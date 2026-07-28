@@ -1,0 +1,5 @@
+Date,Account,Type,Category,Subcategory,Amount,Currency,Payee,Note,Destination Account
+2026-01-28,Conto Aurora,Income,Salary,,2500.00,EUR,Datore Demo,Stipendio sintetico,
+2026-01-29,Conto Aurora,Transfer,,,150.00,EUR,,Risparmio dimostrativo,Spazio Nebula
+2026-01-29,Spazio Nebula,Transfer,,,50.00,EUR,,Allocazione dimostrativa,Broker Demo
+2026-01-30,Contanti Demo,Income,Extra work,,300.00,EUR,Cliente Demo,Incarico sintetico,

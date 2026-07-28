@@ -1,0 +1,991 @@
+{
+  "project": "Nexora",
+  "version": "0.4.0",
+  "files": [
+    {
+      "path": ".codex/agents/domain-architect.md",
+      "size": 183,
+      "sha256": "20d081f3fa7e15486c9b503daeeb7ccd3b4c73966d52b8ef7077bb6bf2a93f6f"
+    },
+    {
+      "path": ".codex/agents/import-specialist.md",
+      "size": 163,
+      "sha256": "692d217852d39f19ee8ab8b462e9e0cfc66d3427b74823c0be8f3dcc59774ca8"
+    },
+    {
+      "path": ".codex/agents/product-owner.md",
+      "size": 207,
+      "sha256": "7886dd06c6b764531d752f7d3af966736a390907ddfdb3eb5e03565dab559fd6"
+    },
+    {
+      "path": ".codex/agents/qa-engineer.md",
+      "size": 167,
+      "sha256": "c142bfd68d214170731393edc5abd150b1614bc94a91ac85c42257fae1dd6771"
+    },
+    {
+      "path": ".codex/agents/security-reviewer.md",
+      "size": 168,
+      "sha256": "ac832e11ef38ed20d80318f859e377e38572a95f07df882648f81face5e54d69"
+    },
+    {
+      "path": ".codex/agents/ux-reviewer.md",
+      "size": 515,
+      "sha256": "f4ecdc80b64f58697a47ddd48ae253c965a3d58c827a7a3d4381f518ac67a9f4"
+    },
+    {
+      "path": ".codex/prompts/00-bootstrap.md",
+      "size": 393,
+      "sha256": "754b24517b468486312d948ec71d93586aa8f135770a2c1f63542057bb33ebea"
+    },
+    {
+      "path": ".codex/prompts/01-domain-core.md",
+      "size": 242,
+      "sha256": "13f69b4af4b42b98eef23b73d1272d502ae87aaa8dea34a28c408c21bce98723"
+    },
+    {
+      "path": ".codex/prompts/02-money-manager-import.md",
+      "size": 253,
+      "sha256": "fc9a758d188b90b49c38befe901e037ac9028eb987bd0202ddcd20d4d0814068"
+    },
+    {
+      "path": ".codex/prompts/03-ui-from-mockup.md",
+      "size": 1068,
+      "sha256": "d5699e47593fd0d88d9c3156a99d1963d668f8f17cd2abeb96679a1997d1c89b"
+    },
+    {
+      "path": ".codex/prompts/REVIEW_CHECKLIST.md",
+      "size": 245,
+      "sha256": "c2c0ca95f5af05fa6f1f448b7fe684a8791c8a15808e0f655d82ccdbd70d3833"
+    },
+    {
+      "path": ".codex/skills/import-pipeline/SKILL.md",
+      "size": 323,
+      "sha256": "a8b6ab9e1395b69165a107566702cec45d1f32d7d1a94e735adb06a957410b38"
+    },
+    {
+      "path": ".codex/skills/mockup-to-ui/SKILL.md",
+      "size": 737,
+      "sha256": "2523060470f5e8001098245a74a6f098f744f5fc1286ff5af50029b70fac0e06"
+    },
+    {
+      "path": ".codex/skills/nexora-domain/SKILL.md",
+      "size": 392,
+      "sha256": "b67eab8cf348773b7612fbd4fc330d21c7bbca4feced168c1d04f9e20d82669f"
+    },
+    {
+      "path": ".codex/skills/quality-gates/SKILL.md",
+      "size": 224,
+      "sha256": "618ddf2f1176ffb47bcf121b3e9bcd1e8141607e728abec25aa2cef219fa67a7"
+    },
+    {
+      "path": ".env.example",
+      "size": 194,
+      "sha256": "be4ae3c87e7d76274c64e810d81a7f13452a72b11cf9fd90f60284f73f4b7c00"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "size": 721,
+      "sha256": "6bccfc6815ac4869d809a04adbf79aaec2f39c3c1fdc9fd6d78e60aee648a09b"
+    },
+    {
+      "path": ".gitignore",
+      "size": 187,
+      "sha256": "bb7c9936c300a966d75a314b2b9efb9248c7e6769b4e681511483701638fb2b5"
+    },
+    {
+      "path": ".npmrc",
+      "size": 65,
+      "sha256": "a6b535050ffed7bf041c71335beb770abb893edc91eb663b0e54955cf9170758"
+    },
+    {
+      "path": ".prettierignore",
+      "size": 151,
+      "sha256": "454cb1407b70daf1113e3c516dceb2c2634346c358f571f3ead87681aa0687eb"
+    },
+    {
+      "path": ".prettierrc.json",
+      "size": 90,
+      "sha256": "1ed88d3b99eced8dc3b6f58f26645466dd1ceaca6c5a9b818531c941ac28e55b"
+    },
+    {
+      "path": "AGENTS.md",
+      "size": 1850,
+      "sha256": "4ff169eb193490db7a53a3bb49dbaae512572e738866f2c51086c97b9023cf15"
+    },
+    {
+      "path": "apps/web/index.html",
+      "size": 639,
+      "sha256": "7a47c3cdcde4645219d8b585dbb7134cf0c74d97d1fc1e779eff8fe0c458c41b"
+    },
+    {
+      "path": "apps/web/package.json",
+      "size": 623,
+      "sha256": "243014f984c2e23860b16c695213bac0d4f98cfd2a5ed2d2e8705a7c0273b4da"
+    },
+    {
+      "path": "apps/web/public/icon.svg",
+      "size": 221,
+      "sha256": "f4270f033cac380e866740506b7a192dec543dba611d2e8416f79ec72cd1ef5b"
+    },
+    {
+      "path": "apps/web/README.md",
+      "size": 1448,
+      "sha256": "af41b9edb66c1d85cdaf98889f3acad0fa310ba9ef43d0493b162cd834fd3b5c"
+    },
+    {
+      "path": "apps/web/src/accounts/accountCommands.test.ts",
+      "size": 2964,
+      "sha256": "76bf5a59f36301956c9a63cd6623338fd7cdf3c9e47a43acf18844443703791c"
+    },
+    {
+      "path": "apps/web/src/accounts/accountCommands.ts",
+      "size": 4452,
+      "sha256": "b9932dcf7d2e006f77f297eac816a6560db34018696324dcf358aebf90f12f42"
+    },
+    {
+      "path": "apps/web/src/accounts/AccountsPage.tsx",
+      "size": 18068,
+      "sha256": "42cd5b9a1e2d960114a8426463494f1ee908992b0665c4a6f5151fb8a236d9fa"
+    },
+    {
+      "path": "apps/web/src/accounts/buildAccountsViewModel.test.ts",
+      "size": 1576,
+      "sha256": "5d0fb79282c579ff81d18ebfd6fe33b155d3b5c9d644b1329799792af4050635"
+    },
+    {
+      "path": "apps/web/src/accounts/buildAccountsViewModel.ts",
+      "size": 3710,
+      "sha256": "caa7054c04b53d7af9dc502544430bfa19ed5305ee0cee220d42c0b2f6eec6a8"
+    },
+    {
+      "path": "apps/web/src/App.test.tsx",
+      "size": 5971,
+      "sha256": "053c5ec4d010e2bdd31ed142cca2ca815ddec31962b7d8dc984082e70db701f0"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "size": 9954,
+      "sha256": "39416a1bea304e516cc2d636e8ab96ca6ed922286fd720750c333f03728a9f87"
+    },
+    {
+      "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
+      "size": 3343,
+      "sha256": "472607ee32bea0d1ff9a9dfb3f722433c2b7cac03c9223da29eaf9ab7dbad958"
+    },
+    {
+      "path": "apps/web/src/dashboard/buildDashboardViewModel.ts",
+      "size": 7715,
+      "sha256": "d67e26abbc48c6423b90e672015da7a538f881a2397753962b7116e77fa2edd1"
+    },
+    {
+      "path": "apps/web/src/dashboard/Dashboard.tsx",
+      "size": 8610,
+      "sha256": "b585a8b9d42b695804771dd51b99c31aad9f37b4cd29bbc0c1f7006bfef420dd"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "size": 772,
+      "sha256": "fa04e4810aa8680b6fd0db5fb1ab500c1fbf1ccd6709bd1e72c47f780bce5afd"
+    },
+    {
+      "path": "apps/web/src/page.css",
+      "size": 15811,
+      "sha256": "dd3b2a0a99fc3a2d3f16877434e0a64ddd05209119ff952e81b6b553afcc47c7"
+    },
+    {
+      "path": "apps/web/src/persistence/openPwaLedger.test.ts",
+      "size": 3204,
+      "sha256": "61dcd37605d8cf11f09b0eb3c9a2c8af3c9639f332b6d6e2526b94f3bd84586b"
+    },
+    {
+      "path": "apps/web/src/persistence/openPwaLedger.ts",
+      "size": 3178,
+      "sha256": "d2cf8dd05dfa0a06e29a0c4137be866ca90809d13bae0952f89f86a5bced6d0f"
+    },
+    {
+      "path": "apps/web/src/transactions/buildTransactionsViewModel.test.ts",
+      "size": 1933,
+      "sha256": "0be4e86239f00e208f5f00107e7bb7dad39fc2eb6117daf04dd5c23b22f13536"
+    },
+    {
+      "path": "apps/web/src/transactions/buildTransactionsViewModel.ts",
+      "size": 4816,
+      "sha256": "9d1d852633cc15b021396ea85e5519657227cae806e0a855880f6dcc7ce3e893"
+    },
+    {
+      "path": "apps/web/src/transactions/transactionCommands.test.ts",
+      "size": 3243,
+      "sha256": "c12c33635df7ce495840cebafea636ff2c3e20b1edbf07d274e05ad7dd15af0e"
+    },
+    {
+      "path": "apps/web/src/transactions/transactionCommands.ts",
+      "size": 4819,
+      "sha256": "9485051d94783b7c9275aaf740aeaa2e47c51fa401aeadfb56de6c2f0a5cc652"
+    },
+    {
+      "path": "apps/web/src/transactions/TransactionsPage.tsx",
+      "size": 14206,
+      "sha256": "fe2fdd520b132a9e5805a8cc09bc32d2d26c4efe248c1e621345c0c5477915bf"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "size": 250,
+      "sha256": "b2eefffac26bef511775595a77fc533aeeba8bd811cf16fc4de0e076f0446623"
+    },
+    {
+      "path": "apps/web/tsconfig.node.json",
+      "size": 150,
+      "sha256": "23a87da828476485da8c8cec67c3761d3bc933d77a4a0ceff2b778d6608e426b"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "size": 1581,
+      "sha256": "d5f1e5197fc3cd41c18e9d370c5768569871b60b2c0fd60201866240ceb50870"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size": 5302,
+      "sha256": "661ca25a2ebc7c84188256f0f0c1aee492c1245ac6df3bd593302889f87d11f8"
+    },
+    {
+      "path": "CHANGELOG.zip",
+      "size": 63199345,
+      "sha256": "8e867fb4eab26bde60429bec75fbd9b4e0760df20f7a147b4b4cea35f44f67b7"
+    },
+    {
+      "path": "design/mockup/README.md",
+      "size": 572,
+      "sha256": "355c26d883713d5bce43c287657f36fe8b70b23090bf5d6c49f0137caaae1b26"
+    },
+    {
+      "path": "design/mockup/stitch/code.html",
+      "size": 22328,
+      "sha256": "a4a68d748ca4eb75d8d1f8a25da9e76fae9892430a5432a13505129d3e7b5a24"
+    },
+    {
+      "path": "design/mockup/stitch/DESIGN.md",
+      "size": 7620,
+      "sha256": "0d59d2ab96243943fcc37573b3c8e219fd64e43df5531db9f5482034ad67a518"
+    },
+    {
+      "path": "design/mockup/stitch/screen.png",
+      "size": 306411,
+      "sha256": "d4ed01a29d134ecd1b1a86026dd8c2019c279629d5f242e9e4883e7404624307"
+    },
+    {
+      "path": "docker-compose.yml",
+      "size": 190,
+      "sha256": "254b6beb47ce0c91068ee48f42cf0c567cacc2982db1d9b486ff58fec11b15bc"
+    },
+    {
+      "path": "docs/adr/0001-modular-monolith.md",
+      "size": 176,
+      "sha256": "c8a1eb76c0946e70d47073cddc1b3dd90319c4a5c2d9b2005372305f5586e7ea"
+    },
+    {
+      "path": "docs/adr/0002-offline-first-persistence.md",
+      "size": 198,
+      "sha256": "0b16d8655c49cb4eed9e6a70eaeb742f2bdfa4e6b33cb2f5281dae7acadc0992"
+    },
+    {
+      "path": "docs/adr/0003-money-representation.md",
+      "size": 168,
+      "sha256": "dd0b4d0b705e02778b4346991fecd1abc6956624a643997bf98f73355f7fac9d"
+    },
+    {
+      "path": "docs/adr/0004-import-batches.md",
+      "size": 138,
+      "sha256": "a08720a5375eab84983f5f52a9bc59d1220232aa2fda041be08279693e7bc865"
+    },
+    {
+      "path": "docs/adr/0005-transfers.md",
+      "size": 143,
+      "sha256": "6d0b62c5fb10882183615df1909e127439156e361c6ae1e97448ee73dbb18c6d"
+    },
+    {
+      "path": "docs/adr/0006-signed-ledger-amounts.md",
+      "size": 974,
+      "sha256": "cbde2150df1770e9c8dc1fcfd6bb536eb08758df08bac4793cfabe219e31607a"
+    },
+    {
+      "path": "docs/adr/0007-sqlite-core-schema-v1.md",
+      "size": 1742,
+      "sha256": "2bb5b5f06585df4e6404fe12e0360e1054fefe467f78792ae1aef76ff83f53db"
+    },
+    {
+      "path": "docs/adr/0008-atomic-migration-runner.md",
+      "size": 1735,
+      "sha256": "88b6dd5e07ea961ad0767420174a6c92322d4de4d313b061e66ce38552355944"
+    },
+    {
+      "path": "docs/adr/0009-sqlite-wasm-opfs-worker.md",
+      "size": 1833,
+      "sha256": "efe6fd9d052ec547d4283484e4abc2dc106cd4eac1e7bfde01d84a4bb5a9c8d8"
+    },
+    {
+      "path": "docs/adr/0010-indexeddb-fallback-selection.md",
+      "size": 2447,
+      "sha256": "10adc3a6ed27bb3b22d41cbff4814ea05b720e922e2edddc8dcb97aa9c825d4f"
+    },
+    {
+      "path": "docs/adr/0011-encrypted-physical-sqlite-backup.md",
+      "size": 2614,
+      "sha256": "36757ebe58aa0005ce0adc36679213e03a173ebac0c54d5cc39e2de732686314"
+    },
+    {
+      "path": "docs/adr/0012-stable-pwa-ledger-bootstrap.md",
+      "size": 2158,
+      "sha256": "929765d01582c65662927b728b8480c4e387b312645c559c8f45f83be93621f9"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "size": 5080,
+      "sha256": "22b7fe048fe2610db6fdad410ed5943d76eee5a09110d24cfb4e9202e50378c3"
+    },
+    {
+      "path": "docs/CONTEXT.md",
+      "size": 1305,
+      "sha256": "6d93fc9e6a1c57cb4bbee790501d08a0aff0f4c622bbab2391dfa339b4e54bf6"
+    },
+    {
+      "path": "docs/DATA_MODEL.md",
+      "size": 4314,
+      "sha256": "62864f536fbbfaccd89b88b47329f06a09b47127968898878046b587d76026ce"
+    },
+    {
+      "path": "docs/DECISIONS_LOG.md",
+      "size": 10067,
+      "sha256": "71df8f1320f246da299f86fa428b84a354c82e9a20c6bb1f18e3c1c597b6b48c"
+    },
+    {
+      "path": "docs/imports/MONEY_MANAGER_XLSX.md",
+      "size": 1426,
+      "sha256": "dd806cf6d6f4a66390766cecb2ad8f67025fa4985de814e227579e1e5ac6f119"
+    },
+    {
+      "path": "docs/operations/BACKUP_RESTORE.md",
+      "size": 2319,
+      "sha256": "2715f57dec7c6b6732a3cf8668e08c89c55e6427faf298d8c7c04e59c976dea0"
+    },
+    {
+      "path": "docs/PRD_Nexora_Reference.docx",
+      "size": 43071,
+      "sha256": "d09da732ad89d76e310cfc54b2d5c6a6f0b3a55d406c472e19e815313224e74f"
+    },
+    {
+      "path": "docs/PRD.md",
+      "size": 5223,
+      "sha256": "5a638013cdaf2f61b6de4142fb572460d3f0b7f3454ae3170de2ce5e3afdaa18"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "size": 3213,
+      "sha256": "47806d06be542c01f634e3f7eec3d63a0f8e457ca42f454ae4c88ce6d9517115"
+    },
+    {
+      "path": "docs/security/THREAT_MODEL.md",
+      "size": 810,
+      "sha256": "26120639a657ff8250b0950d4414e65444fffddfe9f3cc4b3821eff7de446802"
+    },
+    {
+      "path": "docs/testing/QUALITY_GATES.md",
+      "size": 2624,
+      "sha256": "20e238bf68b8b69b17c42986f6cf25bbc7d91f7b71911e8621c81d45cf111609"
+    },
+    {
+      "path": "docs/ux/MOCKUP_INTEGRATION.md",
+      "size": 3434,
+      "sha256": "47341c6e4adc8ae39e46fea8c5a298938acadc40dd00a6404bf87ca5d0b2a1b8"
+    },
+    {
+      "path": "docs/ux/PRIMARY_FLOWS.md",
+      "size": 749,
+      "sha256": "136f7dd5c988e816d7940789183e9d8c1635a5f5bf63d332beb88679471ebf6d"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "size": 1228,
+      "sha256": "601a5e4979c0fcdcc13e0a4fee38432bf647d925214f086ce6efa22cb15e64ac"
+    },
+    {
+      "path": "examples/imports/mapping-profile.example.json",
+      "size": 345,
+      "sha256": "21ac04c3269e641d1c266c958366d3f4f98906f293bbb4a5bca075160fe75caf"
+    },
+    {
+      "path": "examples/imports/money-manager-generic.csv",
+      "size": 426,
+      "sha256": "121faaaa842348c3a7eced9c220e8cd523ffc8443589a62ba2ff39b80119042d"
+    },
+    {
+      "path": "infra/docker/Dockerfile",
+      "size": 128,
+      "sha256": "cfa5107fc4cbd0450bfe71ea7326fe4449e4cd0c4dd12abb4b2a42a03dd45aae"
+    },
+    {
+      "path": "package.json",
+      "size": 1513,
+      "sha256": "be1d884921e82cd87ad75a2caa5b27a5f0aa0bbac219ae6d0fb0b3b514892d42"
+    },
+    {
+      "path": "packages/config/package.json",
+      "size": 220,
+      "sha256": "0b615195350d84b66e951147020aaa2ad03318184129b06e28877bed82c37783"
+    },
+    {
+      "path": "packages/config/src/index.ts",
+      "size": 328,
+      "sha256": "ba2f764aa8150382dbfec6b1039bf3381083efa28e86b6020e6a52bcd0e0c170"
+    },
+    {
+      "path": "packages/config/src/logging.test.ts",
+      "size": 1186,
+      "sha256": "2e31291443032c35d04a57e5eba7c12571ac651e01f0e9562f29a1684ea57e1e"
+    },
+    {
+      "path": "packages/config/src/logging.ts",
+      "size": 2207,
+      "sha256": "6b329f5bdec9bf15b2dd9ee8a0b526fabccefe345606f6a161ea6377b78e7774"
+    },
+    {
+      "path": "packages/config/src/settings.ts",
+      "size": 152,
+      "sha256": "682d3c31c5f18a6d15e70076ff4cd804509ab3e6a99379046a5436909b5727ff"
+    },
+    {
+      "path": "packages/config/tsconfig.json",
+      "size": 134,
+      "sha256": "450fb7e27289c48110296b4b14ea741bf297524c3d2fe4f1edc55c07f88a8337"
+    },
+    {
+      "path": "packages/database/package.json",
+      "size": 389,
+      "sha256": "1af02b98c17b6d27a88a17c1776804c4c10322d8f702447dacb891e00b17dadd"
+    },
+    {
+      "path": "packages/database/README.md",
+      "size": 3726,
+      "sha256": "f78b484bb44de2be19f3c621d154510d43b229eb03a350aa5e31cb8da3ff9f7c"
+    },
+    {
+      "path": "packages/database/src/backup/BackupError.ts",
+      "size": 365,
+      "sha256": "5ee55c5d12905786a27bf215f5749d4320fc6eb3e8b5a4a1c303650f8f087e3c"
+    },
+    {
+      "path": "packages/database/src/backup/EncryptedSqliteBackup.test.ts",
+      "size": 2444,
+      "sha256": "5427f95b387fe0018a27ecc090027311de97f0e46a4b591d20681011822c0328"
+    },
+    {
+      "path": "packages/database/src/backup/EncryptedSqliteBackup.ts",
+      "size": 12297,
+      "sha256": "516dfc70cf554bc8127b9d86b4da6d3af0ff46e583fcf06a8fa097a92fe8d980"
+    },
+    {
+      "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
+      "size": 7940,
+      "sha256": "7591108094907ed39f09105f7fa249f1bea9b5026a6d2d31afee80746caa39ef"
+    },
+    {
+      "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
+      "size": 9708,
+      "sha256": "22d66f101d8d2fa7dff49cc19c49fb36a5f4824f3bb2d2d07eba951df0bd66c1"
+    },
+    {
+      "path": "packages/database/src/backup/PhysicalBackupStore.ts",
+      "size": 2738,
+      "sha256": "af8dcf6dd0f8a0de679bbb81868a7bd822c04b3eb5fd78432e4b485864ac38a9"
+    },
+    {
+      "path": "packages/database/src/browser/openBrowserLedger.test.ts",
+      "size": 4502,
+      "sha256": "936acc28d59c06576180f6e56194cee2091eab4141d31eef477726c2b22d1884"
+    },
+    {
+      "path": "packages/database/src/browser/openBrowserLedger.ts",
+      "size": 2677,
+      "sha256": "3683a493e0e2bff0cb40fe263dd8ba4b3de641fb1fb762d4d857ac7e8f4b5ca3"
+    },
+    {
+      "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
+      "size": 9222,
+      "sha256": "7bfdc676554ee1352e43f90113ad0d2f3833048d562b2b898a64c4f47a25093c"
+    },
+    {
+      "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
+      "size": 8043,
+      "sha256": "89e417bc784ca02820d82261b9feda953c3bb364e3fcf72ccad6674e65c0aa90"
+    },
+    {
+      "path": "packages/database/src/index.ts",
+      "size": 2761,
+      "sha256": "1037f491b4be704a813a2ad796fdb9369f7b67b0b6c6a50f627a224e2356357b"
+    },
+    {
+      "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
+      "size": 12244,
+      "sha256": "81221582e3dc8371bb4f35ccaa9811b9a74d758099881521ed3ca800d0f2c99a"
+    },
+    {
+      "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
+      "size": 20052,
+      "sha256": "b2160305b3b7d7a9b7e12039baed75377fce0dca3aeea4d4ae06462e086f4219"
+    },
+    {
+      "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
+      "size": 5655,
+      "sha256": "1e803d319ced7e1f95cec6f5eabfc4e4f667493a7385c570a6e7e43e491a7d12"
+    },
+    {
+      "path": "packages/database/src/migrations/0001-initial-ledger-schema.test.ts",
+      "size": 8100,
+      "sha256": "47d51e0326dd685126ada1a29b38acde9f175f5af1a4c663aa149608979a668e"
+    },
+    {
+      "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
+      "size": 8994,
+      "sha256": "e26e235565041fded33251a7a58e70c254c29f672a6509ba25a09e88db399677"
+    },
+    {
+      "path": "packages/database/src/migrations/DatabaseMigration.ts",
+      "size": 176,
+      "sha256": "d00ef8d7253c8426b8dfefb93c9557e31290684f0bf9e36d541b9d001923eb98"
+    },
+    {
+      "path": "packages/database/src/migrations/MigrationBackup.ts",
+      "size": 443,
+      "sha256": "f792b10fcbd1cd3d2e870ee40e929a1d7c88671ba2af660379c4ff6c6a5303ae"
+    },
+    {
+      "path": "packages/database/src/migrations/MigrationError.ts",
+      "size": 521,
+      "sha256": "2cb93512b9f26dbe1ae5fd0315f6ca2056ac5fd914a7b5a66df1710a77ecdee8"
+    },
+    {
+      "path": "packages/database/src/migrations/MigrationRunner.test.ts",
+      "size": 8364,
+      "sha256": "ae220e0e86ae0236ac161539bde130f63f967bee990e2f8e40f00efaf789e3f5"
+    },
+    {
+      "path": "packages/database/src/migrations/MigrationRunner.ts",
+      "size": 7267,
+      "sha256": "d67c594a35bb6c617de126788fdc8cd7eb058b387e8a19c36c31a31cadfb12cc"
+    },
+    {
+      "path": "packages/database/src/opfs/openOpfsLedger.ts",
+      "size": 2132,
+      "sha256": "3b25750b0ee840b1ba1694de54152325d0eefafe9b5829dc2833ab6638431e56"
+    },
+    {
+      "path": "packages/database/src/opfs/opfs.worker.ts",
+      "size": 7528,
+      "sha256": "0184092e86d67374d515fc9effe4111d56f6a3b47d72f54709a980e657766e7a"
+    },
+    {
+      "path": "packages/database/src/opfs/OpfsSqliteDatabase.test.ts",
+      "size": 5469,
+      "sha256": "d9ccdec9756832ba5b32aadaad3f96112c4aab2eb2dc8f355d6dd6d3f0896c1e"
+    },
+    {
+      "path": "packages/database/src/opfs/OpfsSqliteDatabase.ts",
+      "size": 8424,
+      "sha256": "1790dad5368dec29181471298f0885013b60a36dd3e344fa0f352966371dc998"
+    },
+    {
+      "path": "packages/database/src/opfs/OpfsWorkerProtocol.ts",
+      "size": 2153,
+      "sha256": "7e61b849e17454307ed4e9e0c096ebaa7c07bf2d81d6231c17e7777d5be94818"
+    },
+    {
+      "path": "packages/database/src/records/LedgerRecords.ts",
+      "size": 10991,
+      "sha256": "9eea1b823952e6000097ecab684a63b3c2af5e9b849c0ce3171513e80b2c7419"
+    },
+    {
+      "path": "packages/database/src/seed/demoLedgerSeed.test.ts",
+      "size": 5256,
+      "sha256": "63a809d47cf36a6efd21d1bce1d2fd10f1316759e3256f206ff30c8fcb527288"
+    },
+    {
+      "path": "packages/database/src/seed/demoLedgerSeed.ts",
+      "size": 14310,
+      "sha256": "2de86a8993d8c8e9d36081f95e6cff5a0ae9a1b1b2d01753c7961a11747189b0"
+    },
+    {
+      "path": "packages/database/src/seed/DemoSeedError.ts",
+      "size": 304,
+      "sha256": "9a5dc712f216d931e3faca4211e23a62286d976c968ccc1895d3faaae6eb601a"
+    },
+    {
+      "path": "packages/database/src/sqlite/initializeSqliteLedger.ts",
+      "size": 1225,
+      "sha256": "242f3fdb614ca5b1a862fc1a759c74534cecbb763ddd624cc14f89951a72ffca"
+    },
+    {
+      "path": "packages/database/src/sqlite/PersistenceError.ts",
+      "size": 502,
+      "sha256": "42b11687cd3877596167feffcccbcbadf4c433384f8cc64ce3b9180f20f644f1"
+    },
+    {
+      "path": "packages/database/src/sqlite/SqliteDatabase.ts",
+      "size": 666,
+      "sha256": "eb33501eb1bb3357a9c7ef498379da68f1b086005292f712a32c17c7420ecfbc"
+    },
+    {
+      "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
+      "size": 12250,
+      "sha256": "81f39c75195ab832e6c371a10d71711694b8e2de52ef2b268d1c1e80342a686b"
+    },
+    {
+      "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
+      "size": 20212,
+      "sha256": "46f21e80bf56506a917dfca83fd7526c4f8b58a0e4dbcae4689e536dabb0e9db"
+    },
+    {
+      "path": "packages/database/tsconfig.json",
+      "size": 124,
+      "sha256": "28282abe534bce160861ed5c0798292c960cb61c7dfa5636d552a245c7223d09"
+    },
+    {
+      "path": "packages/domain/package.json",
+      "size": 220,
+      "sha256": "736b00a82833b9d57dc966c88f96660c5f46cf25c8c3ff7a8a57a9de7b06ef67"
+    },
+    {
+      "path": "packages/domain/README.md",
+      "size": 573,
+      "sha256": "7d074f2693b5ddf2c2d6f8b4b56d9561a840ade60ee65ae49d6f4e3098bf9b74"
+    },
+    {
+      "path": "packages/domain/src/entities/Account.test.ts",
+      "size": 2237,
+      "sha256": "7ea4942fff9566fef65b48c9963b748632008c3f8c9dad8d37a0ca58b07ba31c"
+    },
+    {
+      "path": "packages/domain/src/entities/Account.ts",
+      "size": 3563,
+      "sha256": "1a68a41736e1f92906c9737cb1ac402e2bdcdb697c5232c0bbc33579b64039c8"
+    },
+    {
+      "path": "packages/domain/src/entities/Category.test.ts",
+      "size": 1026,
+      "sha256": "99a8e74c8d69dcc6e70dab68944841aa9b9a6936830e00b1207b84f8993ea615"
+    },
+    {
+      "path": "packages/domain/src/entities/Category.ts",
+      "size": 1852,
+      "sha256": "ead3d7d9b8c0668ceff20a87cdaf43eaa3b191d186bbaea83ba3af15e22aa104"
+    },
+    {
+      "path": "packages/domain/src/entities/Transaction.test.ts",
+      "size": 2943,
+      "sha256": "17ba21eb9a044e182150fac41e7011647fcaf6fdf2a4d44682d77eed4990cb86"
+    },
+    {
+      "path": "packages/domain/src/entities/Transaction.ts",
+      "size": 4891,
+      "sha256": "e293c7c5138d0f4f174e596a352ab6eaa8608231437c986601183a002f8042a8"
+    },
+    {
+      "path": "packages/domain/src/entities/Transfer.test.ts",
+      "size": 2723,
+      "sha256": "6d979a6e88a68d37a18c91fa7baa17c1fd4dc126b82583033f761cabc95d116e"
+    },
+    {
+      "path": "packages/domain/src/entities/Transfer.ts",
+      "size": 3178,
+      "sha256": "79fd2cf69c793e71f4c17d843f10ef91808dfc771c9a0e84ba1738b71e4fc686"
+    },
+    {
+      "path": "packages/domain/src/errors/DomainError.ts",
+      "size": 509,
+      "sha256": "bc0ccf7cecec45acfa9c236406060a0862bfd07f17b13c0c7539dfbec7dd17ab"
+    },
+    {
+      "path": "packages/domain/src/index.ts",
+      "size": 1059,
+      "sha256": "69e6c2f9262e7c42c1c512ab4ed74b85390be9f15a4a06bb297c264a4db2c377"
+    },
+    {
+      "path": "packages/domain/src/repositories/LedgerRepository.ts",
+      "size": 1267,
+      "sha256": "2b27318ae74f797aaab4d91f9ad483f730634a9ac7f600702cfddc7430324dd0"
+    },
+    {
+      "path": "packages/domain/src/services/accountUpdates.test.ts",
+      "size": 2052,
+      "sha256": "ad8288f1eae93a3898129e1fd762b638a65cfcebf816756e56c02f2c6900cc4a"
+    },
+    {
+      "path": "packages/domain/src/services/accountUpdates.ts",
+      "size": 1355,
+      "sha256": "6ca7153fb8f628db49af6d7a2d723619b3cbf2c40782dceceac2e606da302eb5"
+    },
+    {
+      "path": "packages/domain/src/services/ledgerReports.test.ts",
+      "size": 2782,
+      "sha256": "1d283ab0c52e75222eca679f681b1afaf73b9e1ff6b4cafe7893b10123321bfd"
+    },
+    {
+      "path": "packages/domain/src/services/ledgerReports.ts",
+      "size": 1918,
+      "sha256": "ae948800076bc94764f765fb5a53fa51df494f3049a6d5fbbf87cb51562849d8"
+    },
+    {
+      "path": "packages/domain/src/validation.ts",
+      "size": 1152,
+      "sha256": "654e1a9012da086ec927264289eb602418967a25ff50c687c800b4e7e327b842"
+    },
+    {
+      "path": "packages/domain/src/value-objects/CurrencyCode.ts",
+      "size": 408,
+      "sha256": "54029686e182f84c7bf4fa045117542134460c2e218ee35f8f86d9dd3207f3c6"
+    },
+    {
+      "path": "packages/domain/src/value-objects/LocalDate.test.ts",
+      "size": 540,
+      "sha256": "5393a5a8703079ac29cdae0ab5dc4a2dc54f7913e866de3c0e963d3a8ff4f157"
+    },
+    {
+      "path": "packages/domain/src/value-objects/LocalDate.ts",
+      "size": 1397,
+      "sha256": "0c9105b35c12f4c2565370c7e1222600a0c70f1ec272fe5662e4076c16e3c4aa"
+    },
+    {
+      "path": "packages/domain/src/value-objects/Money.test.ts",
+      "size": 1124,
+      "sha256": "829f4cf47908f6f0fdc3fda549e77f6596cecd7bab0299bd5046e075230765c4"
+    },
+    {
+      "path": "packages/domain/src/value-objects/Money.ts",
+      "size": 2010,
+      "sha256": "13b7adf5625e075769a97960394dee23d7a9c2bd7266513ac1014c3c593c47b8"
+    },
+    {
+      "path": "packages/domain/tsconfig.json",
+      "size": 118,
+      "sha256": "258dba759e074566c3c31577303cdccee1ed30fea9d226de83c502ffa346e989"
+    },
+    {
+      "path": "packages/importers/package.json",
+      "size": 223,
+      "sha256": "155a00c4c66cf802f4e9e0f97530f1a7e017ea73f521c1f28eeba6f8577046fd"
+    },
+    {
+      "path": "packages/importers/README.md",
+      "size": 223,
+      "sha256": "c178bf5dc0f78a0a44853904e7e347ea40e30182f02af841ba8457302a40a31e"
+    },
+    {
+      "path": "packages/importers/src/index.ts",
+      "size": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "packages/importers/tsconfig.json",
+      "size": 118,
+      "sha256": "258dba759e074566c3c31577303cdccee1ed30fea9d226de83c502ffa346e989"
+    },
+    {
+      "path": "packages/ui/package.json",
+      "size": 428,
+      "sha256": "b0e05633d5ad5bad44b0d8e40d7c35cc34ff5573c67c4664a7eb712bc904933b"
+    },
+    {
+      "path": "packages/ui/README.md",
+      "size": 527,
+      "sha256": "7a0a3c9eabc2b854c0c72037619ddeb4a44f86fc806f460a480013a0d379934f"
+    },
+    {
+      "path": "packages/ui/src/AppShell.test.tsx",
+      "size": 1532,
+      "sha256": "965603c9e63aac86fabb7772e551d5b8d3b3b85cfe7282b1d3e408d5e42617ec"
+    },
+    {
+      "path": "packages/ui/src/AppShell.tsx",
+      "size": 2436,
+      "sha256": "6037a2eb975fc823d13f127f527324566f51355d0d72288fc849d7725b49c3b9"
+    },
+    {
+      "path": "packages/ui/src/ErrorBoundary.test.tsx",
+      "size": 810,
+      "sha256": "c120f956e482f0426f13841ec9be10cc57b4726689e55a9c1e06ba94c2163e87"
+    },
+    {
+      "path": "packages/ui/src/ErrorBoundary.tsx",
+      "size": 1420,
+      "sha256": "48fabe26256dd080fd8ef644a87d96430f08f3166787e6f5a4f05061b0942d88"
+    },
+    {
+      "path": "packages/ui/src/FinancialAmount.test.tsx",
+      "size": 1122,
+      "sha256": "d635b0522539247d8180ac361ceda3fb9d366a920c4946f76fbd04cbb6799d52"
+    },
+    {
+      "path": "packages/ui/src/FinancialAmount.tsx",
+      "size": 2259,
+      "sha256": "563210e15f13bb302873db6231cecf0c06ee9e367619f32bffc8b2de7fe2fc08"
+    },
+    {
+      "path": "packages/ui/src/index.ts",
+      "size": 499,
+      "sha256": "577688b8aa2ab3a134ec6f4e2f78ec934a0f663f66726deab7dd1af029f36faf"
+    },
+    {
+      "path": "packages/ui/src/MetricCard.tsx",
+      "size": 892,
+      "sha256": "2e0bd7ea7ee165a239ada8383c954ac23ed6df4db78e4e3d03ae4beb7b4a8d44"
+    },
+    {
+      "path": "packages/ui/src/NavIcon.tsx",
+      "size": 1331,
+      "sha256": "7dd526abb2feb75ea022dfcf1900bc77ccaece9fbfe2c56673862312343853de"
+    },
+    {
+      "path": "packages/ui/src/SidebarNavigation.tsx",
+      "size": 3054,
+      "sha256": "b29150c7d4c5089f9dfb0cf45945481ddf138294eae7baf9d728b87ab7205b0f"
+    },
+    {
+      "path": "packages/ui/src/styles.css",
+      "size": 10050,
+      "sha256": "1dba5b558b5a4b0799f94f603325cfa37c02d9e6a757a4079f28f1d5be66a1b8"
+    },
+    {
+      "path": "packages/ui/src/TopHeader.tsx",
+      "size": 1598,
+      "sha256": "6d6423b6509a2a513f7bc981dbd6efea284cacea8f64b387edf738feb1d970ce"
+    },
+    {
+      "path": "packages/ui/tsconfig.json",
+      "size": 179,
+      "sha256": "cf0e404e7604856e18bd995e1e0f0bf71489e3c8acc71c1200b7f01d47c476a4"
+    },
+    {
+      "path": "playwright.config.ts",
+      "size": 907,
+      "sha256": "d148788cd467c32042698aa3aa9a509b34ca1d80115e986f0f637eb509584c01"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "size": 193841,
+      "sha256": "82e7f64e0ecb663a29deda90d45246e5d45170b43e2cb6ef930f952fac691dd2"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "size": 183,
+      "sha256": "c418820a4f7bfba0d3299fc7b9a4298987013c0ea1ebb721565e8cd0c79c04d2"
+    },
+    {
+      "path": "README.md",
+      "size": 1810,
+      "sha256": "8f197744c026cecd03930b711b6d96e48e85be2ca4521c34d07717c99ccb7f4d"
+    },
+    {
+      "path": "schemas/backup-manifest.schema.json",
+      "size": 1163,
+      "sha256": "253949a464d46f7646b037e2ca5c461596c82521150b92c91539d3bd34ee2954"
+    },
+    {
+      "path": "schemas/import-mapping.schema.json",
+      "size": 651,
+      "sha256": "b4a74a8a302a9b1fa892f29b92b0878174c0b038519d32c9f6ead0ef51540cc8"
+    },
+    {
+      "path": "scripts/project-manifest.mjs",
+      "size": 2466,
+      "sha256": "a098f8af6d0368203b4f9115e74c8af22767b2fd8f53f8be4d2171089cb545af"
+    },
+    {
+      "path": "scripts/verify-project.sh",
+      "size": 263,
+      "sha256": "09cf7da5878e096cf99f40480c8d2c10ef0bc0b9b48dcd60777d1b73a190e246"
+    },
+    {
+      "path": "test/e2e/accounts.spec.ts",
+      "size": 2367,
+      "sha256": "450fd7d4249258fb33f0c802e7a5f9f4a1ec1af182f68b0dcbbfcee4cfc72d18"
+    },
+    {
+      "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
+      "size": 107080,
+      "sha256": "b2227687ebd689d3b930aa59290e726d96f3459abb838584c7b0ddda4f1c5580"
+    },
+    {
+      "path": "test/e2e/app-shell.spec.ts",
+      "size": 1924,
+      "sha256": "36a80a6177c7449ac4d4e4f54cfdc3dfee3677a2d8f3247ca85b97d0cbb5a858"
+    },
+    {
+      "path": "test/e2e/backup-restore.spec.ts",
+      "size": 2201,
+      "sha256": "0069764792d963d883b8ab5f4e73af5c64201bf5e0c34507bd644d55b0a88c45"
+    },
+    {
+      "path": "test/e2e/dashboard.spec.ts",
+      "size": 1507,
+      "sha256": "a98365aff85bcab1e95a1975ab63f893fb5688db7991754d6006dd0e0260258b"
+    },
+    {
+      "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
+      "size": 188177,
+      "sha256": "5304e314abf33d95a08a8ff13e70aa2895550bed44a4c7429001d5634fe4634a"
+    },
+    {
+      "path": "test/e2e/fixtures/backup-restore-smoke.ts",
+      "size": 3831,
+      "sha256": "74904ce08bea913dd9f1463110d1dcb88c51c9b8f3fc4047087c05d621eebadf"
+    },
+    {
+      "path": "test/e2e/fixtures/indexeddb-smoke.ts",
+      "size": 2013,
+      "sha256": "ba49bd7c76863a4b800df76385384777d82812e8a89a1f796090c73531030bea"
+    },
+    {
+      "path": "test/e2e/fixtures/opfs-smoke.ts",
+      "size": 1746,
+      "sha256": "f39daf72543367120c400e31ec5769d8460e115dc36ead4fb17fea79071c8adb"
+    },
+    {
+      "path": "test/e2e/indexeddb-persistence.spec.ts",
+      "size": 1807,
+      "sha256": "881c9631e5fca67ea93050da2fb22bad36f1cec7fd30f73085acc25bfc474eac"
+    },
+    {
+      "path": "test/e2e/opfs-persistence.spec.ts",
+      "size": 1792,
+      "sha256": "6768eae714e5e2596966e6d8545cb7312386e4b27f96b3c4c63155fc65098b1f"
+    },
+    {
+      "path": "test/e2e/pwa-persistence.spec.ts",
+      "size": 4637,
+      "sha256": "b33a1d3b656bf8f3f2026a59545e8077650315611df9e804139cb22d3943849a"
+    },
+    {
+      "path": "test/e2e/transactions.spec.ts",
+      "size": 1937,
+      "sha256": "23cc0a4969758c47ab7933a19be235c1c7cea203a592dca00bb5357e52b696e8"
+    },
+    {
+      "path": "test/project-privacy.test.ts",
+      "size": 1407,
+      "sha256": "97a6569f3dcc9fd93a3f393c90677fab04c28a616524435bdefe4c74f8768769"
+    },
+    {
+      "path": "test/setup.ts",
+      "size": 165,
+      "sha256": "f6dacd0c48caa5c15c870a23f157a9801eea0c792f9c6e4d9a29374fa10b3e39"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "size": 461,
+      "sha256": "bd23de0c77727f0c55afa1c9512852008123fa720f45f42a084b40f564f831fb"
+    },
+    {
+      "path": "vitest.config.ts",
+      "size": 283,
+      "sha256": "d6fc0165afb6df21f9bcf8e71b2a4909ff0d6fef128433a7b8e674bebdc505a0"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "sheet": "Transactions",
+  "headerRow": 1,
+  "locale": "it-IT",
+  "dateFormat": "dd/MM/yyyy",
+  "columns": {
+    "Data": "date",
+    "Conto": "account",
+    "Tipo": "type",
+    "Categoria": "category",
+    "Importo": "amount",
+    "Valuta": "currency",
+    "Note": "note",
+    "Conto destinazione": "destinationAccount"
+  }
+}

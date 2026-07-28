@@ -1,0 +1,9 @@
+services:
+  nexora-backup-agent:
+    build:
+      context: ./infra/docker
+    profiles: ["backup-agent"]
+    environment:
+      - TZ=Europe/Rome
+    volumes:
+      - ./backups:/data/backups

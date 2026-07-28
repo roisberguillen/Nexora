@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "@testing-library/jest-dom",
+      "vite/client",
+      "vite-plugin-pwa/client",
+      "vitest/globals"
+    ]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nexora Import Mapping",
+  "type": "object",
+  "required": [
+    "version",
+    "columns"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sheet": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "headerRow": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "columns": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "locale": {
+      "type": "string"
+    },
+    "dateFormat": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

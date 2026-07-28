@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html class="light" lang="it"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexora | Spese Ricorrenti</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(203, 213, 225, 0.5);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#e0e3ff",
+                        "tertiary-fixed": "#c9e6ff",
+                        "primary-container": "#3559e0",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#001355",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "outline": "#747686",
+                        "surface-tint": "#2b50d8",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "on-surface-variant": "#444654",
+                        "on-primary-fixed-variant": "#0036bc",
+                        "on-primary": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "on-tertiary-container": "#cee9ff",
+                        "on-secondary-container": "#586377",
+                        "primary-fixed": "#dde1ff",
+                        "on-surface": "#0b1c30",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "primary": "#0e3ec7",
+                        "secondary-container": "#d5e0f8",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#eff4ff",
+                        "inverse-primary": "#b8c3ff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#006d9c",
+                        "secondary": "#545f73",
+                        "surface-container": "#e5eeff",
+                        "outline-variant": "#c4c5d7",
+                        "tertiary": "#005479",
+                        "background": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-variant": "#d3e4fe",
+                        "on-secondary-fixed": "#111c2d",
+                        "surface": "#f8f9ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed": "#d8e3fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "nav-width-collapsed": "80px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "nav-width": "280px",
+                        "margin-page": "32px",
+                        "container-max": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "mono-md": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "mono-md": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- Persistent SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-secondary flex flex-col py-stack-lg z-50">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Nexora</h1>
+<p class="font-label-md text-label-md text-on-primary/70">Wealth Management</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-on-secondary/70 hover:bg-white/5 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-on-secondary/70 hover:bg-white/5 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">swap_horiz</span>
+<span>Movements</span>
+</a>
+<a class="flex items-center px-6 py-3 text-on-secondary/70 hover:bg-white/5 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">account_balance_wallet</span>
+<span>Budget</span>
+</a>
+<a class="flex items-center px-6 py-3 text-on-secondary/70 hover:bg-white/5 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">insights</span>
+<span>Insights</span>
+</a>
+<a class="flex items-center px-6 py-3 text-on-secondary/70 hover:bg-white/5 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">track_changes</span>
+<span>Goals</span>
+</a>
+<!-- ACTIVE TAB: Recurring -->
+<a class="flex items-center px-6 py-3 text-on-primary border-l-4 border-primary-fixed font-semibold bg-white/10 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">history_toggle_off</span>
+<span>Recurring</span>
+</a>
+<a class="flex items-center px-6 py-3 text-on-secondary/70 hover:bg-white/5 transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<div class="p-4 bg-white/5 rounded-xl border border-white/10">
+<p class="text-label-md font-label-md text-on-primary/60 mb-2">PRO PLAN</p>
+<div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed-dim w-3/4"></div>
+</div>
+<p class="text-label-md font-label-md text-on-primary/80 mt-2">75% del limite utilizzato</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="ml-[280px] w-[calc(100%-280px)] min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="sticky top-0 right-0 z-40 bg-surface flex items-center justify-between h-16 px-margin-page border-b border-outline-variant">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary" placeholder="Cerca tra le tue sottoscrizioni..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant transition-transform active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant transition-transform active:scale-95">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center space-x-3 cursor-pointer p-1 pr-3 hover:bg-surface-container rounded-full transition-colors">
+<img class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a financial advisor in their late 30s, wearing a clean charcoal suit and a light blue shirt. The background is a blurred high-end corporate office with soft natural lighting from large windows. The overall aesthetic is professional, reliable, and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLOqGX3tyTv_5MsmEWeAS9dTCXQdofZ-C-FOVAkQT1GXQzTkquFzdbtLMv1Zk8VGzapzz5hjuBkSChLE75EgHEX9rp_Gvtt204poVaHE7SnmYbIs5QpM1Z9PFyFFjz1puKrD8ZE5kryJmjt2LD_arCln6NpxtsZvDaxZ_yVa_Rd2_X-kMU2ZxaslWLuD61wXtkDBu5zK-MzKMoEqL3nXKt6MJlkw9feWjBUhLpsEVSlvnfs3_Z4Uq3SLV887QbtcFnz8Ux_a1Pd1h0"/>
+<span class="text-label-md font-label-md font-bold text-on-surface">Marco Rossi</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 p-margin-page overflow-y-auto max-w-container-max mx-auto w-full">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">Costi Ricorrenti</h2>
+<p class="text-body-md text-on-surface-variant">Gestisci le tue sottoscrizioni e i pagamenti periodici automatici.</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg flex items-center space-x-2 font-label-md text-label-md hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Aggiungi costo ricorrente</span>
+</button>
+</div>
+<!-- Bento Grid Summary -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<!-- Main Total Card -->
+<div class="col-span-12 lg:col-span-5 bg-primary-container text-on-primary-container p-8 rounded-xl relative overflow-hidden flex flex-col justify-between">
+<div class="relative z-10">
+<p class="text-label-md font-label-md opacity-80 uppercase tracking-wider mb-2">Totale Mensile Stimato</p>
+<h3 class="font-display-lg text-display-lg">€ 458,20</h3>
+</div>
+<div class="mt-8 flex items-center space-x-4 relative z-10">
+<div class="flex items-center text-green-300">
+<span class="material-symbols-outlined text-[18px] mr-1">arrow_downward</span>
+<span class="font-label-md">-12% vs mese scorso</span>
+</div>
+<div class="h-4 w-px bg-white/20"></div>
+<span class="text-label-md opacity-70">14 servizi attivi</span>
+</div>
+<!-- Abstract decoration -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+<!-- Forecast Card -->
+<div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white border border-outline-variant p-6 rounded-xl flex flex-col justify-between shadow-sm">
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">Prossimi 30 giorni</p>
+<div class="flex items-end justify-between">
+<h4 class="font-title-lg text-title-lg text-on-surface">€ 1.240</h4>
+<span class="text-label-md text-error font-bold">+ € 150</span>
+</div>
+</div>
+<div class="mt-4">
+<p class="text-label-md text-on-surface-variant mb-2">Ripartizione</p>
+<div class="flex h-2 rounded-full overflow-hidden">
+<div class="bg-primary w-[60%]"></div>
+<div class="bg-tertiary w-[25%]"></div>
+<div class="bg-secondary-container w-[15%]"></div>
+</div>
+</div>
+</div>
+<!-- Quick Action/Alert Card -->
+<div class="col-span-12 md:col-span-6 lg:col-span-4 bg-tertiary-container text-on-tertiary-container p-6 rounded-xl flex items-center space-x-6 border border-tertiary/20">
+<div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white">notifications_active</span>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg font-bold">2 Scadenze imminenti</h4>
+<p class="text-body-md opacity-90">Adobe CC e Netflix scadono tra 48 ore.</p>
+<a class="inline-block mt-2 text-label-md font-bold underline" href="#">Controlla fondi</a>
+</div>
+</div>
+</div>
+<!-- Subscription Table Section -->
+<div class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface">Abbonamenti Attivi</h3>
+<div class="flex items-center space-x-2">
+<button class="p-1.5 hover:bg-surface-container rounded border border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded border border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+</div>
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-100 text-on-surface-variant uppercase font-label-md text-label-md border-b border-outline-variant">
+<th class="px-6 py-4 font-semibold">Servizio</th>
+<th class="px-6 py-4 font-semibold">Categoria</th>
+<th class="px-6 py-4 font-semibold">Frequenza</th>
+<th class="px-6 py-4 font-semibold">Prossimo Pagamento</th>
+<th class="px-6 py-4 font-semibold text-right">Importo</th>
+<th class="px-6 py-4 font-semibold w-16"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Table Row 1 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-600">movie</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">Netflix Premium</p>
+<p class="text-label-md text-on-surface-variant">Piano 4K UHD</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full text-label-md font-medium">Intrattenimento</span>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface">Mensile</td>
+<td class="px-6 py-4 text-body-md text-on-surface">15 Mag 2024</td>
+<td class="px-6 py-4 text-right font-mono-md text-body-md font-bold text-on-surface">€ 17,99</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-1 hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">cloud</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">Adobe Creative Cloud</p>
+<p class="text-label-md text-on-surface-variant">Tutte le app</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full text-label-md font-medium">Software</span>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface">Annuale</td>
+<td class="px-6 py-4 text-body-md text-error font-bold">12 Mag 2024</td>
+<td class="px-6 py-4 text-right font-mono-md text-body-md font-bold text-on-surface">€ 59,99</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-1 hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600">energy_savings_leaf</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">Enel Energia</p>
+<p class="text-label-md text-on-surface-variant">Utenza Domestica</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full text-label-md font-medium">Utenze</span>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface">Bimestrale</td>
+<td class="px-6 py-4 text-body-md text-on-surface">22 Giu 2024</td>
+<td class="px-6 py-4 text-right font-mono-md text-body-md font-bold text-on-surface">€ 142,50</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-1 hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-orange-600">fitness_center</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">Virgin Active</p>
+<p class="text-label-md text-on-surface-variant">Abbonamento Club</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full text-label-md font-medium">Salute & Sport</span>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface">Mensile</td>
+<td class="px-6 py-4 text-body-md text-on-surface">01 Giu 2024</td>
+<td class="px-6 py-4 text-right font-mono-md text-body-md font-bold text-on-surface">€ 85,00</td>
+<td class="px-6 py-4 text-right">
+<button class="opacity-0 group-hover:opacity-100 p-1 hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<p class="text-label-md text-on-surface-variant italic">Mostrando 4 di 14 sottoscrizioni</p>
+<div class="flex items-center space-x-2">
+<button class="p-2 border border-outline-variant rounded hover:bg-white text-on-surface-variant disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant rounded hover:bg-white text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Insight / Tips Area -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white border border-outline-variant p-6 rounded-xl flex items-start space-x-4">
+<div class="p-3 bg-secondary-container rounded-lg">
+<span class="material-symbols-outlined text-secondary">tips_and_updates</span>
+</div>
+<div>
+<h5 class="font-bold text-on-surface mb-1">Consiglio Risparmio</h5>
+<p class="text-body-md text-on-surface-variant">Hai 3 servizi di streaming simili. Consolidando i tuoi abbonamenti potresti risparmiare fino a €240 all'anno.</p>
+<button class="mt-3 text-primary font-bold text-label-md hover:underline">Vedi suggerimenti</button>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-6 rounded-xl flex items-start space-x-4">
+<div class="p-3 bg-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined text-tertiary">analytics</span>
+</div>
+<div>
+<h5 class="font-bold text-on-surface mb-1">Analisi Previsionale</h5>
+<p class="text-body-md text-on-surface-variant">L'aumento dell'inflazione potrebbe influenzare il costo delle tue utenze energetiche nei prossimi 6 mesi del 15%.</p>
+<button class="mt-3 text-primary font-bold text-label-md hover:underline">Analizza impatto</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('scale-[1.002]', 'shadow-sm');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('scale-[1.002]', 'shadow-sm');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/50');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/50');
+        });
+    </script>
+</body></html>

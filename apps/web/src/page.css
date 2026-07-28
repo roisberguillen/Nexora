@@ -1,0 +1,815 @@
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboard-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.dashboard-heading > div:first-child {
+  max-width: 48rem;
+}
+
+.dashboard-heading h1,
+.ledger-state-card h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.dashboard-heading > div:first-child > p:last-child,
+.ledger-state-card p {
+  margin: 1rem 0 0;
+  color: var(--color-on-surface-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.storage-pill {
+  display: inline-flex;
+  min-height: 2.5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-pill);
+  background: var(--color-card);
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(2rem, 5vw, 3.25rem);
+}
+
+.dashboard-feedback {
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0 -1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-success-container);
+  color: var(--color-success);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.currency-notice {
+  padding: 0.875rem 1rem;
+  margin: 1rem 0 0;
+  border-left: 0.25rem solid var(--color-warning);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--color-card);
+  color: var(--color-on-surface-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-top: 1.25rem;
+}
+
+.data-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.panel-heading {
+  display: flex;
+  min-height: 5.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-outline);
+  background: var(--color-surface-low);
+}
+
+.panel-heading .eyebrow {
+  margin-bottom: 0.25rem;
+}
+
+.panel-heading h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.panel-meta {
+  display: inline-grid;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-pill);
+  place-items: center;
+  background: var(--color-surface-high);
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.activity-table th,
+.activity-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--color-outline);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.activity-table th {
+  background: var(--color-surface-low);
+  color: var(--color-on-surface-muted);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.activity-table th:last-child,
+.activity-table td:last-child {
+  text-align: right;
+}
+
+.activity-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.activity-table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.activity-table td:first-child strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--color-on-surface);
+  font-size: 0.875rem;
+}
+
+.activity-table td:nth-child(2),
+.activity-table td:nth-child(3),
+.activity-table td:nth-child(4) {
+  color: var(--color-on-surface-muted);
+}
+
+.activity-table tr.is-cancelled {
+  background: var(--color-surface-low);
+}
+
+.activity-table tr.is-cancelled td:first-child strong {
+  color: var(--color-on-surface-muted);
+  text-decoration: line-through;
+}
+
+.activity-table tr.is-cancelled .financial-amount {
+  text-decoration: line-through;
+}
+
+.kind-badge,
+.archived-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-high);
+  color: var(--color-on-surface-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.kind-badge.is-positive {
+  background: var(--color-success-container);
+  color: var(--color-success);
+}
+
+.kind-badge.is-negative {
+  background: var(--color-danger-container);
+  color: var(--color-danger);
+}
+
+.account-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.account-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-outline);
+}
+
+.account-list li:last-child {
+  border-bottom: 0;
+}
+
+.account-mark {
+  display: inline-grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  place-items: center;
+  background: var(--color-surface-high);
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.account-copy {
+  min-width: 0;
+}
+
+.account-copy strong,
+.account-copy small {
+  display: block;
+}
+
+.account-copy strong {
+  overflow: hidden;
+  font-size: 0.875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-copy small {
+  margin-top: 0.25rem;
+  overflow: hidden;
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archived-badge {
+  margin-top: 0.4rem;
+}
+
+.account-balance {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.empty-dashboard,
+.ledger-state-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  margin-top: clamp(2rem, 5vw, 3.25rem);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.empty-dashboard > div,
+.ledger-state-card > div {
+  max-width: 44rem;
+}
+
+.empty-dashboard h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  letter-spacing: -0.025em;
+}
+
+.empty-dashboard p:not(.eyebrow),
+.seed-feedback {
+  color: var(--color-on-surface-muted);
+  line-height: 1.6;
+}
+
+.empty-dashboard-mark,
+.ledger-state-mark {
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.875rem;
+  place-items: center;
+  background: var(--color-surface-high);
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  font-weight: 850;
+}
+
+.ledger-state-card.is-loading {
+  background: var(--color-surface-low);
+}
+
+.ledger-state-card.is-error {
+  border-color: var(--color-danger);
+  background: var(--color-danger-container);
+}
+
+.ledger-state-card.is-error .ledger-state-mark {
+  background: var(--color-card);
+  color: var(--color-danger);
+}
+
+.primary-action,
+.secondary-action {
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.primary-action {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.primary-action:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.primary-action:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
+.secondary-action {
+  margin-top: 1rem;
+  border: 1px solid var(--color-outline);
+  background: var(--color-card);
+  color: var(--color-on-surface);
+}
+
+.secondary-action:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.seed-feedback {
+  margin: 0.75rem 0 0;
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.accounts-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.accounts-heading > div {
+  max-width: 48rem;
+}
+
+.accounts-heading h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.accounts-heading > div > p:last-child {
+  margin: 1rem 0 0;
+  color: var(--color-on-surface-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.accounts-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(2rem, 5vw, 3.25rem);
+}
+
+.accounts-stats article {
+  display: grid;
+  min-height: 7rem;
+  align-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.accounts-stats span:first-child {
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.accounts-stats strong,
+.accounts-stats .financial-amount {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 750;
+}
+
+.account-message-region {
+  min-height: 3.5rem;
+}
+
+.account-feedback,
+.account-error {
+  padding: 0.75rem 1rem;
+  margin: 1rem 0 0;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.account-feedback {
+  background: var(--color-success-container);
+  color: var(--color-success);
+}
+
+.account-error {
+  background: var(--color-danger-container);
+  color: var(--color-danger);
+}
+
+.accounts-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(19rem, 0.75fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.account-help-panel,
+.account-editor-panel {
+  padding: 1.5rem;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.account-help-panel h2,
+.account-editor-panel h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.account-help-panel p:not(.eyebrow) {
+  color: var(--color-on-surface-muted);
+  line-height: 1.6;
+}
+
+.account-list-empty {
+  padding: 2rem 1.5rem;
+}
+
+.account-list-empty h3 {
+  margin: 0;
+}
+
+.account-list-empty p {
+  margin: 0.75rem 0 0;
+  color: var(--color-on-surface-muted);
+  line-height: 1.55;
+}
+
+.account-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.account-table th,
+.account-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--color-outline);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.account-table th {
+  background: var(--color-surface-low);
+  color: var(--color-on-surface-muted);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.account-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.account-table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.account-table tr.is-archived {
+  background: var(--color-surface-low);
+}
+
+.account-table td:first-child {
+  display: grid;
+  grid-template-columns: auto minmax(7rem, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.account-table td:first-child strong,
+.account-table td:first-child small {
+  display: block;
+}
+
+.account-table td:first-child small {
+  max-width: 13rem;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-table td:nth-child(3),
+.account-table td:nth-child(4) {
+  text-align: right;
+}
+
+.account-status {
+  display: inline-flex;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 750;
+}
+
+.account-status.is-active {
+  background: var(--color-success-container);
+  color: var(--color-success);
+}
+
+.account-status.is-archived {
+  background: var(--color-surface-high);
+  color: var(--color-on-surface-muted);
+}
+
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.text-action {
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.text-action:hover:not(:disabled) {
+  background: var(--color-surface-high);
+}
+
+.text-action:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.account-editor-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-outline);
+}
+
+.editor-close {
+  display: inline-grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  place-items: center;
+  background: var(--color-card);
+  color: var(--color-on-surface);
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.account-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.account-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--color-on-surface);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.account-form input,
+.account-form select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-on-surface);
+}
+
+.account-form input:focus,
+.account-form select:focus {
+  border-color: var(--color-primary);
+}
+
+.account-form input:disabled,
+.account-form select:disabled {
+  background: var(--color-surface-low);
+  color: var(--color-on-surface-muted);
+}
+
+.account-form small {
+  color: var(--color-on-surface-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.immutable-note {
+  padding: 0.75rem;
+  margin: 0;
+  border-left: 0.2rem solid var(--color-primary);
+  background: var(--color-surface-low);
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.form-actions .secondary-action {
+  margin-top: 0;
+}
+
+@media (max-width: 75rem) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .accounts-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 48rem) {
+  .dashboard-heading,
+  .accounts-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .activity-table thead,
+  .account-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .activity-table,
+  .activity-table tbody,
+  .activity-table tr,
+  .activity-table td,
+  .account-table,
+  .account-table tbody,
+  .account-table tr,
+  .account-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .activity-table tr,
+  .account-table tr {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-outline);
+  }
+
+  .activity-table tbody tr:last-child,
+  .account-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .activity-table td,
+  .activity-table td:last-child,
+  .account-table td,
+  .account-table td:first-child,
+  .account-table td:nth-child(3),
+  .account-table td:nth-child(4) {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 0.7fr) minmax(0, 1.3fr);
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .activity-table td::before,
+  .account-table td::before {
+    color: var(--color-on-surface-muted);
+    content: attr(data-label);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .activity-table td:first-child strong {
+    margin-bottom: 0.25rem;
+  }
+
+  .activity-table td:first-child .kind-badge {
+    grid-column: 2;
+  }
+
+  .account-table td:first-child > .account-mark {
+    display: none;
+  }
+
+  .account-table td:first-child > span:last-child,
+  .account-table td .financial-amount,
+  .account-table td .account-status,
+  .account-table td .table-actions {
+    grid-column: 2;
+  }
+
+  .accounts-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 35rem) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .empty-dashboard,
+  .ledger-state-card {
+    grid-template-columns: 1fr;
+  }
+
+  .account-list li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .account-balance {
+    grid-column: 2;
+    text-align: left;
+  }
+}

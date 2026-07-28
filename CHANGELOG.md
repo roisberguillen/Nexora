@@ -1,0 +1,93 @@
+# Changelog
+
+## [Unreleased]
+
+- Aggiunta la pagina Movimenti con registrazioni manuali di entrate, spese e
+  rettifiche, oltre a trasferimenti interni same-currency.
+- Aggiunto l'annullamento conservativo su repository in-memory, SQLite/OPFS e
+  IndexedDB: le due gambe di un trasferimento vengono annullate insieme e i movimenti
+  riconciliati restano protetti.
+- Aggiunti test di comandi, proiezione, adapter persistenti e flusso E2E responsive
+  per la gestione dei movimenti.
+
+- Aggiunto lo schema SQLite v1 `STRICT` per conti, categorie, transazioni e trasferimenti.
+- Aggiunta la migrazione iniziale reversibile con importi `bigint` persistiti come testo
+  decimale canonico.
+- Aggiunti vincoli e test SQLite per integrità referenziale, segni, date, valute,
+  trasferimenti e rollback atomico.
+- Aggiunto il runner forward-only con catalogo contiguo, transazioni atomiche e storico
+  idempotente.
+- Imposto un backup verificato obbligatorio prima delle migrazioni dichiarate
+  distruttive.
+- Aggiunto `SqliteLedgerRepository` con codec dominio, coda seriale e scritture
+  transazionali.
+- Aggiunto SQLite WASM su OPFS in worker dedicato con gestione tipizzata
+  dell'indisponibilità.
+- Verificata in Chromium la persistenza OPFS dopo chiusura e riapertura del database.
+- Aggiunto il fallback IndexedDB v1 con codec condivisi, transazioni atomiche e
+  precisione `bigint` invariata.
+- Aggiunto il selettore browser fail-safe: il fallback è ammesso solo quando OPFS è
+  esplicitamente indisponibile.
+- Verificata in Chromium la persistenza IndexedDB dopo chiusura e riapertura.
+- Aggiunto il seed dimostrativo sintetico con conti, categorie, transazioni e
+  trasferimento interno.
+- Reso il seed idempotente, ripristinabile dopo un'esecuzione parziale e conservativo
+  sui ledger non vuoti o con identificatori in conflitto.
+- Aggiunto il backup fisico SQLite/OPFS con manifest, doppio checksum e cifratura
+  AES-256-GCM derivata da passphrase.
+- Aggiunto lo store filesystem locale con rilettura obbligatoria prima della ricevuta
+  per migrazioni distruttive.
+- Aggiunto il restore OPFS con validazione preventiva in memoria, controllo schema e
+  rollback automatico del database precedente.
+- Verificato in Chromium il ciclo backup, modifica, restore e riapertura su OPFS reale.
+- Integrata la PWA con il repository persistente e una singola apertura condivisa con
+  React.
+- Resa stabile tra le sessioni la scelta OPFS/IndexedDB, senza fallback implicito
+  quando il backend registrato non è disponibile.
+- Aggiunti stati accessibili di apertura, pronto ed errore con backend, versione schema
+  e conteggi locali.
+- Esposto il seed sintetico soltanto tramite un'azione esplicita su archivio vuoto.
+- Incluso il runtime SQLite WASM nel precache e verificata la riapertura offline della
+  PWA con dati persistiti sia su OPFS sia su IndexedDB.
+- Aggiunta la prima dashboard collegata al ledger con patrimonio EUR, entrate, spese,
+  saldo dei flussi e riepilogo conti.
+- Aggiunta la lista responsive dei movimenti recenti, con trasferimenti collassati in
+  una sola attività neutrale e annullamenti visibili ma esclusi dai saldi.
+- Aggiunti `FinancialAmount` e `MetricCard`, con formattazione locale esatta degli
+  importi `bigint` senza conversione floating point.
+- Verificata la dashboard sintetica con accessibilità automatica e assenza di overflow
+  a 320, 768 e 1440 px.
+- Aggiunta la pagina Conti con creazione, modifica, archiviazione e riattivazione
+  persistenti su SQLite/OPFS e IndexedDB.
+- Aggiunta la conversione esatta dell'input monetario localizzato in minor units
+  `bigint`, senza passaggi floating point.
+- Protetti saldo iniziale e gerarchia dei sottoconti: nessuna modifica retroattiva
+  dopo il primo movimento e nessun sottoconto attivo sotto un padre archiviato.
+- Aggiunta la navigazione hash Panoramica/Conti, con layout tabella-editor responsive
+  e baseline visuali desktop.
+- Verificata la persistenza offline di un conto creato dall'interfaccia su entrambi i
+  backend browser.
+
+## [0.4.0] - 2026-07-27
+
+- Completata la Milestone 1 con Money, LocalDate, Account, Category, Transaction e Transfer.
+- Formalizzata la convenzione signed senza uso di floating point binario.
+- Aggiunti report di saldo e income/expense che escludono i trasferimenti interni.
+- Aggiunto repository in-memory con riferimenti validati e commit atomico dei trasferimenti.
+- Aggiunti test per precisione, segni, valute, fee, annullamenti, saldi e rollback logico.
+
+## [0.3.0] - 2026-07-27
+
+- Completata la Milestone 0 con monorepo pnpm e TypeScript strict.
+- Aggiunta PWA React/Vite installabile con shell e risorse disponibili offline.
+- Implementati design token, navigazione responsive, error boundary e logging sicuro.
+- Aggiunti format, lint, typecheck, unit test, test accessibilità ed E2E a 320/768/1440 px.
+- Resa la CI riproducibile tramite lockfile e quality gate reali.
+- Sostituiti i dati contestuali nell'esempio di importazione con fixture sintetiche.
+
+## [0.2.0]
+
+- Creato pacchetto iniziale Codex-ready per Nexora.
+- Aggiunto requisito prioritario di migrazione Money Manager XLSX.
+- Integrato il mockup ufficiale Nexora con immagine, prototipo HTML e design system.
+- Aggiunte istruzioni, skill e prompt Codex per trasformare il mockup in UI responsive e accessibile.
