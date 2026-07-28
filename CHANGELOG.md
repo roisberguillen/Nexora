@@ -9,6 +9,8 @@
   riflessioni locali e obiettivi per il mese successivo.
 - Aggiunta la pagina Analisi con trend mensili e previsione spese prudente, oltre a un benchmark
   sintetico su 100.000 movimenti e al threat model operativo.
+- Completato l’hardening di release: audit dipendenze senza vulnerabilità note, quality gate,
+  recovery E2E e verifiche responsive Chromium su 320, 768 e 1440 px.
 
 - Aggiunta la pagina Esporta: CSV locale dei movimenti e JSON del ledger senza invio di dati,
   con importi in minor units e neutralizzazione della formula injection nel CSV.

@@ -65,7 +65,7 @@ test("backup cifrato e restore SQLite funzionano su OPFS reale", async ({ page }
       failedRestorePreservedData: true,
       restoredAmountMinor: "900719925474099312345678901234567890",
       laterAccountRemoved: true,
-      reopenedSchemaVersion: 10,
+      reopenedSchemaVersion: 11,
     });
   } finally {
     await server.close();

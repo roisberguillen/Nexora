@@ -134,7 +134,7 @@ Trend mensili, forecast prudente e diario persistente con obiettivi e percezione
 Completata il 2026-07-29. Le analisi escludono trasferimenti, rettifiche e annullamenti; la
 previsione esplicita la mediana storica e una fascia prudente, senza presentarsi come consiglio.
 
-## Milestone 10 — Hardening e release
+## Milestone 10 — Hardening e release ✅
 Accessibilità, performance 100k record, threat review, recovery drill, packaging PWA.
 
 Avanzamento:
@@ -142,6 +142,11 @@ Avanzamento:
 - [x] Benchmark sintetico su 100.000 movimenti per l’aggregazione dei trend, con importi `bigint`.
 - [x] Threat model documentato per ledger, backup, OAuth e importazioni locali.
 - [x] Recovery drill coperto dai test di backup/restore SQLite e OPFS; PWA con manifest e precache.
-- [ ] Esecuzione finale di tutti i quality gate, E2E e audit dipendenze della release.
+- [x] Esecuzione finale di lint, typecheck, build, manifest, audit dipendenze e E2E su
+  320/768/1440 px, con baseline visuali desktop aggiornate dopo l’estensione della navigazione.
+
+Completata il 2026-07-29. Le verifiche E2E backend-specifiche vengono eseguite sul browser
+capace di OPFS/IndexedDB; gli skip espliciti rappresentano funzionalità non disponibili in una
+specifica matrice, non successi simulati.
 
 Ogni milestone deve produrre una demo verticale e soddisfare `docs/testing/QUALITY_GATES.md`.

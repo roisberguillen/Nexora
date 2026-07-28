@@ -419,8 +419,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 8565,
-      "sha256": "4256911b2cc8fd75201f750cb96e7287013dab380aef65274f04493940b4a432"
+      "size": 8732,
+      "sha256": "9da883b52ae45731035d4a54c53e032e4f70015f93745865511c53701c5b4dee"
     },
     {
       "path": "design/mockup/README.md",
@@ -574,8 +574,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 7861,
-      "sha256": "40eacd9bed493609ab31edd3234b31cf3f0843fe9403a4a126918cb0ec3a1e29"
+      "size": 8193,
+      "sha256": "e250c6484cc4faff3dbd979f911b4d5421a4d7719d123748f2d93d3fbba3ae98"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -1334,8 +1334,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
-      "size": 115944,
-      "sha256": "8f164e4b16e77e9c99c5eb9e79590df07fc6aed7bef0c0193049ccf7f7da20b7"
+      "size": 120621,
+      "sha256": "6b0e46239766bd6d1d088e3719e2d5d4fe8f6f60e6a4adf870163be574d38a49"
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
@@ -1345,7 +1345,7 @@
     {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2202,
-      "sha256": "acb91daf0ac8893027fe582cdcc37adfb686cf0555bbd373a02558199177d0bf"
+      "sha256": "462cedb15abac3736d7a1bcee81dd207072d4b0bfca0b87b68645926e9ba7267"
     },
     {
       "path": "test/e2e/budgets.spec.ts",
@@ -1364,8 +1364,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 212318,
-      "sha256": "35d9458bdd1f4b391eaf0572bd81dedf30e9061155039186a0cc375e86578d44"
+      "size": 216547,
+      "sha256": "265ca41fbb24751a3e111b017d2e5f80a5541dd2be7e866f282e7ec996996b6f"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
@@ -1395,7 +1395,7 @@
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
       "size": 1809,
-      "sha256": "43c34e663a14c7ef85558379d5e175b9152dc220f42cc1801470722e9ed90566"
+      "sha256": "4254af671e0ead5682035f4e643bf72aa8bdef93854ffa90819b7619d46d124c"
     },
     {
       "path": "test/e2e/investments.spec.ts",
@@ -1410,12 +1410,12 @@
     {
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1794,
-      "sha256": "b005ddfecd8c0ae4b4b183263ab890ebd7d4c29c551065e58fe1caa6e16a8af7"
+      "sha256": "d64d6e0f8cf591a1c49b8d0432561c4b5fb580f501f55498553ed718275e8e31"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4638,
-      "sha256": "2ed42a52fd57ebffc3de181ff5d35d4b1c53cd29ab56c0edfc9507dc5197e0ee"
+      "sha256": "792342082c587491fc47af316e051ff934a7a8159d02bea5f7c5db4e825d4ab8"
     },
     {
       "path": "test/e2e/recurring.spec.ts",
