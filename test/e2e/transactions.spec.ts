@@ -39,3 +39,15 @@ test("la gestione movimenti registra e annulla un trasferimento senza overflow",
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
 });
+
+test("il modulo movimenti espone righe split responsive", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByRole("button", { name: "Aggiungi ripartizione" }).click();
+  await expect(page.getByLabel("Categoria split 1")).toBeVisible();
+  await expect(page.getByLabel("Importo split 1")).toBeVisible();
+  await page.getByRole("button", { name: "Rimuovi split 1" }).click();
+  await expect(page.getByLabel("Categoria split 1")).toHaveCount(0);
+});
