@@ -52,6 +52,7 @@ import {
   updateRecurringRule,
   type RecurringRuleInput,
 } from "./recurring/recurringCommands";
+import { createAllocationPlan, type AllocationPlanInput } from "./recurring/allocationCommands";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -272,6 +273,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await updateRecurringRule(ledger.repository, id, input);
     });
+  const createAllocation = (input: AllocationPlanInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await createAllocationPlan(ledger.repository, input);
+    });
 
   return (
     <ErrorBoundary
@@ -331,7 +336,9 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           ) : route === "recurring" ? (
             <RecurringPage
               accounts={ledgerState.rawAccounts}
+              allocationPlans={ledgerState.allocationPlans}
               categories={ledgerState.categories}
+              onCreateAllocation={createAllocation}
               rules={ledgerState.recurringRules}
               onCreate={createRecurring}
               onUpdate={updateRecurring}

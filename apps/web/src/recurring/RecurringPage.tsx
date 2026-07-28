@@ -1,21 +1,32 @@
-import type { Account, Category, RecurringRule, WeekendPolicy } from "@nexora/domain";
+import type {
+  Account,
+  AllocationPlan,
+  Category,
+  RecurringRule,
+  WeekendPolicy,
+} from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
 import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import type { RecurringRuleInput } from "./recurringCommands";
+import type { AllocationPlanInput } from "./allocationCommands";
 
 export function RecurringPage({
   accounts,
+  allocationPlans,
   categories,
   rules,
   onCreate,
+  onCreateAllocation,
   onUpdate,
 }: {
   readonly accounts: readonly Account[];
+  readonly allocationPlans: readonly AllocationPlan[];
   readonly categories: readonly Category[];
   readonly rules: readonly RecurringRule[];
   readonly onCreate: (input: RecurringRuleInput) => Promise<void>;
+  readonly onCreateAllocation: (input: AllocationPlanInput) => Promise<void>;
   readonly onUpdate: (id: string, input: RecurringRuleInput) => Promise<void>;
 }) {
   const [editing, setEditing] = useState<RecurringRule | null>(null);
@@ -221,7 +232,114 @@ export function RecurringPage({
           </form>
         </aside>
       </div>
+      <AllocationPlans accounts={accounts} plans={allocationPlans} onCreate={onCreateAllocation} />
     </div>
+  );
+}
+function AllocationPlans({
+  accounts,
+  plans,
+  onCreate,
+}: {
+  readonly accounts: readonly Account[];
+  readonly plans: readonly AllocationPlan[];
+  readonly onCreate: (input: AllocationPlanInput) => Promise<void>;
+}) {
+  const [error, setError] = useState<string | null>(null);
+  const save = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const source = accounts.find((account) => account.id === String(form.get("allocationSource")));
+    if (source === undefined) return;
+    try {
+      await onCreate({
+        name: String(form.get("allocationName") ?? ""),
+        trigger: String(form.get("allocationTrigger")) as "salary" | "photo_income",
+        sourceAccountId: source.id,
+        targetAccountId: String(form.get("allocationTarget")),
+        amountMinor: abs(
+          parseLocalizedAmountMinor(String(form.get("allocationAmount") ?? ""), source.currency),
+        ),
+        enabled: true,
+      });
+      setError(null);
+      event.currentTarget.reset();
+    } catch {
+      setError("Impossibile salvare il piano di allocazione.");
+    }
+  };
+  const active = accounts.filter((account) => !account.isArchived);
+  return (
+    <section className="data-panel account-management-panel" aria-labelledby="allocation-title">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Solo dopo conferma</p>
+          <h2 id="allocation-title">Piani di allocazione</h2>
+        </div>
+        <span className="panel-meta">{plans.length}</span>
+      </div>
+      {error === null ? null : (
+        <p className="account-error" role="alert">
+          {error}
+        </p>
+      )}
+      <ul className="account-list">
+        {plans.map((plan) => (
+          <li key={plan.id}>
+            <div className="account-copy">
+              <strong>{plan.name}</strong>
+              <small>
+                {plan.trigger === "salary" ? "Stipendio" : "Reddito fotografico"} ·{" "}
+                {formatMinorUnits(plan.amount.amountMinor, plan.amount.currency)}
+              </small>
+            </div>
+            <span>{plan.enabled ? "Attivo" : "Pausa"}</span>
+          </li>
+        ))}
+      </ul>
+      <form className="account-form" onSubmit={(event) => void save(event)}>
+        <label>
+          Nome piano
+          <input name="allocationName" required />
+        </label>
+        <label>
+          Evento
+          <select name="allocationTrigger">
+            <option value="salary">Stipendio</option>
+            <option value="photo_income">Reddito fotografico</option>
+          </select>
+        </label>
+        <label>
+          Conto origine
+          <select name="allocationSource">
+            {active.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Conto destinazione
+          <select name="allocationTarget">
+            {active.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Importo
+          <input inputMode="decimal" name="allocationAmount" required />
+        </label>
+        <div className="form-actions">
+          <button className="primary-action" type="submit">
+            Salva piano
+          </button>
+        </div>
+      </form>
+    </section>
   );
 }
 function abs(value: bigint): bigint {

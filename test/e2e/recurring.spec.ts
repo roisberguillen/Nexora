@@ -6,16 +6,22 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
   await page.goto("/#recurring");
   await expect(page.getByRole("heading", { name: "Ricorrenze" })).toBeVisible();
-  await page.getByLabel("Nome").fill("Stipendio sintetico");
-  await page.getByLabel("Conto").selectOption({ label: "Conto quotidiano demo" });
-  await page.getByLabel("Importo").fill("2500,00");
+  await page.getByLabel("Nome", { exact: true }).fill("Stipendio sintetico");
+  await page.locator('select[name="accountId"]').selectOption({ label: "Conto quotidiano demo" });
+  await page.locator('input[name="amount"]').fill("2500,00");
   await page.getByLabel("Prossima data prevista").fill("2026-08-28");
   await page.getByRole("button", { name: "Salva ricorrenza" }).click();
   await expect(page.getByText("Stipendio sintetico")).toBeVisible();
   await page.getByRole("button", { name: "Modifica" }).click();
-  await page.getByLabel("Nome").fill("Stipendio confermabile");
+  await page.locator('input[name="name"]').fill("Stipendio confermabile");
   await page.getByRole("button", { name: "Salva ricorrenza" }).click();
   await expect(page.getByText("Stipendio confermabile")).toBeVisible();
+  await page.getByLabel("Nome piano").fill("Risparmio sintetico");
+  await page.getByLabel("Conto origine").selectOption({ label: "Conto quotidiano demo" });
+  await page.getByLabel("Conto destinazione").selectOption({ label: "Riserva demo" });
+  await page.getByLabel("Importo").last().fill("170,00");
+  await page.getByRole("button", { name: "Salva piano" }).click();
+  await expect(page.getByText("Risparmio sintetico")).toBeVisible();
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,

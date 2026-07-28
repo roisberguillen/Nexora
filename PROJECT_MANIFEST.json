@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 16719,
-      "sha256": "583a1cd1e513d8aa7857326cf4b8740f2b1fbca69f6fdac5b48100691aae6ee0"
+      "size": 17107,
+      "sha256": "3accdefa4c98a2b46b1dc9dfa3a42d94c6f513b0c7c587743b4d160722539662"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -238,14 +238,19 @@
       "sha256": "d2cf8dd05dfa0a06e29a0c4137be866ca90809d13bae0952f89f86a5bced6d0f"
     },
     {
+      "path": "apps/web/src/recurring/allocationCommands.ts",
+      "size": 884,
+      "sha256": "f32179b2c2b71e46a9b618b6c457b08646dfe8b17932523f35a4ccd7611ef882"
+    },
+    {
       "path": "apps/web/src/recurring/recurringCommands.ts",
       "size": 1629,
       "sha256": "946523d47b22742384544a5368473cacebf952ba15c2a2fb67e977a08b04d773"
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 8621,
-      "sha256": "17dc5aa11cc0ce5df747fd77fc43f60043fcbe97bec382f16e593cbe135fce21"
+      "size": 12534,
+      "sha256": "462a77b60fd2992c5fd185eed078e51d0aaf1bc911e15c1cdccd07e55e953244"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -1164,8 +1169,8 @@
     },
     {
       "path": "test/e2e/recurring.spec.ts",
-      "size": 1377,
-      "sha256": "a6f3c7ba36378f4df1266aa9b8a3ab31cc1b8c9191aea55303c0fe6c2d8157bb"
+      "size": 1870,
+      "sha256": "f21b828798de85aade252b78ba86b5152547f0ea8ef1f589b97ac082601018d1"
     },
     {
       "path": "test/e2e/tags.spec.ts",
