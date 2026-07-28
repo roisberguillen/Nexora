@@ -37,6 +37,7 @@ import {
   type TransactionsViewModel,
 } from "./transactions/buildTransactionsViewModel";
 import { TransactionsPage } from "./transactions/TransactionsPage";
+import { commitMoneyManagerImport } from "./imports/importCommands";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -232,6 +233,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         await ledger.repository.cancelTransaction(id);
       }
     });
+  const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await commitMoneyManagerImport(ledger.repository, input);
+    });
 
   return (
     <ErrorBoundary
@@ -283,6 +288,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 accounts={ledgerState.rawAccounts}
                 categories={ledgerState.categories}
                 transactions={ledgerState.rawTransactions}
+                onCommit={commitImport}
               />
             </Suspense>
           ) : (

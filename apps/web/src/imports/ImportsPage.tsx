@@ -5,6 +5,7 @@ import {
   readMoneyManagerWorkbook,
   type DryRunStatus,
   type MoneyManagerField,
+  type MoneyManagerDryRunRow,
   type MoneyManagerMapping,
   type MoneyManagerSheet,
 } from "@nexora/importers";
@@ -27,15 +28,26 @@ export function ImportsPage({
   accounts,
   categories,
   transactions,
+  onCommit,
 }: {
   readonly accounts: readonly Account[];
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
+  readonly onCommit: (input: {
+    readonly filename: string;
+    readonly rows: readonly MoneyManagerDryRunRow[];
+    readonly sourceSha256: string;
+  }) => Promise<void>;
 }) {
   const [sheets, setSheets] = useState<readonly MoneyManagerSheet[]>([]);
   const [selectedSheetName, setSelectedSheetName] = useState<string>("");
   const [mapping, setMapping] = useState<MoneyManagerMapping>({});
   const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<{
+    readonly filename: string;
+    readonly sha256: string;
+  } | null>(null);
+  const [isCommitting, setIsCommitting] = useState(false);
 
   const selectedSheet = sheets.find((sheet) => sheet.name === selectedSheetName);
   const headers = selectedSheet?.rows[0] ?? [];
@@ -52,17 +64,20 @@ export function ImportsPage({
     const file = event.currentTarget.files?.[0];
     if (file === undefined) return;
     try {
-      const workbook = readMoneyManagerWorkbook(await file.arrayBuffer());
+      const bytes = await file.arrayBuffer();
+      const workbook = readMoneyManagerWorkbook(bytes);
       const initialSheet = workbook.sheets[0];
       if (initialSheet === undefined) throw new Error("empty_workbook");
       setSheets(workbook.sheets);
       setSelectedSheetName(initialSheet.name);
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
+      setSource({ filename: file.name, sha256: await sha256(bytes) });
       setError(null);
     } catch {
       setSheets([]);
       setSelectedSheetName("");
       setMapping({});
+      setSource(null);
       setError(
         "Il file non è un workbook XLSX leggibile. I dati locali non sono stati modificati.",
       );
@@ -212,14 +227,44 @@ export function ImportsPage({
               </table>
             </div>
             <p className="import-next-step">
-              Passo 4 sarà disponibile dopo la validazione, deduplica e dry-run. Nessuna riga è
-              stata ancora salvata.
+              Nessuna riga è stata ancora salvata. La conferma crea un batch atomico e conserva le
+              righe da revisionare o duplicate nell’audit.
             </p>
+            <div className="form-actions">
+              <button
+                className="primary-action"
+                disabled={source === null || readyCount === 0 || isCommitting}
+                onClick={() => {
+                  if (source === null) return;
+                  setIsCommitting(true);
+                  setError(null);
+                  void onCommit({
+                    filename: source.filename,
+                    rows: dryRun,
+                    sourceSha256: source.sha256,
+                  })
+                    .catch(() =>
+                      setError(
+                        "L’importazione non è stata completata: nessun movimento è stato salvato.",
+                      ),
+                    )
+                    .finally(() => setIsCommitting(false));
+                }}
+                type="button"
+              >
+                {isCommitting ? "Importazione in corso…" : `Conferma ${readyCount} righe`}
+              </button>
+            </div>
           </section>
         </div>
       )}
     </div>
   );
+}
+
+async function sha256(bytes: ArrayBuffer): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function formatMinor(amountMinor: bigint, currency: string): string {
