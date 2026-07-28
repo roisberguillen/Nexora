@@ -8,6 +8,7 @@ import { DatabaseSync } from "node:sqlite";
 
 import {
   Account,
+  AllocationPlan,
   Category,
   ImportBatch,
   ImportRow,
@@ -482,5 +483,20 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.updateRecurringRule(disabled);
     await expect(repository.listRecurringRules()).resolves.toEqual([disabled]);
+  });
+
+  it("persiste un piano di allocazione", async () => {
+    await repository.saveAccount(account("allocation-source"));
+    await repository.saveAccount(account("allocation-target", "savings"));
+    const plan = AllocationPlan.create({
+      id: "plan-sqlite",
+      name: "Risparmio",
+      trigger: "salary",
+      sourceAccountId: "allocation-source",
+      targetAccountId: "allocation-target",
+      amount: Money.fromMinor(17_000n, "EUR"),
+    });
+    await repository.saveAllocationPlan(plan);
+    await expect(repository.listAllocationPlans()).resolves.toEqual([plan]);
   });
 });

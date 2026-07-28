@@ -9,6 +9,7 @@ import {
   ImportBatch,
   ImportRow,
   RecurringRule,
+  AllocationPlan,
   LocalDate,
   Money,
   validateImportCommit,
@@ -51,7 +52,8 @@ type EntityStore =
   | "transaction_tags"
   | "import_batches"
   | "import_rows"
-  | "recurring_rules";
+  | "recurring_rules"
+  | "allocation_plans";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -203,6 +205,31 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             await requestResult(rules.put(recurringRuleToRecord(rule)));
           },
         ),
+      ),
+    );
+  }
+  public saveAllocationPlan(plan: AllocationPlan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["accounts", "allocation_plans"], "readwrite", async (transaction) => {
+          const plans = transaction.objectStore("allocation_plans");
+          await this.assertNew(plans, plan.id, "Allocation plan");
+          await this.validateAllocationPlanReferences(transaction, plan);
+          await requestResult(plans.add(allocationPlanToRecord(plan)));
+        }),
+      ),
+    );
+  }
+  public updateAllocationPlan(plan: AllocationPlan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["accounts", "allocation_plans"], "readwrite", async (transaction) => {
+          const plans = transaction.objectStore("allocation_plans");
+          if ((await requestResult<unknown>(plans.get(plan.id))) === undefined)
+            throw new DomainError("missing_reference", "Allocation plan does not exist.");
+          await this.validateAllocationPlanReferences(transaction, plan);
+          await requestResult(plans.put(allocationPlanToRecord(plan)));
+        }),
       ),
     );
   }
@@ -745,6 +772,17 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listAllocationPlans(): Promise<readonly AllocationPlan[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["allocation_plans"], "readonly", async (transaction) =>
+          (await requestResult<unknown[]>(transaction.objectStore("allocation_plans").getAll()))
+            .map((row) => allocationPlanFromRecord(row as AllocationPlanRecord))
+            .sort((left, right) => left.name.localeCompare(right.name)),
+        ),
+      ),
+    );
+  }
 
   public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
     return this.enqueue(() =>
@@ -983,6 +1021,26 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         "Recurring rule category does not exist or is incompatible.",
       );
   }
+  private async validateAllocationPlanReferences(
+    transaction: IDBTransaction,
+    plan: AllocationPlan,
+  ): Promise<void> {
+    const accounts = transaction.objectStore("accounts");
+    const [source, target] = await Promise.all([
+      this.findAccountInStore(accounts, plan.sourceAccountId),
+      this.findAccountInStore(accounts, plan.targetAccountId),
+    ]);
+    if (source === undefined || target === undefined || source.isArchived || target.isArchived)
+      throw new DomainError(
+        "missing_reference",
+        "Allocation plan accounts do not exist or are archived.",
+      );
+    if (source.currency !== target.currency || source.currency !== plan.amount.currency)
+      throw new DomainError(
+        "currency_mismatch",
+        "Allocation plan accounts and amount must share a currency.",
+      );
+  }
 
   private async findAccountInStore(
     store: IDBObjectStore,
@@ -1028,6 +1086,40 @@ interface RecurringRuleRecord {
   readonly weekend_policy: "none" | "salary_italy";
   readonly next_expected_date: string;
   readonly enabled: boolean;
+}
+
+interface AllocationPlanRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly trigger_kind: "salary" | "photo_income";
+  readonly source_account_id: string;
+  readonly target_account_id: string;
+  readonly amount_minor: string;
+  readonly currency: string;
+  readonly enabled: boolean;
+}
+function allocationPlanToRecord(plan: AllocationPlan): AllocationPlanRecord {
+  return {
+    id: plan.id,
+    name: plan.name,
+    trigger_kind: plan.trigger,
+    source_account_id: plan.sourceAccountId,
+    target_account_id: plan.targetAccountId,
+    amount_minor: plan.amount.amountMinor.toString(),
+    currency: plan.amount.currency,
+    enabled: plan.enabled,
+  };
+}
+function allocationPlanFromRecord(row: AllocationPlanRecord): AllocationPlan {
+  return AllocationPlan.create({
+    id: row.id,
+    name: row.name,
+    trigger: row.trigger_kind,
+    sourceAccountId: row.source_account_id,
+    targetAccountId: row.target_account_id,
+    amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
+    enabled: row.enabled,
+  });
 }
 function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
   return {

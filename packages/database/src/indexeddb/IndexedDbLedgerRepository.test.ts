@@ -2,6 +2,7 @@
 
 import {
   Account,
+  AllocationPlan,
   Category,
   ImportBatch,
   ImportRow,
@@ -480,5 +481,20 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.close();
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
+  });
+
+  it("persiste un piano di allocazione", async () => {
+    await ledger.repository.saveAccount(account("allocation-source"));
+    await ledger.repository.saveAccount(account("allocation-target", "savings"));
+    const plan = AllocationPlan.create({
+      id: "plan-idb",
+      name: "Directa",
+      trigger: "salary",
+      sourceAccountId: "allocation-source",
+      targetAccountId: "allocation-target",
+      amount: Money.fromMinor(6_000n, "EUR"),
+    });
+    await ledger.repository.saveAllocationPlan(plan);
+    await expect(ledger.repository.listAllocationPlans()).resolves.toEqual([plan]);
   });
 });

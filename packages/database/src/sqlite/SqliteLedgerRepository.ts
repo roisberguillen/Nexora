@@ -9,6 +9,7 @@ import {
   ImportBatch,
   ImportRow,
   RecurringRule,
+  AllocationPlan,
   LocalDate,
   Money,
   validateImportCommit,
@@ -39,7 +40,8 @@ import {
 import { PersistenceError } from "./PersistenceError";
 import type { SqliteDatabase } from "./SqliteDatabase";
 
-type EntityTable = "accounts" | "categories" | "transactions" | "transfers" | "recurring_rules";
+type EntityTable =
+  "accounts" | "categories" | "transactions" | "transfers" | "recurring_rules" | "allocation_plans";
 
 const accountColumns = `
   id,
@@ -310,6 +312,46 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.nominal_day,
               record.weekend_policy,
               record.next_expected_date,
+              record.enabled,
+              record.id,
+            ],
+          );
+        }),
+      ),
+    );
+  }
+  public saveAllocationPlan(plan: AllocationPlan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          await this.assertNew("allocation_plans", plan.id, "Allocation plan");
+          await this.validateAllocationPlanReferences(plan);
+          await this.insertAllocationPlan(plan);
+        }),
+      ),
+    );
+  }
+  public updateAllocationPlan(plan: AllocationPlan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const existing = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM allocation_plans WHERE id = ?",
+            [plan.id],
+          );
+          if (existing.length === 0)
+            throw new DomainError("missing_reference", "Allocation plan does not exist.");
+          await this.validateAllocationPlanReferences(plan);
+          const record = allocationPlanToRecord(plan);
+          await this.database.run(
+            "UPDATE allocation_plans SET name = ?, trigger_kind = ?, source_account_id = ?, target_account_id = ?, amount_minor = ?, currency = ?, enabled = ? WHERE id = ?",
+            [
+              record.name,
+              record.trigger_kind,
+              record.source_account_id,
+              record.target_account_id,
+              record.amount_minor,
+              record.currency,
               record.enabled,
               record.id,
             ],
@@ -913,6 +955,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(recurringRuleFromRecord),
     );
   }
+  public async listAllocationPlans(): Promise<readonly AllocationPlan[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<AllocationPlanRecord>(
+          "SELECT id, name, trigger_kind, source_account_id, target_account_id, amount_minor, currency, enabled FROM allocation_plans ORDER BY name, id",
+        )
+      ).map(allocationPlanFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);
@@ -1010,6 +1061,38 @@ export class SqliteLedgerRepository implements LedgerRepository {
         "missing_reference",
         "Recurring rule category does not exist or is incompatible.",
       );
+  }
+  private async validateAllocationPlanReferences(plan: AllocationPlan): Promise<void> {
+    const [source, target] = await Promise.all([
+      this.findAccountByIdInternal(plan.sourceAccountId),
+      this.findAccountByIdInternal(plan.targetAccountId),
+    ]);
+    if (source === undefined || target === undefined || source.isArchived || target.isArchived)
+      throw new DomainError(
+        "missing_reference",
+        "Allocation plan accounts do not exist or are archived.",
+      );
+    if (source.currency !== target.currency || source.currency !== plan.amount.currency)
+      throw new DomainError(
+        "currency_mismatch",
+        "Allocation plan accounts and amount must share a currency.",
+      );
+  }
+  private async insertAllocationPlan(plan: AllocationPlan): Promise<void> {
+    const record = allocationPlanToRecord(plan);
+    await this.database.run(
+      "INSERT INTO allocation_plans (id, name, trigger_kind, source_account_id, target_account_id, amount_minor, currency, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        record.id,
+        record.name,
+        record.trigger_kind,
+        record.source_account_id,
+        record.target_account_id,
+        record.amount_minor,
+        record.currency,
+        record.enabled,
+      ],
+    );
   }
   private async insertRecurringRule(rule: RecurringRule): Promise<void> {
     const record = recurringRuleToRecord(rule);
@@ -1140,6 +1223,40 @@ interface RecurringRuleRecord {
   readonly weekend_policy: "none" | "salary_italy";
   readonly next_expected_date: string;
   readonly enabled: number;
+}
+
+interface AllocationPlanRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly trigger_kind: "salary" | "photo_income";
+  readonly source_account_id: string;
+  readonly target_account_id: string;
+  readonly amount_minor: string;
+  readonly currency: string;
+  readonly enabled: number;
+}
+function allocationPlanToRecord(plan: AllocationPlan): AllocationPlanRecord {
+  return {
+    id: plan.id,
+    name: plan.name,
+    trigger_kind: plan.trigger,
+    source_account_id: plan.sourceAccountId,
+    target_account_id: plan.targetAccountId,
+    amount_minor: plan.amount.amountMinor.toString(),
+    currency: plan.amount.currency,
+    enabled: plan.enabled ? 1 : 0,
+  };
+}
+function allocationPlanFromRecord(row: AllocationPlanRecord): AllocationPlan {
+  return AllocationPlan.create({
+    id: row.id,
+    name: row.name,
+    trigger: row.trigger_kind,
+    sourceAccountId: row.source_account_id,
+    targetAccountId: row.target_account_id,
+    amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
+    enabled: row.enabled === 1,
+  });
 }
 function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
   return {

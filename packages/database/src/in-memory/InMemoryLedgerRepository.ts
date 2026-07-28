@@ -11,6 +11,7 @@ import {
   type ImportBatch,
   type ImportRow,
   type RecurringRule,
+  type AllocationPlan,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -26,6 +27,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly importBatches = new Map<string, ImportBatch>();
   private readonly importRows = new Map<string, ImportRow>();
   private readonly recurringRules = new Map<string, RecurringRule>();
+  private readonly allocationPlans = new Map<string, AllocationPlan>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -106,6 +108,17 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Recurring rule does not exist.");
     this.validateRecurringRuleReferences(rule);
     this.recurringRules.set(rule.id, rule);
+  }
+  public async saveAllocationPlan(plan: AllocationPlan): Promise<void> {
+    this.assertNew(this.allocationPlans, plan.id, "Allocation plan");
+    this.validateAllocationPlanReferences(plan);
+    this.allocationPlans.set(plan.id, plan);
+  }
+  public async updateAllocationPlan(plan: AllocationPlan): Promise<void> {
+    if (!this.allocationPlans.has(plan.id))
+      throw new DomainError("missing_reference", "Allocation plan does not exist.");
+    this.validateAllocationPlanReferences(plan);
+    this.allocationPlans.set(plan.id, plan);
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -370,6 +383,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       left.nextExpectedDate.toString().localeCompare(right.nextExpectedDate.toString()),
     );
   }
+  public async listAllocationPlans(): Promise<readonly AllocationPlan[]> {
+    return [...this.allocationPlans.values()].sort((left, right) =>
+      left.name.localeCompare(right.name),
+    );
+  }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {
     if (collection.has(id)) {
@@ -420,6 +438,20 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError(
         "missing_reference",
         "Recurring rule category does not exist or is incompatible.",
+      );
+  }
+  private validateAllocationPlanReferences(plan: AllocationPlan): void {
+    const source = this.accounts.get(plan.sourceAccountId);
+    const target = this.accounts.get(plan.targetAccountId);
+    if (source === undefined || target === undefined || source.isArchived || target.isArchived)
+      throw new DomainError(
+        "missing_reference",
+        "Allocation plan accounts do not exist or are archived.",
+      );
+    if (source.currency !== target.currency || source.currency !== plan.amount.currency)
+      throw new DomainError(
+        "currency_mismatch",
+        "Allocation plan accounts and amount must share a currency.",
       );
   }
 
