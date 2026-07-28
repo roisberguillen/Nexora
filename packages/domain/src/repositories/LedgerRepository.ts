@@ -10,6 +10,7 @@ import type { RecurringRule } from "../entities/RecurringRule";
 import type { AllocationPlan } from "../entities/AllocationPlan";
 import type { Budget } from "../entities/Budget";
 import type { Loan } from "../entities/Loan";
+import type { InvestmentPosition } from "../entities/InvestmentPosition";
 
 export interface TransferBundle {
   readonly transfer: Transfer;
@@ -32,6 +33,8 @@ export interface LedgerRepository {
   updateBudget(budget: Budget): Promise<void>;
   saveLoan(loan: Loan): Promise<void>;
   updateLoan(loan: Loan): Promise<void>;
+  saveInvestmentPosition(position: InvestmentPosition): Promise<void>;
+  updateInvestmentPosition(position: InvestmentPosition): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
   commitImportBatch(
     batch: ImportBatch,
@@ -72,4 +75,5 @@ export interface LedgerRepository {
   listAllocationPlans(): Promise<readonly AllocationPlan[]>;
   listBudgets(): Promise<readonly Budget[]>;
   listLoans(): Promise<readonly Loan[]>;
+  listInvestmentPositions(): Promise<readonly InvestmentPosition[]>;
 }

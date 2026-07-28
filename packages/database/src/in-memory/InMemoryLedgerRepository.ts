@@ -14,6 +14,7 @@ import {
   type AllocationPlan,
   type Budget,
   type Loan,
+  type InvestmentPosition,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -32,6 +33,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly allocationPlans = new Map<string, AllocationPlan>();
   private readonly budgets = new Map<string, Budget>();
   private readonly loans = new Map<string, Loan>();
+  private readonly investmentPositions = new Map<string, InvestmentPosition>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -145,6 +147,15 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Loan does not exist.");
     this.validateLoanReferences(loan);
     this.loans.set(loan.id, loan);
+  }
+  public async saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    this.assertNew(this.investmentPositions, position.id, "Investment position");
+    this.investmentPositions.set(position.id, position);
+  }
+  public async updateInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    if (!this.investmentPositions.has(position.id))
+      throw new DomainError("missing_reference", "Investment position does not exist.");
+    this.investmentPositions.set(position.id, position);
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -421,6 +432,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
   public async listLoans(): Promise<readonly Loan[]> {
     return [...this.loans.values()].sort((left, right) => left.lender.localeCompare(right.lender));
+  }
+  public async listInvestmentPositions(): Promise<readonly InvestmentPosition[]> {
+    return [...this.investmentPositions.values()].sort((left, right) =>
+      left.name.localeCompare(right.name),
+    );
   }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {

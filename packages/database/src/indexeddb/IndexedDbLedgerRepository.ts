@@ -12,6 +12,7 @@ import {
   AllocationPlan,
   Budget,
   Loan,
+  InvestmentPosition,
   LocalDate,
   Money,
   validateImportCommit,
@@ -57,7 +58,8 @@ type EntityStore =
   | "recurring_rules"
   | "allocation_plans"
   | "budgets"
-  | "loans";
+  | "loans"
+  | "investment_positions";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -281,6 +283,29 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           if ((await requestResult<unknown>(loans.get(loan.id))) === undefined)
             throw new DomainError("missing_reference", "Loan does not exist.");
           await requestResult(loans.put(loanToRecord(loan)));
+        }),
+      ),
+    );
+  }
+  public saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["investment_positions"], "readwrite", async (transaction) => {
+          const store = transaction.objectStore("investment_positions");
+          await this.assertNew(store, position.id, "Investment position");
+          await requestResult(store.add(investmentPositionToRecord(position)));
+        }),
+      ),
+    );
+  }
+  public updateInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["investment_positions"], "readwrite", async (transaction) => {
+          const store = transaction.objectStore("investment_positions");
+          if ((await requestResult<unknown>(store.get(position.id))) === undefined)
+            throw new DomainError("missing_reference", "Investment position does not exist.");
+          await requestResult(store.put(investmentPositionToRecord(position)));
         }),
       ),
     );
@@ -857,6 +882,17 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listInvestmentPositions(): Promise<readonly InvestmentPosition[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["investment_positions"], "readonly", async (transaction) =>
+          (
+            await requestResult<unknown[]>(transaction.objectStore("investment_positions").getAll())
+          ).map((row) => investmentPositionFromRecord(row as InvestmentPositionRecord)),
+        ),
+      ),
+    );
+  }
 
   public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
     return this.enqueue(() =>
@@ -1208,6 +1244,42 @@ interface LoanRecord {
   readonly installments_paid?: number;
   readonly installments_remaining?: number;
   readonly next_due_date?: string;
+}
+interface InvestmentPositionRecord {
+  readonly id: string;
+  readonly account_id: string;
+  readonly name: string;
+  readonly symbol?: string;
+  readonly units?: string;
+  readonly cost_basis_minor: string;
+  readonly current_value_minor: string;
+  readonly currency: string;
+  readonly valuation_date: string;
+}
+function investmentPositionToRecord(position: InvestmentPosition): InvestmentPositionRecord {
+  return {
+    id: position.id,
+    account_id: position.accountId,
+    name: position.name,
+    ...(position.symbol === undefined ? {} : { symbol: position.symbol }),
+    ...(position.units === undefined ? {} : { units: position.units }),
+    cost_basis_minor: position.costBasis.amountMinor.toString(),
+    current_value_minor: position.currentValue.amountMinor.toString(),
+    currency: position.costBasis.currency,
+    valuation_date: position.valuationDate.toString(),
+  };
+}
+function investmentPositionFromRecord(row: InvestmentPositionRecord): InvestmentPosition {
+  return InvestmentPosition.create({
+    id: row.id,
+    accountId: row.account_id,
+    name: row.name,
+    costBasis: Money.fromMinor(BigInt(row.cost_basis_minor), row.currency),
+    currentValue: Money.fromMinor(BigInt(row.current_value_minor), row.currency),
+    valuationDate: LocalDate.parse(row.valuation_date),
+    ...(row.symbol === undefined ? {} : { symbol: row.symbol }),
+    ...(row.units === undefined ? {} : { units: row.units }),
+  });
 }
 function loanToRecord(loan: Loan): LoanRecord {
   return {

@@ -68,6 +68,10 @@ export {
 } from "./migrations/0006-allocation-plans";
 export { BUDGETS_SCHEMA_VERSION, budgetsMigration } from "./migrations/0007-budgets";
 export { LOANS_SCHEMA_VERSION, loansMigration } from "./migrations/0008-loans";
+export {
+  INVESTMENT_POSITIONS_SCHEMA_VERSION,
+  investmentPositionsMigration,
+} from "./migrations/0009-investment-positions";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

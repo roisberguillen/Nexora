@@ -12,6 +12,7 @@ import {
   AllocationPlan,
   Budget,
   Loan,
+  InvestmentPosition,
   LocalDate,
   Money,
   validateImportCommit,
@@ -50,7 +51,8 @@ type EntityTable =
   | "recurring_rules"
   | "allocation_plans"
   | "budgets"
-  | "loans";
+  | "loans"
+  | "investment_positions";
 
 const accountColumns = `
   id,
@@ -443,6 +445,45 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.installments_paid,
               record.installments_remaining,
               record.next_due_date,
+              record.id,
+            ],
+          );
+        }),
+      ),
+    );
+  }
+  public saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          await this.assertNew("investment_positions", position.id, "Investment position");
+          await this.insertInvestmentPosition(position);
+        }),
+      ),
+    );
+  }
+  public updateInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM investment_positions WHERE id = ?",
+            [position.id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", "Investment position does not exist.");
+          const record = investmentPositionToRecord(position);
+          await this.database.run(
+            "UPDATE investment_positions SET account_id = ?, name = ?, symbol = ?, units = ?, cost_basis_minor = ?, current_value_minor = ?, currency = ?, valuation_date = ? WHERE id = ?",
+            [
+              record.account_id,
+              record.name,
+              record.symbol,
+              record.units,
+              record.cost_basis_minor,
+              record.current_value_minor,
+              record.currency,
+              record.valuation_date,
               record.id,
             ],
           );
@@ -1072,6 +1113,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(loanFromRecord),
     );
   }
+  public async listInvestmentPositions(): Promise<readonly InvestmentPosition[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<InvestmentPositionRecord>(
+          "SELECT id, account_id, name, symbol, units, cost_basis_minor, current_value_minor, currency, valuation_date FROM investment_positions ORDER BY name, id",
+        )
+      ).map(investmentPositionFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);
@@ -1249,6 +1299,23 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ],
     );
   }
+  private async insertInvestmentPosition(position: InvestmentPosition): Promise<void> {
+    const record = investmentPositionToRecord(position);
+    await this.database.run(
+      "INSERT INTO investment_positions (id, account_id, name, symbol, units, cost_basis_minor, current_value_minor, currency, valuation_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        record.id,
+        record.account_id,
+        record.name,
+        record.symbol,
+        record.units,
+        record.cost_basis_minor,
+        record.current_value_minor,
+        record.currency,
+        record.valuation_date,
+      ],
+    );
+  }
   private async insertRecurringRule(rule: RecurringRule): Promise<void> {
     const record = recurringRuleToRecord(rule);
     await this.database.run(
@@ -1412,6 +1479,42 @@ interface LoanRecord {
   readonly installments_paid: number | null;
   readonly installments_remaining: number | null;
   readonly next_due_date: string | null;
+}
+interface InvestmentPositionRecord {
+  readonly id: string;
+  readonly account_id: string;
+  readonly name: string;
+  readonly symbol: string | null;
+  readonly units: string | null;
+  readonly cost_basis_minor: string;
+  readonly current_value_minor: string;
+  readonly currency: string;
+  readonly valuation_date: string;
+}
+function investmentPositionToRecord(position: InvestmentPosition): InvestmentPositionRecord {
+  return {
+    id: position.id,
+    account_id: position.accountId,
+    name: position.name,
+    symbol: position.symbol ?? null,
+    units: position.units ?? null,
+    cost_basis_minor: position.costBasis.amountMinor.toString(),
+    current_value_minor: position.currentValue.amountMinor.toString(),
+    currency: position.costBasis.currency,
+    valuation_date: position.valuationDate.toString(),
+  };
+}
+function investmentPositionFromRecord(row: InvestmentPositionRecord): InvestmentPosition {
+  return InvestmentPosition.create({
+    id: row.id,
+    accountId: row.account_id,
+    name: row.name,
+    costBasis: Money.fromMinor(BigInt(row.cost_basis_minor), row.currency),
+    currentValue: Money.fromMinor(BigInt(row.current_value_minor), row.currency),
+    valuationDate: LocalDate.parse(row.valuation_date),
+    ...(row.symbol === null ? {} : { symbol: row.symbol }),
+    ...(row.units === null ? {} : { units: row.units }),
+  });
 }
 function loanToRecord(loan: Loan): LoanRecord {
   return {
