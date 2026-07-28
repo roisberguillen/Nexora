@@ -2,7 +2,7 @@ import { DomainError } from "../errors/DomainError";
 import { normalizeOptionalText, requireIdentifier } from "../validation";
 import { LocalDate } from "../value-objects/LocalDate";
 import { Money } from "../value-objects/Money";
-import type { TransactionKind } from "./Transaction";
+import type { Transaction, TransactionKind } from "./Transaction";
 
 export type RecurringFrequency = "monthly";
 export type WeekendPolicy = "none" | "salary_italy";
@@ -98,6 +98,17 @@ export class RecurringRule {
       if (nominal.getUTCDay() === 0) nominal.setUTCDate(nominal.getUTCDate() + 1);
     }
     return LocalDate.parse(nominal.toISOString().slice(0, 10));
+  }
+
+  public matchesBookedTransaction(transaction: Transaction): boolean {
+    return (
+      this.enabled &&
+      transaction.status === "booked" &&
+      transaction.kind === this.kind &&
+      transaction.accountId === this.accountId &&
+      transaction.amount.equals(this.amount) &&
+      transaction.bookedDate.equals(this.nextExpectedDate)
+    );
   }
 }
 

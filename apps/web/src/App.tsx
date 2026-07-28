@@ -240,10 +240,29 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
       await updateLedgerTag(ledger.repository, id, input);
     });
 
-  const createManualMovement = (input: CreateManualTransactionInput): Promise<void> =>
-    mutateLedger(async (ledger) => {
-      await createManualTransaction(ledger.repository, input);
+  const createManualMovement = async (
+    input: CreateManualTransactionInput,
+  ): Promise<readonly string[]> => {
+    let salaryAllocationPlanIds: readonly string[] = [];
+    await mutateLedger(async (ledger) => {
+      const transaction = await createManualTransaction(ledger.repository, input);
+      const [rules, plans] = await Promise.all([
+        ledger.repository.listRecurringRules(),
+        ledger.repository.listAllocationPlans(),
+      ]);
+      if (
+        rules.some(
+          (rule) =>
+            rule.weekendPolicy === "salary_italy" && rule.matchesBookedTransaction(transaction),
+        )
+      ) {
+        salaryAllocationPlanIds = plans
+          .filter((plan) => plan.enabled && plan.trigger === "salary")
+          .map((plan) => plan.id);
+      }
     });
+    return salaryAllocationPlanIds;
+  };
 
   const createTransferMovement = (input: CreateTransferInput): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -321,6 +340,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               onCancel={cancelMovement}
               onCreateManual={createManualMovement}
               onCreateTransfer={createTransferMovement}
+              onExecuteSalaryAllocations={executeAllocations}
             />
           ) : route === "categories" ? (
             <CategoriesPage

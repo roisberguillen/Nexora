@@ -14,8 +14,9 @@ interface TransactionsPageProps {
   readonly model: TransactionsViewModel;
   readonly tags: readonly Tag[];
   readonly onCancel: (id: string, isTransfer: boolean) => Promise<void>;
-  readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<void>;
+  readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<readonly string[]>;
   readonly onCreateTransfer: (input: CreateTransferInput) => Promise<void>;
+  readonly onExecuteSalaryAllocations: (planIds: readonly string[]) => Promise<void>;
 }
 
 type FormKind = "income" | "expense" | "adjustment" | "transfer";
@@ -26,12 +27,14 @@ export function TransactionsPage({
   onCancel,
   onCreateManual,
   onCreateTransfer,
+  onExecuteSalaryAllocations,
 }: TransactionsPageProps) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [kind, setKind] = useState<FormKind>("expense");
+  const [salaryAllocationPlanIds, setSalaryAllocationPlanIds] = useState<readonly string[]>([]);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -84,7 +87,7 @@ export function TransactionsPage({
         ) {
           throw new Error("Split total must equal the transaction amount.");
         }
-        await onCreateManual({
+        const planIds = await onCreateManual({
           accountId,
           amountMinor: signedAmount,
           bookedDate,
@@ -95,6 +98,7 @@ export function TransactionsPage({
           ...(tagIds.length > 0 ? { tagIds } : {}),
           ...(splits.length > 0 ? { splits } : categoryId === undefined ? {} : { categoryId }),
         });
+        setSalaryAllocationPlanIds(planIds);
       }
       setIsEditorOpen(false);
       setMessage(
@@ -102,6 +106,20 @@ export function TransactionsPage({
           ? "Trasferimento salvato con due gambe collegate."
           : "Movimento salvato nel ledger locale.",
       );
+    } catch (cause) {
+      setError(transactionErrorMessage(cause));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const executeSalaryAllocations = async () => {
+    setIsSaving(true);
+    setError(null);
+    try {
+      await onExecuteSalaryAllocations(salaryAllocationPlanIds);
+      setSalaryAllocationPlanIds([]);
+      setMessage("Allocazioni stipendio registrate come trasferimenti collegati.");
     } catch (cause) {
       setError(transactionErrorMessage(cause));
     } finally {
@@ -157,6 +175,33 @@ export function TransactionsPage({
           <p className="account-error" role="alert">
             {error}
           </p>
+        )}
+        {salaryAllocationPlanIds.length === 0 ? null : (
+          <div
+            aria-label="Conferma allocazioni stipendio"
+            className="account-feedback"
+            role="alertdialog"
+          >
+            <p>Stipendio ricevuto. Eseguire le allocazioni pianificate?</p>
+            <div className="form-actions">
+              <button
+                className="secondary-action"
+                disabled={isSaving}
+                onClick={() => setSalaryAllocationPlanIds([])}
+                type="button"
+              >
+                Non ora
+              </button>
+              <button
+                className="primary-action"
+                disabled={isSaving}
+                onClick={() => void executeSalaryAllocations()}
+                type="button"
+              >
+                {isSaving ? "Esecuzione…" : "Esegui allocazioni"}
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

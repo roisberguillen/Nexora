@@ -10,9 +10,12 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.locator('select[name="accountId"]').selectOption({ label: "Conto quotidiano demo" });
   await page.locator('input[name="amount"]').fill("2500,00");
   await page.getByLabel("Prossima data prevista").fill("2026-08-28");
+  await page.getByLabel("Policy weekend").selectOption("salary_italy");
   await page.getByRole("button", { name: "Salva ricorrenza" }).click();
   await expect(page.getByText("Stipendio sintetico")).toBeVisible();
   await page.getByRole("button", { name: "Modifica" }).click();
+  await expect(page.getByLabel("Policy weekend")).toHaveValue("salary_italy");
+  await expect(page.getByLabel("Prossima data prevista")).toHaveValue("2026-08-28");
   await page.locator('input[name="name"]').fill("Stipendio confermabile");
   await page.getByRole("button", { name: "Salva ricorrenza" }).click();
   await expect(page.getByText("Stipendio confermabile")).toBeVisible();
@@ -22,11 +25,20 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByLabel("Importo").last().fill("170,00");
   await page.getByRole("button", { name: "Salva piano" }).click();
   await expect(page.getByText("Risparmio sintetico")).toBeVisible();
-  await page.getByRole("button", { name: "Conferma allocazioni stipendio" }).click();
+  await page.goto("/#transactions");
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByLabel("Tipo").selectOption("income");
+  await page
+    .locator('select[name="account"]')
+    .selectOption({ label: "Conto quotidiano demo · EUR" });
+  await page.getByLabel("Importo").fill("2500,00");
+  await page.getByLabel("Data operazione").fill("2026-08-28");
+  await page.getByRole("button", { name: "Salva movimento" }).click();
   const confirmation = page.getByRole("alertdialog", { name: "Conferma allocazioni stipendio" });
   await expect(confirmation).toContainText("Stipendio ricevuto");
   await confirmation.getByRole("button", { name: "Esegui allocazioni" }).click();
   await expect(confirmation).not.toBeVisible();
+  await expect(page.getByRole("status")).toContainText("Allocazioni stipendio registrate");
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,
