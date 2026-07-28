@@ -1185,7 +1185,7 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
 
 interface ImportBatchRecord {
   readonly id: string;
-  readonly importer_type: "money_manager_xlsx";
+  readonly importer_type: ImportBatch["importerType"];
   readonly source_filename: string;
   readonly source_sha256: string;
   readonly status: "previewed" | "committed" | "undone" | "failed";

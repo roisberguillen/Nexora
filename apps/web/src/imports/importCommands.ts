@@ -4,6 +4,7 @@ import {
   LocalDate,
   Money,
   Transaction,
+  type ImporterType,
   type LedgerRepository,
 } from "@nexora/domain";
 import type { MoneyManagerDryRunRow } from "@nexora/importers";
@@ -12,6 +13,7 @@ export async function commitMoneyManagerImport(
   repository: LedgerRepository,
   input: {
     readonly filename: string;
+    readonly importerType?: ImporterType;
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
   },
@@ -19,7 +21,7 @@ export async function commitMoneyManagerImport(
 ): Promise<ImportBatch> {
   const batch = ImportBatch.create({
     id: `batch-${idFactory()}`,
-    importerType: "money_manager_xlsx",
+    importerType: input.importerType ?? "money_manager_xlsx",
     rowsTotal: input.rows.length,
     sourceFilename: input.filename,
     sourceSha256: input.sourceSha256,

@@ -72,6 +72,10 @@ export {
   INVESTMENT_POSITIONS_SCHEMA_VERSION,
   investmentPositionsMigration,
 } from "./migrations/0009-investment-positions";
+export {
+  BANK_IMPORTER_TYPES_SCHEMA_VERSION,
+  bankImporterTypesMigration,
+} from "./migrations/0010-bank-importer-types";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

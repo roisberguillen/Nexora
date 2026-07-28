@@ -25,6 +25,7 @@ export {
   validateImportCommit,
   type CreateImportBatchProps,
   type ImportBatchStatus,
+  type ImporterType,
   type ImportRowStatus,
 } from "./entities/ImportBatch";
 export { ImportRow, type CreateImportRowProps } from "./entities/ImportRow";

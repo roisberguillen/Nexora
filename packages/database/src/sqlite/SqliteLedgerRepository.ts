@@ -504,9 +504,10 @@ export class SqliteLedgerRepository implements LedgerRepository {
           if (existing.length > 0)
             throw new DomainError("duplicate_entity", "Import batch id already exists.");
           await this.database.run(
-            "INSERT INTO import_batches (id, importer_type, source_filename, source_sha256, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO import_batches (id, importer_type, importer_type_v2, source_filename, source_sha256, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
               batch.id,
+              batch.importerType,
               batch.importerType,
               batch.sourceFilename,
               batch.sourceSha256,
@@ -562,9 +563,10 @@ export class SqliteLedgerRepository implements LedgerRepository {
               throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
           }
           await this.database.run(
-            "INSERT INTO import_batches (id, importer_type, source_filename, source_sha256, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO import_batches (id, importer_type, importer_type_v2, source_filename, source_sha256, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
               committed.id,
+              committed.importerType,
               committed.importerType,
               committed.sourceFilename,
               committed.sourceSha256,
@@ -954,7 +956,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public async findImportBatchById(id: string): Promise<ImportBatch | undefined> {
     return this.performDatabaseOperation(async () => {
       const rows = await this.database.query<ImportBatchRecord>(
-        "SELECT id, importer_type, source_filename, source_sha256, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches WHERE id = ?",
+        "SELECT id, importer_type_v2 AS importer_type, source_filename, source_sha256, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches WHERE id = ?",
         [id],
       );
       return rows[0] === undefined ? undefined : importBatchFromRecord(rows[0]);
@@ -1072,7 +1074,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.performDatabaseOperation(async () =>
       (
         await this.database.query<ImportBatchRecord>(
-          "SELECT id, importer_type, source_filename, source_sha256, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches ORDER BY started_at DESC, id DESC",
+          "SELECT id, importer_type_v2 AS importer_type, source_filename, source_sha256, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches ORDER BY started_at DESC, id DESC",
         )
       ).map(importBatchFromRecord),
     );
@@ -1420,7 +1422,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
 interface ImportBatchRecord {
   readonly id: string;
-  readonly importer_type: "money_manager_xlsx";
+  readonly importer_type: ImportBatch["importerType"];
   readonly source_filename: string;
   readonly source_sha256: string;
   readonly status: "previewed" | "committed" | "undone" | "failed";

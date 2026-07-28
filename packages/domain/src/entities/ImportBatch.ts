@@ -5,10 +5,11 @@ import type { ImportRow } from "./ImportRow";
 
 export type ImportBatchStatus = "previewed" | "committed" | "undone" | "failed";
 export type ImportRowStatus = "imported" | "skipped_duplicate" | "needs_review" | "failed";
+export type ImporterType = "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf";
 
 export interface CreateImportBatchProps {
   readonly id: string;
-  readonly importerType: "money_manager_xlsx";
+  readonly importerType: ImporterType;
   readonly sourceFilename: string;
   readonly sourceSha256: string;
   readonly status?: ImportBatchStatus;
@@ -20,7 +21,7 @@ export interface CreateImportBatchProps {
 
 export class ImportBatch {
   public readonly id: string;
-  public readonly importerType: "money_manager_xlsx";
+  public readonly importerType: ImporterType;
   public readonly sourceFilename: string;
   public readonly sourceSha256: string;
   public readonly status: ImportBatchStatus;

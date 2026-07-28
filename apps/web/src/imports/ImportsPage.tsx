@@ -12,7 +12,7 @@ import {
   type MoneyManagerSheet,
 } from "@nexora/importers";
 import type { Account, Category, Transaction } from "@nexora/domain";
-import type { ImportBatch } from "@nexora/domain";
+import type { ImportBatch, ImporterType } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
@@ -40,6 +40,7 @@ export function ImportsPage({
   readonly transactions: readonly Transaction[];
   readonly onCommit: (input: {
     readonly filename: string;
+    readonly importerType: ImporterType;
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
   }) => Promise<void>;
@@ -52,6 +53,7 @@ export function ImportsPage({
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState<{
     readonly filename: string;
+    readonly importerType: ImporterType;
     readonly sha256: string;
   } | null>(null);
   const [isCommitting, setIsCommitting] = useState(false);
@@ -80,18 +82,24 @@ export function ImportsPage({
     try {
       const bytes = await file.arrayBuffer();
       const filename = file.name.toLocaleLowerCase("it-IT");
-      const workbook = filename.endsWith(".pdf")
-        ? await readN26Pdf(bytes)
+      const importerType: ImporterType = filename.endsWith(".pdf")
+        ? "n26_pdf"
         : filename.includes("mediobanca")
-          ? readMediobancaWorkbook(bytes)
-          : readMoneyManagerWorkbook(bytes);
+          ? "mediobanca_xlsx"
+          : "money_manager_xlsx";
+      const workbook =
+        importerType === "n26_pdf"
+          ? await readN26Pdf(bytes)
+          : importerType === "mediobanca_xlsx"
+            ? readMediobancaWorkbook(bytes)
+            : readMoneyManagerWorkbook(bytes);
       const initialSheet = workbook.sheets[0];
       if (initialSheet === undefined) throw new Error("empty_workbook");
       setSheets(workbook.sheets);
       setSelectedSheetName(initialSheet.name);
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
       setFallbackAccountName("");
-      setSource({ filename: file.name, sha256: await sha256(bytes) });
+      setSource({ filename: file.name, importerType, sha256: await sha256(bytes) });
       setError(null);
     } catch {
       setSheets([]);
@@ -324,6 +332,7 @@ export function ImportsPage({
                   setError(null);
                   void onCommit({
                     filename: source.filename,
+                    importerType: source.importerType,
                     rows: dryRun,
                     sourceSha256: source.sha256,
                   })
