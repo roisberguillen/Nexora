@@ -89,8 +89,8 @@
     },
     {
       "path": ".env.example",
-      "size": 205,
-      "sha256": "610ceea06d8b43692f0be54a7b1c7c050dce4488998bfb5e3762538707feb13f"
+      "size": 209,
+      "sha256": "d290a5557ce52319048b0d4510835c8fc28cae36b3345bb329e6b620c360b613"
     },
     {
       "path": ".github/workflows/ci.yml",
@@ -216,6 +216,16 @@
       "path": "apps/web/src/cloud/cloudTypes.ts",
       "size": 964,
       "sha256": "544624cc47788d651365be78dc0534a95f9a5f5f36f247d50c0da4056eaf79fc"
+    },
+    {
+      "path": "apps/web/src/cloud/GoogleDriveBackupProvider.test.ts",
+      "size": 836,
+      "sha256": "b5209bd1a0d9a3c44effad2b5ad6f87a996da9f56e98ce865f0da9349450e4a0"
+    },
+    {
+      "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
+      "size": 2989,
+      "sha256": "c2e81d60766b80123b2aa1827826d79ad05366949fa3d8688ad3c31890e22825"
     },
     {
       "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",
@@ -484,8 +494,8 @@
     },
     {
       "path": "docs/adr/0015-google-drive-appdata-oauth.md",
-      "size": 429,
-      "sha256": "9e81206fc8badbb9615d89fa94bd23f98eb5a959b609cf5d5c7cf4b2cb995df6"
+      "size": 440,
+      "sha256": "39acaf4ae54c329e26fa003678e969a1ca45461297ec6e7bc5168ee909f0f32e"
     },
     {
       "path": "docs/ARCHITECTURE.md",
@@ -514,8 +524,8 @@
     },
     {
       "path": "docs/M8_M10_IMPLEMENTATION_PLAN.md",
-      "size": 1830,
-      "sha256": "a2f0a62abc265b732723a64b4115ed529ed332d726461fc8a7aa7b4a9efe9433"
+      "size": 1867,
+      "sha256": "0db38239547690c5065c87eaca8953c6f23aeda35da7b365966fcf0384debc49"
     },
     {
       "path": "docs/operations/BACKUP_RESTORE.md",
@@ -524,8 +534,8 @@
     },
     {
       "path": "docs/operations/GOOGLE_DRIVE_OAUTH.md",
-      "size": 727,
-      "sha256": "cfdd80b6254b124f724af5072a7b07b3912724de2295c7cd8b913f1a43f0501e"
+      "size": 739,
+      "sha256": "424ec9eb6a389ea40da865bd081aeb3e678d1e0f2598ccb11f7491ac19583707"
     },
     {
       "path": "docs/PRD_Nexora_Reference.docx",
