@@ -59,6 +59,7 @@ export function ImportsPage({
   const [isCommitting, setIsCommitting] = useState(false);
   const [isUndoing, setIsUndoing] = useState<string | null>(null);
   const [fallbackAccountName, setFallbackAccountName] = useState("");
+  const [rowAccountOverrides, setRowAccountOverrides] = useState<Record<number, string>>({});
 
   const selectedSheet = sheets.find((sheet) => sheet.name === selectedSheetName);
   const headers = selectedSheet?.rows[0] ?? [];
@@ -66,11 +67,10 @@ export function ImportsPage({
     selectedSheet === undefined
       ? []
       : previewMoneyManagerRows(selectedSheet.rows.slice(1), mapping);
-  const preview = rawPreview.map((row) =>
-    row.account === undefined && fallbackAccountName !== ""
-      ? Object.freeze({ ...row, account: fallbackAccountName })
-      : row,
-  );
+  const preview = rawPreview.map((row) => {
+    const account = rowAccountOverrides[row.sourceRowNumber] ?? row.account ?? fallbackAccountName;
+    return account === "" || account === row.account ? row : Object.freeze({ ...row, account });
+  });
   const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions);
   const readyCount = dryRun.filter((row) => row.status === "ready").length;
   const reviewCount = dryRun.filter((row) => row.status === "needs_review").length;
@@ -99,6 +99,7 @@ export function ImportsPage({
       setSelectedSheetName(initialSheet.name);
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
       setFallbackAccountName("");
+      setRowAccountOverrides({});
       setSource({ filename: file.name, importerType, sha256: await sha256(bytes) });
       setError(null);
     } catch {
@@ -106,6 +107,7 @@ export function ImportsPage({
       setSelectedSheetName("");
       setMapping({});
       setSource(null);
+      setRowAccountOverrides({});
       setError(
         "Il file non è un estratto XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
@@ -301,7 +303,33 @@ export function ImportsPage({
                     <tr key={row.preview.sourceRowNumber}>
                       <td data-label="Riga">{row.preview.sourceRowNumber}</td>
                       <td data-label="Data">{row.preview.date ?? "—"}</td>
-                      <td data-label="Conto">{row.preview.account ?? "—"}</td>
+                      <td data-label="Conto">
+                        <label
+                          className="sr-only"
+                          htmlFor={`import-account-${row.preview.sourceRowNumber}`}
+                        >
+                          Conto per riga {row.preview.sourceRowNumber}
+                        </label>
+                        <select
+                          id={`import-account-${row.preview.sourceRowNumber}`}
+                          onChange={(event) =>
+                            setRowAccountOverrides((current) => ({
+                              ...current,
+                              [row.preview.sourceRowNumber]: event.target.value,
+                            }))
+                          }
+                          value={row.preview.account ?? ""}
+                        >
+                          <option value="">Da risolvere</option>
+                          {accounts
+                            .filter((account) => !account.isArchived)
+                            .map((account) => (
+                              <option key={account.id} value={account.name}>
+                                {account.name}
+                              </option>
+                            ))}
+                        </select>
+                      </td>
                       <td data-label="Importo">
                         {row.preview.amountMinor === undefined
                           ? "—"
