@@ -179,8 +179,8 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 4329,
-      "sha256": "1eef23c66de5b634a9e132b3914def2b26b963cdc73c0522d9e21906a63752ff"
+      "size": 8971,
+      "sha256": "808457c8b901e238da0c1aa526a53c8c20cbf7d871774d985a981a120ef214b2"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -214,18 +214,18 @@
     },
     {
       "path": "apps/web/src/cloud/cloudTypes.ts",
-      "size": 964,
-      "sha256": "544624cc47788d651365be78dc0534a95f9a5f5f36f247d50c0da4056eaf79fc"
+      "size": 993,
+      "sha256": "35585facb711b4e7e2039993e1c202a1de820cc473a81ae4f0b9bf786d1c22e9"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.test.ts",
-      "size": 836,
-      "sha256": "b5209bd1a0d9a3c44effad2b5ad6f87a996da9f56e98ce865f0da9349450e4a0"
+      "size": 1716,
+      "sha256": "b567056abe395871d5d4488596f9b809058059a8492c26304ea0960ecb0ab27d"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
-      "size": 2989,
-      "sha256": "c2e81d60766b80123b2aa1827826d79ad05366949fa3d8688ad3c31890e22825"
+      "size": 3072,
+      "sha256": "cb212c2949ae8fb66463349e551b7d24dfd3c0170b58f6e976bebbdc2b92fbc8"
     },
     {
       "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",
@@ -236,6 +236,11 @@
       "path": "apps/web/src/cloud/GoogleIdentityAuth.ts",
       "size": 2393,
       "sha256": "fd0af0681705965ad37f8977b221ee42a261e0d427a00eb881feb2aac704a070"
+    },
+    {
+      "path": "apps/web/src/cloud/loadGoogleIdentity.ts",
+      "size": 897,
+      "sha256": "98335862d0fbf0bc04a6f2b2780ff1d671cc3eb5112a3ff7c4555348b0082702"
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
@@ -689,8 +694,8 @@
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 3773,
-      "sha256": "e24743be69d1cec9ef6fe7d9c896f07b754613345028b463d3c6abb4eac3f6d8"
+      "size": 5322,
+      "sha256": "c0e91e2c16924221c4aa92827be828fd62102f3875f462541ba74fea4d5959a8"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",

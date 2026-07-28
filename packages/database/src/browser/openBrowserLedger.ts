@@ -16,7 +16,10 @@ import {
   LocalSqliteBackupService,
   type CreatedLocalBackup,
 } from "../backup/LocalSqliteBackupService";
-import { FileSystemDirectoryBackupStore } from "../backup/PhysicalBackupStore";
+import {
+  FileSystemDirectoryBackupStore,
+  type PhysicalBackupStore,
+} from "../backup/PhysicalBackupStore";
 
 export type BrowserLedgerStorageKind = "opfs" | "indexeddb";
 
@@ -30,6 +33,14 @@ export interface BrowserLedger {
   }): Promise<CreatedLocalBackup>;
   restoreEncryptedBackup?(input: {
     readonly directory: FileSystemDirectoryHandle;
+    readonly id: string;
+    readonly passphrase: string;
+  }): Promise<void>;
+  createEncryptedBackupArchive?(input: {
+    readonly passphrase: string;
+  }): Promise<CreatedLocalBackup & { readonly archive: Uint8Array }>;
+  restoreEncryptedBackupArchive?(input: {
+    readonly archive: Uint8Array;
     readonly id: string;
     readonly passphrase: string;
   }): Promise<void>;
@@ -91,9 +102,27 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
     schemaVersion: ledger.migration.toVersion,
     storageKind: "opfs",
     createEncryptedBackup: ({ directory, passphrase }) =>
-      createBackupService(ledger, directory, passphrase).createBackup(),
+      createBackupService(
+        ledger,
+        new FileSystemDirectoryBackupStore(directory),
+        passphrase,
+      ).createBackup(),
     restoreEncryptedBackup: async ({ directory, id, passphrase }) => {
-      await createBackupService(ledger, directory, passphrase).restoreBackup(id);
+      await createBackupService(
+        ledger,
+        new FileSystemDirectoryBackupStore(directory),
+        passphrase,
+      ).restoreBackup(id);
+    },
+    createEncryptedBackupArchive: async ({ passphrase }) => {
+      const store = new MemoryBackupStore();
+      const backup = await createBackupService(ledger, store, passphrase).createBackup();
+      return { ...backup, archive: await store.read(backup.id) };
+    },
+    restoreEncryptedBackupArchive: async ({ archive, id, passphrase }) => {
+      const store = new MemoryBackupStore();
+      await store.write(id, archive);
+      await createBackupService(ledger, store, passphrase).restoreBackup(id);
     },
     close: () => ledger.close(),
   };
@@ -101,14 +130,34 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
 
 function createBackupService(
   ledger: OpfsLedger,
-  directory: FileSystemDirectoryHandle,
+  store: PhysicalBackupStore,
   passphrase: string,
 ): LocalSqliteBackupService {
   return new LocalSqliteBackupService({
     database: ledger.database,
-    store: new FileSystemDirectoryBackupStore(directory),
+    store,
     passphrase,
   });
+}
+
+class MemoryBackupStore implements PhysicalBackupStore {
+  private readonly archives = new Map<string, Uint8Array>();
+
+  public async write(id: string, archive: Uint8Array): Promise<void> {
+    const copy = new Uint8Array(archive.byteLength);
+    copy.set(archive);
+    this.archives.set(id, copy);
+  }
+
+  public async read(id: string): Promise<Uint8Array> {
+    const archive = this.archives.get(id);
+    if (archive === undefined) {
+      throw new PersistenceError("corrupt_record", "Encrypted backup not found.");
+    }
+    const copy = new Uint8Array(archive.byteLength);
+    copy.set(archive);
+    return copy;
+  }
 }
 
 function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {

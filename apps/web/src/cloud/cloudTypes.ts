@@ -2,6 +2,7 @@ export type CloudBackupStatus = "idle" | "authorizing" | "connected" | "expired"
 
 export interface CloudBackupMetadata {
   readonly id: string;
+  readonly backupId: string;
   readonly checksumSha256: string;
   readonly createdAt: string;
   readonly formatVersion: number;

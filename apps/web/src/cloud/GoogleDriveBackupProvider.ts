@@ -22,6 +22,7 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
     };
     return (body.files ?? []).map((file) => ({
       id: file.id,
+      backupId: file.appProperties?.backupId ?? file.name,
       checksumSha256: file.appProperties?.checksumSha256 ?? "",
       createdAt: file.createdTime,
       formatVersion: Number(file.appProperties?.formatVersion ?? 1),
@@ -32,10 +33,11 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
   public async upload(metadata: CloudBackupMetadata, archive: Uint8Array): Promise<void> {
     const boundary = `nexora-${crypto.randomUUID()}`;
     const meta = JSON.stringify({
-      name: `${metadata.id}.nexora-backup`,
+      name: metadata.backupId,
       parents: ["appDataFolder"],
       appProperties: {
         checksumSha256: metadata.checksumSha256,
+        backupId: metadata.backupId,
         formatVersion: String(metadata.formatVersion),
         schemaVersion: String(metadata.schemaVersion),
       },
