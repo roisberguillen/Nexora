@@ -13,6 +13,7 @@ import {
   type RecurringRule,
   type AllocationPlan,
   type Budget,
+  type Loan,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -30,6 +31,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly recurringRules = new Map<string, RecurringRule>();
   private readonly allocationPlans = new Map<string, AllocationPlan>();
   private readonly budgets = new Map<string, Budget>();
+  private readonly loans = new Map<string, Loan>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -132,6 +134,17 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Budget does not exist.");
     this.validateBudgetReferences(budget);
     this.budgets.set(budget.id, budget);
+  }
+  public async saveLoan(loan: Loan): Promise<void> {
+    this.assertNew(this.loans, loan.id, "Loan");
+    this.validateLoanReferences(loan);
+    this.loans.set(loan.id, loan);
+  }
+  public async updateLoan(loan: Loan): Promise<void> {
+    if (!this.loans.has(loan.id))
+      throw new DomainError("missing_reference", "Loan does not exist.");
+    this.validateLoanReferences(loan);
+    this.loans.set(loan.id, loan);
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -406,6 +419,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       left.period.localeCompare(right.period),
     );
   }
+  public async listLoans(): Promise<readonly Loan[]> {
+    return [...this.loans.values()].sort((left, right) => left.lender.localeCompare(right.lender));
+  }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {
     if (collection.has(id)) {
@@ -479,6 +495,13 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Budget category is not available.");
     if (!category.accepts("expense"))
       throw new DomainError("invalid_category", "Budget category must accept expenses.");
+  }
+  private validateLoanReferences(loan: Loan): void {
+    const account = this.accounts.get(loan.accountId);
+    if (account === undefined || account.isArchived || account.type !== "loan")
+      throw new DomainError("missing_reference", "Loan requires an active loan account.");
+    if (account.currency !== loan.remainingPrincipal.currency)
+      throw new DomainError("currency_mismatch", "Loan currency must match the account.");
   }
 
   private isTransferLeg(transactionId: string): boolean {

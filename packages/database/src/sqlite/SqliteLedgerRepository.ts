@@ -11,6 +11,7 @@ import {
   RecurringRule,
   AllocationPlan,
   Budget,
+  Loan,
   LocalDate,
   Money,
   validateImportCommit,
@@ -48,7 +49,8 @@ type EntityTable =
   | "transfers"
   | "recurring_rules"
   | "allocation_plans"
-  | "budgets";
+  | "budgets"
+  | "loans";
 
 const accountColumns = `
   id,
@@ -399,6 +401,48 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.currency,
               record.alert_at_80,
               record.alert_at_100,
+              record.id,
+            ],
+          );
+        }),
+      ),
+    );
+  }
+  public saveLoan(loan: Loan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          await this.assertNew("loans", loan.id, "Loan");
+          await this.insertLoan(loan);
+        }),
+      ),
+    );
+  }
+  public updateLoan(loan: Loan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM loans WHERE id = ?",
+            [loan.id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", "Loan does not exist.");
+          const record = loanToRecord(loan);
+          await this.database.run(
+            "UPDATE loans SET account_id = ?, lender = ?, installment_minor = ?, remaining_principal_minor = ?, original_principal_minor = ?, currency = ?, annual_nominal_rate_bps = ?, annual_effective_rate_bps = ?, installments_paid = ?, installments_remaining = ?, next_due_date = ? WHERE id = ?",
+            [
+              record.account_id,
+              record.lender,
+              record.installment_minor,
+              record.remaining_principal_minor,
+              record.original_principal_minor,
+              record.currency,
+              record.annual_nominal_rate_bps,
+              record.annual_effective_rate_bps,
+              record.installments_paid,
+              record.installments_remaining,
+              record.next_due_date,
               record.id,
             ],
           );
@@ -1019,6 +1063,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(budgetFromRecord),
     );
   }
+  public async listLoans(): Promise<readonly Loan[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<LoanRecord>(
+          "SELECT id, account_id, lender, installment_minor, remaining_principal_minor, original_principal_minor, currency, annual_nominal_rate_bps, annual_effective_rate_bps, installments_paid, installments_remaining, next_due_date FROM loans ORDER BY lender, id",
+        )
+      ).map(loanFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);
@@ -1176,6 +1229,26 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ],
     );
   }
+  private async insertLoan(loan: Loan): Promise<void> {
+    const record = loanToRecord(loan);
+    await this.database.run(
+      "INSERT INTO loans (id, account_id, lender, installment_minor, remaining_principal_minor, original_principal_minor, currency, annual_nominal_rate_bps, annual_effective_rate_bps, installments_paid, installments_remaining, next_due_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        record.id,
+        record.account_id,
+        record.lender,
+        record.installment_minor,
+        record.remaining_principal_minor,
+        record.original_principal_minor,
+        record.currency,
+        record.annual_nominal_rate_bps,
+        record.annual_effective_rate_bps,
+        record.installments_paid,
+        record.installments_remaining,
+        record.next_due_date,
+      ],
+    );
+  }
   private async insertRecurringRule(rule: RecurringRule): Promise<void> {
     const record = recurringRuleToRecord(rule);
     await this.database.run(
@@ -1325,6 +1398,59 @@ interface BudgetRecord {
   readonly currency: string;
   readonly alert_at_80: number;
   readonly alert_at_100: number;
+}
+interface LoanRecord {
+  readonly id: string;
+  readonly account_id: string;
+  readonly lender: string;
+  readonly installment_minor: string;
+  readonly remaining_principal_minor: string;
+  readonly original_principal_minor: string | null;
+  readonly currency: string;
+  readonly annual_nominal_rate_bps: number | null;
+  readonly annual_effective_rate_bps: number | null;
+  readonly installments_paid: number | null;
+  readonly installments_remaining: number | null;
+  readonly next_due_date: string | null;
+}
+function loanToRecord(loan: Loan): LoanRecord {
+  return {
+    id: loan.id,
+    account_id: loan.accountId,
+    lender: loan.lender,
+    installment_minor: loan.installment.amountMinor.toString(),
+    remaining_principal_minor: loan.remainingPrincipal.amountMinor.toString(),
+    original_principal_minor: loan.originalPrincipal?.amountMinor.toString() ?? null,
+    currency: loan.remainingPrincipal.currency,
+    annual_nominal_rate_bps: loan.annualNominalRateBps ?? null,
+    annual_effective_rate_bps: loan.annualEffectiveRateBps ?? null,
+    installments_paid: loan.installmentsPaid ?? null,
+    installments_remaining: loan.installmentsRemaining ?? null,
+    next_due_date: loan.nextDueDate?.toString() ?? null,
+  };
+}
+function loanFromRecord(row: LoanRecord): Loan {
+  return Loan.create({
+    id: row.id,
+    accountId: row.account_id,
+    lender: row.lender,
+    installment: Money.fromMinor(BigInt(row.installment_minor), row.currency),
+    remainingPrincipal: Money.fromMinor(BigInt(row.remaining_principal_minor), row.currency),
+    ...(row.original_principal_minor === null
+      ? {}
+      : { originalPrincipal: Money.fromMinor(BigInt(row.original_principal_minor), row.currency) }),
+    ...(row.annual_nominal_rate_bps === null
+      ? {}
+      : { annualNominalRateBps: row.annual_nominal_rate_bps }),
+    ...(row.annual_effective_rate_bps === null
+      ? {}
+      : { annualEffectiveRateBps: row.annual_effective_rate_bps }),
+    ...(row.installments_paid === null ? {} : { installmentsPaid: row.installments_paid }),
+    ...(row.installments_remaining === null
+      ? {}
+      : { installmentsRemaining: row.installments_remaining }),
+    ...(row.next_due_date === null ? {} : { nextDueDate: LocalDate.parse(row.next_due_date) }),
+  });
 }
 function budgetToRecord(budget: Budget): BudgetRecord {
   return {

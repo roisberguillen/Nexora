@@ -11,6 +11,7 @@ import {
   RecurringRule,
   AllocationPlan,
   Budget,
+  Loan,
   LocalDate,
   Money,
   validateImportCommit,
@@ -55,7 +56,8 @@ type EntityStore =
   | "import_rows"
   | "recurring_rules"
   | "allocation_plans"
-  | "budgets";
+  | "budgets"
+  | "loans";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -256,6 +258,29 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             throw new DomainError("missing_reference", "Budget does not exist.");
           await this.validateBudgetReferences(transaction, budget);
           await requestResult(budgets.put(budgetToRecord(budget)));
+        }),
+      ),
+    );
+  }
+  public saveLoan(loan: Loan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["loans"], "readwrite", async (transaction) => {
+          const loans = transaction.objectStore("loans");
+          await this.assertNew(loans, loan.id, "Loan");
+          await requestResult(loans.add(loanToRecord(loan)));
+        }),
+      ),
+    );
+  }
+  public updateLoan(loan: Loan): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["loans"], "readwrite", async (transaction) => {
+          const loans = transaction.objectStore("loans");
+          if ((await requestResult<unknown>(loans.get(loan.id))) === undefined)
+            throw new DomainError("missing_reference", "Loan does not exist.");
+          await requestResult(loans.put(loanToRecord(loan)));
         }),
       ),
     );
@@ -821,6 +846,17 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listLoans(): Promise<readonly Loan[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["loans"], "readonly", async (transaction) =>
+          (await requestResult<unknown[]>(transaction.objectStore("loans").getAll()))
+            .map((row) => loanFromRecord(row as LoanRecord))
+            .sort((left, right) => left.lender.localeCompare(right.lender)),
+        ),
+      ),
+    );
+  }
 
   public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
     return this.enqueue(() =>
@@ -1158,6 +1194,67 @@ interface BudgetRecord {
   readonly currency: string;
   readonly alert_at_80: boolean;
   readonly alert_at_100: boolean;
+}
+interface LoanRecord {
+  readonly id: string;
+  readonly account_id: string;
+  readonly lender: string;
+  readonly installment_minor: string;
+  readonly remaining_principal_minor: string;
+  readonly original_principal_minor?: string;
+  readonly currency: string;
+  readonly annual_nominal_rate_bps?: number;
+  readonly annual_effective_rate_bps?: number;
+  readonly installments_paid?: number;
+  readonly installments_remaining?: number;
+  readonly next_due_date?: string;
+}
+function loanToRecord(loan: Loan): LoanRecord {
+  return {
+    id: loan.id,
+    account_id: loan.accountId,
+    lender: loan.lender,
+    installment_minor: loan.installment.amountMinor.toString(),
+    remaining_principal_minor: loan.remainingPrincipal.amountMinor.toString(),
+    ...(loan.originalPrincipal === undefined
+      ? {}
+      : { original_principal_minor: loan.originalPrincipal.amountMinor.toString() }),
+    currency: loan.remainingPrincipal.currency,
+    ...(loan.annualNominalRateBps === undefined
+      ? {}
+      : { annual_nominal_rate_bps: loan.annualNominalRateBps }),
+    ...(loan.annualEffectiveRateBps === undefined
+      ? {}
+      : { annual_effective_rate_bps: loan.annualEffectiveRateBps }),
+    ...(loan.installmentsPaid === undefined ? {} : { installments_paid: loan.installmentsPaid }),
+    ...(loan.installmentsRemaining === undefined
+      ? {}
+      : { installments_remaining: loan.installmentsRemaining }),
+    ...(loan.nextDueDate === undefined ? {} : { next_due_date: loan.nextDueDate.toString() }),
+  };
+}
+function loanFromRecord(row: LoanRecord): Loan {
+  return Loan.create({
+    id: row.id,
+    accountId: row.account_id,
+    lender: row.lender,
+    installment: Money.fromMinor(BigInt(row.installment_minor), row.currency),
+    remainingPrincipal: Money.fromMinor(BigInt(row.remaining_principal_minor), row.currency),
+    ...(row.original_principal_minor === undefined
+      ? {}
+      : { originalPrincipal: Money.fromMinor(BigInt(row.original_principal_minor), row.currency) }),
+    ...(row.annual_nominal_rate_bps === undefined
+      ? {}
+      : { annualNominalRateBps: row.annual_nominal_rate_bps }),
+    ...(row.annual_effective_rate_bps === undefined
+      ? {}
+      : { annualEffectiveRateBps: row.annual_effective_rate_bps }),
+    ...(row.installments_paid === undefined ? {} : { installmentsPaid: row.installments_paid }),
+    ...(row.installments_remaining === undefined
+      ? {}
+      : { installmentsRemaining: row.installments_remaining }),
+    ...(row.next_due_date === undefined ? {} : { nextDueDate: LocalDate.parse(row.next_due_date) }),
+  });
 }
 function budgetToRecord(budget: Budget): BudgetRecord {
   return {

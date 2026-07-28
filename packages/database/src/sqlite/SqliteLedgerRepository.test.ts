@@ -10,6 +10,7 @@ import {
   Account,
   AllocationPlan,
   Budget,
+  Loan,
   Category,
   ImportBatch,
   ImportRow,
@@ -46,7 +47,7 @@ function nodeSqliteDatabase(database: DatabaseSync): SqliteDatabase {
   };
 }
 
-function account(id: string, type: "checking" | "savings" = "checking"): Account {
+function account(id: string, type: "checking" | "savings" | "loan" = "checking"): Account {
   return Account.create({
     id,
     name: `Conto ${id}`,
@@ -379,8 +380,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 7,
-        toVersion: 7,
+        fromVersion: 8,
+        toVersion: 8,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -518,5 +519,17 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.updateBudget(updated);
     await expect(repository.listBudgets()).resolves.toEqual([updated]);
+  });
+  it("persiste un prestito", async () => {
+    await repository.saveAccount(account("loan-account", "loan"));
+    const loan = Loan.create({
+      id: "loan-sqlite",
+      accountId: "loan-account",
+      lender: "Findomestic",
+      installment: Money.fromMinor(17_200n, "EUR"),
+      remainingPrincipal: Money.fromMinor(500_000n, "EUR"),
+    });
+    await repository.saveLoan(loan);
+    await expect(repository.listLoans()).resolves.toEqual([loan]);
   });
 });

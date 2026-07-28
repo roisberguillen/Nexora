@@ -4,6 +4,7 @@ import {
   Account,
   AllocationPlan,
   Budget,
+  Loan,
   Category,
   ImportBatch,
   ImportRow,
@@ -94,6 +95,7 @@ describe("IndexedDbLedgerRepository", () => {
       "categories",
       "import_batches",
       "import_rows",
+      "loans",
       "metadata",
       "recurring_rules",
       "tags",
@@ -117,7 +119,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 7 });
+    expect(metadata).toEqual({ key: "schema_version", value: 8 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -365,7 +367,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(7);
+    expect(ledger.schemaVersion).toBe(8);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -509,5 +511,18 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.close();
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listBudgets()).resolves.toEqual([budget]);
+  });
+  it("persiste un prestito dopo la riapertura", async () => {
+    const loan = Loan.create({
+      id: "loan-idb",
+      accountId: "loan-account",
+      lender: "Agos",
+      installment: Money.fromMinor(7_200n, "EUR"),
+      remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
+    });
+    await ledger.repository.saveLoan(loan);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listLoans()).resolves.toEqual([loan]);
   });
 });

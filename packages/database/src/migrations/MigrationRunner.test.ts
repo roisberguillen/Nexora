@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 7,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7],
+      toVersion: 8,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -134,14 +134,15 @@ describe("MigrationRunner", () => {
       },
       { version: 6, name: "allocation-plans" },
       { version: 7, name: "budgets" },
+      { version: 8, name: "loans" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 7,
-      toVersion: 7,
+      fromVersion: 8,
+      toVersion: 8,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(7);
+    expect(migrationRows(sqlite)).toHaveLength(8);
   });
 
   it("annulla l'intera migrazione quando un'istruzione fallisce", async () => {
