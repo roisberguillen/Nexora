@@ -1,5 +1,6 @@
 export { AppShell } from "./AppShell";
 export { ErrorBoundary } from "./ErrorBoundary";
+export { filterGlobalSearchResults, type GlobalSearchResult } from "./GlobalSearch";
 export {
   FinancialAmount,
   formatMinorUnits,

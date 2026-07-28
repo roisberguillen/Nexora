@@ -1,7 +1,7 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
 import type { Category, Tag } from "@nexora/domain";
-import { AppShell, ErrorBoundary } from "@nexora/ui";
+import { AppShell, ErrorBoundary, type GlobalSearchResult } from "@nexora/ui";
 import { useEffect, useState } from "react";
 
 import {
@@ -224,7 +224,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         });
       }}
     >
-      <AppShell activeRoute={route}>
+      <AppShell
+        activeRoute={route}
+        searchResults={ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []}
+      >
         {ledgerState.status === "ready" ? (
           route === "accounts" ? (
             <AccountsPage
@@ -368,4 +371,33 @@ function readAppRoute(): "accounts" | "overview" | "transactions" | "categories"
   if (window.location.hash === "#categories") return "categories";
   if (window.location.hash === "#tags") return "tags";
   return "overview";
+}
+
+function buildGlobalSearchResults(state: ReadyLedgerState): readonly GlobalSearchResult[] {
+  return [
+    ...state.accounts.accounts.map((account) => ({
+      id: `account-${account.id}`,
+      href: "./#accounts",
+      label: account.name,
+      detail: `Conto · ${account.typeLabel}`,
+    })),
+    ...state.categories.map((category) => ({
+      id: `category-${category.id}`,
+      href: "./#categories",
+      label: category.name,
+      detail: "Categoria",
+    })),
+    ...state.tags.map((tag) => ({
+      id: `tag-${tag.id}`,
+      href: "./#tags",
+      label: tag.name,
+      detail: tag.isArchived ? "Tag archiviato" : "Tag",
+    })),
+    ...state.transactions.items.map((transaction) => ({
+      id: `transaction-${transaction.id}`,
+      href: "./#transactions",
+      label: transaction.title,
+      detail: `${transaction.kindLabel} · ${transaction.accountLabel} · ${transaction.categoryLabel}`,
+    })),
+  ];
 }

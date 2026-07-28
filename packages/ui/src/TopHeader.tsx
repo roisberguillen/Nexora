@@ -1,10 +1,22 @@
+import { useState } from "react";
+
+import { filterGlobalSearchResults, type GlobalSearchResult } from "./GlobalSearch";
+
 interface TopHeaderProps {
   readonly isNavigationOpen: boolean;
   readonly isOnline: boolean;
   readonly onToggleNavigation: () => void;
+  readonly searchResults: readonly GlobalSearchResult[];
 }
 
-export function TopHeader({ isNavigationOpen, isOnline, onToggleNavigation }: TopHeaderProps) {
+export function TopHeader({
+  isNavigationOpen,
+  isOnline,
+  onToggleNavigation,
+  searchResults,
+}: TopHeaderProps) {
+  const [query, setQuery] = useState("");
+  const results = filterGlobalSearchResults(searchResults, query).slice(0, 8);
   return (
     <header className="top-header">
       <button
@@ -32,15 +44,31 @@ export function TopHeader({ isNavigationOpen, isOnline, onToggleNavigation }: To
           ⌕
         </span>
         <input
-          aria-describedby="search-availability"
-          disabled
+          aria-controls="global-search-results"
+          aria-expanded={results.length > 0}
           id="global-search"
-          placeholder="Ricerca disponibile dalla Milestone 3"
+          onChange={(event) => setQuery(event.currentTarget.value)}
+          placeholder="Cerca conti, categorie, tag e movimenti"
           type="search"
         />
-        <span className="sr-only" id="search-availability">
-          La ricerca globale non è ancora disponibile.
-        </span>
+        {query.trim() === "" ? null : (
+          <div aria-live="polite" className="global-search-results" id="global-search-results">
+            {results.length === 0 ? (
+              <p>Nessun risultato locale.</p>
+            ) : (
+              <ul>
+                {results.map((result) => (
+                  <li key={result.id}>
+                    <a href={result.href} onClick={() => setQuery("")}>
+                      <strong>{result.label}</strong>
+                      <small>{result.detail}</small>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
 
       <div aria-live="polite" className={`connectivity ${isOnline ? "is-online" : "is-offline"}`}>

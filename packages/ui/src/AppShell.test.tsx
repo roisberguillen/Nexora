@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { AppShell } from "./AppShell";
 
 describe("AppShell", () => {
-  it("espone landmark, navigazione italiana e ricerca non ancora attiva", () => {
+  it("espone landmark, navigazione italiana e ricerca locale", () => {
     render(
       <AppShell>
         <h1>Contenuto di prova</h1>
@@ -15,7 +15,7 @@ describe("AppShell", () => {
     expect(screen.getByRole("navigation", { name: "Navigazione principale" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Nexora/i })).toBeInTheDocument();
     expect(screen.getByRole("main")).toHaveTextContent("Contenuto di prova");
-    expect(screen.getByRole("searchbox", { name: "Ricerca globale" })).toBeDisabled();
+    expect(screen.getByRole("searchbox", { name: "Ricerca globale" })).toBeEnabled();
     expect(screen.getByRole("link", { name: "Movimenti" })).toHaveAttribute(
       "href",
       "./#transactions",

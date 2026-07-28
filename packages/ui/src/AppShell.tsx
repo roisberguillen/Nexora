@@ -1,13 +1,19 @@
 import { type PropsWithChildren, useEffect, useState } from "react";
 
 import { SidebarNavigation, type NavigationRoute } from "./SidebarNavigation";
+import type { GlobalSearchResult } from "./GlobalSearch";
 import { TopHeader } from "./TopHeader";
 
 interface AppShellProps extends PropsWithChildren {
   readonly activeRoute?: NavigationRoute;
+  readonly searchResults?: readonly GlobalSearchResult[];
 }
 
-export function AppShell({ activeRoute = "overview", children }: AppShellProps) {
+export function AppShell({
+  activeRoute = "overview",
+  children,
+  searchResults = [],
+}: AppShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
@@ -78,6 +84,7 @@ export function AppShell({ activeRoute = "overview", children }: AppShellProps) 
           onToggleNavigation={() => {
             setIsNavigationOpen((isOpen) => !isOpen);
           }}
+          searchResults={searchResults}
         />
         <main className="main-content" id="main-content" tabIndex={-1}>
           {children}

@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Aggiunta la ricerca globale offline per conti, categorie, tag e movimenti, con risultati
+  navigabili e test E2E responsive.
+
 - Aggiunto il modello di split persistenti con migrazione SQLite/IndexedDB v2 e controlli
   di integrità su totale, segno, valuta e categoria.
 
