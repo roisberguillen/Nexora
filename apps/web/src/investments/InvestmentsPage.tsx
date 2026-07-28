@@ -49,7 +49,7 @@ export function InvestmentsPage({
         <div>
           <p className="eyebrow">Patrimonio investito</p>
           <h1>Investimenti</h1>
-          <p>Registra costo e valore corrente delle posizioni, anche del conto Directa.</p>
+          <p>Registra costo e valore corrente delle posizioni del tuo conto investimento.</p>
         </div>
       </header>
       <div className="accounts-layout has-editor">

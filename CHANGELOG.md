@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Completata la vertical slice Budget, Prestiti e Investimenti: budget mensili con soglie,
+  posizioni Findomestic/Agos configurabili, valutazioni investimento e dashboard di debiti
+  e rendimento.
+- Aggiunte migrazioni additive SQLite/IndexedDB v7-v9 per budget, prestiti e posizioni
+  investimento, con test adapter e riapertura.
+
 - Completata la vertical slice Ricorrenze e allocazioni: regole mensili persistenti,
   policy stipendio italiana, piani di trasferimento per stipendio/reddito fotografico e
   conferma esplicita prima di ogni scrittura nel ledger.

@@ -86,8 +86,16 @@ delle righe duplicate e delle righe da revisionare.
 Completata il 2026-07-28. Le allocazioni sono configurabili: gli importi €170 e €60
 restano esempi da impostare sui conti effettivi dell'utente e non vengono precompilati.
 
-## Milestone 6 — Budget, prestiti e investimenti
-Soglie, Findomestic/Agos, dashboard debiti, performance investimenti.
+## Milestone 6 — Budget, prestiti e investimenti ✅
+
+- [x] Budget mensili globali o per categoria, con soglie 80%/100% calcolate dalle sole
+  spese contabilizzate.
+- [x] Prestiti persistenti con rata, capitale residuo/originario, scadenza e progresso.
+- [x] Posizioni di investimento manuali con capitale, valore corrente e rendimento.
+- [x] Dashboard con debito residuo e valore/rendimento degli investimenti separati dai flussi.
+
+Completata il 2026-07-28. Migrazioni additive v7-v9 e upgrade IndexedDB equivalenti
+conservano tutti i record esistenti.
 
 ## Milestone 7 — Importatori bancari
 Mediobanca XLSX, N26 PDF, riconoscimento trasferimenti e revisione.

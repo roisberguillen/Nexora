@@ -65,11 +65,17 @@ in saldi, report o storico finché l'utente non ne conferma l'esecuzione.
 ### Budget
 `id, period, categoryId?, amountMinor, alert80, alert100`
 
+I budget considerano soltanto `expense` contabilizzate per il periodo e la categoria;
+entrate, trasferimenti, rettifiche e annullamenti non incidono sul consumo.
+
 ### Loan
 `id, accountId, lender, originalPrincipalMinor?, remainingPrincipalMinor, installmentMinor, installmentsPaid?, installmentsRemaining?, nextDueDate?`
 
 ### InvestmentPosition
 `id, accountId, symbol?, name, units?, costBasisMinor, currentValueMinor, valuationDate`
+
+Il rendimento è derivato come `currentValue - costBasis`; la percentuale è una vista,
+non un valore monetario persistito.
 
 ### SavingsGoal
 `id, accountId?, name, targetMinor, currentMinor, targetDate?`
@@ -119,9 +125,12 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
   conto; le foreign key collegano batch, righe e transazioni.
 - v5: `recurring_rules` per template mensili con data attesa e weekend policy;
 - v6: `allocation_plans` per proposte di trasferimento confermabili fra conti.
+- v7: `budgets` per limiti mensili globali o di categoria;
+- v8: `loans` per capitale residuo, rata e scadenza;
+- v9: `investment_positions` per valutazioni manuali di portafoglio.
 
 IndexedDB usa gli object store equivalenti fino a `recurring_rules` e `allocation_plans`,
-con indici per scadenza, conto e trigger; l'upgrade è alla versione 6 e conserva gli
+con indici per scadenza, conto e trigger; l'upgrade è alla versione 9 e conserva gli
 store e i record esistenti.
 
 Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite

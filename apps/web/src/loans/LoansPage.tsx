@@ -75,7 +75,7 @@ export function LoansPage({
           {loans.length === 0 ? (
             <div className="account-list-empty">
               <h3>Nessun prestito</h3>
-              <p>Registra Findomestic, Agos o un altro finanziamento.</p>
+              <p>Registra un finanziamento per iniziare a monitorarne il residuo.</p>
             </div>
           ) : (
             <ul className="account-list">
@@ -128,7 +128,7 @@ export function LoansPage({
             </label>
             <label>
               Finanziaria
-              <input name="lender" placeholder="Findomestic" required />
+              <input name="lender" placeholder="Finanziaria" required />
             </label>
             <label>
               Rata mensile

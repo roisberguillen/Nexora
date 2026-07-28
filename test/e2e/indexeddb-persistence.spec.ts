@@ -54,8 +54,8 @@ test("IndexedDB conserva i dati dopo la riapertura", async ({ page }, testInfo) 
 
     expect(result).toEqual({
       amountMinor: "900719925474099312345678901234567890",
-      firstSchemaVersion: 6,
-      reopenedSchemaVersion: 6,
+      firstSchemaVersion: 9,
+      reopenedSchemaVersion: 9,
       storageKind: "indexeddb",
     });
   } finally {

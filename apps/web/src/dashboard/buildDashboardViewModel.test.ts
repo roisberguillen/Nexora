@@ -101,14 +101,14 @@ describe("buildDashboardViewModel", () => {
   it("espone separatamente debiti e rendimento degli investimenti", () => {
     const account = Account.create({
       id: "investment",
-      name: "Directa",
+      name: "Conto investimento sintetico",
       type: "investment",
       currency: "EUR",
     });
     const loan = Loan.create({
       id: "loan",
       accountId: "loan-account",
-      lender: "Agos",
+      lender: "Finanziaria sintetica",
       installment: Money.fromMinor(7_200n, "EUR"),
       remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
     });
