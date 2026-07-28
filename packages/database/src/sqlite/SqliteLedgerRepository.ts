@@ -8,6 +8,9 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
+  RecurringRule,
+  LocalDate,
+  Money,
   validateImportCommit,
   Transfer,
   type TransferBundle,
@@ -36,7 +39,7 @@ import {
 import { PersistenceError } from "./PersistenceError";
 import type { SqliteDatabase } from "./SqliteDatabase";
 
-type EntityTable = "accounts" | "categories" | "transactions" | "transfers";
+type EntityTable = "accounts" | "categories" | "transactions" | "transfers" | "recurring_rules";
 
 const accountColumns = `
   id,
@@ -265,6 +268,52 @@ export class SqliteLedgerRepository implements LedgerRepository {
             tag.name,
             tag.isArchived ? 1 : 0,
           ]);
+        }),
+      ),
+    );
+  }
+  public saveRecurringRule(rule: RecurringRule): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          await this.assertNew("recurring_rules", rule.id, "Recurring rule");
+          await this.validateRecurringRuleReferences(rule);
+          await this.insertRecurringRule(rule);
+        }),
+      ),
+    );
+  }
+  public updateRecurringRule(rule: RecurringRule): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const existing = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM recurring_rules WHERE id = ?",
+            [rule.id],
+          );
+          if (existing.length === 0)
+            throw new DomainError("missing_reference", "Recurring rule does not exist.");
+          await this.validateRecurringRuleReferences(rule);
+          const record = recurringRuleToRecord(rule);
+          await this.database.run(
+            "UPDATE recurring_rules SET name = ?, kind = ?, account_id = ?, amount_minor = ?, currency = ?, category_id = ?, payee = ?, frequency = ?, interval_months = ?, nominal_day = ?, weekend_policy = ?, next_expected_date = ?, enabled = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+            [
+              record.name,
+              record.kind,
+              record.account_id,
+              record.amount_minor,
+              record.currency,
+              record.category_id,
+              record.payee,
+              record.frequency,
+              record.interval_months,
+              record.nominal_day,
+              record.weekend_policy,
+              record.next_expected_date,
+              record.enabled,
+              record.id,
+            ],
+          );
         }),
       ),
     );
@@ -855,6 +904,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(importBatchFromRecord),
     );
   }
+  public async listRecurringRules(): Promise<readonly RecurringRule[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<RecurringRuleRecord>(
+          "SELECT id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled FROM recurring_rules ORDER BY next_expected_date, id",
+        )
+      ).map(recurringRuleFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);
@@ -932,6 +990,48 @@ export class SqliteLedgerRepository implements LedgerRepository {
         );
       }
     }
+  }
+  private async validateRecurringRuleReferences(rule: RecurringRule): Promise<void> {
+    const account = await this.findAccountByIdInternal(rule.accountId);
+    if (account === undefined || account.isArchived)
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule account does not exist or is archived.",
+      );
+    if (account.currency !== rule.amount.currency)
+      throw new DomainError(
+        "currency_mismatch",
+        "Recurring rule currency does not match the account.",
+      );
+    if (rule.categoryId === undefined) return;
+    const category = await this.findCategoryByIdInternal(rule.categoryId);
+    if (category === undefined || category.isArchived || !category.accepts(rule.kind))
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule category does not exist or is incompatible.",
+      );
+  }
+  private async insertRecurringRule(rule: RecurringRule): Promise<void> {
+    const record = recurringRuleToRecord(rule);
+    await this.database.run(
+      "INSERT INTO recurring_rules (id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        record.id,
+        record.name,
+        record.kind,
+        record.account_id,
+        record.amount_minor,
+        record.currency,
+        record.category_id,
+        record.payee,
+        record.frequency,
+        record.interval_months,
+        record.nominal_day,
+        record.weekend_policy,
+        record.next_expected_date,
+        record.enabled,
+      ],
+    );
   }
 
   private insertTransaction(transaction: Transaction): Promise<void> {
@@ -1023,6 +1123,58 @@ interface ImportBatchRecord {
   readonly rows_imported: number;
   readonly rows_skipped: number;
   readonly rows_failed: number;
+}
+
+interface RecurringRuleRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly kind: "income" | "expense";
+  readonly account_id: string;
+  readonly amount_minor: string;
+  readonly currency: string;
+  readonly category_id: string | null;
+  readonly payee: string | null;
+  readonly frequency: "monthly";
+  readonly interval_months: number;
+  readonly nominal_day: number;
+  readonly weekend_policy: "none" | "salary_italy";
+  readonly next_expected_date: string;
+  readonly enabled: number;
+}
+function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
+  return {
+    id: rule.id,
+    name: rule.name,
+    kind: rule.kind,
+    account_id: rule.accountId,
+    amount_minor: rule.amount.amountMinor.toString(),
+    currency: rule.amount.currency,
+    category_id: rule.categoryId ?? null,
+    payee: rule.payee ?? null,
+    frequency: rule.frequency,
+    interval_months: rule.interval,
+    nominal_day: rule.nominalDay,
+    weekend_policy: rule.weekendPolicy,
+    next_expected_date: rule.nextExpectedDate.toString(),
+    enabled: rule.enabled ? 1 : 0,
+  };
+}
+function recurringRuleFromRecord(row: RecurringRuleRecord): RecurringRule {
+  return RecurringRule.create({
+    id: row.id,
+    name: row.name,
+    kind: row.kind,
+    accountId: row.account_id,
+    amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
+    ...(row.category_id === null ? {} : { categoryId: row.category_id }),
+    ...(row.payee === null ? {} : { payee: row.payee }),
+    frequency: row.frequency,
+    interval: row.interval_months,
+    nominalDay: row.nominal_day,
+    weekendPolicy: row.weekend_policy,
+    nextExpectedDate: LocalDate.parse(row.next_expected_date),
+    enabled: row.enabled === 1,
+  });
 }
 interface ImportRowRecord {
   readonly id: string;

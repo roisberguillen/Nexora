@@ -7,6 +7,7 @@ import {
   ImportRow,
   LocalDate,
   Money,
+  RecurringRule,
   Tag,
   Transaction,
   Transfer,
@@ -459,5 +460,24 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toMatchObject({
       status: "cancelled",
     });
+  });
+
+  it("persiste una ricorrenza dopo la riapertura", async () => {
+    const savedAccount = account("account-recurring");
+    await ledger.repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-idb",
+      name: "Stipendio",
+      kind: "income",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(250_000n, "EUR"),
+      nominalDay: 28,
+      weekendPolicy: "salary_italy",
+      nextExpectedDate: LocalDate.parse("2026-07-28"),
+    });
+    await ledger.repository.saveRecurringRule(rule);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
   });
 });

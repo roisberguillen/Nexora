@@ -10,6 +10,7 @@ import {
   type Tag,
   type ImportBatch,
   type ImportRow,
+  type RecurringRule,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -24,6 +25,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly transactionTags = new Map<string, Set<string>>();
   private readonly importBatches = new Map<string, ImportBatch>();
   private readonly importRows = new Map<string, ImportRow>();
+  private readonly recurringRules = new Map<string, RecurringRule>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -93,6 +95,17 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async saveTag(tag: Tag): Promise<void> {
     this.assertNew(this.tags, tag.id, "Tag");
     this.tags.set(tag.id, tag);
+  }
+  public async saveRecurringRule(rule: RecurringRule): Promise<void> {
+    this.assertNew(this.recurringRules, rule.id, "Recurring rule");
+    this.validateRecurringRuleReferences(rule);
+    this.recurringRules.set(rule.id, rule);
+  }
+  public async updateRecurringRule(rule: RecurringRule): Promise<void> {
+    if (!this.recurringRules.has(rule.id))
+      throw new DomainError("missing_reference", "Recurring rule does not exist.");
+    this.validateRecurringRuleReferences(rule);
+    this.recurringRules.set(rule.id, rule);
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -352,6 +365,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async listImportBatches(): Promise<readonly ImportBatch[]> {
     return [...this.importBatches.values()];
   }
+  public async listRecurringRules(): Promise<readonly RecurringRule[]> {
+    return [...this.recurringRules.values()].sort((left, right) =>
+      left.nextExpectedDate.toString().localeCompare(right.nextExpectedDate.toString()),
+    );
+  }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {
     if (collection.has(id)) {
@@ -383,6 +401,26 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         );
       }
     }
+  }
+  private validateRecurringRuleReferences(rule: RecurringRule): void {
+    const account = this.accounts.get(rule.accountId);
+    if (account === undefined || account.isArchived)
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule account does not exist or is archived.",
+      );
+    if (account.currency !== rule.amount.currency)
+      throw new DomainError(
+        "currency_mismatch",
+        "Recurring rule currency does not match the account.",
+      );
+    if (rule.categoryId === undefined) return;
+    const category = this.categories.get(rule.categoryId);
+    if (category === undefined || category.isArchived || !category.accepts(rule.kind))
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule category does not exist or is incompatible.",
+      );
   }
 
   private isTransferLeg(transactionId: string): boolean {

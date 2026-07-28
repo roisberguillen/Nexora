@@ -13,6 +13,7 @@ import {
   ImportRow,
   LocalDate,
   Money,
+  RecurringRule,
   Tag,
   Transaction,
   Transfer,
@@ -451,5 +452,25 @@ describe("SqliteLedgerRepository", () => {
     await expect(repository.findImportBatchById(batch.id)).resolves.toMatchObject({
       status: "undone",
     });
+  });
+
+  it("persiste e aggiorna una ricorrenza mensile", async () => {
+    const savedAccount = account("account-recurring");
+    await repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-sqlite",
+      name: "Stipendio",
+      kind: "income",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(250_000n, "EUR"),
+      nominalDay: 28,
+      weekendPolicy: "salary_italy",
+      nextExpectedDate: LocalDate.parse("2026-07-28"),
+    });
+    await repository.saveRecurringRule(rule);
+    await expect(repository.listRecurringRules()).resolves.toEqual([rule]);
+    const disabled = RecurringRule.create({ ...rule, enabled: false });
+    await repository.updateRecurringRule(disabled);
+    await expect(repository.listRecurringRules()).resolves.toEqual([disabled]);
   });
 });

@@ -8,6 +8,9 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
+  RecurringRule,
+  LocalDate,
+  Money,
   validateImportCommit,
   type Transfer,
   type TransferBundle,
@@ -47,7 +50,8 @@ type EntityStore =
   | "tags"
   | "transaction_tags"
   | "import_batches"
-  | "import_rows";
+  | "import_rows"
+  | "recurring_rules";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -166,6 +170,39 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           await this.assertNew(tags, tag.id, "Tag");
           await requestResult(tags.add(tagToRecord(tag)));
         }),
+      ),
+    );
+  }
+  public saveRecurringRule(rule: RecurringRule): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["accounts", "categories", "recurring_rules"],
+          "readwrite",
+          async (transaction) => {
+            const rules = transaction.objectStore("recurring_rules");
+            await this.assertNew(rules, rule.id, "Recurring rule");
+            await this.validateRecurringRuleReferences(transaction, rule);
+            await requestResult(rules.add(recurringRuleToRecord(rule)));
+          },
+        ),
+      ),
+    );
+  }
+  public updateRecurringRule(rule: RecurringRule): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["accounts", "categories", "recurring_rules"],
+          "readwrite",
+          async (transaction) => {
+            const rules = transaction.objectStore("recurring_rules");
+            if ((await requestResult<unknown>(rules.get(rule.id))) === undefined)
+              throw new DomainError("missing_reference", "Recurring rule does not exist.");
+            await this.validateRecurringRuleReferences(transaction, rule);
+            await requestResult(rules.put(recurringRuleToRecord(rule)));
+          },
+        ),
       ),
     );
   }
@@ -692,6 +729,22 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listRecurringRules(): Promise<readonly RecurringRule[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["recurring_rules"], "readonly", async (transaction) => {
+          const rows = await requestResult<unknown[]>(
+            transaction.objectStore("recurring_rules").getAll(),
+          );
+          return rows
+            .map((row) => recurringRuleFromRecord(row as RecurringRuleRecord))
+            .sort((left, right) =>
+              left.nextExpectedDate.toString().localeCompare(right.nextExpectedDate.toString()),
+            );
+        }),
+      ),
+    );
+  }
 
   public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
     return this.enqueue(() =>
@@ -896,6 +949,40 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       }
     }
   }
+  private async validateRecurringRuleReferences(
+    transaction: IDBTransaction,
+    rule: RecurringRule,
+  ): Promise<void> {
+    const account = await this.findAccountInStore(
+      transaction.objectStore("accounts"),
+      rule.accountId,
+    );
+    if (account === undefined || account.isArchived)
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule account does not exist or is archived.",
+      );
+    if (account.currency !== rule.amount.currency)
+      throw new DomainError(
+        "currency_mismatch",
+        "Recurring rule currency does not match the account.",
+      );
+    if (rule.categoryId === undefined) return;
+    const record = await requestResult<unknown>(
+      transaction.objectStore("categories").get(rule.categoryId),
+    );
+    if (record === undefined)
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule category does not exist or is incompatible.",
+      );
+    const category = categoryFromRecord(record as CategoryRecord);
+    if (category.isArchived || !category.accepts(rule.kind))
+      throw new DomainError(
+        "missing_reference",
+        "Recurring rule category does not exist or is incompatible.",
+      );
+  }
 
   private async findAccountInStore(
     store: IDBObjectStore,
@@ -924,6 +1011,58 @@ interface ImportBatchRecord {
   readonly rows_imported: number;
   readonly rows_skipped: number;
   readonly rows_failed: number;
+}
+
+interface RecurringRuleRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly kind: "income" | "expense";
+  readonly account_id: string;
+  readonly amount_minor: string;
+  readonly currency: string;
+  readonly category_id?: string;
+  readonly payee?: string;
+  readonly frequency: "monthly";
+  readonly interval_months: number;
+  readonly nominal_day: number;
+  readonly weekend_policy: "none" | "salary_italy";
+  readonly next_expected_date: string;
+  readonly enabled: boolean;
+}
+function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
+  return {
+    id: rule.id,
+    name: rule.name,
+    kind: rule.kind,
+    account_id: rule.accountId,
+    amount_minor: rule.amount.amountMinor.toString(),
+    currency: rule.amount.currency,
+    ...(rule.categoryId === undefined ? {} : { category_id: rule.categoryId }),
+    ...(rule.payee === undefined ? {} : { payee: rule.payee }),
+    frequency: rule.frequency,
+    interval_months: rule.interval,
+    nominal_day: rule.nominalDay,
+    weekend_policy: rule.weekendPolicy,
+    next_expected_date: rule.nextExpectedDate.toString(),
+    enabled: rule.enabled,
+  };
+}
+function recurringRuleFromRecord(row: RecurringRuleRecord): RecurringRule {
+  return RecurringRule.create({
+    id: row.id,
+    name: row.name,
+    kind: row.kind,
+    accountId: row.account_id,
+    amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
+    ...(row.category_id === undefined ? {} : { categoryId: row.category_id }),
+    ...(row.payee === undefined ? {} : { payee: row.payee }),
+    frequency: row.frequency,
+    interval: row.interval_months,
+    nominalDay: row.nominal_day,
+    weekendPolicy: row.weekend_policy,
+    nextExpectedDate: LocalDate.parse(row.next_expected_date),
+    enabled: row.enabled,
+  });
 }
 interface ImportRowRecord {
   readonly id: string;

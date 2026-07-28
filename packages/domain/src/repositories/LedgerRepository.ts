@@ -6,6 +6,7 @@ import type { TransactionSplit } from "../entities/TransactionSplit";
 import type { Tag } from "../entities/Tag";
 import type { ImportBatch } from "../entities/ImportBatch";
 import type { ImportRow } from "../entities/ImportRow";
+import type { RecurringRule } from "../entities/RecurringRule";
 
 export interface TransferBundle {
   readonly transfer: Transfer;
@@ -20,6 +21,8 @@ export interface LedgerRepository {
   saveCategory(category: Category): Promise<void>;
   updateCategory(category: Category): Promise<void>;
   saveTag(tag: Tag): Promise<void>;
+  saveRecurringRule(rule: RecurringRule): Promise<void>;
+  updateRecurringRule(rule: RecurringRule): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
   commitImportBatch(
     batch: ImportBatch,
@@ -56,4 +59,5 @@ export interface LedgerRepository {
   listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]>;
   listImportRows(batchId: string): Promise<readonly ImportRow[]>;
   listImportBatches(): Promise<readonly ImportBatch[]>;
+  listRecurringRules(): Promise<readonly RecurringRule[]>;
 }
