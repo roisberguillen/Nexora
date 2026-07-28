@@ -90,6 +90,7 @@ describe("IndexedDbLedgerRepository", () => {
       "import_batches",
       "import_rows",
       "metadata",
+      "recurring_rules",
       "tags",
       "transaction_splits",
       "transaction_tags",
@@ -111,7 +112,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 4 });
+    expect(metadata).toEqual({ key: "schema_version", value: 5 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -359,7 +360,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(4);
+    expect(ledger.schemaVersion).toBe(5);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );

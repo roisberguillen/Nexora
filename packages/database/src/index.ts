@@ -58,6 +58,10 @@ export {
   IMPORT_BATCHES_SCHEMA_VERSION,
   importBatchesMigration,
 } from "./migrations/0004-import-batches";
+export {
+  RECURRING_RULES_SCHEMA_VERSION,
+  recurringRulesMigration,
+} from "./migrations/0005-recurring-rules";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

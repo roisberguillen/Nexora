@@ -535,7 +535,7 @@
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
       "size": 7940,
-      "sha256": "1a60a3852d2cf253d04d11b7bf96d3e0d8ab7b439b5336eab69fbfa80df3313d"
+      "sha256": "9222e115bdd894ff06315f394b4c160099f9385a1dfeadf861ea59a2f230fd01"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
@@ -569,13 +569,13 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 3072,
-      "sha256": "dd15f6dd4d043d07caea52926a0e2564ffb8b082103db910ef7109bfb2a857db"
+      "size": 3186,
+      "sha256": "ab4ecd70fdca6b134d572a2eb80a40952cca2339a4d835e2e5873968d0fb2c17"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 16003,
-      "sha256": "1f016d3e6a21f838b095c454b3c94bff7101ef7015bde859aef574fa9c388dac"
+      "size": 16028,
+      "sha256": "67dc3bd6856969196a87701028acd36aeb53450fe99b1bb2e2841c60cc7e5da6"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
@@ -584,8 +584,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 7353,
-      "sha256": "8e4138aed73dfd522d3d81eed8ab7c3e916dd7f112c3919837162bf0d1da526d"
+      "size": 7909,
+      "sha256": "40b5113a655117745ff81194ba67176333442f875207e7bb841be4e5cc627023"
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.test.ts",
@@ -594,8 +594,8 @@
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
-      "size": 9253,
-      "sha256": "116a574a75a54a572cbacc3d82e942a9f4a70872a1cc7f782d4b49cd0541ff1a"
+      "size": 9346,
+      "sha256": "9c43ea974a4f370c89a274714237659ae6c71f8947759568440f72829b0760ce"
     },
     {
       "path": "packages/database/src/migrations/0002-transaction-splits.ts",
@@ -611,6 +611,11 @@
       "path": "packages/database/src/migrations/0004-import-batches.ts",
       "size": 2470,
       "sha256": "7c0212e3d1295bb2f7134b327d4dce1fb644ed532957206a5d0449c8eca02439"
+    },
+    {
+      "path": "packages/database/src/migrations/0005-recurring-rules.ts",
+      "size": 2111,
+      "sha256": "e9143b478d728abcd11107c9a00de7cb60a33c558c8191318bf666859284766b"
     },
     {
       "path": "packages/database/src/migrations/DatabaseMigration.ts",
@@ -629,8 +634,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 8574,
-      "sha256": "ce36f7a3968d1e6f09fd6862a6fa2c0d099e26e7908e04850b7c7a8d9824ba9b"
+      "size": 8647,
+      "sha256": "e0288f34e4f7e5c93d6d55da8ff6959fad8f592d5cc6c9b0ae75053df51c0c39"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -700,7 +705,7 @@
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
       "size": 15436,
-      "sha256": "c7bbbfa4565351bee84f5c89ad04d098cde924547f40d145cc4a2084ad6f2176"
+      "sha256": "57503ef43ddd2b0e2c1a2716a20dfa9824b32fd57d80fbb9466f4fe1d3412d8e"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
@@ -1060,7 +1065,7 @@
     {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2201,
-      "sha256": "2bf7aa917ae479d38ab80d46919d909f518c9df956e172f358443b80a3e150f5"
+      "sha256": "77600700a585e3c8e98905b728f530e1e7c3e00fcf56ced0cdf8b6eb00d72b43"
     },
     {
       "path": "test/e2e/categories.spec.ts",
@@ -1105,17 +1110,17 @@
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
       "size": 1807,
-      "sha256": "0d14c4b3f558f2315108366bf0392ea31cfae652fc090cceb5a85050f7b4e0ca"
+      "sha256": "e1a6f4aed2f38a7de9ea523f06d79040a0c278baf6b12e635da2ea7c25b35c09"
     },
     {
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1792,
-      "sha256": "e7712c211628dad9d7d1815b38107d6ff0a0fd89d46a7467dc88c20579786d30"
+      "sha256": "b52e1f86d9f4b98361ef8551820b8b5a18e1a16e78c609342bc8abeaa9564010"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4637,
-      "sha256": "9fb4b322c9620a37a49552c0fdc8e55b0935a582a2cd868bae12aa90f4e53dc9"
+      "sha256": "4043e7461d11406e78c82087fa926ee32b282daac954b41073a40e8b0df0e59c"
     },
     {
       "path": "test/e2e/tags.spec.ts",
