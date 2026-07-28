@@ -1,6 +1,16 @@
 // @vitest-environment node
 
-import { Account, Category, LocalDate, Money, Tag, Transaction, Transfer } from "@nexora/domain";
+import {
+  Account,
+  Category,
+  ImportBatch,
+  ImportRow,
+  LocalDate,
+  Money,
+  Tag,
+  Transaction,
+  Transfer,
+} from "@nexora/domain";
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -376,5 +386,25 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.listAccounts()).rejects.toMatchObject({
       code: "persistence_closed",
     });
+  });
+
+  it("persiste batch e righe auditabili", async () => {
+    const batch = ImportBatch.create({
+      id: "batch-idb",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256: "a".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-idb",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "needs_review",
+    });
+    await ledger.repository.saveImportBatch(batch, [row]);
+    await expect(ledger.repository.findImportBatchById(batch.id)).resolves.toEqual(batch);
+    await expect(ledger.repository.listImportRows(batch.id)).resolves.toEqual([row]);
   });
 });

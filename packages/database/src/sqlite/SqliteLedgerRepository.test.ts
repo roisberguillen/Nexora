@@ -6,7 +6,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import { Account, Category, LocalDate, Money, Tag, Transaction, Transfer } from "@nexora/domain";
+import {
+  Account,
+  Category,
+  ImportBatch,
+  ImportRow,
+  LocalDate,
+  Money,
+  Tag,
+  Transaction,
+  Transfer,
+} from "@nexora/domain";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { SqliteDatabase, SqliteValue } from "./SqliteDatabase";
@@ -378,5 +388,25 @@ describe("SqliteLedgerRepository", () => {
       secondConnection?.close();
       rmSync(databasePath, { force: true });
     }
+  });
+
+  it("persiste batch e righe auditabili", async () => {
+    const batch = ImportBatch.create({
+      id: "batch-sqlite",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256: "a".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-sqlite",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "needs_review",
+    });
+    await repository.saveImportBatch(batch, [row]);
+    await expect(repository.findImportBatchById(batch.id)).resolves.toEqual(batch);
+    await expect(repository.listImportRows(batch.id)).resolves.toEqual([row]);
   });
 });
