@@ -5,6 +5,7 @@ import {
   LocalDate,
   Money,
   Transaction,
+  TransactionSplit,
   Transfer,
 } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
@@ -192,6 +193,57 @@ describe("InMemoryLedgerRepository", () => {
     await expect(repository.findTransactionById(creditTransaction.id)).resolves.toMatchObject({
       status: "cancelled",
     });
+  });
+
+  it("salva atomicamente una spesa ripartita e rifiuta categorie archiviate", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(account("split-account"));
+    await repository.saveCategory(
+      Category.create({ id: "split-food", name: "Cibo", kindScope: "expense" }),
+    );
+    await repository.saveCategory(
+      Category.create({
+        id: "split-archived",
+        name: "Archivio",
+        kindScope: "expense",
+        isArchived: true,
+      }),
+    );
+    const transaction = Transaction.create({
+      id: "split-expense",
+      kind: "expense",
+      status: "booked",
+      accountId: "split-account",
+      amount: Money.fromMinor(-1000n, "EUR"),
+      bookedDate,
+    });
+    const valid = TransactionSplit.create({
+      id: "split-valid",
+      transactionId: transaction.id,
+      categoryId: "split-food",
+      amount: Money.fromMinor(-1000n, "EUR"),
+    });
+    await repository.saveTransactionWithSplits(transaction, [valid]);
+    await expect(repository.listTransactionSplits(transaction.id)).resolves.toEqual([valid]);
+    const rejected = Transaction.create({
+      id: "split-rejected",
+      kind: "expense",
+      status: "booked",
+      accountId: "split-account",
+      amount: Money.fromMinor(-10n, "EUR"),
+      bookedDate,
+    });
+    await expect(
+      repository.saveTransactionWithSplits(rejected, [
+        TransactionSplit.create({
+          id: "split-invalid",
+          transactionId: rejected.id,
+          categoryId: "split-archived",
+          amount: Money.fromMinor(-10n, "EUR"),
+        }),
+      ]),
+    ).rejects.toMatchObject({ code: "invalid_category" });
+    await expect(repository.findTransactionById(rejected.id)).resolves.toBeUndefined();
   });
 
   it("aggiorna i campi mutabili e protegge il saldo iniziale dopo i movimenti", async () => {
