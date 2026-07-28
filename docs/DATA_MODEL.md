@@ -85,8 +85,10 @@ non un valore monetario persistito.
 
 Nella Milestone 4 un batch procede da `previewed` a `committed` oppure `undone`. Il commit
 è valido soltanto se tutte le righe sono presenti: ogni riga `imported` corrisponde a una
-sola Transaction con `source=import`, `importBatchId` e fingerprint, mentre duplicate e
-righe da revisionare restano nell'audit senza creare movimenti.
+Transaction con `source=import`, `importBatchId` e fingerprint. Una riga confermata come
+trasferimento può materializzare due gambe collegate: l'audit punta alla gamba presente
+nell'estratto e il repository conserva atomicamente anche la contro-gamba. Duplicate e righe
+da revisionare restano nell'audit senza creare movimenti.
 
 ### ImportRow
 `id, batchId, rowNumber, rawJson, normalizedJson?, status, errorCode?, createdTransactionId?`
