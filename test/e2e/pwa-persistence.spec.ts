@@ -52,7 +52,7 @@ test("IndexedDB già selezionato resta stabile e disponibile offline", async ({
 
 async function expectReadyLedger(page: Page, storageHeading: string): Promise<void> {
   await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
-  await expect(page.getByLabel("Stato archivio")).toContainText(`${storageHeading}·Schema 3`);
+  await expect(page.getByLabel("Stato archivio")).toContainText(`${storageHeading}·Schema 4`);
 }
 
 async function expectSeedCounts(page: Page, netWorth: string): Promise<void> {

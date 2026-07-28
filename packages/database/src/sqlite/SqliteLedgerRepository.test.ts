@@ -443,5 +443,13 @@ describe("SqliteLedgerRepository", () => {
       status: "committed",
     });
     await expect(repository.findTransactionById(transaction.id)).resolves.toEqual(transaction);
+    await expect(repository.undoImportBatch(batch.id)).resolves.toMatchObject({ status: "undone" });
+    await expect(repository.findTransactionById(transaction.id)).resolves.toMatchObject({
+      status: "cancelled",
+      importBatchId: batch.id,
+    });
+    await expect(repository.findImportBatchById(batch.id)).resolves.toMatchObject({
+      status: "undone",
+    });
   });
 });

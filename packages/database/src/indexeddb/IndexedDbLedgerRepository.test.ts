@@ -443,5 +443,20 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toEqual(
       transaction,
     );
+    await expect(ledger.repository.undoImportBatch(batch.id)).resolves.toMatchObject({
+      status: "undone",
+    });
+    await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toMatchObject({
+      status: "cancelled",
+      importBatchId: batch.id,
+    });
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.findImportBatchById(batch.id)).resolves.toMatchObject({
+      status: "undone",
+    });
+    await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toMatchObject({
+      status: "cancelled",
+    });
   });
 });

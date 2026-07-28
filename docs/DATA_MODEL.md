@@ -71,6 +71,11 @@ Relazione molti-a-molti.
 ### ImportBatch
 `id, importerType, sourceFilename, sourceSha256, mappingProfileId?, status, startedAt, completedAt?, rowsTotal, rowsImported, rowsSkipped, rowsFailed`
 
+Nella Milestone 4 un batch procede da `previewed` a `committed` oppure `undone`. Il commit
+è valido soltanto se tutte le righe sono presenti: ogni riga `imported` corrisponde a una
+sola Transaction con `source=import`, `importBatchId` e fingerprint, mentre duplicate e
+righe da revisionare restano nell'audit senza creare movimenti.
+
 ### ImportRow
 `id, batchId, rowNumber, rawJson, normalizedJson?, status, errorCode?, createdTransactionId?`
 
@@ -83,7 +88,7 @@ Relazione molti-a-molti.
 - Importi immutabili dopo riconciliazione; correzioni tramite rettifica o audit event.
 - Un sourceFingerprint non può comparire due volte per lo stesso importer/account, salvo override esplicito.
 
-## Schema fisico SQLite v1
+## Schema fisico SQLite
 
 La prima migrazione della Milestone 2 materializza soltanto il dominio già disponibile:
 
@@ -98,7 +103,18 @@ decimali canoniche in colonne `TEXT`, perché SQLite limita `INTEGER` a 64 bit s
 Date locali, enum, valute, riferimenti, segni contabili e bundle di trasferimento sono
 protetti da vincoli o trigger. Ogni connessione deve abilitare le foreign key.
 
-Tag, batch di importazione, ricorrenze, budget, prestiti, investimenti, obiettivi e
-backup saranno introdotti tramite migrazioni versionate insieme alle rispettive
-milestone. La decisione completa è descritta in
+Le migrazioni additive successive mantengono invariati tutti i dati v1:
+
+- v2: `transaction_splits` con riferimenti, indici e vincoli per le ripartizioni;
+- v3: `tags` e `transaction_tags` per l'associazione molti-a-molti;
+- v4: `import_batches`, `import_rows`, `transactions.import_batch_id` e
+  `transactions.source_fingerprint`. L'indice parziale univoco
+  `(account_id, source_fingerprint)` blocca l'importazione della stessa riga nello stesso
+  conto; le foreign key collegano batch, righe e transazioni.
+
+IndexedDB usa gli object store equivalenti `import_batches` e `import_rows`, con indice
+per `batch_id`; l'upgrade è alla versione 4 e conserva gli store esistenti.
+
+Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite
+migrazioni versionate insieme alle rispettive milestone. La decisione completa è descritta in
 `docs/adr/0007-sqlite-core-schema-v1.md`.

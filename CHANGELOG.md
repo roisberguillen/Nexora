@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Completata la vertical slice Money Manager XLSX: dry-run conservativo, deduplica con
+  fingerprint SHA-256, commit atomico di batch/righe/movimenti e annullamento conservativo.
+- Aggiunta la migrazione additiva SQLite e IndexedDB v4 per `import_batches`, `import_rows`
+  e provenienza dei movimenti importati, senza alterare i dati degli schemi precedenti.
+- Aggiunto lo storico auditabile degli import con righe duplicate o da revisionare e test E2E
+  del caricamento, conferma e undo sui viewport 320/768/1440 px.
+
 - Aggiunta l'anteprima locale dei workbook XLSX Money Manager: lettura dei fogli,
   rilevamento delle intestazioni e normalizzazione conservativa di date/importi in
   minor units, senza scritture nel ledger.

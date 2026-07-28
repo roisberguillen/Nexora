@@ -60,6 +60,18 @@ Avanzamento:
 - [x] Normalizzazione conservativa di date e importi in minor units, con righe ambigue
   indirizzate alla revisione anziché importate.
 - [x] Schermata responsive per caricamento locale, scelta del foglio e correzione del mapping.
+- [x] Dry-run conservativo con risoluzione di conto/categoria, validazione della valuta e
+  righe ambigue mantenute fuori dal commit.
+- [x] Deduplica locale e persistente tramite fingerprint SHA-256 per conto e riga sorgente.
+- [x] Commit atomico del batch, delle righe auditabili e delle transazioni su SQLite/OPFS e
+  IndexedDB, con migrazione additiva v4.
+- [x] Storico locale dei batch e annullamento conservativo: le transazioni importate sono
+  annullate, mentre batch e righe restano auditabili.
+- [x] Test unitari, adapter, riapertura IndexedDB e flusso E2E completo su 320/768/1440 px.
+
+Completata il 2026-07-28. L’importatore Money Manager legge esclusivamente file locali,
+richiede una conferma esplicita per il commit e conserva un audit persistente dei batch,
+delle righe duplicate e delle righe da revisionare.
 
 ## Milestone 5 — Ricorrenze e allocazioni
 Stipendio giorno 28 con weekend policy, risparmio €170, Directa €60, redditi fotografici e conferme.

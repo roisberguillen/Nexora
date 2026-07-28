@@ -42,4 +42,44 @@ describe("commitMoneyManagerImport", () => {
     await expect(repository.listImportRows(batch.id)).resolves.toHaveLength(1);
     await expect(repository.listTransactions()).resolves.toHaveLength(1);
   });
+
+  it("conserva l'audit ma salta una riga gia importata dallo stesso file", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({ id: "account-1", name: "Conto demo", type: "checking", currency: "EUR" }),
+    );
+    const input = {
+      filename: "movimenti.xlsx",
+      sourceSha256: "b".repeat(64),
+      rows: [
+        {
+          accountId: "account-1",
+          categoryId: undefined,
+          kind: "expense" as const,
+          message: "Pronta",
+          preview: {
+            account: "Conto demo",
+            amountMinor: -1250n,
+            category: undefined,
+            currency: "EUR",
+            date: "2026-07-28",
+            message: "",
+            payee: "Cinema",
+            sourceRowNumber: 2,
+            status: "ready" as const,
+          },
+          status: "ready" as const,
+        },
+      ],
+    };
+
+    await commitMoneyManagerImport(repository, input, () => crypto.randomUUID());
+    const repeated = await commitMoneyManagerImport(repository, input, () => crypto.randomUUID());
+
+    expect(repeated).toMatchObject({ status: "committed", rowsImported: 0, rowsSkipped: 1 });
+    await expect(repository.listTransactions()).resolves.toHaveLength(1);
+    await expect(repository.listImportRows(repeated.id)).resolves.toMatchObject([
+      { status: "skipped_duplicate" },
+    ]);
+  });
 });

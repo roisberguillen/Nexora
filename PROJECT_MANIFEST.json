@@ -204,13 +204,13 @@
     },
     {
       "path": "apps/web/src/imports/importCommands.test.ts",
-      "size": 1471,
-      "sha256": "1483d95b865a9ed1c1a5bf5aa75c43d0057d39fd9dd4c76af25642f5fcdbe225"
+      "size": 2870,
+      "sha256": "d85ea5ec316ba303d784cf74b2da5473f460c45280d15b22b1528886a74cec67"
     },
     {
       "path": "apps/web/src/imports/importCommands.ts",
-      "size": 3353,
-      "sha256": "025f34aa6fc541c5add0f1e4eef3cd5dd87a2202857cba7a042662eed8c08910"
+      "size": 4125,
+      "sha256": "d7c353856cd90d6c8bcc65a2d5217adc3feb7bf4e5c0d07f9d3e154f4bd48cd1"
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
@@ -294,8 +294,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 6091,
-      "sha256": "39dcc40b7c1892e0f977f52aaaec28331bf437ae221c60d0fdf854a3597fbbef"
+      "size": 6610,
+      "sha256": "e87767789e3f4dfaddb45183056cd404e43c1fd6ddffbe026a2a55fde980cb18"
     },
     {
       "path": "design/mockup/README.md",
@@ -399,8 +399,8 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 4609,
-      "sha256": "bc441cbe037d957d78cbdd84419c5a808532c55dc57a85f2576f8e575fd9d667"
+      "size": 5590,
+      "sha256": "2ff8bdcc65de1780ecd379f6dd61ac3afdd16119d0d57f154fb5307b6525f3ac"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
@@ -429,8 +429,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 3986,
-      "sha256": "f7483725e4391a20a00bc5554e75ba262686968ab0bc9b71051954c9b7ac2f27"
+      "size": 4813,
+      "sha256": "e3d30658b15e7023d89152b186391d29794575df9fccb24064e28aa4699dd6a0"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -574,8 +574,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 15373,
-      "sha256": "582375b852575985abc910a5e04403e31f3a4d75ffa0be7de76aaca547ac6a2b"
+      "size": 16003,
+      "sha256": "1f016d3e6a21f838b095c454b3c94bff7101ef7015bde859aef574fa9c388dac"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
@@ -699,8 +699,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 15063,
-      "sha256": "ec527f6a58bf82111a543c108d40d6ff29412b42fbdfa11ba2f1d2326b07317f"
+      "size": 15436,
+      "sha256": "c7bbbfa4565351bee84f5c89ad04d098cde924547f40d145cc4a2084ad6f2176"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
@@ -1050,7 +1050,7 @@
     {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2201,
-      "sha256": "d3079d34c8977a07d28dceb5acdc558fc3c0baeb40a79ecf27466737b8634cfb"
+      "sha256": "2bf7aa917ae479d38ab80d46919d909f518c9df956e172f358443b80a3e150f5"
     },
     {
       "path": "test/e2e/categories.spec.ts",
@@ -1064,8 +1064,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 192566,
-      "sha256": "a5fc4ec025e0f944dd322fcaf6d6fd18431156daf0ed3ec0e1ebfba6d302bc02"
+      "size": 192350,
+      "sha256": "b54477a5d8101b7284736780df80accd3c67f4d2b530f5af3b708b51de32ed66"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
@@ -1089,23 +1089,23 @@
     },
     {
       "path": "test/e2e/imports.spec.ts",
-      "size": 481,
-      "sha256": "d879e51b769e736c21c3015ff29d8400883cb21959045c05b55cfe6e07b34ffe"
+      "size": 1981,
+      "sha256": "4136bda3ebb4d299780a67e119d1e10dd077df635bf631a2a256f35ae56f1be1"
     },
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
       "size": 1807,
-      "sha256": "1a88ed7c4e5c3675e3b5d06058734024e4671ae75a242cbd5b2317995baf9bfc"
+      "sha256": "0d14c4b3f558f2315108366bf0392ea31cfae652fc090cceb5a85050f7b4e0ca"
     },
     {
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1792,
-      "sha256": "bc3b1fe08d0f258a2a939f9af03a3291b7c36226c18b08716e5fbd8b86d04b68"
+      "sha256": "e7712c211628dad9d7d1815b38107d6ff0a0fd89d46a7467dc88c20579786d30"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4637,
-      "sha256": "16517423e0d1dad4277a3bea639bfd94a8aed26c3bcf4b1c7cd967c6ceb278f2"
+      "sha256": "9fb4b322c9620a37a49552c0fdc8e55b0935a582a2cd868bae12aa90f4e53dc9"
     },
     {
       "path": "test/e2e/tags.spec.ts",

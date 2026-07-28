@@ -51,8 +51,8 @@ test("SQLite WASM conserva i dati in OPFS dopo la riapertura", async ({ page }, 
 
     expect(result).toEqual({
       amountMinor: "900719925474099312345678901234567890",
-      firstMigrationVersion: 3,
-      reopenedFromVersion: 3,
+      firstMigrationVersion: 4,
+      reopenedFromVersion: 4,
       storageKind: "opfs",
     });
   } finally {
