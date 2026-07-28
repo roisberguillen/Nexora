@@ -2,7 +2,9 @@ import {
   detectMoneyManagerMapping,
   dryRunMoneyManagerRows,
   previewMoneyManagerRows,
+  readMediobancaWorkbook,
   readMoneyManagerWorkbook,
+  readN26Pdf,
   type DryRunStatus,
   type MoneyManagerField,
   type MoneyManagerDryRunRow,
@@ -54,13 +56,19 @@ export function ImportsPage({
   } | null>(null);
   const [isCommitting, setIsCommitting] = useState(false);
   const [isUndoing, setIsUndoing] = useState<string | null>(null);
+  const [fallbackAccountName, setFallbackAccountName] = useState("");
 
   const selectedSheet = sheets.find((sheet) => sheet.name === selectedSheetName);
   const headers = selectedSheet?.rows[0] ?? [];
-  const preview =
+  const rawPreview =
     selectedSheet === undefined
       ? []
       : previewMoneyManagerRows(selectedSheet.rows.slice(1), mapping);
+  const preview = rawPreview.map((row) =>
+    row.account === undefined && fallbackAccountName !== ""
+      ? Object.freeze({ ...row, account: fallbackAccountName })
+      : row,
+  );
   const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions);
   const readyCount = dryRun.filter((row) => row.status === "ready").length;
   const reviewCount = dryRun.filter((row) => row.status === "needs_review").length;
@@ -71,12 +79,18 @@ export function ImportsPage({
     if (file === undefined) return;
     try {
       const bytes = await file.arrayBuffer();
-      const workbook = readMoneyManagerWorkbook(bytes);
+      const filename = file.name.toLocaleLowerCase("it-IT");
+      const workbook = filename.endsWith(".pdf")
+        ? await readN26Pdf(bytes)
+        : filename.includes("mediobanca")
+          ? readMediobancaWorkbook(bytes)
+          : readMoneyManagerWorkbook(bytes);
       const initialSheet = workbook.sheets[0];
       if (initialSheet === undefined) throw new Error("empty_workbook");
       setSheets(workbook.sheets);
       setSelectedSheetName(initialSheet.name);
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
+      setFallbackAccountName("");
       setSource({ filename: file.name, sha256: await sha256(bytes) });
       setError(null);
     } catch {
@@ -85,7 +99,7 @@ export function ImportsPage({
       setMapping({});
       setSource(null);
       setError(
-        "Il file non è un workbook XLSX leggibile. I dati locali non sono stati modificati.",
+        "Il file non è un estratto XLSX o PDF N26 leggibile. I dati locali non sono stati modificati.",
       );
     }
   };
@@ -102,10 +116,10 @@ export function ImportsPage({
       <header className="accounts-heading">
         <div>
           <p className="eyebrow">Importazione locale</p>
-          <h1>Importa da Money Manager</h1>
+          <h1>Importa estratti conto</h1>
           <p>
-            Carica un file XLSX, verifica le colonne e rivedi ogni riga prima di qualsiasi
-            importazione nel ledger.
+            Carica un XLSX Money Manager o Mediobanca, oppure un PDF N26. Verifica le colonne e
+            rivedi ogni riga prima di qualsiasi importazione nel ledger.
           </p>
         </div>
       </header>
@@ -117,9 +131,9 @@ export function ImportsPage({
           <p>Il file resta nel browser: questa fase legge soltanto l’anteprima.</p>
         </div>
         <label className="file-picker">
-          <span>Seleziona un file XLSX</span>
+          <span>Seleziona un estratto XLSX o PDF</span>
           <input
-            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            accept=".xlsx,.pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf"
             onChange={(event) => void handleFile(event)}
             type="file"
           />
@@ -205,8 +219,24 @@ export function ImportsPage({
               </label>
               <p className="import-help">
                 Le colonne rilevate vengono proposte automaticamente. Lascia vuoti i campi non
-                disponibili.
+                disponibili. Per un estratto senza colonna conto, seleziona il conto locale sotto.
               </p>
+              <label className="account-form-label">
+                Conto locale predefinito
+                <select
+                  onChange={(event) => setFallbackAccountName(event.target.value)}
+                  value={fallbackAccountName}
+                >
+                  <option value="">Usa la colonna dell'estratto</option>
+                  {accounts
+                    .filter((account) => !account.isArchived)
+                    .map((account) => (
+                      <option key={account.id} value={account.name}>
+                        {account.name}
+                      </option>
+                    ))}
+                </select>
+              </label>
               <div className="mapping-grid">
                 {mappingFields.map(({ field, label }) => (
                   <label className="account-form-label" key={field}>
@@ -248,7 +278,7 @@ export function ImportsPage({
             </div>
             <div className="account-table-wrap">
               <table className="account-table import-table">
-                <caption className="sr-only">Anteprima delle righe del file XLSX</caption>
+                <caption className="sr-only">Anteprima delle righe dell'estratto locale</caption>
                 <thead>
                   <tr>
                     <th>Riga</th>

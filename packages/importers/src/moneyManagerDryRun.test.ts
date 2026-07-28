@@ -47,4 +47,35 @@ describe("Money Manager dry-run", () => {
       expect.objectContaining({ kind: "income", status: "needs_review" }),
     ]);
   });
+
+  it("segnala come revisione un possibile trasferimento verso un conto locale", () => {
+    const n26 = Account.create({ currency: "EUR", id: "n26", name: "N26", type: "checking" });
+    const space = Account.create({
+      currency: "EUR",
+      id: "space",
+      name: "Spazio risparmio",
+      parentAccountId: "n26",
+      type: "virtual_subaccount",
+    });
+    const [result] = dryRunMoneyManagerRows(
+      [
+        {
+          account: "N26",
+          amountMinor: -6000n,
+          category: undefined,
+          currency: "EUR",
+          date: "2026-07-28",
+          message: "",
+          payee: "Spazio risparmio",
+          sourceRowNumber: 2,
+          status: "ready",
+        },
+      ],
+      [n26, space],
+      [],
+      [],
+    );
+    expect(result).toMatchObject({ status: "needs_review", kind: undefined });
+    expect(result?.message).toContain("Possibile trasferimento");
+  });
 });

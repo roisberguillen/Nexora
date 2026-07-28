@@ -4,8 +4,8 @@ import * as XLSX from "../../packages/importers/node_modules/xlsx/xlsx.mjs";
 test("la pagina Importa è disponibile e non scrive dati prima del dry-run", async ({ page }) => {
   await page.goto("/#imports");
 
-  await expect(page.getByRole("heading", { name: "Importa da Money Manager" })).toBeVisible();
-  await expect(page.getByLabel("Seleziona un file XLSX")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Importa estratti conto" })).toBeVisible();
+  await expect(page.getByLabel("Seleziona un estratto XLSX o PDF")).toBeVisible();
   await expect(
     page.getByText("Il file resta nel browser: questa fase legge soltanto l’anteprima."),
   ).toBeVisible();
@@ -27,7 +27,7 @@ test("importa e annulla un batch Money Manager senza uscire dalla PWA", async ({
     "Movimenti",
   );
   const bytes = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  await page.getByLabel("Seleziona un file XLSX").setInputFiles({
+  await page.getByLabel("Seleziona un estratto XLSX o PDF").setInputFiles({
     name: "movimenti-sintetici.xlsx",
     mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     buffer: bytes,

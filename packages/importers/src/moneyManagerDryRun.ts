@@ -63,6 +63,22 @@ function dryRunRow(
       status: "needs_review",
     };
   }
+  const ownCounterparty = accounts.find(
+    (candidate) =>
+      candidate.id !== account.id &&
+      !candidate.isArchived &&
+      normalize(candidate.name) === normalize(preview.payee),
+  );
+  if (ownCounterparty !== undefined) {
+    return {
+      accountId: account.id,
+      categoryId: undefined,
+      kind: undefined,
+      message: "Possibile trasferimento tra conti propri: richiede revisione manuale.",
+      preview,
+      status: "needs_review",
+    };
+  }
   const kind = preview.amountMinor > 0n ? "income" : "expense";
   const category =
     preview.category === undefined ? undefined : findByName(categories, preview.category);
