@@ -53,6 +53,7 @@ export {
   TRANSACTION_SPLITS_SCHEMA_VERSION,
   transactionSplitsMigration,
 } from "./migrations/0002-transaction-splits";
+export { TAGS_SCHEMA_VERSION, tagsMigration } from "./migrations/0003-tags";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

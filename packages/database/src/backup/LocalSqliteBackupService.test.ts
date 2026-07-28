@@ -117,12 +117,12 @@ describe("LocalSqliteBackupService", () => {
     const backup = await service.createBackup();
 
     expect(backup).toMatchObject({
-      id: expect.stringMatching(/^nexora-v2-.*\.nexora-backup$/),
+      id: expect.stringMatching(/^nexora-v3-.*\.nexora-backup$/),
       createdAt: now().toISOString(),
       checksumSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
       manifest: {
         formatVersion: 1,
-        schemaVersion: 2,
+        schemaVersion: 3,
         appVersion: "0.4.0",
       },
     });
@@ -147,7 +147,7 @@ describe("LocalSqliteBackupService", () => {
 
     await expect(service.restoreBackup(backup.id, backup.checksumSha256)).resolves.toMatchObject({
       id: backup.id,
-      schemaVersion: 2,
+      schemaVersion: 3,
     });
 
     await expect(ledger.repository.findAccountById(laterAccount.id)).resolves.toBeUndefined();
@@ -159,8 +159,8 @@ describe("LocalSqliteBackupService", () => {
     const service = backupService(database, store, now);
 
     const receipt = await service.createVerifiedBackup({
-      fromVersion: 2,
-      toVersion: 3,
+      fromVersion: 3,
+      toVersion: 4,
       migrationName: "synthetic-migration",
       requestedAt: now().toISOString(),
     });
@@ -202,7 +202,7 @@ describe("LocalSqliteBackupService", () => {
     await ledger.repository.saveAccount(preserved);
     const archive = await createEncryptedSqliteBackup({
       databaseBytes: await database.exportDatabase(),
-      schemaVersion: 3,
+      schemaVersion: 4,
       createdAt: now().toISOString(),
       passphrase: "passphrase-sintetica-backup",
     });

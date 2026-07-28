@@ -13,6 +13,7 @@ export {
   type TransactionStatus,
 } from "./entities/Transaction";
 export { Transfer, type CreateTransferProps } from "./entities/Transfer";
+export { Tag, type CreateTagProps } from "./entities/Tag";
 export {
   TransactionSplit,
   validateTransactionSplits,
