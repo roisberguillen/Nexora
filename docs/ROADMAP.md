@@ -100,6 +100,13 @@ conservano tutti i record esistenti.
 ## Milestone 7 — Importatori bancari
 Mediobanca XLSX, N26 PDF, riconoscimento trasferimenti e revisione.
 
+Avanzamento:
+
+- [x] Anteprima locale per Mediobanca XLSX e N26 PDF, separata dal parser Money Manager.
+- [x] Batch auditabili con tipo di importatore persistente e migrazione additiva v10.
+- [x] Possibili trasferimenti verso conti locali trattenuti per revisione manuale.
+- [ ] Revisione riga per riga e conferma dei trasferimenti riconosciuti.
+
 ## Milestone 8 — Backup ed export
 CSV/XLSX/JSON, backup NAS e Google Drive, cifratura, checksum, restore test.
 

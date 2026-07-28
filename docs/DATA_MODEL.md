@@ -128,9 +128,11 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
 - v7: `budgets` per limiti mensili globali o di categoria;
 - v8: `loans` per capitale residuo, rata e scadenza;
 - v9: `investment_positions` per valutazioni manuali di portafoglio.
+- v10: `import_batches.importer_type_v2` distingue i batch `money_manager_xlsx`,
+  `mediobanca_xlsx` e `n26_pdf`, mantenendo il campo v4 e tutti i record precedenti.
 
 IndexedDB usa gli object store equivalenti fino a `recurring_rules` e `allocation_plans`,
-con indici per scadenza, conto e trigger; l'upgrade è alla versione 9 e conserva gli
+con indici per scadenza, conto e trigger; l'upgrade è alla versione 10 e conserva gli
 store e i record esistenti.
 
 Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite

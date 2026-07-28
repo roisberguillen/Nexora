@@ -9,7 +9,10 @@ export {
   type MoneyManagerSheet,
   type MoneyManagerWorkbookPreview,
 } from "./moneyManagerPreview";
-export { parseN26StatementText, readMediobancaWorkbook, readN26Pdf } from "./bankStatementPreview";
+export {
+  readMediobancaWorkbook as readBankWorkbook,
+  readN26Pdf as readBankPdf,
+} from "./bankStatementPreview";
 export {
   dryRunMoneyManagerRows,
   type DryRunStatus,

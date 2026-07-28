@@ -2,9 +2,9 @@ import {
   detectMoneyManagerMapping,
   dryRunMoneyManagerRows,
   previewMoneyManagerRows,
-  readMediobancaWorkbook,
+  readBankWorkbook,
   readMoneyManagerWorkbook,
-  readN26Pdf,
+  readBankPdf,
   type DryRunStatus,
   type MoneyManagerField,
   type MoneyManagerDryRunRow,
@@ -89,9 +89,9 @@ export function ImportsPage({
           : "money_manager_xlsx";
       const workbook =
         importerType === "n26_pdf"
-          ? await readN26Pdf(bytes)
+          ? await readBankPdf(bytes)
           : importerType === "mediobanca_xlsx"
-            ? readMediobancaWorkbook(bytes)
+            ? readBankWorkbook(bytes)
             : readMoneyManagerWorkbook(bytes);
       const initialSheet = workbook.sheets[0];
       if (initialSheet === undefined) throw new Error("empty_workbook");
@@ -107,7 +107,7 @@ export function ImportsPage({
       setMapping({});
       setSource(null);
       setError(
-        "Il file non è un estratto XLSX o PDF N26 leggibile. I dati locali non sono stati modificati.",
+        "Il file non è un estratto XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
     }
   };
@@ -126,8 +126,8 @@ export function ImportsPage({
           <p className="eyebrow">Importazione locale</p>
           <h1>Importa estratti conto</h1>
           <p>
-            Carica un XLSX Money Manager o Mediobanca, oppure un PDF N26. Verifica le colonne e
-            rivedi ogni riga prima di qualsiasi importazione nel ledger.
+            Carica un XLSX o un PDF. Verifica le colonne e rivedi ogni riga prima di qualsiasi
+            importazione nel ledger.
           </p>
         </div>
       </header>

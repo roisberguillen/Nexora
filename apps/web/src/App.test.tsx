@@ -100,14 +100,14 @@ describe("Nexora app", () => {
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
 
     expect(
-      await screen.findByRole("heading", { name: "Importa da Money Manager" }),
+      await screen.findByRole("heading", { name: "Importa estratti conto" }),
     ).toBeInTheDocument();
     expect(
       screen.queryByText("Passo 4 sarà disponibile dopo la validazione, deduplica e dry-run."),
     ).not.toBeInTheDocument();
 
     await user.upload(
-      screen.getByLabelText("Seleziona un file XLSX"),
+      screen.getByLabelText("Seleziona un estratto XLSX o PDF"),
       new File(["non un workbook"], "movimenti.xlsx", {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       }),

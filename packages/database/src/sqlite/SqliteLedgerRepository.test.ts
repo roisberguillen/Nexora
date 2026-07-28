@@ -380,8 +380,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 9,
-        toVersion: 9,
+        fromVersion: 10,
+        toVersion: 10,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
