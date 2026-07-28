@@ -10,6 +10,7 @@ import {
   type MoneyManagerSheet,
 } from "@nexora/importers";
 import type { Account, Category, Transaction } from "@nexora/domain";
+import type { ImportBatch } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
@@ -26,7 +27,9 @@ const mappingFields: readonly { readonly field: MoneyManagerField; readonly labe
 
 export function ImportsPage({
   accounts,
+  batches,
   categories,
+  onUndo,
   transactions,
   onCommit,
 }: {
@@ -38,6 +41,8 @@ export function ImportsPage({
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
   }) => Promise<void>;
+  readonly onUndo: (batchId: string) => Promise<void>;
+  readonly batches: readonly ImportBatch[];
 }) {
   const [sheets, setSheets] = useState<readonly MoneyManagerSheet[]>([]);
   const [selectedSheetName, setSelectedSheetName] = useState<string>("");
@@ -48,6 +53,7 @@ export function ImportsPage({
     readonly sha256: string;
   } | null>(null);
   const [isCommitting, setIsCommitting] = useState(false);
+  const [isUndoing, setIsUndoing] = useState<string | null>(null);
 
   const selectedSheet = sheets.find((sheet) => sheet.name === selectedSheetName);
   const headers = selectedSheet?.rows[0] ?? [];
@@ -124,6 +130,54 @@ export function ImportsPage({
         <p className="account-error" role="alert">
           {error}
         </p>
+      )}
+      {batches.length === 0 ? null : (
+        <section aria-labelledby="import-history-title" className="data-panel import-preview-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Audit locale</p>
+              <h2 id="import-history-title">Importazioni recenti</h2>
+            </div>
+            <span className="panel-meta">{batches.length}</span>
+          </div>
+          <ul className="account-list">
+            {batches.map((batch) => (
+              <li key={batch.id}>
+                <div className="account-copy">
+                  <strong>{batch.sourceFilename}</strong>
+                  <small>
+                    {batch.rowsImported} importate · {batch.rowsSkipped} duplicate ·{" "}
+                    {batch.rowsFailed} da revisionare
+                  </small>
+                </div>
+                <span
+                  className={`import-status is-${batch.status === "committed" ? "ready" : "needs_review"}`}
+                >
+                  {batch.status}
+                </span>
+                {batch.status === "committed" ? (
+                  <button
+                    className="text-action"
+                    disabled={isUndoing !== null}
+                    onClick={() => {
+                      setIsUndoing(batch.id);
+                      void onUndo(batch.id)
+                        .catch(() =>
+                          setError(
+                            "Impossibile annullare il batch: nessun dato è stato modificato.",
+                          ),
+                        )
+                        .finally(() => setIsUndoing(null));
+                    }}
+                    type="button"
+                  >
+                    {isUndoing === batch.id ? "Annullamento…" : "Annulla batch"}
+                  </button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
       {selectedSheet === undefined ? null : (
         <div className="import-layout">

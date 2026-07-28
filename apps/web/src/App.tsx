@@ -1,6 +1,6 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
-import type { Account, Category, Tag, Transaction } from "@nexora/domain";
+import type { Account, Category, ImportBatch, Tag, Transaction } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
 
@@ -48,6 +48,7 @@ const ImportsPage = lazy(async () => {
 interface ReadyLedgerState {
   readonly rawAccounts: readonly Account[];
   readonly rawTransactions: readonly Transaction[];
+  readonly importBatches: readonly ImportBatch[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -85,6 +86,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           accounts,
           categories,
           dashboard,
+          importBatches,
           rawAccounts,
           rawTransactions,
           tags,
@@ -103,6 +105,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             accounts,
             categories,
             dashboard,
+            importBatches,
             ledger,
             rawAccounts,
             rawTransactions,
@@ -237,6 +240,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await commitMoneyManagerImport(ledger.repository, input);
     });
+  const undoImport = (batchId: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.undoImportBatch(batchId);
+    });
 
   return (
     <ErrorBoundary
@@ -289,6 +296,8 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 categories={ledgerState.categories}
                 transactions={ledgerState.rawTransactions}
                 onCommit={commitImport}
+                onUndo={undoImport}
+                batches={ledgerState.importBatches}
               />
             </Suspense>
           ) : (
@@ -341,6 +350,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 }
 
 interface AppModels {
+  readonly importBatches: readonly ImportBatch[];
   readonly rawAccounts: readonly Account[];
   readonly rawTransactions: readonly Transaction[];
   readonly accounts: AccountsViewModel;
@@ -351,14 +361,16 @@ interface AppModels {
 }
 
 async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
-  const [accounts, categories, tags, transactions, transfers] = await Promise.all([
+  const [accounts, categories, importBatches, tags, transactions, transfers] = await Promise.all([
     ledger.repository.listAccounts(),
     ledger.repository.listCategories(),
+    ledger.repository.listImportBatches(),
     ledger.repository.listTags(),
     ledger.repository.listTransactions(),
     ledger.repository.listTransfers(),
   ]);
   return {
+    importBatches,
     rawAccounts: accounts,
     rawTransactions: transactions,
     categories,

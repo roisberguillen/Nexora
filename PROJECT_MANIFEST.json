@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 14691,
-      "sha256": "4cc0ec7cebdf04ba9373111ac8eebb5baa6768d548050a1c61a0570f3cbfad0f"
+      "size": 15179,
+      "sha256": "63ef66c8f4c9db2f1185c06dc58eca0d2dcb33787f68fbc97d8e2ecac1c6fd98"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -214,8 +214,8 @@
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
-      "size": 11175,
-      "sha256": "8f55d69cac226b98fde52726c666a8d789b637218bbc1db661494efd2c0570d9"
+      "size": 13357,
+      "sha256": "fdaa44426af03ba8c6552cae312450d9ccca8bf8247a46307df25b9003c9908f"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -564,8 +564,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 15423,
-      "sha256": "806ff21220168a144cf607088645d5429d2668d0188604c71f74b18a2f3f05b6"
+      "size": 15542,
+      "sha256": "12f095ed195d6f7ea551285bd5375676d7a3b874a5dde49c896a742a11c5326d"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -579,8 +579,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 38058,
-      "sha256": "63a27c8639835e77cf9a447deb758413fea0fb8e847ff89b2ce1810163968ec3"
+      "size": 38454,
+      "sha256": "6471272260e6319db7d3af52b272c9df48030d8281c299c32c1e2a1676088b30"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -704,8 +704,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 37392,
-      "sha256": "e125fcb4f8024039350a1af10a4f11ddf5a5f9a26274ae64cd92dc32514cc2d4"
+      "size": 37820,
+      "sha256": "163a19f9198a0143d63934faa3bc13d4df7fb39f150fdf03c61b19a46cb585ee"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -809,8 +809,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 2600,
-      "sha256": "e723c5daa12e86e6b95e2965976c77f9b836a6bbf01b33bb2af205bf5ecca962"
+      "size": 2656,
+      "sha256": "11d00cb80b5df0bf4b166a69e15d02ba633985a0a71454ba0c6d9ed802d7598d"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",

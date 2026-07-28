@@ -55,4 +55,5 @@ export interface LedgerRepository {
   listTransfers(): Promise<readonly Transfer[]>;
   listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]>;
   listImportRows(batchId: string): Promise<readonly ImportRow[]>;
+  listImportBatches(): Promise<readonly ImportBatch[]>;
 }

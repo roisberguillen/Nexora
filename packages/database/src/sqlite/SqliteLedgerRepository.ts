@@ -846,6 +846,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(importRowFromRecord),
     );
   }
+  public async listImportBatches(): Promise<readonly ImportBatch[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<ImportBatchRecord>(
+          "SELECT id, importer_type, source_filename, source_sha256, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches ORDER BY started_at DESC, id DESC",
+        )
+      ).map(importBatchFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);

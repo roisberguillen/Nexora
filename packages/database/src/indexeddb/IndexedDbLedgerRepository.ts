@@ -778,6 +778,15 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public async listImportBatches(): Promise<readonly ImportBatch[]> {
+    return this.performDatabaseOperation(() =>
+      this.withTransaction(["import_batches"], "readonly", async (transaction) =>
+        (await requestResult<unknown[]>(transaction.objectStore("import_batches").getAll())).map(
+          (row) => importBatchFromRecord(row as ImportBatchRecord),
+        ),
+      ),
+    );
+  }
 
   public close(): void {
     if (this.isClosed) {

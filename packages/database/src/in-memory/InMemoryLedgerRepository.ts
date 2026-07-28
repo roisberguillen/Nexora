@@ -349,6 +349,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       .filter((row) => row.batchId === batchId)
       .sort((left, right) => left.rowNumber - right.rowNumber);
   }
+  public async listImportBatches(): Promise<readonly ImportBatch[]> {
+    return [...this.importBatches.values()];
+  }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {
     if (collection.has(id)) {
