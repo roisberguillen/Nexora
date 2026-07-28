@@ -6,6 +6,25 @@ export interface LedgerExportData {
   readonly transactions: readonly Transaction[];
 }
 
+export interface ExportFilters {
+  readonly accountId?: string;
+  readonly categoryId?: string;
+  readonly from?: string;
+  readonly to?: string;
+}
+
+export function filterExportTransactions(
+  transactions: readonly Transaction[],
+  filters: ExportFilters,
+): readonly Transaction[] {
+  return transactions.filter((transaction) =>
+    (filters.accountId === undefined || transaction.accountId === filters.accountId) &&
+    (filters.categoryId === undefined || transaction.categoryId === filters.categoryId) &&
+    (filters.from === undefined || transaction.bookedDate.toString() >= filters.from) &&
+    (filters.to === undefined || transaction.bookedDate.toString() <= filters.to),
+  );
+}
+
 export function buildTransactionsCsv(data: LedgerExportData): string {
   const accountNames = new Map(data.accounts.map((account) => [account.id, account.name]));
   const categoryNames = new Map(data.categories.map((category) => [category.id, category.name]));

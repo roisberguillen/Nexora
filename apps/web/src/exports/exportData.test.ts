@@ -1,6 +1,6 @@
 import { Account, Category, LocalDate, Money, Transaction } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
-import { buildLedgerJson, buildTransactionsCsv } from "./exportData";
+import { buildLedgerJson, buildTransactionsCsv, filterExportTransactions } from "./exportData";
 
 describe("ledger exports", () => {
   const account = Account.create({ id: "account-1", name: "Conto", type: "checking", currency: "EUR" });
@@ -14,5 +14,9 @@ describe("ledger exports", () => {
   });
   it("serializza il JSON senza bigint", () => {
     expect(JSON.parse(buildLedgerJson(data))).toMatchObject({ format: "nexora-ledger-export", transactions: [{ amount: { amountMinor: "-12345", currency: "EUR" } }] });
+  });
+  it("filtra per intervallo e conto senza modificare i dati", () => {
+    expect(filterExportTransactions(data.transactions, { accountId: "other" })).toEqual([]);
+    expect(filterExportTransactions(data.transactions, { from: "2026-07-28", to: "2026-07-28" })).toEqual([transaction]);
   });
 });

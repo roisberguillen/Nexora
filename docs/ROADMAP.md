@@ -118,7 +118,8 @@ Avanzamento:
 
 - [x] Export locale CSV dei movimenti e JSON del ledger, con precisione minor units e
   protezione da formula injection.
-- [ ] Export XLSX e filtri per intervallo, conto e categoria.
+- [x] Filtri export per intervallo, conto e categoria.
+- [ ] Export XLSX.
 - [ ] Backup configurabile, destinazioni NAS/Google Drive, cifratura e restore verificato.
 
 ## Milestone 9 — Analisi e diario
