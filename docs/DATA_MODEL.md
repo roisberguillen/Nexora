@@ -56,6 +56,12 @@ Relazione molti-a-molti.
 ### RecurringRule
 `id, templateTransactionId, frequency, interval, nominalDay?, weekendPolicy, nextExpectedDate, enabled`
 
+### AllocationPlan
+`id, name, trigger, sourceAccountId, targetAccountId, amountMinor, currency, enabled`
+
+Un piano è una proposta di trasferimento per stipendio o reddito fotografico; non entra
+in saldi, report o storico finché l'utente non ne conferma l'esecuzione.
+
 ### Budget
 `id, period, categoryId?, amountMinor, alert80, alert100`
 
@@ -111,6 +117,8 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
   `transactions.source_fingerprint`. L'indice parziale univoco
   `(account_id, source_fingerprint)` blocca l'importazione della stessa riga nello stesso
   conto; le foreign key collegano batch, righe e transazioni.
+- v5: `recurring_rules` per template mensili con data attesa e weekend policy;
+- v6: `allocation_plans` per proposte di trasferimento confermabili fra conti.
 
 IndexedDB usa gli object store equivalenti `import_batches` e `import_rows`, con indice
 per `batch_id`; l'upgrade è alla versione 4 e conserva gli store esistenti.

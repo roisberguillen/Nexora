@@ -398,6 +398,11 @@
       "sha256": "08ec5862f7b6af319ea00529e06ff1bba298c215a418165b867a7b670b48fcd3"
     },
     {
+      "path": "docs/adr/0014-confirmed-allocation-plans.md",
+      "size": 688,
+      "sha256": "1566be2b73533e197ae101e232af775aa2bd330c94c11a34a2721e4e2dae2237"
+    },
+    {
       "path": "docs/ARCHITECTURE.md",
       "size": 5080,
       "sha256": "22b7fe048fe2610db6fdad410ed5943d76eee5a09110d24cfb4e9202e50378c3"
@@ -409,8 +414,8 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 5590,
-      "sha256": "2ff8bdcc65de1780ecd379f6dd61ac3afdd16119d0d57f154fb5307b6525f3ac"
+      "size": 6018,
+      "sha256": "0645c2fea95385424a13b1ba7624c4a29c59e4f9e7f88d098707751224a500e6"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
