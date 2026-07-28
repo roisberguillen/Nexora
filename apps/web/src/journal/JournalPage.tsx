@@ -11,7 +11,6 @@ export function JournalPage({
   readonly onSave: (input: MonthlyJournalInput, existingId: string | undefined) => Promise<void>;
 }) {
   const currentPeriod = new Date().toISOString().slice(0, 7);
-  const current = journals.find((journal) => journal.period === currentPeriod);
   const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
   const selected = journals.find((journal) => journal.period === selectedPeriod);
   const [error, setError] = useState<string | null>(null);
