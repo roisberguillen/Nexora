@@ -3,6 +3,7 @@ import { transactionSplitsMigration } from "./0002-transaction-splits";
 import { tagsMigration } from "./0003-tags";
 import { importBatchesMigration } from "./0004-import-batches";
 import { recurringRulesMigration } from "./0005-recurring-rules";
+import { allocationPlansMigration } from "./0006-allocation-plans";
 
 export const INITIAL_LEDGER_SCHEMA_VERSION = 1;
 const INITIAL_LEDGER_SCHEMA_NAME = "initial-ledger-schema";
@@ -264,4 +265,5 @@ export const databaseMigrations: readonly DatabaseMigration[] = [
   tagsMigration,
   importBatchesMigration,
   recurringRulesMigration,
+  allocationPlansMigration,
 ];

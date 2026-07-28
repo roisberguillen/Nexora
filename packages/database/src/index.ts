@@ -62,6 +62,10 @@ export {
   RECURRING_RULES_SCHEMA_VERSION,
   recurringRulesMigration,
 } from "./migrations/0005-recurring-rules";
+export {
+  ALLOCATION_PLANS_SCHEMA_VERSION,
+  allocationPlansMigration,
+} from "./migrations/0006-allocation-plans";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,
