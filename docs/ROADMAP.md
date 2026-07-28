@@ -50,7 +50,7 @@ Avanzamento:
 Completata il 2026-07-28. Verificata con unit/integration test, flussi E2E responsive
 320/768/1440, audit Axe, persistenza locale e baseline visuali aggiornate.
 
-## Milestone 4 — Money Manager XLSX
+## Milestone 4 — Money Manager XLSX ✅
 Parser, mapping wizard, preview, validazione, deduplica, dry-run, import atomico, undo batch, report.
 
 Avanzamento:
@@ -97,7 +97,7 @@ restano esempi da impostare sui conti effettivi dell'utente e non vengono precom
 Completata il 2026-07-28. Migrazioni additive v7-v9 e upgrade IndexedDB equivalenti
 conservano tutti i record esistenti.
 
-## Milestone 7 — Importatori bancari
+## Milestone 7 — Importatori bancari ✅
 Mediobanca XLSX, N26 PDF, riconoscimento trasferimenti e revisione.
 
 Avanzamento:
@@ -111,7 +111,7 @@ Avanzamento:
 Completata il 2026-07-28. Gli estratti restano locali; i trasferimenti fra conti propri
 non sono mai classificati come entrate o spese e richiedono una conferma per riga.
 
-## Milestone 8 — Backup ed export
+## Milestone 8 — Backup ed export ✅
 CSV/XLSX/JSON, backup NAS e Google Drive, cifratura, checksum, restore test.
 
 Avanzamento:
