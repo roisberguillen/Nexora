@@ -29,6 +29,11 @@ export {
   type WeekendPolicy,
 } from "./entities/RecurringRule";
 export {
+  AllocationPlan,
+  type AllocationTrigger,
+  type CreateAllocationPlanProps,
+} from "./entities/AllocationPlan";
+export {
   TransactionSplit,
   validateTransactionSplits,
   type CreateTransactionSplitProps,

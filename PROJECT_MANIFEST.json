@@ -748,6 +748,16 @@
       "sha256": "1a68a41736e1f92906c9737cb1ac402e2bdcdb697c5232c0bbc33579b64039c8"
     },
     {
+      "path": "packages/domain/src/entities/AllocationPlan.test.ts",
+      "size": 820,
+      "sha256": "6c2ad1979a2e1fcfb7cdb4e00c6773585c49879f75b4db4d350d4dc9e3449e3e"
+    },
+    {
+      "path": "packages/domain/src/entities/AllocationPlan.ts",
+      "size": 2055,
+      "sha256": "ef11c7dcaac3fd7c7cdf84d91e84c339e09425b4c905b45bde783a3477baa7cc"
+    },
+    {
       "path": "packages/domain/src/entities/Category.test.ts",
       "size": 1026,
       "sha256": "99a8e74c8d69dcc6e70dab68944841aa9b9a6936830e00b1207b84f8993ea615"
@@ -829,8 +839,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 1632,
-      "sha256": "fff3e611b2e0c9219d44b5c22535ec40bd145579368a4f0279ea2fcc79849c92"
+      "size": 1755,
+      "sha256": "391c1c680e41d515e5bbea73cec0e78fb1532dbe1ccc7959e3b09b346556c26c"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
