@@ -12,6 +12,7 @@ import {
   type ImportRow,
   type RecurringRule,
   type AllocationPlan,
+  type Budget,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -28,6 +29,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly importRows = new Map<string, ImportRow>();
   private readonly recurringRules = new Map<string, RecurringRule>();
   private readonly allocationPlans = new Map<string, AllocationPlan>();
+  private readonly budgets = new Map<string, Budget>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -119,6 +121,17 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Allocation plan does not exist.");
     this.validateAllocationPlanReferences(plan);
     this.allocationPlans.set(plan.id, plan);
+  }
+  public async saveBudget(budget: Budget): Promise<void> {
+    this.assertNew(this.budgets, budget.id, "Budget");
+    this.validateBudgetReferences(budget);
+    this.budgets.set(budget.id, budget);
+  }
+  public async updateBudget(budget: Budget): Promise<void> {
+    if (!this.budgets.has(budget.id))
+      throw new DomainError("missing_reference", "Budget does not exist.");
+    this.validateBudgetReferences(budget);
+    this.budgets.set(budget.id, budget);
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -388,6 +401,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       left.name.localeCompare(right.name),
     );
   }
+  public async listBudgets(): Promise<readonly Budget[]> {
+    return [...this.budgets.values()].sort((left, right) =>
+      left.period.localeCompare(right.period),
+    );
+  }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {
     if (collection.has(id)) {
@@ -453,6 +471,14 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         "currency_mismatch",
         "Allocation plan accounts and amount must share a currency.",
       );
+  }
+  private validateBudgetReferences(budget: Budget): void {
+    if (budget.categoryId === undefined) return;
+    const category = this.categories.get(budget.categoryId);
+    if (category === undefined || category.isArchived)
+      throw new DomainError("missing_reference", "Budget category is not available.");
+    if (!category.accepts("expense"))
+      throw new DomainError("invalid_category", "Budget category must accept expenses.");
   }
 
   private isTransferLeg(transactionId: string): boolean {

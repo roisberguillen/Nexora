@@ -9,6 +9,7 @@ import { DatabaseSync } from "node:sqlite";
 import {
   Account,
   AllocationPlan,
+  Budget,
   Category,
   ImportBatch,
   ImportRow,
@@ -378,8 +379,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 6,
-        toVersion: 6,
+        fromVersion: 7,
+        toVersion: 7,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -498,5 +499,24 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.saveAllocationPlan(plan);
     await expect(repository.listAllocationPlans()).resolves.toEqual([plan]);
+  });
+
+  it("persiste e aggiorna un budget mensile", async () => {
+    const budget = Budget.create({
+      id: "budget-sqlite",
+      period: "2026-08",
+      amount: Money.fromMinor(50_000n, "EUR"),
+    });
+    await repository.saveBudget(budget);
+    await expect(repository.listBudgets()).resolves.toEqual([budget]);
+    const updated = Budget.create({
+      id: budget.id,
+      period: budget.period,
+      amount: Money.fromMinor(60_000n, "EUR"),
+      alertAt80: budget.alertAt80,
+      alertAt100: budget.alertAt100,
+    });
+    await repository.updateBudget(updated);
+    await expect(repository.listBudgets()).resolves.toEqual([updated]);
   });
 });

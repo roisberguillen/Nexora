@@ -10,6 +10,7 @@ import {
   ImportRow,
   RecurringRule,
   AllocationPlan,
+  Budget,
   LocalDate,
   Money,
   validateImportCommit,
@@ -41,7 +42,13 @@ import { PersistenceError } from "./PersistenceError";
 import type { SqliteDatabase } from "./SqliteDatabase";
 
 type EntityTable =
-  "accounts" | "categories" | "transactions" | "transfers" | "recurring_rules" | "allocation_plans";
+  | "accounts"
+  | "categories"
+  | "transactions"
+  | "transfers"
+  | "recurring_rules"
+  | "allocation_plans"
+  | "budgets";
 
 const accountColumns = `
   id,
@@ -353,6 +360,45 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.amount_minor,
               record.currency,
               record.enabled,
+              record.id,
+            ],
+          );
+        }),
+      ),
+    );
+  }
+  public saveBudget(budget: Budget): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          await this.assertNew("budgets", budget.id, "Budget");
+          await this.validateBudgetReferences(budget);
+          await this.insertBudget(budget);
+        }),
+      ),
+    );
+  }
+  public updateBudget(budget: Budget): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM budgets WHERE id = ?",
+            [budget.id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", "Budget does not exist.");
+          await this.validateBudgetReferences(budget);
+          const record = budgetToRecord(budget);
+          await this.database.run(
+            "UPDATE budgets SET period = ?, category_id = ?, amount_minor = ?, currency = ?, alert_at_80 = ?, alert_at_100 = ? WHERE id = ?",
+            [
+              record.period,
+              record.category_id,
+              record.amount_minor,
+              record.currency,
+              record.alert_at_80,
+              record.alert_at_100,
               record.id,
             ],
           );
@@ -964,6 +1010,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(allocationPlanFromRecord),
     );
   }
+  public async listBudgets(): Promise<readonly Budget[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<BudgetRecord>(
+          "SELECT id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100 FROM budgets ORDER BY period, id",
+        )
+      ).map(budgetFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);
@@ -1091,6 +1146,33 @@ export class SqliteLedgerRepository implements LedgerRepository {
         record.amount_minor,
         record.currency,
         record.enabled,
+      ],
+    );
+  }
+  private async validateBudgetReferences(budget: Budget): Promise<void> {
+    if (budget.categoryId === undefined) return;
+    const rows = await this.database.query<{
+      readonly kind_scope: string;
+      readonly is_archived: number;
+    }>("SELECT kind_scope, is_archived FROM categories WHERE id = ?", [budget.categoryId]);
+    const category = rows[0];
+    if (category === undefined || category.is_archived === 1)
+      throw new DomainError("missing_reference", "Budget category is not available.");
+    if (category.kind_scope === "income")
+      throw new DomainError("invalid_category", "Budget category must accept expenses.");
+  }
+  private async insertBudget(budget: Budget): Promise<void> {
+    const record = budgetToRecord(budget);
+    await this.database.run(
+      "INSERT INTO budgets (id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        record.id,
+        record.period,
+        record.category_id,
+        record.amount_minor,
+        record.currency,
+        record.alert_at_80,
+        record.alert_at_100,
       ],
     );
   }
@@ -1234,6 +1316,36 @@ interface AllocationPlanRecord {
   readonly amount_minor: string;
   readonly currency: string;
   readonly enabled: number;
+}
+interface BudgetRecord {
+  readonly id: string;
+  readonly period: string;
+  readonly category_id: string | null;
+  readonly amount_minor: string;
+  readonly currency: string;
+  readonly alert_at_80: number;
+  readonly alert_at_100: number;
+}
+function budgetToRecord(budget: Budget): BudgetRecord {
+  return {
+    id: budget.id,
+    period: budget.period,
+    category_id: budget.categoryId ?? null,
+    amount_minor: budget.amount.amountMinor.toString(),
+    currency: budget.amount.currency,
+    alert_at_80: budget.alertAt80 ? 1 : 0,
+    alert_at_100: budget.alertAt100 ? 1 : 0,
+  };
+}
+function budgetFromRecord(row: BudgetRecord): Budget {
+  return Budget.create({
+    id: row.id,
+    period: row.period,
+    ...(row.category_id === null ? {} : { categoryId: row.category_id }),
+    amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
+    alertAt80: row.alert_at_80 === 1,
+    alertAt100: row.alert_at_100 === 1,
+  });
 }
 function allocationPlanToRecord(plan: AllocationPlan): AllocationPlanRecord {
   return {

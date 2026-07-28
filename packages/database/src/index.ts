@@ -66,6 +66,7 @@ export {
   ALLOCATION_PLANS_SCHEMA_VERSION,
   allocationPlansMigration,
 } from "./migrations/0006-allocation-plans";
+export { BUDGETS_SCHEMA_VERSION, budgetsMigration } from "./migrations/0007-budgets";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

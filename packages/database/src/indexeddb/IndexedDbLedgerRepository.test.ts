@@ -3,6 +3,7 @@
 import {
   Account,
   AllocationPlan,
+  Budget,
   Category,
   ImportBatch,
   ImportRow,
@@ -89,6 +90,7 @@ describe("IndexedDbLedgerRepository", () => {
     expect([...ledger.database.objectStoreNames]).toEqual([
       "accounts",
       "allocation_plans",
+      "budgets",
       "categories",
       "import_batches",
       "import_rows",
@@ -115,7 +117,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 6 });
+    expect(metadata).toEqual({ key: "schema_version", value: 7 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -363,7 +365,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(6);
+    expect(ledger.schemaVersion).toBe(7);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -496,5 +498,16 @@ describe("IndexedDbLedgerRepository", () => {
     });
     await ledger.repository.saveAllocationPlan(plan);
     await expect(ledger.repository.listAllocationPlans()).resolves.toEqual([plan]);
+  });
+  it("persiste un budget dopo la riapertura", async () => {
+    const budget = Budget.create({
+      id: "budget-idb",
+      period: "2026-08",
+      amount: Money.fromMinor(50_000n, "EUR"),
+    });
+    await ledger.repository.saveBudget(budget);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listBudgets()).resolves.toEqual([budget]);
   });
 });

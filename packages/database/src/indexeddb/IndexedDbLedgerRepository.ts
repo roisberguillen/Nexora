@@ -10,6 +10,7 @@ import {
   ImportRow,
   RecurringRule,
   AllocationPlan,
+  Budget,
   LocalDate,
   Money,
   validateImportCommit,
@@ -53,7 +54,8 @@ type EntityStore =
   | "import_batches"
   | "import_rows"
   | "recurring_rules"
-  | "allocation_plans";
+  | "allocation_plans"
+  | "budgets";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -229,6 +231,31 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             throw new DomainError("missing_reference", "Allocation plan does not exist.");
           await this.validateAllocationPlanReferences(transaction, plan);
           await requestResult(plans.put(allocationPlanToRecord(plan)));
+        }),
+      ),
+    );
+  }
+  public saveBudget(budget: Budget): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["budgets", "categories"], "readwrite", async (transaction) => {
+          const budgets = transaction.objectStore("budgets");
+          await this.assertNew(budgets, budget.id, "Budget");
+          await this.validateBudgetReferences(transaction, budget);
+          await requestResult(budgets.add(budgetToRecord(budget)));
+        }),
+      ),
+    );
+  }
+  public updateBudget(budget: Budget): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["budgets", "categories"], "readwrite", async (transaction) => {
+          const budgets = transaction.objectStore("budgets");
+          if ((await requestResult<unknown>(budgets.get(budget.id))) === undefined)
+            throw new DomainError("missing_reference", "Budget does not exist.");
+          await this.validateBudgetReferences(transaction, budget);
+          await requestResult(budgets.put(budgetToRecord(budget)));
         }),
       ),
     );
@@ -783,6 +810,17 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listBudgets(): Promise<readonly Budget[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["budgets"], "readonly", async (transaction) =>
+          (await requestResult<unknown[]>(transaction.objectStore("budgets").getAll()))
+            .map((row) => budgetFromRecord(row as BudgetRecord))
+            .sort((left, right) => left.period.localeCompare(right.period)),
+        ),
+      ),
+    );
+  }
 
   public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
     return this.enqueue(() =>
@@ -1041,6 +1079,20 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         "Allocation plan accounts and amount must share a currency.",
       );
   }
+  private async validateBudgetReferences(
+    transaction: IDBTransaction,
+    budget: Budget,
+  ): Promise<void> {
+    if (budget.categoryId === undefined) return;
+    const record = await requestResult<unknown>(
+      transaction.objectStore("categories").get(budget.categoryId),
+    );
+    if (record === undefined)
+      throw new DomainError("missing_reference", "Budget category is not available.");
+    const category = categoryFromRecord(record as CategoryRecord);
+    if (category.isArchived || !category.accepts("expense"))
+      throw new DomainError("invalid_category", "Budget category must accept expenses.");
+  }
 
   private async findAccountInStore(
     store: IDBObjectStore,
@@ -1097,6 +1149,36 @@ interface AllocationPlanRecord {
   readonly amount_minor: string;
   readonly currency: string;
   readonly enabled: boolean;
+}
+interface BudgetRecord {
+  readonly id: string;
+  readonly period: string;
+  readonly category_id?: string;
+  readonly amount_minor: string;
+  readonly currency: string;
+  readonly alert_at_80: boolean;
+  readonly alert_at_100: boolean;
+}
+function budgetToRecord(budget: Budget): BudgetRecord {
+  return {
+    id: budget.id,
+    period: budget.period,
+    ...(budget.categoryId === undefined ? {} : { category_id: budget.categoryId }),
+    amount_minor: budget.amount.amountMinor.toString(),
+    currency: budget.amount.currency,
+    alert_at_80: budget.alertAt80,
+    alert_at_100: budget.alertAt100,
+  };
+}
+function budgetFromRecord(row: BudgetRecord): Budget {
+  return Budget.create({
+    id: row.id,
+    period: row.period,
+    ...(row.category_id === undefined ? {} : { categoryId: row.category_id }),
+    amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
+    alertAt80: row.alert_at_80,
+    alertAt100: row.alert_at_100,
+  });
 }
 function allocationPlanToRecord(plan: AllocationPlan): AllocationPlanRecord {
   return {
