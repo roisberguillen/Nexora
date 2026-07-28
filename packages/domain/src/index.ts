@@ -16,6 +16,7 @@ export { Transfer, type CreateTransferProps } from "./entities/Transfer";
 export { Tag, type CreateTagProps } from "./entities/Tag";
 export {
   ImportBatch,
+  validateImportCommit,
   type CreateImportBatchProps,
   type ImportBatchStatus,
   type ImportRowStatus,

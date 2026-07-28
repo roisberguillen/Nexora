@@ -734,13 +734,13 @@
     },
     {
       "path": "packages/domain/src/entities/ImportBatch.test.ts",
-      "size": 1184,
-      "sha256": "97a3bae934a97de5ae9fc9acca636fa614679a099fac7bf80a9559e82d262bbc"
+      "size": 2309,
+      "sha256": "35a98bc782deb65feee22c6ebbee1c72c9424f84f2bc43a56cb756eb900fed04"
     },
     {
       "path": "packages/domain/src/entities/ImportBatch.ts",
-      "size": 3269,
-      "sha256": "678ca044e9adc8b3a66df9a9ac5481d23e964f12ce431deb6008d6b244d268ca"
+      "size": 4958,
+      "sha256": "a3e93b4b49bca4f7f6638e7522feb4d95b9fc1099cbb26729adfa6aafe5ec30a"
     },
     {
       "path": "packages/domain/src/entities/ImportRow.test.ts",
@@ -794,8 +794,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 1465,
-      "sha256": "3274aaad58ecb74716d38bfb520357c83b390f69f1b53902f75736930f53c863"
+      "size": 1489,
+      "sha256": "e0b3b56399e601e8626969083d9a7ecbaf7c5b6cd90bbe4e94f6cc5a815f60f0"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",

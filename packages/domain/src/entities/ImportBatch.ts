@@ -1,5 +1,7 @@
 import { DomainError } from "../errors/DomainError";
 import { requireIdentifier } from "../validation";
+import type { Transaction } from "./Transaction";
+import type { ImportRow } from "./ImportRow";
 
 export type ImportBatchStatus = "previewed" | "committed" | "undone" | "failed";
 export type ImportRowStatus = "imported" | "skipped_duplicate" | "needs_review" | "failed";
@@ -60,6 +62,50 @@ export class ImportBatch {
       throw new DomainError("invalid_import", "Only committed batches can be undone.");
     return ImportBatch.create({ ...this, status: "undone" });
   }
+}
+
+export function validateImportCommit(
+  batch: ImportBatch,
+  rows: readonly ImportRow[],
+  transactions: readonly Transaction[],
+): ImportBatch {
+  if (batch.status !== "previewed" || rows.length !== batch.rowsTotal) {
+    throw new DomainError("invalid_import", "Only a complete previewed batch can be committed.");
+  }
+  const rowIds = new Set<string>();
+  const transactionIds = new Set<string>();
+  const importedTransactionIds = new Set<string>();
+  let skipped = 0;
+  let failed = 0;
+  for (const row of rows) {
+    if (row.batchId !== batch.id || !rowIds.add(row.id))
+      throw new DomainError("invalid_import", "Import rows are invalid.");
+    if (row.status === "imported") importedTransactionIds.add(row.createdTransactionId!);
+    else if (row.status === "skipped_duplicate") skipped += 1;
+    else failed += 1;
+  }
+  for (const transaction of transactions) {
+    if (
+      !transactionIds.add(transaction.id) ||
+      transaction.source !== "import" ||
+      transaction.importBatchId !== batch.id ||
+      transaction.sourceFingerprint === undefined ||
+      transaction.kind === "transfer"
+    ) {
+      throw new DomainError("invalid_import", "Imported transaction metadata is invalid.");
+    }
+  }
+  if (
+    transactions.length !== importedTransactionIds.size ||
+    transactions.some((transaction) => !importedTransactionIds.has(transaction.id))
+  ) {
+    throw new DomainError("invalid_import", "Imported rows and transactions do not match.");
+  }
+  return batch.commit({
+    rowsImported: transactions.length,
+    rowsSkipped: skipped,
+    rowsFailed: failed,
+  });
 }
 
 function requireText(value: string, maximum: number, label: string): string {
