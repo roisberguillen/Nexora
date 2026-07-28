@@ -1105,7 +1105,7 @@
     {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2201,
-      "sha256": "77600700a585e3c8e98905b728f530e1e7c3e00fcf56ced0cdf8b6eb00d72b43"
+      "sha256": "3d47d802d457bdd25509b563a69adaa94579bc959379f0f95c535c01f237b666"
     },
     {
       "path": "test/e2e/categories.spec.ts",
@@ -1150,17 +1150,17 @@
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
       "size": 1807,
-      "sha256": "e1a6f4aed2f38a7de9ea523f06d79040a0c278baf6b12e635da2ea7c25b35c09"
+      "sha256": "f05d2b780c4706a018cd0b37bb64fb0da864b38dd6a3799a43e028783a3ebf4a"
     },
     {
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1792,
-      "sha256": "b52e1f86d9f4b98361ef8551820b8b5a18e1a16e78c609342bc8abeaa9564010"
+      "sha256": "7d2701f0c22aa75e1d62626aad7df989e9f97857685f37395bbf47a9aed36809"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4637,
-      "sha256": "4043e7461d11406e78c82087fa926ee32b282daac954b41073a40e8b0df0e59c"
+      "sha256": "920614cbb7445d017c692aaf6b64ad313316488511b921d716a5a05609c0186f"
     },
     {
       "path": "test/e2e/recurring.spec.ts",
