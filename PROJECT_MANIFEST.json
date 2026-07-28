@@ -179,8 +179,8 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 2836,
-      "sha256": "914ae76bd95ad46cd825eea449b1ff41df9d16e16ce4a830977bad5a148f3530"
+      "size": 4329,
+      "sha256": "1eef23c66de5b634a9e132b3914def2b26b963cdc73c0522d9e21906a63752ff"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -624,8 +624,8 @@
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 3256,
-      "sha256": "c8fe20e1d98f7ce0a4238cb02bf93dfea04f52cd403f1068cb234d47dd1e39a1"
+      "size": 3773,
+      "sha256": "e24743be69d1cec9ef6fe7d9c896f07b754613345028b463d3c6abb4eac3f6d8"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",

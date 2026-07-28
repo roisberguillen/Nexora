@@ -28,6 +28,11 @@ export interface BrowserLedger {
     readonly directory: FileSystemDirectoryHandle;
     readonly passphrase: string;
   }): Promise<CreatedLocalBackup>;
+  restoreEncryptedBackup?(input: {
+    readonly directory: FileSystemDirectoryHandle;
+    readonly id: string;
+    readonly passphrase: string;
+  }): Promise<void>;
   close(): Promise<void>;
 }
 
@@ -86,13 +91,24 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
     schemaVersion: ledger.migration.toVersion,
     storageKind: "opfs",
     createEncryptedBackup: ({ directory, passphrase }) =>
-      new LocalSqliteBackupService({
-        database: ledger.database,
-        store: new FileSystemDirectoryBackupStore(directory),
-        passphrase,
-      }).createBackup(),
+      createBackupService(ledger, directory, passphrase).createBackup(),
+    restoreEncryptedBackup: async ({ directory, id, passphrase }) => {
+      await createBackupService(ledger, directory, passphrase).restoreBackup(id);
+    },
     close: () => ledger.close(),
   };
+}
+
+function createBackupService(
+  ledger: OpfsLedger,
+  directory: FileSystemDirectoryHandle,
+  passphrase: string,
+): LocalSqliteBackupService {
+  return new LocalSqliteBackupService({
+    database: ledger.database,
+    store: new FileSystemDirectoryBackupStore(directory),
+    passphrase,
+  });
 }
 
 function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {
