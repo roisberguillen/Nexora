@@ -953,6 +953,16 @@
       "sha256": "ebc97972b591363f204f2bbe22d73d1d187e8d29895adb7fed65ee891a95a8e8"
     },
     {
+      "path": "packages/domain/src/entities/MonthlyJournal.test.ts",
+      "size": 559,
+      "sha256": "00ab493fb480ef23b1d3a7b15d85b4cee2824e947b72e076adac2750a45658f8"
+    },
+    {
+      "path": "packages/domain/src/entities/MonthlyJournal.ts",
+      "size": 1511,
+      "sha256": "7a9ede50b1ff981458ca6eaf3a9788bb4d00d0378f1a1e53063bd2d90b8cacbe"
+    },
+    {
       "path": "packages/domain/src/entities/RecurringRule.test.ts",
       "size": 1846,
       "sha256": "e52946a8fe77909be3f71234cdc31e9f995102866774b1fc40c46c9638a38ce1"
@@ -1004,8 +1014,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 2315,
-      "sha256": "67abd7c440fd311f47d2b6c4e4c0870c68207047dec087e555b7ffd4cf22780e"
+      "size": 2407,
+      "sha256": "32748e921d169cbfe3a2cb39205cfaadc4153ebf337614716ed923d801b6d060"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",

@@ -58,6 +58,7 @@ export { validateAccountUpdate, type AccountUpdateFacts } from "./services/accou
 export { executeConfirmedAllocationPlans } from "./services/executeAllocationPlans";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
+export { MonthlyJournal, type CreateMonthlyJournalProps } from "./entities/MonthlyJournal";
 export { currencyCode, type CurrencyCode } from "./value-objects/CurrencyCode";
 export { LocalDate } from "./value-objects/LocalDate";
 export { Money, type SerializedMoney } from "./value-objects/Money";
