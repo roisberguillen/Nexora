@@ -549,13 +549,13 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
-      "size": 13393,
-      "sha256": "96ca0a9d53aacc674776f2f55e360b76876504883a7b6e5c36967fa9ff67ede8"
+      "size": 14260,
+      "sha256": "8f3a2de432a4419b6e924fc4872b0cd3317ea22f480f3a892b1b95d45c010f8e"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 12302,
-      "sha256": "7d75531df3acb44658846d6625d6b86967907cf50a086bef41546a5af09cd2b5"
+      "size": 13441,
+      "sha256": "ede7594fffdfd8453f5ccce5488a36362fc2ed313d991c7ed682bb7a23f688de"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -569,8 +569,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 29595,
-      "sha256": "b4176325df55e5622f385c8b699ee41a4f6ac03b679880153f685c89beb0f93f"
+      "size": 34057,
+      "sha256": "62b1dae2194e72f45d767263938804e9221e7f4f5b7f35c672d13e5fc1c54b33"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -690,12 +690,12 @@
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
       "size": 13221,
-      "sha256": "fa25ff2fefd1ad99e30e07462b2e909b44c5a693b37c989ef829e821c934bc4f"
+      "sha256": "b059a6455c6e6e7521e9b5779fa786b4a9e2b41dfe99b3eb93dba87f3ac65fd9"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 28638,
-      "sha256": "a771d8ab8a106e4acbe8e100ce04b900287a6d18a12cf6c80fb9d8fe86bfcb07"
+      "size": 33110,
+      "sha256": "2ad655efe9d22c6ccfbc498dd54fc61dc40627be6baba5157a380769adbfbeb0"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -799,8 +799,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 2063,
-      "sha256": "3a79b37c4a283f9ac0fa2e1b1850aab9d568b0e47db92ce0f2b9ccba97df7877"
+      "size": 2396,
+      "sha256": "120abfec9d4bdc37baa2722b857769a20953bc6c231fc5d1ac4c5f3d3579e6d6"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",

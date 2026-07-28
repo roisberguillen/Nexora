@@ -8,6 +8,8 @@ import {
   type Transfer,
   type TransferBundle,
   type Tag,
+  type ImportBatch,
+  type ImportRow,
   validateAccountUpdate,
 } from "@nexora/domain";
 
@@ -19,6 +21,8 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly transactionSplits = new Map<string, TransactionSplit>();
   private readonly tags = new Map<string, Tag>();
   private readonly transactionTags = new Map<string, Set<string>>();
+  private readonly importBatches = new Map<string, ImportBatch>();
+  private readonly importRows = new Map<string, ImportRow>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -88,6 +92,18 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async saveTag(tag: Tag): Promise<void> {
     this.assertNew(this.tags, tag.id, "Tag");
     this.tags.set(tag.id, tag);
+  }
+  public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
+    this.assertNew(this.importBatches, batch.id, "Import batch");
+    if (
+      rows.length !== batch.rowsTotal ||
+      new Set(rows.map((row) => row.id)).size !== rows.length ||
+      rows.some((row) => row.batchId !== batch.id)
+    )
+      throw new DomainError("invalid_import", "Import batch rows are invalid.");
+    for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
+    this.importBatches.set(batch.id, batch);
+    for (const row of rows) this.importRows.set(row.id, row);
   }
   public async updateTag(tag: Tag): Promise<void> {
     if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");
@@ -252,6 +268,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async findTransferById(id: string): Promise<Transfer | undefined> {
     return this.transfers.get(id);
   }
+  public async findImportBatchById(id: string): Promise<ImportBatch | undefined> {
+    return this.importBatches.get(id);
+  }
 
   public async listAccounts(): Promise<readonly Account[]> {
     return [...this.accounts.values()];
@@ -281,6 +300,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     return [...this.transactionSplits.values()].filter(
       (split) => split.transactionId === transactionId,
     );
+  }
+  public async listImportRows(batchId: string): Promise<readonly ImportRow[]> {
+    return [...this.importRows.values()]
+      .filter((row) => row.batchId === batchId)
+      .sort((left, right) => left.rowNumber - right.rowNumber);
   }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {

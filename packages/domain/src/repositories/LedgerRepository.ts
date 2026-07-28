@@ -4,6 +4,8 @@ import type { Transaction } from "../entities/Transaction";
 import type { Transfer } from "../entities/Transfer";
 import type { TransactionSplit } from "../entities/TransactionSplit";
 import type { Tag } from "../entities/Tag";
+import type { ImportBatch } from "../entities/ImportBatch";
+import type { ImportRow } from "../entities/ImportRow";
 
 export interface TransferBundle {
   readonly transfer: Transfer;
@@ -18,6 +20,7 @@ export interface LedgerRepository {
   saveCategory(category: Category): Promise<void>;
   updateCategory(category: Category): Promise<void>;
   saveTag(tag: Tag): Promise<void>;
+  saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
   updateTag(tag: Tag): Promise<void>;
   setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;
@@ -37,6 +40,7 @@ export interface LedgerRepository {
   findCategoryById(id: string): Promise<Category | undefined>;
   findTransactionById(id: string): Promise<Transaction | undefined>;
   findTransferById(id: string): Promise<Transfer | undefined>;
+  findImportBatchById(id: string): Promise<ImportBatch | undefined>;
   listAccounts(): Promise<readonly Account[]>;
   listCategories(): Promise<readonly Category[]>;
   listTags(): Promise<readonly Tag[]>;
@@ -44,4 +48,5 @@ export interface LedgerRepository {
   listTransactions(): Promise<readonly Transaction[]>;
   listTransfers(): Promise<readonly Transfer[]>;
   listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]>;
+  listImportRows(batchId: string): Promise<readonly ImportRow[]>;
 }

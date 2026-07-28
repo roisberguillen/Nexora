@@ -6,6 +6,8 @@ import {
   Transaction,
   type TransactionSplit,
   Tag,
+  ImportBatch,
+  ImportRow,
   Transfer,
   type TransferBundle,
   validateAccountUpdate,
@@ -260,6 +262,51 @@ export class SqliteLedgerRepository implements LedgerRepository {
             tag.name,
             tag.isArchived ? 1 : 0,
           ]);
+        }),
+      ),
+    );
+  }
+  public saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if (rows.length !== batch.rowsTotal || rows.some((row) => row.batchId !== batch.id))
+            throw new DomainError("invalid_import", "Import batch rows are invalid.");
+          const existing = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM import_batches WHERE id = ?",
+            [batch.id],
+          );
+          if (existing.length > 0)
+            throw new DomainError("duplicate_entity", "Import batch id already exists.");
+          await this.database.run(
+            "INSERT INTO import_batches (id, importer_type, source_filename, source_sha256, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+              batch.id,
+              batch.importerType,
+              batch.sourceFilename,
+              batch.sourceSha256,
+              batch.status,
+              new Date().toISOString(),
+              batch.rowsTotal,
+              batch.rowsImported,
+              batch.rowsSkipped,
+              batch.rowsFailed,
+            ],
+          );
+          for (const row of rows)
+            await this.database.run(
+              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              [
+                row.id,
+                row.batchId,
+                row.rowNumber,
+                row.rawJson,
+                row.normalizedJson ?? null,
+                row.status,
+                row.errorCode ?? null,
+                row.createdTransactionId ?? null,
+              ],
+            );
         }),
       ),
     );
@@ -584,6 +631,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       }),
     );
   }
+  public async findImportBatchById(id: string): Promise<ImportBatch | undefined> {
+    return this.performDatabaseOperation(async () => {
+      const rows = await this.database.query<ImportBatchRecord>(
+        "SELECT id, importer_type, source_filename, source_sha256, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches WHERE id = ?",
+        [id],
+      );
+      return rows[0] === undefined ? undefined : importBatchFromRecord(rows[0]);
+    });
+  }
 
   public listAccounts(): Promise<readonly Account[]> {
     return this.enqueue(() =>
@@ -680,6 +736,16 @@ export class SqliteLedgerRepository implements LedgerRepository {
           [transactionId],
         )
       ).map(transactionSplitFromRecord),
+    );
+  }
+  public async listImportRows(batchId: string): Promise<readonly ImportRow[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<ImportRowRecord>(
+          "SELECT id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id FROM import_rows WHERE batch_id = ? ORDER BY row_number",
+          [batchId],
+        )
+      ).map(importRowFromRecord),
     );
   }
 
@@ -834,4 +900,53 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
     return rows[0] === undefined ? undefined : transactionFromRecord(rows[0]);
   }
+}
+
+interface ImportBatchRecord {
+  readonly id: string;
+  readonly importer_type: "money_manager_xlsx";
+  readonly source_filename: string;
+  readonly source_sha256: string;
+  readonly status: "previewed" | "committed" | "undone" | "failed";
+  readonly rows_total: number;
+  readonly rows_imported: number;
+  readonly rows_skipped: number;
+  readonly rows_failed: number;
+}
+interface ImportRowRecord {
+  readonly id: string;
+  readonly batch_id: string;
+  readonly row_number: number;
+  readonly raw_json: string;
+  readonly normalized_json: string | null;
+  readonly status: "imported" | "skipped_duplicate" | "needs_review" | "failed";
+  readonly error_code: string | null;
+  readonly created_transaction_id: string | null;
+}
+function importBatchFromRecord(row: ImportBatchRecord): ImportBatch {
+  return ImportBatch.create({
+    id: row.id,
+    importerType: row.importer_type,
+    sourceFilename: row.source_filename,
+    sourceSha256: row.source_sha256,
+    status: row.status,
+    rowsTotal: row.rows_total,
+    rowsImported: row.rows_imported,
+    rowsSkipped: row.rows_skipped,
+    rowsFailed: row.rows_failed,
+  });
+}
+function importRowFromRecord(row: ImportRowRecord): ImportRow {
+  return ImportRow.create({
+    id: row.id,
+    batchId: row.batch_id,
+    rowNumber: row.row_number,
+    rawJson: row.raw_json,
+    status: row.status,
+    ...(row.normalized_json === null ? {} : { normalizedJson: row.normalized_json }),
+    ...(row.error_code === null ? {} : { errorCode: row.error_code }),
+    ...(row.created_transaction_id === null
+      ? {}
+      : { createdTransactionId: row.created_transaction_id }),
+  });
 }

@@ -8,6 +8,8 @@ import {
   Transaction,
   TransactionSplit,
   Transfer,
+  ImportBatch,
+  ImportRow,
 } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
@@ -386,5 +388,28 @@ describe("InMemoryLedgerRepository", () => {
         }),
       ),
     ).rejects.toMatchObject({ code: "invalid_account" });
+  });
+  it("salva batch e righe di importazione senza stati parziali", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const batch = ImportBatch.create({
+      id: "batch-1",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256: "a".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-1",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "needs_review",
+    });
+    await repository.saveImportBatch(batch, [row]);
+    await expect(repository.findImportBatchById(batch.id)).resolves.toEqual(batch);
+    await expect(repository.listImportRows(batch.id)).resolves.toEqual([row]);
+    await expect(repository.saveImportBatch(batch, [])).rejects.toMatchObject({
+      code: "duplicate_entity",
+    });
   });
 });
