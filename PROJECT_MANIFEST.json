@@ -414,8 +414,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 3354,
-      "sha256": "7b210e36caa6f5817c7750de4e4b0a3422cec68bb91118536a50d056c514f95f"
+      "size": 3566,
+      "sha256": "fc398734744c88e4caa6c717c034731e0da5ae41cf86ceb8da1b67093b526fe2"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -979,8 +979,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
-      "size": 109642,
-      "sha256": "0faa71871ab6efe0ee30a7011c03aeb0bfafdd50a4d3b0d2eaf5d7a65e379b00"
+      "size": 109672,
+      "sha256": "d9a274d1c2d743b983931b2d4a16369f4c2ea08eaa15178bd41ac7d460aca5c3"
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
@@ -1004,8 +1004,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 191248,
-      "sha256": "ed3b03847c3109c109bafb20a5f60369ab7c08ab7a26adbeda0842515196a837"
+      "size": 191280,
+      "sha256": "33d60a23f1219ce880565a9e7da0851cd857925a039c7687db8e36dc619ecd00"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",

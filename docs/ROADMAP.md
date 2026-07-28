@@ -29,7 +29,7 @@ Avanzamento:
 Completata il 2026-07-27. La PWA mantiene stabile il backend scelto, non inserisce dati
 automaticamente e riapre ledger OPFS e IndexedDB con rete indisponibile.
 
-## Milestone 3 — UI core
+## Milestone 3 — UI core ✅
 Dashboard base, conti, transazioni, categorie, tag, ricerca e responsive layout.
 
 Avanzamento:
@@ -39,13 +39,16 @@ Avanzamento:
 - [x] Riepilogo conti e movimenti recenti responsive, con trasferimenti collassati.
 - [x] Componenti `FinancialAmount` e `MetricCard` riutilizzabili.
 - [x] Gestione conti con creazione, modifica conservativa, archiviazione e riattivazione.
-- [ ] Gestione movimenti, split e rettifiche.
+- [x] Gestione movimenti, split e rettifiche.
   - [x] Registrazioni manuali di entrate, spese e rettifiche, trasferimenti atomici e
     annullamento conservativo.
-  - [ ] Split con raggruppamento persistente e migrazione dedicata.
+  - [x] Split con raggruppamento persistente e migrazione dedicata.
   - [x] Modello e migrazione v2 per split persistenti, con UI e controlli E2E iniziali.
 - [x] Gestione categorie e tag, inclusa l'assegnazione atomica dei tag ai movimenti.
-- [ ] Ricerca globale.
+- [x] Ricerca globale offline per conti, categorie, tag e movimenti.
+
+Completata il 2026-07-28. Verificata con unit/integration test, flussi E2E responsive
+320/768/1440, audit Axe, persistenza locale e baseline visuali aggiornate.
 
 ## Milestone 4 — Money Manager XLSX
 Parser, mapping wizard, preview, validazione, deduplica, dry-run, import atomico, undo batch, report.
