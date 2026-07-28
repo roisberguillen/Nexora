@@ -218,6 +218,16 @@
       "sha256": "544624cc47788d651365be78dc0534a95f9a5f5f36f247d50c0da4056eaf79fc"
     },
     {
+      "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",
+      "size": 1143,
+      "sha256": "25feb229de4b8764bbdafc03cbd07244ea7d56abe84e0280b9e28df1e9a0017d"
+    },
+    {
+      "path": "apps/web/src/cloud/GoogleIdentityAuth.ts",
+      "size": 2393,
+      "sha256": "fd0af0681705965ad37f8977b221ee42a261e0d427a00eb881feb2aac704a070"
+    },
+    {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
       "size": 4545,
       "sha256": "6b4dbb36b1b5f451c1d1acfa3d0f7f415acfbd494a2d943a4e4dfe787bad3aa8"
