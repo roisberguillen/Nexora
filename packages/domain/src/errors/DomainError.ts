@@ -6,6 +6,7 @@ export type DomainErrorCode =
   | "invalid_currency"
   | "invalid_date"
   | "invalid_identifier"
+  | "invalid_import"
   | "invalid_money"
   | "invalid_transaction"
   | "invalid_transfer"

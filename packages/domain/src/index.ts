@@ -15,6 +15,12 @@ export {
 export { Transfer, type CreateTransferProps } from "./entities/Transfer";
 export { Tag, type CreateTagProps } from "./entities/Tag";
 export {
+  ImportBatch,
+  type CreateImportBatchProps,
+  type ImportBatchStatus,
+  type ImportRowStatus,
+} from "./entities/ImportBatch";
+export {
   TransactionSplit,
   validateTransactionSplits,
   type CreateTransactionSplitProps,

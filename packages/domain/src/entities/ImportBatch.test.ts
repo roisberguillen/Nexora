@@ -1,0 +1,41 @@
+import { describe, expect, it } from "vitest";
+
+import { ImportBatch } from "./ImportBatch";
+
+const sourceSha256 = "a".repeat(64);
+
+describe("ImportBatch", () => {
+  it("consente il passaggio previewed, committed, undone", () => {
+    const batch = ImportBatch.create({
+      id: "batch-1",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 2,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256,
+    });
+    const committed = batch.commit({ rowsImported: 1, rowsSkipped: 1, rowsFailed: 0 });
+    expect(committed.status).toBe("committed");
+    expect(committed.undo().status).toBe("undone");
+  });
+
+  it("rifiuta conteggi e transizioni non validi", () => {
+    expect(() =>
+      ImportBatch.create({
+        id: "batch-1",
+        importerType: "money_manager_xlsx",
+        rowsTotal: 1,
+        rowsImported: 2,
+        sourceFilename: "movimenti.xlsx",
+        sourceSha256,
+      }),
+    ).toThrow("exceed");
+    const batch = ImportBatch.create({
+      id: "batch-1",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256,
+    });
+    expect(() => batch.undo()).toThrow("committed");
+  });
+});

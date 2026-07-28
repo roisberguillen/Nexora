@@ -620,7 +620,7 @@
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
       "size": 8574,
-      "sha256": "735160f0d326e600c2ed16467312fff99b6bae8fe3c691e6de6b7000015f018c"
+      "sha256": "ce36f7a3968d1e6f09fd6862a6fa2c0d099e26e7908e04850b7c7a8d9824ba9b"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -733,6 +733,16 @@
       "sha256": "1c6b63d3a4b35e596257a9189124e9bf079ac75c09997f2ae44d58bd8f210be6"
     },
     {
+      "path": "packages/domain/src/entities/ImportBatch.test.ts",
+      "size": 1184,
+      "sha256": "97a3bae934a97de5ae9fc9acca636fa614679a099fac7bf80a9559e82d262bbc"
+    },
+    {
+      "path": "packages/domain/src/entities/ImportBatch.ts",
+      "size": 3269,
+      "sha256": "678ca044e9adc8b3a66df9a9ac5481d23e964f12ce431deb6008d6b244d268ca"
+    },
+    {
       "path": "packages/domain/src/entities/Tag.ts",
       "size": 820,
       "sha256": "edca9f60c87080749c9354ef1e4b83962efa327f9e1444018b5e39365135ca8e"
@@ -769,13 +779,13 @@
     },
     {
       "path": "packages/domain/src/errors/DomainError.ts",
-      "size": 509,
-      "sha256": "bc0ccf7cecec45acfa9c236406060a0862bfd07f17b13c0c7539dfbec7dd17ab"
+      "size": 530,
+      "sha256": "fde7ec89de20de609a3dd498c3a2aadbb45da5db18460a57ae8a9e18038fd7d8"
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 1250,
-      "sha256": "b13be0096e4de935c12690476ca23cc4e78dd9f18b1c1f4ed0936f04ef7222bf"
+      "size": 1388,
+      "sha256": "a527daa1ffd1d0c1df7967fe18fa4af080e33fb5358a3f30def616faddb51c97"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
