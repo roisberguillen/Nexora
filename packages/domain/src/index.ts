@@ -5,6 +5,7 @@ export {
   type UpdateAccountProps,
 } from "./entities/Account";
 export { Category, type CategoryKindScope, type CreateCategoryProps } from "./entities/Category";
+export { Budget, type CreateBudgetProps } from "./entities/Budget";
 export {
   Transaction,
   type CreateTransactionProps,
