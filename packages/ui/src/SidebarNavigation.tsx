@@ -8,7 +8,14 @@ interface NavigationItem {
 }
 
 export type NavigationRoute =
-  "overview" | "accounts" | "transactions" | "categories" | "tags" | "imports" | "recurring";
+  | "overview"
+  | "accounts"
+  | "transactions"
+  | "categories"
+  | "tags"
+  | "imports"
+  | "budgets"
+  | "recurring";
 
 const navigationItems: readonly NavigationItem[] = [
   { label: "Panoramica", icon: "overview", available: true, route: "overview" },
@@ -17,7 +24,7 @@ const navigationItems: readonly NavigationItem[] = [
   { label: "Categorie", icon: "transactions", available: true, route: "categories" },
   { label: "Tag", icon: "transactions", available: true, route: "tags" },
   { label: "Importa", icon: "transactions", available: true, route: "imports" },
-  { label: "Budget", icon: "budget", available: false, route: "overview" },
+  { label: "Budget", icon: "budget", available: true, route: "budgets" },
   { label: "Ricorrenze", icon: "recurring", available: true, route: "recurring" },
   { label: "Impostazioni", icon: "settings", available: false, route: "overview" },
 ];

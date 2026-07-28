@@ -4,6 +4,7 @@ import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
 import type {
   Account,
   AllocationPlan,
+  Budget,
   Category,
   ImportBatch,
   RecurringRule,
@@ -54,6 +55,8 @@ import {
   type RecurringRuleInput,
 } from "./recurring/recurringCommands";
 import { createAllocationPlan, type AllocationPlanInput } from "./recurring/allocationCommands";
+import { BudgetsPage } from "./budgets/BudgetsPage";
+import { createBudget, type BudgetInput } from "./budgets/budgetCommands";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -67,6 +70,7 @@ interface ReadyLedgerState {
   readonly importBatches: readonly ImportBatch[];
   readonly recurringRules: readonly RecurringRule[];
   readonly allocationPlans: readonly AllocationPlan[];
+  readonly budgets: readonly Budget[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -103,6 +107,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         ({
           accounts,
           allocationPlans,
+          budgets,
           categories,
           dashboard,
           importBatches,
@@ -124,6 +129,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           setLedgerState({
             accounts,
             allocationPlans,
+            budgets,
             categories,
             dashboard,
             importBatches,
@@ -297,6 +303,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await createAllocationPlan(ledger.repository, input);
     });
+  const createMonthlyBudget = (input: BudgetInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await createBudget(ledger.repository, input);
+    });
   const executeAllocations = (planIds: readonly string[]): Promise<void> =>
     mutateLedger(async (ledger) => {
       const plans = (await ledger.repository.listAllocationPlans()).filter((plan) =>
@@ -367,6 +377,13 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 batches={ledgerState.importBatches}
               />
             </Suspense>
+          ) : route === "budgets" ? (
+            <BudgetsPage
+              budgets={ledgerState.budgets}
+              categories={ledgerState.categories}
+              onCreate={createMonthlyBudget}
+              transactions={ledgerState.rawTransactions}
+            />
           ) : route === "recurring" ? (
             <RecurringPage
               accounts={ledgerState.rawAccounts}
@@ -428,6 +445,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 }
 
 interface AppModels {
+  readonly budgets: readonly Budget[];
   readonly importBatches: readonly ImportBatch[];
   readonly recurringRules: readonly RecurringRule[];
   readonly allocationPlans: readonly AllocationPlan[];
@@ -444,6 +462,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
   const [
     accounts,
     allocationPlans,
+    budgets,
     categories,
     importBatches,
     recurringRules,
@@ -453,6 +472,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
   ] = await Promise.all([
     ledger.repository.listAccounts(),
     ledger.repository.listAllocationPlans(),
+    ledger.repository.listBudgets(),
     ledger.repository.listCategories(),
     ledger.repository.listImportBatches(),
     ledger.repository.listRecurringRules(),
@@ -462,6 +482,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
   ]);
   return {
     allocationPlans,
+    budgets,
     importBatches,
     recurringRules,
     rawAccounts: accounts,
@@ -495,9 +516,23 @@ function persistenceErrorMessage(error: unknown): string {
 }
 
 function useAppRoute():
-  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" | "recurring" {
+  | "accounts"
+  | "overview"
+  | "transactions"
+  | "categories"
+  | "tags"
+  | "imports"
+  | "budgets"
+  | "recurring" {
   const [route, setRoute] = useState<
-    "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" | "recurring"
+    | "accounts"
+    | "overview"
+    | "transactions"
+    | "categories"
+    | "tags"
+    | "imports"
+    | "budgets"
+    | "recurring"
   >(readAppRoute);
 
   useEffect(() => {
@@ -512,7 +547,14 @@ function useAppRoute():
 }
 
 function readAppRoute():
-  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" | "recurring" {
+  | "accounts"
+  | "overview"
+  | "transactions"
+  | "categories"
+  | "tags"
+  | "imports"
+  | "budgets"
+  | "recurring" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
@@ -522,6 +564,7 @@ function readAppRoute():
   if (window.location.hash === "#categories") return "categories";
   if (window.location.hash === "#tags") return "tags";
   if (window.location.hash === "#imports") return "imports";
+  if (window.location.hash === "#budgets") return "budgets";
   if (window.location.hash === "#recurring") return "recurring";
   return "overview";
 }
