@@ -412,4 +412,40 @@ describe("InMemoryLedgerRepository", () => {
       code: "duplicate_entity",
     });
   });
+
+  it("committa o annulla atomicamente batch, righe e transazioni importate", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const savedAccount = account("account-import");
+    await repository.saveAccount(savedAccount);
+    const batch = ImportBatch.create({
+      id: "batch-commit",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256: "c".repeat(64),
+    });
+    const transaction = Transaction.create({
+      id: "transaction-import",
+      kind: "income",
+      status: "booked",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(100n, "EUR"),
+      bookedDate,
+      source: "import",
+      importBatchId: batch.id,
+      sourceFingerprint: "d".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-commit",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "imported",
+      createdTransactionId: transaction.id,
+    });
+    await expect(repository.commitImportBatch(batch, [row], [transaction])).resolves.toMatchObject({
+      status: "committed",
+    });
+    await expect(repository.findTransactionById(transaction.id)).resolves.toEqual(transaction);
+  });
 });

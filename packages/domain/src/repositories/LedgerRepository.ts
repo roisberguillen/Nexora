@@ -21,6 +21,11 @@ export interface LedgerRepository {
   updateCategory(category: Category): Promise<void>;
   saveTag(tag: Tag): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
+  commitImportBatch(
+    batch: ImportBatch,
+    rows: readonly ImportRow[],
+    transactions: readonly Transaction[],
+  ): Promise<ImportBatch>;
   updateTag(tag: Tag): Promise<void>;
   setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;

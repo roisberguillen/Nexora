@@ -10,6 +10,7 @@ import {
   type Tag,
   type ImportBatch,
   type ImportRow,
+  validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
 
@@ -104,6 +105,31 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
     this.importBatches.set(batch.id, batch);
     for (const row of rows) this.importRows.set(row.id, row);
+  }
+  public async commitImportBatch(
+    batch: ImportBatch,
+    rows: readonly ImportRow[],
+    transactions: readonly Transaction[],
+  ): Promise<ImportBatch> {
+    const committed = validateImportCommit(batch, rows, transactions);
+    this.assertNew(this.importBatches, batch.id, "Import batch");
+    for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
+    for (const transaction of transactions) {
+      this.assertNew(this.transactions, transaction.id, "Transaction");
+      this.validateTransactionReferences(transaction);
+      if (
+        [...this.transactions.values()].some(
+          (candidate) =>
+            candidate.accountId === transaction.accountId &&
+            candidate.sourceFingerprint === transaction.sourceFingerprint,
+        )
+      )
+        throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
+    }
+    this.importBatches.set(committed.id, committed);
+    for (const row of rows) this.importRows.set(row.id, row);
+    for (const transaction of transactions) this.transactions.set(transaction.id, transaction);
+    return committed;
   }
   public async updateTag(tag: Tag): Promise<void> {
     if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");

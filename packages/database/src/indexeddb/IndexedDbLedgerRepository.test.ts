@@ -407,4 +407,41 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.findImportBatchById(batch.id)).resolves.toEqual(batch);
     await expect(ledger.repository.listImportRows(batch.id)).resolves.toEqual([row]);
   });
+
+  it("committa transazioni importate con il loro batch", async () => {
+    const savedAccount = account("account-import");
+    await ledger.repository.saveAccount(savedAccount);
+    const batch = ImportBatch.create({
+      id: "batch-commit",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "movimenti.xlsx",
+      sourceSha256: "c".repeat(64),
+    });
+    const transaction = Transaction.create({
+      id: "transaction-import",
+      kind: "income",
+      status: "booked",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(100n, "EUR"),
+      bookedDate,
+      source: "import",
+      importBatchId: batch.id,
+      sourceFingerprint: "d".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-commit",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "imported",
+      createdTransactionId: transaction.id,
+    });
+    await expect(
+      ledger.repository.commitImportBatch(batch, [row], [transaction]),
+    ).resolves.toMatchObject({ status: "committed" });
+    await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toEqual(
+      transaction,
+    );
+  });
 });

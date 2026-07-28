@@ -549,13 +549,13 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
-      "size": 14260,
-      "sha256": "8f3a2de432a4419b6e924fc4872b0cd3317ea22f480f3a892b1b95d45c010f8e"
+      "size": 15482,
+      "sha256": "5628ec67a1de5df2e4d01feb1ae6b4e02c7c044bb75ce04d21dbe5ca0a7f27a0"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 13441,
-      "sha256": "ede7594fffdfd8453f5ccce5488a36362fc2ed313d991c7ed682bb7a23f688de"
+      "size": 14586,
+      "sha256": "b3a134a9f1680c04fe5c74cb8022c015016a3e2b4053e1d65ac656b2daf252ba"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -564,13 +564,13 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 14190,
-      "sha256": "cead19e74a41b01ec3a6dcc5a6eb413dbb58fd76d39c20da9671de27aaee795f"
+      "size": 15373,
+      "sha256": "582375b852575985abc910a5e04403e31f3a4d75ffa0be7de76aaca547ac6a2b"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 34057,
-      "sha256": "62b1dae2194e72f45d767263938804e9221e7f4f5b7f35c672d13e5fc1c54b33"
+      "size": 36100,
+      "sha256": "72307bf60201d482a422a0b41b354d7d83bfa4e96ddc11e77a15387ee1f5811d"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -689,13 +689,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 13916,
-      "sha256": "e8f97ee99e9c551cc2d631d3f55838f4d2a5c2986a0a413c8cc428f49f98c3f6"
+      "size": 15063,
+      "sha256": "ec527f6a58bf82111a543c108d40d6ff29412b42fbdfa11ba2f1d2326b07317f"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 33281,
-      "sha256": "299f1cf576a62e56862dc30d989ca4558ffa24aec758f07e77bee38f8b7e1261"
+      "size": 35988,
+      "sha256": "9c6ee29a3d1cdae02206201f680dde5e6015e24f5afde539cf7fae5565c08802"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -799,8 +799,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 2396,
-      "sha256": "120abfec9d4bdc37baa2722b857769a20953bc6c231fc5d1ac4c5f3d3579e6d6"
+      "size": 2542,
+      "sha256": "d885e49289e88ceefdc5487f1c0ecae36945ab058100f7c38d485571386d03f2"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",

@@ -8,6 +8,7 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
+  validateImportCommit,
   type Transfer,
   type TransferBundle,
   validateAccountUpdate,
@@ -197,6 +198,46 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             for (const row of rows) await this.assertNew(importRows, row.id, "Import row");
             await requestResult(batches.add(importBatchToRecord(batch)));
             for (const row of rows) await requestResult(importRows.add(importRowToRecord(row)));
+          },
+        ),
+      ),
+    );
+  }
+  public commitImportBatch(
+    batch: ImportBatch,
+    rows: readonly ImportRow[],
+    transactions: readonly Transaction[],
+  ): Promise<ImportBatch> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["accounts", "categories", "transactions", "import_batches", "import_rows"],
+          "readwrite",
+          async (transaction) => {
+            const committed = validateImportCommit(batch, rows, transactions);
+            const batches = transaction.objectStore("import_batches");
+            const importRows = transaction.objectStore("import_rows");
+            const storedTransactions = transaction.objectStore("transactions");
+            await this.assertNew(batches, batch.id, "Import batch");
+            for (const row of rows) await this.assertNew(importRows, row.id, "Import row");
+            const existing = await requestResult<unknown[]>(storedTransactions.getAll());
+            for (const ledgerTransaction of transactions) {
+              await this.assertNew(storedTransactions, ledgerTransaction.id, "Transaction");
+              await this.validateTransactionReferences(transaction, ledgerTransaction);
+              if (
+                (existing as TransactionRecord[]).some(
+                  (candidate) =>
+                    candidate.account_id === ledgerTransaction.accountId &&
+                    candidate.source_fingerprint === ledgerTransaction.sourceFingerprint,
+                )
+              )
+                throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
+            }
+            await requestResult(batches.add(importBatchToRecord(committed)));
+            for (const ledgerTransaction of transactions)
+              await requestResult(storedTransactions.add(transactionToRecord(ledgerTransaction)));
+            for (const row of rows) await requestResult(importRows.add(importRowToRecord(row)));
+            return committed;
           },
         ),
       ),

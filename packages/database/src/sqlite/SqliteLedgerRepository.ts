@@ -8,6 +8,7 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
+  validateImportCommit,
   Transfer,
   type TransferBundle,
   validateAccountUpdate,
@@ -309,6 +310,67 @@ export class SqliteLedgerRepository implements LedgerRepository {
                 row.createdTransactionId ?? null,
               ],
             );
+        }),
+      ),
+    );
+  }
+  public commitImportBatch(
+    batch: ImportBatch,
+    rows: readonly ImportRow[],
+    transactions: readonly Transaction[],
+  ): Promise<ImportBatch> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const committed = validateImportCommit(batch, rows, transactions);
+          const existing = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM import_batches WHERE id = ?",
+            [batch.id],
+          );
+          if (existing.length > 0)
+            throw new DomainError("duplicate_entity", "Import batch id already exists.");
+          for (const transaction of transactions) {
+            await this.assertNew("transactions", transaction.id, "Transaction");
+            await this.validateTransactionReferences(transaction);
+            const duplicate = await this.database.query<{ readonly id: string }>(
+              "SELECT id FROM transactions WHERE account_id = ? AND source_fingerprint = ? LIMIT 1",
+              [transaction.accountId, transaction.sourceFingerprint!],
+            );
+            if (duplicate.length > 0)
+              throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
+          }
+          await this.database.run(
+            "INSERT INTO import_batches (id, importer_type, source_filename, source_sha256, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+              committed.id,
+              committed.importerType,
+              committed.sourceFilename,
+              committed.sourceSha256,
+              committed.status,
+              new Date().toISOString(),
+              new Date().toISOString(),
+              committed.rowsTotal,
+              committed.rowsImported,
+              committed.rowsSkipped,
+              committed.rowsFailed,
+            ],
+          );
+          for (const transaction of transactions) await this.insertTransaction(transaction);
+          for (const row of rows)
+            await this.database.run(
+              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              [
+                row.id,
+                row.batchId,
+                row.rowNumber,
+                row.rawJson,
+                row.normalizedJson ?? null,
+                row.status,
+                row.errorCode ?? null,
+                row.createdTransactionId ?? null,
+              ],
+            );
+          return committed;
         }),
       ),
     );
