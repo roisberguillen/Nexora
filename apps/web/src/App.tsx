@@ -1,5 +1,6 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
+import type { Category } from "@nexora/domain";
 import { AppShell, ErrorBoundary } from "@nexora/ui";
 import { useEffect, useState } from "react";
 
@@ -11,6 +12,12 @@ import {
   type UpdateLedgerAccountInput,
 } from "./accounts/accountCommands";
 import { AccountsPage } from "./accounts/AccountsPage";
+import { CategoriesPage } from "./categories/CategoriesPage";
+import {
+  createLedgerCategory,
+  updateLedgerCategory,
+  type CategoryInput,
+} from "./categories/categoryCommands";
 import { buildAccountsViewModel, type AccountsViewModel } from "./accounts/buildAccountsViewModel";
 import {
   buildDashboardViewModel,
@@ -33,6 +40,7 @@ const logger = createSafeLogger();
 
 interface ReadyLedgerState {
   readonly accounts: AccountsViewModel;
+  readonly categories: readonly Category[];
   readonly dashboard: DashboardViewModel;
   readonly transactions: TransactionsViewModel;
   readonly ledger: BrowserLedger;
@@ -62,7 +70,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
 
     void ledgerPromise
       .then(async (ledger) => ({ ...(await loadAppModels(ledger)), ledger }))
-      .then(({ accounts, dashboard, transactions, ledger }) => {
+      .then(({ accounts, categories, dashboard, transactions, ledger }) => {
         if (!isActive) {
           return;
         }
@@ -71,7 +79,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           status: "completed",
           storageKind: ledger.storageKind,
         });
-        setLedgerState({ accounts, dashboard, ledger, status: "ready", transactions });
+        setLedgerState({ accounts, categories, dashboard, ledger, status: "ready", transactions });
       })
       .catch((error: unknown) => {
         if (!isActive) {
@@ -152,6 +160,18 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
       await setLedgerAccountArchived(ledger.repository, accountId, isArchived);
     });
 
+  const createCategory = (input: CategoryInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await createLedgerCategory(ledger.repository, input);
+    });
+  const updateCategory = (
+    id: string,
+    input: CategoryInput & { readonly isArchived: boolean },
+  ): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateLedgerCategory(ledger.repository, id, input);
+    });
+
   const createManualMovement = (input: CreateManualTransactionInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createManualTransaction(ledger.repository, input);
@@ -196,6 +216,12 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               onCancel={cancelMovement}
               onCreateManual={createManualMovement}
               onCreateTransfer={createTransferMovement}
+            />
+          ) : route === "categories" ? (
+            <CategoriesPage
+              categories={ledgerState.categories}
+              onCreate={createCategory}
+              onUpdate={updateCategory}
             />
           ) : (
             <Dashboard
@@ -248,6 +274,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 
 interface AppModels {
   readonly accounts: AccountsViewModel;
+  readonly categories: readonly Category[];
   readonly dashboard: DashboardViewModel;
   readonly transactions: TransactionsViewModel;
 }
@@ -260,6 +287,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     ledger.repository.listTransfers(),
   ]);
   return {
+    categories,
     accounts: buildAccountsViewModel({ accounts, transactions }),
     dashboard: buildDashboardViewModel({
       accounts,
@@ -286,8 +314,10 @@ function persistenceErrorMessage(error: unknown): string {
   return "Nexora ha interrotto l’apertura per proteggere i dati. Nessun archivio alternativo è stato aperto.";
 }
 
-function useAppRoute(): "accounts" | "overview" | "transactions" {
-  const [route, setRoute] = useState<"accounts" | "overview" | "transactions">(readAppRoute);
+function useAppRoute(): "accounts" | "overview" | "transactions" | "categories" {
+  const [route, setRoute] = useState<"accounts" | "overview" | "transactions" | "categories">(
+    readAppRoute,
+  );
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -300,12 +330,13 @@ function useAppRoute(): "accounts" | "overview" | "transactions" {
   return route;
 }
 
-function readAppRoute(): "accounts" | "overview" | "transactions" {
+function readAppRoute(): "accounts" | "overview" | "transactions" | "categories" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
   if (window.location.hash === "#transactions") {
     return "transactions";
   }
+  if (window.location.hash === "#categories") return "categories";
   return "overview";
 }
