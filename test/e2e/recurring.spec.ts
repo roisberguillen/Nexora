@@ -22,6 +22,11 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByLabel("Importo").last().fill("170,00");
   await page.getByRole("button", { name: "Salva piano" }).click();
   await expect(page.getByText("Risparmio sintetico")).toBeVisible();
+  await page.getByRole("button", { name: "Conferma allocazioni stipendio" }).click();
+  const confirmation = page.getByRole("alertdialog", { name: "Conferma allocazioni stipendio" });
+  await expect(confirmation).toContainText("Stipendio ricevuto");
+  await confirmation.getByRole("button", { name: "Esegui allocazioni" }).click();
+  await expect(confirmation).not.toBeVisible();
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,

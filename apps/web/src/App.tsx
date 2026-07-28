@@ -1,5 +1,6 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
+import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
 import type {
   Account,
   AllocationPlan,
@@ -277,6 +278,19 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await createAllocationPlan(ledger.repository, input);
     });
+  const executeAllocations = (planIds: readonly string[]): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      const plans = (await ledger.repository.listAllocationPlans()).filter((plan) =>
+        planIds.includes(plan.id),
+      );
+      const bookedDate = new Intl.DateTimeFormat("sv-SE", {
+        day: "2-digit",
+        month: "2-digit",
+        timeZone: "Europe/Rome",
+        year: "numeric",
+      }).format(new Date());
+      await executeConfirmedAllocationPlans(ledger.repository, plans, LocalDate.parse(bookedDate));
+    });
 
   return (
     <ErrorBoundary
@@ -339,6 +353,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               allocationPlans={ledgerState.allocationPlans}
               categories={ledgerState.categories}
               onCreateAllocation={createAllocation}
+              onExecuteAllocations={executeAllocations}
               rules={ledgerState.recurringRules}
               onCreate={createRecurring}
               onUpdate={updateRecurring}

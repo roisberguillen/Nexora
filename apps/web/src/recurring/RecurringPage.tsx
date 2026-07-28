@@ -19,6 +19,7 @@ export function RecurringPage({
   rules,
   onCreate,
   onCreateAllocation,
+  onExecuteAllocations,
   onUpdate,
 }: {
   readonly accounts: readonly Account[];
@@ -27,6 +28,7 @@ export function RecurringPage({
   readonly rules: readonly RecurringRule[];
   readonly onCreate: (input: RecurringRuleInput) => Promise<void>;
   readonly onCreateAllocation: (input: AllocationPlanInput) => Promise<void>;
+  readonly onExecuteAllocations: (planIds: readonly string[]) => Promise<void>;
   readonly onUpdate: (id: string, input: RecurringRuleInput) => Promise<void>;
 }) {
   const [editing, setEditing] = useState<RecurringRule | null>(null);
@@ -232,7 +234,12 @@ export function RecurringPage({
           </form>
         </aside>
       </div>
-      <AllocationPlans accounts={accounts} plans={allocationPlans} onCreate={onCreateAllocation} />
+      <AllocationPlans
+        accounts={accounts}
+        onCreate={onCreateAllocation}
+        onExecute={onExecuteAllocations}
+        plans={allocationPlans}
+      />
     </div>
   );
 }
@@ -240,12 +247,16 @@ function AllocationPlans({
   accounts,
   plans,
   onCreate,
+  onExecute,
 }: {
   readonly accounts: readonly Account[];
   readonly plans: readonly AllocationPlan[];
   readonly onCreate: (input: AllocationPlanInput) => Promise<void>;
+  readonly onExecute: (planIds: readonly string[]) => Promise<void>;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const [isConfirmingExecution, setIsConfirmingExecution] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -269,6 +280,21 @@ function AllocationPlans({
     }
   };
   const active = accounts.filter((account) => !account.isArchived);
+  const salaryPlanIds = plans
+    .filter((plan) => plan.enabled && plan.trigger === "salary")
+    .map((plan) => plan.id);
+  const executeSalaryAllocations = async () => {
+    setIsExecuting(true);
+    setError(null);
+    try {
+      await onExecute(salaryPlanIds);
+      setIsConfirmingExecution(false);
+    } catch {
+      setError("Impossibile eseguire le allocazioni. Nessun trasferimento è stato salvato.");
+    } finally {
+      setIsExecuting(false);
+    }
+  };
   return (
     <section className="data-panel account-management-panel" aria-labelledby="allocation-title">
       <div className="panel-heading">
@@ -297,6 +323,41 @@ function AllocationPlans({
           </li>
         ))}
       </ul>
+      {salaryPlanIds.length === 0 ? null : isConfirmingExecution ? (
+        <div
+          aria-label="Conferma allocazioni stipendio"
+          className="account-error"
+          role="alertdialog"
+        >
+          <p>Stipendio ricevuto. Eseguire le allocazioni pianificate?</p>
+          <div className="form-actions">
+            <button
+              className="secondary-action"
+              disabled={isExecuting}
+              onClick={() => setIsConfirmingExecution(false)}
+              type="button"
+            >
+              Annulla
+            </button>
+            <button
+              className="primary-action"
+              disabled={isExecuting}
+              onClick={() => void executeSalaryAllocations()}
+              type="button"
+            >
+              {isExecuting ? "Esecuzione…" : "Esegui allocazioni"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          className="secondary-action"
+          onClick={() => setIsConfirmingExecution(true)}
+          type="button"
+        >
+          Conferma allocazioni stipendio
+        </button>
+      )}
       <form className="account-form" onSubmit={(event) => void save(event)}>
         <label>
           Nome piano
