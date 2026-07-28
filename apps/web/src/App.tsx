@@ -7,6 +7,7 @@ import type {
   Budget,
   Loan,
   InvestmentPosition,
+  MonthlyJournal,
   Category,
   ImportBatch,
   RecurringRule,
@@ -68,6 +69,8 @@ import {
 } from "./investments/investmentCommands";
 import { ExportsPage } from "./exports/ExportsPage";
 import { BackupPage } from "./backup/BackupPage";
+import { JournalPage } from "./journal/JournalPage";
+import { saveMonthlyJournal, type MonthlyJournalInput } from "./journal/journalCommands";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -84,6 +87,7 @@ interface ReadyLedgerState {
   readonly budgets: readonly Budget[];
   readonly loans: readonly Loan[];
   readonly investmentPositions: readonly InvestmentPosition[];
+  readonly monthlyJournals: readonly MonthlyJournal[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -123,6 +127,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           budgets,
           loans,
           investmentPositions,
+          monthlyJournals,
           categories,
           dashboard,
           importBatches,
@@ -147,6 +152,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             budgets,
             loans,
             investmentPositions,
+            monthlyJournals,
             categories,
             dashboard,
             importBatches,
@@ -332,6 +338,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await createInvestmentPosition(ledger.repository, input);
     });
+  const saveJournal = (input: MonthlyJournalInput, existingId: string | undefined): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await saveMonthlyJournal(ledger.repository, input, existingId);
+    });
   const executeAllocations = (planIds: readonly string[]): Promise<void> =>
     mutateLedger(async (ledger) => {
       const plans = (await ledger.repository.listAllocationPlans()).filter((plan) =>
@@ -440,6 +450,8 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             />
           ) : route === "backup" ? (
             <BackupPage ledger={ledgerState.ledger} />
+          ) : route === "journal" ? (
+            <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
@@ -493,6 +505,7 @@ interface AppModels {
   readonly budgets: readonly Budget[];
   readonly loans: readonly Loan[];
   readonly investmentPositions: readonly InvestmentPosition[];
+  readonly monthlyJournals: readonly MonthlyJournal[];
   readonly importBatches: readonly ImportBatch[];
   readonly recurringRules: readonly RecurringRule[];
   readonly allocationPlans: readonly AllocationPlan[];
@@ -512,6 +525,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     budgets,
     loans,
     investmentPositions,
+    monthlyJournals,
     categories,
     importBatches,
     recurringRules,
@@ -524,6 +538,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     ledger.repository.listBudgets(),
     ledger.repository.listLoans(),
     ledger.repository.listInvestmentPositions(),
+    ledger.repository.listMonthlyJournals(),
     ledger.repository.listCategories(),
     ledger.repository.listImportBatches(),
     ledger.repository.listRecurringRules(),
@@ -536,6 +551,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     budgets,
     loans,
     investmentPositions,
+    monthlyJournals,
     importBatches,
     recurringRules,
     rawAccounts: accounts,
@@ -582,7 +598,8 @@ function useAppRoute():
   | "investments"
   | "recurring"
   | "exports"
-  | "backup" {
+  | "backup"
+  | "journal" {
   const [route, setRoute] = useState<
     | "accounts"
     | "overview"
@@ -596,6 +613,7 @@ function useAppRoute():
     | "recurring"
     | "exports"
     | "backup"
+    | "journal"
   >(readAppRoute);
 
   useEffect(() => {
@@ -621,7 +639,8 @@ function readAppRoute():
   | "investments"
   | "recurring"
   | "exports"
-  | "backup" {
+  | "backup"
+  | "journal" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
@@ -637,6 +656,7 @@ function readAppRoute():
   if (window.location.hash === "#recurring") return "recurring";
   if (window.location.hash === "#exports") return "exports";
   if (window.location.hash === "#backup") return "backup";
+  if (window.location.hash === "#journal") return "journal";
   return "overview";
 }
 

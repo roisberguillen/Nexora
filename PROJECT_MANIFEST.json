@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 21856,
-      "sha256": "603dc6f9618dc781cc65737be199b687accd96d4f917a94e173852e4a660cd4f"
+      "size": 22717,
+      "sha256": "1c76d45928c281a23d0bc672c4db996ebb4257804d04e66e9f76697afbfc30b6"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
@@ -291,6 +291,21 @@
       "path": "apps/web/src/investments/InvestmentsPage.tsx",
       "size": 6086,
       "sha256": "d685d77aee4a44a3166b9221cf8d78f0a4d1015a5b9588f495eb6875a2bd293c"
+    },
+    {
+      "path": "apps/web/src/journal/journalCommands.test.ts",
+      "size": 773,
+      "sha256": "a5ede47b55f125d6b8ec8313f760e245bbb4c5ccdc92ebdb8f7f81885fbc5564"
+    },
+    {
+      "path": "apps/web/src/journal/journalCommands.ts",
+      "size": 1005,
+      "sha256": "0b8045e7c02ca897f6c994ddbd82de77e26fd369e367ffbe00fce89c564c7476"
+    },
+    {
+      "path": "apps/web/src/journal/JournalPage.tsx",
+      "size": 5941,
+      "sha256": "076b965d528589cd21fa13439783a8d230aa01921f81b66dfcd6c1e3bbbe0a26"
     },
     {
       "path": "apps/web/src/loans/loanCommands.ts",
@@ -1239,8 +1254,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 3748,
-      "sha256": "148dcf3f063b70da67731d246d2aebf701fdab114772385b590d374cb0e9fbeb"
+      "size": 3836,
+      "sha256": "c3ee7a4237b5defbdfe1d16076b83e7d86a5eb9ed758353f6e1adc0dce15716c"
     },
     {
       "path": "packages/ui/src/styles.css",
