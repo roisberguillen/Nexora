@@ -314,8 +314,8 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 5941,
-      "sha256": "076b965d528589cd21fa13439783a8d230aa01921f81b66dfcd6c1e3bbbe0a26"
+      "size": 5861,
+      "sha256": "ddad0117f8096d5e4eba89f05967b6d6cfd95a162fc608644794aedcabc61784"
     },
     {
       "path": "apps/web/src/loans/loanCommands.ts",
