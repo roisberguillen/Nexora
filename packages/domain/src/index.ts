@@ -20,6 +20,7 @@ export {
   type ImportBatchStatus,
   type ImportRowStatus,
 } from "./entities/ImportBatch";
+export { ImportRow, type CreateImportRowProps } from "./entities/ImportRow";
 export {
   TransactionSplit,
   validateTransactionSplits,
