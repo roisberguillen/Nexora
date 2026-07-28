@@ -23,6 +23,7 @@ export { Tag, type CreateTagProps } from "./entities/Tag";
 export {
   ImportBatch,
   validateImportCommit,
+  type ImportTransferBundle,
   type CreateImportBatchProps,
   type ImportBatchStatus,
   type ImporterType,

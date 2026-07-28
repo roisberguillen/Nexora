@@ -11,6 +11,7 @@ export interface MoneyManagerDryRunRow {
   readonly message: string;
   readonly preview: MoneyManagerPreviewRow;
   readonly status: DryRunStatus;
+  readonly transferCandidateAccountId?: string;
 }
 
 export function dryRunMoneyManagerRows(
@@ -77,6 +78,7 @@ function dryRunRow(
       message: "Possibile trasferimento tra conti propri: richiede revisione manuale.",
       preview,
       status: "needs_review",
+      transferCandidateAccountId: ownCounterparty.id,
     };
   }
   const kind = preview.amountMinor > 0n ? "income" : "expense";

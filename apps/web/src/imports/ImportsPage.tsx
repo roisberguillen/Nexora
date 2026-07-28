@@ -43,6 +43,7 @@ export function ImportsPage({
     readonly importerType: ImporterType;
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
+    readonly confirmedTransferRowNumbers?: readonly number[];
   }) => Promise<void>;
   readonly onUndo: (batchId: string) => Promise<void>;
   readonly batches: readonly ImportBatch[];
@@ -60,6 +61,7 @@ export function ImportsPage({
   const [isUndoing, setIsUndoing] = useState<string | null>(null);
   const [fallbackAccountName, setFallbackAccountName] = useState("");
   const [rowAccountOverrides, setRowAccountOverrides] = useState<Record<number, string>>({});
+  const [confirmedTransferRows, setConfirmedTransferRows] = useState<Record<number, boolean>>({});
 
   const selectedSheet = sheets.find((sheet) => sheet.name === selectedSheetName);
   const headers = selectedSheet?.rows[0] ?? [];
@@ -100,6 +102,7 @@ export function ImportsPage({
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
       setFallbackAccountName("");
       setRowAccountOverrides({});
+      setConfirmedTransferRows({});
       setSource({ filename: file.name, importerType, sha256: await sha256(bytes) });
       setError(null);
     } catch {
@@ -108,6 +111,7 @@ export function ImportsPage({
       setMapping({});
       setSource(null);
       setRowAccountOverrides({});
+      setConfirmedTransferRows({});
       setError(
         "Il file non è un estratto XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
@@ -340,6 +344,12 @@ export function ImportsPage({
                           {dryRunLabel(row.status)}
                         </span>
                         <small>{row.message}</small>
+                        {row.transferCandidateAccountId === undefined ? null : (
+                          <label className="import-transfer-confirmation">
+                            <input checked={confirmedTransferRows[row.preview.sourceRowNumber] ?? false} onChange={(event) => setConfirmedTransferRows((current) => ({ ...current, [row.preview.sourceRowNumber]: event.target.checked }))} type="checkbox" />
+                            Confermo trasferimento verso {accounts.find((account) => account.id === row.transferCandidateAccountId)?.name ?? "conto locale"}
+                          </label>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -362,6 +372,7 @@ export function ImportsPage({
                     filename: source.filename,
                     importerType: source.importerType,
                     rows: dryRun,
+                    confirmedTransferRowNumbers: Object.entries(confirmedTransferRows).filter(([, confirmed]) => confirmed).map(([rowNumber]) => Number(rowNumber)),
                     sourceSha256: source.sha256,
                   })
                     .catch(() =>

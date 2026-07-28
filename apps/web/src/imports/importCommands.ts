@@ -4,6 +4,8 @@ import {
   LocalDate,
   Money,
   Transaction,
+  Transfer,
+  type ImportTransferBundle,
   type ImporterType,
   type LedgerRepository,
 } from "@nexora/domain";
@@ -16,6 +18,7 @@ export async function commitMoneyManagerImport(
     readonly importerType?: ImporterType;
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
+    readonly confirmedTransferRowNumbers?: readonly number[];
   },
   idFactory: () => string = () => crypto.randomUUID(),
 ): Promise<ImportBatch> {
@@ -35,9 +38,59 @@ export async function commitMoneyManagerImport(
       .map((transaction) => `${transaction.accountId}|${transaction.sourceFingerprint}`),
   );
   const transactions: Transaction[] = [];
+  const transferBundles: ImportTransferBundle[] = [];
   const rows: ImportRow[] = [];
+  const confirmedTransfers = new Set(input.confirmedTransferRowNumbers ?? []);
   for (const result of input.rows) {
     const preview = result.preview;
+    const isConfirmedTransfer =
+      result.transferCandidateAccountId !== undefined &&
+      confirmedTransfers.has(preview.sourceRowNumber) &&
+      result.accountId !== undefined &&
+      preview.amountMinor !== undefined &&
+      preview.date !== undefined;
+    if (isConfirmedTransfer) {
+      const sourceAccount = await repository.findAccountById(result.accountId!);
+      const counterpartyAccount = await repository.findAccountById(result.transferCandidateAccountId!);
+      if (
+        sourceAccount === undefined || counterpartyAccount === undefined ||
+        sourceAccount.isArchived || counterpartyAccount.isArchived ||
+        sourceAccount.currency !== counterpartyAccount.currency
+      ) {
+        throw new Error("invalid_transfer_import");
+      }
+      const amount = preview.amountMinor!;
+      const sourceFingerprint = await fingerprint(
+        `${input.sourceSha256}|${preview.sourceRowNumber}|${result.accountId}|${amount.toString()}|transfer-source`,
+      );
+      const counterpartFingerprint = await fingerprint(
+        `${input.sourceSha256}|${preview.sourceRowNumber}|${result.transferCandidateAccountId}|${amount.toString()}|transfer-counterpart`,
+      );
+      const isDebit = amount < 0n;
+      const debit = Transaction.create({
+        id: `transaction-${idFactory()}`, kind: "transfer", status: "booked",
+        accountId: isDebit ? sourceAccount.id : counterpartyAccount.id,
+        amount: Money.fromMinor(-abs(amount), sourceAccount.currency), bookedDate: LocalDate.parse(preview.date!),
+        source: "import", importBatchId: batch.id, sourceFingerprint: isDebit ? sourceFingerprint : counterpartFingerprint,
+        ...(preview.payee === undefined ? {} : { payee: preview.payee }),
+      });
+      const credit = Transaction.create({
+        id: `transaction-${idFactory()}`, kind: "transfer", status: "booked",
+        accountId: isDebit ? counterpartyAccount.id : sourceAccount.id,
+        amount: Money.fromMinor(abs(amount), sourceAccount.currency), bookedDate: LocalDate.parse(preview.date!),
+        source: "import", importBatchId: batch.id, sourceFingerprint: isDebit ? counterpartFingerprint : sourceFingerprint,
+        ...(preview.payee === undefined ? {} : { payee: preview.payee }),
+      });
+      const auditTransaction = isDebit ? debit : credit;
+      const transfer = Transfer.create({ id: `transfer-${idFactory()}`, debitTransaction: debit, creditTransaction: credit });
+      transferBundles.push({ auditTransactionId: auditTransaction.id, transfer, debitTransaction: debit, creditTransaction: credit });
+      rows.push(ImportRow.create({
+        id: `import-row-${idFactory()}`, batchId: batch.id, rowNumber: preview.sourceRowNumber,
+        rawJson: serializePreview(preview), normalizedJson: JSON.stringify({ accountId: result.accountId, kind: "transfer", counterpartyAccountId: result.transferCandidateAccountId }),
+        status: "imported", createdTransactionId: auditTransaction.id,
+      }));
+      continue;
+    }
     if (
       result.status !== "ready" ||
       result.accountId === undefined ||
@@ -102,8 +155,10 @@ export async function commitMoneyManagerImport(
       }),
     );
   }
-  return repository.commitImportBatch(batch, rows, transactions);
+  return repository.commitImportBatch(batch, rows, transactions, transferBundles);
 }
+
+function abs(value: bigint): bigint { return value < 0n ? -value : value; }
 
 export async function sha256(bytes: ArrayBuffer): Promise<string> {
   return fingerprintBytes(new Uint8Array(bytes));

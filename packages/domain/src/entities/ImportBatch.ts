@@ -2,6 +2,14 @@ import { DomainError } from "../errors/DomainError";
 import { requireIdentifier } from "../validation";
 import type { Transaction } from "./Transaction";
 import type { ImportRow } from "./ImportRow";
+import type { Transfer } from "./Transfer";
+
+export interface ImportTransferBundle {
+  readonly auditTransactionId: string;
+  readonly transfer: Transfer;
+  readonly debitTransaction: Transaction;
+  readonly creditTransaction: Transaction;
+}
 
 export type ImportBatchStatus = "previewed" | "committed" | "undone" | "failed";
 export type ImportRowStatus = "imported" | "skipped_duplicate" | "needs_review" | "failed";
@@ -69,6 +77,7 @@ export function validateImportCommit(
   batch: ImportBatch,
   rows: readonly ImportRow[],
   transactions: readonly Transaction[],
+  transferBundles: readonly ImportTransferBundle[] = [],
 ): ImportBatch {
   if (batch.status !== "previewed" || rows.length !== batch.rowsTotal) {
     throw new DomainError("invalid_import", "Only a complete previewed batch can be committed.");
@@ -85,25 +94,40 @@ export function validateImportCommit(
     else if (row.status === "skipped_duplicate") skipped += 1;
     else failed += 1;
   }
-  for (const transaction of transactions) {
+  const allTransactions = [...transactions];
+  for (const bundle of transferBundles) {
+    const { transfer, debitTransaction, creditTransaction, auditTransactionId } = bundle;
+    if (
+      transfer.debitTransactionId !== debitTransaction.id ||
+      transfer.creditTransactionId !== creditTransaction.id ||
+      transfer.feeTransactionId !== undefined ||
+      (auditTransactionId !== debitTransaction.id && auditTransactionId !== creditTransaction.id)
+    )
+      throw new DomainError("invalid_import", "Imported transfer bundle is invalid.");
+    allTransactions.push(debitTransaction, creditTransaction);
+  }
+  for (const transaction of allTransactions) {
     if (
       !transactionIds.add(transaction.id) ||
       transaction.source !== "import" ||
       transaction.importBatchId !== batch.id ||
-      transaction.sourceFingerprint === undefined ||
-      transaction.kind === "transfer"
+      transaction.sourceFingerprint === undefined
     ) {
       throw new DomainError("invalid_import", "Imported transaction metadata is invalid.");
     }
   }
+  if (transactions.some((transaction) => transaction.kind === "transfer"))
+    throw new DomainError("invalid_import", "Transfer legs require a transfer bundle.");
+  const auditedTransferIds = new Set(transferBundles.map((bundle) => bundle.auditTransactionId));
   if (
-    transactions.length !== importedTransactionIds.size ||
-    transactions.some((transaction) => !importedTransactionIds.has(transaction.id))
+    importedTransactionIds.size !== transactions.length + auditedTransferIds.size ||
+    transactions.some((transaction) => !importedTransactionIds.has(transaction.id)) ||
+    [...auditedTransferIds].some((id) => !importedTransactionIds.has(id))
   ) {
     throw new DomainError("invalid_import", "Imported rows and transactions do not match.");
   }
   return batch.commit({
-    rowsImported: transactions.length,
+    rowsImported: importedTransactionIds.size,
     rowsSkipped: skipped,
     rowsFailed: failed,
   });

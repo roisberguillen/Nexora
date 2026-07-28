@@ -10,6 +10,7 @@ import {
   type Tag,
   type ImportBatch,
   type ImportRow,
+  type ImportTransferBundle,
   type RecurringRule,
   type AllocationPlan,
   type Budget,
@@ -173,11 +174,18 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     batch: ImportBatch,
     rows: readonly ImportRow[],
     transactions: readonly Transaction[],
+    transferBundles: readonly ImportTransferBundle[] = [],
   ): Promise<ImportBatch> {
-    const committed = validateImportCommit(batch, rows, transactions);
+    const committed = validateImportCommit(batch, rows, transactions, transferBundles);
     this.assertNew(this.importBatches, batch.id, "Import batch");
     for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
-    for (const transaction of transactions) {
+    const transferTransactions = transferBundles.flatMap((bundle) => [
+      bundle.debitTransaction,
+      bundle.creditTransaction,
+    ]);
+    const allTransactions = [...transactions, ...transferTransactions];
+    for (const bundle of transferBundles) this.assertNew(this.transfers, bundle.transfer.id, "Transfer");
+    for (const transaction of allTransactions) {
       this.assertNew(this.transactions, transaction.id, "Transaction");
       this.validateTransactionReferences(transaction);
       if (
@@ -191,17 +199,27 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     }
     this.importBatches.set(committed.id, committed);
     for (const row of rows) this.importRows.set(row.id, row);
-    for (const transaction of transactions) this.transactions.set(transaction.id, transaction);
+    for (const transaction of allTransactions) this.transactions.set(transaction.id, transaction);
+    for (const bundle of transferBundles) this.transfers.set(bundle.transfer.id, bundle.transfer);
     return committed;
   }
   public async undoImportBatch(batchId: string): Promise<ImportBatch> {
     const batch = this.importBatches.get(batchId);
     if (batch === undefined)
       throw new DomainError("missing_reference", "Import batch does not exist.");
-    const cancelled = [...this.importRows.values()]
+    const importedIds = [...this.importRows.values()]
       .filter((row) => row.batchId === batchId && row.status === "imported")
-      .map((row) => {
-        const transaction = this.transactions.get(row.createdTransactionId!);
+      .map((row) => row.createdTransactionId!);
+    const transactionIds = new Set(importedIds);
+    for (const transfer of this.transfers.values()) {
+      if (transactionIds.has(transfer.debitTransactionId) || transactionIds.has(transfer.creditTransactionId)) {
+        transactionIds.add(transfer.debitTransactionId);
+        transactionIds.add(transfer.creditTransactionId);
+        if (transfer.feeTransactionId !== undefined) transactionIds.add(transfer.feeTransactionId);
+      }
+    }
+    const cancelled = [...transactionIds].map((id) => {
+        const transaction = this.transactions.get(id);
         if (transaction === undefined)
           throw new DomainError("missing_reference", "Imported transaction does not exist.");
         return transaction.cancel();

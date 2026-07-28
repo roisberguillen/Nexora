@@ -8,6 +8,7 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
+  type ImportTransferBundle,
   RecurringRule,
   AllocationPlan,
   Budget,
@@ -33,6 +34,7 @@ import {
   transactionRecordMap,
   transactionToRecord,
   type TransferRecord,
+  type StoredTransferRecord,
   transferFromRecord,
   transferRecordTransactionIds,
   transferToRecord,
@@ -348,21 +350,29 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     batch: ImportBatch,
     rows: readonly ImportRow[],
     transactions: readonly Transaction[],
+    transferBundles: readonly ImportTransferBundle[] = [],
   ): Promise<ImportBatch> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(
-          ["accounts", "categories", "transactions", "import_batches", "import_rows"],
+          ["accounts", "categories", "transactions", "transfers", "import_batches", "import_rows"],
           "readwrite",
           async (transaction) => {
-            const committed = validateImportCommit(batch, rows, transactions);
+            const committed = validateImportCommit(batch, rows, transactions, transferBundles);
             const batches = transaction.objectStore("import_batches");
             const importRows = transaction.objectStore("import_rows");
             const storedTransactions = transaction.objectStore("transactions");
             await this.assertNew(batches, batch.id, "Import batch");
             for (const row of rows) await this.assertNew(importRows, row.id, "Import row");
             const existing = await requestResult<unknown[]>(storedTransactions.getAll());
-            for (const ledgerTransaction of transactions) {
+            const transferTransactions = transferBundles.flatMap((bundle) => [
+              bundle.debitTransaction,
+              bundle.creditTransaction,
+            ]);
+            const allTransactions = [...transactions, ...transferTransactions];
+            const transfers = transaction.objectStore("transfers");
+            for (const bundle of transferBundles) await this.assertNew(transfers, bundle.transfer.id, "Transfer");
+            for (const ledgerTransaction of allTransactions) {
               await this.assertNew(storedTransactions, ledgerTransaction.id, "Transaction");
               await this.validateTransactionReferences(transaction, ledgerTransaction);
               if (
@@ -375,8 +385,10 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
                 throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
             }
             await requestResult(batches.add(importBatchToRecord(committed)));
-            for (const ledgerTransaction of transactions)
+            for (const ledgerTransaction of allTransactions)
               await requestResult(storedTransactions.add(transactionToRecord(ledgerTransaction)));
+            for (const bundle of transferBundles)
+              await requestResult(transfers.add(transferToRecord(bundle.transfer)));
             for (const row of rows) await requestResult(importRows.add(importRowToRecord(row)));
             return committed;
           },
@@ -388,7 +400,7 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(
-          ["import_batches", "import_rows", "transactions"],
+          ["import_batches", "import_rows", "transactions", "transfers"],
           "readwrite",
           async (transaction) => {
             const batches = transaction.objectStore("import_batches");
@@ -402,12 +414,19 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
               )
             ).map((row) => importRowFromRecord(row as ImportRowRecord));
             const transactions = transaction.objectStore("transactions");
+            const transactionIds = new Set(rows.filter((row) => row.status === "imported").map((row) => row.createdTransactionId!));
+            const transferRecords = await requestResult<unknown[]>(transaction.objectStore("transfers").getAll());
+            for (const record of transferRecords as StoredTransferRecord[]) {
+              if (transactionIds.has(record.debit_transaction_id) || transactionIds.has(record.credit_transaction_id) || (record.fee_transaction_id !== null && transactionIds.has(record.fee_transaction_id))) {
+                transactionIds.add(record.debit_transaction_id);
+                transactionIds.add(record.credit_transaction_id);
+                if (record.fee_transaction_id !== null) transactionIds.add(record.fee_transaction_id);
+              }
+            }
             const cancelled = await Promise.all(
-              rows
-                .filter((row) => row.status === "imported")
-                .map(async (row) => {
+              [...transactionIds].map(async (id) => {
                   const record = await requestResult<unknown>(
-                    transactions.get(row.createdTransactionId!),
+                    transactions.get(id),
                   );
                   if (record === undefined)
                     throw new DomainError(
