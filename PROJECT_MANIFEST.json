@@ -834,8 +834,8 @@
     },
     {
       "path": "packages/importers/package.json",
-      "size": 314,
-      "sha256": "ef55dc693884d0b3fe094d1b5ca31db590c11dba9ea8127199de819279dfe629"
+      "size": 351,
+      "sha256": "b3a0602903adb6ed0c2057ad39b8bd07198dd83271415ec5a6902afed23c8040"
     },
     {
       "path": "packages/importers/README.md",
@@ -844,8 +844,18 @@
     },
     {
       "path": "packages/importers/src/index.ts",
-      "size": 300,
-      "sha256": "a1d5a5c0a0ab31c5751595ae3860c8080c53cf8877538d203394823e61f5a22f"
+      "size": 417,
+      "sha256": "5cfff37fd98d38d6fae5e1108dccb87e9deaed937be4e877ac9d6371377724f8"
+    },
+    {
+      "path": "packages/importers/src/moneyManagerDryRun.test.ts",
+      "size": 1385,
+      "sha256": "38926520697527567dc3b38f2a4ab49a98cdd41683f8ea9d37035543ce3d035c"
+    },
+    {
+      "path": "packages/importers/src/moneyManagerDryRun.ts",
+      "size": 3596,
+      "sha256": "a9d1266ecb020a0f82d5d74cb7f67cef91cda3239d05be7dfd4b457d4f4a8b12"
     },
     {
       "path": "packages/importers/src/moneyManagerPreview.test.ts",
@@ -954,8 +964,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 194491,
-      "sha256": "5392d6749a2d865f901200b932e0c26030064c4f796252156f4e58f5ab870eb3"
+      "size": 194578,
+      "sha256": "d9b3469221d4a59261e9972a7b868e8e09a49844f399b7149d3c03d50f5905fb"
     },
     {
       "path": "pnpm-workspace.yaml",
