@@ -5,6 +5,7 @@ import {
   type LedgerRepository,
   type Transaction,
   type TransactionSplit,
+  Tag,
   type Transfer,
   type TransferBundle,
   validateAccountUpdate,
@@ -28,10 +29,20 @@ import {
   transactionSplitFromRecord,
   transactionSplitToRecord,
   type TransactionSplitRecord,
+  type TagRecord,
+  tagFromRecord,
+  tagToRecord,
 } from "../records/LedgerRecords";
 import { PersistenceError } from "../sqlite/PersistenceError";
 
-type EntityStore = "accounts" | "categories" | "transactions" | "transfers" | "transaction_splits";
+type EntityStore =
+  | "accounts"
+  | "categories"
+  | "transactions"
+  | "transfers"
+  | "transaction_splits"
+  | "tags"
+  | "transaction_tags";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -138,6 +149,79 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             throw new DomainError("missing_reference", "Category does not exist.");
           await requestResult(categories.put(categoryToRecord(category)));
         }),
+      ),
+    );
+  }
+
+  public saveTag(tag: Tag): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags"], "readwrite", async (transaction) => {
+          const tags = transaction.objectStore("tags");
+          await this.assertNew(tags, tag.id, "Tag");
+          await requestResult(tags.add(tagToRecord(tag)));
+        }),
+      ),
+    );
+  }
+
+  public updateTag(tag: Tag): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags"], "readwrite", async (transaction) => {
+          const tags = transaction.objectStore("tags");
+          if ((await requestResult<unknown>(tags.get(tag.id))) === undefined) {
+            throw new DomainError("missing_reference", "Tag does not exist.");
+          }
+          await requestResult(tags.put(tagToRecord(tag)));
+        }),
+      ),
+    );
+  }
+
+  public setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["transactions", "tags", "transaction_tags"],
+          "readwrite",
+          async (transaction) => {
+            if (new Set(tagIds).size !== tagIds.length) {
+              throw new DomainError(
+                "duplicate_entity",
+                "A transaction cannot contain duplicate tags.",
+              );
+            }
+            if (
+              (await requestResult<unknown>(
+                transaction.objectStore("transactions").get(transactionId),
+              )) === undefined
+            ) {
+              throw new DomainError("missing_reference", "Transaction does not exist.");
+            }
+
+            const tags = transaction.objectStore("tags");
+            for (const tagId of tagIds) {
+              const row = await requestResult<unknown>(tags.get(tagId));
+              if (row === undefined || tagFromRecord(row as TagRecord).isArchived) {
+                throw new DomainError("missing_reference", "Tag does not exist or is archived.");
+              }
+            }
+
+            const transactionTags = transaction.objectStore("transaction_tags");
+            const existingKeys = await requestResult<IDBValidKey[]>(
+              transactionTags.index("by_transaction_id").getAllKeys(transactionId),
+            );
+            for (const key of existingKeys) {
+              await requestResult(transactionTags.delete(key));
+            }
+            for (const tagId of tagIds) {
+              await requestResult(
+                transactionTags.add({ transaction_id: transactionId, tag_id: tagId }),
+              );
+            }
+          },
+        ),
       ),
     );
   }
@@ -415,6 +499,38 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             transaction.objectStore("categories").getAll(),
           );
           return rows.map((row) => categoryFromRecord(row as CategoryRecord));
+        }),
+      ),
+    );
+  }
+  public listTags(): Promise<readonly Tag[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags"], "readonly", async (transaction) => {
+          const rows = await requestResult<unknown[]>(transaction.objectStore("tags").getAll());
+          return rows.map((row) => tagFromRecord(row as TagRecord));
+        }),
+      ),
+    );
+  }
+
+  public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags", "transaction_tags"], "readonly", async (transaction) => {
+          const links = await requestResult<Array<{ readonly tag_id: string }>>(
+            transaction
+              .objectStore("transaction_tags")
+              .index("by_transaction_id")
+              .getAll(transactionId),
+          );
+          const tags = transaction.objectStore("tags");
+          const rows = await Promise.all(
+            links.map((link) => requestResult<unknown>(tags.get(link.tag_id))),
+          );
+          return rows
+            .filter((row): row is TagRecord => row !== undefined)
+            .map((row) => tagFromRecord(row));
         }),
       ),
     );

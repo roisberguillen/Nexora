@@ -3,6 +3,7 @@ import type { Category } from "../entities/Category";
 import type { Transaction } from "../entities/Transaction";
 import type { Transfer } from "../entities/Transfer";
 import type { TransactionSplit } from "../entities/TransactionSplit";
+import type { Tag } from "../entities/Tag";
 
 export interface TransferBundle {
   readonly transfer: Transfer;
@@ -16,6 +17,9 @@ export interface LedgerRepository {
   updateAccount(account: Account): Promise<void>;
   saveCategory(category: Category): Promise<void>;
   updateCategory(category: Category): Promise<void>;
+  saveTag(tag: Tag): Promise<void>;
+  updateTag(tag: Tag): Promise<void>;
+  setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;
   saveTransactionWithSplits(
     transaction: Transaction,
@@ -30,6 +34,8 @@ export interface LedgerRepository {
   findTransferById(id: string): Promise<Transfer | undefined>;
   listAccounts(): Promise<readonly Account[]>;
   listCategories(): Promise<readonly Category[]>;
+  listTags(): Promise<readonly Tag[]>;
+  listTransactionTags(transactionId: string): Promise<readonly Tag[]>;
   listTransactions(): Promise<readonly Transaction[]>;
   listTransfers(): Promise<readonly Transfer[]>;
   listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]>;

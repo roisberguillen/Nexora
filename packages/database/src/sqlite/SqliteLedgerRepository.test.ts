@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import { Account, Category, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
+import { Account, Category, LocalDate, Money, Tag, Transaction, Transfer } from "@nexora/domain";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { SqliteDatabase, SqliteValue } from "./SqliteDatabase";
@@ -67,6 +67,33 @@ describe("SqliteLedgerRepository", () => {
 
   afterEach(() => {
     sqlite.close();
+  });
+
+  it("persiste tag e associazioni transazionali", async () => {
+    const main = account("account-tags");
+    const transaction = Transaction.create({
+      id: "expense-tags",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-1_200n, "EUR"),
+      bookedDate,
+    });
+    const tag = Tag.create({ id: "tag-work", name: "Lavoro" });
+
+    await repository.saveAccount(main);
+    await repository.saveTransaction(transaction);
+    await repository.saveTag(tag);
+    await repository.setTransactionTags(transaction.id, [tag.id]);
+
+    expect(await repository.listTags()).toEqual([tag]);
+    expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
+    await expect(
+      repository.setTransactionTags(transaction.id, ["unknown-tag"]),
+    ).rejects.toMatchObject({
+      code: "missing_reference",
+    });
+    expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
   it("ricostruisce conti, categorie e transazioni senza perdere precisione", async () => {

@@ -5,6 +5,7 @@ import {
   type LedgerRepository,
   Transaction,
   type TransactionSplit,
+  Tag,
   Transfer,
   type TransferBundle,
   validateAccountUpdate,
@@ -240,6 +241,70 @@ export class SqliteLedgerRepository implements LedgerRepository {
             "UPDATE categories SET name = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
             [record.name, record.is_archived, record.id],
           );
+        }),
+      ),
+    );
+  }
+
+  public saveTag(tag: Tag): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM tags WHERE id = ?",
+            [tag.id],
+          );
+          if (found.length > 0) throw new DomainError("duplicate_entity", "Tag id already exists.");
+          await this.database.run("INSERT INTO tags (id, name, is_archived) VALUES (?, ?, ?)", [
+            tag.id,
+            tag.name,
+            tag.isArchived ? 1 : 0,
+          ]);
+        }),
+      ),
+    );
+  }
+  public updateTag(tag: Tag): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM tags WHERE id = ?",
+            [tag.id],
+          );
+          if (found.length === 0) throw new DomainError("missing_reference", "Tag does not exist.");
+          await this.database.run(
+            "UPDATE tags SET name = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+            [tag.name, tag.isArchived ? 1 : 0, tag.id],
+          );
+        }),
+      ),
+    );
+  }
+  public setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if (new Set(tagIds).size !== tagIds.length)
+            throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+          if ((await this.findTransactionByIdInternal(transactionId)) === undefined)
+            throw new DomainError("missing_reference", "Transaction does not exist.");
+          for (const tagId of tagIds) {
+            const rows = await this.database.query<{ readonly is_archived: number }>(
+              "SELECT is_archived FROM tags WHERE id = ?",
+              [tagId],
+            );
+            if (rows[0]?.is_archived !== 0)
+              throw new DomainError("missing_reference", "Tag is unavailable.");
+          }
+          await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [
+            transactionId,
+          ]);
+          for (const tagId of tagIds)
+            await this.database.run(
+              "INSERT INTO transaction_tags (transaction_id, tag_id) VALUES (?, ?)",
+              [transactionId, tagId],
+            );
         }),
       ),
     );
@@ -488,6 +553,31 @@ export class SqliteLedgerRepository implements LedgerRepository {
         );
         return rows.map(categoryFromRecord);
       }),
+    );
+  }
+  public async listTags(): Promise<readonly Tag[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<{
+          readonly id: string;
+          readonly name: string;
+          readonly is_archived: number;
+        }>("SELECT id, name, is_archived FROM tags ORDER BY name", [])
+      ).map((row) => Tag.create({ id: row.id, name: row.name, isArchived: row.is_archived === 1 })),
+    );
+  }
+  public async listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<{
+          readonly id: string;
+          readonly name: string;
+          readonly is_archived: number;
+        }>(
+          "SELECT tags.id, tags.name, tags.is_archived FROM tags JOIN transaction_tags ON transaction_tags.tag_id = tags.id WHERE transaction_tags.transaction_id = ? ORDER BY tags.name",
+          [transactionId],
+        )
+      ).map((row) => Tag.create({ id: row.id, name: row.name, isArchived: row.is_archived === 1 })),
     );
   }
 

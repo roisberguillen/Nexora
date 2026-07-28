@@ -11,6 +11,7 @@ import {
   type TransactionStatus,
   Transfer,
   TransactionSplit,
+  Tag,
 } from "@nexora/domain";
 
 import { PersistenceError } from "../sqlite/PersistenceError";
@@ -108,6 +109,17 @@ export interface TransactionSplitRecord {
   readonly note: unknown;
 }
 
+export interface TagRecord {
+  readonly id: unknown;
+  readonly name: unknown;
+  readonly is_archived: unknown;
+}
+export interface StoredTagRecord extends TagRecord {
+  readonly id: string;
+  readonly name: string;
+  readonly is_archived: 0 | 1;
+}
+
 export interface StoredTransactionSplitRecord extends TransactionSplitRecord {
   readonly id: string;
   readonly transaction_id: string;
@@ -203,6 +215,21 @@ export function categoryFromRecord(row: CategoryRecord): Category {
     });
   } catch (cause) {
     throw corruptRecord("category", cause);
+  }
+}
+
+export function tagToRecord(tag: Tag): StoredTagRecord {
+  return { id: tag.id, name: tag.name, is_archived: tag.isArchived ? 1 : 0 };
+}
+export function tagFromRecord(row: TagRecord): Tag {
+  try {
+    return Tag.create({
+      id: requiredText(row.id, "tag.id"),
+      name: requiredText(row.name, "tag.name"),
+      isArchived: storedBoolean(row.is_archived, "tag.is_archived"),
+    });
+  } catch (cause) {
+    throw corruptRecord("tag", cause);
   }
 }
 

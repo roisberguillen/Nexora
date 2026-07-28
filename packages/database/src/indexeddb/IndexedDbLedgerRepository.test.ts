@@ -1,6 +1,6 @@
 // @vitest-environment node
 
-import { Account, Category, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
+import { Account, Category, LocalDate, Money, Tag, Transaction, Transfer } from "@nexora/domain";
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -43,6 +43,33 @@ describe("IndexedDbLedgerRepository", () => {
 
   afterEach(async () => {
     await ledger.close();
+  });
+
+  it("persiste tag e associazioni atomiche dopo la riapertura", async () => {
+    const main = account("account-tags");
+    const transaction = Transaction.create({
+      id: "expense-tags",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-1_200n, "EUR"),
+      bookedDate,
+    });
+    const tag = Tag.create({ id: "tag-work", name: "Lavoro" });
+
+    await ledger.repository.saveAccount(main);
+    await ledger.repository.saveTransaction(transaction);
+    await ledger.repository.saveTag(tag);
+    await ledger.repository.setTransactionTags(transaction.id, [tag.id]);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+
+    expect(await ledger.repository.listTags()).toEqual([tag]);
+    expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
+    await expect(
+      ledger.repository.setTransactionTags(transaction.id, [tag.id, tag.id]),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+    expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
   it("crea atomicamente lo schema v1 con indici e metadati", async () => {

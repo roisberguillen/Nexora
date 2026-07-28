@@ -7,6 +7,7 @@ import {
   type TransactionSplit,
   type Transfer,
   type TransferBundle,
+  type Tag,
   validateAccountUpdate,
 } from "@nexora/domain";
 
@@ -16,6 +17,8 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly transactions = new Map<string, Transaction>();
   private readonly transfers = new Map<string, Transfer>();
   private readonly transactionSplits = new Map<string, TransactionSplit>();
+  private readonly tags = new Map<string, Tag>();
+  private readonly transactionTags = new Map<string, Set<string>>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -80,6 +83,27 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (!this.categories.has(category.id))
       throw new DomainError("missing_reference", "Category does not exist.");
     this.categories.set(category.id, category);
+  }
+
+  public async saveTag(tag: Tag): Promise<void> {
+    this.assertNew(this.tags, tag.id, "Tag");
+    this.tags.set(tag.id, tag);
+  }
+  public async updateTag(tag: Tag): Promise<void> {
+    if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");
+    this.tags.set(tag.id, tag);
+  }
+  public async setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
+    if (!this.transactions.has(transactionId))
+      throw new DomainError("missing_reference", "Transaction does not exist.");
+    if (new Set(tagIds).size !== tagIds.length)
+      throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+    for (const id of tagIds) {
+      const tag = this.tags.get(id);
+      if (tag === undefined || tag.isArchived)
+        throw new DomainError("missing_reference", "Tag is unavailable.");
+    }
+    this.transactionTags.set(transactionId, new Set(tagIds));
   }
 
   public async saveTransaction(transaction: Transaction): Promise<void> {
@@ -208,6 +232,14 @@ export class InMemoryLedgerRepository implements LedgerRepository {
 
   public async listCategories(): Promise<readonly Category[]> {
     return [...this.categories.values()];
+  }
+  public async listTags(): Promise<readonly Tag[]> {
+    return [...this.tags.values()];
+  }
+  public async listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
+    return [...(this.transactionTags.get(transactionId) ?? new Set())]
+      .map((id) => this.tags.get(id))
+      .filter((tag): tag is Tag => tag !== undefined);
   }
 
   public async listTransactions(): Promise<readonly Transaction[]> {

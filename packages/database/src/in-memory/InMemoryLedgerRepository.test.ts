@@ -4,6 +4,7 @@ import {
   DomainError,
   LocalDate,
   Money,
+  Tag,
   Transaction,
   TransactionSplit,
   Transfer,
@@ -35,6 +36,35 @@ function transferLeg(id: string, accountId: string, amountMinor: bigint) {
 }
 
 describe("InMemoryLedgerRepository", () => {
+  it("persiste tag attivi e le loro associazioni alla transazione", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const main = account("account-tags");
+    const transaction = Transaction.create({
+      id: "expense-tags",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-1_200n, "EUR"),
+      bookedDate,
+    });
+    const tag = Tag.create({ id: "tag-work", name: "Lavoro" });
+
+    await repository.saveAccount(main);
+    await repository.saveTransaction(transaction);
+    await repository.saveTag(tag);
+    await repository.setTransactionTags(transaction.id, [tag.id]);
+
+    expect(await repository.listTags()).toEqual([tag]);
+    expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
+
+    const archivedTag = tag.update({ name: tag.name, isArchived: true });
+    await repository.updateTag(archivedTag);
+    await expect(repository.setTransactionTags(transaction.id, [tag.id])).rejects.toMatchObject({
+      code: "missing_reference",
+    });
+    expect(await repository.listTransactionTags(transaction.id)).toEqual([archivedTag]);
+  });
+
   it("verifica riferimenti di conti, categorie e sottoconti", async () => {
     const repository = new InMemoryLedgerRepository();
     const main = account("account-main");
