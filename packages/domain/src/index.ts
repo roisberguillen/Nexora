@@ -8,6 +8,10 @@ export { Category, type CategoryKindScope, type CreateCategoryProps } from "./en
 export { Budget, type CreateBudgetProps } from "./entities/Budget";
 export { Loan, type CreateLoanProps } from "./entities/Loan";
 export {
+  InvestmentPosition,
+  type CreateInvestmentPositionProps,
+} from "./entities/InvestmentPosition";
+export {
   Transaction,
   type CreateTransactionProps,
   type TransactionKind,
