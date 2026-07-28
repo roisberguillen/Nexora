@@ -19,6 +19,7 @@ export interface CreateManualTransactionInput {
   readonly kind: Exclude<TransactionKind, "transfer">;
   readonly payee: string;
   readonly status: Exclude<TransactionStatus, "cancelled" | "reconciled">;
+  readonly tagIds?: readonly string[];
   readonly splits?: readonly {
     readonly categoryId: string;
     readonly amountMinor: bigint;
@@ -61,21 +62,20 @@ export async function createManualTransaction(
     ...(description === undefined ? {} : { description }),
     ...(payee === undefined ? {} : { payee }),
   });
-  if (input.splits === undefined || input.splits.length === 0)
-    await repository.saveTransaction(transaction);
-  else
-    await repository.saveTransactionWithSplits(
-      transaction,
-      input.splits.map((split) =>
-        TransactionSplit.create({
-          id: idFactory(),
-          transactionId: transaction.id,
-          categoryId: split.categoryId,
-          amount: Money.fromMinor(split.amountMinor, account.currency),
-          ...(optional(split.note) === undefined ? {} : { note: optional(split.note)! }),
-        }),
-      ),
-    );
+  const splits =
+    input.splits?.map((split) =>
+      TransactionSplit.create({
+        id: idFactory(),
+        transactionId: transaction.id,
+        categoryId: split.categoryId,
+        amount: Money.fromMinor(split.amountMinor, account.currency),
+        ...(optional(split.note) === undefined ? {} : { note: optional(split.note)! }),
+      }),
+    ) ?? [];
+  if (input.tagIds !== undefined && input.tagIds.length > 0)
+    await repository.saveTransactionWithDetails(transaction, splits, input.tagIds);
+  else if (splits.length === 0) await repository.saveTransaction(transaction);
+  else await repository.saveTransactionWithSplits(transaction, splits);
   return transaction;
 }
 

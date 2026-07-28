@@ -44,8 +44,6 @@ export function TopHeader({
           ⌕
         </span>
         <input
-          aria-controls="global-search-results"
-          aria-expanded={results.length > 0}
           id="global-search"
           onChange={(event) => setQuery(event.currentTarget.value)}
           placeholder="Cerca conti, categorie, tag e movimenti"

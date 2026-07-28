@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 13050,
-      "sha256": "81901efd472aac800ee3e02483e7b8f2e3bdf64ccad8dcd496e6f9fee143d81c"
+      "size": 13088,
+      "sha256": "7db8fcdfe0ab5c7cd5b690cb323655eee60d4748894e51643f3507e11ec96a9d"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -209,8 +209,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 16988,
-      "sha256": "166a6222f4245b77826da555cca8bd1d7c7ac34f0c77e397ae92a2678cca4516"
+      "size": 17635,
+      "sha256": "40498cc4793717294cd4d21b1d3ec563b8bb81a17ea49d30255cde9ac0d31758"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -254,13 +254,13 @@
     },
     {
       "path": "apps/web/src/transactions/transactionCommands.ts",
-      "size": 5688,
-      "sha256": "d5af90fee671d1976a2e45c9b7432bd78faf08be998faa7a98178c09aa2ba654"
+      "size": 5834,
+      "sha256": "bffe73b59a10ec62e3c9b4e3a25e3260c56de37e45c0793683abfdaa39cecf5b"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 19174,
-      "sha256": "e7775f37c84ea4f1ca0233c678f7c48320c0827f40e3a3d83b6ec03f236daeeb"
+      "size": 20103,
+      "sha256": "05395f20dfa3d9a4e06cfaea1907d03d8509cf3f862113221af7b7a5685a2c4d"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -279,8 +279,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 5575,
-      "sha256": "57db85fbfb4e82d774b7e2d472e0fdc4fee8e6f60661a32e3456d45d627183ad"
+      "size": 5724,
+      "sha256": "f23eb6fdf8106ef644e168cde9c7bac844363447aa6bc1462b91cfb575e2b17b"
     },
     {
       "path": "design/mockup/README.md",
@@ -414,8 +414,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 3301,
-      "sha256": "c259fd2d2720fdd2b397e6ec5fdc282afbd61d5488c35e46e2c6426eac105203"
+      "size": 3354,
+      "sha256": "7b210e36caa6f5817c7750de4e4b0a3422cec68bb91118536a50d056c514f95f"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -544,13 +544,13 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
-      "size": 12156,
-      "sha256": "54f3b17b57b54f415a38be88096112e0d14cfdfb4c295ba6d9f961a1eef58e58"
+      "size": 13393,
+      "sha256": "96ca0a9d53aacc674776f2f55e360b76876504883a7b6e5c36967fa9ff67ede8"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 10998,
-      "sha256": "3c5e4dd34a40280afbded0fdf31fb7173f958de82446f47d9fbb62e246a57357"
+      "size": 12302,
+      "sha256": "7d75531df3acb44658846d6625d6b86967907cf50a086bef41546a5af09cd2b5"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -564,8 +564,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 27038,
-      "sha256": "cc78ab2081aa4afb54528bdc977ea3ea9614dc057fdd3ee1ea571c06a4030ff9"
+      "size": 29595,
+      "sha256": "b4176325df55e5622f385c8b699ee41a4f6ac03b679880153f685c89beb0f93f"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -684,8 +684,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 26505,
-      "sha256": "755fa57bcf80aa68bc296f8149dcc92883a14afe2f3142d1f0b9917be37ce6d2"
+      "size": 28638,
+      "sha256": "a771d8ab8a106e4acbe8e100ce04b900287a6d18a12cf6c80fb9d8fe86bfcb07"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -769,8 +769,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 1911,
-      "sha256": "aad4930db828f352a6688ac5bbbabbf2b94720a4f2d722315e28d1a97933daa6"
+      "size": 2063,
+      "sha256": "3a79b37c4a283f9ac0fa2e1b1850aab9d568b0e47db92ce0f2b9ccba97df7877"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",
@@ -924,8 +924,8 @@
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
-      "size": 2534,
-      "sha256": "105e709b2b8143720ec6aba0f1aec25b89f917a49fee7a0c728cb0249bb97d39"
+      "size": 2441,
+      "sha256": "1d4fe487c59f5b7f39bde38734e9980fd97fe168b3c1b75fb955aad9b42b1580"
     },
     {
       "path": "packages/ui/tsconfig.json",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "test/e2e/tags.spec.ts",
-      "size": 1320,
-      "sha256": "da984fbc863a78de5ed7c0c438a83cd33e2b859914c324ef000874e837123d81"
+      "size": 2159,
+      "sha256": "15eab81e8c0d1e9c140d1be212115afa720f7dc720ab616843d95ad0715814c3"
     },
     {
       "path": "test/e2e/transactions.spec.ts",

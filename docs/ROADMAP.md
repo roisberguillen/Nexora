@@ -44,7 +44,7 @@ Avanzamento:
     annullamento conservativo.
   - [ ] Split con raggruppamento persistente e migrazione dedicata.
   - [x] Modello e migrazione v2 per split persistenti, con UI e controlli E2E iniziali.
-- [ ] Gestione categorie e tag.
+- [x] Gestione categorie e tag, inclusa l'assegnazione atomica dei tag ai movimenti.
 - [ ] Ricerca globale.
 
 ## Milestone 4 — Money Manager XLSX

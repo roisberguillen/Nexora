@@ -138,6 +138,33 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     for (const split of splits) this.transactionSplits.set(split.id, split);
   }
 
+  public async saveTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void> {
+    const { validateTransactionSplits } = await import("@nexora/domain");
+    validateTransactionSplits(transaction, splits);
+    this.assertNew(this.transactions, transaction.id, "Transaction");
+    this.validateTransactionReferences(transaction);
+    if (new Set(tagIds).size !== tagIds.length)
+      throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+    for (const split of splits) {
+      this.assertNew(this.transactionSplits, split.id, "Transaction split");
+      const category = this.categories.get(split.categoryId);
+      if (category === undefined || category.isArchived || !category.accepts(transaction.kind))
+        throw new DomainError("invalid_category", "Split category is incompatible.");
+    }
+    for (const tagId of tagIds) {
+      const tag = this.tags.get(tagId);
+      if (tag === undefined || tag.isArchived)
+        throw new DomainError("missing_reference", "Tag is unavailable.");
+    }
+    this.transactions.set(transaction.id, transaction);
+    for (const split of splits) this.transactionSplits.set(split.id, split);
+    this.transactionTags.set(transaction.id, new Set(tagIds));
+  }
+
   public async saveTransfer(bundle: TransferBundle): Promise<void> {
     const { transfer, debitTransaction, creditTransaction, feeTransaction } = bundle;
     const bundleTransactions =

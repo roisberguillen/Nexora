@@ -25,6 +25,11 @@ export interface LedgerRepository {
     transaction: Transaction,
     splits: readonly TransactionSplit[],
   ): Promise<void>;
+  saveTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void>;
   saveTransfer(bundle: TransferBundle): Promise<void>;
   cancelTransaction(id: string): Promise<void>;
   cancelTransfer(id: string): Promise<void>;

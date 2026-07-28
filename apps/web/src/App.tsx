@@ -239,6 +239,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           ) : route === "transactions" ? (
             <TransactionsPage
               model={ledgerState.transactions}
+              tags={ledgerState.tags}
               onCancel={cancelMovement}
               onCreateManual={createManualMovement}
               onCreateTransfer={createTransferMovement}

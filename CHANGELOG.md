@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Aggiunta l'assegnazione di tag ai movimenti, salvata atomicamente insieme a transazione ed
+  eventuali split su memoria, SQLite/OPFS e IndexedDB.
+
 - Aggiunta la ricerca globale offline per conti, categorie, tag e movimenti, con risultati
   navigabili e test E2E responsive.
 

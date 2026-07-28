@@ -65,6 +65,40 @@ describe("InMemoryLedgerRepository", () => {
     expect(await repository.listTransactionTags(transaction.id)).toEqual([archivedTag]);
   });
 
+  it("salva atomicamente transazione, split e tag", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const main = account("account-details");
+    const category = Category.create({
+      id: "category-details",
+      name: "Cibo",
+      kindScope: "expense",
+    });
+    const tag = Tag.create({ id: "tag-details", name: "Famiglia" });
+    const transaction = Transaction.create({
+      id: "expense-details",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-1_000n, "EUR"),
+      bookedDate,
+    });
+    const split = TransactionSplit.create({
+      id: "split-details",
+      transactionId: transaction.id,
+      categoryId: category.id,
+      amount: Money.fromMinor(-1_000n, "EUR"),
+    });
+    await repository.saveAccount(main);
+    await repository.saveCategory(category);
+    await repository.saveTag(tag);
+
+    await repository.saveTransactionWithDetails(transaction, [split], [tag.id]);
+
+    expect(await repository.findTransactionById(transaction.id)).toEqual(transaction);
+    expect(await repository.listTransactionSplits(transaction.id)).toEqual([split]);
+    expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
+  });
+
   it("verifica riferimenti di conti, categorie e sottoconti", async () => {
     const repository = new InMemoryLedgerRepository();
     const main = account("account-main");

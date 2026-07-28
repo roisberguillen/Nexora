@@ -363,6 +363,57 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public saveTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const { validateTransactionSplits } = await import("@nexora/domain");
+          validateTransactionSplits(transaction, splits);
+          if (new Set(tagIds).size !== tagIds.length)
+            throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+          await this.assertNew("transactions", transaction.id, "Transaction");
+          await this.validateTransactionReferences(transaction);
+          for (const split of splits) {
+            if ((await this.findCategoryByIdInternal(split.categoryId))?.isArchived !== false)
+              throw new DomainError("invalid_category", "Split category is unavailable.");
+          }
+          for (const tagId of tagIds) {
+            const tags = await this.database.query<{ readonly is_archived: number }>(
+              "SELECT is_archived FROM tags WHERE id = ?",
+              [tagId],
+            );
+            if (tags[0]?.is_archived !== 0)
+              throw new DomainError("missing_reference", "Tag is unavailable.");
+          }
+          await this.insertTransaction(transaction);
+          for (const split of splits) {
+            const record = transactionSplitToRecord(split);
+            await this.database.run(
+              "INSERT INTO transaction_splits (id, transaction_id, category_id, amount_minor, currency, note) VALUES (?, ?, ?, ?, ?, ?)",
+              [
+                record.id,
+                record.transaction_id,
+                record.category_id,
+                record.amount_minor,
+                record.currency,
+                record.note,
+              ],
+            );
+          }
+          for (const tagId of tagIds)
+            await this.database.run(
+              "INSERT INTO transaction_tags (transaction_id, tag_id) VALUES (?, ?)",
+              [transaction.id, tagId],
+            );
+        }),
+      ),
+    );
+  }
+
   public saveTransfer(bundle: TransferBundle): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

@@ -1,4 +1,5 @@
 import { FinancialAmount } from "@nexora/ui";
+import type { Tag } from "@nexora/domain";
 import { useState, type FormEvent } from "react";
 
 import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
@@ -11,6 +12,7 @@ import type { TransactionsViewModel } from "./buildTransactionsViewModel";
 
 interface TransactionsPageProps {
   readonly model: TransactionsViewModel;
+  readonly tags: readonly Tag[];
   readonly onCancel: (id: string, isTransfer: boolean) => Promise<void>;
   readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<void>;
   readonly onCreateTransfer: (input: CreateTransferInput) => Promise<void>;
@@ -20,6 +22,7 @@ type FormKind = "income" | "expense" | "adjustment" | "transfer";
 
 export function TransactionsPage({
   model,
+  tags,
   onCancel,
   onCreateManual,
   onCreateTransfer,
@@ -61,6 +64,7 @@ export function TransactionsPage({
         const categoryId = String(form.get("category") ?? "") || undefined;
         const splitCategories = form.getAll("splitCategory").map(String);
         const splitAmounts = form.getAll("splitAmount").map(String);
+        const tagIds = form.getAll("tagId").map(String);
         const signedAmount = signedAmountForKind(
           kind,
           amountMinor,
@@ -88,6 +92,7 @@ export function TransactionsPage({
           kind,
           payee: String(form.get("payee") ?? ""),
           status,
+          ...(tagIds.length > 0 ? { tagIds } : {}),
           ...(splits.length > 0 ? { splits } : categoryId === undefined ? {} : { categoryId }),
         });
       }
@@ -246,6 +251,7 @@ export function TransactionsPage({
             onCancel={() => setIsEditorOpen(false)}
             onKindChange={setKind}
             onSubmit={save}
+            tags={tags}
           />
         ) : (
           <aside aria-labelledby="transaction-help-title" className="account-help-panel">
@@ -270,6 +276,7 @@ function TransactionForm({
   onCancel,
   onKindChange,
   onSubmit,
+  tags,
 }: {
   readonly accounts: TransactionsViewModel["accounts"];
   readonly categories: TransactionsViewModel["categories"];
@@ -278,6 +285,7 @@ function TransactionForm({
   readonly onCancel: () => void;
   readonly onKindChange: (kind: FormKind) => void;
   readonly onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  readonly tags: readonly Tag[];
 }) {
   const [splitRows, setSplitRows] = useState<readonly string[]>([]);
   const [splitAmounts, setSplitAmounts] = useState<Record<string, string>>({});
@@ -437,6 +445,25 @@ function TransactionForm({
             >
               Aggiungi ripartizione
             </button>
+          </fieldset>
+        ) : null}
+        {!isTransfer ? (
+          <fieldset className="tag-selector">
+            <legend>Tag</legend>
+            {tags.filter((tag) => !tag.isArchived).length === 0 ? (
+              <p>Nessun tag attivo. Puoi crearne uno dalla sezione Tag.</p>
+            ) : (
+              <div>
+                {tags
+                  .filter((tag) => !tag.isArchived)
+                  .map((tag) => (
+                    <label key={tag.id}>
+                      <input name="tagId" type="checkbox" value={tag.id} />
+                      {tag.name}
+                    </label>
+                  ))}
+              </div>
+            )}
           </fieldset>
         ) : null}
         {kind === "adjustment" ? (
