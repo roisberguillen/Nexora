@@ -710,6 +710,29 @@
   color: var(--color-on-surface);
 }
 
+.split-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-low);
+  color: var(--color-on-surface-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.split-summary .is-balanced {
+  color: var(--color-positive);
+  font-weight: 700;
+}
+
+.split-summary .is-unbalanced {
+  color: var(--color-negative);
+  font-weight: 700;
+}
+
 .form-actions {
   display: flex;
   justify-content: end;

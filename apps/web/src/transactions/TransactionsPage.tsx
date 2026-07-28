@@ -279,8 +279,27 @@ function TransactionForm({
   readonly onKindChange: (kind: FormKind) => void;
   readonly onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
-  const [splitCount, setSplitCount] = useState(0);
+  const [splitRows, setSplitRows] = useState<readonly string[]>([]);
+  const [splitAmounts, setSplitAmounts] = useState<Record<string, string>>({});
+  const [amountText, setAmountText] = useState("");
+  const [selectedAccountId, setSelectedAccountId] = useState(accounts[0]?.id ?? "");
   const isTransfer = kind === "transfer";
+  const hasSplits = splitRows.length > 0;
+  const selectedAccount = accounts.find((account) => account.id === selectedAccountId);
+  const currency = selectedAccount?.currency ?? "EUR";
+  const transactionAmount = tryParseAmountMinor(amountText, currency);
+  const assignedAmount = hasSplits
+    ? splitRows.reduce<bigint | undefined>((total, rowId) => {
+        const value = tryParseAmountMinor(splitAmounts[rowId] ?? "", currency);
+        return total === undefined || value === undefined ? undefined : total + value;
+      }, 0n)
+    : 0n;
+  const amountRemaining =
+    transactionAmount === undefined || assignedAmount === undefined
+      ? undefined
+      : transactionAmount - assignedAmount;
+  const splitsAreBalanced =
+    hasSplits && transactionAmount !== undefined && assignedAmount === transactionAmount;
   const categoriesForKind = categories.filter(
     (category) =>
       kind === "adjustment" || category.kindScope === "both" || category.kindScope === kind,
@@ -317,7 +336,12 @@ function TransactionForm({
         </label>
         <label>
           {isTransfer ? "Conto origine" : "Conto"}
-          <select name="account" required>
+          <select
+            name="account"
+            onChange={(event) => setSelectedAccountId(event.currentTarget.value)}
+            required
+            value={selectedAccountId}
+          >
             {accounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name} · {account.currency}
@@ -337,7 +361,7 @@ function TransactionForm({
             </select>
           </label>
         ) : null}
-        {!isTransfer && kind !== "adjustment" && splitCount === 0 ? (
+        {!isTransfer && kind !== "adjustment" && !hasSplits ? (
           <label>
             Categoria
             <select name="category">
@@ -353,8 +377,8 @@ function TransactionForm({
         {!isTransfer && kind !== "adjustment" ? (
           <fieldset className="split-editor">
             <legend>Ripartizione per categoria</legend>
-            {Array.from({ length: splitCount }, (_, index) => (
-              <div className="split-row" key={index}>
+            {splitRows.map((rowId, index) => (
+              <div className="split-row" key={rowId}>
                 <select aria-label={`Categoria split ${index + 1}`} name="splitCategory" required>
                   <option value="">Categoria</option>
                   {categoriesForKind.map((category) => (
@@ -367,22 +391,48 @@ function TransactionForm({
                   aria-label={`Importo split ${index + 1}`}
                   inputMode="decimal"
                   name="splitAmount"
+                  onChange={(event) =>
+                    setSplitAmounts((amounts) => ({
+                      ...amounts,
+                      [rowId]: event.currentTarget.value,
+                    }))
+                  }
                   placeholder="0,00"
                   required
                 />
                 <button
                   aria-label={`Rimuovi split ${index + 1}`}
                   className="text-action"
-                  onClick={() => setSplitCount((count) => count - 1)}
+                  onClick={() => setSplitRows((rows) => rows.filter((id) => id !== rowId))}
                   type="button"
                 >
                   Rimuovi
                 </button>
               </div>
             ))}
+            {hasSplits ? (
+              <div aria-live="polite" className="split-summary">
+                <span>
+                  Assegnato:{" "}
+                  {assignedAmount === undefined ? (
+                    "—"
+                  ) : (
+                    <FinancialAmount amountMinor={assignedAmount} currency={currency} />
+                  )}
+                </span>
+                <span className={amountRemaining === 0n ? "is-balanced" : "is-unbalanced"}>
+                  Da assegnare:{" "}
+                  {amountRemaining === undefined ? (
+                    "—"
+                  ) : (
+                    <FinancialAmount amountMinor={amountRemaining} currency={currency} />
+                  )}
+                </span>
+              </div>
+            ) : null}
             <button
               className="text-action"
-              onClick={() => setSplitCount((count) => count + 1)}
+              onClick={() => setSplitRows((rows) => [...rows, crypto.randomUUID()])}
               type="button"
             >
               Aggiungi ripartizione
@@ -404,6 +454,7 @@ function TransactionForm({
             aria-label="Importo"
             inputMode="decimal"
             name="amount"
+            onChange={(event) => setAmountText(event.currentTarget.value)}
             placeholder="0,00"
             required
           />
@@ -446,7 +497,7 @@ function TransactionForm({
           </button>
           <button
             className="primary-action"
-            disabled={isSaving || accounts.length === 0}
+            disabled={isSaving || accounts.length === 0 || (hasSplits && !splitsAreBalanced)}
             type="submit"
           >
             {isSaving ? "Salvataggio…" : "Salva movimento"}
@@ -455,6 +506,15 @@ function TransactionForm({
       </form>
     </aside>
   );
+}
+
+function tryParseAmountMinor(value: string, currency: string): bigint | undefined {
+  if (value.trim() === "") return undefined;
+  try {
+    return parseLocalizedAmountMinor(value, currency);
+  } catch {
+    return undefined;
+  }
 }
 
 function transactionErrorMessage(error: unknown): string {
