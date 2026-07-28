@@ -69,7 +69,9 @@ const transactionColumns = `
   description,
   category_id,
   note,
-  source
+  source,
+  import_batch_id,
+  source_fingerprint
 `;
 
 const transferColumns = `
@@ -844,9 +846,11 @@ export class SqliteLedgerRepository implements LedgerRepository {
           description,
           category_id,
           note,
-          source
+          source,
+          import_batch_id,
+          source_fingerprint
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         record.id,
@@ -862,6 +866,8 @@ export class SqliteLedgerRepository implements LedgerRepository {
         record.category_id,
         record.note,
         record.source,
+        record.import_batch_id,
+        record.source_fingerprint,
       ],
     );
   }

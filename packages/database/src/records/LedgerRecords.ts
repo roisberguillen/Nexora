@@ -68,6 +68,8 @@ export interface TransactionRecord {
   readonly category_id: unknown;
   readonly note: unknown;
   readonly source: unknown;
+  readonly import_batch_id?: unknown;
+  readonly source_fingerprint?: unknown;
 }
 
 export interface StoredTransactionRecord extends TransactionRecord {
@@ -84,6 +86,8 @@ export interface StoredTransactionRecord extends TransactionRecord {
   readonly category_id: string | null;
   readonly note: string | null;
   readonly source: TransactionSource;
+  readonly import_batch_id: string | null;
+  readonly source_fingerprint: string | null;
 }
 
 export interface TransferRecord {
@@ -248,6 +252,8 @@ export function transactionToRecord(transaction: Transaction): StoredTransaction
     category_id: transaction.categoryId ?? null,
     note: transaction.note ?? null,
     source: transaction.source,
+    import_batch_id: transaction.importBatchId ?? null,
+    source_fingerprint: transaction.sourceFingerprint ?? null,
   };
 }
 
@@ -259,6 +265,11 @@ export function transactionFromRecord(row: TransactionRecord): Transaction {
     const description = optionalText(row.description, "transaction.description");
     const categoryId = optionalText(row.category_id, "transaction.category_id");
     const note = optionalText(row.note, "transaction.note");
+    const importBatchId = optionalText(row.import_batch_id ?? null, "transaction.import_batch_id");
+    const sourceFingerprint = optionalText(
+      row.source_fingerprint ?? null,
+      "transaction.source_fingerprint",
+    );
 
     return Transaction.create({
       id: requiredText(row.id, "transaction.id"),
@@ -276,6 +287,8 @@ export function transactionFromRecord(row: TransactionRecord): Transaction {
       ...(description === undefined ? {} : { description }),
       ...(categoryId === undefined ? {} : { categoryId }),
       ...(note === undefined ? {} : { note }),
+      ...(importBatchId === undefined ? {} : { importBatchId }),
+      ...(sourceFingerprint === undefined ? {} : { sourceFingerprint }),
     });
   } catch (cause) {
     throw corruptRecord("transaction", cause);

@@ -654,8 +654,8 @@
     },
     {
       "path": "packages/database/src/records/LedgerRecords.ts",
-      "size": 13336,
-      "sha256": "e1c46e62d8b7441dd31f64495d049c8e22323d1beaf409a629dfb4686a6c103b"
+      "size": 13990,
+      "sha256": "5967cca4c2289746dcdf2997218e7a36bdd7d9d14449059ac32e6382fb3cc0ab"
     },
     {
       "path": "packages/database/src/seed/demoLedgerSeed.test.ts",
@@ -694,8 +694,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 33110,
-      "sha256": "2ad655efe9d22c6ccfbc498dd54fc61dc40627be6baba5157a380769adbfbeb0"
+      "size": 33281,
+      "sha256": "299f1cf576a62e56862dc30d989ca4558ffa24aec758f07e77bee38f8b7e1261"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -759,13 +759,13 @@
     },
     {
       "path": "packages/domain/src/entities/Transaction.test.ts",
-      "size": 2943,
-      "sha256": "17ba21eb9a044e182150fac41e7011647fcaf6fdf2a4d44682d77eed4990cb86"
+      "size": 3685,
+      "sha256": "fe2705b007cdc3d3fb6edba4db92ec2522a6a404cddbccf482688fd4d82a47e2"
     },
     {
       "path": "packages/domain/src/entities/Transaction.ts",
-      "size": 4891,
-      "sha256": "e293c7c5138d0f4f174e596a352ab6eaa8608231437c986601183a002f8042a8"
+      "size": 6072,
+      "sha256": "52b2d25d224b67c4dbbd116c08717c7a54fa9cf90a28c809a75045f027fa8c12"
     },
     {
       "path": "packages/domain/src/entities/TransactionSplit.test.ts",

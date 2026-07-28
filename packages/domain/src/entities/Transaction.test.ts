@@ -100,4 +100,30 @@ describe("Transaction", () => {
     });
     expect(() => reconciled.cancel()).toThrowError(DomainError);
   });
+
+  it("vincola batch e fingerprint alle sole transazioni importate", () => {
+    const imported = Transaction.create({
+      id: "import-1",
+      kind: "income",
+      status: "booked",
+      accountId: "account-main",
+      amount: Money.fromMinor(100n, "EUR"),
+      bookedDate,
+      source: "import",
+      importBatchId: "batch-1",
+      sourceFingerprint: "a".repeat(64),
+    });
+    expect(imported.cancel().sourceFingerprint).toBe("a".repeat(64));
+    expect(() =>
+      Transaction.create({
+        id: "import-2",
+        kind: "income",
+        status: "booked",
+        accountId: "account-main",
+        amount: Money.fromMinor(100n, "EUR"),
+        bookedDate,
+        source: "import",
+      }),
+    ).toThrow("batch");
+  });
 });

@@ -29,6 +29,8 @@ export interface CreateTransactionProps {
   readonly categoryId?: string;
   readonly note?: string;
   readonly source?: TransactionSource;
+  readonly importBatchId?: string;
+  readonly sourceFingerprint?: string;
 }
 
 export class Transaction {
@@ -44,6 +46,8 @@ export class Transaction {
   public readonly categoryId: string | undefined;
   public readonly note: string | undefined;
   public readonly source: TransactionSource;
+  public readonly importBatchId: string | undefined;
+  public readonly sourceFingerprint: string | undefined;
 
   private constructor(props: CreateTransactionProps) {
     this.id = requireIdentifier(props.id, "Transaction id");
@@ -68,6 +72,29 @@ export class Transaction {
       throw new DomainError("invalid_transaction", "Transaction source is not supported.");
     }
     this.source = source;
+    this.importBatchId =
+      props.importBatchId === undefined
+        ? undefined
+        : requireIdentifier(props.importBatchId, "Import batch id");
+    this.sourceFingerprint = props.sourceFingerprint?.trim().toLowerCase();
+    if (
+      this.source === "import" &&
+      (this.importBatchId === undefined || !/^[a-f0-9]{64}$/.test(this.sourceFingerprint ?? ""))
+    ) {
+      throw new DomainError(
+        "invalid_import",
+        "Imported transactions require a batch and SHA-256 fingerprint.",
+      );
+    }
+    if (
+      this.source !== "import" &&
+      (this.importBatchId !== undefined || this.sourceFingerprint !== undefined)
+    ) {
+      throw new DomainError(
+        "invalid_import",
+        "Only imported transactions can carry import metadata.",
+      );
+    }
 
     this.assertAmountSign();
     if (this.kind === "transfer" && this.categoryId !== undefined) {
@@ -113,6 +140,10 @@ export class Transaction {
       ...(this.description === undefined ? {} : { description: this.description }),
       ...(this.categoryId === undefined ? {} : { categoryId: this.categoryId }),
       ...(this.note === undefined ? {} : { note: this.note }),
+      ...(this.importBatchId === undefined ? {} : { importBatchId: this.importBatchId }),
+      ...(this.sourceFingerprint === undefined
+        ? {}
+        : { sourceFingerprint: this.sourceFingerprint }),
     });
   }
 
