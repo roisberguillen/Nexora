@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 17107,
-      "sha256": "3accdefa4c98a2b46b1dc9dfa3a42d94c6f513b0c7c587743b4d160722539662"
+      "size": 18481,
+      "sha256": "4fa1530c1d696eef49110a6f2431227c7b707ec7d684c22d6c7b32a7ccd5c5eb"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -249,8 +249,8 @@
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 12534,
-      "sha256": "462a77b60fd2992c5fd185eed078e51d0aaf1bc911e15c1cdccd07e55e953244"
+      "size": 15136,
+      "sha256": "8e3551d976fbdb81a389aba661d871342ebcc574d5a4660738165d45cd1d21f4"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -289,8 +289,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 20103,
-      "sha256": "05395f20dfa3d9a4e06cfaea1907d03d8509cf3f862113221af7b7a5685a2c4d"
+      "size": 21744,
+      "sha256": "0850194932228ed86ef98136ede832eadd526eb0afbe032726a37c4dbcf8dbb1"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -309,8 +309,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 6610,
-      "sha256": "e87767789e3f4dfaddb45183056cd404e43c1fd6ddffbe026a2a55fde980cb18"
+      "size": 7130,
+      "sha256": "653bb3062e75c6309263b01aa2c2f45a84296fbdb94d30f947a31ff28a5ea2cd"
     },
     {
       "path": "design/mockup/README.md",
@@ -404,8 +404,8 @@
     },
     {
       "path": "docs/adr/0014-confirmed-allocation-plans.md",
-      "size": 688,
-      "sha256": "1566be2b73533e197ae101e232af775aa2bd330c94c11a34a2721e4e2dae2237"
+      "size": 826,
+      "sha256": "a39437707d3f77b476589ca1fcb51bacff07955efec011bcc0d954afa181ae10"
     },
     {
       "path": "docs/ARCHITECTURE.md",
@@ -419,8 +419,8 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 6018,
-      "sha256": "0645c2fea95385424a13b1ba7624c4a29c59e4f9e7f88d098707751224a500e6"
+      "size": 6057,
+      "sha256": "e38b52dba8dd471ffc7c5306b58f83b29cb1fecc677e035dbd0d924d6604a7e6"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
@@ -449,8 +449,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 4813,
-      "sha256": "e3d30658b15e7023d89152b186391d29794575df9fccb24064e28aa4699dd6a0"
+      "size": 5421,
+      "sha256": "82ec2de34b36d3c97d2b191691097b4f3c994ff62240c558c0a1e98bbdf99ed9"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -804,13 +804,13 @@
     },
     {
       "path": "packages/domain/src/entities/RecurringRule.test.ts",
-      "size": 809,
-      "sha256": "b12317a0e9603e6de3b70971ded3f1ed2be66cf89009282109ed18a179078f94"
+      "size": 1846,
+      "sha256": "e52946a8fe77909be3f71234cdc31e9f995102866774b1fc40c46c9638a38ce1"
     },
     {
       "path": "packages/domain/src/entities/RecurringRule.ts",
-      "size": 4536,
-      "sha256": "4bfb0c495806bf2df02ccf909b7ec47d2aedb77f7a65118c6afd1704b48aaa75"
+      "size": 4905,
+      "sha256": "e5d5cec406c0a512bf65158bf6b3bc2f50063c94e95e8f39607809a757199581"
     },
     {
       "path": "packages/domain/src/entities/Tag.ts",
@@ -1099,8 +1099,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
-      "size": 110970,
-      "sha256": "c41c55cd2436c7d7a80e2283cd010a7472e96e9397c4da6afe0bde543a7a0025"
+      "size": 111156,
+      "sha256": "5e0994159e237ba872fec2ef4269f002625899109b515134db2bc635493dec05"
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
@@ -1124,8 +1124,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 192350,
-      "sha256": "b54477a5d8101b7284736780df80accd3c67f4d2b530f5af3b708b51de32ed66"
+      "size": 192746,
+      "sha256": "06c0af359858c99b14c83d40adb3fa1cf456411bb41610ecbcc27ec2c79a9b16"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
@@ -1169,8 +1169,8 @@
     },
     {
       "path": "test/e2e/recurring.spec.ts",
-      "size": 1870,
-      "sha256": "f21b828798de85aade252b78ba86b5152547f0ea8ef1f589b97ac082601018d1"
+      "size": 3761,
+      "sha256": "6c121ff264d6451d29f5bef43d6b77470df89501a23fe2829b063bfaffbf7997"
     },
     {
       "path": "test/e2e/tags.spec.ts",

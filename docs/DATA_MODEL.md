@@ -120,8 +120,9 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
 - v5: `recurring_rules` per template mensili con data attesa e weekend policy;
 - v6: `allocation_plans` per proposte di trasferimento confermabili fra conti.
 
-IndexedDB usa gli object store equivalenti `import_batches` e `import_rows`, con indice
-per `batch_id`; l'upgrade è alla versione 4 e conserva gli store esistenti.
+IndexedDB usa gli object store equivalenti fino a `recurring_rules` e `allocation_plans`,
+con indici per scadenza, conto e trigger; l'upgrade è alla versione 6 e conserva gli
+store e i record esistenti.
 
 Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite
 migrazioni versionate insieme alle rispettive milestone. La decisione completa è descritta in

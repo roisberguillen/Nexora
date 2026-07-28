@@ -255,7 +255,9 @@ function AllocationPlans({
   readonly onExecute: (planIds: readonly string[]) => Promise<void>;
 }) {
   const [error, setError] = useState<string | null>(null);
-  const [isConfirmingExecution, setIsConfirmingExecution] = useState(false);
+  const [confirmingTrigger, setConfirmingTrigger] = useState<"salary" | "photo_income" | null>(
+    null,
+  );
   const [isExecuting, setIsExecuting] = useState(false);
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -280,15 +282,15 @@ function AllocationPlans({
     }
   };
   const active = accounts.filter((account) => !account.isArchived);
-  const salaryPlanIds = plans
-    .filter((plan) => plan.enabled && plan.trigger === "salary")
-    .map((plan) => plan.id);
-  const executeSalaryAllocations = async () => {
+  const planIdsFor = (trigger: "salary" | "photo_income") =>
+    plans.filter((plan) => plan.enabled && plan.trigger === trigger).map((plan) => plan.id);
+  const executeAllocations = async () => {
+    if (confirmingTrigger === null) return;
     setIsExecuting(true);
     setError(null);
     try {
-      await onExecute(salaryPlanIds);
-      setIsConfirmingExecution(false);
+      await onExecute(planIdsFor(confirmingTrigger));
+      setConfirmingTrigger(null);
     } catch {
       setError("Impossibile eseguire le allocazioni. Nessun trasferimento è stato salvato.");
     } finally {
@@ -323,41 +325,52 @@ function AllocationPlans({
           </li>
         ))}
       </ul>
-      {salaryPlanIds.length === 0 ? null : isConfirmingExecution ? (
-        <div
-          aria-label="Conferma allocazioni stipendio"
-          className="account-error"
-          role="alertdialog"
-        >
-          <p>Stipendio ricevuto. Eseguire le allocazioni pianificate?</p>
-          <div className="form-actions">
-            <button
-              className="secondary-action"
-              disabled={isExecuting}
-              onClick={() => setIsConfirmingExecution(false)}
-              type="button"
-            >
-              Annulla
-            </button>
-            <button
-              className="primary-action"
-              disabled={isExecuting}
-              onClick={() => void executeSalaryAllocations()}
-              type="button"
-            >
-              {isExecuting ? "Esecuzione…" : "Esegui allocazioni"}
-            </button>
+      {(["salary", "photo_income"] as const).map((trigger) => {
+        const planIds = planIdsFor(trigger);
+        if (planIds.length === 0) return null;
+        const label = trigger === "salary" ? "stipendio" : "reddito fotografico";
+        const question =
+          trigger === "salary"
+            ? "Stipendio ricevuto. Eseguire le allocazioni pianificate?"
+            : "Reddito fotografico ricevuto. Eseguire le allocazioni pianificate?";
+        return confirmingTrigger === trigger ? (
+          <div
+            aria-label={`Conferma allocazioni ${label}`}
+            className="account-error"
+            key={trigger}
+            role="alertdialog"
+          >
+            <p>{question}</p>
+            <div className="form-actions">
+              <button
+                className="secondary-action"
+                disabled={isExecuting}
+                onClick={() => setConfirmingTrigger(null)}
+                type="button"
+              >
+                Annulla
+              </button>
+              <button
+                className="primary-action"
+                disabled={isExecuting}
+                onClick={() => void executeAllocations()}
+                type="button"
+              >
+                {isExecuting ? "Esecuzione…" : "Esegui allocazioni"}
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <button
-          className="secondary-action"
-          onClick={() => setIsConfirmingExecution(true)}
-          type="button"
-        >
-          Conferma allocazioni stipendio
-        </button>
-      )}
+        ) : (
+          <button
+            className="secondary-action"
+            key={trigger}
+            onClick={() => setConfirmingTrigger(trigger)}
+            type="button"
+          >
+            Conferma allocazioni {label}
+          </button>
+        );
+      })}
       <form className="account-form" onSubmit={(event) => void save(event)}>
         <label>
           Nome piano

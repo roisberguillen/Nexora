@@ -73,8 +73,18 @@ Completata il 2026-07-28. L’importatore Money Manager legge esclusivamente fil
 richiede una conferma esplicita per il commit e conserva un audit persistente dei batch,
 delle righe duplicate e delle righe da revisionare.
 
-## Milestone 5 — Ricorrenze e allocazioni
-Stipendio giorno 28 con weekend policy, risparmio €170, Directa €60, redditi fotografici e conferme.
+## Milestone 5 — Ricorrenze e allocazioni ✅
+
+- [x] Regole mensili persistenti per entrate e spese, con data nominale e policy italiana
+  per lo stipendio se il 28 cade nel fine settimana.
+- [x] Piani di allocazione persistenti a importo fisso per stipendio e reddito fotografico,
+  fra conti attivi della stessa valuta.
+- [x] Rilevamento conservativo dello stipendio contabilizzato atteso e proposta esplicita
+  di esecuzione; nessun trasferimento è creato senza un secondo consenso.
+- [x] UI responsive per configurare, annullare o confermare le proposte a 320/768/1440 px.
+
+Completata il 2026-07-28. Le allocazioni sono configurabili: gli importi €170 e €60
+restano esempi da impostare sui conti effettivi dell'utente e non vengono precompilati.
 
 ## Milestone 6 — Budget, prestiti e investimenti
 Soglie, Findomestic/Agos, dashboard debiti, performance investimenti.

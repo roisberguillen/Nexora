@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+- Completata la vertical slice Ricorrenze e allocazioni: regole mensili persistenti,
+  policy stipendio italiana, piani di trasferimento per stipendio/reddito fotografico e
+  conferma esplicita prima di ogni scrittura nel ledger.
+- Aggiunte migrazioni additive SQLite e IndexedDB v5/v6 per `recurring_rules` e
+  `allocation_plans`, con persistenza e riapertura verificate.
+- Aggiunto il rilevamento prudente dello stipendio contabilizzato atteso e la proposta
+  accessibile di allocazione; test E2E su 320/768/1440 px.
+
 - Completata la vertical slice Money Manager XLSX: dry-run conservativo, deduplica con
   fingerprint SHA-256, commit atomico di batch/righe/movimenti e annullamento conservativo.
 - Aggiunta la migrazione additiva SQLite e IndexedDB v4 per `import_batches`, `import_rows`

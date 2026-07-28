@@ -25,6 +25,18 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByLabel("Importo").last().fill("170,00");
   await page.getByRole("button", { name: "Salva piano" }).click();
   await expect(page.getByText("Risparmio sintetico")).toBeVisible();
+  await page.getByLabel("Nome piano").fill("Fondo attrezzatura");
+  await page.getByLabel("Evento").selectOption("photo_income");
+  await page.getByLabel("Conto origine").selectOption({ label: "Conto quotidiano demo" });
+  await page.getByLabel("Conto destinazione").selectOption({ label: "Riserva demo" });
+  await page.getByLabel("Importo").last().fill("60,00");
+  await page.getByRole("button", { name: "Salva piano" }).click();
+  await page.getByRole("button", { name: "Conferma allocazioni reddito fotografico" }).click();
+  const photoConfirmation = page.getByRole("alertdialog", {
+    name: "Conferma allocazioni reddito fotografico",
+  });
+  await expect(photoConfirmation).toContainText("Reddito fotografico ricevuto");
+  await photoConfirmation.getByRole("button", { name: "Annulla" }).click();
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
   await page.getByLabel("Tipo").selectOption("income");
