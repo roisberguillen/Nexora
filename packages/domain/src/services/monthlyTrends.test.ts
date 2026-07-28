@@ -31,3 +31,24 @@ describe("calculateMonthlyTrends", () =>
     expect(trend[0]).toMatchObject({ month: "2026-07" });
     expect(trend[0]?.savings.amountMinor).toBe(800n);
   }));
+
+describe("calculateMonthlyTrends performance", () =>
+  it("aggregates a synthetic 100k-record ledger without precision loss", () => {
+    const transactions = Array.from({ length: 100_000 }, (_, index) =>
+      Transaction.create({
+        id: `benchmark-${index}`,
+        kind: index % 3 === 0 ? "income" : "expense",
+        status: "booked",
+        accountId: "benchmark-account",
+        amount: Money.fromMinor(index % 3 === 0 ? 10_000n : -2_500n, "EUR"),
+        bookedDate: LocalDate.parse(`2026-${String((index % 12) + 1).padStart(2, "0")}-15`),
+      }),
+    );
+
+    const trends = calculateMonthlyTrends(transactions, "EUR");
+
+    expect(trends).toHaveLength(12);
+    expect(
+      trends.reduce((total, trend) => total.add(trend.income), Money.zero("EUR")).amountMinor,
+    ).toBe(333_340_000n);
+  }));

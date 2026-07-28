@@ -128,10 +128,20 @@ Avanzamento:
 Completata il 2026-07-29. La connessione Google richiede la configurazione esplicita di un
 client OAuth nel deployment; Drive riceve soltanto archivi AES-GCM nel suo `appDataFolder`.
 
-## Milestone 9 — Analisi e diario
-Widget, trend, forecast conservativi, diario mensile.
+## Milestone 9 — Analisi e diario ✅
+Trend mensili, forecast prudente e diario persistente con obiettivi e percezione di controllo.
+
+Completata il 2026-07-29. Le analisi escludono trasferimenti, rettifiche e annullamenti; la
+previsione esplicita la mediana storica e una fascia prudente, senza presentarsi come consiglio.
 
 ## Milestone 10 — Hardening e release
 Accessibilità, performance 100k record, threat review, recovery drill, packaging PWA.
+
+Avanzamento:
+
+- [x] Benchmark sintetico su 100.000 movimenti per l’aggregazione dei trend, con importi `bigint`.
+- [x] Threat model documentato per ledger, backup, OAuth e importazioni locali.
+- [x] Recovery drill coperto dai test di backup/restore SQLite e OPFS; PWA con manifest e precache.
+- [ ] Esecuzione finale di tutti i quality gate, E2E e audit dipendenze della release.
 
 Ogni milestone deve produrre una demo verticale e soddisfare `docs/testing/QUALITY_GATES.md`.

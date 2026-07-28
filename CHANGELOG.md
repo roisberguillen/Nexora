@@ -7,6 +7,8 @@
   I token OAuth restano in memoria e Drive riceve esclusivamente archivi AES-GCM già verificati.
 - Aggiunto il diario mensile persistente, con migrazione additiva SQLite/IndexedDB v11,
   riflessioni locali e obiettivi per il mese successivo.
+- Aggiunta la pagina Analisi con trend mensili e previsione spese prudente, oltre a un benchmark
+  sintetico su 100.000 movimenti e al threat model operativo.
 
 - Aggiunta la pagina Esporta: CSV locale dei movimenti e JSON del ledger senza invio di dati,
   con importi in minor units e neutralizzazione della formula injection nel CSV.

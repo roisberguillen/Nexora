@@ -419,8 +419,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 8406,
-      "sha256": "c1129b5fbd4d9eb83c9c80374c5bac1ded055811966bee08bdbb2804355bf719"
+      "size": 8565,
+      "sha256": "4256911b2cc8fd75201f750cb96e7287013dab380aef65274f04493940b4a432"
     },
     {
       "path": "design/mockup/README.md",
@@ -574,8 +574,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 7243,
-      "sha256": "7df82d610bb5fb1ff9c85228d2440132c2c4c5211fe6264f35e2e1eb1882ba15"
+      "size": 7861,
+      "sha256": "40eacd9bed493609ab31edd3234b31cf3f0843fe9403a4a126918cb0ec3a1e29"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -586,6 +586,11 @@
       "path": "docs/testing/QUALITY_GATES.md",
       "size": 2624,
       "sha256": "20e238bf68b8b69b17c42986f6cf25bbc7d91f7b71911e8621c81d45cf111609"
+    },
+    {
+      "path": "docs/THREAT_MODEL.md",
+      "size": 1495,
+      "sha256": "78df02ac6746433b4179c5decae99975bd2e8d0472c9d948fb7532568a937f9c"
     },
     {
       "path": "docs/ux/MOCKUP_INTEGRATION.md",
@@ -1084,8 +1089,8 @@
     },
     {
       "path": "packages/domain/src/services/monthlyTrends.test.ts",
-      "size": 1129,
-      "sha256": "6cf15f1a1c23d508990dced4a84ee69e886e285e4febec6d1f9a87c1ff04c236"
+      "size": 1946,
+      "sha256": "130048dd376454fa5e9e19fcf95707e46ad780a44ebc3a0fe00505dc7ab23bfb"
     },
     {
       "path": "packages/domain/src/services/monthlyTrends.ts",
