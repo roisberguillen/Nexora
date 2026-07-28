@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit and Push"
+  short_description: "Commit and publish Nexora changes"
+  default_prompt: "After completing a Nexora implementation, verify it, commit the intended changes, and push them to origin."

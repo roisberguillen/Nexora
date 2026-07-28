@@ -43,3 +43,6 @@ Costruire Nexora come applicazione finanziaria personale affidabile, installabil
 - Date ISO-8601; timezone predefinita `Europe/Rome`.
 - Valuta predefinita EUR, locale `it-IT`.
 - Commit piccoli e semanticamente coerenti.
+- Dopo ogni implementazione completata e verificata, usare `.codex/skills/commit-and-push`:
+  creare un commit Conventional Commit e pubblicarlo su `origin`. Non lasciare modifiche
+  funzionali completate soltanto in locale.
