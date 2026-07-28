@@ -53,6 +53,13 @@ Completata il 2026-07-28. Verificata con unit/integration test, flussi E2E respo
 ## Milestone 4 — Money Manager XLSX
 Parser, mapping wizard, preview, validazione, deduplica, dry-run, import atomico, undo batch, report.
 
+Avanzamento:
+
+- [x] Lettura locale e immutabile dei workbook XLSX con selezione dei fogli disponibili.
+- [x] Rilevamento iniziale delle intestazioni Money Manager e anteprima delle righe.
+- [x] Normalizzazione conservativa di date e importi in minor units, con righe ambigue
+  indirizzate alla revisione anziché importate.
+
 ## Milestone 5 — Ricorrenze e allocazioni
 Stipendio giorno 28 con weekend policy, risparmio €170, Directa €60, redditi fotografici e conferme.
 

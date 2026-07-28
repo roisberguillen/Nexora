@@ -279,8 +279,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 5724,
-      "sha256": "f23eb6fdf8106ef644e168cde9c7bac844363447aa6bc1462b91cfb575e2b17b"
+      "size": 5933,
+      "sha256": "e0f85d29a264846d67284b00bff6b3c1537aba45bf82426891185df69b5b3ff1"
     },
     {
       "path": "design/mockup/README.md",
@@ -414,8 +414,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 3566,
-      "sha256": "fc398734744c88e4caa6c717c034731e0da5ae41cf86ceb8da1b67093b526fe2"
+      "size": 3891,
+      "sha256": "b3a602e8a1b7add30f7e409ec6c7b7436e64d70a525ef71f9550c12618ab30fd"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -829,18 +829,28 @@
     },
     {
       "path": "packages/importers/package.json",
-      "size": 223,
-      "sha256": "155a00c4c66cf802f4e9e0f97530f1a7e017ea73f521c1f28eeba6f8577046fd"
+      "size": 314,
+      "sha256": "ef55dc693884d0b3fe094d1b5ca31db590c11dba9ea8127199de819279dfe629"
     },
     {
       "path": "packages/importers/README.md",
-      "size": 223,
-      "sha256": "c178bf5dc0f78a0a44853904e7e347ea40e30182f02af841ba8457302a40a31e"
+      "size": 401,
+      "sha256": "05f7cef35d86430f61ac04e484af93d16e9acef2bf39b261664392982a45b1e1"
     },
     {
       "path": "packages/importers/src/index.ts",
-      "size": 11,
-      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+      "size": 300,
+      "sha256": "a1d5a5c0a0ab31c5751595ae3860c8080c53cf8877538d203394823e61f5a22f"
+    },
+    {
+      "path": "packages/importers/src/moneyManagerPreview.test.ts",
+      "size": 1438,
+      "sha256": "64b20dc43c932d2a445381f961a5149d1d6a4bbbd2fa3183ac6319a0cafe9db6"
+    },
+    {
+      "path": "packages/importers/src/moneyManagerPreview.ts",
+      "size": 7092,
+      "sha256": "d94ba7520811106ec31d1c93dd4db8a5a01fca53b7dbfda417900cfc9a9543c2"
     },
     {
       "path": "packages/importers/tsconfig.json",
@@ -939,8 +949,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 193841,
-      "sha256": "82e7f64e0ecb663a29deda90d45246e5d45170b43e2cb6ef930f952fac691dd2"
+      "size": 194386,
+      "sha256": "05563845fc0ccb4c4ae93b0d103f0781e78d6c2f8304523ea9bd8ae6ebf27997"
     },
     {
       "path": "pnpm-workspace.yaml",
