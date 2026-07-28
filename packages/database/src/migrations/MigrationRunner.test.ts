@@ -135,7 +135,7 @@ describe("MigrationRunner", () => {
       toVersion: 4,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(3);
+    expect(migrationRows(sqlite)).toHaveLength(4);
   });
 
   it("annulla l'intera migrazione quando un'istruzione fallisce", async () => {
