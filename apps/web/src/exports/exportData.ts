@@ -26,6 +26,10 @@ export function filterExportTransactions(
 }
 
 export function buildTransactionsCsv(data: LedgerExportData): string {
+  return buildTransactionsRows(data).map((row, index) => index === 0 ? row.join(",") : row.map((value, cellIndex) => csvCell(value, cellIndex !== 5)).join(",")).join("\r\n");
+}
+
+export function buildTransactionsRows(data: LedgerExportData): readonly (readonly string[])[] {
   const accountNames = new Map(data.accounts.map((account) => [account.id, account.name]));
   const categoryNames = new Map(data.categories.map((category) => [category.id, category.name]));
   const rows = [...data.transactions]
@@ -36,8 +40,8 @@ export function buildTransactionsCsv(data: LedgerExportData): string {
       transaction.amount.amountMinor.toString(), transaction.amount.currency,
       transaction.categoryId === undefined ? "" : (categoryNames.get(transaction.categoryId) ?? transaction.categoryId),
       transaction.payee ?? "", transaction.description ?? "", transaction.source,
-    ].map((value, index) => csvCell(value, index !== 5)).join(","));
-  return ["id,data,tipo,stato,conto,importo_minor,valuta,categoria,controparte,descrizione,origine", ...rows].join("\r\n");
+    ]);
+  return [["id", "data", "tipo", "stato", "conto", "importo_minor", "valuta", "categoria", "controparte", "descrizione", "origine"], ...rows];
 }
 
 export function buildLedgerJson(data: LedgerExportData): string {
@@ -53,6 +57,15 @@ export function buildLedgerJson(data: LedgerExportData): string {
 }
 
 export function downloadText(filename: string, content: string, type: string): void {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+export function downloadBytes(filename: string, content: ArrayBuffer, type: string): void {
   const url = URL.createObjectURL(new Blob([content], { type }));
   const anchor = document.createElement("a");
   anchor.href = url;
