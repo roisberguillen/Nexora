@@ -72,7 +72,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 2 });
+    expect(metadata).toEqual({ key: "schema_version", value: 3 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
