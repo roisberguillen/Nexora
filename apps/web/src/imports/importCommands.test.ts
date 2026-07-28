@@ -8,7 +8,7 @@ describe("commitMoneyManagerImport", () => {
   it("crea un batch atomico con una riga pronta", async () => {
     const repository = new InMemoryLedgerRepository();
     await repository.saveAccount(
-      Account.create({ id: "account-1", name: "N26", type: "checking", currency: "EUR" }),
+      Account.create({ id: "account-1", name: "Conto demo", type: "checking", currency: "EUR" }),
     );
     const batch = await commitMoneyManagerImport(
       repository,
@@ -22,7 +22,7 @@ describe("commitMoneyManagerImport", () => {
             kind: "expense",
             message: "Pronta",
             preview: {
-              account: "N26",
+              account: "Conto demo",
               amountMinor: -1250n,
               category: undefined,
               currency: "EUR",
