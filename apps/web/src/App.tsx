@@ -66,6 +66,7 @@ import {
   createInvestmentPosition,
   type InvestmentPositionInput,
 } from "./investments/investmentCommands";
+import { ExportsPage } from "./exports/ExportsPage";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -430,6 +431,8 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               onCreate={createRecurring}
               onUpdate={updateRecurring}
             />
+          ) : route === "exports" ? (
+            <ExportsPage accounts={ledgerState.rawAccounts} categories={ledgerState.categories} transactions={ledgerState.rawTransactions} />
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
@@ -570,7 +573,8 @@ function useAppRoute():
   | "budgets"
   | "loans"
   | "investments"
-  | "recurring" {
+  | "recurring"
+  | "exports" {
   const [route, setRoute] = useState<
     | "accounts"
     | "overview"
@@ -582,6 +586,7 @@ function useAppRoute():
     | "loans"
     | "investments"
     | "recurring"
+    | "exports"
   >(readAppRoute);
 
   useEffect(() => {
@@ -605,7 +610,8 @@ function readAppRoute():
   | "budgets"
   | "loans"
   | "investments"
-  | "recurring" {
+  | "recurring"
+  | "exports" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
@@ -619,6 +625,7 @@ function readAppRoute():
   if (window.location.hash === "#loans") return "loans";
   if (window.location.hash === "#investments") return "investments";
   if (window.location.hash === "#recurring") return "recurring";
+  if (window.location.hash === "#exports") return "exports";
   return "overview";
 }
 

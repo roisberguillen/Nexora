@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Aggiunta la pagina Esporta: CSV locale dei movimenti e JSON del ledger senza invio di dati,
+  con importi in minor units e neutralizzazione della formula injection nel CSV.
+
 - Completata la vertical slice importatori bancari: anteprime locali Mediobanca XLSX e N26 PDF,
   audit con tipo importatore persistente e revisione per riga.
 - I trasferimenti riconosciuti fra conti locali richiedono una conferma esplicita e vengono

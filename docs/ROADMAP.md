@@ -114,6 +114,13 @@ non sono mai classificati come entrate o spese e richiedono una conferma per rig
 ## Milestone 8 — Backup ed export
 CSV/XLSX/JSON, backup NAS e Google Drive, cifratura, checksum, restore test.
 
+Avanzamento:
+
+- [x] Export locale CSV dei movimenti e JSON del ledger, con precisione minor units e
+  protezione da formula injection.
+- [ ] Export XLSX e filtri per intervallo, conto e categoria.
+- [ ] Backup configurabile, destinazioni NAS/Google Drive, cifratura e restore verificato.
+
 ## Milestone 9 — Analisi e diario
 Widget, trend, forecast conservativi, diario mensile.
 

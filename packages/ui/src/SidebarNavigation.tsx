@@ -17,7 +17,8 @@ export type NavigationRoute =
   | "budgets"
   | "loans"
   | "investments"
-  | "recurring";
+  | "recurring"
+  | "exports";
 
 const navigationItems: readonly NavigationItem[] = [
   { label: "Panoramica", icon: "overview", available: true, route: "overview" },
@@ -30,6 +31,7 @@ const navigationItems: readonly NavigationItem[] = [
   { label: "Prestiti", icon: "accounts", available: true, route: "loans" },
   { label: "Investimenti", icon: "accounts", available: true, route: "investments" },
   { label: "Ricorrenze", icon: "recurring", available: true, route: "recurring" },
+  { label: "Esporta", icon: "transactions", available: true, route: "exports" },
   { label: "Impostazioni", icon: "settings", available: false, route: "overview" },
 ];
 
