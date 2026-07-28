@@ -89,8 +89,8 @@
     },
     {
       "path": ".env.example",
-      "size": 194,
-      "sha256": "be4ae3c87e7d76274c64e810d81a7f13452a72b11cf9fd90f60284f73f4b7c00"
+      "size": 205,
+      "sha256": "610ceea06d8b43692f0be54a7b1c7c050dce4488998bfb5e3762538707feb13f"
     },
     {
       "path": ".github/workflows/ci.yml",
@@ -201,6 +201,31 @@
       "path": "apps/web/src/categories/categoryCommands.ts",
       "size": 1024,
       "sha256": "2ace5b8b5aa5c159a5ff03c600184df99f28b37a346f812a03e11a30599672c5"
+    },
+    {
+      "path": "apps/web/src/cloud/cloudConfig.test.ts",
+      "size": 635,
+      "sha256": "3f8335d3747e7c6baa59ea4d151f902c87113c0f3fbd8d0461aa8f45174f8f6e"
+    },
+    {
+      "path": "apps/web/src/cloud/cloudConfig.ts",
+      "size": 590,
+      "sha256": "93720537da3be55915b8f988be14dd902035c1fee36083c1efe485d2a6423948"
+    },
+    {
+      "path": "apps/web/src/cloud/cloudTypes.ts",
+      "size": 964,
+      "sha256": "544624cc47788d651365be78dc0534a95f9a5f5f36f247d50c0da4056eaf79fc"
+    },
+    {
+      "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",
+      "size": 1143,
+      "sha256": "25feb229de4b8764bbdafc03cbd07244ea7d56abe84e0280b9e28df1e9a0017d"
+    },
+    {
+      "path": "apps/web/src/cloud/GoogleIdentityAuth.ts",
+      "size": 2393,
+      "sha256": "fd0af0681705965ad37f8977b221ee42a261e0d427a00eb881feb2aac704a070"
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
@@ -458,6 +483,11 @@
       "sha256": "a39437707d3f77b476589ca1fcb51bacff07955efec011bcc0d954afa181ae10"
     },
     {
+      "path": "docs/adr/0015-google-drive-appdata-oauth.md",
+      "size": 429,
+      "sha256": "9e81206fc8badbb9615d89fa94bd23f98eb5a959b609cf5d5c7cf4b2cb995df6"
+    },
+    {
       "path": "docs/ARCHITECTURE.md",
       "size": 5080,
       "sha256": "22b7fe048fe2610db6fdad410ed5943d76eee5a09110d24cfb4e9202e50378c3"
@@ -483,9 +513,19 @@
       "sha256": "dd806cf6d6f4a66390766cecb2ad8f67025fa4985de814e227579e1e5ac6f119"
     },
     {
+      "path": "docs/M8_M10_IMPLEMENTATION_PLAN.md",
+      "size": 1830,
+      "sha256": "a2f0a62abc265b732723a64b4115ed529ed332d726461fc8a7aa7b4a9efe9433"
+    },
+    {
       "path": "docs/operations/BACKUP_RESTORE.md",
       "size": 2319,
       "sha256": "2715f57dec7c6b6732a3cf8668e08c89c55e6427faf298d8c7c04e59c976dea0"
+    },
+    {
+      "path": "docs/operations/GOOGLE_DRIVE_OAUTH.md",
+      "size": 727,
+      "sha256": "cfdd80b6254b124f724af5072a7b07b3912724de2295c7cd8b913f1a43f0501e"
     },
     {
       "path": "docs/PRD_Nexora_Reference.docx",
