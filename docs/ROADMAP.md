@@ -122,7 +122,11 @@ Avanzamento:
 - [x] Export XLSX locale rileggibile, costruito dalle stesse righe canoniche del CSV.
 - [x] Backup cifrato SQLite/OPFS verso cartella locale o NAS selezionata nel browser, con
   passphrase non persistita e checksum verificato.
-- [ ] Ripristino UI, cronologia backup e destinazione Google Drive tramite OAuth.
+- [x] Ripristino UI da cartella locale/NAS, cronologia Google Drive privata e destinazione
+  Google Drive tramite OAuth, con token solo in memoria e archivi già cifrati prima dell’upload.
+
+Completata il 2026-07-29. La connessione Google richiede la configurazione esplicita di un
+client OAuth nel deployment; Drive riceve soltanto archivi AES-GCM nel suo `appDataFolder`.
 
 ## Milestone 9 — Analisi e diario
 Widget, trend, forecast conservativi, diario mensile.

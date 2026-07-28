@@ -414,8 +414,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 7982,
-      "sha256": "077babded2a5b62c10e1009ce215c62d8372c9aa6149e3536732c2bb5ed6a68a"
+      "size": 8406,
+      "sha256": "c1129b5fbd4d9eb83c9c80374c5bac1ded055811966bee08bdbb2804355bf719"
     },
     {
       "path": "design/mockup/README.md",
@@ -569,8 +569,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 6950,
-      "sha256": "8820f37115bf8922a5b3ab649b57494230008836c4b817c81c5f3c95dd746aca"
+      "size": 7243,
+      "sha256": "7df82d610bb5fb1ff9c85228d2440132c2c4c5211fe6264f35e2e1eb1882ba15"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
