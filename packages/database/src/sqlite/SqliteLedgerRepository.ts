@@ -229,6 +229,22 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public updateCategory(category: Category): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findCategoryByIdInternal(category.id)) === undefined)
+            throw new DomainError("missing_reference", "Category does not exist.");
+          const record = categoryToRecord(category);
+          await this.database.run(
+            "UPDATE categories SET name = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+            [record.name, record.is_archived, record.id],
+          );
+        }),
+      ),
+    );
+  }
+
   public saveTransaction(transaction: Transaction): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

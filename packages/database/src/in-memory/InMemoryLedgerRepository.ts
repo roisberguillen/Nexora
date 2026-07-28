@@ -76,6 +76,12 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.categories.set(category.id, category);
   }
 
+  public async updateCategory(category: Category): Promise<void> {
+    if (!this.categories.has(category.id))
+      throw new DomainError("missing_reference", "Category does not exist.");
+    this.categories.set(category.id, category);
+  }
+
   public async saveTransaction(transaction: Transaction): Promise<void> {
     if (transaction.kind === "transfer") {
       throw new DomainError(

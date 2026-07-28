@@ -54,4 +54,14 @@ export class Category {
     }
     return false;
   }
+
+  public update(input: { readonly name: string; readonly isArchived: boolean }): Category {
+    return Category.create({
+      id: this.id,
+      name: input.name,
+      kindScope: this.kindScope,
+      isArchived: input.isArchived,
+      ...(this.parentId === undefined ? {} : { parentId: this.parentId }),
+    });
+  }
 }

@@ -129,6 +129,19 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     );
   }
 
+  public updateCategory(category: Category): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["categories"], "readwrite", async (transaction) => {
+          const categories = transaction.objectStore("categories");
+          if ((await this.findCategoryInStore(categories, category.id)) === undefined)
+            throw new DomainError("missing_reference", "Category does not exist.");
+          await requestResult(categories.put(categoryToRecord(category)));
+        }),
+      ),
+    );
+  }
+
   public saveTransaction(transaction: Transaction): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

@@ -15,6 +15,7 @@ export interface LedgerRepository {
   saveAccount(account: Account): Promise<void>;
   updateAccount(account: Account): Promise<void>;
   saveCategory(category: Category): Promise<void>;
+  updateCategory(category: Category): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;
   saveTransactionWithSplits(
     transaction: Transaction,
