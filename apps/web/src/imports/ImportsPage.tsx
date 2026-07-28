@@ -346,8 +346,20 @@ export function ImportsPage({
                         <small>{row.message}</small>
                         {row.transferCandidateAccountId === undefined ? null : (
                           <label className="import-transfer-confirmation">
-                            <input checked={confirmedTransferRows[row.preview.sourceRowNumber] ?? false} onChange={(event) => setConfirmedTransferRows((current) => ({ ...current, [row.preview.sourceRowNumber]: event.target.checked }))} type="checkbox" />
-                            Confermo trasferimento verso {accounts.find((account) => account.id === row.transferCandidateAccountId)?.name ?? "conto locale"}
+                            <input
+                              checked={confirmedTransferRows[row.preview.sourceRowNumber] ?? false}
+                              onChange={(event) =>
+                                setConfirmedTransferRows((current) => ({
+                                  ...current,
+                                  [row.preview.sourceRowNumber]: event.target.checked,
+                                }))
+                              }
+                              type="checkbox"
+                            />
+                            Confermo trasferimento verso{" "}
+                            {accounts.find(
+                              (account) => account.id === row.transferCandidateAccountId,
+                            )?.name ?? "conto locale"}
                           </label>
                         )}
                       </td>
@@ -372,7 +384,9 @@ export function ImportsPage({
                     filename: source.filename,
                     importerType: source.importerType,
                     rows: dryRun,
-                    confirmedTransferRowNumbers: Object.entries(confirmedTransferRows).filter(([, confirmed]) => confirmed).map(([rowNumber]) => Number(rowNumber)),
+                    confirmedTransferRowNumbers: Object.entries(confirmedTransferRows)
+                      .filter(([, confirmed]) => confirmed)
+                      .map(([rowNumber]) => Number(rowNumber)),
                     sourceSha256: source.sha256,
                   })
                     .catch(() =>

@@ -51,10 +51,14 @@ export async function commitMoneyManagerImport(
       preview.date !== undefined;
     if (isConfirmedTransfer) {
       const sourceAccount = await repository.findAccountById(result.accountId!);
-      const counterpartyAccount = await repository.findAccountById(result.transferCandidateAccountId!);
+      const counterpartyAccount = await repository.findAccountById(
+        result.transferCandidateAccountId!,
+      );
       if (
-        sourceAccount === undefined || counterpartyAccount === undefined ||
-        sourceAccount.isArchived || counterpartyAccount.isArchived ||
+        sourceAccount === undefined ||
+        counterpartyAccount === undefined ||
+        sourceAccount.isArchived ||
+        counterpartyAccount.isArchived ||
         sourceAccount.currency !== counterpartyAccount.currency
       ) {
         throw new Error("invalid_transfer_import");
@@ -68,27 +72,56 @@ export async function commitMoneyManagerImport(
       );
       const isDebit = amount < 0n;
       const debit = Transaction.create({
-        id: `transaction-${idFactory()}`, kind: "transfer", status: "booked",
+        id: `transaction-${idFactory()}`,
+        kind: "transfer",
+        status: "booked",
         accountId: isDebit ? sourceAccount.id : counterpartyAccount.id,
-        amount: Money.fromMinor(-abs(amount), sourceAccount.currency), bookedDate: LocalDate.parse(preview.date!),
-        source: "import", importBatchId: batch.id, sourceFingerprint: isDebit ? sourceFingerprint : counterpartFingerprint,
+        amount: Money.fromMinor(-abs(amount), sourceAccount.currency),
+        bookedDate: LocalDate.parse(preview.date!),
+        source: "import",
+        importBatchId: batch.id,
+        sourceFingerprint: isDebit ? sourceFingerprint : counterpartFingerprint,
         ...(preview.payee === undefined ? {} : { payee: preview.payee }),
       });
       const credit = Transaction.create({
-        id: `transaction-${idFactory()}`, kind: "transfer", status: "booked",
+        id: `transaction-${idFactory()}`,
+        kind: "transfer",
+        status: "booked",
         accountId: isDebit ? counterpartyAccount.id : sourceAccount.id,
-        amount: Money.fromMinor(abs(amount), sourceAccount.currency), bookedDate: LocalDate.parse(preview.date!),
-        source: "import", importBatchId: batch.id, sourceFingerprint: isDebit ? counterpartFingerprint : sourceFingerprint,
+        amount: Money.fromMinor(abs(amount), sourceAccount.currency),
+        bookedDate: LocalDate.parse(preview.date!),
+        source: "import",
+        importBatchId: batch.id,
+        sourceFingerprint: isDebit ? counterpartFingerprint : sourceFingerprint,
         ...(preview.payee === undefined ? {} : { payee: preview.payee }),
       });
       const auditTransaction = isDebit ? debit : credit;
-      const transfer = Transfer.create({ id: `transfer-${idFactory()}`, debitTransaction: debit, creditTransaction: credit });
-      transferBundles.push({ auditTransactionId: auditTransaction.id, transfer, debitTransaction: debit, creditTransaction: credit });
-      rows.push(ImportRow.create({
-        id: `import-row-${idFactory()}`, batchId: batch.id, rowNumber: preview.sourceRowNumber,
-        rawJson: serializePreview(preview), normalizedJson: JSON.stringify({ accountId: result.accountId, kind: "transfer", counterpartyAccountId: result.transferCandidateAccountId }),
-        status: "imported", createdTransactionId: auditTransaction.id,
-      }));
+      const transfer = Transfer.create({
+        id: `transfer-${idFactory()}`,
+        debitTransaction: debit,
+        creditTransaction: credit,
+      });
+      transferBundles.push({
+        auditTransactionId: auditTransaction.id,
+        transfer,
+        debitTransaction: debit,
+        creditTransaction: credit,
+      });
+      rows.push(
+        ImportRow.create({
+          id: `import-row-${idFactory()}`,
+          batchId: batch.id,
+          rowNumber: preview.sourceRowNumber,
+          rawJson: serializePreview(preview),
+          normalizedJson: JSON.stringify({
+            accountId: result.accountId,
+            kind: "transfer",
+            counterpartyAccountId: result.transferCandidateAccountId,
+          }),
+          status: "imported",
+          createdTransactionId: auditTransaction.id,
+        }),
+      );
       continue;
     }
     if (
@@ -158,7 +191,9 @@ export async function commitMoneyManagerImport(
   return repository.commitImportBatch(batch, rows, transactions, transferBundles);
 }
 
-function abs(value: bigint): bigint { return value < 0n ? -value : value; }
+function abs(value: bigint): bigint {
+  return value < 0n ? -value : value;
+}
 
 export async function sha256(bytes: ArrayBuffer): Promise<string> {
   return fingerprintBytes(new Uint8Array(bytes));

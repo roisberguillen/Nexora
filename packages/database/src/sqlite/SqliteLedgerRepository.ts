@@ -559,7 +559,8 @@ export class SqliteLedgerRepository implements LedgerRepository {
             bundle.creditTransaction,
           ]);
           const allTransactions = [...transactions, ...transferTransactions];
-          for (const bundle of transferBundles) await this.assertNew("transfers", bundle.transfer.id, "Transfer");
+          for (const bundle of transferBundles)
+            await this.assertNew("transfers", bundle.transfer.id, "Transfer");
           for (const transaction of allTransactions) {
             await this.assertNew("transactions", transaction.id, "Transaction");
             await this.validateTransactionReferences(transaction);
@@ -592,7 +593,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
             const record = transferToRecord(bundle.transfer);
             await this.database.run(
               "INSERT INTO transfers (id, debit_transaction_id, credit_transaction_id, fee_transaction_id) VALUES (?, ?, ?, ?)",
-              [record.id, record.debit_transaction_id, record.credit_transaction_id, record.fee_transaction_id],
+              [
+                record.id,
+                record.debit_transaction_id,
+                record.credit_transaction_id,
+                record.fee_transaction_id,
+              ],
             );
           }
           for (const row of rows)
@@ -622,28 +628,32 @@ export class SqliteLedgerRepository implements LedgerRepository {
           if (batch === undefined)
             throw new DomainError("missing_reference", "Import batch does not exist.");
           const rows = await this.listImportRows(batchId);
-          const transactionIds = new Set(rows.filter((row) => row.status === "imported").map((row) => row.createdTransactionId!));
+          const transactionIds = new Set(
+            rows.filter((row) => row.status === "imported").map((row) => row.createdTransactionId!),
+          );
           for (const id of [...transactionIds]) {
-            const transfers = await this.database.query<{ readonly debit_transaction_id: string; readonly credit_transaction_id: string; readonly fee_transaction_id: string | null }>(
+            const transfers = await this.database.query<{
+              readonly debit_transaction_id: string;
+              readonly credit_transaction_id: string;
+              readonly fee_transaction_id: string | null;
+            }>(
               "SELECT debit_transaction_id, credit_transaction_id, fee_transaction_id FROM transfers WHERE debit_transaction_id = ? OR credit_transaction_id = ? OR fee_transaction_id = ?",
               [id, id, id],
             );
             for (const transfer of transfers) {
               transactionIds.add(transfer.debit_transaction_id);
               transactionIds.add(transfer.credit_transaction_id);
-              if (transfer.fee_transaction_id !== null) transactionIds.add(transfer.fee_transaction_id);
+              if (transfer.fee_transaction_id !== null)
+                transactionIds.add(transfer.fee_transaction_id);
             }
           }
           const cancelled = await Promise.all(
             [...transactionIds].map(async (id) => {
-                const transaction = await this.findTransactionByIdInternal(id);
-                if (transaction === undefined)
-                  throw new DomainError(
-                    "missing_reference",
-                    "Imported transaction does not exist.",
-                  );
-                return transaction.cancel();
-              }),
+              const transaction = await this.findTransactionByIdInternal(id);
+              if (transaction === undefined)
+                throw new DomainError("missing_reference", "Imported transaction does not exist.");
+              return transaction.cancel();
+            }),
           );
           const undone = batch.undo();
           for (const transaction of cancelled) await this.updateTransactionStatus(transaction);

@@ -371,7 +371,8 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             ]);
             const allTransactions = [...transactions, ...transferTransactions];
             const transfers = transaction.objectStore("transfers");
-            for (const bundle of transferBundles) await this.assertNew(transfers, bundle.transfer.id, "Transfer");
+            for (const bundle of transferBundles)
+              await this.assertNew(transfers, bundle.transfer.id, "Transfer");
             for (const ledgerTransaction of allTransactions) {
               await this.assertNew(storedTransactions, ledgerTransaction.id, "Transaction");
               await this.validateTransactionReferences(transaction, ledgerTransaction);
@@ -414,27 +415,37 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
               )
             ).map((row) => importRowFromRecord(row as ImportRowRecord));
             const transactions = transaction.objectStore("transactions");
-            const transactionIds = new Set(rows.filter((row) => row.status === "imported").map((row) => row.createdTransactionId!));
-            const transferRecords = await requestResult<unknown[]>(transaction.objectStore("transfers").getAll());
+            const transactionIds = new Set(
+              rows
+                .filter((row) => row.status === "imported")
+                .map((row) => row.createdTransactionId!),
+            );
+            const transferRecords = await requestResult<unknown[]>(
+              transaction.objectStore("transfers").getAll(),
+            );
             for (const record of transferRecords as StoredTransferRecord[]) {
-              if (transactionIds.has(record.debit_transaction_id) || transactionIds.has(record.credit_transaction_id) || (record.fee_transaction_id !== null && transactionIds.has(record.fee_transaction_id))) {
+              if (
+                transactionIds.has(record.debit_transaction_id) ||
+                transactionIds.has(record.credit_transaction_id) ||
+                (record.fee_transaction_id !== null &&
+                  transactionIds.has(record.fee_transaction_id))
+              ) {
                 transactionIds.add(record.debit_transaction_id);
                 transactionIds.add(record.credit_transaction_id);
-                if (record.fee_transaction_id !== null) transactionIds.add(record.fee_transaction_id);
+                if (record.fee_transaction_id !== null)
+                  transactionIds.add(record.fee_transaction_id);
               }
             }
             const cancelled = await Promise.all(
               [...transactionIds].map(async (id) => {
-                  const record = await requestResult<unknown>(
-                    transactions.get(id),
+                const record = await requestResult<unknown>(transactions.get(id));
+                if (record === undefined)
+                  throw new DomainError(
+                    "missing_reference",
+                    "Imported transaction does not exist.",
                   );
-                  if (record === undefined)
-                    throw new DomainError(
-                      "missing_reference",
-                      "Imported transaction does not exist.",
-                    );
-                  return transactionFromRecord(record as TransactionRecord).cancel();
-                }),
+                return transactionFromRecord(record as TransactionRecord).cancel();
+              }),
             );
             const undone = batch.undo();
             for (const ledgerTransaction of cancelled)

@@ -184,7 +184,8 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       bundle.creditTransaction,
     ]);
     const allTransactions = [...transactions, ...transferTransactions];
-    for (const bundle of transferBundles) this.assertNew(this.transfers, bundle.transfer.id, "Transfer");
+    for (const bundle of transferBundles)
+      this.assertNew(this.transfers, bundle.transfer.id, "Transfer");
     for (const transaction of allTransactions) {
       this.assertNew(this.transactions, transaction.id, "Transaction");
       this.validateTransactionReferences(transaction);
@@ -212,18 +213,21 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       .map((row) => row.createdTransactionId!);
     const transactionIds = new Set(importedIds);
     for (const transfer of this.transfers.values()) {
-      if (transactionIds.has(transfer.debitTransactionId) || transactionIds.has(transfer.creditTransactionId)) {
+      if (
+        transactionIds.has(transfer.debitTransactionId) ||
+        transactionIds.has(transfer.creditTransactionId)
+      ) {
         transactionIds.add(transfer.debitTransactionId);
         transactionIds.add(transfer.creditTransactionId);
         if (transfer.feeTransactionId !== undefined) transactionIds.add(transfer.feeTransactionId);
       }
     }
     const cancelled = [...transactionIds].map((id) => {
-        const transaction = this.transactions.get(id);
-        if (transaction === undefined)
-          throw new DomainError("missing_reference", "Imported transaction does not exist.");
-        return transaction.cancel();
-      });
+      const transaction = this.transactions.get(id);
+      if (transaction === undefined)
+        throw new DomainError("missing_reference", "Imported transaction does not exist.");
+      return transaction.cancel();
+    });
     const undone = batch.undo();
     for (const transaction of cancelled) this.transactions.set(transaction.id, transaction);
     this.importBatches.set(batchId, undone);

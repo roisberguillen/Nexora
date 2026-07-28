@@ -432,7 +432,11 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               onUpdate={updateRecurring}
             />
           ) : route === "exports" ? (
-            <ExportsPage accounts={ledgerState.rawAccounts} categories={ledgerState.categories} transactions={ledgerState.rawTransactions} />
+            <ExportsPage
+              accounts={ledgerState.rawAccounts}
+              categories={ledgerState.categories}
+              transactions={ledgerState.rawTransactions}
+            />
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
