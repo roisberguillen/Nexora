@@ -849,8 +849,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 1755,
-      "sha256": "391c1c680e41d515e5bbea73cec0e78fb1532dbe1ccc7959e3b09b346556c26c"
+      "size": 1840,
+      "sha256": "f909b0ac9109642e5870c125598af83a2a11a48e39acd67be85cc696a1999b53"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -866,6 +866,16 @@
       "path": "packages/domain/src/services/accountUpdates.ts",
       "size": 1355,
       "sha256": "6ca7153fb8f628db49af6d7a2d723619b3cbf2c40782dceceac2e606da302eb5"
+    },
+    {
+      "path": "packages/domain/src/services/executeAllocationPlans.test.ts",
+      "size": 1713,
+      "sha256": "7bdaca707cbe76f522ca403d223f6b990420aa257d6c1a235b85213ba998f167"
+    },
+    {
+      "path": "packages/domain/src/services/executeAllocationPlans.ts",
+      "size": 2127,
+      "sha256": "6ffb3e9198a7c97cb9dda1dd189d80fc75e3994d3de0fca3e9bb3c69006812b0"
     },
     {
       "path": "packages/domain/src/services/ledgerReports.test.ts",
