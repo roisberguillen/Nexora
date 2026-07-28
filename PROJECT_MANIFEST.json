@@ -168,14 +168,19 @@
       "sha256": "caa7054c04b53d7af9dc502544430bfa19ed5305ee0cee220d42c0b2f6eec6a8"
     },
     {
+      "path": "apps/web/src/analytics/AnalyticsPage.tsx",
+      "size": 4515,
+      "sha256": "1223e429b58cc80b80aa4791db63d8f6d67fe0c98cd903a37530f476b8fd0787"
+    },
+    {
       "path": "apps/web/src/App.test.tsx",
       "size": 6859,
       "sha256": "fcd4579be113be492d097991168ef7de8f2ca5f4938704449ac0eb941d5a764e"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 22717,
-      "sha256": "1c76d45928c281a23d0bc672c4db996ebb4257804d04e66e9f76697afbfc30b6"
+      "size": 23004,
+      "sha256": "f0bb0c13cf494ebe9962527f68119f772149752663930ea0fe7d653baeb361e2"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
@@ -1259,8 +1264,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 3836,
-      "sha256": "c3ee7a4237b5defbdfe1d16076b83e7d86a5eb9ed758353f6e1adc0dce15716c"
+      "size": 3931,
+      "sha256": "4304179e800b040fa3976006e1898c8aacd39d04307d3c34da7a3d1dde4c8dd6"
     },
     {
       "path": "packages/ui/src/styles.css",

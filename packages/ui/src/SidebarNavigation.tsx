@@ -20,7 +20,8 @@ export type NavigationRoute =
   | "recurring"
   | "exports"
   | "backup"
-  | "journal";
+  | "journal"
+  | "analytics";
 
 const navigationItems: readonly NavigationItem[] = [
   { label: "Panoramica", icon: "overview", available: true, route: "overview" },
@@ -36,6 +37,7 @@ const navigationItems: readonly NavigationItem[] = [
   { label: "Esporta", icon: "transactions", available: true, route: "exports" },
   { label: "Backup", icon: "settings", available: true, route: "backup" },
   { label: "Diario", icon: "budget", available: true, route: "journal" },
+  { label: "Analisi", icon: "overview", available: true, route: "analytics" },
   { label: "Impostazioni", icon: "settings", available: false, route: "overview" },
 ];
 
