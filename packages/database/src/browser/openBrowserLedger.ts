@@ -12,6 +12,11 @@ import {
   type OpfsLedger,
 } from "../opfs/openOpfsLedger";
 import { PersistenceError } from "../sqlite/PersistenceError";
+import {
+  LocalSqliteBackupService,
+  type CreatedLocalBackup,
+} from "../backup/LocalSqliteBackupService";
+import { FileSystemDirectoryBackupStore } from "../backup/PhysicalBackupStore";
 
 export type BrowserLedgerStorageKind = "opfs" | "indexeddb";
 
@@ -19,6 +24,10 @@ export interface BrowserLedger {
   readonly repository: LedgerRepository;
   readonly schemaVersion: number;
   readonly storageKind: BrowserLedgerStorageKind;
+  createEncryptedBackup?(input: {
+    readonly directory: FileSystemDirectoryHandle;
+    readonly passphrase: string;
+  }): Promise<CreatedLocalBackup>;
   close(): Promise<void>;
 }
 
@@ -76,6 +85,12 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
     repository: ledger.repository,
     schemaVersion: ledger.migration.toVersion,
     storageKind: "opfs",
+    createEncryptedBackup: ({ directory, passphrase }) =>
+      new LocalSqliteBackupService({
+        database: ledger.database,
+        store: new FileSystemDirectoryBackupStore(directory),
+        passphrase,
+      }).createBackup(),
     close: () => ledger.close(),
   };
 }

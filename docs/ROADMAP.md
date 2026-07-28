@@ -120,7 +120,9 @@ Avanzamento:
   protezione da formula injection.
 - [x] Filtri export per intervallo, conto e categoria.
 - [x] Export XLSX locale rileggibile, costruito dalle stesse righe canoniche del CSV.
-- [ ] Backup configurabile, destinazioni NAS/Google Drive, cifratura e restore verificato.
+- [x] Backup cifrato SQLite/OPFS verso cartella locale o NAS selezionata nel browser, con
+  passphrase non persistita e checksum verificato.
+- [ ] Ripristino UI, cronologia backup e destinazione Google Drive tramite OAuth.
 
 ## Milestone 9 — Analisi e diario
 Widget, trend, forecast conservativi, diario mensile.

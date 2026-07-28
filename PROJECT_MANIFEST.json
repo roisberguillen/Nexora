@@ -174,8 +174,13 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 21614,
-      "sha256": "e5aabd1e5cde6e5c872d5516cb06d5b67a171d09848dc95322b676fc1eee6957"
+      "size": 21856,
+      "sha256": "603dc6f9618dc781cc65737be199b687accd96d4f917a94e173852e4a660cd4f"
+    },
+    {
+      "path": "apps/web/src/backup/BackupPage.tsx",
+      "size": 2836,
+      "sha256": "914ae76bd95ad46cd825eea449b1ff41df9d16e16ce4a830977bad5a148f3530"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -494,8 +499,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 6818,
-      "sha256": "f64fcd362a88246e9ceee94b165af3e96dc6d87006b010a638eddb86fa1e42db"
+      "size": 6950,
+      "sha256": "8820f37115bf8922a5b3ab649b57494230008836c4b817c81c5f3c95dd746aca"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -619,8 +624,8 @@
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 2677,
-      "sha256": "3683a493e0e2bff0cb40fe263dd8ba4b3de641fb1fb762d4d857ac7e8f4b5ca3"
+      "size": 3256,
+      "sha256": "c8fe20e1d98f7ce0a4238cb02bf93dfea04f52cd403f1068cb234d47dd1e39a1"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
@@ -1149,8 +1154,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 3660,
-      "sha256": "0157a1c2dba983198e2ae14afbe4a85faf24b586500924ba9288076f5de0a96b"
+      "size": 3748,
+      "sha256": "148dcf3f063b70da67731d246d2aebf701fdab114772385b590d374cb0e9fbeb"
     },
     {
       "path": "packages/ui/src/styles.css",
