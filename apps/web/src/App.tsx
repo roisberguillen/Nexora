@@ -2,7 +2,7 @@ import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
 import type { Category, Tag } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult } from "@nexora/ui";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 import {
   createLedgerAccount,
@@ -39,6 +39,10 @@ import {
 import { TransactionsPage } from "./transactions/TransactionsPage";
 
 const logger = createSafeLogger();
+const ImportsPage = lazy(async () => {
+  const module = await import("./imports/ImportsPage");
+  return { default: module.ImportsPage };
+});
 
 interface ReadyLedgerState {
   readonly accounts: AccountsViewModel;
@@ -252,6 +256,16 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             />
           ) : route === "tags" ? (
             <TagsPage tags={ledgerState.tags} onCreate={createTag} onUpdate={updateTag} />
+          ) : route === "imports" ? (
+            <Suspense
+              fallback={
+                <section aria-live="polite" className="ledger-state-card is-loading" role="status">
+                  Preparazione dell’anteprima XLSX…
+                </section>
+              }
+            >
+              <ImportsPage />
+            </Suspense>
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
@@ -346,9 +360,10 @@ function persistenceErrorMessage(error: unknown): string {
   return "Nexora ha interrotto l’apertura per proteggere i dati. Nessun archivio alternativo è stato aperto.";
 }
 
-function useAppRoute(): "accounts" | "overview" | "transactions" | "categories" | "tags" {
+function useAppRoute():
+  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" {
   const [route, setRoute] = useState<
-    "accounts" | "overview" | "transactions" | "categories" | "tags"
+    "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports"
   >(readAppRoute);
 
   useEffect(() => {
@@ -362,7 +377,8 @@ function useAppRoute(): "accounts" | "overview" | "transactions" | "categories" 
   return route;
 }
 
-function readAppRoute(): "accounts" | "overview" | "transactions" | "categories" | "tags" {
+function readAppRoute():
+  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
@@ -371,6 +387,7 @@ function readAppRoute(): "accounts" | "overview" | "transactions" | "categories"
   }
   if (window.location.hash === "#categories") return "categories";
   if (window.location.hash === "#tags") return "tags";
+  if (window.location.hash === "#imports") return "imports";
   return "overview";
 }
 

@@ -94,6 +94,30 @@ describe("Nexora app", () => {
     expect(screen.getByRole("button", { name: "Ricarica Nexora" })).toBeInTheDocument();
   });
 
+  it("mostra l'anteprima XLSX come fase locale e segnala un file non leggibile", async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, "", "#imports");
+    render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
+
+    expect(
+      await screen.findByRole("heading", { name: "Importa da Money Manager" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Passo 4 sarà disponibile dopo la validazione, deduplica e dry-run."),
+    ).not.toBeInTheDocument();
+
+    await user.upload(
+      screen.getByLabelText("Seleziona un file XLSX"),
+      new File(["non un workbook"], "movimenti.xlsx", {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "I dati locali non sono stati modificati.",
+    );
+  });
+
   it("crea, modifica e archivia un conto mantenendo aggiornata la dashboard", async () => {
     const user = userEvent.setup();
     const ledger = browserLedger("indexeddb");

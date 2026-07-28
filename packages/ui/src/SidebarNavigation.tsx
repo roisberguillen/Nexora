@@ -7,7 +7,8 @@ interface NavigationItem {
   readonly route: NavigationRoute;
 }
 
-export type NavigationRoute = "overview" | "accounts" | "transactions" | "categories" | "tags";
+export type NavigationRoute =
+  "overview" | "accounts" | "transactions" | "categories" | "tags" | "imports";
 
 const navigationItems: readonly NavigationItem[] = [
   { label: "Panoramica", icon: "overview", available: true, route: "overview" },
@@ -15,6 +16,7 @@ const navigationItems: readonly NavigationItem[] = [
   { label: "Movimenti", icon: "transactions", available: true, route: "transactions" },
   { label: "Categorie", icon: "transactions", available: true, route: "categories" },
   { label: "Tag", icon: "transactions", available: true, route: "tags" },
+  { label: "Importa", icon: "transactions", available: true, route: "imports" },
   { label: "Budget", icon: "budget", available: false, route: "overview" },
   { label: "Ricorrenze", icon: "recurring", available: false, route: "overview" },
   { label: "Impostazioni", icon: "settings", available: false, route: "overview" },

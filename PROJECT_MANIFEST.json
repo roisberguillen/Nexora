@@ -129,8 +129,8 @@
     },
     {
       "path": "apps/web/package.json",
-      "size": 623,
-      "sha256": "243014f984c2e23860b16c695213bac0d4f98cfd2a5ed2d2e8705a7c0273b4da"
+      "size": 663,
+      "sha256": "b1af110aac04f317a35e1658c2133abe0dcc1dc55b6ab77f62c8f4c7686f4da2"
     },
     {
       "path": "apps/web/public/icon.svg",
@@ -169,13 +169,13 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 5971,
-      "sha256": "053c5ec4d010e2bdd31ed142cca2ca815ddec31962b7d8dc984082e70db701f0"
+      "size": 6851,
+      "sha256": "62059cd7e745a15e470bfc5ab87a1d36d9af079c3b8f8a227815d369cf53551a"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 13088,
-      "sha256": "7db8fcdfe0ab5c7cd5b690cb323655eee60d4748894e51643f3507e11ec96a9d"
+      "size": 13698,
+      "sha256": "c83f682182d71aed6eedaa914aa1978a92579185390b1d2a333139f9980ebf06"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -203,14 +203,19 @@
       "sha256": "b585a8b9d42b695804771dd51b99c31aad9f37b4cd29bbc0c1f7006bfef420dd"
     },
     {
+      "path": "apps/web/src/imports/ImportsPage.tsx",
+      "size": 8632,
+      "sha256": "8dde70cb434cc67fbc7d1b924c0fa1861df34a16e0aaea4335e9f81f2b343ded"
+    },
+    {
       "path": "apps/web/src/main.tsx",
       "size": 772,
       "sha256": "fa04e4810aa8680b6fd0db5fb1ab500c1fbf1ccd6709bd1e72c47f780bce5afd"
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 17635,
-      "sha256": "40498cc4793717294cd4d21b1d3ec563b8bb81a17ea49d30255cde9ac0d31758"
+      "size": 20430,
+      "sha256": "dbb7c4258751ad30123f69797ffb776280b578788bfe179a852270dab7bd2082"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -279,8 +284,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 5933,
-      "sha256": "e0f85d29a264846d67284b00bff6b3c1537aba45bf82426891185df69b5b3ff1"
+      "size": 6091,
+      "sha256": "39dcc40b7c1892e0f977f52aaaec28331bf437ae221c60d0fdf854a3597fbbef"
     },
     {
       "path": "design/mockup/README.md",
@@ -414,8 +419,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 3891,
-      "sha256": "b3a602e8a1b7add30f7e409ec6c7b7436e64d70a525ef71f9550c12618ab30fd"
+      "size": 3986,
+      "sha256": "f7483725e4391a20a00bc5554e75ba262686968ab0bc9b71051954c9b7ac2f27"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -844,13 +849,13 @@
     },
     {
       "path": "packages/importers/src/moneyManagerPreview.test.ts",
-      "size": 1438,
-      "sha256": "64b20dc43c932d2a445381f961a5149d1d6a4bbbd2fa3183ac6319a0cafe9db6"
+      "size": 1645,
+      "sha256": "7669116de758c68933626041bdb4bcfa0df7c2923103f626439a1fa1db1dac54"
     },
     {
       "path": "packages/importers/src/moneyManagerPreview.ts",
-      "size": 7092,
-      "sha256": "d94ba7520811106ec31d1c93dd4db8a5a01fca53b7dbfda417900cfc9a9543c2"
+      "size": 7354,
+      "sha256": "d70d0fb7c996bfcbf605734e498ec4ec6a9ad422d4ed0de3d3403b71861a10c8"
     },
     {
       "path": "packages/importers/tsconfig.json",
@@ -924,8 +929,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 3238,
-      "sha256": "9d53aa4c66ef4ad8953af4af7428878e917f795c0799c1da40bbfc217bb01651"
+      "size": 3333,
+      "sha256": "217d336fe47411959109c0aba8f1c687518b6001825a39532a20f8fcbeeaefe5"
     },
     {
       "path": "packages/ui/src/styles.css",
@@ -949,8 +954,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 194386,
-      "sha256": "05563845fc0ccb4c4ae93b0d103f0781e78d6c2f8304523ea9bd8ae6ebf27997"
+      "size": 194491,
+      "sha256": "5392d6749a2d865f901200b932e0c26030064c4f796252156f4e58f5ab870eb3"
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -989,8 +994,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
-      "size": 109672,
-      "sha256": "d9a274d1c2d743b983931b2d4a16369f4c2ea08eaa15178bd41ac7d460aca5c3"
+      "size": 110970,
+      "sha256": "c41c55cd2436c7d7a80e2283cd010a7472e96e9397c4da6afe0bde543a7a0025"
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
@@ -1014,8 +1019,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 191280,
-      "sha256": "33d60a23f1219ce880565a9e7da0851cd857925a039c7687db8e36dc619ecd00"
+      "size": 192566,
+      "sha256": "a5fc4ec025e0f944dd322fcaf6d6fd18431156daf0ed3ec0e1ebfba6d302bc02"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
@@ -1036,6 +1041,11 @@
       "path": "test/e2e/global-search.spec.ts",
       "size": 591,
       "sha256": "aae819409b6599ab95f9f8a96050d46197f4ff94a901359b98b460a8b1ac0ef5"
+    },
+    {
+      "path": "test/e2e/imports.spec.ts",
+      "size": 481,
+      "sha256": "d879e51b769e736c21c3015ff29d8400883cb21959045c05b55cfe6e07b34ffe"
     },
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",

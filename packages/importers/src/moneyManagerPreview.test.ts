@@ -45,4 +45,10 @@ describe("Money Manager preview", () => {
       expect.objectContaining({ status: "needs_review" }),
     ]);
   });
+
+  it("rifiuta contenuti che non sono un contenitore XLSX", () => {
+    expect(() => readMoneyManagerWorkbook(new TextEncoder().encode("testo").buffer)).toThrow(
+      "invalid_xlsx_container",
+    );
+  });
 });

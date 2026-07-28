@@ -5,6 +5,8 @@
 - Aggiunta l'anteprima locale dei workbook XLSX Money Manager: lettura dei fogli,
   rilevamento delle intestazioni e normalizzazione conservativa di date/importi in
   minor units, senza scritture nel ledger.
+- Aggiunta la schermata Importa con caricamento locale, selezione foglio, mapping
+  modificabile e riepilogo accessibile delle righe pronte o da revisionare.
 
 - Aggiunta l'assegnazione di tag ai movimenti, salvata atomicamente insieme a transazione ed
   eventuali split su memoria, SQLite/OPFS e IndexedDB.

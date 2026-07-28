@@ -49,6 +49,16 @@ const aliases: Readonly<Record<MoneyManagerField, readonly string[]>> = {
 };
 
 export function readMoneyManagerWorkbook(bytes: ArrayBuffer): MoneyManagerWorkbookPreview {
+  const signature = new Uint8Array(bytes.slice(0, 4));
+  if (
+    signature.length !== 4 ||
+    signature[0] !== 0x50 ||
+    signature[1] !== 0x4b ||
+    signature[2] !== 0x03 ||
+    signature[3] !== 0x04
+  ) {
+    throw new Error("invalid_xlsx_container");
+  }
   const workbook = XLSX.read(bytes, { type: "array", raw: false, cellDates: false });
   return Object.freeze({
     sheets: Object.freeze(

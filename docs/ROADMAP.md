@@ -59,6 +59,7 @@ Avanzamento:
 - [x] Rilevamento iniziale delle intestazioni Money Manager e anteprima delle righe.
 - [x] Normalizzazione conservativa di date e importi in minor units, con righe ambigue
   indirizzate alla revisione anziché importate.
+- [x] Schermata responsive per caricamento locale, scelta del foglio e correzione del mapping.
 
 ## Milestone 5 — Ricorrenze e allocazioni
 Stipendio giorno 28 con weekend policy, risparmio €170, Directa €60, redditi fotografici e conferme.
