@@ -1004,8 +1004,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 2129,
-      "sha256": "7ced89595dff995b63a2edb42e7c304b8a1d1f79af210b4c39267636a760f641"
+      "size": 2215,
+      "sha256": "69a5806ba0f18b53c6faa79a0f96f10846892350934c64724cfd077b079a6069"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -1041,6 +1041,16 @@
       "path": "packages/domain/src/services/ledgerReports.ts",
       "size": 1918,
       "sha256": "ae948800076bc94764f765fb5a53fa51df494f3049a6d5fbbf87cb51562849d8"
+    },
+    {
+      "path": "packages/domain/src/services/monthlyTrends.test.ts",
+      "size": 1129,
+      "sha256": "6cf15f1a1c23d508990dced4a84ee69e886e285e4febec6d1f9a87c1ff04c236"
+    },
+    {
+      "path": "packages/domain/src/services/monthlyTrends.ts",
+      "size": 1322,
+      "sha256": "adecd64edb012de5ab42624358f3e5dce1ccdcf6a784dfd616b188d2e71d3227"
     },
     {
       "path": "packages/domain/src/validation.ts",
