@@ -16,6 +16,7 @@ import {
   type Budget,
   type Loan,
   type InvestmentPosition,
+  type MonthlyJournal,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -35,6 +36,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly budgets = new Map<string, Budget>();
   private readonly loans = new Map<string, Loan>();
   private readonly investmentPositions = new Map<string, InvestmentPosition>();
+  private readonly monthlyJournals = new Map<string, MonthlyJournal>();
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -157,6 +159,17 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (!this.investmentPositions.has(position.id))
       throw new DomainError("missing_reference", "Investment position does not exist.");
     this.investmentPositions.set(position.id, position);
+  }
+  public async saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    this.assertNew(this.monthlyJournals, journal.id, "Monthly journal");
+    this.assertJournalPeriodAvailable(journal);
+    this.monthlyJournals.set(journal.id, journal);
+  }
+  public async updateMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    if (!this.monthlyJournals.has(journal.id))
+      throw new DomainError("missing_reference", "Monthly journal does not exist.");
+    this.assertJournalPeriodAvailable(journal);
+    this.monthlyJournals.set(journal.id, journal);
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -460,6 +473,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       left.name.localeCompare(right.name),
     );
   }
+  public async listMonthlyJournals(): Promise<readonly MonthlyJournal[]> {
+    return [...this.monthlyJournals.values()].sort((left, right) =>
+      left.period.localeCompare(right.period),
+    );
+  }
 
   private assertNew<T>(collection: Map<string, T>, id: string, entityName: string): void {
     if (collection.has(id)) {
@@ -491,6 +509,14 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         );
       }
     }
+  }
+  private assertJournalPeriodAvailable(journal: MonthlyJournal): void {
+    if (
+      [...this.monthlyJournals.values()].some(
+        (candidate) => candidate.id !== journal.id && candidate.period === journal.period,
+      )
+    )
+      throw new DomainError("duplicate_entity", "Monthly journal period already exists.");
   }
   private validateRecurringRuleReferences(rule: RecurringRule): void {
     const account = this.accounts.get(rule.accountId);

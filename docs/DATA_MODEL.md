@@ -77,6 +77,13 @@ entrate, trasferimenti, rettifiche e annullamenti non incidono sul consumo.
 Il rendimento è derivato come `currentValue - costBasis`; la percentuale è una vista,
 non un valore monetario persistito.
 
+### MonthlyJournal
+`id, period, note?, nextMonthGoals?, perceivedControl?`
+
+Un solo diario per mese `YYYY-MM`. Testo e obiettivi sono opzionali e limitati a 4.000
+caratteri; la percezione di controllo è un valore discreto da 1 a 5. Il diario non
+modifica saldi, budget o report finanziari.
+
 ### SavingsGoal
 `id, accountId?, name, targetMinor, currentMinor, targetDate?`
 
@@ -132,10 +139,12 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
 - v9: `investment_positions` per valutazioni manuali di portafoglio.
 - v10: `import_batches.importer_type_v2` distingue i batch `money_manager_xlsx`,
   `mediobanca_xlsx` e `n26_pdf`, mantenendo il campo v4 e tutti i record precedenti.
+- v11: `monthly_journals` aggiunge riflessioni mensili, con periodo univoco e vincoli
+  sui testi e sul valore di controllo, senza intervenire sulle tabelle esistenti.
 
 IndexedDB usa gli object store equivalenti fino a `recurring_rules` e `allocation_plans`,
-con indici per scadenza, conto e trigger; l'upgrade è alla versione 10 e conserva gli
-store e i record esistenti.
+con indici per scadenza, conto e trigger. Lo store `monthly_journals` ha un indice
+univoco sul periodo; l'upgrade è alla versione 11 e conserva store e record esistenti.
 
 Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite
 migrazioni versionate insieme alle rispettive milestone. La decisione completa è descritta in

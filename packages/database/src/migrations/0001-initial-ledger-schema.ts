@@ -8,6 +8,7 @@ import { budgetsMigration } from "./0007-budgets";
 import { loansMigration } from "./0008-loans";
 import { investmentPositionsMigration } from "./0009-investment-positions";
 import { bankImporterTypesMigration } from "./0010-bank-importer-types";
+import { monthlyJournalsMigration } from "./0011-monthly-journals";
 
 export const INITIAL_LEDGER_SCHEMA_VERSION = 1;
 const INITIAL_LEDGER_SCHEMA_NAME = "initial-ledger-schema";
@@ -274,4 +275,5 @@ export const databaseMigrations: readonly DatabaseMigration[] = [
   loansMigration,
   investmentPositionsMigration,
   bankImporterTypesMigration,
+  monthlyJournalsMigration,
 ];

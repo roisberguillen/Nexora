@@ -16,6 +16,7 @@ import {
   ImportRow,
   LocalDate,
   Money,
+  MonthlyJournal,
   RecurringRule,
   Tag,
   Transaction,
@@ -108,6 +109,26 @@ describe("SqliteLedgerRepository", () => {
       code: "missing_reference",
     });
     expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
+  });
+
+  it("persiste e aggiorna il diario mensile", async () => {
+    const journal = MonthlyJournal.create({
+      id: "journal-2026-07",
+      period: "2026-07",
+      note: "Mese sotto controllo",
+      perceivedControl: 4,
+    });
+    await repository.saveMonthlyJournal(journal);
+    expect(await repository.listMonthlyJournals()).toEqual([journal]);
+
+    const updated = MonthlyJournal.create({
+      id: journal.id,
+      period: journal.period,
+      nextMonthGoals: "Ridurre le spese discrezionali",
+      perceivedControl: 5,
+    });
+    await repository.updateMonthlyJournal(updated);
+    expect(await repository.listMonthlyJournals()).toEqual([updated]);
   });
 
   it("ricostruisce conti, categorie e transazioni senza perdere precisione", async () => {
@@ -380,8 +401,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 10,
-        toVersion: 10,
+        fromVersion: 11,
+        toVersion: 11,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(

@@ -11,6 +11,7 @@ import type { AllocationPlan } from "../entities/AllocationPlan";
 import type { Budget } from "../entities/Budget";
 import type { Loan } from "../entities/Loan";
 import type { InvestmentPosition } from "../entities/InvestmentPosition";
+import type { MonthlyJournal } from "../entities/MonthlyJournal";
 
 export interface TransferBundle {
   readonly transfer: Transfer;
@@ -35,6 +36,8 @@ export interface LedgerRepository {
   updateLoan(loan: Loan): Promise<void>;
   saveInvestmentPosition(position: InvestmentPosition): Promise<void>;
   updateInvestmentPosition(position: InvestmentPosition): Promise<void>;
+  saveMonthlyJournal(journal: MonthlyJournal): Promise<void>;
+  updateMonthlyJournal(journal: MonthlyJournal): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
   commitImportBatch(
     batch: ImportBatch,
@@ -77,4 +80,5 @@ export interface LedgerRepository {
   listBudgets(): Promise<readonly Budget[]>;
   listLoans(): Promise<readonly Loan[]>;
   listInvestmentPositions(): Promise<readonly InvestmentPosition[]>;
+  listMonthlyJournals(): Promise<readonly MonthlyJournal[]>;
 }

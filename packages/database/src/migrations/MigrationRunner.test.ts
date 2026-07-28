@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 10,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      toVersion: 11,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -137,14 +137,43 @@ describe("MigrationRunner", () => {
       { version: 8, name: "loans" },
       { version: 9, name: "investment-positions" },
       { version: 10, name: "bank-importer-types" },
+      { version: 11, name: "monthly-journals" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 10,
-      toVersion: 10,
+      fromVersion: 11,
+      toVersion: 11,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(10);
+    expect(migrationRows(sqlite)).toHaveLength(11);
+  });
+
+  it("aggiorna un database v10 senza perdere dati già presenti", async () => {
+    const v10Runner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations.filter((migration) => migration.version <= 10),
+      now: () => fixedNow,
+    });
+    await v10Runner.migrateToLatest();
+    await database.run(
+      "INSERT INTO accounts (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      ["account-v10", "Conto v10", "checking", null, "EUR", null, "0", 0],
+    );
+
+    const v11Runner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations,
+      now: () => fixedNow,
+    });
+    await expect(v11Runner.migrateToLatest()).resolves.toEqual({
+      fromVersion: 10,
+      toVersion: 11,
+      appliedMigrations: [11],
+    });
+    expect(tableCount(sqlite, "monthly_journals")).toBe(1);
+    expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
+      name: "Conto v10",
+    });
   });
 
   it("annulla l'intera migrazione quando un'istruzione fallisce", async () => {

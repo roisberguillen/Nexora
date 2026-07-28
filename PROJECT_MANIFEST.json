@@ -509,8 +509,8 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 6870,
-      "sha256": "07268647a4592b955e72ea899b1dbe43465b856cc4b7cd1dd623a243769c6531"
+      "size": 7386,
+      "sha256": "4834a709e8b8b1afc8104baf45ae40a765bbc1f3c0766aa1dfa6c90f94927e06"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
@@ -655,7 +655,7 @@
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
       "size": 7946,
-      "sha256": "7c0e5c89a17479a22eed573f907127cbf25c635a345ee106b0e25f152494ae22"
+      "sha256": "68a07e2ee7abdcad65fb7e9b92ad6c30962f562bafbf0833046077783dfb3e7b"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
@@ -684,8 +684,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 22845,
-      "sha256": "2bf8fdab7ec3cfb97e38413a372d9fd1869a380cdb054f3cadfd314246674c42"
+      "size": 24034,
+      "sha256": "148403de9a9facb159b136e26e8ddaf108d492320c1922dafe570c2a2da49c1a"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -694,18 +694,18 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 18431,
-      "sha256": "8268c48596bc9d12e5a1aec1d1b0225816349bc7b56a5591be9c51be14c5cc5b"
+      "size": 19283,
+      "sha256": "cd44488ede938c298c7db3d0c382bfac96bb997796e5ad3697e6693e01ac78e5"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 58969,
-      "sha256": "cde63febc90501c3480b624a015da283379fd8780984b04d83696d2655f22740"
+      "size": 61620,
+      "sha256": "480b5072c5e5e793d1d66b2f2e70b92e0ed493ba7cd171db51eeb7507e2f09ef"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 9739,
-      "sha256": "7ce802cc0a206e922d29fba0f9b1dc6baca139d8b85d9b9ee07ea01d59cf0c0b"
+      "size": 10195,
+      "sha256": "8c195c78eb4fac58c3fe69134c406ba8ffb718aecff567307653e8a7c32e2a65"
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.test.ts",
@@ -714,8 +714,8 @@
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
-      "size": 9789,
-      "sha256": "a40f7962b826e1e8c08f706a229f91be6920d4b1e99619b9600f95ee7c6580c2"
+      "size": 9885,
+      "sha256": "d776bc72f16bceeda68aa110e65b348b9b4ed83a63b2f4bb8ad20c865d14dd47"
     },
     {
       "path": "packages/database/src/migrations/0002-transaction-splits.ts",
@@ -763,6 +763,11 @@
       "sha256": "ee2c0fa4bf6c63f0cfc510ea3801a1e4e199740887bb3eb351749d566d33f6ce"
     },
     {
+      "path": "packages/database/src/migrations/0011-monthly-journals.ts",
+      "size": 1013,
+      "sha256": "c1d139f2a89b19f8da3a2d4312d520f2099bf5111e8069630aeb19bfa4bf06b6"
+    },
+    {
       "path": "packages/database/src/migrations/DatabaseMigration.ts",
       "size": 176,
       "sha256": "d00ef8d7253c8426b8dfefb93c9557e31290684f0bf9e36d541b9d001923eb98"
@@ -779,8 +784,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 8895,
-      "sha256": "c176cf2a1e30109596320f17fcdd9009ccc5ff909a1da454d40ae8e49126581d"
+      "size": 9990,
+      "sha256": "0f6a176da5adf94a08b1d13adbb46b4b790ad17d54d0a7b65fa421382d9529f9"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -849,13 +854,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 18854,
-      "sha256": "0203475d437f85607c6f03afc053f2e989a82080d31f092dfcb2afa22f1be589"
+      "size": 19540,
+      "sha256": "1341eb1a6c282ae7752c2cbf072cd2c5c1c357e2aa9e5ae38f11b01808782a00"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 63053,
-      "sha256": "6b74efd5de46cb9e1b80ab4c98c64a551b3c8d21436c67467fd4a50172ac05c3"
+      "size": 66269,
+      "sha256": "4018c69bd966389d21d50aa82816d2db900f98b3766f9313277a58246e8d1ea4"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -1019,8 +1024,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 3860,
-      "sha256": "11865bc3d612c51e8758ee5eb8fe7fef1f036db024653f676e33350a4c700e2a"
+      "size": 4113,
+      "sha256": "f823b28cedfd02ef4710ae560f17d3dfd8df1d46b88329cd25764ccc521d2a8f"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",

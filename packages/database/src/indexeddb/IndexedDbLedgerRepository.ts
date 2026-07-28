@@ -14,6 +14,7 @@ import {
   Budget,
   Loan,
   InvestmentPosition,
+  MonthlyJournal,
   LocalDate,
   Money,
   validateImportCommit,
@@ -61,7 +62,8 @@ type EntityStore =
   | "allocation_plans"
   | "budgets"
   | "loans"
-  | "investment_positions";
+  | "investment_positions"
+  | "monthly_journals";
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -308,6 +310,29 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           if ((await requestResult<unknown>(store.get(position.id))) === undefined)
             throw new DomainError("missing_reference", "Investment position does not exist.");
           await requestResult(store.put(investmentPositionToRecord(position)));
+        }),
+      ),
+    );
+  }
+  public saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["monthly_journals"], "readwrite", async (transaction) => {
+          const store = transaction.objectStore("monthly_journals");
+          await this.assertNew(store, journal.id, "Monthly journal");
+          await requestResult(store.add(monthlyJournalToRecord(journal)));
+        }),
+      ),
+    );
+  }
+  public updateMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["monthly_journals"], "readwrite", async (transaction) => {
+          const store = transaction.objectStore("monthly_journals");
+          if ((await requestResult<unknown>(store.get(journal.id))) === undefined)
+            throw new DomainError("missing_reference", "Monthly journal does not exist.");
+          await requestResult(store.put(monthlyJournalToRecord(journal)));
         }),
       ),
     );
@@ -923,6 +948,17 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listMonthlyJournals(): Promise<readonly MonthlyJournal[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["monthly_journals"], "readonly", async (transaction) =>
+          (await requestResult<unknown[]>(transaction.objectStore("monthly_journals").getAll()))
+            .map((row) => monthlyJournalFromRecord(row as MonthlyJournalRecord))
+            .sort((left, right) => left.period.localeCompare(right.period)),
+        ),
+      ),
+    );
+  }
 
   public listTransactionTags(transactionId: string): Promise<readonly Tag[]> {
     return this.enqueue(() =>
@@ -1285,6 +1321,33 @@ interface InvestmentPositionRecord {
   readonly current_value_minor: string;
   readonly currency: string;
   readonly valuation_date: string;
+}
+interface MonthlyJournalRecord {
+  readonly id: string;
+  readonly period: string;
+  readonly note?: string;
+  readonly next_month_goals?: string;
+  readonly perceived_control?: 1 | 2 | 3 | 4 | 5;
+}
+function monthlyJournalToRecord(journal: MonthlyJournal): MonthlyJournalRecord {
+  return {
+    id: journal.id,
+    period: journal.period,
+    ...(journal.note === undefined ? {} : { note: journal.note }),
+    ...(journal.nextMonthGoals === undefined ? {} : { next_month_goals: journal.nextMonthGoals }),
+    ...(journal.perceivedControl === undefined
+      ? {}
+      : { perceived_control: journal.perceivedControl }),
+  };
+}
+function monthlyJournalFromRecord(row: MonthlyJournalRecord): MonthlyJournal {
+  return MonthlyJournal.create({
+    id: row.id,
+    period: row.period,
+    ...(row.note === undefined ? {} : { note: row.note }),
+    ...(row.next_month_goals === undefined ? {} : { nextMonthGoals: row.next_month_goals }),
+    ...(row.perceived_control === undefined ? {} : { perceivedControl: row.perceived_control }),
+  });
 }
 function investmentPositionToRecord(position: InvestmentPosition): InvestmentPositionRecord {
   return {

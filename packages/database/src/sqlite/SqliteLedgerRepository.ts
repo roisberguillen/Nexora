@@ -14,6 +14,7 @@ import {
   Budget,
   Loan,
   InvestmentPosition,
+  MonthlyJournal,
   LocalDate,
   Money,
   validateImportCommit,
@@ -53,7 +54,8 @@ type EntityTable =
   | "allocation_plans"
   | "budgets"
   | "loans"
-  | "investment_positions";
+  | "investment_positions"
+  | "monthly_journals";
 
 const accountColumns = `
   id,
@@ -485,6 +487,42 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.current_value_minor,
               record.currency,
               record.valuation_date,
+              record.id,
+            ],
+          );
+        }),
+      ),
+    );
+  }
+  public saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          await this.assertNew("monthly_journals", journal.id, "Monthly journal");
+          await this.insertMonthlyJournal(journal);
+        }),
+      ),
+    );
+  }
+  public updateMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM monthly_journals WHERE id = ?",
+            [journal.id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", "Monthly journal does not exist.");
+          const record = monthlyJournalToRecord(journal);
+          await this.database.run(
+            "UPDATE monthly_journals SET period = ?, note = ?, next_month_goals = ?, perceived_control = ?, updated_at = ? WHERE id = ?",
+            [
+              record.period,
+              record.note,
+              record.next_month_goals,
+              record.perceived_control,
+              new Date().toISOString(),
               record.id,
             ],
           );
@@ -1157,6 +1195,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(investmentPositionFromRecord),
     );
   }
+  public async listMonthlyJournals(): Promise<readonly MonthlyJournal[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<MonthlyJournalRecord>(
+          "SELECT id, period, note, next_month_goals, perceived_control FROM monthly_journals ORDER BY period, id",
+        )
+      ).map(monthlyJournalFromRecord),
+    );
+  }
 
   private enqueue<Result>(operation: () => Promise<Result>): Promise<Result> {
     const result = this.operationTail.then(operation, operation);
@@ -1351,6 +1398,22 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ],
     );
   }
+  private async insertMonthlyJournal(journal: MonthlyJournal): Promise<void> {
+    const record = monthlyJournalToRecord(journal);
+    const timestamp = new Date().toISOString();
+    await this.database.run(
+      "INSERT INTO monthly_journals (id, period, note, next_month_goals, perceived_control, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        record.id,
+        record.period,
+        record.note,
+        record.next_month_goals,
+        record.perceived_control,
+        timestamp,
+        timestamp,
+      ],
+    );
+  }
   private async insertRecurringRule(rule: RecurringRule): Promise<void> {
     const record = recurringRuleToRecord(rule);
     await this.database.run(
@@ -1525,6 +1588,31 @@ interface InvestmentPositionRecord {
   readonly current_value_minor: string;
   readonly currency: string;
   readonly valuation_date: string;
+}
+interface MonthlyJournalRecord {
+  readonly id: string;
+  readonly period: string;
+  readonly note: string | null;
+  readonly next_month_goals: string | null;
+  readonly perceived_control: 1 | 2 | 3 | 4 | 5 | null;
+}
+function monthlyJournalToRecord(journal: MonthlyJournal): MonthlyJournalRecord {
+  return {
+    id: journal.id,
+    period: journal.period,
+    note: journal.note ?? null,
+    next_month_goals: journal.nextMonthGoals ?? null,
+    perceived_control: journal.perceivedControl ?? null,
+  };
+}
+function monthlyJournalFromRecord(row: MonthlyJournalRecord): MonthlyJournal {
+  return MonthlyJournal.create({
+    id: row.id,
+    period: row.period,
+    ...(row.note === null ? {} : { note: row.note }),
+    ...(row.next_month_goals === null ? {} : { nextMonthGoals: row.next_month_goals }),
+    ...(row.perceived_control === null ? {} : { perceivedControl: row.perceived_control }),
+  });
 }
 function investmentPositionToRecord(position: InvestmentPosition): InvestmentPositionRecord {
   return {

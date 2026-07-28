@@ -10,6 +10,7 @@ import {
   ImportRow,
   LocalDate,
   Money,
+  MonthlyJournal,
   RecurringRule,
   Tag,
   Transaction,
@@ -86,6 +87,28 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("persiste e aggiorna il diario mensile dopo la riapertura", async () => {
+    const journal = MonthlyJournal.create({
+      id: "journal-2026-07",
+      period: "2026-07",
+      note: "Mese sotto controllo",
+      perceivedControl: 4,
+    });
+    await ledger.repository.saveMonthlyJournal(journal);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+
+    expect(await ledger.repository.listMonthlyJournals()).toEqual([journal]);
+    const updated = MonthlyJournal.create({
+      id: journal.id,
+      period: journal.period,
+      nextMonthGoals: "Ridurre le spese discrezionali",
+      perceivedControl: 5,
+    });
+    await ledger.repository.updateMonthlyJournal(updated);
+    expect(await ledger.repository.listMonthlyJournals()).toEqual([updated]);
+  });
+
   it("crea atomicamente lo schema v1 con indici e metadati", async () => {
     expect(ledger.schemaVersion).toBe(INDEXED_DB_SCHEMA_VERSION);
     expect([...ledger.database.objectStoreNames]).toEqual([
@@ -98,6 +121,7 @@ describe("IndexedDbLedgerRepository", () => {
       "investment_positions",
       "loans",
       "metadata",
+      "monthly_journals",
       "recurring_rules",
       "tags",
       "transaction_splits",
@@ -120,7 +144,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 10 });
+    expect(metadata).toEqual({ key: "schema_version", value: 11 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -368,7 +392,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(10);
+    expect(ledger.schemaVersion).toBe(11);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
