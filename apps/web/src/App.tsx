@@ -1,6 +1,6 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
-import type { Category, Tag } from "@nexora/domain";
+import type { Account, Category, Tag, Transaction } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
 
@@ -45,6 +45,8 @@ const ImportsPage = lazy(async () => {
 });
 
 interface ReadyLedgerState {
+  readonly rawAccounts: readonly Account[];
+  readonly rawTransactions: readonly Transaction[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -77,25 +79,38 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
 
     void ledgerPromise
       .then(async (ledger) => ({ ...(await loadAppModels(ledger)), ledger }))
-      .then(({ accounts, categories, dashboard, tags, transactions, ledger }) => {
-        if (!isActive) {
-          return;
-        }
-        logger.info("persistence.opened", {
-          component: "persistence",
-          status: "completed",
-          storageKind: ledger.storageKind,
-        });
-        setLedgerState({
+      .then(
+        ({
           accounts,
           categories,
           dashboard,
-          ledger,
-          status: "ready",
+          rawAccounts,
+          rawTransactions,
           tags,
           transactions,
-        });
-      })
+          ledger,
+        }) => {
+          if (!isActive) {
+            return;
+          }
+          logger.info("persistence.opened", {
+            component: "persistence",
+            status: "completed",
+            storageKind: ledger.storageKind,
+          });
+          setLedgerState({
+            accounts,
+            categories,
+            dashboard,
+            ledger,
+            rawAccounts,
+            rawTransactions,
+            status: "ready",
+            tags,
+            transactions,
+          });
+        },
+      )
       .catch((error: unknown) => {
         if (!isActive) {
           return;
@@ -264,7 +279,11 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 </section>
               }
             >
-              <ImportsPage />
+              <ImportsPage
+                accounts={ledgerState.rawAccounts}
+                categories={ledgerState.categories}
+                transactions={ledgerState.rawTransactions}
+              />
             </Suspense>
           ) : (
             <Dashboard
@@ -316,6 +335,8 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 }
 
 interface AppModels {
+  readonly rawAccounts: readonly Account[];
+  readonly rawTransactions: readonly Transaction[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -332,6 +353,8 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     ledger.repository.listTransfers(),
   ]);
   return {
+    rawAccounts: accounts,
+    rawTransactions: transactions,
     categories,
     tags,
     accounts: buildAccountsViewModel({ accounts, transactions }),

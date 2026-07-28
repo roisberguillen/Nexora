@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 13698,
-      "sha256": "c83f682182d71aed6eedaa914aa1978a92579185390b1d2a333139f9980ebf06"
+      "size": 14376,
+      "sha256": "a52412b91ee70f38f1c1cbe5fd1b18f1617d819bb8cb2f8ca2481536dd4c1d9c"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -204,8 +204,8 @@
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
-      "size": 8632,
-      "sha256": "8dde70cb434cc67fbc7d1b924c0fa1861df34a16e0aaea4335e9f81f2b343ded"
+      "size": 9405,
+      "sha256": "0a0a8612dfb208d70cb2e3006dc11575bb31c424711bc46db31abdf40f17e61a"
     },
     {
       "path": "apps/web/src/main.tsx",

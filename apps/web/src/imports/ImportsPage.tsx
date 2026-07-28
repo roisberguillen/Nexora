@@ -1,11 +1,14 @@
 import {
   detectMoneyManagerMapping,
+  dryRunMoneyManagerRows,
   previewMoneyManagerRows,
   readMoneyManagerWorkbook,
+  type DryRunStatus,
   type MoneyManagerField,
   type MoneyManagerMapping,
   type MoneyManagerSheet,
 } from "@nexora/importers";
+import type { Account, Category, Transaction } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
@@ -20,7 +23,15 @@ const mappingFields: readonly { readonly field: MoneyManagerField; readonly labe
   { field: "type", label: "Tipo" },
 ];
 
-export function ImportsPage() {
+export function ImportsPage({
+  accounts,
+  categories,
+  transactions,
+}: {
+  readonly accounts: readonly Account[];
+  readonly categories: readonly Category[];
+  readonly transactions: readonly Transaction[];
+}) {
   const [sheets, setSheets] = useState<readonly MoneyManagerSheet[]>([]);
   const [selectedSheetName, setSelectedSheetName] = useState<string>("");
   const [mapping, setMapping] = useState<MoneyManagerMapping>({});
@@ -32,8 +43,10 @@ export function ImportsPage() {
     selectedSheet === undefined
       ? []
       : previewMoneyManagerRows(selectedSheet.rows.slice(1), mapping);
-  const readyCount = preview.filter((row) => row.status === "ready").length;
-  const reviewCount = preview.length - readyCount;
+  const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions);
+  const readyCount = dryRun.filter((row) => row.status === "ready").length;
+  const reviewCount = dryRun.filter((row) => row.status === "needs_review").length;
+  const duplicateCount = dryRun.filter((row) => row.status === "skipped_duplicate").length;
 
   const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
@@ -162,6 +175,7 @@ export function ImportsPage() {
             <div aria-live="polite" className="import-summary" role="status">
               <strong>{readyCount} pronte</strong>
               <span>{reviewCount} da revisionare</span>
+              <span>{duplicateCount} duplicate</span>
             </div>
             <div className="account-table-wrap">
               <table className="account-table import-table">
@@ -176,19 +190,19 @@ export function ImportsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {preview.map((row) => (
-                    <tr key={row.sourceRowNumber}>
-                      <td data-label="Riga">{row.sourceRowNumber}</td>
-                      <td data-label="Data">{row.date ?? "—"}</td>
-                      <td data-label="Conto">{row.account ?? "—"}</td>
+                  {dryRun.map((row) => (
+                    <tr key={row.preview.sourceRowNumber}>
+                      <td data-label="Riga">{row.preview.sourceRowNumber}</td>
+                      <td data-label="Data">{row.preview.date ?? "—"}</td>
+                      <td data-label="Conto">{row.preview.account ?? "—"}</td>
                       <td data-label="Importo">
-                        {row.amountMinor === undefined
+                        {row.preview.amountMinor === undefined
                           ? "—"
-                          : formatMinor(row.amountMinor, row.currency ?? "EUR")}
+                          : formatMinor(row.preview.amountMinor, row.preview.currency ?? "EUR")}
                       </td>
                       <td data-label="Stato">
                         <span className={`import-status is-${row.status}`}>
-                          {row.status === "ready" ? "Pronta" : "Da revisionare"}
+                          {dryRunLabel(row.status)}
                         </span>
                         <small>{row.message}</small>
                       </td>
@@ -220,4 +234,12 @@ function updateMapping(
   const entries = Object.entries(mapping).filter(([key]) => key !== field);
   if (value !== undefined) entries.push([field, value]);
   return Object.freeze(Object.fromEntries(entries) as MoneyManagerMapping);
+}
+
+function dryRunLabel(status: DryRunStatus): string {
+  return status === "ready"
+    ? "Pronta"
+    : status === "skipped_duplicate"
+      ? "Duplicata"
+      : "Da revisionare";
 }
