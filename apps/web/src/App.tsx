@@ -536,6 +536,8 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     dashboard: buildDashboardViewModel({
       accounts,
       categories,
+      loans,
+      investmentPositions,
       transactions,
       transfers,
     }),

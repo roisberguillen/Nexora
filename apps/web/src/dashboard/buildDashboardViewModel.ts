@@ -1,10 +1,12 @@
 import {
   calculateAccountBalance,
   calculateTotalBalance,
+  Money,
   summarizeCashFlow,
   type Account,
   type Category,
-  type Money,
+  type Loan,
+  type InvestmentPosition,
   type Transaction,
   type TransactionKind,
   type TransactionStatus,
@@ -19,6 +21,8 @@ export interface DashboardLedgerData {
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
   readonly transfers: readonly Transfer[];
+  readonly loans?: readonly Loan[];
+  readonly investmentPositions?: readonly InvestmentPosition[];
 }
 
 export interface DashboardCounts {
@@ -61,6 +65,9 @@ export interface DashboardViewModel {
   readonly income: Money;
   readonly netCashFlow: Money;
   readonly netWorth: Money;
+  readonly loanBalance: Money;
+  readonly investmentValue: Money;
+  readonly investmentGainLoss: Money;
 }
 
 export function buildDashboardViewModel(
@@ -70,6 +77,10 @@ export function buildDashboardViewModel(
   const cashFlow = summarizeCashFlow(data.transactions, currency);
   const accountById = new Map(data.accounts.map((account) => [account.id, account]));
   const categoryById = new Map(data.categories.map((category) => [category.id, category]));
+  const loans = data.loans ?? [];
+  const positions = data.investmentPositions ?? [];
+  const sum = (values: readonly Money[]) =>
+    values.reduce((total, value) => total.add(value), Money.zero(currency));
 
   return Object.freeze({
     accounts: Object.freeze(
@@ -104,6 +115,21 @@ export function buildDashboardViewModel(
     income: cashFlow.income,
     netCashFlow: cashFlow.net,
     netWorth: calculateTotalBalance(data.accounts, data.transactions, currency),
+    loanBalance: sum(
+      loans
+        .filter((loan) => loan.remainingPrincipal.currency === currency)
+        .map((loan) => loan.remainingPrincipal),
+    ),
+    investmentValue: sum(
+      positions
+        .filter((position) => position.currentValue.currency === currency)
+        .map((position) => position.currentValue),
+    ),
+    investmentGainLoss: sum(
+      positions
+        .filter((position) => position.currentValue.currency === currency)
+        .map((position) => position.gainLoss()),
+    ),
   });
 }
 

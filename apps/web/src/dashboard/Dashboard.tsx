@@ -80,6 +80,20 @@ export function Dashboard({
               supportingText="Entrate meno spese nello storico disponibile"
               tone={model.netCashFlow.amountMinor < 0n ? "negative" : "positive"}
             />
+            <MetricCard
+              amountMinor={model.loanBalance.amountMinor}
+              currency={model.loanBalance.currency}
+              label="Debiti residui"
+              supportingText="Capitale residuo dei prestiti registrati"
+              tone="negative"
+            />
+            <MetricCard
+              amountMinor={model.investmentValue.amountMinor}
+              currency={model.investmentValue.currency}
+              label="Investimenti"
+              supportingText={`Rendimento ${model.investmentGainLoss.amountMinor < 0n ? "negativo" : "positivo"}`}
+              tone={model.investmentGainLoss.amountMinor < 0n ? "negative" : "positive"}
+            />
           </section>
 
           {model.excludedCurrencyAccountCount > 0 ? (

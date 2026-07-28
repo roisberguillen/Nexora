@@ -1,5 +1,5 @@
 import { createDemoLedgerSeed } from "@nexora/database";
-import { Account, LocalDate, Money, Transaction } from "@nexora/domain";
+import { Account, InvestmentPosition, Loan, LocalDate, Money, Transaction } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import { buildDashboardViewModel, type DashboardLedgerData } from "./buildDashboardViewModel";
@@ -96,5 +96,39 @@ describe("buildDashboardViewModel", () => {
     expect(
       dashboard.accounts.find((account) => account.id === usdAccount.id)?.balance.amountMinor,
     ).toBe(900_719_925_474_099_312_845n);
+  });
+
+  it("espone separatamente debiti e rendimento degli investimenti", () => {
+    const account = Account.create({
+      id: "investment",
+      name: "Directa",
+      type: "investment",
+      currency: "EUR",
+    });
+    const loan = Loan.create({
+      id: "loan",
+      accountId: "loan-account",
+      lender: "Agos",
+      installment: Money.fromMinor(7_200n, "EUR"),
+      remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
+    });
+    const position = InvestmentPosition.create({
+      id: "position",
+      accountId: account.id,
+      name: "ETF",
+      costBasis: Money.fromMinor(100_000n, "EUR"),
+      currentValue: Money.fromMinor(112_500n, "EUR"),
+      valuationDate: LocalDate.parse("2026-08-01"),
+    });
+    const data = demoLedgerData();
+    const dashboard = buildDashboardViewModel({
+      ...data,
+      accounts: [...data.accounts, account],
+      loans: [loan],
+      investmentPositions: [position],
+    });
+    expect(dashboard.loanBalance.amountMinor).toBe(200_000n);
+    expect(dashboard.investmentValue.amountMinor).toBe(112_500n);
+    expect(dashboard.investmentGainLoss.amountMinor).toBe(12_500n);
   });
 });
