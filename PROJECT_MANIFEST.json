@@ -404,8 +404,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 10067,
-      "sha256": "71df8f1320f246da299f86fa428b84a354c82e9a20c6bb1f18e3c1c597b6b48c"
+      "size": 10712,
+      "sha256": "5be3fd82cd25ac78b7eb1d1d91a8c1b707f23ab0598ca04f7b9405d2df9dff28"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -763,6 +763,16 @@
       "sha256": "2f1e67274afd74e62799623ca78bb0bb6496b1eda2614237d229d174a4c91f13"
     },
     {
+      "path": "packages/domain/src/entities/RecurringRule.test.ts",
+      "size": 809,
+      "sha256": "b12317a0e9603e6de3b70971ded3f1ed2be66cf89009282109ed18a179078f94"
+    },
+    {
+      "path": "packages/domain/src/entities/RecurringRule.ts",
+      "size": 4536,
+      "sha256": "4bfb0c495806bf2df02ccf909b7ec47d2aedb77f7a65118c6afd1704b48aaa75"
+    },
+    {
       "path": "packages/domain/src/entities/Tag.ts",
       "size": 820,
       "sha256": "edca9f60c87080749c9354ef1e4b83962efa327f9e1444018b5e39365135ca8e"
@@ -804,8 +814,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 1489,
-      "sha256": "e0b3b56399e601e8626969083d9a7ecbaf7c5b6cd90bbe4e94f6cc5a815f60f0"
+      "size": 1632,
+      "sha256": "fff3e611b2e0c9219d44b5c22535ec40bd145579368a4f0279ea2fcc79849c92"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",

@@ -173,3 +173,14 @@ Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e
   nei report income/expense. Le transazioni riconciliate sono protette; l'interfaccia
   chiede una rettifica per correggerle. Value date, note e allegati restano previsti
   dal dominio e verranno esposti in un'estensione del modulo.
+
+## 2026-07-28 — Ricorrenze come proposte esplicite
+
+- **Contesto:** il PRD definisce date previste e allocazioni legate allo stipendio, ma non
+  autorizza scritture automatiche nel ledger.
+- **Scelta:** una ricorrenza conserva un template indipendente e calcola soltanto una data
+  attesa; la futura UI proporrà la registrazione e richiederà sempre conferma prima di
+  creare movimenti o trasferimenti. La policy `salary_italy` applica 28 sabato→27 e
+  domenica→29.
+- **Conseguenze:** dati pianificati e contabilità effettiva non si confondono; una data
+  attesa non entra in saldi o report finché l'utente non conferma un movimento.

@@ -23,6 +23,12 @@ export {
 } from "./entities/ImportBatch";
 export { ImportRow, type CreateImportRowProps } from "./entities/ImportRow";
 export {
+  RecurringRule,
+  type CreateRecurringRuleProps,
+  type RecurringFrequency,
+  type WeekendPolicy,
+} from "./entities/RecurringRule";
+export {
   TransactionSplit,
   validateTransactionSplits,
   type CreateTransactionSplitProps,
