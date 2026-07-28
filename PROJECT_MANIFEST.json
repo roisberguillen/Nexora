@@ -174,8 +174,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 15179,
-      "sha256": "63ef66c8f4c9db2f1185c06dc58eca0d2dcb33787f68fbc97d8e2ecac1c6fd98"
+      "size": 16435,
+      "sha256": "51b9279d89b9b322ef4b7ceca073abac0b51f34c9f7cf4d0b34ef88c5354cb12"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
@@ -236,6 +236,16 @@
       "path": "apps/web/src/persistence/openPwaLedger.ts",
       "size": 3178,
       "sha256": "d2cf8dd05dfa0a06e29a0c4137be866ca90809d13bae0952f89f86a5bced6d0f"
+    },
+    {
+      "path": "apps/web/src/recurring/recurringCommands.ts",
+      "size": 1629,
+      "sha256": "946523d47b22742384544a5368473cacebf952ba15c2a2fb67e977a08b04d773"
+    },
+    {
+      "path": "apps/web/src/recurring/RecurringPage.tsx",
+      "size": 8621,
+      "sha256": "17dc5aa11cc0ce5df747fd77fc43f60043fcbe97bec382f16e593cbe135fce21"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -704,8 +714,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 16270,
-      "sha256": "da217f244f4baa23cf62c94a76d21bb694374d3f14a92591179184808c82a57b"
+      "size": 16520,
+      "sha256": "08eeb600c1b653897cf8692419c4db72822fe0e7bbe13f242500d7a633b615a5"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
@@ -989,8 +999,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 3333,
-      "sha256": "217d336fe47411959109c0aba8f1c687518b6001825a39532a20f8fcbeeaefe5"
+      "size": 3347,
+      "sha256": "5c7b9fd6ac306d03e9da3b1076ea19a33ca4c053a9234a6629c98badb7a0d420"
     },
     {
       "path": "packages/ui/src/styles.css",
@@ -1121,6 +1131,11 @@
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4637,
       "sha256": "4043e7461d11406e78c82087fa926ee32b282daac954b41073a40e8b0df0e59c"
+    },
+    {
+      "path": "test/e2e/recurring.spec.ts",
+      "size": 1377,
+      "sha256": "a6f3c7ba36378f4df1266aa9b8a3ab31cc1b8c9191aea55303c0fe6c2d8157bb"
     },
     {
       "path": "test/e2e/tags.spec.ts",

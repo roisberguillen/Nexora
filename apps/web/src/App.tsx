@@ -1,6 +1,13 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
-import type { Account, Category, ImportBatch, Tag, Transaction } from "@nexora/domain";
+import type {
+  Account,
+  Category,
+  ImportBatch,
+  RecurringRule,
+  Tag,
+  Transaction,
+} from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
 
@@ -38,6 +45,12 @@ import {
 } from "./transactions/buildTransactionsViewModel";
 import { TransactionsPage } from "./transactions/TransactionsPage";
 import { commitMoneyManagerImport } from "./imports/importCommands";
+import { RecurringPage } from "./recurring/RecurringPage";
+import {
+  createRecurringRule,
+  updateRecurringRule,
+  type RecurringRuleInput,
+} from "./recurring/recurringCommands";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -49,6 +62,7 @@ interface ReadyLedgerState {
   readonly rawAccounts: readonly Account[];
   readonly rawTransactions: readonly Transaction[];
   readonly importBatches: readonly ImportBatch[];
+  readonly recurringRules: readonly RecurringRule[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -87,6 +101,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           categories,
           dashboard,
           importBatches,
+          recurringRules,
           rawAccounts,
           rawTransactions,
           tags,
@@ -106,6 +121,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             categories,
             dashboard,
             importBatches,
+            recurringRules,
             ledger,
             rawAccounts,
             rawTransactions,
@@ -244,6 +260,14 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.undoImportBatch(batchId);
     });
+  const createRecurring = (input: RecurringRuleInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await createRecurringRule(ledger.repository, input);
+    });
+  const updateRecurring = (id: string, input: RecurringRuleInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateRecurringRule(ledger.repository, id, input);
+    });
 
   return (
     <ErrorBoundary
@@ -300,6 +324,14 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 batches={ledgerState.importBatches}
               />
             </Suspense>
+          ) : route === "recurring" ? (
+            <RecurringPage
+              accounts={ledgerState.rawAccounts}
+              categories={ledgerState.categories}
+              rules={ledgerState.recurringRules}
+              onCreate={createRecurring}
+              onUpdate={updateRecurring}
+            />
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
@@ -351,6 +383,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 
 interface AppModels {
   readonly importBatches: readonly ImportBatch[];
+  readonly recurringRules: readonly RecurringRule[];
   readonly rawAccounts: readonly Account[];
   readonly rawTransactions: readonly Transaction[];
   readonly accounts: AccountsViewModel;
@@ -361,16 +394,19 @@ interface AppModels {
 }
 
 async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
-  const [accounts, categories, importBatches, tags, transactions, transfers] = await Promise.all([
-    ledger.repository.listAccounts(),
-    ledger.repository.listCategories(),
-    ledger.repository.listImportBatches(),
-    ledger.repository.listTags(),
-    ledger.repository.listTransactions(),
-    ledger.repository.listTransfers(),
-  ]);
+  const [accounts, categories, importBatches, recurringRules, tags, transactions, transfers] =
+    await Promise.all([
+      ledger.repository.listAccounts(),
+      ledger.repository.listCategories(),
+      ledger.repository.listImportBatches(),
+      ledger.repository.listRecurringRules(),
+      ledger.repository.listTags(),
+      ledger.repository.listTransactions(),
+      ledger.repository.listTransfers(),
+    ]);
   return {
     importBatches,
+    recurringRules,
     rawAccounts: accounts,
     rawTransactions: transactions,
     categories,
@@ -402,9 +438,9 @@ function persistenceErrorMessage(error: unknown): string {
 }
 
 function useAppRoute():
-  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" {
+  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" | "recurring" {
   const [route, setRoute] = useState<
-    "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports"
+    "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" | "recurring"
   >(readAppRoute);
 
   useEffect(() => {
@@ -419,7 +455,7 @@ function useAppRoute():
 }
 
 function readAppRoute():
-  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" {
+  "accounts" | "overview" | "transactions" | "categories" | "tags" | "imports" | "recurring" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
@@ -429,6 +465,7 @@ function readAppRoute():
   if (window.location.hash === "#categories") return "categories";
   if (window.location.hash === "#tags") return "tags";
   if (window.location.hash === "#imports") return "imports";
+  if (window.location.hash === "#recurring") return "recurring";
   return "overview";
 }
 

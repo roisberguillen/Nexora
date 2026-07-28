@@ -469,7 +469,17 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.saveRecurringRule(rule);
     await expect(repository.listRecurringRules()).resolves.toEqual([rule]);
-    const disabled = RecurringRule.create({ ...rule, enabled: false });
+    const disabled = RecurringRule.create({
+      id: rule.id,
+      name: rule.name,
+      kind: rule.kind,
+      accountId: rule.accountId,
+      amount: rule.amount,
+      nominalDay: rule.nominalDay,
+      weekendPolicy: rule.weekendPolicy,
+      nextExpectedDate: rule.nextExpectedDate,
+      enabled: false,
+    });
     await repository.updateRecurringRule(disabled);
     await expect(repository.listRecurringRules()).resolves.toEqual([disabled]);
   });
