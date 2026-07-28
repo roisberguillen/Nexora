@@ -35,6 +35,11 @@ può essere annullato: la correzione passa da una rettifica. Gli split richiedon
 relazione persistente fra transazione principale e righe di ripartizione e sono
 rinviati a una migrazione dedicata, senza simulazioni transitorie nella UI.
 
+Gli split persistenti usano `TransactionSplit(id, transactionId, categoryId, amountMinor,
+currency, note?)`. Sono ammessi solo per income/expense non annullate, senza categoria
+diretta sulla madre; tutte le righe hanno stessa valuta e segno e sommano esattamente
+all'importo della transazione.
+
 ### Transfer
 `id, debitTransactionId, creditTransactionId, exchangeRate?, feeTransactionId?`
 

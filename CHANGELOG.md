@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Aggiunto il modello di split persistenti con migrazione SQLite/IndexedDB v2 e controlli
+  di integrità su totale, segno, valuta e categoria.
+
 - Aggiunta la pagina Movimenti con registrazioni manuali di entrate, spese e
   rettifiche, oltre a trasferimenti interni same-currency.
 - Aggiunto l'annullamento conservativo su repository in-memory, SQLite/OPFS e

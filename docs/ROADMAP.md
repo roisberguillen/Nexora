@@ -43,6 +43,7 @@ Avanzamento:
   - [x] Registrazioni manuali di entrate, spese e rettifiche, trasferimenti atomici e
     annullamento conservativo.
   - [ ] Split con raggruppamento persistente e migrazione dedicata.
+  - [x] Modello e migrazione v2 per split persistenti, con UI e controlli E2E iniziali.
 - [ ] Gestione categorie e tag.
 - [ ] Ricerca globale.
 
