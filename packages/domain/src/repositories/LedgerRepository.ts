@@ -26,6 +26,7 @@ export interface LedgerRepository {
     rows: readonly ImportRow[],
     transactions: readonly Transaction[],
   ): Promise<ImportBatch>;
+  undoImportBatch(batchId: string): Promise<ImportBatch>;
   updateTag(tag: Tag): Promise<void>;
   setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;

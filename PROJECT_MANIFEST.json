@@ -549,13 +549,13 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
-      "size": 15482,
-      "sha256": "5628ec67a1de5df2e4d01feb1ae6b4e02c7c044bb75ce04d21dbe5ca0a7f27a0"
+      "size": 15677,
+      "sha256": "a2efc10cdef99b2f88449ce18bc241e7a50822969cb2a327cf84c6a50980c714"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 14586,
-      "sha256": "b3a134a9f1680c04fe5c74cb8022c015016a3e2b4053e1d65ac656b2daf252ba"
+      "size": 15423,
+      "sha256": "806ff21220168a144cf607088645d5429d2668d0188604c71f74b18a2f3f05b6"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -569,8 +569,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 36100,
-      "sha256": "72307bf60201d482a422a0b41b354d7d83bfa4e96ddc11e77a15387ee1f5811d"
+      "size": 38058,
+      "sha256": "63a27c8639835e77cf9a447deb758413fea0fb8e847ff89b2ce1810163968ec3"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -694,8 +694,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 35988,
-      "sha256": "9c6ee29a3d1cdae02206201f680dde5e6015e24f5afde539cf7fae5565c08802"
+      "size": 37392,
+      "sha256": "e125fcb4f8024039350a1af10a4f11ddf5a5f9a26274ae64cd92dc32514cc2d4"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -799,8 +799,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 2542,
-      "sha256": "d885e49289e88ceefdc5487f1c0ecae36945ab058100f7c38d485571386d03f2"
+      "size": 2600,
+      "sha256": "e723c5daa12e86e6b95e2965976c77f9b836a6bbf01b33bb2af205bf5ecca962"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",

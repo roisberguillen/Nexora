@@ -447,5 +447,7 @@ describe("InMemoryLedgerRepository", () => {
       status: "committed",
     });
     await expect(repository.findTransactionById(transaction.id)).resolves.toEqual(transaction);
+    await expect(repository.undoImportBatch(batch.id)).resolves.toMatchObject({ status: "undone" });
+    expect((await repository.findTransactionById(transaction.id))?.status).toBe("cancelled");
   });
 });

@@ -243,6 +243,49 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public undoImportBatch(batchId: string): Promise<ImportBatch> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["import_batches", "import_rows", "transactions"],
+          "readwrite",
+          async (transaction) => {
+            const batches = transaction.objectStore("import_batches");
+            const stored = await requestResult<unknown>(batches.get(batchId));
+            if (stored === undefined)
+              throw new DomainError("missing_reference", "Import batch does not exist.");
+            const batch = importBatchFromRecord(stored as ImportBatchRecord);
+            const rows = (
+              await requestResult<unknown[]>(
+                transaction.objectStore("import_rows").index("by_batch_id").getAll(batchId),
+              )
+            ).map((row) => importRowFromRecord(row as ImportRowRecord));
+            const transactions = transaction.objectStore("transactions");
+            const cancelled = await Promise.all(
+              rows
+                .filter((row) => row.status === "imported")
+                .map(async (row) => {
+                  const record = await requestResult<unknown>(
+                    transactions.get(row.createdTransactionId!),
+                  );
+                  if (record === undefined)
+                    throw new DomainError(
+                      "missing_reference",
+                      "Imported transaction does not exist.",
+                    );
+                  return transactionFromRecord(record as TransactionRecord).cancel();
+                }),
+            );
+            const undone = batch.undo();
+            for (const ledgerTransaction of cancelled)
+              await requestResult(transactions.put(transactionToRecord(ledgerTransaction)));
+            await requestResult(batches.put(importBatchToRecord(undone)));
+            return undone;
+          },
+        ),
+      ),
+    );
+  }
 
   public setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
     return this.enqueue(() =>

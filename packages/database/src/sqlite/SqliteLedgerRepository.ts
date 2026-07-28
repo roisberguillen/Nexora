@@ -375,6 +375,40 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public undoImportBatch(batchId: string): Promise<ImportBatch> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const batch = await this.findImportBatchById(batchId);
+          if (batch === undefined)
+            throw new DomainError("missing_reference", "Import batch does not exist.");
+          const rows = await this.listImportRows(batchId);
+          const cancelled = await Promise.all(
+            rows
+              .filter((row) => row.status === "imported")
+              .map(async (row) => {
+                const transaction = await this.findTransactionByIdInternal(
+                  row.createdTransactionId!,
+                );
+                if (transaction === undefined)
+                  throw new DomainError(
+                    "missing_reference",
+                    "Imported transaction does not exist.",
+                  );
+                return transaction.cancel();
+              }),
+          );
+          const undone = batch.undo();
+          for (const transaction of cancelled) await this.updateTransactionStatus(transaction);
+          await this.database.run(
+            "UPDATE import_batches SET status = ?, completed_at = ? WHERE id = ?",
+            [undone.status, new Date().toISOString(), batchId],
+          );
+          return undone;
+        }),
+      ),
+    );
+  }
   public updateTag(tag: Tag): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

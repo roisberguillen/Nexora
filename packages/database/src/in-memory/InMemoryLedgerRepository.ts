@@ -131,6 +131,23 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     for (const transaction of transactions) this.transactions.set(transaction.id, transaction);
     return committed;
   }
+  public async undoImportBatch(batchId: string): Promise<ImportBatch> {
+    const batch = this.importBatches.get(batchId);
+    if (batch === undefined)
+      throw new DomainError("missing_reference", "Import batch does not exist.");
+    const cancelled = [...this.importRows.values()]
+      .filter((row) => row.batchId === batchId && row.status === "imported")
+      .map((row) => {
+        const transaction = this.transactions.get(row.createdTransactionId!);
+        if (transaction === undefined)
+          throw new DomainError("missing_reference", "Imported transaction does not exist.");
+        return transaction.cancel();
+      });
+    const undone = batch.undo();
+    for (const transaction of cancelled) this.transactions.set(transaction.id, transaction);
+    this.importBatches.set(batchId, undone);
+    return undone;
+  }
   public async updateTag(tag: Tag): Promise<void> {
     if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");
     this.tags.set(tag.id, tag);
