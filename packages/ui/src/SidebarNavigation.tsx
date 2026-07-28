@@ -15,6 +15,7 @@ export type NavigationRoute =
   | "tags"
   | "imports"
   | "budgets"
+  | "loans"
   | "recurring";
 
 const navigationItems: readonly NavigationItem[] = [
@@ -25,6 +26,7 @@ const navigationItems: readonly NavigationItem[] = [
   { label: "Tag", icon: "transactions", available: true, route: "tags" },
   { label: "Importa", icon: "transactions", available: true, route: "imports" },
   { label: "Budget", icon: "budget", available: true, route: "budgets" },
+  { label: "Prestiti", icon: "accounts", available: true, route: "loans" },
   { label: "Ricorrenze", icon: "recurring", available: true, route: "recurring" },
   { label: "Impostazioni", icon: "settings", available: false, route: "overview" },
 ];

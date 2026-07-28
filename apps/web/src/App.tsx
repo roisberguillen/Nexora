@@ -5,6 +5,7 @@ import type {
   Account,
   AllocationPlan,
   Budget,
+  Loan,
   Category,
   ImportBatch,
   RecurringRule,
@@ -57,6 +58,8 @@ import {
 import { createAllocationPlan, type AllocationPlanInput } from "./recurring/allocationCommands";
 import { BudgetsPage } from "./budgets/BudgetsPage";
 import { createBudget, type BudgetInput } from "./budgets/budgetCommands";
+import { LoansPage } from "./loans/LoansPage";
+import { createLoan, type LoanInput } from "./loans/loanCommands";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -71,6 +74,7 @@ interface ReadyLedgerState {
   readonly recurringRules: readonly RecurringRule[];
   readonly allocationPlans: readonly AllocationPlan[];
   readonly budgets: readonly Budget[];
+  readonly loans: readonly Loan[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -108,6 +112,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           accounts,
           allocationPlans,
           budgets,
+          loans,
           categories,
           dashboard,
           importBatches,
@@ -130,6 +135,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             accounts,
             allocationPlans,
             budgets,
+            loans,
             categories,
             dashboard,
             importBatches,
@@ -307,6 +313,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await createBudget(ledger.repository, input);
     });
+  const createLoanPosition = (input: LoanInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await createLoan(ledger.repository, input);
+    });
   const executeAllocations = (planIds: readonly string[]): Promise<void> =>
     mutateLedger(async (ledger) => {
       const plans = (await ledger.repository.listAllocationPlans()).filter((plan) =>
@@ -384,6 +394,12 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               onCreate={createMonthlyBudget}
               transactions={ledgerState.rawTransactions}
             />
+          ) : route === "loans" ? (
+            <LoansPage
+              accounts={ledgerState.rawAccounts}
+              loans={ledgerState.loans}
+              onCreate={createLoanPosition}
+            />
           ) : route === "recurring" ? (
             <RecurringPage
               accounts={ledgerState.rawAccounts}
@@ -446,6 +462,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 
 interface AppModels {
   readonly budgets: readonly Budget[];
+  readonly loans: readonly Loan[];
   readonly importBatches: readonly ImportBatch[];
   readonly recurringRules: readonly RecurringRule[];
   readonly allocationPlans: readonly AllocationPlan[];
@@ -463,6 +480,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     accounts,
     allocationPlans,
     budgets,
+    loans,
     categories,
     importBatches,
     recurringRules,
@@ -473,6 +491,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     ledger.repository.listAccounts(),
     ledger.repository.listAllocationPlans(),
     ledger.repository.listBudgets(),
+    ledger.repository.listLoans(),
     ledger.repository.listCategories(),
     ledger.repository.listImportBatches(),
     ledger.repository.listRecurringRules(),
@@ -483,6 +502,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
   return {
     allocationPlans,
     budgets,
+    loans,
     importBatches,
     recurringRules,
     rawAccounts: accounts,
@@ -523,6 +543,7 @@ function useAppRoute():
   | "tags"
   | "imports"
   | "budgets"
+  | "loans"
   | "recurring" {
   const [route, setRoute] = useState<
     | "accounts"
@@ -532,6 +553,7 @@ function useAppRoute():
     | "tags"
     | "imports"
     | "budgets"
+    | "loans"
     | "recurring"
   >(readAppRoute);
 
@@ -554,6 +576,7 @@ function readAppRoute():
   | "tags"
   | "imports"
   | "budgets"
+  | "loans"
   | "recurring" {
   if (window.location.hash === "#accounts") {
     return "accounts";
@@ -565,6 +588,7 @@ function readAppRoute():
   if (window.location.hash === "#tags") return "tags";
   if (window.location.hash === "#imports") return "imports";
   if (window.location.hash === "#budgets") return "budgets";
+  if (window.location.hash === "#loans") return "loans";
   if (window.location.hash === "#recurring") return "recurring";
   return "overview";
 }
