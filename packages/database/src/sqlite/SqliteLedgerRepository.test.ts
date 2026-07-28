@@ -414,6 +414,27 @@ describe("SqliteLedgerRepository", () => {
     await expect(repository.listImportRows(batch.id)).resolves.toEqual([row]);
   });
 
+  it("persiste il tipo importer v2 senza violare il vincolo legacy", async () => {
+    const batch = ImportBatch.create({
+      id: "batch-bank-type",
+      importerType: "n26_pdf",
+      rowsTotal: 1,
+      sourceFilename: "estratto.pdf",
+      sourceSha256: "e".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-bank-type",
+      batchId: batch.id,
+      rowNumber: 1,
+      rawJson: "{}",
+      status: "needs_review",
+    });
+
+    await repository.saveImportBatch(batch, [row]);
+
+    await expect(repository.findImportBatchById(batch.id)).resolves.toEqual(batch);
+  });
+
   it("committa transazioni importate con il loro batch", async () => {
     const savedAccount = account("account-import");
     await repository.saveAccount(savedAccount);

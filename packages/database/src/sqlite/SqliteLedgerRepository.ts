@@ -507,7 +507,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
             "INSERT INTO import_batches (id, importer_type, importer_type_v2, source_filename, source_sha256, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
               batch.id,
-              batch.importerType,
+              "money_manager_xlsx",
               batch.importerType,
               batch.sourceFilename,
               batch.sourceSha256,
@@ -566,7 +566,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
             "INSERT INTO import_batches (id, importer_type, importer_type_v2, source_filename, source_sha256, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
               committed.id,
-              committed.importerType,
+              "money_manager_xlsx",
               committed.importerType,
               committed.sourceFilename,
               committed.sourceSha256,
