@@ -2,6 +2,7 @@ import { classifyErrorName, createSafeLogger } from "@nexora/config";
 import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
 import type {
   Account,
+  AllocationPlan,
   Category,
   ImportBatch,
   RecurringRule,
@@ -63,6 +64,7 @@ interface ReadyLedgerState {
   readonly rawTransactions: readonly Transaction[];
   readonly importBatches: readonly ImportBatch[];
   readonly recurringRules: readonly RecurringRule[];
+  readonly allocationPlans: readonly AllocationPlan[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -98,6 +100,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
       .then(
         ({
           accounts,
+          allocationPlans,
           categories,
           dashboard,
           importBatches,
@@ -118,6 +121,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           });
           setLedgerState({
             accounts,
+            allocationPlans,
             categories,
             dashboard,
             importBatches,
@@ -384,6 +388,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 interface AppModels {
   readonly importBatches: readonly ImportBatch[];
   readonly recurringRules: readonly RecurringRule[];
+  readonly allocationPlans: readonly AllocationPlan[];
   readonly rawAccounts: readonly Account[];
   readonly rawTransactions: readonly Transaction[];
   readonly accounts: AccountsViewModel;
@@ -394,17 +399,27 @@ interface AppModels {
 }
 
 async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
-  const [accounts, categories, importBatches, recurringRules, tags, transactions, transfers] =
-    await Promise.all([
-      ledger.repository.listAccounts(),
-      ledger.repository.listCategories(),
-      ledger.repository.listImportBatches(),
-      ledger.repository.listRecurringRules(),
-      ledger.repository.listTags(),
-      ledger.repository.listTransactions(),
-      ledger.repository.listTransfers(),
-    ]);
+  const [
+    accounts,
+    allocationPlans,
+    categories,
+    importBatches,
+    recurringRules,
+    tags,
+    transactions,
+    transfers,
+  ] = await Promise.all([
+    ledger.repository.listAccounts(),
+    ledger.repository.listAllocationPlans(),
+    ledger.repository.listCategories(),
+    ledger.repository.listImportBatches(),
+    ledger.repository.listRecurringRules(),
+    ledger.repository.listTags(),
+    ledger.repository.listTransactions(),
+    ledger.repository.listTransfers(),
+  ]);
   return {
+    allocationPlans,
     importBatches,
     recurringRules,
     rawAccounts: accounts,
