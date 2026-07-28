@@ -1,7 +1,7 @@
 import { PersistenceError } from "../sqlite/PersistenceError";
 import { IndexedDbLedgerRepository } from "./IndexedDbLedgerRepository";
 
-export const INDEXED_DB_SCHEMA_VERSION = 3;
+export const INDEXED_DB_SCHEMA_VERSION = 4;
 
 const defaultDatabaseName = "nexora-ledger";
 const databaseNamePattern = /^[A-Za-z0-9._-]+$/;
@@ -129,6 +129,17 @@ function openDatabase(factory: IDBFactory, databaseName: string): Promise<IDBDat
             .put({ key: "schema_version", value: INDEXED_DB_SCHEMA_VERSION });
         }
       }
+      if (event.oldVersion < 4) {
+        database.createObjectStore("import_batches", { keyPath: "id" });
+        const importRows = database.createObjectStore("import_rows", { keyPath: "id" });
+        importRows.createIndex("by_batch_id", "batch_id", { unique: false });
+        importRows.createIndex("by_batch_status", ["batch_id", "status"], { unique: false });
+        if (event.oldVersion > 0) {
+          transaction
+            .objectStore("metadata")
+            .put({ key: "schema_version", value: INDEXED_DB_SCHEMA_VERSION });
+        }
+      }
     };
     request.onblocked = () => {
       rejectOnce(
@@ -168,6 +179,8 @@ async function validateSchema(database: IDBDatabase): Promise<void> {
     "transaction_splits",
     "tags",
     "transaction_tags",
+    "import_batches",
+    "import_rows",
   ];
   if (requiredStores.some((store) => !database.objectStoreNames.contains(store))) {
     throw new PersistenceError("corrupt_record", "The IndexedDB ledger schema is incomplete.");

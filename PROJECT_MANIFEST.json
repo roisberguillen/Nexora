@@ -559,13 +559,13 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 2961,
-      "sha256": "4a020503a8033149032a1522a62c2de70e1c28cedb9207443035f5cbc6b6da2f"
+      "size": 3072,
+      "sha256": "dd15f6dd4d043d07caea52926a0e2564ffb8b082103db910ef7109bfb2a857db"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 13435,
-      "sha256": "73303d522f4554e80122fdb39da272595baf2c937e6680212ad157977a9eb080"
+      "size": 13480,
+      "sha256": "9e004561010cf5763f407ecc3b4d75f0041bedd63c3d7b8852fa181408f954e2"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
@@ -574,8 +574,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 6752,
-      "sha256": "a9a561e72714ae93e145bf208b94e4df26c18ffe921bae2baa3792729d6bc2bc"
+      "size": 7353,
+      "sha256": "8e4138aed73dfd522d3d81eed8ab7c3e916dd7f112c3919837162bf0d1da526d"
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.test.ts",
@@ -584,8 +584,8 @@
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
-      "size": 9163,
-      "sha256": "2c3b763086e9ee483a2e51acb355203a205a137c00a558a719de4c609ebad3eb"
+      "size": 9253,
+      "sha256": "116a574a75a54a572cbacc3d82e942a9f4a70872a1cc7f782d4b49cd0541ff1a"
     },
     {
       "path": "packages/database/src/migrations/0002-transaction-splits.ts",
@@ -596,6 +596,11 @@
       "path": "packages/database/src/migrations/0003-tags.ts",
       "size": 1073,
       "sha256": "1cc68647c9294a15e62e43aa6f3c079a71f9675e759ba091cb62d2d90f6af6d4"
+    },
+    {
+      "path": "packages/database/src/migrations/0004-import-batches.ts",
+      "size": 2470,
+      "sha256": "7c0212e3d1295bb2f7134b327d4dce1fb644ed532957206a5d0449c8eca02439"
     },
     {
       "path": "packages/database/src/migrations/DatabaseMigration.ts",
@@ -614,8 +619,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 8502,
-      "sha256": "64c5916697a824c39c93d6dc571ffb29978438a5d6db3c072483e6cd8c7e7ad0"
+      "size": 8574,
+      "sha256": "735160f0d326e600c2ed16467312fff99b6bae8fe3c691e6de6b7000015f018c"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",

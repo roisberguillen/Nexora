@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 3,
-      appliedMigrations: [1, 2, 3],
+      toVersion: 4,
+      appliedMigrations: [1, 2, 3, 4],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -124,11 +124,15 @@ describe("MigrationRunner", () => {
         version: 3,
         name: "tags",
       },
+      {
+        version: 4,
+        name: "import-batches",
+      },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 3,
-      toVersion: 3,
+      fromVersion: 4,
+      toVersion: 4,
       appliedMigrations: [],
     });
     expect(migrationRows(sqlite)).toHaveLength(3);
