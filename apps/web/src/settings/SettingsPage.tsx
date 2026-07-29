@@ -6,6 +6,8 @@ import type { FinancialResetPreview } from "../reset/financialReset";
 import type { TotalResetReport } from "../reset/totalReset";
 import { countExpiredTrashEntries } from "../transactions/trashRetention";
 
+import { AccessibleDialog } from "./AccessibleDialog";
+
 import {
   applyAppPreferences,
   readAppPreferences,
@@ -68,6 +70,7 @@ export function SettingsPage({
   const [applicationResetReport, setApplicationResetReport] = useState<TotalResetReport | null>(
     null,
   );
+  const [applicationResetMessage, setApplicationResetMessage] = useState<string | null>(null);
   const expiredTrashEntries = countExpiredTrashEntries(
     trashedTransactions,
     preferences.trashRetentionDays,
@@ -136,18 +139,19 @@ export function SettingsPage({
             onChange={(reduceMotion) => update({ reduceMotion })}
           />
         </SettingsGroup>
-        <SettingsGroup title="Preferenze finanziarie">
-          <SettingsRow label="Valuta principale" value="EUR" />
-          <SettingsRow label="Formato data" value="GG/MM/AAAA" />
-          <SettingsRow label="Mese finanziario" value="Gennaio" />
-        </SettingsGroup>
-        <SettingsGroup title="Dati e sicurezza">
-          <SettingsLink label="Backup" href="./#backup" />
+        <SettingsGroup title="Gestione dati">
+          <p>
+            Gestisci gli elementi archiviati, il cestino e le copie di sicurezza senza esporre
+            credenziali o dati finanziari nella pagina.
+          </p>
+          <SettingsLink label="Elementi archiviati" href="./#categories" />
+          <SettingsLink label="Tag archiviati" href="./#tags" />
+          <SettingsLink label="Backup ed esportazione" href="./#backup" />
           <SettingsLink label="Esportazione completa" href="./#exports" />
           <SettingsRow label="Archivio locale" value="Locale; non cifrato a riposo" />
         </SettingsGroup>
         {onRestoreTransaction === undefined ? null : (
-          <SettingsGroup title="Cestino movimenti">
+          <SettingsGroup title="Cestino">
             <p>I movimenti nel cestino non incidono su saldi, budget o analisi.</p>
             <SettingsSelect
               label="Conservazione cestino"
@@ -223,11 +227,9 @@ export function SettingsPage({
             )}
             {purgeMessage === null ? null : <p role="status">{purgeMessage}</p>}
             {purgeId === null ? null : (
-              <div
-                aria-labelledby="purge-transaction-title"
-                aria-modal="true"
-                className="account-feedback"
-                role="dialog"
+              <AccessibleDialog
+                labelledBy="purge-transaction-title"
+                onClose={() => !isPurging && setPurgeId(null)}
               >
                 <h2 id="purge-transaction-title">Eliminare definitivamente?</h2>
                 <p>
@@ -267,14 +269,12 @@ export function SettingsPage({
                     {isPurging ? "Eliminazione…" : "Elimina definitivamente"}
                   </button>
                 </div>
-              </div>
+              </AccessibleDialog>
             )}
             {isPurgeAllOpen ? (
-              <div
-                aria-labelledby="purge-all-transactions-title"
-                aria-modal="true"
-                className="account-feedback"
-                role="dialog"
+              <AccessibleDialog
+                labelledBy="purge-all-transactions-title"
+                onClose={() => !isPurging && setIsPurgeAllOpen(false)}
               >
                 <h2 id="purge-all-transactions-title">Svuotare il cestino?</h2>
                 <p>
@@ -316,7 +316,7 @@ export function SettingsPage({
                     {isPurging ? "Svuotamento…" : "Svuota cestino"}
                   </button>
                 </div>
-              </div>
+              </AccessibleDialog>
             ) : null}
           </SettingsGroup>
         )}
@@ -342,11 +342,17 @@ export function SettingsPage({
               Reset dati finanziari
             </button>
             {isResetOpen ? (
-              <div
-                aria-labelledby="reset-financial-title"
-                aria-modal="true"
-                className="account-feedback"
-                role="dialog"
+              <AccessibleDialog
+                labelledBy="reset-financial-title"
+                onClose={() => {
+                  if (isResetting) return;
+                  setResetPhrase("");
+                  setBackupPassphrase("");
+                  setBackupChecksumPrefix(null);
+                  setSkipBackup(false);
+                  setResetPin("");
+                  setIsResetOpen(false);
+                }}
               >
                 <h2 id="reset-financial-title">Conferma reset dati finanziari</h2>
                 <p>
@@ -462,7 +468,7 @@ export function SettingsPage({
                     {isResetting ? "Reset in corso…" : "Conferma reset"}
                   </button>
                 </div>
-              </div>
+              </AccessibleDialog>
             ) : null}
           </SettingsGroup>
         )}
@@ -480,11 +486,9 @@ export function SettingsPage({
               Ripristino totale dell’app
             </button>
             {isApplicationResetOpen ? (
-              <div
-                aria-labelledby="reset-application-title"
-                aria-modal="true"
-                className="account-feedback"
-                role="dialog"
+              <AccessibleDialog
+                labelledBy="reset-application-title"
+                onClose={() => !isResetting && setIsApplicationResetOpen(false)}
               >
                 <h2 id="reset-application-title">Conferma ripristino totale</h2>
                 <p>
@@ -517,8 +521,14 @@ export function SettingsPage({
                     disabled={isResetting || applicationResetPhrase !== "RIPRISTINA NEXORA"}
                     onClick={() => {
                       setIsResetting(true);
+                      setApplicationResetMessage(null);
                       void onResetApplication({ deleteCloud: deleteCloudBackups })
                         .then(setApplicationResetReport)
+                        .catch(() =>
+                          setApplicationResetMessage(
+                            "Ripristino non completato: verifica l’archivio locale prima di riprovare.",
+                          ),
+                        )
                         .finally(() => setIsResetting(false));
                     }}
                     type="button"
@@ -527,18 +537,28 @@ export function SettingsPage({
                   </button>
                 </div>
                 {applicationResetReport === null ? null : (
-                  <p role="status">
+                  <p aria-atomic="true" role="status">
                     Reset locale:{" "}
                     {applicationResetReport.local === "succeeded" ? "riuscito" : "non riuscito"}.
                     Backup cloud eliminati: {applicationResetReport.cloudDeleted}; rimanenti:{" "}
                     {applicationResetReport.cloudRemaining}.
                   </p>
                 )}
-              </div>
+                {applicationResetMessage === null ? null : (
+                  <p aria-atomic="true" className="form-error" role="alert">
+                    {applicationResetMessage}
+                  </p>
+                )}
+              </AccessibleDialog>
             ) : null}
           </SettingsGroup>
         )}
         <SettingsGroup title="Applicazione">
+          <p className="import-help">
+            Valuta principale, formato data e giorno iniziale del mese finanziario non sono ancora
+            configurabili: per evitare impostazioni solo apparenti, Nexora usa EUR, formato italiano
+            e mese civile finché non sarà disponibile una migrazione dati sicura.
+          </p>
           <SettingsRow label="Versione app" value={appVersion} />
           <SettingsLink label="Privacy e sicurezza" href="./#privacy-security" />
           <SettingsLink label="Note di rilascio" href="./#overview" />

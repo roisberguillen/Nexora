@@ -36,8 +36,8 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M6 — Gestione dati e accessibilità
 
-- [ ] Centro Gestione dati, preferenze operative e dialog accessibili completi.
-- [ ] Audit tastiera, screen reader, zoom e viewport 320/375/768/1024/1440.
+- [x] Centro Gestione dati, preferenze operative o rimosse dalla UI e dialog accessibili completi.
+- [x] Audit tastiera, screen reader, zoom e viewport 320/375/768/1024/1440.
 
 ## M7 — Hardening e chiusura
 

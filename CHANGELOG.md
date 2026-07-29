@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Aggiunto il centro **Gestione dati** nelle impostazioni, con percorsi espliciti per elementi
+  archiviati, cestino, backup ed esportazione e zona pericolosa. Le preferenze finanziarie non
+  ancora operative non sono più presentate come controlli modificabili.
+- I dialog distruttivi delle impostazioni ora intrappolano il focus, si chiudono con Escape,
+  restituiscono il focus al controllo invocante e comunicano avanzamento, successo ed errori
+  specifici tramite regioni accessibili. La verifica E2E copre 320, 375, 768, 1024 e 1440 px.
+
 - Completata la gestione dati di conti, categorie e tag: `Svuota conto` sposta atomicamente i
   movimenti nel cestino dopo frase di conferma e PIN opzionale; le categorie si uniscono con
   riassegnazione coerente di movimenti, split, budget e ricorrenze; i tag possono essere uniti

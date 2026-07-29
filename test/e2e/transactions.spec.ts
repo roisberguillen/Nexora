@@ -112,3 +112,24 @@ test("il ripristino totale rimuove il profilo locale e riporta all'onboarding", 
   await confirm.click();
   await expect(page.getByRole("button", { name: "Carica dati dimostrativi" })).toBeVisible();
 });
+
+test("la gestione dati espone dialog accessibili con Escape e focus di ritorno", async ({
+  page,
+}) => {
+  await page.goto("/#settings");
+  const trigger = page.getByRole("button", { name: "Reset dati finanziari" });
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  const dialog = page.getByRole("dialog", { name: "Conferma reset dati finanziari" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toBeVisible();
+  expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect(page.getByRole("region", { name: "Gestione dati" })).toBeVisible();
+  await expect(page.getByText(/non sono ancora configurabili/i)).toBeVisible();
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});

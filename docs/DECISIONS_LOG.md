@@ -2,6 +2,16 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-07-29 — Preferenze finanziarie non operative nascoste
+
+- **Contesto:** valuta principale, formato data e “Mese finanziario: Gennaio” erano mostrati come
+  preferenze statiche senza un contratto di persistenza né una migrazione sicura per dati esistenti.
+- **Scelta:** rimuovere i controlli apparenti e dichiarare esplicitamente la policy corrente:
+  EUR, formato italiano e mese civile. La futura configurazione richiederà un modello dati e una
+  migrazione verificata, non solo una modifica visiva.
+- **Conseguenze:** l’interfaccia non promette comportamenti inesistenti; nessun dato v1 viene
+  reinterpretato o riscritto dalla pagina Impostazioni.
+
 ## 2026-07-29 — Nessun backup-agent Docker nella Release Candidate
 
 - **Contesto:** il Dockerfile pubblicava soltanto un placeholder e non offriva un servizio

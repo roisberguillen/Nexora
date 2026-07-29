@@ -162,4 +162,28 @@ describe("SettingsPage destructive flows", () => {
       expect(reset).toHaveBeenCalledWith({ backupChecksumPrefix: "cafebabecafe", pin: "4937" }),
     );
   });
+
+  it("intrappola il focus nel dialog, chiude con Escape e lo restituisce al controllo invocante", async () => {
+    const user = userEvent.setup();
+    render(<SettingsPage onResetFinancialData={async () => undefined} />);
+
+    const trigger = screen.getByRole("button", { name: "Reset dati finanziari" });
+    trigger.focus();
+    await user.keyboard("{Enter}");
+
+    const dialog = screen.getByRole("dialog", { name: "Conferma reset dati finanziari" });
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("dialog", { name: "Conferma reset dati finanziari" })).toBeNull();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("non mostra preferenze finanziarie non operative come se fossero modificabili", () => {
+    render(<SettingsPage />);
+
+    expect(screen.queryByLabelText("Valuta principale")).toBeNull();
+    expect(screen.getByText(/non sono ancora configurabili/i)).toBeVisible();
+    expect(screen.getByRole("region", { name: "Gestione dati" })).toBeVisible();
+  });
 });
