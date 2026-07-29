@@ -337,6 +337,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         await ledger.repository.cancelTransaction(id);
       }
     });
+  const trashMovement = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.trashTransaction(id);
+    });
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
       await commitMoneyManagerImport(ledger.repository, input);
@@ -422,6 +426,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 standaloneEditor={route === "new-transaction"}
                 tags={ledgerState.tags}
                 onCancel={cancelMovement}
+                onTrash={trashMovement}
                 onCreateManual={createManualMovement}
                 onCreateTransfer={createTransferMovement}
                 onExecuteSalaryAllocations={executeAllocations}
