@@ -20,6 +20,8 @@
   aperture concorrenti tra schede.
 - Se OPFS era assente e risulta indisponibile durante l'apertura, l'avvio passa
   esplicitamente a IndexedDB; archivi OPFS esistenti non vengono mai mascherati.
+- Aggiunta una Content Security Policy per sviluppo e preview, compatibile con
+  SQLite WebAssembly e con l'isolamento cross-origin richiesto da OPFS.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

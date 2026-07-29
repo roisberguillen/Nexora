@@ -684,13 +684,13 @@
     },
     {
       "path": "apps/web/vite.config.ts",
-      "size": 1894,
-      "sha256": "fb376c6099dada20a4ab6d110c976d89c9bfc2837dd4dfe270bee2162101cfe2"
+      "size": 2382,
+      "sha256": "4144d8c0f8400a79b7c0a673670cd64416ccd5866b1d10e2319c2d4c9f7fe05c"
     },
     {
       "path": "CHANGELOG.md",
-      "size": 14784,
-      "sha256": "ceb189aae10a460f5147f45dbc4ebbc571ee6fbcb6a5a997a042697e7633a2ed"
+      "size": 14935,
+      "sha256": "2c904b0121cd1ea5db6b518e1809a1b1fdbe98192c0dfb602dff23c8272f50fd"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/reports/known-limitations.md",
-      "size": 2154,
-      "sha256": "d0482258672b769ce8c117ea4a796f6e0f233be197bdfad11e7fd56c9b48ae4e"
+      "size": 2309,
+      "sha256": "c81650ce3d2084684c22ce753e1292ec9b1b2742376885f1dbaffdb309e987b5"
     },
     {
       "path": "docs/reports/startup-baseline.md",

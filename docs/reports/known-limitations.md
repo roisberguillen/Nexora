@@ -5,9 +5,11 @@ Data: 2026-07-30
 ## Stato verificato
 
 - `pnpm verify`, `pnpm doctor`, `pnpm manifest:check` e `pnpm audit --prod` sono verdi.
+- La CSP di sviluppo e preview è verificata con l'avvio reale di SQLite WebAssembly e con
+  l'E2E della shell sulle viewport previste.
 - Gli E2E Playwright sono stati eseguiti a gruppi sulle viewport 320, 375, 768, 1024 e
-  1440 px: 121 test passati e 34 skip condizionati da capacità del browser o baseline
-  deliberate.
+  1440 px: i gruppi registrati sono verdi; gli skip sono condizionati da capacità del
+  browser o baseline deliberate.
 - Il browser integrato usato per il controllo visuale non espone IndexedDB, OPFS, Worker o
   SharedArrayBuffer al runtime della pagina. In tale ambiente Nexora visualizza correttamente
   il recovery, ma non è possibile usarlo come prova di una dashboard con dati persistiti.
