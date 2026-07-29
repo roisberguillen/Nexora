@@ -524,8 +524,8 @@
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.test.ts",
-      "size": 1863,
-      "sha256": "54e6fbc335b75d1d17769a1f3db4c88c58b23ba6f898b836a2e209bc4c0470ef"
+      "size": 3350,
+      "sha256": "edb32cf0c2160eb2ab304f8cb60376fa53bc4b2c6542414baf350bd62aa247fb"
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.ts",
@@ -549,8 +549,8 @@
     },
     {
       "path": "apps/web/src/startup/StorageSelection.test.ts",
-      "size": 1582,
-      "sha256": "d62642c580fe61fbbba51d58078fb070ca9efcfcd0bf50dcea8e1cf4555efde3"
+      "size": 3146,
+      "sha256": "7f54b559f663ed28ddc0b1ebc7601fd750a98e2198fd7c7621f077e5b34896ed"
     },
     {
       "path": "apps/web/src/startup/StorageSelection.ts",
@@ -634,8 +634,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 13202,
-      "sha256": "4f40c4d480e44fdc414a86ce5f528363c5dd65732a293248e62abc6d22bb0c84"
+      "size": 13426,
+      "sha256": "77863641fa1eb280af29399bb6fc64312dfadc9b065d80b85aab28e8a54fd1eb"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -819,8 +819,8 @@
     },
     {
       "path": "docs/release/STARTUP_ORCHESTRATOR_REPORT_2026-07-29.md",
-      "size": 1600,
-      "sha256": "8d8f9372bf69cd9eb0ee8ccc64728dedbad74b297c51fa622b6ba3f8534ecaef"
+      "size": 1999,
+      "sha256": "be7b744edb7469ef3f0dbff19a5ca35088c555ebe9f447b171d9d03e1addb8fa"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1599,8 +1599,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "size": 1149,
-      "sha256": "35f592d11af45c3db4aa3fb110542861be4493b5b0daf28288f0e6637dd45985"
+      "size": 1187,
+      "sha256": "1b8efc436ab9b459fa9f645e31aa21cc6441a55aab5908c90cf9ceceab666e7e"
     },
     {
       "path": "pnpm-lock.yaml",
@@ -1679,8 +1679,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts",
-      "size": 1507,
-      "sha256": "a98365aff85bcab1e95a1975ab63f893fb5688db7991754d6006dd0e0260258b"
+      "size": 1533,
+      "sha256": "1f88558133a7387fbd7d65454dbd44e814cb58662aab75b8c48ab7a0d9c844a0"
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
@@ -1741,6 +1741,11 @@
       "path": "test/e2e/recurring.spec.ts",
       "size": 3761,
       "sha256": "6c121ff264d6451d29f5bef43d6b77470df89501a23fe2829b063bfaffbf7997"
+    },
+    {
+      "path": "test/e2e/startup-orchestrator.spec.ts",
+      "size": 5613,
+      "sha256": "c72d82d63aaf35d054f39c9c07ff4df145dcac4945c090b7758d992e317b0f26"
     },
     {
       "path": "test/e2e/tags.spec.ts",

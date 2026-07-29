@@ -23,6 +23,9 @@ archivi, preferenze o backup.
 
 - Unit: orchestratore, discovery, selezione/retry, diagnostica e schermate di avvio.
 - E2E: persistenza OPFS/IndexedDB, PWA offline, backup/restore e viewport 320/375/768/1024/1440.
+  La policy di startup viene inoltre eseguita in un browser reale per prima installazione,
+  preferenze valide/non valide, archivi multipli, archivio bloccato o corrotto, retry,
+  migrazioni e capacità Worker/WASM/cross-origin non disponibili.
 - Accessibilità: ruoli `status` e `alert`, azioni tastiera native, reduced motion e layout responsive.
 - Sicurezza: nessun reset o delete automatico; la diagnostica esclude dati finanziari e segreti.
 
@@ -38,3 +41,5 @@ worker sono configurati nella PWA.
   quando non è disponibile, lo stato resta prudenzialmente `unavailable`.
 - I flussi di migrazione/unificazione tra due archivi rimangono guidati: Nexora non
   li automatizza per evitare sostituzioni di dati.
+- I test delle capability non disponibili verificano la classificazione e la diagnostica;
+  non simulano manomissioni del runtime del browser installato.

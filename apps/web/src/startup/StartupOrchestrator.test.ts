@@ -47,6 +47,45 @@ describe("StartupOrchestrator", () => {
     });
   });
 
+  it("continua con la verifica quando migrazione e dati sono validi", async () => {
+    const validateLedger = vi.fn();
+    const runMigrations = vi.fn();
+    const verifyData = vi.fn();
+    const orchestrator = new StartupOrchestrator({
+      openLedger: vi.fn(async () => ledger),
+      validateLedger,
+      runMigrations,
+      verifyData,
+    });
+
+    await expect(orchestrator.run()).resolves.toMatchObject({ state: "READY", ledger });
+    expect(validateLedger).toHaveBeenCalledWith(ledger);
+    expect(runMigrations).toHaveBeenCalledWith(ledger);
+    expect(verifyData).toHaveBeenCalledWith(ledger);
+  });
+
+  it("interrompe in modo recuperabile se il worker o il backend non sono disponibili", () => {
+    for (const code of ["worker_failed", "opfs_unavailable", "indexeddb_unavailable"] as const) {
+      expect(classifyStartupError(new PersistenceError(code, code))).toMatchObject({
+        code: "NX-STORAGE-001",
+        kind: "recoverable",
+      });
+    }
+  });
+
+  it("ferma l'avvio se la verifica dei dati segnala un archivio corrotto", async () => {
+    const failure = new PersistenceError("corrupt_record", "corrupt");
+    const orchestrator = new StartupOrchestrator({
+      openLedger: vi.fn(async () => ledger),
+      verifyData: vi.fn(async () => Promise.reject(failure)),
+    });
+
+    await expect(orchestrator.run()).resolves.toMatchObject({
+      state: "BLOCKING_ERROR",
+      failure: { code: "NX-START-001", kind: "blocking", cause: failure },
+    });
+  });
+
   it("classifica errori non noti come bloccanti", () => {
     expect(classifyStartupError(new Error("unexpected"))).toMatchObject({
       code: "NX-START-001",

@@ -32,6 +32,33 @@ describe("selectStorage", () => {
       reason: "unsafe-state",
     });
   });
+
+  it("usa la preferenza valida solo quando non sono stati rilevati archivi", () => {
+    expect(
+      selectStorage([archive("opfs", "absent"), archive("indexeddb", "absent")], "indexeddb"),
+    ).toEqual({
+      kind: "open",
+      storageKind: "indexeddb",
+    });
+  });
+
+  it("ignora una preferenza non valida e sceglie OPFS disponibile", () => {
+    expect(
+      selectStorage(
+        [archive("opfs", "absent"), archive("indexeddb", "absent")],
+        "unsupported" as never,
+      ),
+    ).toEqual({ kind: "open", storageKind: "opfs" });
+  });
+
+  it("richiede recupero quando l'ispezione segnala corruzione", () => {
+    expect(
+      selectStorage([
+        { ...archive("opfs", "absent"), state: "corrupt" as const },
+        archive("indexeddb", "absent"),
+      ]),
+    ).toEqual({ kind: "guided-recovery", reason: "unsafe-state" });
+  });
 });
 
 describe("retryTransient", () => {
@@ -44,5 +71,26 @@ describe("retryTransient", () => {
     await expect(retryTransient(action, () => true, { sleep })).resolves.toBe("ready");
     expect(action).toHaveBeenCalledTimes(2);
     expect(sleep).toHaveBeenCalledWith(150, undefined);
+  });
+
+  it("propaga l'ultimo errore se tutti i retry falliscono", async () => {
+    const failure = new Error("temporary");
+    const action = vi.fn(async () => Promise.reject(failure));
+    await expect(
+      retryTransient(action, () => true, { maxAttempts: 2, sleep: async () => undefined }),
+    ).rejects.toBe(failure);
+    expect(action).toHaveBeenCalledTimes(2);
+  });
+
+  it("non ritenta quando la procedura viene annullata", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      retryTransient(
+        async () => "ready",
+        () => true,
+        { signal: controller.signal },
+      ),
+    ).rejects.toMatchObject({ name: "AbortError" });
   });
 });

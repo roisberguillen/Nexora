@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
+  preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica
+  di capability Worker, WASM e cross-origin.
+
 - Completato l’hardening della release: benchmark ripetibile da 1.000 a 100.000 movimenti,
   recovery drill di snapshot portabile, controlli di integrità dei backend, scansione dei segreti
   e report finale quality-gated su `main`.

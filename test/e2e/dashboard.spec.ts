@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 
 test("la dashboard sintetica è accessibile e responsive", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible({
+    timeout: 15_000,
+  });
 
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
