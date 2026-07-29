@@ -359,13 +359,13 @@
     },
     {
       "path": "apps/web/src/notifications/localNotifications.test.ts",
-      "size": 799,
-      "sha256": "37c7cefa94c6a19617719939fdc9ade00d1fbb10e7d299817aa9eb494d1df480"
+      "size": 2122,
+      "sha256": "5d8b59ac53b25067c74fa96bf28942870f0e94240015696b4c851a224c5ea221"
     },
     {
       "path": "apps/web/src/notifications/localNotifications.ts",
-      "size": 3783,
-      "sha256": "19df4c474a561e65ea1e583a9757c55c5ae13b1bc44e815f5f067b06be054856"
+      "size": 5139,
+      "sha256": "483faa4e9ada60ff914e6eff2e8bd9c95654338df2acefb91fa00c898cdb6e78"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
