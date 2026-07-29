@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 29360,
-      "sha256": "5645204e8fbe37c7460dad79b04ecba70fb9a77553393d9fabd90ba8a8e2e3fe"
+      "size": 29590,
+      "sha256": "e73fb794893307b260df5c004e1a3c179f1c31df7d34797eacce382b8bfdbca0"
     },
     {
       "path": "apps/web/src/backup/backupHistory.test.ts",
@@ -459,8 +459,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 11865,
-      "sha256": "7454e4459c0015cbca0e99cfb054f6ed140cab0172ad179507bc35d02230824d"
+      "size": 14558,
+      "sha256": "043f0600c191e0bbaf3657b10af426290c8cf3932bc14b604ba344898234ea58"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -519,8 +519,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 10302,
-      "sha256": "6d884d3cae6b5faca3e87cbfdd8e2a282e39b27b2f1924a2eb9f0bba017d47c0"
+      "size": 10774,
+      "sha256": "3fa985beca9b1207a28c34bbb915418cc671c36e9957729e85b40030757da2f6"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -644,8 +644,8 @@
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
-      "size": 3049,
-      "sha256": "2334fc3e9c9ba9cc51f606f12a37a50244648a4423d2e63fda4229906d6234a9"
+      "size": 3377,
+      "sha256": "7fc9499ecb6e73cea7cd1bb05bc8d97822f817be35743e269135d7ee15023724"
     },
     {
       "path": "docs/DATA_MODEL.md",
@@ -864,8 +864,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 82025,
-      "sha256": "f1374e9eda0c369fd2335384a9a327338bf82c046d14f6778a597c75826d7c63"
+      "size": 82630,
+      "sha256": "a854fa127b362448c1252d39440172c439459287c5f718fdf0b88edcbee07760"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -1034,8 +1034,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 83679,
-      "sha256": "16b0baa69902133a7feaa2ff0fb60a21618f53f206224a79649266ae0449f7c2"
+      "size": 83786,
+      "sha256": "aef4ddda0e5fb168626536e8201a5de824d60556bddeaab388c1937275a1a16e"
     },
     {
       "path": "packages/database/tsconfig.json",

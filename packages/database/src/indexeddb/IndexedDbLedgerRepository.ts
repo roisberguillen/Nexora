@@ -1115,7 +1115,14 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(
-          ["transactions", "transfers", "transaction_splits", "transaction_tags", "transaction_trash", "import_rows"],
+          [
+            "transactions",
+            "transfers",
+            "transaction_splits",
+            "transaction_tags",
+            "transaction_trash",
+            "import_rows",
+          ],
           "readwrite",
           async (transaction) => {
             const trash = transaction.objectStore("transaction_trash");
@@ -1123,26 +1130,55 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             if (entry === undefined)
               throw new DomainError("missing_reference", "Trashed transaction does not exist.");
             const deletionGroupId = (entry as TransactionTrashRecord).deletion_group_id;
-            const entries = (await requestResult<unknown[]>(trash.getAll())) as TransactionTrashRecord[];
-            const ids = entries.filter((item) => item.deletion_group_id === deletionGroupId).map((item) => item.transaction_id);
+            const entries = (await requestResult<unknown[]>(
+              trash.getAll(),
+            )) as TransactionTrashRecord[];
+            const ids = entries
+              .filter((item) => item.deletion_group_id === deletionGroupId)
+              .map((item) => item.transaction_id);
             const importRows = transaction.objectStore("import_rows");
             for (const rawRow of await requestResult<unknown[]>(importRows.getAll())) {
               const row = rawRow as ImportRowRecord;
               if (row.created_transaction_id !== null && ids.includes(row.created_transaction_id))
-                await requestResult(importRows.put({ ...row, created_transaction_id: null, deleted_transaction_id: row.created_transaction_id }));
+                await requestResult(
+                  importRows.put({
+                    ...row,
+                    created_transaction_id: null,
+                    deleted_transaction_id: row.created_transaction_id,
+                  }),
+                );
             }
             const transfers = transaction.objectStore("transfers");
             for (const rawTransfer of await requestResult<unknown[]>(transfers.getAll())) {
               const transfer = rawTransfer as StoredTransferRecord;
-              if (ids.includes(transfer.debit_transaction_id) || ids.includes(transfer.credit_transaction_id) || (transfer.fee_transaction_id !== null && ids.includes(transfer.fee_transaction_id)))
+              if (
+                ids.includes(transfer.debit_transaction_id) ||
+                ids.includes(transfer.credit_transaction_id) ||
+                (transfer.fee_transaction_id !== null && ids.includes(transfer.fee_transaction_id))
+              )
                 await requestResult(transfers.delete(transfer.id));
             }
             for (const transactionId of ids) {
               const tags = transaction.objectStore("transaction_tags").index("by_transaction_id");
-              for (const tag of await requestResult<unknown[]>(tags.getAll(IDBKeyRange.only(transactionId))))
-                await requestResult(transaction.objectStore("transaction_tags").delete([transactionId, (tag as { tag_id: string }).tag_id]));
-              for (const split of await requestResult<unknown[]>(transaction.objectStore("transaction_splits").index("by_transaction_id").getAll(IDBKeyRange.only(transactionId))))
-                await requestResult(transaction.objectStore("transaction_splits").delete((split as { id: string }).id));
+              for (const tag of await requestResult<unknown[]>(
+                tags.getAll(IDBKeyRange.only(transactionId)),
+              ))
+                await requestResult(
+                  transaction
+                    .objectStore("transaction_tags")
+                    .delete([transactionId, (tag as { tag_id: string }).tag_id]),
+                );
+              for (const split of await requestResult<unknown[]>(
+                transaction
+                  .objectStore("transaction_splits")
+                  .index("by_transaction_id")
+                  .getAll(IDBKeyRange.only(transactionId)),
+              ))
+                await requestResult(
+                  transaction
+                    .objectStore("transaction_splits")
+                    .delete((split as { id: string }).id),
+                );
               await requestResult(trash.delete(transactionId));
               await requestResult(transaction.objectStore("transactions").delete(transactionId));
             }

@@ -149,16 +149,49 @@ export function SettingsPage({
             )}
             {purgeMessage === null ? null : <p role="status">{purgeMessage}</p>}
             {purgeId === null ? null : (
-              <div aria-labelledby="purge-transaction-title" aria-modal="true" className="account-feedback" role="dialog">
+              <div
+                aria-labelledby="purge-transaction-title"
+                aria-modal="true"
+                className="account-feedback"
+                role="dialog"
+              >
                 <h2 id="purge-transaction-title">Eliminare definitivamente?</h2>
-                <p>Questa operazione non è annullabile. L&apos;audit dell&apos;importazione resta conservato.</p>
+                <p>
+                  Questa operazione non è annullabile. L&apos;audit dell&apos;importazione resta
+                  conservato.
+                </p>
                 <div className="form-actions">
-                  <button className="secondary-action" disabled={isPurging} onClick={() => setPurgeId(null)} type="button">Annulla</button>
-                  <button className="primary-action" disabled={isPurging} onClick={() => {
-                    if (onPurgeTransaction === undefined) return;
-                    setIsPurging(true); setPurgeMessage(null);
-                    void onPurgeTransaction(purgeId).then(() => { setPurgeId(null); setPurgeMessage("Movimento eliminato definitivamente."); }).catch(() => setPurgeMessage("Eliminazione non completata: i dati sono rimasti invariati.")).finally(() => setIsPurging(false));
-                  }} type="button">{isPurging ? "Eliminazione…" : "Elimina definitivamente"}</button>
+                  <button
+                    className="secondary-action"
+                    disabled={isPurging}
+                    onClick={() => setPurgeId(null)}
+                    type="button"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    className="primary-action"
+                    disabled={isPurging}
+                    onClick={() => {
+                      if (onPurgeTransaction === undefined) return;
+                      setIsPurging(true);
+                      setPurgeMessage(null);
+                      void onPurgeTransaction(purgeId)
+                        .then(() => {
+                          setPurgeId(null);
+                          setPurgeMessage("Movimento eliminato definitivamente.");
+                        })
+                        .catch(() =>
+                          setPurgeMessage(
+                            "Eliminazione non completata: i dati sono rimasti invariati.",
+                          ),
+                        )
+                        .finally(() => setIsPurging(false));
+                    }}
+                    type="button"
+                  >
+                    {isPurging ? "Eliminazione…" : "Elimina definitivamente"}
+                  </button>
                 </div>
               </div>
             )}

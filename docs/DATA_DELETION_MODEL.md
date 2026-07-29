@@ -10,6 +10,11 @@ I movimenti nel cestino non contribuiscono a saldi, report, budget, trend né no
 movimenti la strategia è soft-delete con data UTC e retention configurabile (30 giorni di default);
 la cancellazione definitiva è un'azione separata e auditabile.
 
+La purga elimina nello stesso confine atomico tutti gli split, tag e le eventuali gambe del
+trasferimento. Le `ImportRow` non vengono eliminate: spostano il riferimento dalla transazione
+attiva a un identificatore storico non referenziale, così l'audit resta consultabile senza
+impedire la cancellazione fisica del movimento.
+
 ## Matrice delle dipendenze
 
 | Entità | Riferimenti in ingresso | Eliminabile se inutilizzata | Eliminabile se usata | Archiviabile | Riassegnabile | Strategia |

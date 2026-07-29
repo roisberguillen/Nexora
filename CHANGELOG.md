@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Aggiunto il cestino persistente dei movimenti: trasferimenti trattati come gruppo atomico,
+  ripristino esplicito ed esclusione da saldi, budget e analisi.
+- Aggiunta la cancellazione definitiva protetta dal cestino, con rimozione atomica di split e tag
+  e conservazione dell'audit tecnico delle righe d'importazione.
+- Introdotta la migrazione additiva SQLite/IndexedDB v13 per il riferimento storico delle righe
+  importate a un movimento eliminato definitivamente.
+
 ## [0.5.0-rc.1] - 2026-07-29
 
 - Introdotto il backup logico `.nexora-backup` cifrato e portabile tra SQLite/OPFS e IndexedDB,

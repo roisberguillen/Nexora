@@ -1276,13 +1276,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
           const rows = await this.database.query<{ readonly deletion_group_id: string }>(
-            "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?", [id],
+            "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?",
+            [id],
           );
           const entry = rows[0];
           if (entry === undefined)
             throw new DomainError("missing_reference", "Trashed transaction does not exist.");
           const trashed = await this.database.query<{ readonly transaction_id: string }>(
-            "SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?", [entry.deletion_group_id],
+            "SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?",
+            [entry.deletion_group_id],
           );
           for (const { transaction_id } of trashed) {
             await this.database.run(
@@ -1292,14 +1294,20 @@ export class SqliteLedgerRepository implements LedgerRepository {
           }
           const ids = trashed.map(({ transaction_id }) => transaction_id);
           for (const transactionId of ids) {
-            await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [transactionId]);
-            await this.database.run("DELETE FROM transaction_splits WHERE transaction_id = ?", [transactionId]);
+            await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [
+              transactionId,
+            ]);
+            await this.database.run("DELETE FROM transaction_splits WHERE transaction_id = ?", [
+              transactionId,
+            ]);
           }
           await this.database.run(
             "DELETE FROM transfers WHERE debit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR credit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR fee_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?)",
             [entry.deletion_group_id, entry.deletion_group_id, entry.deletion_group_id],
           );
-          await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [entry.deletion_group_id]);
+          await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [
+            entry.deletion_group_id,
+          ]);
           for (const transactionId of ids)
             await this.database.run("DELETE FROM transactions WHERE id = ?", [transactionId]);
         }),
