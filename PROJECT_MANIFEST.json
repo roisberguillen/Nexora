@@ -508,6 +508,16 @@
       "sha256": "3709ba41a9122a0d122026a9aa2b2e5ba2a2ff5c41b1d7f9f3f197f52dfb915b"
     },
     {
+      "path": "apps/web/src/startup/StartupDiagnostics.test.ts",
+      "size": 1101,
+      "sha256": "e3def67fa27cc82098daaedef85bcb786149877f59a8908a195d1c980b3a8903"
+    },
+    {
+      "path": "apps/web/src/startup/StartupDiagnostics.ts",
+      "size": 2757,
+      "sha256": "8593696b70430a966255a08feeb07bb1dd60a0b2674485634ccc979183700d4b"
+    },
+    {
       "path": "apps/web/src/startup/StartupLoadingScreen.tsx",
       "size": 1158,
       "sha256": "59488293fe62df33f82b8dcf1d39af02fd2dccb8512b5f8b5a37c55f78047cb8"
