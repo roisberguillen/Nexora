@@ -563,6 +563,11 @@
       "sha256": "1dd5be16914f715737031b2502d36ccf62b625163d298c9bd81320c47a0c4a77"
     },
     {
+      "path": "apps/web/src/startup/StartupRecoveryScreen.test.tsx",
+      "size": 1058,
+      "sha256": "86c9fa8c25505982d15d1cd35e97c90e0f4c6e687017fa2ae2c66cce4d36dc77"
+    },
+    {
       "path": "apps/web/src/startup/StartupRecoveryScreen.tsx",
       "size": 5021,
       "sha256": "dc7827e7fd3625b5be94feef59584303dcec3edab411a56d3c3d72bb92d2aac6"
