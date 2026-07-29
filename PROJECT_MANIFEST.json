@@ -824,8 +824,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 62364,
-      "sha256": "29d5c016baa360193b75579a0502ddf1cec5a1daf9298c2392c907e96b193c72"
+      "size": 64717,
+      "sha256": "6650a6e3b3bccc56dffa7de94640644b2585cf83e2dba1bc53b0056fb5d8e903"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",

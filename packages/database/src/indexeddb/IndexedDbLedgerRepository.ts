@@ -47,6 +47,7 @@ import {
   tagToRecord,
 } from "../records/LedgerRecords";
 import { PersistenceError } from "../sqlite/PersistenceError";
+import type { ValidatedPortableLedgerSnapshot } from "../backup/PortableLedgerSnapshot";
 
 type EntityStore =
   | "accounts"
@@ -99,6 +100,55 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         ),
       ),
     );
+  }
+
+  public replacePortableSnapshot(snapshot: ValidatedPortableLedgerSnapshot): Promise<void> {
+    return this.runAtomically(async (transaction) => {
+      const stores: readonly EntityStore[] = [
+        "accounts",
+        "categories",
+        "transactions",
+        "transfers",
+        "transaction_splits",
+        "tags",
+        "transaction_tags",
+        "import_batches",
+        "import_rows",
+        "recurring_rules",
+        "allocation_plans",
+        "budgets",
+        "loans",
+        "investment_positions",
+        "monthly_journals",
+      ];
+      await Promise.all(stores.map((name) => requestResult(transaction.objectStore(name).clear())));
+      const putAll = async (store: EntityStore, values: readonly unknown[]) => {
+        for (const value of values) await requestResult(transaction.objectStore(store).put(value));
+      };
+      await putAll("categories", snapshot.categories.map(categoryToRecord));
+      await putAll("accounts", snapshot.accounts.map(accountToRecord));
+      await putAll("tags", snapshot.tags.map(tagToRecord));
+      await putAll("import_batches", snapshot.importBatches.map(importBatchToRecord));
+      await putAll("import_rows", snapshot.importRows.map(importRowToRecord));
+      await putAll("transactions", snapshot.transactions.map(transactionToRecord));
+      await putAll("transaction_splits", snapshot.splits.map(transactionSplitToRecord));
+      await putAll("transfers", snapshot.transfers.map(transferToRecord));
+      await putAll("recurring_rules", snapshot.recurringRules.map(recurringRuleToRecord));
+      await putAll("allocation_plans", snapshot.allocationPlans.map(allocationPlanToRecord));
+      await putAll("budgets", snapshot.budgets.map(budgetToRecord));
+      await putAll("loans", snapshot.loans.map(loanToRecord));
+      await putAll(
+        "investment_positions",
+        snapshot.investmentPositions.map(investmentPositionToRecord),
+      );
+      await putAll("monthly_journals", snapshot.monthlyJournals.map(monthlyJournalToRecord));
+      await putAll(
+        "transaction_tags",
+        [...snapshot.transactionTagIds].flatMap(([transactionId, tagIds]) =>
+          tagIds.map((tagId) => ({ transaction_id: transactionId, tag_id: tagId })),
+        ),
+      );
+    });
   }
 
   public saveAccount(account: Account): Promise<void> {
