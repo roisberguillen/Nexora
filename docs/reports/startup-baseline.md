@@ -27,6 +27,8 @@ scegliere IndexedDB per un’installazione nuova.
 
 La preferenza del backend viene inoltre salvata solo dopo che l'orchestratore ha
 concluso tutte le verifiche con stato `READY`, non durante l'apertura preliminare.
+Un valore locale non riconosciuto viene rimosso in modo controllato e resta quindi
+una semplice preferenza non autorevole, mai una causa di blocco dell'avvio.
 
 ## Stato di avvio deterministico
 

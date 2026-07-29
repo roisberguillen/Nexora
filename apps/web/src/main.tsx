@@ -13,6 +13,7 @@ import { StartupOrchestrator } from "./startup/StartupOrchestrator";
 import { createStartupBootstrap } from "./startup/StartupBootstrap";
 import { StorageDiscovery } from "./startup/StorageDiscovery";
 import { selectStorage } from "./startup/StorageSelection";
+import { readStoragePreferenceHint } from "./startup/storagePreference";
 
 const rootElement = document.querySelector("#root");
 
@@ -49,15 +50,6 @@ const ledgerPromise = startupBootstrap.ledgerPromise.then((ledger) => {
   persistPwaLedgerSelection(ledger.storageKind);
   return ledger;
 });
-
-function readStoragePreferenceHint(): "opfs" | "indexeddb" | undefined {
-  try {
-    const value = globalThis.localStorage?.getItem("nexora.ledger-storage.v1");
-    return value === "opfs" || value === "indexeddb" ? value : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 window.addEventListener(
   "pagehide",
