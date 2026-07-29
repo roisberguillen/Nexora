@@ -5,7 +5,7 @@ export const BACKUP_FILE_EXTENSION = ".nexora-backup";
 export const PBKDF2_ITERATIONS = 600_000;
 
 export interface BackupManifestFile {
-  readonly path: "database.sqlite3";
+  readonly path: "database.sqlite3" | "ledger.json";
   readonly sha256: string;
   readonly size: number;
 }
@@ -31,6 +31,19 @@ export interface DecryptedSqliteBackup {
   readonly manifest: BackupManifest;
   readonly databaseBytes: Uint8Array;
 }
+export interface CreateEncryptedPayloadBackupOptions {
+  readonly payloadBytes: Uint8Array;
+  readonly path: BackupManifestFile["path"];
+  readonly schemaVersion: number;
+  readonly createdAt: string;
+  readonly passphrase: string;
+  readonly appVersion?: string;
+  readonly cryptoProvider?: Crypto;
+}
+export interface DecryptedBackupPayload {
+  readonly manifest: BackupManifest;
+  readonly payloadBytes: Uint8Array;
+}
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder("utf-8", { fatal: true });
@@ -47,15 +60,25 @@ const sha256Pattern = /^[a-f0-9]{64}$/;
 export async function createEncryptedSqliteBackup(
   options: CreateEncryptedSqliteBackupOptions,
 ): Promise<Uint8Array> {
+  return createEncryptedPayloadBackup({
+    ...options,
+    payloadBytes: options.databaseBytes,
+    path: "database.sqlite3",
+  });
+}
+
+export async function createEncryptedPayloadBackup(
+  options: CreateEncryptedPayloadBackupOptions,
+): Promise<Uint8Array> {
   validatePassphrase(options.passphrase);
-  validateDatabaseBytes(options.databaseBytes);
+  validatePayloadBytes(options.payloadBytes, options.path);
   validateSchemaVersion(options.schemaVersion);
   validateTimestamp(options.createdAt);
   validateAppVersion(options.appVersion);
 
   const cryptoProvider = options.cryptoProvider ?? globalThis.crypto;
   requireWebCrypto(cryptoProvider);
-  const databaseBytes = options.databaseBytes.slice();
+  const databaseBytes = options.payloadBytes.slice();
   const databaseChecksum = await sha256Hex(databaseBytes, cryptoProvider);
   const manifest: BackupManifest = Object.freeze({
     formatVersion: BACKUP_FORMAT_VERSION,
@@ -64,7 +87,7 @@ export async function createEncryptedSqliteBackup(
     ...(options.appVersion === undefined ? {} : { appVersion: options.appVersion }),
     files: Object.freeze([
       Object.freeze({
-        path: "database.sqlite3",
+        path: options.path,
         sha256: databaseChecksum,
         size: databaseBytes.byteLength,
       }),
@@ -97,6 +120,17 @@ export async function decryptSqliteBackup(
   passphrase: string,
   cryptoProvider: Crypto = globalThis.crypto,
 ): Promise<DecryptedSqliteBackup> {
+  const decrypted = await decryptEncryptedPayloadBackup(archive, passphrase, cryptoProvider);
+  if (decrypted.manifest.files[0].path !== "database.sqlite3")
+    throw new BackupError("unsupported_backup", "The backup does not contain a SQLite database.");
+  return { manifest: decrypted.manifest, databaseBytes: decrypted.payloadBytes };
+}
+
+export async function decryptEncryptedPayloadBackup(
+  archive: Uint8Array,
+  passphrase: string,
+  cryptoProvider: Crypto = globalThis.crypto,
+): Promise<DecryptedBackupPayload> {
   validatePassphrase(passphrase);
   requireWebCrypto(cryptoProvider);
 
@@ -121,7 +155,7 @@ export async function decryptSqliteBackup(
         "The backup database checksum does not match its manifest.",
       );
     }
-    return decoded;
+    return { manifest: decoded.manifest, payloadBytes: decoded.databaseBytes };
   } catch (cause) {
     if (cause instanceof BackupError) {
       throw cause;
@@ -225,7 +259,7 @@ function decodePlaintext(plaintext: Uint8Array): DecryptedSqliteBackup {
   const manifestJson = textDecoder.decode(plaintext.slice(4, 4 + manifestLength));
   const manifest = parseManifest(JSON.parse(manifestJson) as unknown);
   const databaseBytes = plaintext.slice(4 + manifestLength);
-  validateDatabaseBytes(databaseBytes);
+  validatePayloadBytes(databaseBytes, manifest.files[0].path);
   if (manifest.files[0].size !== databaseBytes.byteLength) {
     throw new BackupError(
       "invalid_archive",
@@ -260,11 +294,11 @@ function parseManifest(value: unknown): BackupManifest {
   }
   const fileCandidate = file as Record<string, unknown>;
   if (
-    fileCandidate.path !== "database.sqlite3" ||
+    (fileCandidate.path !== "database.sqlite3" && fileCandidate.path !== "ledger.json") ||
     typeof fileCandidate.sha256 !== "string" ||
     !sha256Pattern.test(fileCandidate.sha256) ||
     !Number.isInteger(fileCandidate.size) ||
-    (fileCandidate.size as number) < 100 ||
+    (fileCandidate.size as number) < 1 ||
     (fileCandidate.size as number) > maxDatabaseBytes
   ) {
     throw new BackupError("invalid_archive", "The backup database manifest entry is invalid.");
@@ -277,7 +311,7 @@ function parseManifest(value: unknown): BackupManifest {
     ...(candidate.appVersion === undefined ? {} : { appVersion: candidate.appVersion as string }),
     files: Object.freeze([
       Object.freeze({
-        path: "database.sqlite3" as const,
+        path: fileCandidate.path as BackupManifestFile["path"],
         sha256: fileCandidate.sha256,
         size: fileCandidate.size as number,
       }),
@@ -328,6 +362,15 @@ function validateDatabaseBytes(bytes: Uint8Array): void {
   ) {
     throw new BackupError("invalid_archive", "The SQLite database payload size is invalid.");
   }
+}
+
+function validatePayloadBytes(bytes: Uint8Array, path: BackupManifestFile["path"]): void {
+  if (path === "database.sqlite3") {
+    validateDatabaseBytes(bytes);
+    return;
+  }
+  if (!(bytes instanceof Uint8Array) || bytes.byteLength < 1 || bytes.byteLength > maxDatabaseBytes)
+    throw new BackupError("invalid_archive", "The portable ledger payload size is invalid.");
 }
 
 function validateSchemaVersion(value: unknown): asserts value is number {

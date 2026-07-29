@@ -1,9 +1,18 @@
 export { InMemoryLedgerRepository } from "./in-memory/InMemoryLedgerRepository";
 export { BackupError, type BackupErrorCode } from "./backup/BackupError";
 export {
+  capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  PORTABLE_LEDGER_SNAPSHOT_VERSION,
+  type PortableLedgerSnapshot,
+} from "./backup/PortableLedgerSnapshot";
+export {
   BACKUP_FILE_EXTENSION,
   BACKUP_FORMAT_VERSION,
   createEncryptedSqliteBackup,
+  createEncryptedPayloadBackup,
+  decryptEncryptedPayloadBackup,
   decryptSqliteBackup,
   PBKDF2_ITERATIONS,
   sha256Hex,
@@ -11,6 +20,8 @@ export {
   type BackupManifestFile,
   type CreateEncryptedSqliteBackupOptions,
   type DecryptedSqliteBackup,
+  type CreateEncryptedPayloadBackupOptions,
+  type DecryptedBackupPayload,
 } from "./backup/EncryptedSqliteBackup";
 export {
   LocalSqliteBackupService,

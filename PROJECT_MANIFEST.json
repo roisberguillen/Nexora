@@ -764,8 +764,8 @@
     },
     {
       "path": "packages/database/src/backup/EncryptedSqliteBackup.ts",
-      "size": 12297,
-      "sha256": "516dfc70cf554bc8127b9d86b4da6d3af0ff46e583fcf06a8fa097a92fe8d980"
+      "size": 14041,
+      "sha256": "5ee02f7ca6032ee60370894b32a51f8dc79832b45a6076658d69c800e5895c37"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
@@ -783,14 +783,24 @@
       "sha256": "af8dcf6dd0f8a0de679bbb81868a7bd822c04b3eb5fd78432e4b485864ac38a9"
     },
     {
+      "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
+      "size": 1109,
+      "sha256": "d8c429b0187ade164d612161acc73c3c89f4c0a6581c3661300f6c9ec5dc5404"
+    },
+    {
+      "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
+      "size": 3648,
+      "sha256": "08ba6275b5d87b7871644b5cfbc8aaaecd5b404733fddb327fc51fd1ae8ff441"
+    },
+    {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
       "size": 4502,
       "sha256": "936acc28d59c06576180f6e56194cee2091eab4141d31eef477726c2b22d1884"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 5322,
-      "sha256": "c0e91e2c16924221c4aa92827be828fd62102f3875f462541ba74fea4d5959a8"
+      "size": 6534,
+      "sha256": "ce65b48c39073e2dbef253f63e248d1739a254fba30057bf8fdb730a32c8480b"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
@@ -804,8 +814,8 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 3723,
-      "sha256": "93414f472dfe129ef2ea77dfa9ab8cfe783948df60a6d136ed5b220fe7fb4a89"
+      "size": 4078,
+      "sha256": "160be8e7c6217e8e8feb3060a0e867206eb4a7b8012c2401f7ac2a4f26f8721d"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",

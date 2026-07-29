@@ -16,6 +16,11 @@ import {
   LocalSqliteBackupService,
   type CreatedLocalBackup,
 } from "../backup/LocalSqliteBackupService";
+import { createEncryptedPayloadBackup, sha256Hex } from "../backup/EncryptedSqliteBackup";
+import {
+  capturePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+} from "../backup/PortableLedgerSnapshot";
 import {
   FileSystemDirectoryBackupStore,
   type PhysicalBackupStore,
@@ -165,6 +170,35 @@ function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {
     repository: ledger.repository,
     schemaVersion: ledger.schemaVersion,
     storageKind: "indexeddb",
+    createEncryptedBackupArchive: async ({ passphrase }) => {
+      const payload = encodePortableLedgerSnapshot(
+        await capturePortableLedgerSnapshot(ledger.repository),
+      );
+      const archive = await createEncryptedPayloadBackup({
+        payloadBytes: payload,
+        path: "ledger.json",
+        schemaVersion: ledger.schemaVersion,
+        createdAt: new Date().toISOString(),
+        passphrase,
+      });
+      const checksumSha256 = await sha256Hex(archive);
+      const id = `nexora-portable-${crypto.randomUUID()}${".nexora-backup"}`;
+      return {
+        id,
+        archive,
+        checksumSha256,
+        createdAt: new Date().toISOString(),
+        size: archive.byteLength,
+        manifest: {
+          formatVersion: 1,
+          schemaVersion: ledger.schemaVersion,
+          createdAt: new Date().toISOString(),
+          files: [
+            { path: "ledger.json", sha256: await sha256Hex(payload), size: payload.byteLength },
+          ],
+        },
+      };
+    },
     close: () => ledger.close(),
   };
 }
