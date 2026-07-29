@@ -6,15 +6,15 @@ con codice, test, quality gate, commit e push.
 
 ## R0 — Riallineamento del progetto
 
-- [ ] Documentazione, versioning, toolchain e CI coerenti;
-- [ ] `pnpm doctor` verifica ambiente e configurazione non sensibile;
-- [ ] roadmap pre-release archiviata.
+- [x] Documentazione, versioning, toolchain e CI coerenti;
+- [x] `pnpm doctor` verifica ambiente e configurazione non sensibile;
+- [x] roadmap pre-release archiviata.
 
 ## R1 — Protezione dei dati locali e trasparenza privacy
 
-- [ ] Stato di cifratura del ledger documentato senza affermazioni fuorvianti;
-- [ ] pagina Privacy e sicurezza, redazione log e blocco applicazione opzionale;
-- [ ] test sicurezza, timeout e accessibilità.
+- [x] Stato di cifratura del ledger documentato senza affermazioni fuorvianti;
+- [x] pagina Privacy e sicurezza, redazione log e blocco applicazione opzionale;
+- [x] test sicurezza, timeout e accessibilità.
 
 ## R2 — Backup equivalente
 

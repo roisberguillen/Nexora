@@ -76,6 +76,8 @@ import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
 import { NotificationsPage } from "./notifications/NotificationsPage";
 import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
+import { AppLockScreen } from "./security/AppLockScreen";
+import { getAppLockTimeoutMilliseconds, readAppLock, type AppLockConfig } from "./security/appLock";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -119,6 +121,30 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   });
   const [isSeeding, setIsSeeding] = useState(false);
   const [hasSeedFeedback, setHasSeedFeedback] = useState(false);
+  const [appLockConfig, setAppLockConfig] = useState<AppLockConfig | undefined>(() =>
+    readAppLock(),
+  );
+  const [isAppLocked, setIsAppLocked] = useState(() => readAppLock() !== undefined);
+
+  useEffect(() => {
+    if (!appLockConfig || isAppLocked) return;
+    let timeoutId: number | undefined;
+    const refreshTimeout = () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(
+        () => setIsAppLocked(true),
+        getAppLockTimeoutMilliseconds(appLockConfig),
+      );
+    };
+    window.addEventListener("pointerdown", refreshTimeout);
+    window.addEventListener("keydown", refreshTimeout);
+    refreshTimeout();
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      window.removeEventListener("pointerdown", refreshTimeout);
+      window.removeEventListener("keydown", refreshTimeout);
+    };
+  }, [appLockConfig, isAppLocked]);
 
   useEffect(() => {
     let isActive = true;
@@ -371,124 +397,142 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         });
       }}
     >
-      <AppShell
-        activeRoute={route}
-        quickActions={quickActions}
-        searchResults={ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []}
-      >
-        {ledgerState.status === "ready" ? (
-          route === "accounts" ? (
-            <AccountsPage
-              model={ledgerState.accounts}
-              onCreate={createAccount}
-              onSetArchived={setAccountArchived}
-              onUpdate={updateAccount}
-            />
-          ) : route === "transactions" || route === "new-transaction" ? (
-            <TransactionsPage
-              initialEditorOpen={route === "new-transaction"}
-              model={ledgerState.transactions}
-              standaloneEditor={route === "new-transaction"}
-              tags={ledgerState.tags}
-              onCancel={cancelMovement}
-              onCreateManual={createManualMovement}
-              onCreateTransfer={createTransferMovement}
-              onExecuteSalaryAllocations={executeAllocations}
-            />
-          ) : route === "categories" ? (
-            <CategoriesPage
-              categories={ledgerState.categories}
-              onCreate={createCategory}
-              onUpdate={updateCategory}
-            />
-          ) : route === "tags" ? (
-            <TagsPage tags={ledgerState.tags} onCreate={createTag} onUpdate={updateTag} />
-          ) : route === "imports" ? (
-            <Suspense
-              fallback={
-                <section aria-live="polite" className="ledger-state-card is-loading" role="status">
-                  Preparazione dell’anteprima XLSX…
-                </section>
-              }
-            >
-              <ImportsPage
+      {appLockConfig && isAppLocked ? (
+        <AppLockScreen config={appLockConfig} onUnlock={() => setIsAppLocked(false)} />
+      ) : (
+        <AppShell
+          activeRoute={route}
+          quickActions={quickActions}
+          searchResults={
+            ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []
+          }
+        >
+          {ledgerState.status === "ready" ? (
+            route === "accounts" ? (
+              <AccountsPage
+                model={ledgerState.accounts}
+                onCreate={createAccount}
+                onSetArchived={setAccountArchived}
+                onUpdate={updateAccount}
+              />
+            ) : route === "transactions" || route === "new-transaction" ? (
+              <TransactionsPage
+                initialEditorOpen={route === "new-transaction"}
+                model={ledgerState.transactions}
+                standaloneEditor={route === "new-transaction"}
+                tags={ledgerState.tags}
+                onCancel={cancelMovement}
+                onCreateManual={createManualMovement}
+                onCreateTransfer={createTransferMovement}
+                onExecuteSalaryAllocations={executeAllocations}
+              />
+            ) : route === "categories" ? (
+              <CategoriesPage
+                categories={ledgerState.categories}
+                onCreate={createCategory}
+                onUpdate={updateCategory}
+              />
+            ) : route === "tags" ? (
+              <TagsPage tags={ledgerState.tags} onCreate={createTag} onUpdate={updateTag} />
+            ) : route === "imports" ? (
+              <Suspense
+                fallback={
+                  <section
+                    aria-live="polite"
+                    className="ledger-state-card is-loading"
+                    role="status"
+                  >
+                    Preparazione dell’anteprima XLSX…
+                  </section>
+                }
+              >
+                <ImportsPage
+                  accounts={ledgerState.rawAccounts}
+                  categories={ledgerState.categories}
+                  transactions={ledgerState.rawTransactions}
+                  onCommit={commitImport}
+                  onUndo={undoImport}
+                  batches={ledgerState.importBatches}
+                />
+              </Suspense>
+            ) : route === "budgets" ? (
+              <BudgetsPage
+                budgets={ledgerState.budgets}
+                categories={ledgerState.categories}
+                onCreate={createMonthlyBudget}
+                transactions={ledgerState.rawTransactions}
+              />
+            ) : route === "loans" ? (
+              <LoansPage
+                accounts={ledgerState.rawAccounts}
+                loans={ledgerState.loans}
+                onCreate={createLoanPosition}
+              />
+            ) : route === "investments" ? (
+              <InvestmentsPage
+                accounts={ledgerState.rawAccounts}
+                onCreate={createInvestment}
+                positions={ledgerState.investmentPositions}
+              />
+            ) : route === "recurring" ? (
+              <RecurringPage
+                accounts={ledgerState.rawAccounts}
+                allocationPlans={ledgerState.allocationPlans}
+                categories={ledgerState.categories}
+                onCreateAllocation={createAllocation}
+                onExecuteAllocations={executeAllocations}
+                rules={ledgerState.recurringRules}
+                onCreate={createRecurring}
+                onUpdate={updateRecurring}
+              />
+            ) : route === "exports" ? (
+              <ExportsPage
                 accounts={ledgerState.rawAccounts}
                 categories={ledgerState.categories}
                 transactions={ledgerState.rawTransactions}
-                onCommit={commitImport}
-                onUndo={undoImport}
-                batches={ledgerState.importBatches}
               />
-            </Suspense>
-          ) : route === "budgets" ? (
-            <BudgetsPage
-              budgets={ledgerState.budgets}
-              categories={ledgerState.categories}
-              onCreate={createMonthlyBudget}
-              transactions={ledgerState.rawTransactions}
-            />
-          ) : route === "loans" ? (
-            <LoansPage
-              accounts={ledgerState.rawAccounts}
-              loans={ledgerState.loans}
-              onCreate={createLoanPosition}
-            />
-          ) : route === "investments" ? (
-            <InvestmentsPage
-              accounts={ledgerState.rawAccounts}
-              onCreate={createInvestment}
-              positions={ledgerState.investmentPositions}
-            />
-          ) : route === "recurring" ? (
-            <RecurringPage
-              accounts={ledgerState.rawAccounts}
-              allocationPlans={ledgerState.allocationPlans}
-              categories={ledgerState.categories}
-              onCreateAllocation={createAllocation}
-              onExecuteAllocations={executeAllocations}
-              rules={ledgerState.recurringRules}
-              onCreate={createRecurring}
-              onUpdate={updateRecurring}
-            />
-          ) : route === "exports" ? (
-            <ExportsPage
-              accounts={ledgerState.rawAccounts}
-              categories={ledgerState.categories}
-              transactions={ledgerState.rawTransactions}
-            />
-          ) : route === "backup" ? (
-            <BackupPage ledger={ledgerState.ledger} />
-          ) : route === "journal" ? (
-            <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
-          ) : route === "analytics" ? (
-            <AnalyticsPage transactions={ledgerState.rawTransactions} />
-          ) : route === "notifications" ? (
-            <NotificationsPage
-              budgets={ledgerState.budgets}
-              loans={ledgerState.loans}
-              recurringRules={ledgerState.recurringRules}
-              transactions={ledgerState.rawTransactions}
-            />
-          ) : route === "profile" ? (
-            <ProfilePage ledger={ledgerState.ledger} />
-          ) : route === "settings" ? (
-            <SettingsPage />
-          ) : route === "privacy-security" ? (
-            <PrivacySecurityPage ledger={ledgerState.ledger} />
+            ) : route === "backup" ? (
+              <BackupPage ledger={ledgerState.ledger} />
+            ) : route === "journal" ? (
+              <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
+            ) : route === "analytics" ? (
+              <AnalyticsPage transactions={ledgerState.rawTransactions} />
+            ) : route === "notifications" ? (
+              <NotificationsPage
+                budgets={ledgerState.budgets}
+                loans={ledgerState.loans}
+                recurringRules={ledgerState.recurringRules}
+                transactions={ledgerState.rawTransactions}
+              />
+            ) : route === "profile" ? (
+              <ProfilePage ledger={ledgerState.ledger} />
+            ) : route === "settings" ? (
+              <SettingsPage />
+            ) : route === "privacy-security" ? (
+              <PrivacySecurityPage
+                ledger={ledgerState.ledger}
+                lockConfig={appLockConfig}
+                onLockConfigChanged={(config) => {
+                  setAppLockConfig(config);
+                  setIsAppLocked(false);
+                }}
+                onManualLock={() => setIsAppLocked(true)}
+              />
+            ) : (
+              <Dashboard
+                hasSeedFeedback={hasSeedFeedback}
+                isSeeding={isSeeding}
+                model={ledgerState.dashboard}
+                onAddDemoData={() => void addDemoData()}
+                schemaVersion={ledgerState.ledger.schemaVersion}
+                storageKind={ledgerState.ledger.storageKind}
+              />
+            )
           ) : (
-            <Dashboard
-              hasSeedFeedback={hasSeedFeedback}
-              isSeeding={isSeeding}
-              model={ledgerState.dashboard}
-              onAddDemoData={() => void addDemoData()}
-              schemaVersion={ledgerState.ledger.schemaVersion}
-              storageKind={ledgerState.ledger.storageKind}
-            />
-          )
-        ) : (
-          <PersistenceState state={ledgerState} />
-        )}
-      </AppShell>
+            <PersistenceState state={ledgerState} />
+          )}
+        </AppShell>
+      )}
     </ErrorBoundary>
   );
 }

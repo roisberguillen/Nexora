@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { classifyErrorName, createSafeLogger } from "./logging";
+import { classifyErrorName, createSafeLogger, redactSensitiveText } from "./logging";
 
 describe("safe logger", () => {
   it("records only the approved structured metadata", () => {
@@ -32,5 +32,16 @@ describe("safe logger", () => {
 
     expect(classifyErrorName(customError)).toBe("UnknownError");
     expect(classifyErrorName("failure")).toBe("UnknownError");
+  });
+});
+
+describe("sensitive text redaction", () => {
+  it("removes common OAuth, passphrase and IBAN values before diagnostic use", () => {
+    const output = redactSensitiveText(
+      "Bearer token-value access_token=oauth-value passphrase=hidden IT60X0542811101000000123456",
+    );
+    expect(output).toBe(
+      "Bearer [REDACTED] access_token=[REDACTED] passphrase=[REDACTED] [REDACTED_IBAN]",
+    );
   });
 });

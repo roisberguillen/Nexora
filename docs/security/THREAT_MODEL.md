@@ -13,7 +13,9 @@ Database finanziario, allegati, backup, token cloud, configurazioni e audit log.
 - esposizione dati nei log.
 
 ## Contromisure
-- blocco app opzionale e backup AES-GCM cifrati prima della scrittura;
+- blocco app opzionale con verificatore PBKDF2 e timeout di inattività; il blocco protegge la
+  sessione, ma non cifra il ledger conservato dal browser;
+- backup AES-GCM cifrati prima della scrittura;
 - manifest autenticato, checksum SHA-256 e versionamento;
 - validazione del restore in database temporaneo e rollback preventivo;
 - parser in ambiente limitato con limiti dimensione/righe;

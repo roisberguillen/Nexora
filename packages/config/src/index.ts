@@ -1,5 +1,6 @@
 export {
   createSafeLogger,
+  redactSensitiveText,
   classifyErrorName,
   type SafeErrorName,
   type SafeLogComponent,

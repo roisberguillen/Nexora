@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 25453,
-      "sha256": "5a31d084772f78b3bb34556a7e4f4030d0fdfbc174a528b81e4e29e602872a14"
+      "size": 27298,
+      "sha256": "86ef33bdc75d3b99bc97c968e871fd3e749a0e260fe6b9b28afb94bffee0bfef"
     },
     {
       "path": "apps/web/src/backup/BackupPage.test.tsx",
@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 24221,
-      "sha256": "e415928983e999ae45c49c3d6b4b5c1d2062f71897026870d23dfc96132a8115"
+      "size": 24557,
+      "sha256": "5b58a0ef6dcd2a42e61bf6a313913198243b39cc9a330fc957ff4257a8163c8f"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -398,9 +398,24 @@
       "sha256": "8e3551d976fbdb81a389aba661d871342ebcc574d5a4660738165d45cd1d21f4"
     },
     {
+      "path": "apps/web/src/security/appLock.test.ts",
+      "size": 1441,
+      "sha256": "4caa13bb83b11a266aba224ae95bbf23341ab947521d4ff33b8732da7de22f2d"
+    },
+    {
+      "path": "apps/web/src/security/appLock.ts",
+      "size": 3695,
+      "sha256": "52b9bcc92ee895e8755cd9a357bdbaf59f526307c38541ba4e72c6b4911ebddb"
+    },
+    {
+      "path": "apps/web/src/security/AppLockScreen.tsx",
+      "size": 1865,
+      "sha256": "0a5448b8d34b4997cc5e66f56fb87cc5eb6a60d92a8b1fd7d605b97979f9859a"
+    },
+    {
       "path": "apps/web/src/security/PrivacySecurityPage.tsx",
-      "size": 1804,
-      "sha256": "b984b4861a79bb51d2ebb73c45dc893c3e46158d9a7e8702cf31644ccde7ac32"
+      "size": 5295,
+      "sha256": "b418b68384a547cc26a2ec17634b0ebcf7f0c1a3c32eccdb305c61057ae88f62"
     },
     {
       "path": "apps/web/src/settings/preferences.test.ts",
@@ -474,8 +489,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 9280,
-      "sha256": "56d08b78e41c09e0d968bf3872ed97ac89dbb10043cd493183fa4bc6d74648f4"
+      "size": 9659,
+      "sha256": "cb5dac150b9ff9df6c9567baebb1be5a2e8e91942aca2a2ee0dfc05abcf0234f"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -640,12 +655,12 @@
     {
       "path": "docs/ROADMAP.md",
       "size": 1935,
-      "sha256": "5b7d73537dd02a7a037e0fdc17598cd504f1194a459ca2fdce7932d38cf2ab50"
+      "sha256": "8fee7b581a820727402ed6a46cf37a7941f83c62b9a5e4b93531d8a63d8736b4"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
-      "size": 810,
-      "sha256": "26120639a657ff8250b0950d4414e65444fffddfe9f3cc4b3821eff7de446802"
+      "size": 941,
+      "sha256": "cd5863ca2a8dd6a83c7d1e1f0d7fa7f267d22b4594f5d547f36870bf0541212d"
     },
     {
       "path": "docs/testing/QUALITY_GATES.md",
@@ -654,8 +669,8 @@
     },
     {
       "path": "docs/THREAT_MODEL.md",
-      "size": 1495,
-      "sha256": "78df02ac6746433b4179c5decae99975bd2e8d0472c9d948fb7532568a937f9c"
+      "size": 1690,
+      "sha256": "e761148db97036bee9f52d51475dad113b285f2ca712404e91cb7685e247e79d"
     },
     {
       "path": "docs/ux/MOBILE_UI_IMPLEMENTATION_PLAN.md",
@@ -704,18 +719,18 @@
     },
     {
       "path": "packages/config/src/index.ts",
-      "size": 328,
-      "sha256": "ba2f764aa8150382dbfec6b1039bf3381083efa28e86b6020e6a52bcd0e0c170"
+      "size": 351,
+      "sha256": "a30b9ea812f9ed90edf2b961946544e39a2f62e3077c986525e8d0e38f9ce868"
     },
     {
       "path": "packages/config/src/logging.test.ts",
-      "size": 1186,
-      "sha256": "2e31291443032c35d04a57e5eba7c12571ac651e01f0e9562f29a1684ea57e1e"
+      "size": 1617,
+      "sha256": "a0c9f68cdf4033db90357f475b018665597fdde307acd20857e39af5acd42209"
     },
     {
       "path": "packages/config/src/logging.ts",
-      "size": 2207,
-      "sha256": "6b329f5bdec9bf15b2dd9ee8a0b526fabccefe345606f6a161ea6377b78e7774"
+      "size": 2552,
+      "sha256": "df5eec7395540f60b90388d32f346f7d3acbf602e0b076e5456ce2bf3f9b1759"
     },
     {
       "path": "packages/config/src/settings.ts",

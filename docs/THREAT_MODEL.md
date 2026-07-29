@@ -15,6 +15,8 @@
   integrità SQLite e foreign key sono verificati prima di dichiarare riusciti backup e restore.
 - Google Drive riceve solo l’archivio già cifrato nel private `appDataFolder`; il token OAuth
   è mantenuto esclusivamente in memoria e viene revocato al disconnect.
+- Il blocco opzionale dell’app conserva soltanto un verificatore PBKDF2 e termina la sessione UI
+  per inattività; non sostituisce la protezione del profilo del sistema e non cifra il ledger.
 - File importati ed esportati sono elaborati localmente; CSV neutralizza le formule.
 - I trasferimenti non contribuiscono ai report income/expense; le scritture composte sono
   transazionali nei due adapter persistenti.

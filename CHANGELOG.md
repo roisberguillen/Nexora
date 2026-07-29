@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Aggiunto il blocco opzionale dell’app con verificatore PBKDF2, timeout di inattività e blocco
+  manuale. PIN e passphrase non vengono mai salvati; il ledger locale resta esplicitamente non
+  cifrato a riposo dal browser.
+- Rafforzata la comunicazione di sicurezza e aggiunta redazione per token, passphrase e IBAN nei
+  testi diagnostici prima di un eventuale uso nei log.
+
 - Avviata la vertical slice UI mobile: barra inferiore accessibile, menu rapido con cinque azioni,
   route della nuova registrazione e selettore unificato Entrata/Uscita/Trasferimento.
 - Aggiunti Profilo, Impostazioni locali e Centro notifiche derivato da budget, rate e ricorrenze;
