@@ -773,6 +773,11 @@
       "sha256": "166faea11dc26e72c7d6279ad8f736fa44e1a3ee7ca092cec7ac164bbe112b16"
     },
     {
+      "path": "docs/startup/STARTUP_BASELINE_AUDIT.md",
+      "size": 3173,
+      "sha256": "8f3019aebbca1aa499fbd17a28740dff2469774712c3740283dd4b7a41120967"
+    },
+    {
       "path": "docs/testing/QUALITY_GATES.md",
       "size": 3164,
       "sha256": "23acff0908f2c18ffd146a7f90e60f83a6c80d8c4fef68d03a33f15b5f1040ed"
