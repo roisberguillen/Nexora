@@ -21,6 +21,9 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
   const [isCloudBusy, setIsCloudBusy] = useState(false);
   const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
   const [history, setHistory] = useState(() => readBackupHistory());
+  const [cloudStatus, setCloudStatus] = useState<
+    "idle" | "authorizing" | "connected" | "expired" | "error"
+  >("idle");
   const cloudConfig = useMemo(readGoogleCloudConfig, []);
   const cloudAuth = useMemo(
     () => new GoogleIdentityAuth(cloudConfig.clientId),
@@ -144,13 +147,21 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     try {
       await loadGoogleIdentity();
       await cloudAuth.connect();
+      setCloudStatus(cloudAuth.getStatus());
       setCloudBackups(await cloudProvider.list());
       setMessage("Google Drive collegato: vengono gestiti solo backup cifrati privati.");
     } catch {
+      setCloudStatus(cloudAuth.getStatus());
       setMessage("Collegamento Google Drive non riuscito. Nessun dato locale è stato condiviso.");
     } finally {
       setIsCloudBusy(false);
     }
+  };
+  const disconnectCloud = async () => {
+    await cloudAuth.disconnect();
+    setCloudBackups([]);
+    setCloudStatus(cloudAuth.getStatus());
+    setMessage("Google Drive disconnesso: nessun token è conservato nel browser.");
   };
   const uploadCloud = async () => {
     if (ledger.createEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
@@ -182,6 +193,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       setCloudBackups(await cloudProvider.list());
       setMessage("Backup cifrato caricato su Google Drive dopo la verifica locale.");
     } catch {
+      setCloudStatus("expired");
       appendBackupHistory({
         operation: "cloud_upload",
         storageKind: ledger.storageKind,
@@ -213,6 +225,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       setHistory(readBackupHistory());
       window.location.reload();
     } catch {
+      setCloudStatus("expired");
       appendBackupHistory({
         operation: "cloud_download",
         storageKind: ledger.storageKind,
@@ -268,7 +281,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
                 {isCloudBusy ? "Connessione…" : "Collega Google Drive"}
               </button>
             ) : null}
-            {cloudAuth.getStatus() === "connected" ? (
+            {cloudStatus === "connected" ? (
               <button
                 className="secondary-action"
                 disabled={passphrase.trim().length < 12 || isCloudBusy}
@@ -276,6 +289,16 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
                 type="button"
               >
                 Carica backup cifrato su Drive
+              </button>
+            ) : null}
+            {cloudStatus === "connected" ? (
+              <button
+                className="secondary-action"
+                disabled={isCloudBusy}
+                onClick={() => void disconnectCloud()}
+                type="button"
+              >
+                Disconnetti Drive
               </button>
             ) : null}
           </div>
@@ -328,7 +351,19 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       <section aria-labelledby="cloud-backup-title" className="backup-cloud-unavailable">
         <h2 id="cloud-backup-title">Backup cloud</h2>
         {cloudConfig.enabled ? (
-          <p>Drive usa `appDataFolder` e riceve esclusivamente archivi già cifrati.</p>
+          <p>
+            Stato Drive:{" "}
+            {cloudStatus === "idle"
+              ? "non collegato"
+              : cloudStatus === "authorizing"
+                ? "collegamento in corso"
+                : cloudStatus === "connected"
+                  ? "collegato"
+                  : cloudStatus === "expired"
+                    ? "sessione scaduta"
+                    : "errore autorizzazione"}
+            . Drive usa `appDataFolder` e riceve esclusivamente archivi già cifrati.
+          </p>
         ) : (
           <p>Configura `VITE_GOOGLE_CLIENT_ID` e `VITE_GOOGLE_DRIVE_ENABLED=true` per attivarlo.</p>
         )}
