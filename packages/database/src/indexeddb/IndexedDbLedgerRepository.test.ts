@@ -180,6 +180,16 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listMonthlyJournals()).toEqual([updated]);
   });
 
+  it("elimina un diario mensile senza toccare il ledger", async () => {
+    const journal = MonthlyJournal.create({ id: "journal-delete", period: "2026-08" });
+    await ledger.repository.saveMonthlyJournal(journal);
+    await ledger.repository.deleteMonthlyJournal(journal.id);
+    await expect(ledger.repository.listMonthlyJournals()).resolves.toEqual([]);
+    await expect(ledger.repository.deleteMonthlyJournal(journal.id)).rejects.toMatchObject({
+      code: "missing_reference",
+    });
+  });
+
   it("crea atomicamente lo schema v1 con indici e metadati", async () => {
     expect(ledger.schemaVersion).toBe(INDEXED_DB_SCHEMA_VERSION);
     expect([...ledger.database.objectStoreNames]).toEqual([

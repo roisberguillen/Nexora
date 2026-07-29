@@ -37,16 +37,22 @@ export interface LedgerRepository {
   saveTag(tag: Tag): Promise<void>;
   saveRecurringRule(rule: RecurringRule): Promise<void>;
   updateRecurringRule(rule: RecurringRule): Promise<void>;
+  deleteRecurringRule(id: string): Promise<void>;
   saveAllocationPlan(plan: AllocationPlan): Promise<void>;
   updateAllocationPlan(plan: AllocationPlan): Promise<void>;
+  deleteAllocationPlan(id: string): Promise<void>;
   saveBudget(budget: Budget): Promise<void>;
   updateBudget(budget: Budget): Promise<void>;
+  deleteBudget(id: string): Promise<void>;
   saveLoan(loan: Loan): Promise<void>;
   updateLoan(loan: Loan): Promise<void>;
+  deleteLoan(id: string): Promise<void>;
   saveInvestmentPosition(position: InvestmentPosition): Promise<void>;
   updateInvestmentPosition(position: InvestmentPosition): Promise<void>;
+  deleteInvestmentPosition(id: string): Promise<void>;
   saveMonthlyJournal(journal: MonthlyJournal): Promise<void>;
   updateMonthlyJournal(journal: MonthlyJournal): Promise<void>;
+  deleteMonthlyJournal(id: string): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
   commitImportBatch(
     batch: ImportBatch,

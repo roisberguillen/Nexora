@@ -202,6 +202,16 @@ describe("SqliteLedgerRepository", () => {
     expect(await repository.listMonthlyJournals()).toEqual([updated]);
   });
 
+  it("elimina un diario mensile senza toccare il ledger", async () => {
+    const journal = MonthlyJournal.create({ id: "journal-delete", period: "2026-08" });
+    await repository.saveMonthlyJournal(journal);
+    await repository.deleteMonthlyJournal(journal.id);
+    await expect(repository.listMonthlyJournals()).resolves.toEqual([]);
+    await expect(repository.deleteMonthlyJournal(journal.id)).rejects.toMatchObject({
+      code: "missing_reference",
+    });
+  });
+
   it("ricostruisce conti, categorie e transazioni senza perdere precisione", async () => {
     const mainAccount = Account.create({
       id: "account-main",

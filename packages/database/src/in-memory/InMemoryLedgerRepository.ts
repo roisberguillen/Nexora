@@ -136,7 +136,8 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
 
   public async deleteUnusedCategory(id: string): Promise<void> {
-    if (!this.categories.has(id)) throw new DomainError("missing_reference", "Category does not exist.");
+    if (!this.categories.has(id))
+      throw new DomainError("missing_reference", "Category does not exist.");
     const isReferenced =
       [...this.categories.values()].some((category) => category.parentId === id) ||
       [...this.transactions.values()].some((transaction) => transaction.categoryId === id) ||
@@ -144,7 +145,10 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       [...this.budgets.values()].some((budget) => budget.categoryId === id) ||
       [...this.recurringRules.values()].some((rule) => rule.categoryId === id);
     if (isReferenced)
-      throw new DomainError("invalid_category", "A referenced category must be archived or reassigned.");
+      throw new DomainError(
+        "invalid_category",
+        "A referenced category must be archived or reassigned.",
+      );
     this.categories.delete(id);
   }
 
@@ -163,6 +167,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateRecurringRuleReferences(rule);
     this.recurringRules.set(rule.id, rule);
   }
+  public async deleteRecurringRule(id: string): Promise<void> {
+    this.deleteExisting(this.recurringRules, id, "Recurring rule");
+  }
   public async saveAllocationPlan(plan: AllocationPlan): Promise<void> {
     this.assertNew(this.allocationPlans, plan.id, "Allocation plan");
     this.validateAllocationPlanReferences(plan);
@@ -173,6 +180,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Allocation plan does not exist.");
     this.validateAllocationPlanReferences(plan);
     this.allocationPlans.set(plan.id, plan);
+  }
+  public async deleteAllocationPlan(id: string): Promise<void> {
+    this.deleteExisting(this.allocationPlans, id, "Allocation plan");
   }
   public async saveBudget(budget: Budget): Promise<void> {
     this.assertNew(this.budgets, budget.id, "Budget");
@@ -185,6 +195,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateBudgetReferences(budget);
     this.budgets.set(budget.id, budget);
   }
+  public async deleteBudget(id: string): Promise<void> {
+    this.deleteExisting(this.budgets, id, "Budget");
+  }
   public async saveLoan(loan: Loan): Promise<void> {
     this.assertNew(this.loans, loan.id, "Loan");
     this.validateLoanReferences(loan);
@@ -196,6 +209,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateLoanReferences(loan);
     this.loans.set(loan.id, loan);
   }
+  public async deleteLoan(id: string): Promise<void> {
+    this.deleteExisting(this.loans, id, "Loan");
+  }
   public async saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
     this.assertNew(this.investmentPositions, position.id, "Investment position");
     this.investmentPositions.set(position.id, position);
@@ -204,6 +220,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (!this.investmentPositions.has(position.id))
       throw new DomainError("missing_reference", "Investment position does not exist.");
     this.investmentPositions.set(position.id, position);
+  }
+  public async deleteInvestmentPosition(id: string): Promise<void> {
+    this.deleteExisting(this.investmentPositions, id, "Investment position");
   }
   public async saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
     this.assertNew(this.monthlyJournals, journal.id, "Monthly journal");
@@ -215,6 +234,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Monthly journal does not exist.");
     this.assertJournalPeriodAvailable(journal);
     this.monthlyJournals.set(journal.id, journal);
+  }
+  public async deleteMonthlyJournal(id: string): Promise<void> {
+    this.deleteExisting(this.monthlyJournals, id, "Monthly journal");
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -299,7 +321,10 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async deleteUnusedTag(id: string): Promise<void> {
     if (!this.tags.has(id)) throw new DomainError("missing_reference", "Tag does not exist.");
     if ([...this.transactionTags.values()].some((tagIds) => tagIds.has(id)))
-      throw new DomainError("invalid_transaction", "A referenced tag must be archived or removed globally.");
+      throw new DomainError(
+        "invalid_transaction",
+        "A referenced tag must be archived or removed globally.",
+      );
     this.tags.delete(id);
   }
   public async setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
@@ -599,6 +624,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (collection.has(id)) {
       throw new DomainError("duplicate_entity", `${entityName} id already exists.`);
     }
+  }
+
+  private deleteExisting<T>(collection: Map<string, T>, id: string, entityName: string): void {
+    if (!collection.delete(id))
+      throw new DomainError("missing_reference", `${entityName} does not exist.`);
   }
 
   private validateTransactionReferences(transaction: Transaction): void {

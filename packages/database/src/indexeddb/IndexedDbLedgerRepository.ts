@@ -340,8 +340,12 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             const [categoryRows, transactionCount, splitCount, budgetRows, recurringRows] =
               await Promise.all([
                 requestResult<unknown[]>(categories.getAll()),
-                requestResult<number>(transaction.objectStore("transactions").index("by_category_id").count(id)),
-                requestResult<number>(transaction.objectStore("transaction_splits").index("by_category_id").count(id)),
+                requestResult<number>(
+                  transaction.objectStore("transactions").index("by_category_id").count(id),
+                ),
+                requestResult<number>(
+                  transaction.objectStore("transaction_splits").index("by_category_id").count(id),
+                ),
                 requestResult<unknown[]>(transaction.objectStore("budgets").getAll()),
                 requestResult<unknown[]>(transaction.objectStore("recurring_rules").getAll()),
               ]);
@@ -549,6 +553,25 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public deleteRecurringRule(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("recurring_rules", id, "Recurring rule");
+  }
+  public deleteAllocationPlan(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("allocation_plans", id, "Allocation plan");
+  }
+  public deleteBudget(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("budgets", id, "Budget");
+  }
+  public deleteLoan(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("loans", id, "Loan");
+  }
+  public deleteInvestmentPosition(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("investment_positions", id, "Investment position");
+  }
+  public deleteMonthlyJournal(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("monthly_journals", id, "Monthly journal");
+  }
+
   public saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -1431,6 +1454,29 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         cause,
       );
     }
+  }
+
+  private deleteIsolatedEntity(
+    storeName:
+      | "recurring_rules"
+      | "allocation_plans"
+      | "budgets"
+      | "loans"
+      | "investment_positions"
+      | "monthly_journals",
+    id: string,
+    entityName: string,
+  ): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction([storeName], "readwrite", async (transaction) => {
+          const store = transaction.objectStore(storeName);
+          if ((await requestResult<unknown>(store.get(id))) === undefined)
+            throw new DomainError("missing_reference", `${entityName} does not exist.`);
+          await requestResult(store.delete(id));
+        }),
+      ),
+    );
   }
 
   private async withTransaction<Result>(

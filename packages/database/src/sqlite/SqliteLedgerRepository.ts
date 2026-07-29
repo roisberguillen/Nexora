@@ -456,7 +456,10 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
-          const rows = await this.database.query<{ readonly tag_count: number; readonly reference_count: number }>(
+          const rows = await this.database.query<{
+            readonly tag_count: number;
+            readonly reference_count: number;
+          }>(
             "SELECT (SELECT COUNT(*) FROM tags WHERE id = ?) AS tag_count, (SELECT COUNT(*) FROM transaction_tags WHERE tag_id = ?) AS reference_count",
             [id, id],
           );
@@ -715,6 +718,25 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public deleteRecurringRule(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("recurring_rules", id, "Recurring rule");
+  }
+  public deleteAllocationPlan(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("allocation_plans", id, "Allocation plan");
+  }
+  public deleteBudget(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("budgets", id, "Budget");
+  }
+  public deleteLoan(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("loans", id, "Loan");
+  }
+  public deleteInvestmentPosition(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("investment_positions", id, "Investment position");
+  }
+  public deleteMonthlyJournal(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("monthly_journals", id, "Monthly journal");
+  }
+
   public saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -1490,6 +1512,22 @@ export class SqliteLedgerRepository implements LedgerRepository {
         cause,
       );
     }
+  }
+
+  private deleteIsolatedEntity(table: EntityTable, id: string, entityName: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            `SELECT id FROM ${table} WHERE id = ?`,
+            [id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", `${entityName} does not exist.`);
+          await this.database.run(`DELETE FROM ${table} WHERE id = ?`, [id]);
+        }),
+      ),
+    );
   }
 
   private async withWriteTransaction<Result>(operation: () => Promise<Result>): Promise<Result> {
