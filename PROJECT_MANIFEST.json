@@ -209,8 +209,8 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 9206,
-      "sha256": "e64d5163c5a242a4ef8a750e85e02a93599e441bc84069cb3a93bd00210d8a91"
+      "size": 11946,
+      "sha256": "a66069a578e122dcd22c8ffa61d09e891f777b08c40017406b9dea56c0996561"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",

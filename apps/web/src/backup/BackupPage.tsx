@@ -6,6 +6,7 @@ import { GoogleIdentityAuth } from "../cloud/GoogleIdentityAuth";
 import { readGoogleCloudConfig } from "../cloud/cloudConfig";
 import type { CloudBackupMetadata } from "../cloud/cloudTypes";
 import { loadGoogleIdentity } from "../cloud/loadGoogleIdentity";
+import { appendBackupHistory, readBackupHistory } from "./backupHistory";
 
 interface DirectoryPickerWindow extends Window {
   showDirectoryPicker?: () => Promise<FileSystemDirectoryHandle>;
@@ -19,6 +20,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
   const [isRestoring, setIsRestoring] = useState(false);
   const [isCloudBusy, setIsCloudBusy] = useState(false);
   const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
+  const [history, setHistory] = useState(() => readBackupHistory());
   const cloudConfig = useMemo(readGoogleCloudConfig, []);
   const cloudAuth = useMemo(
     () => new GoogleIdentityAuth(cloudConfig.clientId),
@@ -40,11 +42,25 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     try {
       const directory = await (window as DirectoryPickerWindow).showDirectoryPicker!();
       const backup = await ledger.createEncryptedBackup({ directory, passphrase });
+      appendBackupHistory({
+        operation: "local_backup",
+        storageKind: ledger.storageKind,
+        outcome: "succeeded",
+        size: backup.size,
+        checksumPrefix: backup.checksumSha256.slice(0, 12),
+      });
+      setHistory(readBackupHistory());
       setPassphrase("");
       setMessage(
         `Backup verificato creato: ${backup.id}. Checksum ${backup.checksumSha256.slice(0, 12)}…`,
       );
     } catch {
+      appendBackupHistory({
+        operation: "local_backup",
+        storageKind: ledger.storageKind,
+        outcome: "failed",
+      });
+      setHistory(readBackupHistory());
       setMessage("Backup non creato: nessun dato del ledger è stato modificato.");
     } finally {
       setIsCreating(false);
@@ -66,8 +82,21 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
         id: selectedArchive.name,
         passphrase,
       });
+      appendBackupHistory({
+        operation: "restore",
+        storageKind: ledger.storageKind,
+        outcome: "succeeded",
+        size: selectedArchive.size,
+      });
+      setHistory(readBackupHistory());
       window.location.reload();
     } catch {
+      appendBackupHistory({
+        operation: "restore",
+        storageKind: ledger.storageKind,
+        outcome: "failed",
+      });
+      setHistory(readBackupHistory());
       setMessage("Ripristino non completato: l’archivio locale corrente è rimasto protetto.");
       setIsRestoring(false);
     }
@@ -105,10 +134,24 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
         },
         backup.archive,
       );
+      appendBackupHistory({
+        operation: "cloud_upload",
+        storageKind: ledger.storageKind,
+        outcome: "succeeded",
+        size: backup.size,
+        checksumPrefix: backup.checksumSha256.slice(0, 12),
+      });
+      setHistory(readBackupHistory());
       setPassphrase("");
       setCloudBackups(await cloudProvider.list());
       setMessage("Backup cifrato caricato su Google Drive dopo la verifica locale.");
     } catch {
+      appendBackupHistory({
+        operation: "cloud_upload",
+        storageKind: ledger.storageKind,
+        outcome: "failed",
+      });
+      setHistory(readBackupHistory());
       setMessage("Caricamento cloud non completato: l’archivio locale non è stato modificato.");
     } finally {
       setIsCloudBusy(false);
@@ -124,8 +167,22 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
         id: backup.backupId,
         passphrase,
       });
+      appendBackupHistory({
+        operation: "cloud_download",
+        storageKind: ledger.storageKind,
+        outcome: "succeeded",
+        size: backup.size,
+        checksumPrefix: backup.checksumSha256.slice(0, 12),
+      });
+      setHistory(readBackupHistory());
       window.location.reload();
     } catch {
+      appendBackupHistory({
+        operation: "cloud_download",
+        storageKind: ledger.storageKind,
+        outcome: "failed",
+      });
+      setHistory(readBackupHistory());
       setMessage(
         "Ripristino Google Drive non completato: l’archivio locale corrente è rimasto protetto.",
       );
@@ -242,6 +299,26 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
                 >
                   Ripristina da Drive
                 </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <section aria-labelledby="backup-history-title" className="backup-cloud-unavailable">
+        <h2 id="backup-history-title">Cronologia backup</h2>
+        {history.length === 0 ? (
+          <p>Nessuna operazione registrata in questo browser.</p>
+        ) : (
+          <ul className="account-list">
+            {history.slice(0, 8).map((entry) => (
+              <li key={entry.id}>
+                <div className="account-copy">
+                  <strong>{entry.operation.replaceAll("_", " ")}</strong>
+                  <small>
+                    {new Date(entry.occurredAt).toLocaleString("it-IT")} · {entry.storageKind} ·{" "}
+                    {entry.outcome === "succeeded" ? "riuscito" : "non riuscito"}
+                  </small>
+                </div>
               </li>
             ))}
           </ul>
