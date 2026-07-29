@@ -16,6 +16,8 @@
 - Resa raggiungibile la pagina Impostazioni dalla navigazione desktop.
 - Il recovery guidato può ora provare un restore di backup portabili in un IndexedDB
   temporaneo, verificarne i movimenti e rimuovere la copia senza toccare il ledger attivo.
+- L'apertura e la migrazione del ledger usano Web Locks quando disponibili per evitare
+  aperture concorrenti tra schede.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

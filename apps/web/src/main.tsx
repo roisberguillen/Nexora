@@ -15,6 +15,7 @@ import { StorageDiscovery } from "./startup/StorageDiscovery";
 import { selectStorage } from "./startup/StorageSelection";
 import { readRecoverySelection, StartupRecoveryRequiredError } from "./startup/StartupRecovery";
 import { readStoragePreferenceHint } from "./startup/storagePreference";
+import { withStartupLock } from "./startup/StartupLock";
 
 const rootElement = document.querySelector("#root");
 
@@ -41,7 +42,10 @@ const startupBootstrap = createStartupBootstrap(
     openLedger: () => {
       if (selectedStorageKind === undefined)
         throw new Error("Nexora storage selection is missing.");
-      return openPwaLedger({ selectedStorageKind, persistSelection: false });
+      const storageKind = selectedStorageKind;
+      return withStartupLock(() =>
+        openPwaLedger({ selectedStorageKind: storageKind, persistSelection: false }),
+      );
     },
     timeouts: {
       environment: 5_000,
