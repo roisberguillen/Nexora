@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { TrashedTransaction } from "@nexora/domain";
 
 import {
   applyAppPreferences,
@@ -9,8 +10,12 @@ import {
 
 export function SettingsPage({
   onResetFinancialData,
+  onRestoreTransaction,
+  trashedTransactions = [],
 }: {
   readonly onResetFinancialData?: () => Promise<void>;
+  readonly onRestoreTransaction?: (id: string) => Promise<void>;
+  readonly trashedTransactions?: readonly TrashedTransaction[];
 }) {
   const [preferences, setPreferences] = useState<AppPreferences>(() => readAppPreferences());
   useEffect(() => {
@@ -23,6 +28,7 @@ export function SettingsPage({
   const [resetPhrase, setResetPhrase] = useState("");
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   const resetFinancialData = async () => {
     if (onResetFinancialData === undefined || resetPhrase !== "RESETTA DATI FINANZIARI") return;
     setIsResetting(true);
@@ -89,6 +95,41 @@ export function SettingsPage({
           <SettingsLink label="Esportazione completa" href="./#exports" />
           <SettingsRow label="Archivio locale" value="Locale; non cifrato a riposo" />
         </SettingsGroup>
+        {onRestoreTransaction === undefined ? null : (
+          <SettingsGroup title="Cestino movimenti">
+            <p>I movimenti nel cestino non incidono su saldi, budget o analisi.</p>
+            {trashedTransactions.length === 0 ? (
+              <p>Il cestino è vuoto.</p>
+            ) : (
+              <ul className="settings-list">
+                {trashedTransactions.map(({ transaction, deletedAt }) => (
+                  <li key={transaction.id}>
+                    <span>
+                      {transaction.description ?? transaction.payee ?? "Movimento"} ·{" "}
+                      {transaction.bookedDate.toString()}
+                    </span>
+                    <button
+                      className="text-action"
+                      disabled={isRestoring}
+                      onClick={() => {
+                        setIsRestoring(true);
+                        void onRestoreTransaction(transaction.id).finally(() =>
+                          setIsRestoring(false),
+                        );
+                      }}
+                      type="button"
+                    >
+                      Ripristina
+                    </button>
+                    <small>
+                      Eliminato il {new Intl.DateTimeFormat("it-IT").format(new Date(deletedAt))}
+                    </small>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </SettingsGroup>
+        )}
         {onResetFinancialData === undefined ? null : (
           <SettingsGroup title="Zona pericolosa">
             <p>

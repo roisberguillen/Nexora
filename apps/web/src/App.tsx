@@ -12,6 +12,7 @@ import type {
   ImportBatch,
   RecurringRule,
   Tag,
+  TrashedTransaction,
   Transaction,
 } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult, type QuickAction } from "@nexora/ui";
@@ -98,6 +99,7 @@ interface ReadyLedgerState {
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
+  readonly trashedTransactions: readonly TrashedTransaction[];
   readonly dashboard: DashboardViewModel;
   readonly transactions: TransactionsViewModel;
   readonly ledger: BrowserLedger;
@@ -166,6 +168,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           rawAccounts,
           rawTransactions,
           tags,
+          trashedTransactions,
           transactions,
           ledger,
         }) => {
@@ -193,6 +196,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             rawTransactions,
             status: "ready",
             tags,
+            trashedTransactions,
             transactions,
           });
         },
@@ -348,6 +352,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   const resetFinancialData = (): Promise<void> =>
     mutateLedger(async (ledger) => {
       await ledger.repository.resetFinancialData();
+    });
+  const restoreTrashedTransaction = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.restoreTransaction(id);
     });
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -522,7 +530,11 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             ) : route === "profile" ? (
               <ProfilePage ledger={ledgerState.ledger} />
             ) : route === "settings" ? (
-              <SettingsPage onResetFinancialData={resetFinancialData} />
+              <SettingsPage
+                onResetFinancialData={resetFinancialData}
+                onRestoreTransaction={restoreTrashedTransaction}
+                trashedTransactions={ledgerState.trashedTransactions}
+              />
             ) : route === "privacy-security" ? (
               <PrivacySecurityPage
                 ledger={ledgerState.ledger}
@@ -635,6 +647,7 @@ interface AppModels {
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
+  readonly trashedTransactions: readonly TrashedTransaction[];
   readonly dashboard: DashboardViewModel;
   readonly transactions: TransactionsViewModel;
 }
@@ -653,6 +666,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     tags,
     transactions,
     transfers,
+    trashedTransactions,
   ] = await Promise.all([
     ledger.repository.listAccounts(),
     ledger.repository.listAllocationPlans(),
@@ -666,6 +680,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     ledger.repository.listTags(),
     ledger.repository.listTransactions(),
     ledger.repository.listTransfers(),
+    ledger.repository.listTrashedTransactions(),
   ]);
   return {
     allocationPlans,
@@ -679,6 +694,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     rawTransactions: transactions,
     categories,
     tags,
+    trashedTransactions,
     accounts: buildAccountsViewModel({ accounts, transactions }),
     dashboard: buildDashboardViewModel({
       accounts,
