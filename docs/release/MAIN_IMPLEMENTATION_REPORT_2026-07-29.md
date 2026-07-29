@@ -4,8 +4,8 @@
 
 - **Branch:** `main`.
 - **Commit iniziale:** `6fe25651f32d76a49ff5fa059050ef3b721161e0`.
-- **Commit finale:** il commit `release(rc)` che aggiunge questo report; il relativo SHA è
-  verificato contro `origin/main` al termine della pubblicazione.
+- **Commit finale della release funzionale:**
+  `42c611b9e5aa712b14999ec6c3ebcb4f15e384b2`, verificato contro `origin/main`.
 - **Remote:** `https://github.com/roisberguillen/Nexora.git`.
 
 ## Milestone e pubblicazione
@@ -19,7 +19,7 @@
 | M4 cestino e selezione | `5c16ffc` | verificato su `origin/main` |
 | M5 conti, categorie e tag | `13ac016` | verificato su `origin/main` |
 | M6 gestione dati/accessibilità | `8fd1b6f` | verificato su `origin/main` |
-| M7 hardening | commit `release(rc)` | da verificare dopo il push |
+| M7 hardening | `42c611b` | verificato su `origin/main` |
 
 ## Risultati verificati
 
