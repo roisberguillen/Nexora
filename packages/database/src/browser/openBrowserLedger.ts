@@ -16,10 +16,16 @@ import {
   LocalSqliteBackupService,
   type CreatedLocalBackup,
 } from "../backup/LocalSqliteBackupService";
-import { createEncryptedPayloadBackup, sha256Hex } from "../backup/EncryptedSqliteBackup";
+import {
+  createEncryptedPayloadBackup,
+  decryptEncryptedPayloadBackup,
+  sha256Hex,
+} from "../backup/EncryptedSqliteBackup";
 import {
   capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
   encodePortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
 } from "../backup/PortableLedgerSnapshot";
 import {
   FileSystemDirectoryBackupStore,
@@ -120,16 +126,52 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
       ).restoreBackup(id);
     },
     createEncryptedBackupArchive: async ({ passphrase }) => {
-      const store = new MemoryBackupStore();
-      const backup = await createBackupService(ledger, store, passphrase).createBackup();
-      return { ...backup, archive: await store.read(backup.id) };
+      return createPortableArchive(ledger.repository, ledger.migration.toVersion, passphrase);
     },
     restoreEncryptedBackupArchive: async ({ archive, id, passphrase }) => {
+      const decrypted = await decryptEncryptedPayloadBackup(archive, passphrase);
+      if (decrypted.manifest.files[0].path === "ledger.json") {
+        await ledger.repository.replacePortableSnapshot(
+          validatePortableLedgerSnapshot(decodePortableLedgerSnapshot(decrypted.payloadBytes)),
+        );
+        return;
+      }
       const store = new MemoryBackupStore();
       await store.write(id, archive);
       await createBackupService(ledger, store, passphrase).restoreBackup(id);
     },
     close: () => ledger.close(),
+  };
+}
+
+async function createPortableArchive(
+  repository: LedgerRepository,
+  schemaVersion: number,
+  passphrase: string,
+): Promise<CreatedLocalBackup & { readonly archive: Uint8Array }> {
+  const createdAt = new Date().toISOString();
+  const payload = encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository));
+  const archive = await createEncryptedPayloadBackup({
+    payloadBytes: payload,
+    path: "ledger.json",
+    schemaVersion,
+    createdAt,
+    passphrase,
+  });
+  const checksumSha256 = await sha256Hex(archive);
+  const id = `nexora-portable-${crypto.randomUUID()}.nexora-backup`;
+  return {
+    id,
+    archive,
+    checksumSha256,
+    createdAt,
+    size: archive.byteLength,
+    manifest: {
+      formatVersion: 1,
+      schemaVersion,
+      createdAt,
+      files: [{ path: "ledger.json", sha256: await sha256Hex(payload), size: payload.byteLength }],
+    },
   };
 }
 
@@ -171,33 +213,25 @@ function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {
     schemaVersion: ledger.schemaVersion,
     storageKind: "indexeddb",
     createEncryptedBackupArchive: async ({ passphrase }) => {
-      const payload = encodePortableLedgerSnapshot(
-        await capturePortableLedgerSnapshot(ledger.repository),
+      return createPortableArchive(ledger.repository, ledger.schemaVersion, passphrase);
+    },
+    restoreEncryptedBackupArchive: async ({ archive, passphrase }) => {
+      const decrypted = await decryptEncryptedPayloadBackup(archive, passphrase);
+      if (decrypted.manifest.files[0].path !== "ledger.json") {
+        throw new PersistenceError(
+          "corrupt_record",
+          "The portable IndexedDB backup payload is missing.",
+        );
+      }
+      if (decrypted.manifest.schemaVersion > ledger.schemaVersion) {
+        throw new PersistenceError(
+          "corrupt_record",
+          "The backup schema is newer than this IndexedDB ledger.",
+        );
+      }
+      await ledger.repository.replacePortableSnapshot(
+        validatePortableLedgerSnapshot(decodePortableLedgerSnapshot(decrypted.payloadBytes)),
       );
-      const archive = await createEncryptedPayloadBackup({
-        payloadBytes: payload,
-        path: "ledger.json",
-        schemaVersion: ledger.schemaVersion,
-        createdAt: new Date().toISOString(),
-        passphrase,
-      });
-      const checksumSha256 = await sha256Hex(archive);
-      const id = `nexora-portable-${crypto.randomUUID()}${".nexora-backup"}`;
-      return {
-        id,
-        archive,
-        checksumSha256,
-        createdAt: new Date().toISOString(),
-        size: archive.byteLength,
-        manifest: {
-          formatVersion: 1,
-          schemaVersion: ledger.schemaVersion,
-          createdAt: new Date().toISOString(),
-          files: [
-            { path: "ledger.json", sha256: await sha256Hex(payload), size: payload.byteLength },
-          ],
-        },
-      };
     },
     close: () => ledger.close(),
   };

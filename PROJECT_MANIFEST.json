@@ -799,8 +799,8 @@
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 6534,
-      "sha256": "ce65b48c39073e2dbef253f63e248d1739a254fba30057bf8fdb730a32c8480b"
+      "size": 7670,
+      "sha256": "b9d4cd651474c1b1f08dc54eaac6783d95945a920fc8e14fb20587fbce007844"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
