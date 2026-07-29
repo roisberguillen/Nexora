@@ -358,6 +358,16 @@
       "sha256": "fa04e4810aa8680b6fd0db5fb1ab500c1fbf1ccd6709bd1e72c47f780bce5afd"
     },
     {
+      "path": "apps/web/src/notifications/browserNotifications.test.ts",
+      "size": 783,
+      "sha256": "a0eb21b1083e23e046a1632da2b10ec3375e706ec64b796e5f98f1bc3c8a49c3"
+    },
+    {
+      "path": "apps/web/src/notifications/browserNotifications.ts",
+      "size": 749,
+      "sha256": "df485d39a5c879ec8fb241e83668493574c7c1d32c8960d3d907232d7c8e7ce7"
+    },
+    {
       "path": "apps/web/src/notifications/localNotifications.test.ts",
       "size": 4144,
       "sha256": "60ca034ca12c0099af9d6774d42687dd94b894f7811877c6982e623bd47b1d9c"
@@ -369,8 +379,8 @@
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
-      "size": 6309,
-      "sha256": "b4a36c078ce8d682b1d80ae511d59787f9057dafe6250fdd947d962098c198b2"
+      "size": 7799,
+      "sha256": "ace45abc01f151405e9acc08ea35ae23aa83e717a12bf2f88ed12d925e9e74c6"
     },
     {
       "path": "apps/web/src/page.css",

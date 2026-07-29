@@ -2,6 +2,7 @@ import type { Account, Budget, Loan, RecurringRule, Transaction } from "@nexora/
 import { useMemo, useState } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { enableBrowserNotifications, type BrowserNotificationStatus } from "./browserNotifications";
 import {
   deriveLocalNotifications,
   readLocalNotificationPreferences,
@@ -32,6 +33,9 @@ export function NotificationsPage({
     formatEditableAmountMinor(preferences.lowBalanceThresholdMinor, "EUR"),
   );
   const [preferenceError, setPreferenceError] = useState<string>();
+  const [browserNotificationStatus, setBrowserNotificationStatus] = useState<
+    BrowserNotificationStatus | undefined
+  >();
   const notifications = useMemo(
     () =>
       deriveLocalNotifications({
@@ -83,6 +87,34 @@ export function NotificationsPage({
           </button>
         )}
       </header>
+      <section aria-labelledby="system-notification-heading" className="data-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Dispositivo</p>
+            <h2 id="system-notification-heading">Notifiche di sistema</h2>
+            <p>
+              Il centro notifiche interno resta disponibile anche se il browser non supporta o nega
+              le notifiche di sistema.
+            </p>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => void enableBrowserNotifications().then(setBrowserNotificationStatus)}
+            type="button"
+          >
+            Attiva sul dispositivo
+          </button>
+        </div>
+        {browserNotificationStatus === undefined ? null : (
+          <p aria-live="polite" className="form-success" role="status">
+            {browserNotificationStatus === "granted"
+              ? "Notifiche di sistema abilitate."
+              : browserNotificationStatus === "denied"
+                ? "Permesso non concesso: continuerai a vedere gli avvisi in questa schermata."
+                : "Notifiche di sistema non supportate: continuerai a vedere gli avvisi in questa schermata."}
+          </p>
+        )}
+      </section>
       <section aria-labelledby="notification-preferences-heading" className="data-panel">
         <div className="section-heading">
           <div>
