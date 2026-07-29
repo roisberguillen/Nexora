@@ -29,3 +29,6 @@
 - OAuth richiede un client ID configurato dal deployment; nessuna credenziale è inclusa nel
   repository.
 - Prima di aggiornare l’app, mantenere almeno un backup verificato su supporto distinto.
+- La scansione automatica del repository intercetta pattern comuni di chiavi cloud e token GitHub;
+  non sostituisce i controlli del provider né autorizza a committare segreti. I test usano solo
+  identificativi sintetici e le diagnostiche applicano redazione ai token, alle passphrase e IBAN.

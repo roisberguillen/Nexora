@@ -13,6 +13,12 @@
 `pnpm verify` esegue tutti i gate veloci fino alla build. Gli E2E vengono mantenuti
 separati perché richiedono Chromium.
 
+Il benchmark M7 è intenzionalmente escluso dalla suite ordinaria, per evitare di allocare un
+ledger da 100.000 record in ogni controllo locale. Va eseguito esplicitamente prima di una
+release con `NEXORA_HARDENING_BENCHMARK=1 pnpm exec vitest run
+test/benchmarks/hardeningBenchmark.test.ts --reporter=verbose` (in PowerShell impostare e poi
+rimuovere la variabile di ambiente nella stessa sessione).
+
 ## Per ogni PR
 - format/lint/typecheck verdi;
 - unit test e integration test verdi;
@@ -63,6 +69,8 @@ separati perché richiedono Chromium.
 
 ## Release
 - performance con 100.000 transazioni;
+- benchmark 1k/10k/50k/100k per selezione, cestino, restore, purge, ricostruzione categorie,
+  backup preventivo, recovery drill e reset;
 - restore di backup verificato su database temporaneo e OPFS reale;
 - audit vulnerabilità dipendenze;
 - manuale utente aggiornato.

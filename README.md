@@ -47,6 +47,18 @@ pnpm audit --prod
 
 `pnpm verify` esegue format, lint, typecheck, test e build. Gli E2E richiedono Chromium.
 
+Il benchmark di hardening viene eseguito intenzionalmente a parte, perché materializza ledger
+sintetici fino a 100.000 movimenti:
+
+```powershell
+$env:NEXORA_HARDENING_BENCHMARK = '1'
+pnpm exec vitest run test/benchmarks/hardeningBenchmark.test.ts --reporter=verbose
+Remove-Item Env:NEXORA_HARDENING_BENCHMARK
+```
+
+Misura selezione, cestino, ripristino, purge, ricostruzione categorie, snapshot/restore e reset
+senza usare dati personali. I risultati verificati della release sono nel report finale.
+
 ## Google Drive
 
 Google Drive è facoltativo. L’app usa il solo scope `drive.appdata`: token OAuth in memoria e

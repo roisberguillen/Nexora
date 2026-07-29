@@ -53,6 +53,11 @@ object store coinvolti. Il repository in memoria prende uno snapshot prima dell'
 test. Il reset finanziario sostituisce atomicamente il ledger con il set di categorie di sistema;
 il ripristino totale elimina anche il database selezionato e le preferenze controllate dall'app.
 
+Il benchmark di hardening esercita questi confini su 1.000, 10.000, 50.000 e 100.000 movimenti
+sintetici: selezione, soft-delete, ripristino, purge, riassegnazione categoria, snapshot
+preventivo, validazione di recovery e reset. Non introduce cancellazioni automatiche né esegue
+operazioni sul profilo dell’utente.
+
 ## Backup, cloud e audit
 
 Ogni reset mostra conteggi delle entità da eliminare e dei dati mantenuti. Propone un archivio

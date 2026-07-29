@@ -41,5 +41,5 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M7 — Hardening e chiusura
 
-- [ ] Benchmark 1k–100k dei nuovi flussi, recovery drill, controllo segreti e report finale.
-- [ ] Quality gate finale verde su `main` e report `MAIN_IMPLEMENTATION_REPORT_2026-07-29.md`.
+- [x] Benchmark 1k–100k dei nuovi flussi, recovery drill, controllo segreti e report finale.
+- [x] Quality gate finale verde su `main` e report `MAIN_IMPLEMENTATION_REPORT_2026-07-29.md`.

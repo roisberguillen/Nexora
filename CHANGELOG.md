@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Completato l’hardening della release: benchmark ripetibile da 1.000 a 100.000 movimenti,
+  recovery drill di snapshot portabile, controlli di integrità dei backend, scansione dei segreti
+  e report finale quality-gated su `main`.
+
 - Aggiunto il centro **Gestione dati** nelle impostazioni, con percorsi espliciti per elementi
   archiviati, cestino, backup ed esportazione e zona pericolosa. Le preferenze finanziarie non
   ancora operative non sono più presentate come controlli modificabili.

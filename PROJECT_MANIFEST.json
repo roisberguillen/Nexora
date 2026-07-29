@@ -478,6 +478,11 @@
       "sha256": "b418b68384a547cc26a2ec17634b0ebcf7f0c1a3c32eccdb305c61057ae88f62"
     },
     {
+      "path": "apps/web/src/settings/AccessibleDialog.tsx",
+      "size": 2358,
+      "sha256": "55df59ee4f4e6df8598a76b2ac091a74208e40cddc79b04ec08dbaaea55bac01"
+    },
+    {
       "path": "apps/web/src/settings/preferences.test.ts",
       "size": 732,
       "sha256": "b941259f95c25b0f58dfcc10d9516a9d9322622991396346576803629a88d5c1"
@@ -489,13 +494,13 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 6802,
-      "sha256": "bedd5b0e00efdc80785b99df552dcd732958d5dd285d872a3879b83c742529fe"
+      "size": 7870,
+      "sha256": "60686454e2cbe92d2a80f7da01e992e9fa0d920aef76143714d0f35fc0b8167f"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 24325,
-      "sha256": "e29c4be9958e7aaa99584a9e129ad371a8d97bf3049bf16ef2a04e4c85702e70"
+      "size": 25618,
+      "sha256": "a4b8da802e66f23f32b96180d0b80a67a580573ea7fbecf30e02765386736110"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -574,8 +579,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 12422,
-      "sha256": "dfbd66e3479482ad3bf7fec253080872dca01ef5d369c3e57dfc8b11327fa509"
+      "size": 13202,
+      "sha256": "4f40c4d480e44fdc414a86ce5f528363c5dd65732a293248e62abc6d22bb0c84"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -699,8 +704,8 @@
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
-      "size": 4998,
-      "sha256": "626559a7045fe6b73bab36ecfd4f444e30dfdbb966778e16b772fb28779cd135"
+      "size": 5315,
+      "sha256": "627fa50009bc8200b500a1e95cf7995fd9a7abfd255bd5751eb84099f2bfa2eb"
     },
     {
       "path": "docs/DATA_MODEL.md",
@@ -709,8 +714,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 12001,
-      "sha256": "97e1c7f241bd7cd56165972c90c3bbf3252c5e0376e9a3f36ad6fc3ab9986cd7"
+      "size": 12670,
+      "sha256": "fb7344dc45d37eb3eca531cf2b53f452f21e23392485fc6569baa9bb35ef5621"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -753,9 +758,14 @@
       "sha256": "e8a80dc96cd0242aae5fa8e884aae03b5d0c20364a7a1e204def181f21fcad9a"
     },
     {
+      "path": "docs/release/MAIN_IMPLEMENTATION_REPORT_2026-07-29.md",
+      "size": 5066,
+      "sha256": "5b6ef99fd2a99af69fdc55bedb948afc1cab3658080cfd22b66c537b2f1ee0a5"
+    },
+    {
       "path": "docs/ROADMAP.md",
-      "size": 1957,
-      "sha256": "b23767d7a757fa89dd7c4ca7df6e87e914a8a1133f2a4a442e9163351b70c3c5"
+      "size": 1976,
+      "sha256": "55f1e7e1ffc1490c0f25dc8d6f0e2b9804be09f36dba17aaa0e3b7d6a94c045f"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -764,13 +774,13 @@
     },
     {
       "path": "docs/testing/QUALITY_GATES.md",
-      "size": 2624,
-      "sha256": "20e238bf68b8b69b17c42986f6cf25bbc7d91f7b71911e8621c81d45cf111609"
+      "size": 3164,
+      "sha256": "23acff0908f2c18ffd146a7f90e60f83a6c80d8c4fef68d03a33f15b5f1040ed"
     },
     {
       "path": "docs/THREAT_MODEL.md",
-      "size": 1721,
-      "sha256": "3025410632ff6593484ab95d35ae23284c48412d767557004604a1c6c9cacf32"
+      "size": 2014,
+      "sha256": "89a8ebac1a71c644f5b37c437be9849e1a7fe9ef101b98c93670630b858c9d7d"
     },
     {
       "path": "docs/ux/MOBILE_UI_IMPLEMENTATION_PLAN.md",
@@ -1519,8 +1529,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "size": 907,
-      "sha256": "d148788cd467c32042698aa3aa9a509b34ca1d80115e986f0f637eb509584c01"
+      "size": 1149,
+      "sha256": "35f592d11af45c3db4aa3fb110542861be4493b5b0daf28288f0e6637dd45985"
     },
     {
       "path": "pnpm-lock.yaml",
@@ -1534,8 +1544,8 @@
     },
     {
       "path": "README.md",
-      "size": 2434,
-      "sha256": "4569ed93e9d38d4b19cc87823f08d6c67a48ffc8a689cbaadbfc4c296c0e75b4"
+      "size": 2935,
+      "sha256": "76002bc76bbf82cfaf45ffbc32ecc49d4e57467974573857fa984ac18a555fab"
     },
     {
       "path": "schemas/backup-manifest.schema.json",
@@ -1561,6 +1571,11 @@
       "path": "scripts/verify-project.sh",
       "size": 263,
       "sha256": "09cf7da5878e096cf99f40480c8d2c10ef0bc0b9b48dcd60777d1b73a190e246"
+    },
+    {
+      "path": "test/benchmarks/hardeningBenchmark.test.ts",
+      "size": 5263,
+      "sha256": "a48f423cea20c44e0a8cb2b15ad8a26c3ce65810f4198f7eb1390e13a1997c99"
     },
     {
       "path": "test/e2e/accounts.spec.ts",
@@ -1664,8 +1679,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 5870,
-      "sha256": "32f36db52cc1a737d5f0e37e30633f90f614013b79b2becb024183215813d707"
+      "size": 6813,
+      "sha256": "3f3c5bf3c3adfb22c12a272f364e233ce943c6d0da3243da7f5453ad29564f62"
     },
     {
       "path": "test/project-privacy.test.ts",
