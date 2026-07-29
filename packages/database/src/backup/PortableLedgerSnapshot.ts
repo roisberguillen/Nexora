@@ -1,12 +1,18 @@
 import {
   Account,
+  AllocationPlan,
+  Budget,
   Category,
+  InvestmentPosition,
   LocalDate,
+  Loan,
+  MonthlyJournal,
   Money,
   Tag,
   Transaction,
   TransactionSplit,
   Transfer,
+  RecurringRule,
   type LedgerRepository,
 } from "@nexora/domain";
 
@@ -24,6 +30,12 @@ export interface ValidatedPortableLedgerSnapshot {
   readonly transactions: readonly Transaction[];
   readonly transfers: readonly Transfer[];
   readonly splits: readonly TransactionSplit[];
+  readonly recurringRules: readonly RecurringRule[];
+  readonly allocationPlans: readonly AllocationPlan[];
+  readonly budgets: readonly Budget[];
+  readonly loans: readonly Loan[];
+  readonly investmentPositions: readonly InvestmentPosition[];
+  readonly monthlyJournals: readonly MonthlyJournal[];
 }
 
 export async function capturePortableLedgerSnapshot(
@@ -185,7 +197,120 @@ export function validatePortableLedgerSnapshot(
       ...(fee === undefined ? {} : { feeTransaction: fee }),
     });
   });
-  return Object.freeze({ accounts, categories, tags, transactions, transfers, splits });
+  const recurringRules = entityList(entities, "recurringRules").map((value) =>
+    RecurringRule.create({
+      id: text(value, "id"),
+      name: text(value, "name"),
+      kind: text(value, "kind") as "income" | "expense",
+      accountId: text(value, "accountId"),
+      amount: money(value, "amount"),
+      nominalDay: number(value, "nominalDay"),
+      nextExpectedDate: LocalDate.parse(text(value, "nextExpectedDate")),
+      frequency: text(value, "frequency") as "monthly",
+      interval: number(value, "interval"),
+      weekendPolicy: text(value, "weekendPolicy") as "none" | "salary_italy",
+      enabled: boolean(value, "enabled"),
+      ...(optionalText(value, "categoryId") === undefined
+        ? {}
+        : { categoryId: optionalText(value, "categoryId")! }),
+      ...(optionalText(value, "payee") === undefined
+        ? {}
+        : { payee: optionalText(value, "payee")! }),
+    }),
+  );
+  const allocationPlans = entityList(entities, "allocationPlans").map((value) =>
+    AllocationPlan.create({
+      id: text(value, "id"),
+      name: text(value, "name"),
+      trigger: text(value, "trigger") as "salary" | "photo_income",
+      sourceAccountId: text(value, "sourceAccountId"),
+      targetAccountId: text(value, "targetAccountId"),
+      amount: money(value, "amount"),
+      enabled: boolean(value, "enabled"),
+    }),
+  );
+  const budgets = entityList(entities, "budgets").map((value) =>
+    Budget.create({
+      id: text(value, "id"),
+      period: text(value, "period"),
+      amount: money(value, "amount"),
+      alertAt80: boolean(value, "alertAt80"),
+      alertAt100: boolean(value, "alertAt100"),
+      ...(optionalText(value, "categoryId") === undefined
+        ? {}
+        : { categoryId: optionalText(value, "categoryId")! }),
+    }),
+  );
+  const loans = entityList(entities, "loans").map((value) =>
+    Loan.create({
+      id: text(value, "id"),
+      accountId: text(value, "accountId"),
+      lender: text(value, "lender"),
+      installment: money(value, "installment"),
+      remainingPrincipal: money(value, "remainingPrincipal"),
+      ...(optionalObjectMoney(value, "originalPrincipal") === undefined
+        ? {}
+        : { originalPrincipal: optionalObjectMoney(value, "originalPrincipal")! }),
+      ...(optionalNumber(value, "annualNominalRateBps") === undefined
+        ? {}
+        : { annualNominalRateBps: optionalNumber(value, "annualNominalRateBps")! }),
+      ...(optionalNumber(value, "annualEffectiveRateBps") === undefined
+        ? {}
+        : { annualEffectiveRateBps: optionalNumber(value, "annualEffectiveRateBps")! }),
+      ...(optionalNumber(value, "installmentsPaid") === undefined
+        ? {}
+        : { installmentsPaid: optionalNumber(value, "installmentsPaid")! }),
+      ...(optionalNumber(value, "installmentsRemaining") === undefined
+        ? {}
+        : { installmentsRemaining: optionalNumber(value, "installmentsRemaining")! }),
+      ...(optionalText(value, "nextDueDate") === undefined
+        ? {}
+        : { nextDueDate: LocalDate.parse(optionalText(value, "nextDueDate")!) }),
+    }),
+  );
+  const investmentPositions = entityList(entities, "investmentPositions").map((value) =>
+    InvestmentPosition.create({
+      id: text(value, "id"),
+      accountId: text(value, "accountId"),
+      name: text(value, "name"),
+      costBasis: money(value, "costBasis"),
+      currentValue: money(value, "currentValue"),
+      valuationDate: LocalDate.parse(text(value, "valuationDate")),
+      ...(optionalText(value, "symbol") === undefined
+        ? {}
+        : { symbol: optionalText(value, "symbol")! }),
+      ...(optionalText(value, "units") === undefined
+        ? {}
+        : { units: optionalText(value, "units")! }),
+    }),
+  );
+  const monthlyJournals = entityList(entities, "monthlyJournals").map((value) =>
+    MonthlyJournal.create({
+      id: text(value, "id"),
+      period: text(value, "period"),
+      ...(optionalText(value, "note") === undefined ? {} : { note: optionalText(value, "note")! }),
+      ...(optionalText(value, "nextMonthGoals") === undefined
+        ? {}
+        : { nextMonthGoals: optionalText(value, "nextMonthGoals")! }),
+      ...(optionalNumber(value, "perceivedControl") === undefined
+        ? {}
+        : { perceivedControl: optionalNumber(value, "perceivedControl")! as 1 | 2 | 3 | 4 | 5 }),
+    }),
+  );
+  return Object.freeze({
+    accounts,
+    categories,
+    tags,
+    transactions,
+    transfers,
+    splits,
+    recurringRules,
+    allocationPlans,
+    budgets,
+    loans,
+    investmentPositions,
+    monthlyJournals,
+  });
 }
 
 function createAccount(value: Record<string, unknown>): Account {
@@ -295,6 +420,27 @@ function boolean(value: Record<string, unknown>, name: string): boolean {
   const candidate = value[name];
   if (typeof candidate !== "boolean") throw new Error(`Portable snapshot ${name} is invalid.`);
   return candidate;
+}
+function number(value: Record<string, unknown>, name: string): number {
+  const candidate = value[name];
+  if (typeof candidate !== "number" || !Number.isInteger(candidate))
+    throw new Error(`Portable snapshot ${name} is invalid.`);
+  return candidate;
+}
+function optionalNumber(value: Record<string, unknown>, name: string): number | undefined {
+  const candidate = value[name];
+  if (candidate === undefined || candidate === null) return undefined;
+  return typeof candidate === "number" && Number.isInteger(candidate)
+    ? candidate
+    : (() => {
+        throw new Error(`Portable snapshot ${name} is invalid.`);
+      })();
+}
+function optionalObjectMoney(value: Record<string, unknown>, name: string): Money | undefined {
+  const candidate = value[name];
+  return candidate === undefined || candidate === null
+    ? undefined
+    : money({ [name]: candidate }, name);
 }
 function money(value: Record<string, unknown>, name: string): Money {
   const candidate = object(value[name]);
