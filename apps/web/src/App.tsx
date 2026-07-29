@@ -499,6 +499,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               <AnalyticsPage transactions={ledgerState.rawTransactions} />
             ) : route === "notifications" ? (
               <NotificationsPage
+                accounts={ledgerState.rawAccounts}
                 budgets={ledgerState.budgets}
                 loans={ledgerState.loans}
                 recurringRules={ledgerState.recurringRules}

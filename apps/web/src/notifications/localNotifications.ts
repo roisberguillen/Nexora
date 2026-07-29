@@ -1,7 +1,15 @@
-import type { Budget, Loan, RecurringRule, Transaction } from "@nexora/domain";
+import {
+  calculateAccountBalance,
+  type Account,
+  type Budget,
+  type Loan,
+  type RecurringRule,
+  type Transaction,
+} from "@nexora/domain";
 import { readBackupHistory, type BackupHistoryEntry } from "../backup/backupHistory";
 
-export type LocalNotificationKind = "backup" | "budget" | "loan" | "recurring" | "recovery";
+export type LocalNotificationKind =
+  "backup" | "balance" | "budget" | "income" | "loan" | "recurring" | "recovery";
 
 export interface LocalNotification {
   readonly description: string;
@@ -19,16 +27,35 @@ export interface LocalNotificationState {
 export type LocalNotificationStates = Readonly<Record<string, LocalNotificationState>>;
 
 const storageKey = "nexora.local-notifications.v1";
+const preferencesStorageKey = "nexora.notification-preferences.v1";
+
+export interface LocalNotificationPreferences {
+  readonly lowBalanceThresholdMinor: bigint;
+}
+
+export const defaultLocalNotificationPreferences: LocalNotificationPreferences = Object.freeze({
+  lowBalanceThresholdMinor: 0n,
+});
 
 export function deriveLocalNotifications(input: {
+  readonly accounts?: readonly Account[];
   readonly budgets: readonly Budget[];
   readonly loans: readonly Loan[];
   readonly recurringRules: readonly RecurringRule[];
   readonly today?: Date;
   readonly transactions: readonly Transaction[];
   readonly backupHistory?: readonly BackupHistoryEntry[];
+  readonly lowBalanceThresholdMinor?: bigint;
 }): readonly LocalNotification[] {
-  const { budgets, loans, recurringRules, transactions, today = new Date() } = input;
+  const {
+    accounts = [],
+    budgets,
+    loans,
+    lowBalanceThresholdMinor = 0n,
+    recurringRules,
+    transactions,
+    today = new Date(),
+  } = input;
   const currentPeriod = today.toISOString().slice(0, 7);
   const notifications: LocalNotification[] = [];
   const history = input.backupHistory ?? readBackupHistory();
@@ -56,6 +83,18 @@ export function deriveLocalNotifications(input: {
       description: "Verifica un archivio senza ripristinarlo almeno una volta al mese.",
       href: "./#backup",
     });
+  for (const account of accounts) {
+    if (account.isArchived) continue;
+    const balance = calculateAccountBalance(account, transactions);
+    if (balance.amountMinor > lowBalanceThresholdMinor) continue;
+    notifications.push({
+      description: `Il saldo è sotto la soglia configurata per ${account.currency}.`,
+      href: "./#accounts",
+      id: `low_balance:${account.id}:${currentPeriod}:${lowBalanceThresholdMinor}`,
+      kind: "balance",
+      title: `Saldo basso: ${account.name}`,
+    });
+  }
   for (const budget of budgets) {
     if (budget.period !== currentPeriod) continue;
     const usage = budget.usagePercent(transactions);
@@ -79,6 +118,20 @@ export function deriveLocalNotifications(input: {
   }
   for (const rule of recurringRules) {
     const days = daysUntil(rule.nextExpectedDate.toString(), today);
+    if (
+      rule.enabled &&
+      rule.kind === "income" &&
+      days < 0 &&
+      !transactions.some((transaction) => rule.matchesBookedTransaction(transaction))
+    ) {
+      notifications.push({
+        description: `L'entrata prevista il ${rule.nextExpectedDate.toString()} non risulta registrata.`,
+        href: "./#recurring",
+        id: `expected_income_missing:${rule.id}:${rule.nextExpectedDate.toString()}`,
+        kind: "income",
+        title: `Entrata attesa: ${rule.name}`,
+      });
+    }
     if (!rule.enabled || days < 0 || days > 7) continue;
     notifications.push({
       description: `Prevista ${days === 0 ? "oggi" : `tra ${days} giorni`}.`,
@@ -101,6 +154,34 @@ export function deriveLocalNotifications(input: {
     });
   }
   return notifications;
+}
+
+export function readLocalNotificationPreferences(
+  storage: Pick<Storage, "getItem"> = localStorage,
+): LocalNotificationPreferences {
+  try {
+    const raw = storage.getItem(preferencesStorageKey);
+    if (raw === null) return defaultLocalNotificationPreferences;
+    const value: unknown = JSON.parse(raw);
+    if (!value || typeof value !== "object") return defaultLocalNotificationPreferences;
+    const amount = (value as Record<string, unknown>).lowBalanceThresholdMinor;
+    if (typeof amount !== "string" || !/^-?\d+$/.test(amount)) {
+      return defaultLocalNotificationPreferences;
+    }
+    return Object.freeze({ lowBalanceThresholdMinor: BigInt(amount) });
+  } catch {
+    return defaultLocalNotificationPreferences;
+  }
+}
+
+export function writeLocalNotificationPreferences(
+  preferences: LocalNotificationPreferences,
+  storage: Pick<Storage, "setItem"> = localStorage,
+): void {
+  storage.setItem(
+    preferencesStorageKey,
+    JSON.stringify({ lowBalanceThresholdMinor: preferences.lowBalanceThresholdMinor.toString() }),
+  );
 }
 
 export function readLocalNotificationStates(

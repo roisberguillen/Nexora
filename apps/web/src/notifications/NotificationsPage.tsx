@@ -1,27 +1,48 @@
-import type { Budget, Loan, RecurringRule, Transaction } from "@nexora/domain";
+import type { Account, Budget, Loan, RecurringRule, Transaction } from "@nexora/domain";
 import { useMemo, useState } from "react";
 
+import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import {
   deriveLocalNotifications,
+  readLocalNotificationPreferences,
   readLocalNotificationStates,
+  writeLocalNotificationPreferences,
   writeLocalNotificationStates,
+  type LocalNotificationPreferences,
   type LocalNotificationStates,
 } from "./localNotifications";
 
 export function NotificationsPage({
+  accounts,
   budgets,
   loans,
   recurringRules,
   transactions,
 }: {
+  readonly accounts: readonly Account[];
   readonly budgets: readonly Budget[];
   readonly loans: readonly Loan[];
   readonly recurringRules: readonly RecurringRule[];
   readonly transactions: readonly Transaction[];
 }) {
+  const [preferences, setPreferences] = useState<LocalNotificationPreferences>(() =>
+    readLocalNotificationPreferences(),
+  );
+  const [thresholdText, setThresholdText] = useState(() =>
+    formatEditableAmountMinor(preferences.lowBalanceThresholdMinor, "EUR"),
+  );
+  const [preferenceError, setPreferenceError] = useState<string>();
   const notifications = useMemo(
-    () => deriveLocalNotifications({ budgets, loans, recurringRules, transactions }),
-    [budgets, loans, recurringRules, transactions],
+    () =>
+      deriveLocalNotifications({
+        accounts,
+        budgets,
+        loans,
+        lowBalanceThresholdMinor: preferences.lowBalanceThresholdMinor,
+        recurringRules,
+        transactions,
+      }),
+    [accounts, budgets, loans, preferences.lowBalanceThresholdMinor, recurringRules, transactions],
   );
   const [states, setStates] = useState<LocalNotificationStates>(() =>
     readLocalNotificationStates(),
@@ -62,6 +83,56 @@ export function NotificationsPage({
           </button>
         )}
       </header>
+      <section aria-labelledby="notification-preferences-heading" className="data-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Soglie</p>
+            <h2 id="notification-preferences-heading">Preferenze avvisi</h2>
+          </div>
+        </div>
+        <form
+          className="inline-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            try {
+              const next = {
+                lowBalanceThresholdMinor: parseLocalizedAmountMinor(thresholdText, "EUR"),
+              };
+              writeLocalNotificationPreferences(next);
+              setPreferences(next);
+              setPreferenceError(undefined);
+            } catch (error) {
+              setPreferenceError(error instanceof Error ? error.message : "Soglia non valida.");
+            }
+          }}
+        >
+          <label>
+            Soglia saldo basso (EUR)
+            <input
+              aria-describedby="notification-threshold-help notification-threshold-error"
+              inputMode="decimal"
+              onChange={(event) => setThresholdText(event.currentTarget.value)}
+              value={thresholdText}
+            />
+          </label>
+          <button className="secondary-action" type="submit">
+            Salva soglia
+          </button>
+        </form>
+        <p id="notification-threshold-help">
+          Vengono segnalati gli account attivi con saldo uguale o inferiore a questa soglia.
+        </p>
+        {preferenceError === undefined ? null : (
+          <p
+            aria-live="polite"
+            className="form-error"
+            id="notification-threshold-error"
+            role="alert"
+          >
+            {preferenceError}
+          </p>
+        )}
+      </section>
       <section aria-label="Elenco notifiche" className="data-panel notification-list">
         {visible.length === 0 ? (
           <div className="account-list-empty">

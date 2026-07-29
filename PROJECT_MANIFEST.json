@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 27298,
-      "sha256": "86ef33bdc75d3b99bc97c968e871fd3e749a0e260fe6b9b28afb94bffee0bfef"
+      "size": 27349,
+      "sha256": "3857e810aa9821c6d41754df0c38f5e18a07634c9bc6bf4dfe9c57c309f91460"
     },
     {
       "path": "apps/web/src/backup/backupHistory.test.ts",
@@ -359,18 +359,18 @@
     },
     {
       "path": "apps/web/src/notifications/localNotifications.test.ts",
-      "size": 2122,
-      "sha256": "5d8b59ac53b25067c74fa96bf28942870f0e94240015696b4c851a224c5ea221"
+      "size": 4144,
+      "sha256": "60ca034ca12c0099af9d6774d42687dd94b894f7811877c6982e623bd47b1d9c"
     },
     {
       "path": "apps/web/src/notifications/localNotifications.ts",
-      "size": 5139,
-      "sha256": "483faa4e9ada60ff914e6eff2e8bd9c95654338df2acefb91fa00c898cdb6e78"
+      "size": 7766,
+      "sha256": "06b2a318ed02ae5e9d166cc71a3ff1ea1417f61e1dfbc8eff136c76968d10e8a"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
-      "size": 3734,
-      "sha256": "b0b003500a21f98690ae2741002909657b1ee3b0b805a1fc4c1f4adc9360f304"
+      "size": 6309,
+      "sha256": "b4a36c078ce8d682b1d80ae511d59787f9057dafe6250fdd947d962098c198b2"
     },
     {
       "path": "apps/web/src/page.css",

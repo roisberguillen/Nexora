@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { Account, LocalDate, Money, RecurringRule } from "@nexora/domain";
 
 import {
   deriveLocalNotifications,
+  readLocalNotificationPreferences,
   readLocalNotificationStates,
+  writeLocalNotificationPreferences,
   writeLocalNotificationStates,
 } from "./localNotifications";
 
@@ -68,5 +71,67 @@ describe("local notification derivation", () => {
     });
 
     expect(notifications).toEqual([]);
+  });
+
+  it("segnala saldo basso ed entrata prevista non registrata", () => {
+    const account = Account.create({
+      currency: "EUR",
+      id: "main",
+      name: "Conto principale",
+      openingBalance: Money.fromMinor(0n, "EUR"),
+      type: "checking",
+    });
+    const salary = RecurringRule.create({
+      accountId: account.id,
+      amount: Money.fromMinor(250_000n, "EUR"),
+      id: "salary",
+      kind: "income",
+      name: "Stipendio",
+      nextExpectedDate: LocalDate.parse("2026-07-25"),
+      nominalDay: 25,
+    });
+
+    const notifications = deriveLocalNotifications({
+      accounts: [account],
+      backupHistory: [
+        {
+          id: "recovery",
+          occurredAt: "2026-07-01T12:00:00.000Z",
+          operation: "restore_test",
+          outcome: "succeeded",
+          storageKind: "indexeddb",
+        },
+        {
+          id: "backup",
+          occurredAt: "2026-07-25T12:00:00.000Z",
+          operation: "local_backup",
+          outcome: "succeeded",
+          storageKind: "indexeddb",
+        },
+      ],
+      budgets: [],
+      loans: [],
+      lowBalanceThresholdMinor: 0n,
+      recurringRules: [salary],
+      today: new Date("2026-07-29T12:00:00.000Z"),
+      transactions: [],
+    });
+
+    expect(notifications.map((notification) => notification.id)).toEqual([
+      "low_balance:main:2026-07:0",
+      "expected_income_missing:salary:2026-07-25",
+    ]);
+  });
+
+  it("persiste la soglia in minor unit senza usare float", () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    };
+
+    writeLocalNotificationPreferences({ lowBalanceThresholdMinor: 12_345n }, storage);
+
+    expect(readLocalNotificationPreferences(storage).lowBalanceThresholdMinor).toBe(12_345n);
   });
 });
