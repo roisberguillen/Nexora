@@ -366,6 +366,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.restoreTransaction(id);
     });
+  const purgeTrashedTransaction = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.purgeTrashedTransaction(id);
+    });
   const resetApplication = async (): Promise<void> => {
     if (ledgerState.status !== "ready") return;
     await resetLocalApp(ledgerState.ledger);
@@ -554,6 +558,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 onResetFinancialData={resetFinancialData}
                 onResetApplication={resetApplication}
                 onRestoreTransaction={restoreTrashedTransaction}
+                onPurgeTransaction={purgeTrashedTransaction}
                 trashedTransactions={ledgerState.trashedTransactions}
               />
             ) : route === "privacy-security" ? (

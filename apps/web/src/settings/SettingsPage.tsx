@@ -11,11 +11,13 @@ import {
 export function SettingsPage({
   onResetFinancialData,
   onRestoreTransaction,
+  onPurgeTransaction,
   onResetApplication,
   trashedTransactions = [],
 }: {
   readonly onResetFinancialData?: () => Promise<void>;
   readonly onRestoreTransaction?: (id: string) => Promise<void>;
+  readonly onPurgeTransaction?: (id: string) => Promise<void>;
   readonly onResetApplication?: () => Promise<void>;
   readonly trashedTransactions?: readonly TrashedTransaction[];
 }) {
@@ -31,6 +33,9 @@ export function SettingsPage({
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+  const [purgeId, setPurgeId] = useState<string | null>(null);
+  const [isPurging, setIsPurging] = useState(false);
+  const [purgeMessage, setPurgeMessage] = useState<string | null>(null);
   const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
   const [applicationResetPhrase, setApplicationResetPhrase] = useState("");
   const resetFinancialData = async () => {
@@ -125,12 +130,37 @@ export function SettingsPage({
                     >
                       Ripristina
                     </button>
+                    {onPurgeTransaction === undefined ? null : (
+                      <button
+                        className="text-action"
+                        disabled={isRestoring || isPurging}
+                        onClick={() => setPurgeId(transaction.id)}
+                        type="button"
+                      >
+                        Elimina definitivamente
+                      </button>
+                    )}
                     <small>
                       Eliminato il {new Intl.DateTimeFormat("it-IT").format(new Date(deletedAt))}
                     </small>
                   </li>
                 ))}
               </ul>
+            )}
+            {purgeMessage === null ? null : <p role="status">{purgeMessage}</p>}
+            {purgeId === null ? null : (
+              <div aria-labelledby="purge-transaction-title" aria-modal="true" className="account-feedback" role="dialog">
+                <h2 id="purge-transaction-title">Eliminare definitivamente?</h2>
+                <p>Questa operazione non è annullabile. L&apos;audit dell&apos;importazione resta conservato.</p>
+                <div className="form-actions">
+                  <button className="secondary-action" disabled={isPurging} onClick={() => setPurgeId(null)} type="button">Annulla</button>
+                  <button className="primary-action" disabled={isPurging} onClick={() => {
+                    if (onPurgeTransaction === undefined) return;
+                    setIsPurging(true); setPurgeMessage(null);
+                    void onPurgeTransaction(purgeId).then(() => { setPurgeId(null); setPurgeMessage("Movimento eliminato definitivamente."); }).catch(() => setPurgeMessage("Eliminazione non completata: i dati sono rimasti invariati.")).finally(() => setIsPurging(false));
+                  }} type="button">{isPurging ? "Eliminazione…" : "Elimina definitivamente"}</button>
+                </div>
+              </div>
             )}
           </SettingsGroup>
         )}
