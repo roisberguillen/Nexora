@@ -633,14 +633,19 @@
       "sha256": "6d93fc9e6a1c57cb4bbee790501d08a0aff0f4c622bbab2391dfa339b4e54bf6"
     },
     {
+      "path": "docs/DATA_DELETION_MODEL.md",
+      "size": 3049,
+      "sha256": "2334fc3e9c9ba9cc51f606f12a37a50244648a4423d2e63fda4229906d6234a9"
+    },
+    {
       "path": "docs/DATA_MODEL.md",
       "size": 7386,
       "sha256": "4834a709e8b8b1afc8104baf45ae40a765bbc1f3c0766aa1dfa6c90f94927e06"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 10712,
-      "sha256": "5be3fd82cd25ac78b7eb1d1d91a8c1b707f23ab0598ca04f7b9405d2df9dff28"
+      "size": 11253,
+      "sha256": "aae611c7131a8d75f97fcbe00070167a05c43c296c4c0a8e5bbc811d600a240e"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
