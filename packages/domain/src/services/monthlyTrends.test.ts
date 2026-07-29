@@ -55,4 +55,3 @@ describe("calculateMonthlyTrends performance", () =>
       ).toBe(BigInt(Math.ceil(count / 3)) * 10_000n);
     },
   ));
-  }));

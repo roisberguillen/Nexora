@@ -1204,8 +1204,8 @@
     },
     {
       "path": "packages/domain/src/services/monthlyTrends.test.ts",
-      "size": 2056,
-      "sha256": "c482997c28349f31a71efbaee7776f831129d829dba3d5f014b27fd6af80cd31"
+      "size": 2049,
+      "sha256": "c86a1de46981e5e19f5ad28b6240c689914507cebf43e4562ed3f2c8c25cdb9f"
     },
     {
       "path": "packages/domain/src/services/monthlyTrends.ts",
