@@ -55,6 +55,10 @@ export interface BrowserLedger {
     readonly id: string;
     readonly passphrase: string;
   }): Promise<void>;
+  verifyEncryptedBackupArchive?(input: {
+    readonly archive: Uint8Array;
+    readonly passphrase: string;
+  }): Promise<void>;
   close(): Promise<void>;
 }
 
@@ -140,6 +144,8 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
       await store.write(id, archive);
       await createBackupService(ledger, store, passphrase).restoreBackup(id);
     },
+    verifyEncryptedBackupArchive: ({ archive, passphrase }) =>
+      verifyPortableArchive(archive, passphrase),
     close: () => ledger.close(),
   };
 }
@@ -173,6 +179,15 @@ async function createPortableArchive(
       files: [{ path: "ledger.json", sha256: await sha256Hex(payload), size: payload.byteLength }],
     },
   };
+}
+async function verifyPortableArchive(archive: Uint8Array, passphrase: string): Promise<void> {
+  const decrypted = await decryptEncryptedPayloadBackup(archive, passphrase);
+  if (decrypted.manifest.files[0].path !== "ledger.json")
+    throw new PersistenceError(
+      "corrupt_record",
+      "The selected archive is not a portable Nexora backup.",
+    );
+  validatePortableLedgerSnapshot(decodePortableLedgerSnapshot(decrypted.payloadBytes));
 }
 
 function createBackupService(
@@ -233,6 +248,8 @@ function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {
         validatePortableLedgerSnapshot(decodePortableLedgerSnapshot(decrypted.payloadBytes)),
       );
     },
+    verifyEncryptedBackupArchive: ({ archive, passphrase }) =>
+      verifyPortableArchive(archive, passphrase),
     close: () => ledger.close(),
   };
 }

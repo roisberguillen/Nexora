@@ -101,6 +101,42 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       setIsRestoring(false);
     }
   };
+  const runRecoveryDrill = async () => {
+    if (
+      !selectedArchive ||
+      passphrase.trim().length < 12 ||
+      ledger.verifyEncryptedBackupArchive === undefined
+    )
+      return;
+    setIsRestoring(true);
+    setMessage(null);
+    try {
+      await ledger.verifyEncryptedBackupArchive({
+        archive: new Uint8Array(await selectedArchive.arrayBuffer()),
+        passphrase,
+      });
+      appendBackupHistory({
+        operation: "restore_test",
+        storageKind: ledger.storageKind,
+        outcome: "succeeded",
+        size: selectedArchive.size,
+      });
+      setHistory(readBackupHistory());
+      setMessage(
+        "Recovery drill superato: l’archivio è leggibile e il ledger attivo non è stato modificato.",
+      );
+    } catch {
+      appendBackupHistory({
+        operation: "restore_test",
+        storageKind: ledger.storageKind,
+        outcome: "failed",
+      });
+      setHistory(readBackupHistory());
+      setMessage("Recovery drill non riuscito: il ledger attivo non è stato modificato.");
+    } finally {
+      setIsRestoring(false);
+    }
+  };
   const connectCloud = async () => {
     if (!cloudConfig.enabled) return;
     setIsCloudBusy(true);
@@ -274,6 +310,19 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
           type="button"
         >
           {isRestoring ? "Ripristino verificato…" : "Ripristina archivio selezionato"}
+        </button>
+        <button
+          className="secondary-action"
+          disabled={
+            !selectedArchive ||
+            passphrase.trim().length < 12 ||
+            isRestoring ||
+            ledger.verifyEncryptedBackupArchive === undefined
+          }
+          onClick={() => void runRecoveryDrill()}
+          type="button"
+        >
+          Verifica archivio senza ripristinare
         </button>
       </div>
       <section aria-labelledby="cloud-backup-title" className="backup-cloud-unavailable">
