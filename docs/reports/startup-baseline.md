@@ -42,6 +42,9 @@ Quando due archivi con dati sono presenti, Nexora non ne apre uno in modo implic
 la schermata di recupero consente di scegliere esplicitamente solo uno degli archivi
 effettivamente rilevati. La scelta è monouso e viene rimossa prima dell'apertura.
 
+Il recovery può inoltre validare un backup cifrato scelto dall'utente senza aprire
+il ledger principale e senza modificare alcun archivio locale.
+
 ## Verifiche mirate
 
 - `StorageDiscovery.test.ts`, `StorageSelection.test.ts`,

@@ -1,17 +1,41 @@
 import { type ReactElement, useState } from "react";
 
+import { verifyRecoveryBackup } from "./RecoveryBackupVerification";
 import type { StorageArchiveInspection } from "./StorageDiscovery";
 
 export interface StartupRecoveryScreenProps {
   readonly onRetry: () => void;
   readonly recoveryArchives: readonly StorageArchiveInspection[] | undefined;
   readonly onOpenSafeCopy: (storageKind: "opfs" | "indexeddb") => void;
-  readonly onRestoreBackup: () => void;
   readonly onExportDiagnostics: () => void;
 }
 
 export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactElement {
   const [isGuidanceOpen, setIsGuidanceOpen] = useState(false);
+  const [backup, setBackup] = useState<File>();
+  const [passphrase, setPassphrase] = useState("");
+  const [backupMessage, setBackupMessage] = useState<string>();
+  const [isVerifyingBackup, setIsVerifyingBackup] = useState(false);
+  const verifyBackup = async (): Promise<void> => {
+    if (backup === undefined || passphrase.length < 12) return;
+    setIsVerifyingBackup(true);
+    setBackupMessage(undefined);
+    try {
+      const result = await verifyRecoveryBackup(
+        new Uint8Array(await backup.arrayBuffer()),
+        passphrase,
+      );
+      setBackupMessage(
+        `Backup verificato (${result.kind}, schema ${result.schemaVersion}). Nessun archivio locale è stato modificato.`,
+      );
+    } catch {
+      setBackupMessage(
+        "Backup non verificato: il file o la passphrase non sono validi. Nessun archivio locale è stato modificato.",
+      );
+    } finally {
+      setIsVerifyingBackup(false);
+    }
+  };
   return (
     <section aria-labelledby="startup-recovery-title" className="startup-recovery" role="alert">
       <h1 id="startup-recovery-title">
@@ -36,9 +60,6 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
             Apri archivio {archive.kind === "opfs" ? "OPFS" : "IndexedDB"}
           </button>
         ))}
-        <button onClick={props.onRestoreBackup} type="button">
-          Ripristina da backup
-        </button>
         <button onClick={props.onExportDiagnostics} type="button">
           Esporta diagnostica
         </button>
@@ -47,10 +68,38 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
         <div className="startup-recovery__guidance">
           <h2>Recupero guidato</h2>
           <p>
-            Potrai scegliere una copia verificata o un backup. Nexora non eliminerà l’altro
-            archivio.
+            Puoi scegliere uno degli archivi rilevati oppure verificare un backup cifrato senza
+            modificare i dati locali.
           </p>
-          <p>Prima di ogni aggiornamento verrà proposta una copia di sicurezza.</p>
+          <label>
+            File backup `.nexora-backup`
+            <input
+              accept=".nexora-backup,application/octet-stream"
+              onChange={(event) => setBackup(event.target.files?.[0])}
+              type="file"
+            />
+          </label>
+          <label>
+            Passphrase del backup
+            <input
+              autoComplete="current-password"
+              onChange={(event) => setPassphrase(event.target.value)}
+              type="password"
+              value={passphrase}
+            />
+          </label>
+          <button
+            disabled={backup === undefined || passphrase.length < 12 || isVerifyingBackup}
+            onClick={() => void verifyBackup()}
+            type="button"
+          >
+            {isVerifyingBackup ? "Verifica backup…" : "Verifica backup senza ripristinare"}
+          </button>
+          {backupMessage === undefined ? null : (
+            <p aria-live="polite" role="status">
+              {backupMessage}
+            </p>
+          )}
         </div>
       ) : null}
     </section>

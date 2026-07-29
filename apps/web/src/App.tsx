@@ -808,9 +808,6 @@ function PersistenceState({
         writeRecoverySelection(storageKind);
         window.location.reload();
       }}
-      onRestoreBackup={() => {
-        window.location.hash = "#backup";
-      }}
       onRetry={() => window.location.reload()}
     />
   );

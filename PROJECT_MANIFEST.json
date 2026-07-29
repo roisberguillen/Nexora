@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 36223,
-      "sha256": "72f2592e1244cd13471062ba4847a12b21e590c3185f78c24e5bb478595b39af"
+      "size": 36141,
+      "sha256": "a0847b7186247d545d9ad36bd80e0aa9959b58849a358fece6b6d5784ca5193a"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -503,6 +503,16 @@
       "sha256": "a4b8da802e66f23f32b96180d0b80a67a580573ea7fbecf30e02765386736110"
     },
     {
+      "path": "apps/web/src/startup/RecoveryBackupVerification.test.ts",
+      "size": 969,
+      "sha256": "8709a27baf3be686c6f35ed5a1739563e1d1d4127907f45442521bde07ae82d0"
+    },
+    {
+      "path": "apps/web/src/startup/RecoveryBackupVerification.ts",
+      "size": 947,
+      "sha256": "c1ad1a48c60397de59306e5c8d12f816bfbe10422ebc5dc37034ca5911d27d66"
+    },
+    {
       "path": "apps/web/src/startup/startup.css",
       "size": 2057,
       "sha256": "6531b2bd08da034e716bb89d7a8271c93b7acb0b2b18ce125453d4d7a393d942"
@@ -554,8 +564,8 @@
     },
     {
       "path": "apps/web/src/startup/StartupRecoveryScreen.tsx",
-      "size": 2157,
-      "sha256": "ef5ca9f5dca96a9aeac351cf19222c2fbb069dc57d559e4e04ba2c8dae6aa171"
+      "size": 3968,
+      "sha256": "1662dedbf42fd5a37019e784faa67321c76e742105e39ed0b768bafb047bcf3f"
     },
     {
       "path": "apps/web/src/startup/StorageDiscovery.test.ts",
@@ -664,8 +674,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 14129,
-      "sha256": "6f2f3a5c0d1d973c74c688fee3dd6c5cf5b330917bbccb65cd7f60bd13625c2a"
+      "size": 14253,
+      "sha256": "23b3ee28287520a2e26f22ddd358ec73031bc058241b29b0b0496c581cff7e89"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -854,8 +864,8 @@
     },
     {
       "path": "docs/reports/startup-baseline.md",
-      "size": 2308,
-      "sha256": "d01229f604d61f6d3318ee4ddd5aed8f9d71764c66140d7a57e32ed2db22711c"
+      "size": 2456,
+      "sha256": "539fbb00bce2508c09985a8440232a1a74d0494604826610273db8f895be884d"
     },
     {
       "path": "docs/ROADMAP.md",
