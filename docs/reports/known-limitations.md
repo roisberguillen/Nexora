@@ -14,8 +14,8 @@ Data: 2026-07-30
 
 ## Requisiti della roadmap non ancora provati
 
-1. Il recovery verifica un backup cifrato senza mutare il ledger, ma non ripristina ancora un
-   backup portabile in un archivio temporaneo navigabile dall'utente.
+1. Il recovery verifica e ripristina un backup portabile in un archivio temporaneo poi rimosso,
+   ma non offre ancora l'apertura navigabile di quella copia come sessione separata.
 2. Non esiste una campagna ripetuta sui backend reali con 100.000 movimenti: il benchmark
    presente usa il repository in-memory e non misura IndexedDB/OPFS, rendering o memoria di
    Chromium.

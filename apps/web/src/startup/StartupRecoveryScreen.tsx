@@ -1,6 +1,9 @@
 import { type ReactElement, useState } from "react";
 
-import { verifyRecoveryBackup } from "./RecoveryBackupVerification";
+import {
+  restorePortableBackupTemporarily,
+  verifyRecoveryBackup,
+} from "./RecoveryBackupVerification";
 import type { StorageArchiveInspection } from "./StorageDiscovery";
 
 export interface StartupRecoveryScreenProps {
@@ -31,6 +34,26 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
     } catch {
       setBackupMessage(
         "Backup non verificato: il file o la passphrase non sono validi. Nessun archivio locale è stato modificato.",
+      );
+    } finally {
+      setIsVerifyingBackup(false);
+    }
+  };
+  const restoreTemporarily = async (): Promise<void> => {
+    if (backup === undefined || passphrase.length < 12) return;
+    setIsVerifyingBackup(true);
+    setBackupMessage(undefined);
+    try {
+      const result = await restorePortableBackupTemporarily(
+        new Uint8Array(await backup.arrayBuffer()),
+        passphrase,
+      );
+      setBackupMessage(
+        `Ripristino temporaneo riuscito: ${result.restoredTransactions} movimenti verificati. La copia temporanea è stata rimossa e l’archivio locale non è stato modificato.`,
+      );
+    } catch {
+      setBackupMessage(
+        "Ripristino temporaneo non riuscito: l’archivio locale non è stato modificato.",
       );
     } finally {
       setIsVerifyingBackup(false);
@@ -94,6 +117,13 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
             type="button"
           >
             {isVerifyingBackup ? "Verifica backup…" : "Verifica backup senza ripristinare"}
+          </button>
+          <button
+            disabled={backup === undefined || passphrase.length < 12 || isVerifyingBackup}
+            onClick={() => void restoreTemporarily()}
+            type="button"
+          >
+            Prova ripristino temporaneo
           </button>
           {backupMessage === undefined ? null : (
             <p aria-live="polite" role="status">
