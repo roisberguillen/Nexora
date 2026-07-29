@@ -104,8 +104,8 @@
     },
     {
       "path": ".node-version",
-      "size": 8,
-      "sha256": "b911698dc3cf3227d34d0ad6727f1c4408791203c9665de99ab959331a1fb07d"
+      "size": 9,
+      "sha256": "3c4283f87409f21d4f0d98dad3cf48501cdc957b3282e8c03436226caed1b8a4"
     },
     {
       "path": ".npmrc",
@@ -114,8 +114,8 @@
     },
     {
       "path": ".nvmrc",
-      "size": 8,
-      "sha256": "b911698dc3cf3227d34d0ad6727f1c4408791203c9665de99ab959331a1fb07d"
+      "size": 9,
+      "sha256": "3c4283f87409f21d4f0d98dad3cf48501cdc957b3282e8c03436226caed1b8a4"
     },
     {
       "path": ".prettierignore",
@@ -191,6 +191,16 @@
       "path": "apps/web/src/App.tsx",
       "size": 29590,
       "sha256": "e73fb794893307b260df5c004e1a3c179f1c31df7d34797eacce382b8bfdbca0"
+    },
+    {
+      "path": "apps/web/src/appVersion.test.ts",
+      "size": 193,
+      "sha256": "1026f2b2adb458683a717c2e626c5946777ba3d7c7ea801b8998e6709a1a3440"
+    },
+    {
+      "path": "apps/web/src/appVersion.ts",
+      "size": 135,
+      "sha256": "7a3876926b3b03e62c64072335e3eec29334cf51c013603f0807b2925d50fb15"
     },
     {
       "path": "apps/web/src/backup/backupHistory.test.ts",
@@ -459,8 +469,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 14558,
-      "sha256": "043f0600c191e0bbaf3657b10af426290c8cf3932bc14b604ba344898234ea58"
+      "size": 14608,
+      "sha256": "e4e35d2ab6da22968e25842650796058b0b83377ae15b2e85fb0327e34eacc41"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -514,8 +524,8 @@
     },
     {
       "path": "apps/web/vite.config.ts",
-      "size": 1581,
-      "sha256": "d5f1e5197fc3cd41c18e9d370c5768569871b60b2c0fd60201866240ceb50870"
+      "size": 1862,
+      "sha256": "969ee86962b6fc7d0a942b4104253c8e54454e39581b8ab18e28ebaa5c6c3333"
     },
     {
       "path": "CHANGELOG.md",
@@ -634,8 +644,8 @@
     },
     {
       "path": "docs/archive/ROADMAP_PRE_RELEASE_2026-07-29.md",
-      "size": 309,
-      "sha256": "e578970835d9a6ef144ca99074c647ed1b0520d89903eb83a212c4a664ef6542"
+      "size": 314,
+      "sha256": "15e357463d51fc32ce43580a145d3b785bc710cf333c775242d54eefdcd6aac5"
     },
     {
       "path": "docs/CONTEXT.md",
@@ -644,8 +654,8 @@
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
-      "size": 3377,
-      "sha256": "7fc9499ecb6e73cea7cd1bb05bc8d97822f817be35743e269135d7ee15023724"
+      "size": 3425,
+      "sha256": "ef08ad41c059463e81564cabf1e23a0cbb105a27e79270819bcb29fb42db1876"
     },
     {
       "path": "docs/DATA_MODEL.md",
@@ -654,8 +664,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 11253,
-      "sha256": "aae611c7131a8d75f97fcbe00070167a05c43c296c4c0a8e5bbc811d600a240e"
+      "size": 12009,
+      "sha256": "a8e51e433b4a464d50565b4659c29fafbef2b0626d636dedd9ee5a8838fa4aef"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -689,18 +699,18 @@
     },
     {
       "path": "docs/release/IMPLEMENTATION_REPORT_2026-07-29.md",
-      "size": 1324,
-      "sha256": "18de61818baaa97d0b0fbee49978b3e19b32db570f63d12d544603d965995c3e"
+      "size": 1354,
+      "sha256": "e8a80dc96cd0242aae5fa8e884aae03b5d0c20364a7a1e204def181f21fcad9a"
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 1933,
-      "sha256": "97af1bf931a59a622a09457fdfe6797cf099ac0f30cffcf221c8fb46feb97b81"
+      "size": 1957,
+      "sha256": "1c040d91d281d0d90e7883819c57f5cb784515158c870591c91f7d2622afb87f"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
-      "size": 941,
-      "sha256": "cd5863ca2a8dd6a83c7d1e1f0d7fa7f267d22b4594f5d547f36870bf0541212d"
+      "size": 966,
+      "sha256": "166faea11dc26e72c7d6279ad8f736fa44e1a3ee7ca092cec7ac164bbe112b16"
     },
     {
       "path": "docs/testing/QUALITY_GATES.md",
@@ -709,8 +719,8 @@
     },
     {
       "path": "docs/THREAT_MODEL.md",
-      "size": 1690,
-      "sha256": "e761148db97036bee9f52d51475dad113b285f2ca712404e91cb7685e247e79d"
+      "size": 1721,
+      "sha256": "3025410632ff6593484ab95d35ae23284c48412d767557004604a1c6c9cacf32"
     },
     {
       "path": "docs/ux/MOBILE_UI_IMPLEMENTATION_PLAN.md",
@@ -741,11 +751,6 @@
       "path": "examples/imports/money-manager-generic.csv",
       "size": 426,
       "sha256": "121faaaa842348c3a7eced9c220e8cd523ffc8443589a62ba2ff39b80119042d"
-    },
-    {
-      "path": "infra/docker/Dockerfile",
-      "size": 128,
-      "sha256": "cfa5107fc4cbd0450bfe71ea7326fe4449e4cd0c4dd12abb4b2a42a03dd45aae"
     },
     {
       "path": "package.json",
@@ -1510,7 +1515,7 @@
     {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2202,
-      "sha256": "4f1177e38dfb88d48fc99b54a7a500c30fb392e59eecc341cf5b5c71bc5ce4a9"
+      "sha256": "c8ccadf22e28851d242156f59c219f7df33b316c84f58b6d62cb855c5ee4356e"
     },
     {
       "path": "test/e2e/budgets.spec.ts",
@@ -1529,8 +1534,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 216870,
-      "sha256": "1637ad75c9b43302488cafdb9300da705b5f3816ff96f21ac51ffea68a3931b3"
+      "size": 216748,
+      "sha256": "1839e5ae87de173bf76f1632c860709dae33cf37f564aa4bd5bebc229b5c0f43"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
@@ -1560,7 +1565,7 @@
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
       "size": 1809,
-      "sha256": "41b4346d5b7a01c61daee3831227e9281b7253d04b88f7be8e268f1db28588f9"
+      "sha256": "163d7842eea0799dc0b083c3e84661b5788c09a5a390bd3d2556aba0b136131d"
     },
     {
       "path": "test/e2e/investments.spec.ts",
@@ -1575,12 +1580,12 @@
     {
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1794,
-      "sha256": "a8e2fc68fcf0743576afc81a179668ccfb38faa37a467aa7dd6fb079eb9b8b08"
+      "sha256": "66a7b2a21f5a8365b713c43612b7e230b6aa53bc229f81aa366b40f0de319bf6"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4638,
-      "sha256": "647e8063ad339da541afc1592681e634036ebddd273e40d04efc66e6339e4618"
+      "sha256": "648188f81a8401c68c475f6992f223be555caa2a2b4df44e972f32ad0d83176d"
     },
     {
       "path": "test/e2e/recurring.spec.ts",
@@ -1614,8 +1619,8 @@
     },
     {
       "path": "vitest.config.ts",
-      "size": 283,
-      "sha256": "d6fc0165afb6df21f9bcf8e71b2a4909ff0d6fef128433a7b8e674bebdc505a0"
+      "size": 560,
+      "sha256": "fb75c6221a21c5c5e0fe615d87b409462637adedf69d34d81c30c9a207955c83"
     }
   ]
 }

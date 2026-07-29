@@ -2,6 +2,15 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-07-29 — Nessun backup-agent Docker nella Release Candidate
+
+- **Contesto:** il Dockerfile pubblicava soltanto un placeholder e non offriva un servizio
+  eseguibile, verificabile o incluso nel percorso backup della PWA.
+- **Scelta:** rimuovere il Dockerfile dal percorso di release anziché presentare un agente
+  inesistente. Backup locale e Google Drive restano i soli flussi supportati e testati.
+- **Conseguenze:** un futuro agente NAS/self-hosted richiederà contratto, threat model, test e
+  documentazione dedicati prima di essere reintrodotto.
+
 ## 2026-07-29 — Cestino transazioni senza cascade impliciti
 
 - **Contesto:** la roadmap di cancellazione richiede recupero, coerenza dei trasferimenti e

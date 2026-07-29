@@ -3,7 +3,7 @@
 ## Ambito completato
 
 R0–R6 della roadmap Release Candidate sono completati e pubblicati sul branch
-`codex/roadmap-release-candidate`.
+`main` tramite merge commit `6fe2565`.
 
 - Backup portabile cifrato, validato e ripristinato atomicamente su SQLite/OPFS e IndexedDB.
 - Cronologia locale delle operazioni e recovery drill senza modifica del ledger attivo.

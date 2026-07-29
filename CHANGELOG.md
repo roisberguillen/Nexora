@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Riallineata la baseline di `main`: versione build centralizzata dal manifest root, report
+  verificabile, roadmap quality-gated e rimozione del Dockerfile placeholder non produttivo.
+
 - Aggiunto il cestino persistente dei movimenti: trasferimenti trattati come gruppo atomico,
   ripristino esplicito ed esclusione da saldi, budget e analisi.
 - Aggiunta la cancellazione definitiva protetta dal cestino, con rimozione atomica di split e tag

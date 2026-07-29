@@ -1,49 +1,45 @@
-# Roadmap Release Candidate
+# Roadmap Main Quality Gated
 
-Fonte: `NEXORA_ROADMAP_RELEASE_CANDIDATE.md`, 29 luglio 2026. Nexora è in
-`0.5.0-rc.1`; il passaggio a `1.0.0` è vietato finché tutte le fasi seguenti non sono provate
-con codice, test, quality gate, commit e push.
+Fonte normativa: `C:\Users\Roi23\Downloads\NEXORA_ROADMAP_MAIN_QUALITY_GATED.md`,
+audit del 29 luglio 2026. Questa roadmap sostituisce lo stato dichiarativo della precedente
+Release Candidate: ogni casella può essere selezionata soltanto dopo test mirati, quality gate,
+documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
-## R0 — Riallineamento del progetto
+## M0 — Baseline, versione e documentazione
 
-- [x] Documentazione, versioning, toolchain e CI coerenti;
-- [x] `pnpm doctor` verifica ambiente e configurazione non sensibile;
-- [x] roadmap pre-release archiviata.
+- [x] Baseline riproducibile registrata con ambiente, commit, test e skip.
+- [x] Versione derivata da una sola fonte e nessun placeholder produttivo.
+- [x] Documentazione e report allineati a `main`.
 
-## R1 — Protezione dei dati locali e trasparenza privacy
+## M1 — Copertura flussi distruttivi
 
-- [x] Stato di cifratura del ledger documentato senza affermazioni fuorvianti;
-- [x] pagina Privacy e sicurezza, redazione log e blocco applicazione opzionale;
-- [x] test sicurezza, timeout e accessibilità.
+- [ ] Test component, adapter ed E2E per cestino, restore, purge, reset e ripristino totale.
+- [ ] Verificate invarianti di saldi, budget, trend, import, split e trasferimenti.
 
-## R2 — Backup equivalente
+## M2 — Reset dati finanziari
 
-- [x] formato `.nexora-backup` cifrato canonico per SQLite/OPFS e IndexedDB;
-- [x] restore incrociato, picker accessibile, verifica manifest/checksum e rollback;
-- [x] test round-trip e corruzione su entrambi i backend.
+- [ ] Preview, backup preventivo verificato, scelta esplicita senza backup, PIN e ricevuta sicura.
+- [ ] Reset atomico con ricostruzione categorie di sistema, cache e notifiche riallineate.
 
-## R3 — Cronologia e recovery drill
+## M3 — Ripristino totale locale e cloud opzionale
 
-- [x] cronologia persistente di backup, restore e controlli;
-- [x] recovery drill non distruttivo e avvisi temporali;
-- [x] UI, test backend ed E2E equivalenti.
+- [ ] Pulizia locale con report per componente e recupero dagli errori.
+- [ ] Cancellazione Google Drive opzionale con doppia conferma ed esito parziale esplicito.
 
-## R4 — Google Drive pronto per uso reale
+## M4 — Cestino e cancellazione multipla
 
-- [x] stati OAuth espliciti, retry, timeout, disconnessione e diagnostica sicura;
-- [x] upload/download registrati e verificati prima del restore;
-- [x] mock CI e guida di configurazione reale.
+- [ ] Selezione multipla, preview, rollback, svuotamento, retention e undo sicuro.
 
-## R5 — Notifiche finanziarie e operative
+## M5 — Conti, categorie e tag
 
-- [x] backup/restore scaduti, saldo basso ed entrata attesa mancante;
-- [x] priorità, preferenze, deduplica e storico;
-- [x] fallback interno senza Notifications API.
+- [ ] Svuota conto protetto, unione/riassegnazione categorie e unione/rimozione tag.
 
-## R6 — Prestazioni, accessibilità e RC
+## M6 — Gestione dati e accessibilità
 
-- [x] benchmark 1k–100k per operazioni critiche;
-- [x] audit Axe, tastiera, zoom e visual regression 320–1440;
-- [x] checklist, report RC e quality gate completi.
+- [ ] Centro Gestione dati, preferenze operative e dialog accessibili completi.
+- [ ] Audit tastiera, screen reader, zoom e viewport 320/375/768/1024/1440.
 
-Ogni fase resta non selezionata finché i rispettivi criteri sono verificati e pubblicati.
+## M7 — Hardening e chiusura
+
+- [ ] Benchmark 1k–100k dei nuovi flussi, recovery drill, controllo segreti e report finale.
+- [ ] Quality gate finale verde su `main` e report `MAIN_IMPLEMENTATION_REPORT_2026-07-29.md`.

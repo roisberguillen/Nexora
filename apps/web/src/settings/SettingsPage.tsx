@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { TrashedTransaction } from "@nexora/domain";
 
+import { appVersion } from "../appVersion";
+
 import {
   applyAppPreferences,
   readAppPreferences,
@@ -311,7 +313,7 @@ export function SettingsPage({
           </SettingsGroup>
         )}
         <SettingsGroup title="Applicazione">
-          <SettingsRow label="Versione app" value="0.4.0" />
+          <SettingsRow label="Versione app" value={appVersion} />
           <SettingsLink label="Privacy e sicurezza" href="./#privacy-security" />
           <SettingsLink label="Note di rilascio" href="./#overview" />
         </SettingsGroup>
