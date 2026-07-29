@@ -47,6 +47,8 @@ cifrato, lo verifica prima del download e conserva nella ricevuta solo il prefis
 l'utente può proseguire senza backup soltanto con un consenso distinto. Se il blocco app è attivo,
 il reset richiede nuovamente PIN/passphrase. Dopo il commit vengono rigenerati dashboard e
 notifiche locali e restano soltanto le categorie di sistema `Entrate` e `Spese`.
-Backup locali e Drive non vengono mai eliminati dal reset finanziario. L'eliminazione cloud è
-un'opzione separata, disattivata per default, con esito per file. L'audit registra solo tipo,
+Backup locali e Drive non vengono mai eliminati dal reset finanziario. Nel ripristino totale
+l'eliminazione cloud è un'opzione separata, disattivata per default e disponibile solo quando
+Google Drive è configurato; un errore cloud non annulla mai il risultato locale e il report
+sessionale indica backup eliminati, rimanenti ed errori tecnici. L'audit registra solo tipo,
 timestamp e conteggi, mai importi, descrizioni, token o passphrase.

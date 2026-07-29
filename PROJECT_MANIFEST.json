@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 31479,
-      "sha256": "f36788203b89aeeeb792c7c84f466f9af004e9284e4c389440137998d34c1cc0"
+      "size": 32896,
+      "sha256": "2b284eef509ade645962c4e1122ab5e8a528a1c84c25ff3e58c297dd5275c6c7"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -294,8 +294,8 @@
     },
     {
       "path": "apps/web/src/dashboard/Dashboard.tsx",
-      "size": 9249,
-      "sha256": "13998d4d3f1914612e3d9b536353d94bfd621cdf73a985a07c45bb05dce5a9fa"
+      "size": 9741,
+      "sha256": "54d342c71b80f984f153a986ab2c7be974b4b7cfd8ce501b484395ef17cd7069"
     },
     {
       "path": "apps/web/src/exports/exportData.test.ts",
@@ -448,6 +448,16 @@
       "sha256": "20e40d2de9460fadfabb250c3e01086011b34b435476541b5f4e4c59af031821"
     },
     {
+      "path": "apps/web/src/reset/totalReset.test.ts",
+      "size": 1802,
+      "sha256": "6a7719a6d6ef2749eea13359c21e9699f2f208aeede2f940cb6883b0577bdfc8"
+    },
+    {
+      "path": "apps/web/src/reset/totalReset.ts",
+      "size": 2806,
+      "sha256": "f7e140b9aad413ef67d1af24200f3a2ab2e5b4d4bbafd52e659f39e85b95ba05"
+    },
+    {
       "path": "apps/web/src/security/appLock.test.ts",
       "size": 1441,
       "sha256": "4caa13bb83b11a266aba224ae95bbf23341ab947521d4ff33b8732da7de22f2d"
@@ -479,13 +489,13 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 5778,
-      "sha256": "1cc95a35cd6eef5f1bdb25a45a9f40ec136a9b702001b36131a7457524c4aa2a"
+      "size": 5993,
+      "sha256": "e7620ed7913305e027e248ec0191df48eb7840eccf372f66112e34760a2c0892"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 19060,
-      "sha256": "b4df95a6a7c097fd1e716270502746d35b3cad4d9a49a26c2a57385680bf4e91"
+      "size": 20563,
+      "sha256": "683cde58199085642a2feec01a7c2f8aa6f1a96df2e45c52c774cc84ecf082d9"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -544,8 +554,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 11515,
-      "sha256": "e5290256f8a3052e8c9507f7ce458f4271039179f62d4d15fbe4e3b3a812e127"
+      "size": 11702,
+      "sha256": "d2c468bb54e384cadf839cbe0a983b1bd74335a53ddc5e9ff83a62943149fad5"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -669,8 +679,8 @@
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
-      "size": 3794,
-      "sha256": "8f71762783f62006f35b2a7f5289aff2618dfd12744128e4c7582b66e61c941e"
+      "size": 3977,
+      "sha256": "537223314aa0fd0c4e87191a5f1d3e22adaa08dd034742088f1f5e44f957cbbb"
     },
     {
       "path": "docs/DATA_MODEL.md",
@@ -725,7 +735,7 @@
     {
       "path": "docs/ROADMAP.md",
       "size": 1957,
-      "sha256": "474b048802e94099396664c230f17b7c4cbf71c70818e586d35ebe649db21a00"
+      "sha256": "3d613985c0374df639c338acb208fa7f685f57b0eaf8cbd1efb984f1933321e6"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",

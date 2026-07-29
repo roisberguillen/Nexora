@@ -3,6 +3,7 @@ import type { TrashedTransaction } from "@nexora/domain";
 
 import { appVersion } from "../appVersion";
 import type { FinancialResetPreview } from "../reset/financialReset";
+import type { TotalResetReport } from "../reset/totalReset";
 
 import {
   applyAppPreferences,
@@ -15,6 +16,7 @@ export function SettingsPage({
   onResetFinancialData,
   onCreateResetBackup,
   requiresResetPin = false,
+  cloudResetAvailable = false,
   onPreviewFinancialReset,
   onRestoreTransaction,
   onPurgeTransaction,
@@ -27,10 +29,13 @@ export function SettingsPage({
   }) => Promise<void>;
   readonly onCreateResetBackup?: (passphrase: string) => Promise<string>;
   readonly requiresResetPin?: boolean;
+  readonly cloudResetAvailable?: boolean;
   readonly onPreviewFinancialReset?: () => Promise<FinancialResetPreview>;
   readonly onRestoreTransaction?: (id: string) => Promise<void>;
   readonly onPurgeTransaction?: (id: string) => Promise<void>;
-  readonly onResetApplication?: () => Promise<void>;
+  readonly onResetApplication?: (input: {
+    readonly deleteCloud: boolean;
+  }) => Promise<TotalResetReport>;
   readonly trashedTransactions?: readonly TrashedTransaction[];
 }) {
   const [preferences, setPreferences] = useState<AppPreferences>(() => readAppPreferences());
@@ -55,6 +60,10 @@ export function SettingsPage({
   const [purgeMessage, setPurgeMessage] = useState<string | null>(null);
   const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
   const [applicationResetPhrase, setApplicationResetPhrase] = useState("");
+  const [deleteCloudBackups, setDeleteCloudBackups] = useState(false);
+  const [applicationResetReport, setApplicationResetReport] = useState<TotalResetReport | null>(
+    null,
+  );
   const resetFinancialData = async () => {
     if (
       onResetFinancialData === undefined ||
@@ -323,6 +332,17 @@ export function SettingsPage({
                     value={resetPhrase}
                   />
                 </label>
+                <label>
+                  <input
+                    aria-label="Elimina backup Google Drive"
+                    checked={deleteCloudBackups}
+                    disabled={!cloudResetAvailable}
+                    onChange={(event) => setDeleteCloudBackups(event.currentTarget.checked)}
+                    type="checkbox"
+                  />{" "}
+                  Elimina anche i backup Nexora da Google Drive
+                  {cloudResetAvailable ? "" : " (non configurato)"}
+                </label>
                 <div className="form-actions">
                   <button
                     className="secondary-action"
@@ -396,6 +416,7 @@ export function SettingsPage({
                     disabled={isResetting}
                     onClick={() => {
                       setApplicationResetPhrase("");
+                      setDeleteCloudBackups(false);
                       setIsApplicationResetOpen(false);
                     }}
                     type="button"
@@ -407,13 +428,23 @@ export function SettingsPage({
                     disabled={isResetting || applicationResetPhrase !== "RIPRISTINA NEXORA"}
                     onClick={() => {
                       setIsResetting(true);
-                      void onResetApplication().finally(() => setIsResetting(false));
+                      void onResetApplication({ deleteCloud: deleteCloudBackups })
+                        .then(setApplicationResetReport)
+                        .finally(() => setIsResetting(false));
                     }}
                     type="button"
                   >
                     {isResetting ? "Ripristino in corso…" : "Ripristina app"}
                   </button>
                 </div>
+                {applicationResetReport === null ? null : (
+                  <p role="status">
+                    Reset locale:{" "}
+                    {applicationResetReport.local === "succeeded" ? "riuscito" : "non riuscito"}.
+                    Backup cloud eliminati: {applicationResetReport.cloudDeleted}; rimanenti:{" "}
+                    {applicationResetReport.cloudRemaining}.
+                  </p>
+                )}
               </div>
             ) : null}
           </SettingsGroup>

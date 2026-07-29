@@ -84,7 +84,13 @@ describe("SettingsPage destructive flows", () => {
 
   it("protegge il ripristino totale con una frase distinta e consente l'annullamento", async () => {
     const user = userEvent.setup();
-    const resetApplication = vi.fn(async () => undefined);
+    const resetApplication = vi.fn(async () => ({
+      local: "succeeded" as const,
+      cloudRequested: false,
+      cloudDeleted: 0,
+      cloudRemaining: 0,
+      cloudErrors: [],
+    }));
     render(<SettingsPage onResetApplication={resetApplication} />);
 
     await user.click(screen.getByRole("button", { name: "Ripristino totale dell’app" }));
@@ -108,6 +114,8 @@ describe("SettingsPage destructive flows", () => {
     );
     await user.click(screen.getByRole("button", { name: "Ripristina app" }));
     await waitFor(() => expect(resetApplication).toHaveBeenCalledOnce());
+
+    expect(resetApplication).toHaveBeenLastCalledWith({ deleteCloud: false });
   });
 
   it("richiede backup e PIN prima del reset quando il blocco app è attivo", async () => {

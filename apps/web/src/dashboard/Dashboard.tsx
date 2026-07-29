@@ -3,6 +3,7 @@ import type { BrowserLedgerStorageKind } from "@nexora/database";
 import { FinancialAmount, MetricCard } from "@nexora/ui";
 
 import type { DashboardActivityItem, DashboardViewModel } from "./buildDashboardViewModel";
+import type { TotalResetReport } from "../reset/totalReset";
 
 interface DashboardProps {
   readonly hasSeedFeedback: boolean;
@@ -11,6 +12,7 @@ interface DashboardProps {
   readonly onAddDemoData: () => void;
   readonly schemaVersion: number;
   readonly storageKind: BrowserLedgerStorageKind;
+  readonly totalResetReport?: TotalResetReport;
 }
 
 export function Dashboard({
@@ -20,6 +22,7 @@ export function Dashboard({
   onAddDemoData,
   schemaVersion,
   storageKind,
+  totalResetReport,
 }: DashboardProps) {
   const storageLabel = storageKind === "opfs" ? "SQLite su OPFS" : "IndexedDB";
 
@@ -41,6 +44,13 @@ export function Dashboard({
           <span>Schema {schemaVersion}</span>
         </div>
       </header>
+      {totalResetReport === undefined ? null : (
+        <p className="dashboard-feedback" role="status">
+          Ripristino locale {totalResetReport.local === "succeeded" ? "riuscito" : "non riuscito"}.
+          Backup Google Drive eliminati: {totalResetReport.cloudDeleted}; rimanenti:{" "}
+          {totalResetReport.cloudRemaining}.
+        </p>
+      )}
 
       {isDashboardEmpty(model) ? (
         <EmptyDashboard isSeeding={isSeeding} onAddDemoData={onAddDemoData} />

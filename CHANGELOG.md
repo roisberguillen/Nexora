@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Il ripristino totale distingue reset locale e pulizia Google Drive opzionale, richiede
+  autorizzazione al momento dell’azione e conserva un report tecnico non sensibile tra reload.
+
 - Il reset finanziario ora mostra una preview, richiede un backup cifrato verificato o un consenso
   distinto senza backup, richiede il PIN quando il blocco app è attivo e conserva una ricevuta
   tecnica senza dati finanziari.

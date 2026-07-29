@@ -90,6 +90,11 @@ import {
   previewFinancialReset,
   writeFinancialResetReceipt,
 } from "./reset/financialReset";
+import { readTotalResetReport, runTotalReset, writeTotalResetReport } from "./reset/totalReset";
+import { GoogleDriveBackupProvider } from "./cloud/GoogleDriveBackupProvider";
+import { GoogleIdentityAuth } from "./cloud/GoogleIdentityAuth";
+import { readGoogleCloudConfig } from "./cloud/cloudConfig";
+import { loadGoogleIdentity } from "./cloud/loadGoogleIdentity";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -138,6 +143,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     readAppLock(),
   );
   const [isAppLocked, setIsAppLocked] = useState(() => readAppLock() !== undefined);
+  const [totalResetReport] = useState(() => readTotalResetReport());
 
   useEffect(() => {
     if (!appLockConfig || isAppLocked) return;
@@ -416,11 +422,33 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.purgeTrashedTransaction(id);
     });
-  const resetApplication = async (): Promise<void> => {
-    if (ledgerState.status !== "ready") return;
-    await resetLocalApp(ledgerState.ledger);
-    window.location.hash = "#overview";
-    window.location.reload();
+  const resetApplication = async (input: { readonly deleteCloud: boolean }) => {
+    if (ledgerState.status !== "ready") throw new Error("Ledger non pronto");
+    let cloud: GoogleDriveBackupProvider | undefined;
+    if (input.deleteCloud) {
+      const config = readGoogleCloudConfig();
+      if (config.enabled) {
+        try {
+          await loadGoogleIdentity();
+          const auth = new GoogleIdentityAuth(config.clientId);
+          await auth.connect();
+          cloud = new GoogleDriveBackupProvider(() => auth.getAccessToken());
+        } catch {
+          // The local reset remains independent from a failed optional cloud authorization.
+        }
+      }
+    }
+    const report = await runTotalReset({
+      deleteCloud: input.deleteCloud,
+      resetLocal: () => resetLocalApp(ledgerState.ledger),
+      ...(cloud === undefined ? {} : { cloud }),
+    });
+    if (report.local === "succeeded") {
+      writeTotalResetReport(report);
+      window.location.hash = "#overview";
+      window.location.reload();
+    }
+    return report;
   };
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -604,6 +632,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               <SettingsPage
                 onResetFinancialData={resetFinancialData}
                 onCreateResetBackup={createResetBackup}
+                cloudResetAvailable={readGoogleCloudConfig().enabled}
                 requiresResetPin={appLockConfig !== undefined}
                 onPreviewFinancialReset={previewResetFinancialData}
                 onResetApplication={resetApplication}
@@ -626,6 +655,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 hasSeedFeedback={hasSeedFeedback}
                 isSeeding={isSeeding}
                 model={ledgerState.dashboard}
+                {...(totalResetReport === undefined ? {} : { totalResetReport })}
                 onAddDemoData={() => void addDemoData()}
                 schemaVersion={ledgerState.ledger.schemaVersion}
                 storageKind={ledgerState.ledger.storageKind}

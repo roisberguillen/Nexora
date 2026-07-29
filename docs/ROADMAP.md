@@ -23,8 +23,8 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M3 — Ripristino totale locale e cloud opzionale
 
-- [ ] Pulizia locale con report per componente e recupero dagli errori.
-- [ ] Cancellazione Google Drive opzionale con doppia conferma ed esito parziale esplicito.
+- [x] Pulizia locale con report per componente e recupero dagli errori.
+- [x] Cancellazione Google Drive opzionale con doppia conferma ed esito parziale esplicito.
 
 ## M4 — Cestino e cancellazione multipla
 
