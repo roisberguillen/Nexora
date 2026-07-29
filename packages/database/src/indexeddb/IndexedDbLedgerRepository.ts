@@ -15,6 +15,7 @@ import {
   Loan,
   InvestmentPosition,
   MonthlyJournal,
+  type TrashedTransaction,
   LocalDate,
   Money,
   validateImportCommit,
@@ -53,6 +54,7 @@ type EntityStore =
   | "accounts"
   | "categories"
   | "transactions"
+  | "transaction_trash"
   | "transfers"
   | "transaction_splits"
   | "tags"
@@ -65,6 +67,12 @@ type EntityStore =
   | "loans"
   | "investment_positions"
   | "monthly_journals";
+
+interface TransactionTrashRecord {
+  readonly transaction_id: string;
+  readonly deleted_at: string;
+  readonly deletion_group_id: string;
+}
 
 export class IndexedDbLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
@@ -82,6 +90,7 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
             "accounts",
             "categories",
             "transactions",
+            "transaction_trash",
             "transfers",
             "transaction_splits",
             "tags",
@@ -857,6 +866,102 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     );
   }
 
+  public trashTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["transactions", "transfers", "transaction_trash"],
+          "readwrite",
+          async (transaction) => {
+            const transactions = transaction.objectStore("transactions");
+            if ((await requestResult<unknown>(transactions.get(id))) === undefined)
+              throw new DomainError("missing_reference", "Transaction does not exist.");
+            const transfers = (await requestResult<unknown[]>(
+              transaction.objectStore("transfers").getAll(),
+            )) as readonly TransferRecord[];
+            const transfer = transfers.find(
+              (candidate) =>
+                candidate.debit_transaction_id === id ||
+                candidate.credit_transaction_id === id ||
+                candidate.fee_transaction_id === id,
+            );
+            const transactionIds =
+              transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
+            const deleted_at = new Date().toISOString();
+            const deletion_group_id =
+              transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+            const trash = transaction.objectStore("transaction_trash");
+            for (const transaction_id of transactionIds) {
+              if ((await requestResult<unknown>(transactions.get(transaction_id))) === undefined)
+                throw new DomainError("missing_reference", "Transfer leg does not exist.");
+              await requestResult(
+                trash.put({
+                  transaction_id,
+                  deleted_at,
+                  deletion_group_id,
+                } satisfies TransactionTrashRecord),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  public restoreTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["transaction_trash"], "readwrite", async (transaction) => {
+          const trash = transaction.objectStore("transaction_trash");
+          const entry = await requestResult<unknown>(trash.get(id));
+          if (entry === undefined)
+            throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+          const deletionGroupId = (entry as TransactionTrashRecord).deletion_group_id;
+          const entries = (await requestResult<unknown[]>(
+            trash.getAll(),
+          )) as readonly TransactionTrashRecord[];
+          for (const candidate of entries) {
+            if (candidate.deletion_group_id === deletionGroupId)
+              await requestResult(trash.delete(candidate.transaction_id));
+          }
+        }),
+      ),
+    );
+  }
+
+  public listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["transactions", "transaction_trash"],
+          "readonly",
+          async (transaction) => {
+            const [transactionRows, trashRows] = await Promise.all([
+              requestResult<unknown[]>(transaction.objectStore("transactions").getAll()),
+              requestResult<unknown[]>(transaction.objectStore("transaction_trash").getAll()),
+            ]);
+            const transactions = transactionRecordMap(
+              transactionRows as readonly TransactionRecord[],
+            );
+            return (trashRows as readonly TransactionTrashRecord[])
+              .map((entry) => {
+                const stored = transactions.get(entry.transaction_id);
+                return stored === undefined
+                  ? undefined
+                  : {
+                      transaction: stored,
+                      deletedAt: entry.deleted_at,
+                      deletionGroupId: entry.deletion_group_id,
+                    };
+              })
+              .filter((entry): entry is TrashedTransaction => entry !== undefined)
+              .sort((left, right) => left.deletedAt.localeCompare(right.deletedAt));
+          },
+        ),
+      ),
+    );
+  }
+
   public findAccountById(id: string): Promise<Account | undefined> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -880,14 +985,20 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public findTransactionById(id: string): Promise<Transaction | undefined> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["transactions"], "readonly", async (transaction) => {
-          const value = await requestResult<unknown>(
-            transaction.objectStore("transactions").get(id),
-          );
-          return value === undefined
-            ? undefined
-            : transactionFromRecord(value as TransactionRecord);
-        }),
+        this.withTransaction(
+          ["transactions", "transaction_trash"],
+          "readonly",
+          async (transaction) => {
+            const [value, trash] = await Promise.all([
+              requestResult<unknown>(transaction.objectStore("transactions").get(id)),
+              requestResult<unknown>(transaction.objectStore("transaction_trash").get(id)),
+            ]);
+            if (trash !== undefined) return undefined;
+            return value === undefined
+              ? undefined
+              : transactionFromRecord(value as TransactionRecord);
+          },
+        ),
       ),
     );
   }
@@ -895,30 +1006,44 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public findTransferById(id: string): Promise<Transfer | undefined> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["transactions", "transfers"], "readonly", async (transaction) => {
-          const value = await requestResult<unknown>(transaction.objectStore("transfers").get(id));
-          if (value === undefined) {
-            return undefined;
-          }
-
-          const transferRecord = value as TransferRecord;
-          const transactionStore = transaction.objectStore("transactions");
-          const transactionRecords = await Promise.all(
-            transferRecordTransactionIds(transferRecord).map((transactionId) =>
-              requestResult<unknown>(transactionStore.get(transactionId)),
-            ),
-          );
-          if (transactionRecords.some((record) => record === undefined)) {
-            throw new PersistenceError(
-              "corrupt_record",
-              "The persisted transfer record has a missing leg.",
+        this.withTransaction(
+          ["transactions", "transfers", "transaction_trash"],
+          "readonly",
+          async (transaction) => {
+            const value = await requestResult<unknown>(
+              transaction.objectStore("transfers").get(id),
             );
-          }
-          return transferFromRecord(
-            transferRecord,
-            transactionRecordMap(transactionRecords as readonly TransactionRecord[]),
-          );
-        }),
+            if (value === undefined) {
+              return undefined;
+            }
+
+            const transferRecord = value as TransferRecord;
+            const transactionStore = transaction.objectStore("transactions");
+            const transactionRecords = await Promise.all(
+              transferRecordTransactionIds(transferRecord).map((transactionId) =>
+                requestResult<unknown>(transactionStore.get(transactionId)),
+              ),
+            );
+            if (transactionRecords.some((record) => record === undefined)) {
+              throw new PersistenceError(
+                "corrupt_record",
+                "The persisted transfer record has a missing leg.",
+              );
+            }
+            const trashEntries = await Promise.all(
+              transferRecordTransactionIds(transferRecord).map((transactionId) =>
+                requestResult<unknown>(
+                  transaction.objectStore("transaction_trash").get(transactionId),
+                ),
+              ),
+            );
+            if (trashEntries.some((entry) => entry !== undefined)) return undefined;
+            return transferFromRecord(
+              transferRecord,
+              transactionRecordMap(transactionRecords as readonly TransactionRecord[]),
+            );
+          },
+        ),
       ),
     );
   }
@@ -1065,12 +1190,22 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public listTransactions(): Promise<readonly Transaction[]> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["transactions"], "readonly", async (transaction) => {
-          const rows = await requestResult<unknown[]>(
-            transaction.objectStore("transactions").getAll(),
-          );
-          return rows.map((row) => transactionFromRecord(row as TransactionRecord));
-        }),
+        this.withTransaction(
+          ["transactions", "transaction_trash"],
+          "readonly",
+          async (transaction) => {
+            const [rows, trashRows] = await Promise.all([
+              requestResult<unknown[]>(transaction.objectStore("transactions").getAll()),
+              requestResult<unknown[]>(transaction.objectStore("transaction_trash").getAll()),
+            ]);
+            const trashedIds = new Set(
+              (trashRows as readonly TransactionTrashRecord[]).map((row) => row.transaction_id),
+            );
+            return rows
+              .map((row) => transactionFromRecord(row as TransactionRecord))
+              .filter((candidate) => !trashedIds.has(candidate.id));
+          },
+        ),
       ),
     );
   }
@@ -1078,22 +1213,35 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public listTransfers(): Promise<readonly Transfer[]> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["transactions", "transfers"], "readonly", async (transaction) => {
-          const transferRequest = requestResult<unknown[]>(
-            transaction.objectStore("transfers").getAll(),
-          );
-          const transactionRequest = requestResult<unknown[]>(
-            transaction.objectStore("transactions").getAll(),
-          );
-          const [transferRows, transactionRows] = await Promise.all([
-            transferRequest,
-            transactionRequest,
-          ]);
-          const transactions = transactionRecordMap(
-            transactionRows as readonly TransactionRecord[],
-          );
-          return transferRows.map((row) => transferFromRecord(row as TransferRecord, transactions));
-        }),
+        this.withTransaction(
+          ["transactions", "transfers", "transaction_trash"],
+          "readonly",
+          async (transaction) => {
+            const transferRequest = requestResult<unknown[]>(
+              transaction.objectStore("transfers").getAll(),
+            );
+            const transactionRequest = requestResult<unknown[]>(
+              transaction.objectStore("transactions").getAll(),
+            );
+            const [transferRows, transactionRows, trashRows] = await Promise.all([
+              transferRequest,
+              transactionRequest,
+              requestResult<unknown[]>(transaction.objectStore("transaction_trash").getAll()),
+            ]);
+            const transactions = transactionRecordMap(
+              transactionRows as readonly TransactionRecord[],
+            );
+            const trashedIds = new Set(
+              (trashRows as readonly TransactionTrashRecord[]).map((row) => row.transaction_id),
+            );
+            return transferRows
+              .map((row) => row as TransferRecord)
+              .filter((transfer) =>
+                transferRecordTransactionIds(transfer).every((id) => !trashedIds.has(id)),
+              )
+              .map((transfer) => transferFromRecord(transfer, transactions));
+          },
+        ),
       ),
     );
   }

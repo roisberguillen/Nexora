@@ -312,6 +312,24 @@ describe("IndexedDbLedgerRepository", () => {
     ).resolves.toMatchObject({ status: "cancelled" });
   });
 
+  it("sposta nel cestino un trasferimento in modo atomico e lo ripristina", async () => {
+    await ledger.repository.saveAccount(account("account-trash-a"));
+    await ledger.repository.saveAccount(account("account-trash-b", "savings"));
+    const debitTransaction = transferLeg("transfer-trash-debit", "account-trash-a", -100n);
+    const creditTransaction = transferLeg("transfer-trash-credit", "account-trash-b", 100n);
+    const transfer = Transfer.create({ id: "transfer-trash", debitTransaction, creditTransaction });
+    await ledger.repository.saveTransfer({ transfer, debitTransaction, creditTransaction });
+
+    await ledger.repository.trashTransaction(debitTransaction.id);
+    await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
+    await expect(ledger.repository.findTransferById(transfer.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.listTrashedTransactions()).resolves.toHaveLength(2);
+
+    await ledger.repository.restoreTransaction(creditTransaction.id);
+    await expect(ledger.repository.findTransferById(transfer.id)).resolves.toEqual(transfer);
+    await expect(ledger.repository.listTransactions()).resolves.toHaveLength(2);
+  });
+
   it("aggiorna un conto senza perdere precisione e blocca saldi retroattivi", async () => {
     const original = Account.create({
       id: "account-editable",

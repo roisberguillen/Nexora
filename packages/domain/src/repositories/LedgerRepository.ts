@@ -20,6 +20,13 @@ export interface TransferBundle {
   readonly feeTransaction?: Transaction;
 }
 
+/** A transaction retained in the local recycle bin and excluded from financial reads. */
+export interface TrashedTransaction {
+  readonly transaction: Transaction;
+  readonly deletedAt: string;
+  readonly deletionGroupId: string;
+}
+
 export interface LedgerRepository {
   saveAccount(account: Account): Promise<void>;
   updateAccount(account: Account): Promise<void>;
@@ -61,6 +68,9 @@ export interface LedgerRepository {
   saveTransfer(bundle: TransferBundle): Promise<void>;
   cancelTransaction(id: string): Promise<void>;
   cancelTransfer(id: string): Promise<void>;
+  trashTransaction(id: string): Promise<void>;
+  restoreTransaction(id: string): Promise<void>;
+  listTrashedTransactions(): Promise<readonly TrashedTransaction[]>;
   findAccountById(id: string): Promise<Account | undefined>;
   findCategoryById(id: string): Promise<Category | undefined>;
   findTransactionById(id: string): Promise<Transaction | undefined>;

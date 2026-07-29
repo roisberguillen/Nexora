@@ -47,7 +47,11 @@ export {
   type CreateTransactionSplitProps,
 } from "./entities/TransactionSplit";
 export { DomainError, type DomainErrorCode } from "./errors/DomainError";
-export type { LedgerRepository, TransferBundle } from "./repositories/LedgerRepository";
+export type {
+  LedgerRepository,
+  TransferBundle,
+  TrashedTransaction,
+} from "./repositories/LedgerRepository";
 export {
   calculateAccountBalance,
   calculateTotalBalance,

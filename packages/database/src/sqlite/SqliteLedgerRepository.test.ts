@@ -292,6 +292,24 @@ describe("SqliteLedgerRepository", () => {
     });
   });
 
+  it("sposta nel cestino un trasferimento in modo atomico e lo ripristina", async () => {
+    await repository.saveAccount(account("account-trash-a"));
+    await repository.saveAccount(account("account-trash-b", "savings"));
+    const debitTransaction = transferLeg("transfer-trash-debit", "account-trash-a", -100n);
+    const creditTransaction = transferLeg("transfer-trash-credit", "account-trash-b", 100n);
+    const transfer = Transfer.create({ id: "transfer-trash", debitTransaction, creditTransaction });
+    await repository.saveTransfer({ transfer, debitTransaction, creditTransaction });
+
+    await repository.trashTransaction(debitTransaction.id);
+    await expect(repository.listTransactions()).resolves.toEqual([]);
+    await expect(repository.findTransferById(transfer.id)).resolves.toBeUndefined();
+    await expect(repository.listTrashedTransactions()).resolves.toHaveLength(2);
+
+    await repository.restoreTransaction(creditTransaction.id);
+    await expect(repository.findTransferById(transfer.id)).resolves.toEqual(transfer);
+    await expect(repository.listTransactions()).resolves.toHaveLength(2);
+  });
+
   it("serializza operazioni concorrenti sulla stessa connessione", async () => {
     await Promise.all([
       repository.saveAccount(account("account-concurrent-a")),
@@ -408,8 +426,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 11,
-        toVersion: 11,
+        fromVersion: 12,
+        toVersion: 12,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(

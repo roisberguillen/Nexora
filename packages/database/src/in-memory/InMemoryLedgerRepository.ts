@@ -17,6 +17,7 @@ import {
   type Loan,
   type InvestmentPosition,
   type MonthlyJournal,
+  type TrashedTransaction,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -25,6 +26,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly accounts = new Map<string, Account>();
   private readonly categories = new Map<string, Category>();
   private readonly transactions = new Map<string, Transaction>();
+  private readonly transactionTrash = new Map<string, Omit<TrashedTransaction, "transaction">>();
   private readonly transfers = new Map<string, Transfer>();
   private readonly transactionSplits = new Map<string, TransactionSplit>();
   private readonly tags = new Map<string, Tag>();
@@ -404,6 +406,55 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     }
   }
 
+  public async trashTransaction(id: string): Promise<void> {
+    const transaction = this.transactions.get(id);
+    if (transaction === undefined)
+      throw new DomainError("missing_reference", "Transaction does not exist.");
+    if (this.transactionTrash.has(id)) return;
+    const transfer = [...this.transfers.values()].find(
+      (candidate) =>
+        candidate.debitTransactionId === id ||
+        candidate.creditTransactionId === id ||
+        candidate.feeTransactionId === id,
+    );
+    const ids =
+      transfer === undefined
+        ? [id]
+        : [
+            transfer.debitTransactionId,
+            transfer.creditTransactionId,
+            ...(transfer.feeTransactionId === undefined ? [] : [transfer.feeTransactionId]),
+          ];
+    const deletedAt = new Date().toISOString();
+    const deletionGroupId =
+      transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+    for (const transactionId of ids) {
+      if (!this.transactions.has(transactionId))
+        throw new DomainError("missing_reference", "Transfer leg does not exist.");
+      this.transactionTrash.set(transactionId, { deletedAt, deletionGroupId });
+    }
+  }
+
+  public async restoreTransaction(id: string): Promise<void> {
+    const entry = this.transactionTrash.get(id);
+    if (entry === undefined)
+      throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+    for (const [transactionId, candidate] of this.transactionTrash) {
+      if (candidate.deletionGroupId === entry.deletionGroupId)
+        this.transactionTrash.delete(transactionId);
+    }
+  }
+
+  public async listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {
+    return [...this.transactionTrash.entries()]
+      .map(([id, entry]) => {
+        const transaction = this.transactions.get(id);
+        return transaction === undefined ? undefined : { transaction, ...entry };
+      })
+      .filter((entry): entry is TrashedTransaction => entry !== undefined)
+      .sort((left, right) => left.deletedAt.localeCompare(right.deletedAt));
+  }
+
   public async findAccountById(id: string): Promise<Account | undefined> {
     return this.accounts.get(id);
   }
@@ -413,11 +464,18 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
 
   public async findTransactionById(id: string): Promise<Transaction | undefined> {
-    return this.transactions.get(id);
+    return this.transactionTrash.has(id) ? undefined : this.transactions.get(id);
   }
 
   public async findTransferById(id: string): Promise<Transfer | undefined> {
-    return this.transfers.get(id);
+    const transfer = this.transfers.get(id);
+    return transfer === undefined ||
+      this.transactionTrash.has(transfer.debitTransactionId) ||
+      this.transactionTrash.has(transfer.creditTransactionId) ||
+      (transfer.feeTransactionId !== undefined &&
+        this.transactionTrash.has(transfer.feeTransactionId))
+      ? undefined
+      : transfer;
   }
   public async findImportBatchById(id: string): Promise<ImportBatch | undefined> {
     return this.importBatches.get(id);
@@ -440,11 +498,19 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
 
   public async listTransactions(): Promise<readonly Transaction[]> {
-    return [...this.transactions.values()];
+    return [...this.transactions.values()].filter(
+      (transaction) => !this.transactionTrash.has(transaction.id),
+    );
   }
 
   public async listTransfers(): Promise<readonly Transfer[]> {
-    return [...this.transfers.values()];
+    return [...this.transfers.values()].filter(
+      (transfer) =>
+        !this.transactionTrash.has(transfer.debitTransactionId) &&
+        !this.transactionTrash.has(transfer.creditTransactionId) &&
+        (transfer.feeTransactionId === undefined ||
+          !this.transactionTrash.has(transfer.feeTransactionId)),
+    );
   }
 
   public async listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]> {
@@ -592,6 +658,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       accounts: new Map(this.accounts),
       categories: new Map(this.categories),
       transactions: new Map(this.transactions),
+      transactionTrash: new Map(this.transactionTrash),
       transfers: new Map(this.transfers),
       transactionSplits: new Map(this.transactionSplits),
       tags: new Map(this.tags),
@@ -614,6 +681,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     replace(this.accounts, state.accounts);
     replace(this.categories, state.categories);
     replace(this.transactions, state.transactions);
+    replace(this.transactionTrash, state.transactionTrash);
     replace(this.transfers, state.transfers);
     replace(this.transactionSplits, state.transactionSplits);
     replace(this.tags, state.tags);

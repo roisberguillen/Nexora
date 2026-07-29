@@ -15,6 +15,7 @@ import {
   Loan,
   InvestmentPosition,
   MonthlyJournal,
+  type TrashedTransaction,
   LocalDate,
   Money,
   validateImportCommit,
@@ -1094,6 +1095,71 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public trashTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findTransactionByIdInternal(id)) === undefined)
+            throw new DomainError("missing_reference", "Transaction does not exist.");
+          const transferRows = await this.database.query<TransferRecord>(
+            `SELECT ${transferColumns} FROM transfers WHERE debit_transaction_id = ? OR credit_transaction_id = ? OR fee_transaction_id = ?`,
+            [id, id, id],
+          );
+          const transfer = transferRows[0];
+          const transactionIds =
+            transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
+          const deletedAt = new Date().toISOString();
+          const deletionGroupId =
+            transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+          for (const transactionId of transactionIds) {
+            if ((await this.findTransactionByIdInternal(transactionId)) === undefined)
+              throw new DomainError("missing_reference", "Transfer leg does not exist.");
+            await this.database.run(
+              "INSERT OR IGNORE INTO transaction_trash (transaction_id, deleted_at, deletion_group_id) VALUES (?, ?, ?)",
+              [transactionId, deletedAt, deletionGroupId],
+            );
+          }
+        }),
+      ),
+    );
+  }
+
+  public restoreTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const rows = await this.database.query<{ readonly deletion_group_id: string }>(
+            "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?",
+            [id],
+          );
+          const entry = rows[0];
+          if (entry === undefined)
+            throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+          await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [
+            entry.deletion_group_id,
+          ]);
+        }),
+      ),
+    );
+  }
+
+  public listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(async () => {
+        const rows = await this.database.query<
+          TransactionRecord & { readonly deleted_at: string; readonly deletion_group_id: string }
+        >(
+          `SELECT ${transactionColumns}, transaction_trash.deleted_at, transaction_trash.deletion_group_id FROM transactions JOIN transaction_trash ON transaction_trash.transaction_id = transactions.id ORDER BY transaction_trash.deleted_at ASC, transactions.id ASC`,
+        );
+        return rows.map((row) => ({
+          transaction: transactionFromRecord(row),
+          deletedAt: row.deleted_at,
+          deletionGroupId: row.deletion_group_id,
+        }));
+      }),
+    );
+  }
+
   public findCategoryById(id: string): Promise<Category | undefined> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() => this.findCategoryByIdInternal(id)),
@@ -1102,7 +1168,9 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
   public findTransactionById(id: string): Promise<Transaction | undefined> {
     return this.enqueue(() =>
-      this.performDatabaseOperation(() => this.findTransactionByIdInternal(id)),
+      this.performDatabaseOperation(async () =>
+        (await this.isTransactionTrashed(id)) ? undefined : this.findTransactionByIdInternal(id),
+      ),
     );
   }
 
@@ -1124,6 +1192,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
           `SELECT ${transactionColumns} FROM transactions WHERE id IN (${placeholders})`,
           transactionIds,
         );
+        if (
+          transactionRows.length !== transactionIds.length ||
+          (
+            await Promise.all(
+              transactionIds.map((transactionId) => this.isTransactionTrashed(transactionId)),
+            )
+          ).some(Boolean)
+        )
+          return undefined;
         return transferFromRecord(row, transactionRecordMap(transactionRows));
       }),
     );
@@ -1189,7 +1266,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(async () => {
         const rows = await this.database.query<TransactionRecord>(
-          `SELECT ${transactionColumns} FROM transactions ORDER BY created_at ASC, id ASC`,
+          `SELECT ${transactionColumns} FROM transactions WHERE NOT EXISTS (SELECT 1 FROM transaction_trash WHERE transaction_trash.transaction_id = transactions.id) ORDER BY created_at ASC, id ASC`,
         );
         return rows.map(transactionFromRecord);
       }),
@@ -1200,7 +1277,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(async () => {
         const transferRows = await this.database.query<TransferRecord>(
-          `SELECT ${transferColumns} FROM transfers ORDER BY created_at ASC, id ASC`,
+          `SELECT ${transferColumns} FROM transfers WHERE NOT EXISTS (SELECT 1 FROM transaction_trash WHERE transaction_id = transfers.debit_transaction_id OR transaction_id = transfers.credit_transaction_id OR transaction_id = transfers.fee_transaction_id) ORDER BY created_at ASC, id ASC`,
         );
         if (transferRows.length === 0) {
           return [];
@@ -1650,6 +1727,14 @@ export class SqliteLedgerRepository implements LedgerRepository {
       [id],
     );
     return rows[0] === undefined ? undefined : transactionFromRecord(rows[0]);
+  }
+
+  private async isTransactionTrashed(id: string): Promise<boolean> {
+    const rows = await this.database.query<{ readonly found: number }>(
+      "SELECT 1 AS found FROM transaction_trash WHERE transaction_id = ?",
+      [id],
+    );
+    return rows.length > 0;
   }
 }
 
