@@ -513,6 +513,16 @@
       "sha256": "fe740a68e0ff09e4ce286f8b2da66a82a062700abb60b7824cfb79e1b005d7c1"
     },
     {
+      "path": "apps/web/src/startup/StorageDiscovery.test.ts",
+      "size": 1815,
+      "sha256": "40070360e91e22752486fd49960c625c88a4b20712e4d032afb0165dc0f4aece"
+    },
+    {
+      "path": "apps/web/src/startup/StorageDiscovery.ts",
+      "size": 4122,
+      "sha256": "a240bee7bbe1cee11ed188b403b5f691acad8c1c97c56e2bc4854b3533a6b878"
+    },
+    {
       "path": "apps/web/src/tags/tagCommands.test.ts",
       "size": 679,
       "sha256": "1b32010112845d0cbcb96dafe74ffb81e687f3180c6a87aae171e74254bd420d"
