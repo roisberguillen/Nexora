@@ -115,9 +115,11 @@ describe("Nexora app", () => {
     );
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Nessun archivio IndexedDB alternativo è stato aperto.",
+      "I tuoi dati non sono stati modificati.",
     );
-    expect(screen.getByRole("button", { name: "Ricarica Nexora" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Riprova" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Avvia recupero guidato" })).toBeInTheDocument();
+    expect(screen.queryByText("OPFS")).not.toBeInTheDocument();
   });
 
   it("mostra l'anteprima XLSX come fase locale e segnala un file non leggibile", async () => {

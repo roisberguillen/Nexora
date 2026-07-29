@@ -1,5 +1,5 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
-import { PersistenceError, seedDemoLedger, type BrowserLedger } from "@nexora/database";
+import { seedDemoLedger, type BrowserLedger } from "@nexora/database";
 import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
 import type {
   Account,
@@ -96,6 +96,7 @@ import { GoogleIdentityAuth } from "./cloud/GoogleIdentityAuth";
 import { readGoogleCloudConfig } from "./cloud/cloudConfig";
 import { loadGoogleIdentity } from "./cloud/loadGoogleIdentity";
 import { StartupLoadingScreen } from "./startup/StartupLoadingScreen";
+import { StartupRecoveryScreen } from "./startup/StartupRecoveryScreen";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -773,18 +774,16 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
   }
 
   return (
-    <section className="ledger-state-card is-error" role="alert">
-      <span aria-hidden="true" className="ledger-state-mark">
-        !
-      </span>
-      <div>
-        <h1>Archivio locale non disponibile</h1>
-        <p>{persistenceErrorMessage(state.error)}</p>
-        <button className="secondary-action" onClick={() => window.location.reload()} type="button">
-          Ricarica Nexora
-        </button>
-      </div>
-    </section>
+    <StartupRecoveryScreen
+      onExportDiagnostics={() => window.dispatchEvent(new Event("nexora:startup-diagnostics"))}
+      onOpenSafeCopy={() => {
+        window.location.hash = "#backup";
+      }}
+      onRestoreBackup={() => {
+        window.location.hash = "#backup";
+      }}
+      onRetry={() => window.location.reload()}
+    />
   );
 }
 
@@ -865,16 +864,6 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
       transfers,
     }),
   };
-}
-
-function persistenceErrorMessage(error: unknown): string {
-  if (error instanceof PersistenceError && error.code === "opfs_unavailable") {
-    return "Questo profilo usa SQLite/OPFS, ma il browser non espone più i requisiti necessari. Nessun archivio IndexedDB alternativo è stato aperto.";
-  }
-  if (error instanceof PersistenceError && error.code === "upgrade_blocked") {
-    return "Un’altra scheda di Nexora sta bloccando l’aggiornamento del database. Chiudila e ricarica l’app.";
-  }
-  return "Nexora ha interrotto l’apertura per proteggere i dati. Nessun archivio alternativo è stato aperto.";
 }
 
 function useAppRoute():

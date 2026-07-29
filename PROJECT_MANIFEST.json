@@ -184,13 +184,13 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 8194,
-      "sha256": "5882328f497a41430abd5e9078e26753e565c3ba58cafa60accefdaae3ff7645"
+      "size": 8330,
+      "sha256": "5cbb074cf04aae60d64ff219d331ce697becc4bbed1257cceed3042ef072029a"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 35332,
-      "sha256": "7c40272b0c1ed5ddb7e6f6cabf9a4a1660fb03d1a1a2cbd8bed6ed51b4d296eb"
+      "size": 34673,
+      "sha256": "45689ffc2ad762b05132ea17b686ea8d3fe36d149cbc25a00631329725639d49"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -504,8 +504,8 @@
     },
     {
       "path": "apps/web/src/startup/startup.css",
-      "size": 1113,
-      "sha256": "472fc98bc2710ab1d83d5ec1dfca08d4414d44a863f75bf20e38160d3a0f4926"
+      "size": 1979,
+      "sha256": "3709ba41a9122a0d122026a9aa2b2e5ba2a2ff5c41b1d7f9f3f197f52dfb915b"
     },
     {
       "path": "apps/web/src/startup/StartupLoadingScreen.tsx",
@@ -521,6 +521,11 @@
       "path": "apps/web/src/startup/StartupOrchestrator.ts",
       "size": 4101,
       "sha256": "fe740a68e0ff09e4ce286f8b2da66a82a062700abb60b7824cfb79e1b005d7c1"
+    },
+    {
+      "path": "apps/web/src/startup/StartupRecoveryScreen.tsx",
+      "size": 1780,
+      "sha256": "6d2d85e9fb478b5df9fa42fc7e116d025a32119d3b5aeaf170ca992035eace72"
     },
     {
       "path": "apps/web/src/startup/StorageDiscovery.test.ts",

@@ -51,3 +51,43 @@
     margin-inline: 0.75rem;
   }
 }
+
+.startup-recovery {
+  max-width: 42rem;
+  margin: clamp(2rem, 10vh, 7rem) auto;
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+  border: 1px solid #f0c9c9;
+  border-radius: 1.25rem;
+  background: #fff;
+  color: #17213f;
+}
+.startup-recovery h1 {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+.startup-recovery__actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.startup-recovery__actions button {
+  min-height: 2.75rem;
+  border: 1px solid #0e3ec7;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: #0e3ec7;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+.startup-recovery__actions button:first-child {
+  background: #0e3ec7;
+  color: #fff;
+}
+.startup-recovery__guidance {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #f3f6ff;
+}
