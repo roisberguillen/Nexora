@@ -22,6 +22,7 @@ import {
   type Transfer,
   type TransferBundle,
   validateAccountUpdate,
+  createSystemCategories,
 } from "@nexora/domain";
 
 import {
@@ -205,6 +206,11 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
                 "monthly_journals",
               ].map((store) => requestResult(transaction.objectStore(store).clear())),
             );
+            for (const category of createSystemCategories()) {
+              await requestResult(
+                transaction.objectStore("categories").put(categoryToRecord(category)),
+              );
+            }
           },
         ),
       ),

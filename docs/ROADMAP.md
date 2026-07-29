@@ -18,8 +18,8 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M2 — Reset dati finanziari
 
-- [ ] Preview, backup preventivo verificato, scelta esplicita senza backup, PIN e ricevuta sicura.
-- [ ] Reset atomico con ricostruzione categorie di sistema, cache e notifiche riallineate.
+- [x] Preview, backup preventivo verificato, scelta esplicita senza backup, PIN e ricevuta sicura.
+- [x] Reset atomico con ricostruzione categorie di sistema, cache e notifiche riallineate.
 
 ## M3 — Ripristino totale locale e cloud opzionale
 

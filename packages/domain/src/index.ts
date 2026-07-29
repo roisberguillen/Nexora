@@ -60,6 +60,7 @@ export {
 } from "./services/ledgerReports";
 export { validateAccountUpdate, type AccountUpdateFacts } from "./services/accountUpdates";
 export { executeConfirmedAllocationPlans } from "./services/executeAllocationPlans";
+export { createSystemCategories } from "./services/systemCategories";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
 export { MonthlyJournal, type CreateMonthlyJournalProps } from "./entities/MonthlyJournal";

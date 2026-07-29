@@ -42,7 +42,11 @@ il ripristino totale elimina anche il database selezionato e le preferenze contr
 
 ## Backup, cloud e audit
 
-Ogni reset propone un archivio cifrato, ma l'utente può continuare solo dopo scelta esplicita.
+Ogni reset mostra conteggi delle entità da eliminare e dei dati mantenuti. Propone un archivio
+cifrato, lo verifica prima del download e conserva nella ricevuta solo il prefisso del checksum;
+l'utente può proseguire senza backup soltanto con un consenso distinto. Se il blocco app è attivo,
+il reset richiede nuovamente PIN/passphrase. Dopo il commit vengono rigenerati dashboard e
+notifiche locali e restano soltanto le categorie di sistema `Entrate` e `Spese`.
 Backup locali e Drive non vengono mai eliminati dal reset finanziario. L'eliminazione cloud è
 un'opzione separata, disattivata per default, con esito per file. L'audit registra solo tipo,
 timestamp e conteggi, mai importi, descrizioni, token o passphrase.

@@ -22,6 +22,7 @@ import {
   Transfer,
   type TransferBundle,
   validateAccountUpdate,
+  createSystemCategories,
 } from "@nexora/domain";
 
 import {
@@ -237,6 +238,13 @@ export class SqliteLedgerRepository implements LedgerRepository {
         "categories",
       ])
         await this.database.execute(`DELETE FROM ${table};`);
+      for (const category of createSystemCategories()) {
+        const record = categoryToRecord(category);
+        await this.database.run(
+          "INSERT INTO categories (id, name, kind_scope, parent_id, is_archived) VALUES (?, ?, ?, ?, ?)",
+          [record.id, record.name, record.kind_scope, record.parent_id, record.is_archived],
+        );
+      }
     });
   }
 

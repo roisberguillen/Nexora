@@ -20,6 +20,7 @@ import {
   type TrashedTransaction,
   validateImportCommit,
   validateAccountUpdate,
+  createSystemCategories,
 } from "@nexora/domain";
 
 export class InMemoryLedgerRepository implements LedgerRepository {
@@ -68,6 +69,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       this.loans.clear();
       this.investmentPositions.clear();
       this.monthlyJournals.clear();
+      for (const category of createSystemCategories()) this.categories.set(category.id, category);
     });
   }
 

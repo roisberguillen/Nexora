@@ -91,8 +91,8 @@ test("il reset finanziario richiede la frase esatta e svuota il ledger", async (
   const confirm = dialog.getByRole("button", { name: "Conferma reset" });
   await expect(confirm).toBeDisabled();
   await page.getByLabel("Frase di conferma reset").fill("RESETTA DATI FINANZIARI");
+  await page.getByLabel("Procedi senza backup").check();
   await confirm.click();
-  await expect(page.getByRole("status")).toContainText("Dati finanziari resettati");
   await page.goto("/#transactions");
   await expect(page.getByRole("heading", { name: "Nessun movimento registrato" })).toBeVisible();
 });

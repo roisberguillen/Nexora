@@ -78,8 +78,18 @@ import { SettingsPage } from "./settings/SettingsPage";
 import { NotificationsPage } from "./notifications/NotificationsPage";
 import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
 import { AppLockScreen } from "./security/AppLockScreen";
-import { getAppLockTimeoutMilliseconds, readAppLock, type AppLockConfig } from "./security/appLock";
+import {
+  getAppLockTimeoutMilliseconds,
+  readAppLock,
+  verifyAppLock,
+  type AppLockConfig,
+} from "./security/appLock";
 import { resetLocalApp } from "./reset/resetLocalApp";
+import {
+  createVerifiedResetBackup,
+  previewFinancialReset,
+  writeFinancialResetReceipt,
+} from "./reset/financialReset";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -358,10 +368,46 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.deleteUnusedAccount(id);
     });
-  const resetFinancialData = (): Promise<void> =>
-    mutateLedger(async (ledger) => {
+  const previewResetFinancialData = () =>
+    ledgerState.status === "ready"
+      ? previewFinancialReset(ledgerState.ledger)
+      : Promise.reject(new Error("Ledger non pronto"));
+  const createResetBackup = async (passphrase: string): Promise<string> => {
+    if (ledgerState.status !== "ready") throw new Error("Ledger non pronto");
+    return createVerifiedResetBackup(ledgerState.ledger, passphrase, (archive, filename) => {
+      const anchor = document.createElement("a");
+      const bytes = new Uint8Array(archive);
+      const url = URL.createObjectURL(
+        new Blob([bytes.buffer as ArrayBuffer], { type: "application/octet-stream" }),
+      );
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    });
+  };
+  const resetFinancialData = async (input: {
+    readonly backupChecksumPrefix?: string;
+    readonly pin?: string;
+  }): Promise<void> => {
+    const preview = await previewResetFinancialData();
+    if (appLockConfig && !(await verifyAppLock(input.pin ?? "", appLockConfig))) {
+      throw new Error("PIN o passphrase non corretti.");
+    }
+    await mutateLedger(async (ledger) => {
       await ledger.repository.resetFinancialData();
     });
+    window.localStorage.removeItem("nexora.local-notifications.v1");
+    writeFinancialResetReceipt({
+      version: 1,
+      occurredAt: new Date().toISOString(),
+      storageKind: ledgerState.status === "ready" ? ledgerState.ledger.storageKind : "indexeddb",
+      ...(input.backupChecksumPrefix === undefined
+        ? {}
+        : { backupChecksumPrefix: input.backupChecksumPrefix }),
+      reset: preview,
+    });
+  };
   const restoreTrashedTransaction = (id: string): Promise<void> =>
     mutateLedger(async (ledger) => {
       await ledger.repository.restoreTransaction(id);
@@ -557,6 +603,9 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             ) : route === "settings" ? (
               <SettingsPage
                 onResetFinancialData={resetFinancialData}
+                onCreateResetBackup={createResetBackup}
+                requiresResetPin={appLockConfig !== undefined}
+                onPreviewFinancialReset={previewResetFinancialData}
                 onResetApplication={resetApplication}
                 onRestoreTransaction={restoreTrashedTransaction}
                 onPurgeTransaction={purgeTrashedTransaction}

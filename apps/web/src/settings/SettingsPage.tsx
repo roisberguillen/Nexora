@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { TrashedTransaction } from "@nexora/domain";
 
 import { appVersion } from "../appVersion";
+import type { FinancialResetPreview } from "../reset/financialReset";
 
 import {
   applyAppPreferences,
@@ -12,12 +13,21 @@ import {
 
 export function SettingsPage({
   onResetFinancialData,
+  onCreateResetBackup,
+  requiresResetPin = false,
+  onPreviewFinancialReset,
   onRestoreTransaction,
   onPurgeTransaction,
   onResetApplication,
   trashedTransactions = [],
 }: {
-  readonly onResetFinancialData?: () => Promise<void>;
+  readonly onResetFinancialData?: (input: {
+    readonly backupChecksumPrefix?: string;
+    readonly pin?: string;
+  }) => Promise<void>;
+  readonly onCreateResetBackup?: (passphrase: string) => Promise<string>;
+  readonly requiresResetPin?: boolean;
+  readonly onPreviewFinancialReset?: () => Promise<FinancialResetPreview>;
   readonly onRestoreTransaction?: (id: string) => Promise<void>;
   readonly onPurgeTransaction?: (id: string) => Promise<void>;
   readonly onResetApplication?: () => Promise<void>;
@@ -32,6 +42,11 @@ export function SettingsPage({
     setPreferences((current) => ({ ...current, ...patch }));
   const [isResetOpen, setIsResetOpen] = useState(false);
   const [resetPhrase, setResetPhrase] = useState("");
+  const [resetPreview, setResetPreview] = useState<FinancialResetPreview | null>(null);
+  const [backupPassphrase, setBackupPassphrase] = useState("");
+  const [backupChecksumPrefix, setBackupChecksumPrefix] = useState<string | null>(null);
+  const [skipBackup, setSkipBackup] = useState(false);
+  const [resetPin, setResetPin] = useState("");
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -41,11 +56,19 @@ export function SettingsPage({
   const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
   const [applicationResetPhrase, setApplicationResetPhrase] = useState("");
   const resetFinancialData = async () => {
-    if (onResetFinancialData === undefined || resetPhrase !== "RESETTA DATI FINANZIARI") return;
+    if (
+      onResetFinancialData === undefined ||
+      resetPhrase !== "RESETTA DATI FINANZIARI" ||
+      (!skipBackup && backupChecksumPrefix === null)
+    )
+      return;
     setIsResetting(true);
     setResetMessage(null);
     try {
-      await onResetFinancialData();
+      await onResetFinancialData({
+        ...(backupChecksumPrefix === null ? {} : { backupChecksumPrefix }),
+        ...(resetPin === "" ? {} : { pin: resetPin }),
+      });
       setResetPhrase("");
       setIsResetOpen(false);
       setResetMessage("Dati finanziari resettati. Preferenze e backup non sono stati modificati.");
@@ -210,7 +233,14 @@ export function SettingsPage({
                 {resetMessage}
               </p>
             )}
-            <button className="secondary-action" onClick={() => setIsResetOpen(true)} type="button">
+            <button
+              className="secondary-action"
+              onClick={() => {
+                void onPreviewFinancialReset?.().then(setResetPreview);
+                setIsResetOpen(true);
+              }}
+              type="button"
+            >
               Reset dati finanziari
             </button>
             {isResetOpen ? (
@@ -224,6 +254,67 @@ export function SettingsPage({
                 <p>
                   Backup e preferenze restano disponibili. Scrivi la frase richiesta per continuare.
                 </p>
+                {resetPreview === null ? null : (
+                  <p>
+                    <strong>Eliminerai:</strong> {resetPreview.transactions} movimenti,{" "}
+                    {resetPreview.accounts} conti, {resetPreview.categories} categorie,{" "}
+                    {resetPreview.imports} importazioni e {resetPreview.plans} pianificazioni.{" "}
+                    <strong>Restano:</strong> {resetPreview.kept.join(", ")}.
+                  </p>
+                )}
+                {backupChecksumPrefix === null ? (
+                  <>
+                    <label>
+                      Passphrase del backup cifrato
+                      <input
+                        aria-label="Passphrase backup reset"
+                        type="password"
+                        value={backupPassphrase}
+                        onChange={(event) => setBackupPassphrase(event.currentTarget.value)}
+                      />
+                    </label>
+                    <button
+                      className="secondary-action"
+                      disabled={
+                        isResetting ||
+                        backupPassphrase.length < 12 ||
+                        onCreateResetBackup === undefined
+                      }
+                      onClick={() =>
+                        void onCreateResetBackup?.(backupPassphrase)
+                          .then(setBackupChecksumPrefix)
+                          .catch(() =>
+                            setResetMessage("Backup non creato: i dati non sono stati modificati."),
+                          )
+                      }
+                      type="button"
+                    >
+                      Crea backup verificato
+                    </button>
+                    <label>
+                      <input
+                        aria-label="Procedi senza backup"
+                        type="checkbox"
+                        checked={skipBackup}
+                        onChange={(event) => setSkipBackup(event.currentTarget.checked)}
+                      />{" "}
+                      Prosegui senza backup (scelta esplicita)
+                    </label>
+                  </>
+                ) : (
+                  <p role="status">Backup verificato pronto (checksum {backupChecksumPrefix}…).</p>
+                )}
+                {requiresResetPin ? (
+                  <label>
+                    PIN o passphrase app
+                    <input
+                      aria-label="PIN reset finanziario"
+                      type="password"
+                      value={resetPin}
+                      onChange={(event) => setResetPin(event.currentTarget.value)}
+                    />
+                  </label>
+                ) : null}
                 <label>
                   Frase di conferma
                   <input
@@ -238,6 +329,10 @@ export function SettingsPage({
                     disabled={isResetting}
                     onClick={() => {
                       setResetPhrase("");
+                      setBackupPassphrase("");
+                      setBackupChecksumPrefix(null);
+                      setSkipBackup(false);
+                      setResetPin("");
                       setIsResetOpen(false);
                     }}
                     type="button"
@@ -246,7 +341,12 @@ export function SettingsPage({
                   </button>
                   <button
                     className="primary-action"
-                    disabled={isResetting || resetPhrase !== "RESETTA DATI FINANZIARI"}
+                    disabled={
+                      isResetting ||
+                      resetPhrase !== "RESETTA DATI FINANZIARI" ||
+                      (!skipBackup && backupChecksumPrefix === null) ||
+                      (requiresResetPin && resetPin === "")
+                    }
                     onClick={() => void resetFinancialData()}
                     type="button"
                   >

@@ -141,7 +141,9 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.repository.resetFinancialData();
 
     await expect(ledger.repository.listAccounts()).resolves.toEqual([]);
-    await expect(ledger.repository.listCategories()).resolves.toEqual([]);
+    expect(
+      (await ledger.repository.listCategories()).map((category) => category.id).sort(),
+    ).toEqual(["system-expense", "system-income"]);
     await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
     await expect(ledger.repository.listTransfers()).resolves.toEqual([]);
   });

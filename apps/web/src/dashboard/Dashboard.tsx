@@ -248,9 +248,6 @@ function formatLocalDate(value: string): string {
 
 function isDashboardEmpty(model: DashboardViewModel): boolean {
   return (
-    model.counts.accounts === 0 &&
-    model.counts.categories === 0 &&
-    model.counts.transactions === 0 &&
-    model.counts.transfers === 0
+    model.counts.accounts === 0 && model.counts.transactions === 0 && model.counts.transfers === 0
   );
 }

@@ -165,7 +165,10 @@ describe("SqliteLedgerRepository", () => {
     await repository.resetFinancialData();
 
     await expect(repository.listAccounts()).resolves.toEqual([]);
-    await expect(repository.listCategories()).resolves.toEqual([]);
+    expect((await repository.listCategories()).map((category) => category.id).sort()).toEqual([
+      "system-expense",
+      "system-income",
+    ]);
     await expect(repository.listTransactions()).resolves.toEqual([]);
     await expect(repository.listTransfers()).resolves.toEqual([]);
   });

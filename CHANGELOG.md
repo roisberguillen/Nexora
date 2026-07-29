@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Il reset finanziario ora mostra una preview, richiede un backup cifrato verificato o un consenso
+  distinto senza backup, richiede il PIN quando il blocco app è attivo e conserva una ricevuta
+  tecnica senza dati finanziari.
+
 - Rafforzati i flussi distruttivi: reset finanziario atomico anche per le gerarchie OPFS,
   ripristino totale locale, cestino/restore/purge e relative conferme accessibili.
 - Aggiunta copertura component, adapter SQLite e IndexedDB, e E2E responsive (320, 768 e

@@ -44,6 +44,7 @@ describe("SettingsPage destructive flows", () => {
 
     await user.click(screen.getByRole("button", { name: "Reset dati finanziari" }));
     await user.type(screen.getByLabelText("Frase di conferma reset"), "RESETTA DATI FINANZIARI");
+    await user.click(screen.getByLabelText("Procedi senza backup"));
     await user.click(screen.getByRole("button", { name: "Conferma reset" }));
 
     expect(await screen.findByRole("status")).toHaveTextContent("Reset non completato");
@@ -107,5 +108,28 @@ describe("SettingsPage destructive flows", () => {
     );
     await user.click(screen.getByRole("button", { name: "Ripristina app" }));
     await waitFor(() => expect(resetApplication).toHaveBeenCalledOnce());
+  });
+
+  it("richiede backup e PIN prima del reset quando il blocco app è attivo", async () => {
+    const user = userEvent.setup();
+    const reset = vi.fn(async () => undefined);
+    const createBackup = vi.fn(async () => "cafebabecafe");
+    render(
+      <SettingsPage
+        onCreateResetBackup={createBackup}
+        onResetFinancialData={reset}
+        requiresResetPin
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Reset dati finanziari" }));
+    await user.type(screen.getByLabelText("Passphrase backup reset"), "passphrase-sicura");
+    await user.click(screen.getByRole("button", { name: "Crea backup verificato" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Backup verificato pronto");
+    await user.type(screen.getByLabelText("Frase di conferma reset"), "RESETTA DATI FINANZIARI");
+    await user.type(screen.getByLabelText("PIN reset finanziario"), "4937");
+    await user.click(screen.getByRole("button", { name: "Conferma reset" }));
+    await waitFor(() =>
+      expect(reset).toHaveBeenCalledWith({ backupChecksumPrefix: "cafebabecafe", pin: "4937" }),
+    );
   });
 });
