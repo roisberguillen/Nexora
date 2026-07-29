@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 772,
-      "sha256": "fa04e4810aa8680b6fd0db5fb1ab500c1fbf1ccd6709bd1e72c47f780bce5afd"
+      "size": 1112,
+      "sha256": "1280ff7ac5024a567ac5d8de6c0e3db0153bacf69b4820801206fdc99ef3986d"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -501,6 +501,16 @@
       "path": "apps/web/src/settings/SettingsPage.tsx",
       "size": 25618,
       "sha256": "a4b8da802e66f23f32b96180d0b80a67a580573ea7fbecf30e02765386736110"
+    },
+    {
+      "path": "apps/web/src/startup/StartupOrchestrator.test.ts",
+      "size": 1863,
+      "sha256": "54e6fbc335b75d1d17769a1f3db4c88c58b23ba6f898b836a2e209bc4c0470ef"
+    },
+    {
+      "path": "apps/web/src/startup/StartupOrchestrator.ts",
+      "size": 4101,
+      "sha256": "fe740a68e0ff09e4ce286f8b2da66a82a062700abb60b7824cfb79e1b005d7c1"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",

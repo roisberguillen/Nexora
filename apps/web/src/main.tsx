@@ -8,6 +8,7 @@ import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
 import { openPwaLedger } from "./persistence/openPwaLedger";
+import { StartupOrchestrator } from "./startup/StartupOrchestrator";
 
 const rootElement = document.querySelector("#root");
 
@@ -15,7 +16,13 @@ if (!(rootElement instanceof HTMLElement)) {
   throw new Error("Nexora root element is missing");
 }
 
-const ledgerPromise = openPwaLedger();
+const startupOrchestrator = new StartupOrchestrator({
+  openLedger: () => openPwaLedger(),
+});
+const ledgerPromise = startupOrchestrator.run().then((result) => {
+  if (result.ledger !== undefined) return result.ledger;
+  throw result.failure?.cause ?? new Error("Nexora startup did not return a ledger.");
+});
 
 window.addEventListener(
   "pagehide",
