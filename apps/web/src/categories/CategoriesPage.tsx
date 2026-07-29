@@ -6,10 +6,12 @@ import type { CategoryInput } from "./categoryCommands";
 export function CategoriesPage({
   categories,
   onCreate,
+  onDeleteUnused,
   onUpdate,
 }: {
   readonly categories: readonly Category[];
   readonly onCreate: (input: CategoryInput) => Promise<void>;
+  readonly onDeleteUnused: (id: string) => Promise<void>;
   readonly onUpdate: (
     id: string,
     input: CategoryInput & { readonly isArchived: boolean },
@@ -32,6 +34,15 @@ export function CategoriesPage({
       event.currentTarget.reset();
     } catch {
       setError("Impossibile salvare la categoria.");
+    }
+  };
+  const remove = async (id: string) => {
+    try {
+      setError(null);
+      await onDeleteUnused(id);
+      if (editing?.id === id) setEditing(null);
+    } catch {
+      setError("La categoria è usata: archiviala o riassegna prima i riferimenti.");
     }
   };
   return (
@@ -80,6 +91,13 @@ export function CategoriesPage({
                         type="button"
                       >
                         Modifica
+                      </button>
+                      <button
+                        className="text-action"
+                        onClick={() => void remove(category.id)}
+                        type="button"
+                      >
+                        Elimina
                       </button>
                     </td>
                   </tr>

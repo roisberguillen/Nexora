@@ -292,6 +292,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await updateLedgerCategory(ledger.repository, id, input);
     });
+  const deleteUnusedCategory = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteUnusedCategory(id);
+    });
 
   const createTag = (input: TagInput): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -303,6 +307,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   ): Promise<void> =>
     mutateLedger(async (ledger) => {
       await updateLedgerTag(ledger.repository, id, input);
+    });
+  const deleteUnusedTag = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteUnusedTag(id);
     });
 
   const createManualMovement = async (
@@ -458,10 +466,16 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               <CategoriesPage
                 categories={ledgerState.categories}
                 onCreate={createCategory}
+                onDeleteUnused={deleteUnusedCategory}
                 onUpdate={updateCategory}
               />
             ) : route === "tags" ? (
-              <TagsPage tags={ledgerState.tags} onCreate={createTag} onUpdate={updateTag} />
+              <TagsPage
+                tags={ledgerState.tags}
+                onCreate={createTag}
+                onDeleteUnused={deleteUnusedTag}
+                onUpdate={updateTag}
+              />
             ) : route === "imports" ? (
               <Suspense
                 fallback={
