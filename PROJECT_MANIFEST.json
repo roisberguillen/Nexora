@@ -534,13 +534,13 @@
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.test.ts",
-      "size": 4575,
-      "sha256": "671e70a943d3304af384b251cb93872bca90b4039b8feb7965d5010d8ea1ce50"
+      "size": 5148,
+      "sha256": "1514cdf1f3403680f52ffda4dde6aad972866e331c1870d2127197182548bf86"
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.ts",
-      "size": 5521,
-      "sha256": "22bb84a33702493aa45da9bae11558a07c2b2329a5e3dcc187423d7b5088c520"
+      "size": 5694,
+      "sha256": "883b7e38a514bc192fef47e1dbf961bf0522fd932cd0b69df6a8452ca9b0e19b"
     },
     {
       "path": "apps/web/src/startup/StartupRecovery.test.ts",
@@ -664,8 +664,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 13979,
-      "sha256": "4a8be2fb716deafc7ca13ac1a753889dc7ee9d1fb608776afa7cc84e2e435322"
+      "size": 14129,
+      "sha256": "6f2f3a5c0d1d973c74c688fee3dd6c5cf5b330917bbccb65cd7f60bd13625c2a"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",

@@ -121,6 +121,20 @@ describe("StartupOrchestrator", () => {
     });
   });
 
+  it("non maschera l'errore originale se una fixture senza close fallisce dopo l'apertura", async () => {
+    const failure = new PersistenceError("corrupt_record", "corrupt");
+    const incompleteLedger = { ...ledger, close: undefined } as unknown as BrowserLedger;
+    const orchestrator = new StartupOrchestrator({
+      openLedger: async () => incompleteLedger,
+      verifyData: async () => Promise.reject(failure),
+    });
+
+    await expect(orchestrator.run()).resolves.toMatchObject({
+      state: "BLOCKING_ERROR",
+      failure: { cause: failure },
+    });
+  });
+
   it("classifica errori non noti come bloccanti", () => {
     expect(classifyStartupError(new Error("unexpected"))).toMatchObject({
       code: "NX-START-001",

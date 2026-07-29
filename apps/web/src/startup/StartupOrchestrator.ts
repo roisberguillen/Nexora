@@ -91,7 +91,7 @@ export class StartupOrchestrator {
       this.emit("READY", "ready", onProgress);
       return { ledger: openedLedger, state: this.state };
     } catch (cause) {
-      await ledger?.close().catch(() => undefined);
+      await closeOpenedLedger(ledger);
       const failure = classifyStartupError(cause);
       this.emit(
         failure.kind === "recoverable" ? "RECOVERABLE_ERROR" : "BLOCKING_ERROR",
@@ -128,6 +128,11 @@ export class StartupOrchestrator {
       occurredAt: (this.dependencies.now ?? (() => new Date()))().toISOString(),
     });
   }
+}
+
+async function closeOpenedLedger(ledger: BrowserLedger | undefined): Promise<void> {
+  if (typeof ledger?.close !== "function") return;
+  await ledger.close().catch(() => undefined);
 }
 
 function withTimeout<T>(
