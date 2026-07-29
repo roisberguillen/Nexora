@@ -31,4 +31,14 @@ describe("portable ledger snapshot", () => {
       9_007_199_254_740_993n,
     );
   });
+
+  it("rejects incomplete and malformed portable payloads before a restore can start", async () => {
+    expect(() => decodePortableLedgerSnapshot(new TextEncoder().encode("{not-json"))).toThrow();
+    const snapshot = await capturePortableLedgerSnapshot(new InMemoryLedgerRepository());
+    const incomplete = {
+      ...snapshot,
+      relations: { splits: [], transactionTags: [] },
+    };
+    expect(() => validatePortableLedgerSnapshot(incomplete)).toThrow("importRows");
+  });
 });

@@ -784,8 +784,8 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
-      "size": 1279,
-      "sha256": "c8626da9a8f602fe034feb3c3f2aa037f0d05d3cc43fde994af69751b069ade5"
+      "size": 1762,
+      "sha256": "63a5e1c03569055030cba113c7959991fba635628e7c8e5f8f44fc4d7e1d3c92"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
