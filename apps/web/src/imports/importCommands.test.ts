@@ -83,6 +83,48 @@ describe("commitMoneyManagerImport", () => {
     ]);
   });
 
+  it("blocca una reimportazione anche quando il movimento è nel cestino", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({
+        id: "account-trash",
+        name: "Conto demo",
+        type: "checking",
+        currency: "EUR",
+      }),
+    );
+    const input = {
+      filename: "movimenti.xlsx",
+      sourceSha256: "d".repeat(64),
+      rows: [
+        {
+          accountId: "account-trash",
+          categoryId: undefined,
+          kind: "expense" as const,
+          message: "Pronta",
+          preview: {
+            account: "Conto demo",
+            amountMinor: -1250n,
+            currency: "EUR",
+            date: "2026-07-28",
+            message: "",
+            payee: "Cinema",
+            sourceRowNumber: 2,
+            status: "ready" as const,
+          },
+          status: "ready" as const,
+        },
+      ],
+    };
+    await commitMoneyManagerImport(repository, input, () => crypto.randomUUID());
+    const transaction = (await repository.listTransactions())[0]!;
+    await repository.trashTransaction(transaction.id);
+
+    const repeated = await commitMoneyManagerImport(repository, input, () => crypto.randomUUID());
+    expect(repeated.rowsSkipped).toBe(1);
+    await expect(repository.listTransactions()).resolves.toEqual([]);
+  });
+
   it("crea entrambe le gambe solo dopo la conferma del trasferimento", async () => {
     const repository = new InMemoryLedgerRepository();
     await repository.saveAccount(
