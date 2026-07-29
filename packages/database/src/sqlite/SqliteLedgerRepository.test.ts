@@ -159,6 +159,17 @@ describe("SqliteLedgerRepository", () => {
     await expect(repository.listTransactions()).resolves.toEqual([]);
   });
 
+  it("azzera anche gerarchie e trasferimenti del ledger dimostrativo", async () => {
+    await seedDemoLedger(repository);
+
+    await repository.resetFinancialData();
+
+    await expect(repository.listAccounts()).resolves.toEqual([]);
+    await expect(repository.listCategories()).resolves.toEqual([]);
+    await expect(repository.listTransactions()).resolves.toEqual([]);
+    await expect(repository.listTransfers()).resolves.toEqual([]);
+  });
+
   it("elimina solo categorie e tag non referenziati", async () => {
     const main = account("account-taxonomy-delete");
     const unusedCategory = Category.create({

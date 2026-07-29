@@ -236,7 +236,10 @@ export function SettingsPage({
                   <button
                     className="secondary-action"
                     disabled={isResetting}
-                    onClick={() => setIsResetOpen(false)}
+                    onClick={() => {
+                      setResetPhrase("");
+                      setIsResetOpen(false);
+                    }}
                     type="button"
                   >
                     Annulla
@@ -291,7 +294,10 @@ export function SettingsPage({
                   <button
                     className="secondary-action"
                     disabled={isResetting}
-                    onClick={() => setIsApplicationResetOpen(false)}
+                    onClick={() => {
+                      setApplicationResetPhrase("");
+                      setIsApplicationResetOpen(false);
+                    }}
                     type="button"
                   >
                     Annulla

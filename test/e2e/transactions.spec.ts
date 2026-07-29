@@ -51,3 +51,64 @@ test("il modulo movimenti espone righe split responsive", async ({ page }) => {
   await page.getByRole("button", { name: "Rimuovi split 1" }).click();
   await expect(page.getByLabel("Categoria split 1")).toHaveCount(0);
 });
+
+test("un movimento nel cestino può essere ripristinato e purgato dalla gestione dati", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+  const table = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
+  const row = table.getByRole("row").filter({ hasText: "Esercente campione" });
+  await row.getByRole("button", { name: "Cestina" }).click();
+  await expect(page.getByRole("status")).toContainText("Movimento spostato nel cestino");
+
+  await page.goto("/#settings");
+  await expect(page.getByText("Esercente campione")).toBeVisible();
+  await page.getByRole("button", { name: "Ripristina" }).click();
+  await expect(page.getByText("Il cestino è vuoto.")).toBeVisible();
+
+  await page.goto("/#transactions");
+  const restoredTable = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
+  const restoredRow = restoredTable.getByRole("row").filter({ hasText: "Esercente campione" });
+  await restoredRow.getByRole("button", { name: "Cestina" }).click();
+  await page.goto("/#settings");
+  const purgeButton = page.getByRole("button", { name: "Elimina definitivamente" });
+  await expect(purgeButton).toHaveCount(1);
+  await purgeButton.click();
+  const purgeDialog = page.getByRole("dialog", { name: "Eliminare definitivamente?" });
+  await purgeDialog.getByRole("button", { name: "Elimina definitivamente" }).click();
+  await expect(page.getByRole("status")).toContainText("Movimento eliminato definitivamente.");
+  await expect(page.getByText("Il cestino è vuoto.")).toBeVisible();
+});
+
+test("il reset finanziario richiede la frase esatta e svuota il ledger", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#settings");
+  await page.getByRole("button", { name: "Reset dati finanziari" }).click();
+  const dialog = page.getByRole("dialog", { name: "Conferma reset dati finanziari" });
+  const confirm = dialog.getByRole("button", { name: "Conferma reset" });
+  await expect(confirm).toBeDisabled();
+  await page.getByLabel("Frase di conferma reset").fill("RESETTA DATI FINANZIARI");
+  await confirm.click();
+  await expect(page.getByRole("status")).toContainText("Dati finanziari resettati");
+  await page.goto("/#transactions");
+  await expect(page.getByRole("heading", { name: "Nessun movimento registrato" })).toBeVisible();
+});
+
+test("il ripristino totale rimuove il profilo locale e riporta all'onboarding", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
+  await page.goto("/#settings");
+  await page.getByRole("button", { name: "Ripristino totale dell’app" }).click();
+  const dialog = page.getByRole("dialog", { name: "Conferma ripristino totale" });
+  const confirm = dialog.getByRole("button", { name: "Ripristina app" });
+  await expect(confirm).toBeDisabled();
+  await page.getByLabel("Frase di conferma ripristino totale").fill("RIPRISTINA NEXORA");
+  await confirm.click();
+  await expect(page.getByRole("button", { name: "Carica dati dimostrativi" })).toBeVisible();
+});

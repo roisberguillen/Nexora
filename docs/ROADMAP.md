@@ -13,8 +13,8 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M1 — Copertura flussi distruttivi
 
-- [ ] Test component, adapter ed E2E per cestino, restore, purge, reset e ripristino totale.
-- [ ] Verificate invarianti di saldi, budget, trend, import, split e trasferimenti.
+- [x] Test component, adapter ed E2E per cestino, restore, purge, reset e ripristino totale.
+- [x] Verificate invarianti di saldi, budget, trend, import, split e trasferimenti.
 
 ## M2 — Reset dati finanziari
 

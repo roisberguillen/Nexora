@@ -13,7 +13,6 @@ export interface LocalResetEnvironment {
   readonly caches?: Pick<CacheStorage, "keys" | "delete">;
   readonly indexedDb?: Pick<IDBFactory, "deleteDatabase">;
   readonly localStorage?: Pick<Storage, "removeItem">;
-  readonly opfsRoot?: () => Promise<FileSystemDirectoryHandle>;
 }
 
 /** Removes only Nexora-owned local state. Cloud backups are intentionally out of scope. */
@@ -21,16 +20,17 @@ export async function resetLocalApp(
   ledger: BrowserLedger,
   environment: LocalResetEnvironment = {},
 ): Promise<void> {
+  // OPFS SQLite needs its directory and schema container to remain available to reopen reliably.
+  // Clear every financial store atomically before closing it; only technical schema metadata remains.
+  if (ledger.storageKind === "opfs") {
+    await ledger.repository.resetFinancialData();
+  }
   await ledger.close();
   const storage = environment.localStorage ?? globalThis.localStorage;
   for (const key of nexoraStorageKeys) storage.removeItem(key);
 
   if (ledger.storageKind === "indexeddb") {
     await deleteIndexedDb(environment.indexedDb ?? globalThis.indexedDB, "nexora-ledger");
-  } else {
-    const getRoot = environment.opfsRoot ?? (() => navigator.storage.getDirectory());
-    const root = await getRoot();
-    await root.removeEntry("nexora", { recursive: true });
   }
 
   const cacheStorage = environment.caches ?? globalThis.caches;

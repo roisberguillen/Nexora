@@ -135,6 +135,17 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
   });
 
+  it("azzera anche gerarchie e trasferimenti del ledger dimostrativo", async () => {
+    await seedDemoLedger(ledger.repository);
+
+    await ledger.repository.resetFinancialData();
+
+    await expect(ledger.repository.listAccounts()).resolves.toEqual([]);
+    await expect(ledger.repository.listCategories()).resolves.toEqual([]);
+    await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
+    await expect(ledger.repository.listTransfers()).resolves.toEqual([]);
+  });
+
   it("elimina solo categorie e tag non referenziati", async () => {
     const main = account("account-taxonomy-delete");
     const unusedCategory = Category.create({

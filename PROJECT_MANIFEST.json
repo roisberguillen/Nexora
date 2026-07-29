@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 29590,
-      "sha256": "e73fb794893307b260df5c004e1a3c179f1c31df7d34797eacce382b8bfdbca0"
+      "size": 29630,
+      "sha256": "c5e7b7afc962b5798c1c12bcfc9c8b70e9aa604fb33604c265103eb5dce942ce"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -429,13 +429,13 @@
     },
     {
       "path": "apps/web/src/reset/resetLocalApp.test.ts",
-      "size": 999,
-      "sha256": "e9ac83c06ef4a099487182d6eae354fd5e48eb43a6cd0e1eea229f6d05084528"
+      "size": 1459,
+      "sha256": "3788117b7b10bde7000ce40ccb9a10e6e8ccc17ec80e9d037429b97c2b586130"
     },
     {
       "path": "apps/web/src/reset/resetLocalApp.ts",
-      "size": 2059,
-      "sha256": "4fb83820b997d598c60f0702dd550e34a83e85babddb6e3f36336311cf4479ff"
+      "size": 2099,
+      "sha256": "20e40d2de9460fadfabb250c3e01086011b34b435476541b5f4e4c59af031821"
     },
     {
       "path": "apps/web/src/security/appLock.test.ts",
@@ -468,9 +468,14 @@
       "sha256": "ac9d586389432efcb2aa212554c375d1935238e87131aa0423b86e455ecdc40a"
     },
     {
+      "path": "apps/web/src/settings/SettingsPage.test.tsx",
+      "size": 4576,
+      "sha256": "9e3f5d4d31949869ced8e9d9690c998f5933d9518128ebdc5e148a1b8c9ed9a5"
+    },
+    {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 14608,
-      "sha256": "e4e35d2ab6da22968e25842650796058b0b83377ae15b2e85fb0327e34eacc41"
+      "size": 14797,
+      "sha256": "43f8033c364c1c4bd301a6f721e28798df445b688a46fbcd01d2bdfa90741a52"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -529,8 +534,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 10774,
-      "sha256": "3fa985beca9b1207a28c34bbb915418cc671c36e9957729e85b40030757da2f6"
+      "size": 11286,
+      "sha256": "4bd945c6ee24cf2285f646b43885df0052d102c213fd334a074ee2622b33c4e1"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -664,8 +669,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 12009,
-      "sha256": "a8e51e433b4a464d50565b4659c29fafbef2b0626d636dedd9ee5a8838fa4aef"
+      "size": 12001,
+      "sha256": "97e1c7f241bd7cd56165972c90c3bbf3252c5e0376e9a3f36ad6fc3ab9986cd7"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -698,6 +703,11 @@
       "sha256": "5a638013cdaf2f61b6de4142fb572460d3f0b7f3454ae3170de2ce5e3afdaa18"
     },
     {
+      "path": "docs/release/BASELINE_AUDIT_2026-07-29.md",
+      "size": 1492,
+      "sha256": "bd9fe75d096560d75ef0506bfffed25f57655dd25a7a15d846a278bdb5174ece"
+    },
+    {
       "path": "docs/release/IMPLEMENTATION_REPORT_2026-07-29.md",
       "size": 1354,
       "sha256": "e8a80dc96cd0242aae5fa8e884aae03b5d0c20364a7a1e204def181f21fcad9a"
@@ -705,7 +715,7 @@
     {
       "path": "docs/ROADMAP.md",
       "size": 1957,
-      "sha256": "1c040d91d281d0d90e7883819c57f5cb784515158c870591c91f7d2622afb87f"
+      "sha256": "61a46ac98958963da1207cc9cf9a0cb112ab7823ae0d8e8591cfddc801708768"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -864,8 +874,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 25380,
-      "sha256": "a0f1b52ce729a07e36971b964a863066914688f075b567dc641ba30fed43a90d"
+      "size": 25868,
+      "sha256": "e0eac8e251e755e29ff70b83a23cb27b4bb5baa2df386d24b501a85a0f42bf3e"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
@@ -1034,13 +1044,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 25249,
-      "sha256": "31be2013d3c3f1c981782853bcd4719b5b82a89afe5e447a6d61eff9c24bbcdd"
+      "size": 25695,
+      "sha256": "b58137dbe7ff8bd2056a24d8ce916a7d34079f302a40052e3b714ace019595a2"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 83786,
-      "sha256": "aef4ddda0e5fb168626536e8201a5de824d60556bddeaab388c1937275a1a16e"
+      "size": 84135,
+      "sha256": "c5f5556e57a6ab9fab0fcc6b10dfeb5ef9f2cd40236f77571dda765b51ccf8a7"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -1599,8 +1609,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 2585,
-      "sha256": "d6b755c3337a090a44e95f43163f4fa9d80ce99dd4256ed05ec209ed44f1b994"
+      "size": 5898,
+      "sha256": "48847a0ee6d5c2f8bb61fdf3c13f2bba5bfff8b1f81c302b8766bb4081838597"
     },
     {
       "path": "test/project-privacy.test.ts",

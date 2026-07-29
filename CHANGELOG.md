@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Rafforzati i flussi distruttivi: reset finanziario atomico anche per le gerarchie OPFS,
+  ripristino totale locale, cestino/restore/purge e relative conferme accessibili.
+- Aggiunta copertura component, adapter SQLite e IndexedDB, e E2E responsive (320, 768 e
+  1440 px) per cestino, reset finanziario e ripristino totale.
+
 - Riallineata la baseline di `main`: versione build centralizzata dal manifest root, report
   verificabile, roadmap quality-gated e rimozione del Dockerfile placeholder non produttivo.
 

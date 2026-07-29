@@ -214,6 +214,10 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
   public resetFinancialData(): Promise<void> {
     return this.runAtomically(async () => {
+      // The ledger owns two self-referential trees (accounts and categories). Deferring foreign
+      // keys for this write transaction lets the complete reset remove each tree as a set; the
+      // constraint is still checked at commit, after every financial table is empty.
+      await this.database.execute("PRAGMA defer_foreign_keys = ON;");
       for (const table of [
         "transaction_trash",
         "transaction_tags",

@@ -373,6 +373,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   const resetApplication = async (): Promise<void> => {
     if (ledgerState.status !== "ready") return;
     await resetLocalApp(ledgerState.ledger);
+    window.location.hash = "#overview";
     window.location.reload();
   };
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>

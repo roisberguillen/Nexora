@@ -22,4 +22,16 @@ describe("resetLocalApp", () => {
     expect(deleteCache).toHaveBeenCalledWith("nexora-pwa");
     expect(removeItem).toHaveBeenCalledTimes(6);
   });
+
+  it("svuota il ledger OPFS senza rimuovere il contenitore SQLite", async () => {
+    const close = vi.fn(async () => undefined);
+    const resetFinancialData = vi.fn(async () => undefined);
+    await resetLocalApp(
+      { close, repository: { resetFinancialData }, storageKind: "opfs" } as never,
+      { localStorage: { removeItem: vi.fn() } },
+    );
+
+    expect(resetFinancialData).toHaveBeenCalledOnce();
+    expect(close).toHaveBeenCalledOnce();
+  });
 });
