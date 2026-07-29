@@ -2,7 +2,7 @@
 
 | Area | Evidenza | Esito |
 |---|---|---|
-| Formattazione, lint, typecheck, unit, build | `pnpm verify` | Verde: 286 passati, 4 skip |
+| Formattazione, lint, typecheck, unit, build | `pnpm verify` | Verde: 295 passati, 4 skip |
 | E2E startup | `startup-orchestrator.spec.ts` | Verde: 1 pass, 4 skip per progetto |
 | E2E reload ripetuto | `startup-reload-resilience.spec.ts` | Verde: 20 reload consecutivi su Chromium 1440 |
 | E2E avvio multi-tab | `startup-multitab.spec.ts` | Verde: due schede Chromium 1440 contemporanee |
