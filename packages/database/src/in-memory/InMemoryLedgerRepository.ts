@@ -9,7 +9,7 @@ import {
   type TransferBundle,
   type Tag,
   type ImportBatch,
-  type ImportRow,
+  ImportRow,
   type ImportTransferBundle,
   type RecurringRule,
   type AllocationPlan,
@@ -529,6 +529,48 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       if (candidate.deletionGroupId === entry.deletionGroupId)
         this.transactionTrash.delete(transactionId);
     }
+  }
+
+  public async purgeTrashedTransaction(id: string): Promise<void> {
+    await this.runAtomically(async () => {
+      const entry = this.transactionTrash.get(id);
+      if (entry === undefined)
+        throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+      const ids = [...this.transactionTrash.entries()]
+        .filter(([, candidate]) => candidate.deletionGroupId === entry.deletionGroupId)
+        .map(([transactionId]) => transactionId);
+      for (const [rowId, row] of this.importRows) {
+        if (row.createdTransactionId !== undefined && ids.includes(row.createdTransactionId))
+          this.importRows.set(
+            rowId,
+            ImportRow.create({
+              id: row.id,
+              batchId: row.batchId,
+              rowNumber: row.rowNumber,
+              rawJson: row.rawJson,
+              status: row.status,
+              ...(row.normalizedJson === undefined ? {} : { normalizedJson: row.normalizedJson }),
+              ...(row.errorCode === undefined ? {} : { errorCode: row.errorCode }),
+              deletedTransactionId: row.createdTransactionId,
+            }),
+          );
+      }
+      for (const [transferId, transfer] of this.transfers) {
+        if (
+          ids.includes(transfer.debitTransactionId) ||
+          ids.includes(transfer.creditTransactionId) ||
+          (transfer.feeTransactionId !== undefined && ids.includes(transfer.feeTransactionId))
+        )
+          this.transfers.delete(transferId);
+      }
+      for (const transactionId of ids) {
+        this.transactionTrash.delete(transactionId);
+        this.transactions.delete(transactionId);
+        this.transactionTags.delete(transactionId);
+        for (const [splitId, split] of this.transactionSplits)
+          if (split.transactionId === transactionId) this.transactionSplits.delete(splitId);
+      }
+    });
   }
 
   public async listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {

@@ -810,7 +810,7 @@
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
       "size": 7946,
-      "sha256": "1812d09fde552fed524e425741bc89ca8595aa7faab054e6f952cf02a0e77b0f"
+      "sha256": "68af765dda53b5456bb8cc614f8111a3c9dc4036bbbd5bd844072901844eff57"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
@@ -829,8 +829,8 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 18498,
-      "sha256": "947d9463ecb506b5411c0755c4a10d241fdd7ca197ebcf9d92f454630e846455"
+      "size": 18659,
+      "sha256": "131b3adf862bdc8986b62700bdcc47c8c422f9307d8eae96aeefe81bfe09eb97"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -849,28 +849,28 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 33004,
-      "sha256": "429718225761ab9f6cb04014e61ee5847333710d1a7af85be6bd6d61c3553c5e"
+      "size": 34872,
+      "sha256": "82f0843855011be4daf9ac5cb3c7d405d284d9ca45dbd1b4e6e15bc5ad318ee8"
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 4272,
-      "sha256": "f6cc137b3d2e741ffa7aec831874738880b892e505d220e5ffa469d638d798b3"
+      "size": 4414,
+      "sha256": "473bf6b1e423c9779a10e7989b47d7180541a59e1cedfcb5b770469a4632211f"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
       "size": 25380,
-      "sha256": "7c04c1dd5a357e774dcfe09971cfc4e8507a35c2c6266fb1ce18b36901b58ec1"
+      "sha256": "a0f1b52ce729a07e36971b964a863066914688f075b567dc641ba30fed43a90d"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 78953,
-      "sha256": "cd44db4143e88d709abd6edeee2c731479ce14e1c58a36804426a1ffeaef3db1"
+      "size": 82025,
+      "sha256": "f1374e9eda0c369fd2335384a9a327338bf82c046d14f6778a597c75826d7c63"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 10654,
-      "sha256": "c416dd6e1a9021f5a1934b320d2943d9c708987ab21ecbf2aa4dfb738efd31a4"
+      "size": 10860,
+      "sha256": "6e2738e75ce232a1fd23fb6359700ca0ad4fbb2a18e422900f645637ebd6191c"
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.test.ts",
@@ -879,8 +879,8 @@
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
-      "size": 9984,
-      "sha256": "90bb08eadd43651d34f71559e035c4c1d5a89516409838c237c103f6de93e0bb"
+      "size": 10103,
+      "sha256": "ef0f796eb16e662d8d5a63440860570ad00baa9d78e28c70a655b21b4b13b487"
     },
     {
       "path": "packages/database/src/migrations/0002-transaction-splits.ts",
@@ -938,6 +938,11 @@
       "sha256": "b0cb9cc3dfbee18d679bbf355c7f14abfc3987cae398eefcd977ff21fc143381"
     },
     {
+      "path": "packages/database/src/migrations/0013-import-row-deletion-audit.ts",
+      "size": 1542,
+      "sha256": "cf1361e075a12d88d2f3286972d397758ed5f30e55ac5f30b3ec8a80b20ba828"
+    },
+    {
       "path": "packages/database/src/migrations/DatabaseMigration.ts",
       "size": 176,
       "sha256": "d00ef8d7253c8426b8dfefb93c9557e31290684f0bf9e36d541b9d001923eb98"
@@ -954,8 +959,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 10048,
-      "sha256": "04b68f530a7a256c85a0a85c4afd24c3ef2219211448189ecfb3e12bd65b713d"
+      "size": 10114,
+      "sha256": "d3d6e8f734769aa16ca1763b5b7047fe53e6f310a9ad4e091f10988c1b9a209a"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -1025,12 +1030,12 @@
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
       "size": 25249,
-      "sha256": "3e33cd56c40873d13d95d74c4131cf3a2310cbfa639a3dad199c0cfb935b9ab6"
+      "sha256": "31be2013d3c3f1c981782853bcd4719b5b82a89afe5e447a6d61eff9c24bbcdd"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 81070,
-      "sha256": "6e0019a152c17afe703502b0b60950402960bb8bfd92bdadaea24f073685d515"
+      "size": 83679,
+      "sha256": "16b0baa69902133a7feaa2ff0fb60a21618f53f206224a79649266ae0449f7c2"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -1099,13 +1104,13 @@
     },
     {
       "path": "packages/domain/src/entities/ImportRow.test.ts",
-      "size": 606,
-      "sha256": "7ffa68cb3c0a493b4381af52b1aa834d394ca0fc4568924ffdc00fe1b933a2f3"
+      "size": 1434,
+      "sha256": "ec47756cd161ea8c91d6e485065f5b49fefc01b6da47f5bc18d45c188e51b0d1"
     },
     {
       "path": "packages/domain/src/entities/ImportRow.ts",
-      "size": 2171,
-      "sha256": "2f1e67274afd74e62799623ca78bb0bb6496b1eda2614237d229d174a4c91f13"
+      "size": 2765,
+      "sha256": "b16049bb03166252f2295027beccd8478c2984db96ffa632e85a7279f82f9cd6"
     },
     {
       "path": "packages/domain/src/entities/InvestmentPosition.test.ts",
@@ -1194,8 +1199,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 5093,
-      "sha256": "049ff62b2658d4af5af8f2bc7c73919f0a6c7fb4dc6f1e63f8db8b5e96d9bc84"
+      "size": 5233,
+      "sha256": "eae4327746c59f892c6f22a6f17819fd844f50496e03967ec3750e316ce925c1"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",
@@ -1505,7 +1510,7 @@
     {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2202,
-      "sha256": "462cedb15abac3736d7a1bcee81dd207072d4b0bfca0b87b68645926e9ba7267"
+      "sha256": "4f1177e38dfb88d48fc99b54a7a500c30fb392e59eecc341cf5b5c71bc5ce4a9"
     },
     {
       "path": "test/e2e/budgets.spec.ts",
@@ -1524,8 +1529,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 216547,
-      "sha256": "265ca41fbb24751a3e111b017d2e5f80a5541dd2be7e866f282e7ec996996b6f"
+      "size": 216870,
+      "sha256": "1637ad75c9b43302488cafdb9300da705b5f3816ff96f21ac51ffea68a3931b3"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
@@ -1555,7 +1560,7 @@
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
       "size": 1809,
-      "sha256": "4254af671e0ead5682035f4e643bf72aa8bdef93854ffa90819b7619d46d124c"
+      "sha256": "41b4346d5b7a01c61daee3831227e9281b7253d04b88f7be8e268f1db28588f9"
     },
     {
       "path": "test/e2e/investments.spec.ts",
@@ -1570,12 +1575,12 @@
     {
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1794,
-      "sha256": "d64d6e0f8cf591a1c49b8d0432561c4b5fb580f501f55498553ed718275e8e31"
+      "sha256": "a8e2fc68fcf0743576afc81a179668ccfb38faa37a467aa7dd6fb079eb9b8b08"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
       "size": 4638,
-      "sha256": "792342082c587491fc47af316e051ff934a7a8159d02bea5f7c5db4e825d4ab8"
+      "sha256": "647e8063ad339da541afc1592681e634036ebddd273e40d04efc66e6339e4618"
     },
     {
       "path": "test/e2e/recurring.spec.ts",

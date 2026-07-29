@@ -244,7 +244,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 12 });
+    expect(metadata).toEqual({ key: "schema_version", value: 13 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -510,7 +510,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(12);
+    expect(ledger.schemaVersion).toBe(13);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );

@@ -93,6 +93,10 @@ export {
   TRANSACTION_TRASH_SCHEMA_VERSION,
   transactionTrashMigration,
 } from "./migrations/0012-transaction-trash";
+export {
+  IMPORT_ROW_DELETION_AUDIT_SCHEMA_VERSION,
+  importRowDeletionAuditMigration,
+} from "./migrations/0013-import-row-deletion-audit";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

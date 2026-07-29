@@ -322,6 +322,7 @@ export function validatePortableLedgerSnapshot(
       const normalizedJson = optionalText(value, "normalizedJson");
       const errorCode = optionalText(value, "errorCode");
       const createdTransactionId = optionalText(value, "createdTransactionId");
+      const deletedTransactionId = optionalText(value, "deletedTransactionId");
       return ImportRow.create({
         id: text(value, "id"),
         batchId: text(value, "batchId"),
@@ -332,6 +333,7 @@ export function validatePortableLedgerSnapshot(
         ...(normalizedJson === undefined ? {} : { normalizedJson }),
         ...(errorCode === undefined ? {} : { errorCode }),
         ...(createdTransactionId === undefined ? {} : { createdTransactionId }),
+        ...(deletedTransactionId === undefined ? {} : { deletedTransactionId }),
       });
     });
   const transactionTagIds = new Map(

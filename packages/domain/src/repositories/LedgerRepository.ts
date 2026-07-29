@@ -81,6 +81,8 @@ export interface LedgerRepository {
   cancelTransfer(id: string): Promise<void>;
   trashTransaction(id: string): Promise<void>;
   restoreTransaction(id: string): Promise<void>;
+  /** Permanently deletes one recycle-bin group while retaining import audit rows. */
+  purgeTrashedTransaction(id: string): Promise<void>;
   listTrashedTransactions(): Promise<readonly TrashedTransaction[]>;
   findAccountById(id: string): Promise<Account | undefined>;
   findCategoryById(id: string): Promise<Category | undefined>;
