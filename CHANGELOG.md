@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.5.0-rc.1] - 2026-07-29
+
+- Introdotto il backup logico `.nexora-backup` cifrato e portabile tra SQLite/OPFS e IndexedDB,
+  con restore atomico, verifica non distruttiva e cronologia locale delle operazioni.
+- Reso il backup Google Drive più robusto con stato OAuth esplicito, disconnessione, timeout,
+  retry dei soli fallimenti temporanei e messaggi sicuri.
+- Completato il centro notifiche locale: backup e recovery drill scaduti, saldo basso configurabile,
+  entrata attesa mancante, priorità, stato letto/ignorato e fallback interno.
+- Aggiunti round-trip cross-adapter, benchmark da 1k a 100k movimenti e gate RC su 320/768/1440.
+
 - Aggiunto il blocco opzionale dell’app con verificatore PBKDF2, timeout di inattività e blocco
   manuale. PIN e passphrase non vengono mai salvati; il ledger locale resta esplicitamente non
   cifrato a riposo dal browser.

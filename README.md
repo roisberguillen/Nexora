@@ -5,7 +5,7 @@ su OPFS è il backend preferito; IndexedDB è il fallback esplicito quando OPFS 
 
 ## Stato prodotto
 
-Versione corrente: **0.5.0-beta.1**. Non è una release di produzione. La roadmap Release
+Versione corrente: **0.5.0-rc.1**. Non è una release di produzione. La roadmap Release
 Candidate in `docs/ROADMAP.md` distingue in modo verificabile funzionalità completate, limiti e
 lavoro ancora necessario prima di una RC.
 
@@ -14,7 +14,7 @@ lavoro ancora necessario prima di una RC.
 - Node.js `>=24.14.0 <25` (versione consigliata: 24.15.0);
 - pnpm `>=11.9.0 <12`;
 - Chromium/Chrome recente per OPFS e File System Access API. Altri browser possono usare
-  IndexedDB, con capacità backup inferiori finché il formato comune non sarà completato.
+  IndexedDB, con un formato di backup logico cifrato equivalente a SQLite/OPFS.
 
 ## Installazione
 

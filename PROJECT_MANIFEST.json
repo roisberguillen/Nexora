@@ -1,6 +1,6 @@
 {
   "project": "Nexora",
-  "version": "0.5.0-beta.1",
+  "version": "0.5.0-rc.1",
   "files": [
     {
       "path": ".codex/agents/domain-architect.md",
@@ -509,8 +509,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 9659,
-      "sha256": "cb5dac150b9ff9df6c9567baebb1be5a2e8e91942aca2a2ee0dfc05abcf0234f"
+      "size": 10302,
+      "sha256": "6d884d3cae6b5faca3e87cbfdd8e2a282e39b27b2f1924a2eb9f0bba017d47c0"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -673,9 +673,14 @@
       "sha256": "5a638013cdaf2f61b6de4142fb572460d3f0b7f3454ae3170de2ce5e3afdaa18"
     },
     {
+      "path": "docs/release/IMPLEMENTATION_REPORT_2026-07-29.md",
+      "size": 1324,
+      "sha256": "18de61818baaa97d0b0fbee49978b3e19b32db570f63d12d544603d965995c3e"
+    },
+    {
       "path": "docs/ROADMAP.md",
-      "size": 1935,
-      "sha256": "8fee7b581a820727402ed6a46cf37a7941f83c62b9a5e4b93531d8a63d8736b4"
+      "size": 1933,
+      "sha256": "97af1bf931a59a622a09457fdfe6797cf099ac0f30cffcf221c8fb46feb97b81"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -729,8 +734,8 @@
     },
     {
       "path": "package.json",
-      "size": 1623,
-      "sha256": "4777e3a42b036dffa5994b07d106b4332bb87b57d26cb39e95f821d2fe25c120"
+      "size": 1621,
+      "sha256": "0db05058fd7b950c012466fe3ae1d8229fac9b1900b9748e16268f808be66bd7"
     },
     {
       "path": "packages/config/package.json",
@@ -1434,8 +1439,8 @@
     },
     {
       "path": "README.md",
-      "size": 2448,
-      "sha256": "ba55fd99f9100030e6dd1ba621ce064b7f78013939cddf43037851edf807e563"
+      "size": 2434,
+      "sha256": "4569ed93e9d38d4b19cc87823f08d6c67a48ffc8a689cbaadbfc4c296c0e75b4"
     },
     {
       "path": "schemas/backup-manifest.schema.json",
