@@ -539,13 +539,13 @@
     },
     {
       "path": "apps/web/src/startup/StorageDiscovery.test.ts",
-      "size": 1815,
-      "sha256": "40070360e91e22752486fd49960c625c88a4b20712e4d032afb0165dc0f4aece"
+      "size": 2404,
+      "sha256": "f635f996579d6ac2a25d6e8b922c185e0a1014d3441b4929fcb36c58f413bf96"
     },
     {
       "path": "apps/web/src/startup/StorageDiscovery.ts",
-      "size": 4122,
-      "sha256": "a240bee7bbe1cee11ed188b403b5f691acad8c1c97c56e2bc4854b3533a6b878"
+      "size": 4392,
+      "sha256": "5eaa32b6ce69a4b87cf015c72155d89bb5a10cc097812d9012d5e505d99bb790"
     },
     {
       "path": "apps/web/src/startup/StorageSelection.test.ts",
@@ -821,6 +821,11 @@
       "path": "docs/release/STARTUP_ORCHESTRATOR_REPORT_2026-07-29.md",
       "size": 1999,
       "sha256": "be7b744edb7469ef3f0dbff19a5ca35088c555ebe9f447b171d9d03e1addb8fa"
+    },
+    {
+      "path": "docs/reports/startup-baseline.md",
+      "size": 1232,
+      "sha256": "d3ac8e15843831daeb9c6e7a22efde03c84c6db0e95339c058226ea1d3576b91"
     },
     {
       "path": "docs/ROADMAP.md",

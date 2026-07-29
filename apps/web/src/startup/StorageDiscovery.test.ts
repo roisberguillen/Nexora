@@ -24,6 +24,7 @@ describe("StorageDiscovery", () => {
     const getDirectoryHandle = vi.fn(async () => ({ getFileHandle }));
     const result = await new StorageDiscovery({
       now,
+      opfsSqliteSupported: () => true,
       opfsRoot: async () => ({ getDirectoryHandle }) as unknown as FileSystemDirectoryHandle,
     }).inspect();
 
@@ -32,6 +33,21 @@ describe("StorageDiscovery", () => {
     });
     expect(getDirectoryHandle).toHaveBeenCalledWith("nexora", { create: false });
     expect(getFileHandle).toHaveBeenCalledWith("nexora.sqlite3", { create: false });
+  });
+
+  it("non dichiara OPFS utilizzabile se il runtime SQLite non è isolato", async () => {
+    const getDirectoryHandle = vi.fn();
+    const result = await new StorageDiscovery({
+      now,
+      opfsSqliteSupported: () => false,
+      opfsRoot: async () => ({ getDirectoryHandle }) as unknown as FileSystemDirectoryHandle,
+    }).inspect();
+
+    expect(result.archives.find((archive) => archive.kind === "opfs")).toMatchObject({
+      available: false,
+      state: "unavailable",
+    });
+    expect(getDirectoryHandle).not.toHaveBeenCalled();
   });
 
   it("mantiene un errore di accesso come stato bloccato senza cancellare dati", async () => {

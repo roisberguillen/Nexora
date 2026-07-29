@@ -1,4 +1,4 @@
-import type { BrowserLedgerStorageKind } from "@nexora/database";
+import { isOpfsSqliteSupported, type BrowserLedgerStorageKind } from "@nexora/database";
 
 export type StorageArchiveState =
   "unavailable" | "absent" | "present" | "unknown" | "blocked" | "corrupt";
@@ -19,6 +19,8 @@ export interface StorageDiscoveryResult {
 export interface StorageDiscoveryDependencies {
   readonly now?: () => Date;
   readonly indexedDbDatabases?: () => Promise<readonly { name?: string; version?: number }[]>;
+  /** Uses the same runtime predicate as the SQLite OPFS adapter. */
+  readonly opfsSqliteSupported?: () => boolean;
   readonly opfsRoot?: () => Promise<FileSystemDirectoryHandle>;
 }
 
@@ -35,6 +37,9 @@ export class StorageDiscovery {
 
   private async inspectOpfs(): Promise<StorageArchiveInspection> {
     const checkedAt = this.now();
+    if (!(this.dependencies.opfsSqliteSupported ?? isOpfsSqliteSupported)()) {
+      return unavailable("opfs", checkedAt);
+    }
     const getRoot = this.dependencies.opfsRoot ?? defaultOpfsRoot();
     if (getRoot === undefined) return unavailable("opfs", checkedAt);
     try {
