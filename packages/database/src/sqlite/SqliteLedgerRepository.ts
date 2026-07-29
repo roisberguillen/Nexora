@@ -442,7 +442,10 @@ export class SqliteLedgerRepository implements LedgerRepository {
             [id, id, id, id, id],
           );
           if (references.length > 0)
-            throw new DomainError("invalid_category", "A referenced category must be archived or reassigned.");
+            throw new DomainError(
+              "invalid_category",
+              "A referenced category must be archived or reassigned.",
+            );
           await this.database.run("DELETE FROM categories WHERE id = ?", [id]);
         }),
       ),
@@ -453,13 +456,18 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
-          const rows = await this.database.query<{ readonly found: number }>(
-            "SELECT 1 AS found FROM tags WHERE id = ? UNION ALL SELECT 1 FROM transaction_tags WHERE tag_id = ? LIMIT 1",
+          const rows = await this.database.query<{ readonly tag_count: number; readonly reference_count: number }>(
+            "SELECT (SELECT COUNT(*) FROM tags WHERE id = ?) AS tag_count, (SELECT COUNT(*) FROM transaction_tags WHERE tag_id = ?) AS reference_count",
             [id, id],
           );
-          if (rows.length === 0) throw new DomainError("missing_reference", "Tag does not exist.");
-          if (rows.length > 1)
-            throw new DomainError("invalid_transaction", "A referenced tag must be archived or removed globally.");
+          const counts = rows[0];
+          if (counts === undefined || counts.tag_count === 0)
+            throw new DomainError("missing_reference", "Tag does not exist.");
+          if (counts.reference_count > 0)
+            throw new DomainError(
+              "invalid_transaction",
+              "A referenced tag must be archived or removed globally.",
+            );
           await this.database.run("DELETE FROM tags WHERE id = ?", [id]);
         }),
       ),

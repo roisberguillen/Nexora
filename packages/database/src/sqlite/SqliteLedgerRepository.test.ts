@@ -141,6 +141,47 @@ describe("SqliteLedgerRepository", () => {
     });
   });
 
+  it("elimina solo categorie e tag non referenziati", async () => {
+    const main = account("account-taxonomy-delete");
+    const unusedCategory = Category.create({
+      id: "category-unused",
+      name: "Libera",
+      kindScope: "expense",
+    });
+    const usedCategory = Category.create({
+      id: "category-used",
+      name: "Usata",
+      kindScope: "expense",
+    });
+    const unusedTag = Tag.create({ id: "tag-unused", name: "Libero" });
+    const usedTag = Tag.create({ id: "tag-used", name: "Usato" });
+    await repository.saveAccount(main);
+    await repository.saveCategory(unusedCategory);
+    await repository.saveCategory(usedCategory);
+    await repository.saveTag(unusedTag);
+    await repository.saveTag(usedTag);
+    const transaction = Transaction.create({
+      id: "taxonomy-reference",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: usedCategory.id,
+    });
+    await repository.saveTransaction(transaction);
+    await repository.setTransactionTags(transaction.id, [usedTag.id]);
+
+    await repository.deleteUnusedCategory(unusedCategory.id);
+    await repository.deleteUnusedTag(unusedTag.id);
+    await expect(repository.deleteUnusedCategory(usedCategory.id)).rejects.toMatchObject({
+      code: "invalid_category",
+    });
+    await expect(repository.deleteUnusedTag(usedTag.id)).rejects.toMatchObject({
+      code: "invalid_transaction",
+    });
+  });
+
   it("persiste e aggiorna il diario mensile", async () => {
     const journal = MonthlyJournal.create({
       id: "journal-2026-07",
