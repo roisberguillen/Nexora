@@ -523,6 +523,16 @@
       "sha256": "a240bee7bbe1cee11ed188b403b5f691acad8c1c97c56e2bc4854b3533a6b878"
     },
     {
+      "path": "apps/web/src/startup/StorageSelection.test.ts",
+      "size": 1582,
+      "sha256": "d62642c580fe61fbbba51d58078fb070ca9efcfcd0bf50dcea8e1cf4555efde3"
+    },
+    {
+      "path": "apps/web/src/startup/StorageSelection.ts",
+      "size": 2925,
+      "sha256": "165b012d25bfbd8e24eeb4b154230a41e704b24b1825fceedf8cf618ec7a912b"
+    },
+    {
       "path": "apps/web/src/tags/tagCommands.test.ts",
       "size": 679,
       "sha256": "1b32010112845d0cbcb96dafe74ffb81e687f3180c6a87aae171e74254bd420d"
