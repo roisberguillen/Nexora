@@ -3,6 +3,8 @@ import {
   AllocationPlan,
   Budget,
   Category,
+  ImportBatch,
+  ImportRow,
   InvestmentPosition,
   LocalDate,
   Loan,
@@ -36,6 +38,9 @@ export interface ValidatedPortableLedgerSnapshot {
   readonly loans: readonly Loan[];
   readonly investmentPositions: readonly InvestmentPosition[];
   readonly monthlyJournals: readonly MonthlyJournal[];
+  readonly importBatches: readonly ImportBatch[];
+  readonly importRows: readonly ImportRow[];
+  readonly transactionTagIds: ReadonlyMap<string, readonly string[]>;
 }
 
 export async function capturePortableLedgerSnapshot(
@@ -297,6 +302,44 @@ export function validatePortableLedgerSnapshot(
         : { perceivedControl: optionalNumber(value, "perceivedControl")! as 1 | 2 | 3 | 4 | 5 }),
     }),
   );
+  const importBatches = entityList(entities, "importBatches").map((value) =>
+    ImportBatch.create({
+      id: text(value, "id"),
+      importerType: text(value, "importerType") as
+        "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf",
+      sourceFilename: text(value, "sourceFilename"),
+      sourceSha256: text(value, "sourceSha256"),
+      status: text(value, "status") as "previewed" | "committed" | "undone" | "failed",
+      rowsTotal: number(value, "rowsTotal"),
+      rowsImported: number(value, "rowsImported"),
+      rowsSkipped: number(value, "rowsSkipped"),
+      rowsFailed: number(value, "rowsFailed"),
+    }),
+  );
+  const importRows = relationList(snapshot.relations, "importRows")
+    .flatMap((relation) => recordArray(relation, "values"))
+    .map((value) => {
+      const normalizedJson = optionalText(value, "normalizedJson");
+      const errorCode = optionalText(value, "errorCode");
+      const createdTransactionId = optionalText(value, "createdTransactionId");
+      return ImportRow.create({
+        id: text(value, "id"),
+        batchId: text(value, "batchId"),
+        rowNumber: number(value, "rowNumber"),
+        rawJson: text(value, "rawJson"),
+        status: text(value, "status") as
+          "imported" | "skipped_duplicate" | "needs_review" | "failed",
+        ...(normalizedJson === undefined ? {} : { normalizedJson }),
+        ...(errorCode === undefined ? {} : { errorCode }),
+        ...(createdTransactionId === undefined ? {} : { createdTransactionId }),
+      });
+    });
+  const transactionTagIds = new Map(
+    relationList(snapshot.relations, "transactionTags").map((relation) => [
+      text(relation, "id"),
+      recordArray(relation, "values").map((tag) => text(tag, "id")),
+    ]),
+  );
   return Object.freeze({
     accounts,
     categories,
@@ -310,6 +353,9 @@ export function validatePortableLedgerSnapshot(
     loans,
     investmentPositions,
     monthlyJournals,
+    importBatches,
+    importRows,
+    transactionTagIds,
   });
 }
 
