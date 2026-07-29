@@ -139,6 +139,23 @@ export function decodePortableLedgerSnapshot(bytes: Uint8Array): PortableLedgerS
 export function validatePortableLedgerSnapshot(
   snapshot: PortableLedgerSnapshot,
 ): ValidatedPortableLedgerSnapshot {
+  for (const name of [
+    "accounts",
+    "categories",
+    "tags",
+    "transactions",
+    "transfers",
+    "importBatches",
+    "recurringRules",
+    "allocationPlans",
+    "budgets",
+    "loans",
+    "investmentPositions",
+    "monthlyJournals",
+  ])
+    entityList(snapshot.entities, name);
+  for (const name of ["splits", "transactionTags", "importRows"])
+    relationList(snapshot.relations, name);
   const entities = snapshot.entities;
   const accounts = entityList(entities, "accounts").map(createAccount);
   const categories = entityList(entities, "categories").map(createCategory);
