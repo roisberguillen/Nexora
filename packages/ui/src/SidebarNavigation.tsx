@@ -21,7 +21,11 @@ export type NavigationRoute =
   | "exports"
   | "backup"
   | "journal"
-  | "analytics";
+  | "analytics"
+  | "profile"
+  | "settings"
+  | "notifications"
+  | "new-transaction";
 
 const navigationItems: readonly NavigationItem[] = [
   { label: "Panoramica", icon: "overview", available: true, route: "overview" },

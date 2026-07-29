@@ -1,5 +1,13 @@
 export type NavIconName =
-  "overview" | "accounts" | "transactions" | "budget" | "recurring" | "settings";
+  | "overview"
+  | "accounts"
+  | "transactions"
+  | "budget"
+  | "recurring"
+  | "settings"
+  | "profile"
+  | "bell"
+  | "plus";
 
 const iconPaths: Record<NavIconName, readonly string[]> = {
   overview: ["M4 4h6v6H4z", "M14 4h6v10h-6z", "M4 14h6v6H4z", "M14 18h6v2h-6z"],
@@ -15,6 +23,9 @@ const iconPaths: Record<NavIconName, readonly string[]> = {
     "M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z",
     "M19 13.5v-3l-2-.7-.8-1.9.9-1.9-2.1-2.1-1.9.9-1.9-.8L10.5 2h-3l-.7 2-1.9.8L3 3.9.9 6l.9 1.9L1 9.8l-2 .7v3l2 .7.8 1.9-.9 1.9L3 20.1l1.9-.9 1.9.8.7 2h3l.7-2 1.9-.8 1.9.9 2.1-2.1-.9-1.9.8-1.9z",
   ],
+  profile: ["M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z", "M4 21a8 8 0 0 1 16 0"],
+  bell: ["M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9", "M10 21h4"],
+  plus: ["M12 5v14", "M5 12h14"],
 };
 
 interface NavIconProps {

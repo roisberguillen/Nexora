@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
 test("la ricerca globale trova e apre dati locali", async ({ page }) => {
+  test.skip(
+    (page.viewportSize()?.width ?? 0) < 768,
+    "Su mobile la ricerca è contestuale alla pagina Movimenti.",
+  );
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
 

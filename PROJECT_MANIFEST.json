@@ -174,18 +174,23 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 6859,
-      "sha256": "fcd4579be113be492d097991168ef7de8f2ca5f4938704449ac0eb941d5a764e"
+      "size": 8189,
+      "sha256": "ec93d6a71c00cf39b50777899c07507448d536c91fcd78d9bbbad6467bd825de"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 23004,
-      "sha256": "f0bb0c13cf494ebe9962527f68119f772149752663930ea0fe7d653baeb361e2"
+      "size": 25122,
+      "sha256": "531f6e0b9506ae969a9bf9acea285f3860c766e3cd1bf00baa5b140812df1cd9"
+    },
+    {
+      "path": "apps/web/src/backup/BackupPage.test.tsx",
+      "size": 773,
+      "sha256": "556026840669f409ec8b6100d2ef15cd6aa39dc838210265957bb7fbd48cfd79"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 8971,
-      "sha256": "808457c8b901e238da0c1aa526a53c8c20cbf7d871774d985a981a120ef214b2"
+      "size": 9133,
+      "sha256": "6b99d3b50c3b84e7425610bca3ca6648b2397c844490eab70220689d4544fabd"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -224,8 +229,8 @@
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.test.ts",
-      "size": 1716,
-      "sha256": "b567056abe395871d5d4488596f9b809058059a8492c26304ea0960ecb0ab27d"
+      "size": 2608,
+      "sha256": "f38bb0b0173b1634f49a8a2a243ba07030ddd1724a1a670fb55b52c3c4dd50d5"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
@@ -333,9 +338,24 @@
       "sha256": "fa04e4810aa8680b6fd0db5fb1ab500c1fbf1ccd6709bd1e72c47f780bce5afd"
     },
     {
+      "path": "apps/web/src/notifications/localNotifications.test.ts",
+      "size": 799,
+      "sha256": "37c7cefa94c6a19617719939fdc9ade00d1fbb10e7d299817aa9eb494d1df480"
+    },
+    {
+      "path": "apps/web/src/notifications/localNotifications.ts",
+      "size": 3783,
+      "sha256": "19df4c474a561e65ea1e583a9757c55c5ae13b1bc44e815f5f067b06be054856"
+    },
+    {
+      "path": "apps/web/src/notifications/NotificationsPage.tsx",
+      "size": 3734,
+      "sha256": "b0b003500a21f98690ae2741002909657b1ee3b0b805a1fc4c1f4adc9360f304"
+    },
+    {
       "path": "apps/web/src/page.css",
-      "size": 20430,
-      "sha256": "dbb7c4258751ad30123f69797ffb776280b578788bfe179a852270dab7bd2082"
+      "size": 24221,
+      "sha256": "e415928983e999ae45c49c3d6b4b5c1d2062f71897026870d23dfc96132a8115"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -346,6 +366,11 @@
       "path": "apps/web/src/persistence/openPwaLedger.ts",
       "size": 3178,
       "sha256": "d2cf8dd05dfa0a06e29a0c4137be866ca90809d13bae0952f89f86a5bced6d0f"
+    },
+    {
+      "path": "apps/web/src/profile/ProfilePage.tsx",
+      "size": 2142,
+      "sha256": "1f021e8b5642ea1b5615f43423e79ec592f6cfbe1f761a34d220f1eb733efcae"
     },
     {
       "path": "apps/web/src/recurring/allocationCommands.ts",
@@ -361,6 +386,21 @@
       "path": "apps/web/src/recurring/RecurringPage.tsx",
       "size": 15136,
       "sha256": "8e3551d976fbdb81a389aba661d871342ebcc574d5a4660738165d45cd1d21f4"
+    },
+    {
+      "path": "apps/web/src/settings/preferences.test.ts",
+      "size": 659,
+      "sha256": "129a9e21701672032a943f68a0793f7329b5efd34b0b484bf180437e295fea0b"
+    },
+    {
+      "path": "apps/web/src/settings/preferences.ts",
+      "size": 1415,
+      "sha256": "ac9d586389432efcb2aa212554c375d1935238e87131aa0423b86e455ecdc40a"
+    },
+    {
+      "path": "apps/web/src/settings/SettingsPage.tsx",
+      "size": 4464,
+      "sha256": "6f3449dbd877405107df720fc6bed3c88e66d3c9bc2a2c5e404a33431f72128c"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -399,8 +439,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 21744,
-      "sha256": "0850194932228ed86ef98136ede832eadd526eb0afbe032726a37c4dbcf8dbb1"
+      "size": 23222,
+      "sha256": "326c972d6f0d715861b3c720c45f56e7c77bf0cd5e27aec60a5680f8739bb010"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -419,8 +459,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 8732,
-      "sha256": "9da883b52ae45731035d4a54c53e032e4f70015f93745865511c53701c5b4dee"
+      "size": 9280,
+      "sha256": "56d08b78e41c09e0d968bf3872ed97ac89dbb10043cd493183fa4bc6d74648f4"
+    },
+    {
+      "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
+      "size": 1260639,
+      "sha256": "5212443e30d406685a715c856bb104bb7ac70c82cbe2c2e89d0cdc1fabbdc74a"
     },
     {
       "path": "design/mockup/README.md",
@@ -593,14 +638,19 @@
       "sha256": "78df02ac6746433b4179c5decae99975bd2e8d0472c9d948fb7532568a937f9c"
     },
     {
+      "path": "docs/ux/MOBILE_UI_IMPLEMENTATION_PLAN.md",
+      "size": 4044,
+      "sha256": "275053f1cfe9f27ff0c084f503bf49e03e4c718c0b9a20da95c99f7d0a54fa5e"
+    },
+    {
       "path": "docs/ux/MOCKUP_INTEGRATION.md",
       "size": 3434,
       "sha256": "47341c6e4adc8ae39e46fea8c5a298938acadc40dd00a6404bf87ca5d0b2a1b8"
     },
     {
       "path": "docs/ux/PRIMARY_FLOWS.md",
-      "size": 749,
-      "sha256": "136f7dd5c988e816d7940789183e9d8c1635a5f5bf63d332beb88679471ebf6d"
+      "size": 1301,
+      "sha256": "d41fd254ad5a52cd64885e05743c43957fe49fe10bbf15854e134a8c288c5f34"
     },
     {
       "path": "eslint.config.mjs",
@@ -1214,13 +1264,13 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 1520,
-      "sha256": "b4da9cc6f463f0672fc7d8311ef293713ac03a615805855dfb2bd4c4f384562d"
+      "size": 2571,
+      "sha256": "e38f9aa7fb22188c9324b1d2a0c2942b18834eb0e1e1b5494b70132377750f89"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
-      "size": 2619,
-      "sha256": "1d3b16edcbb779f3cfbf450b8e984c068c4b517368fa617c0faff103ee97fa97"
+      "size": 3534,
+      "sha256": "24f7045252697dd405eb377dfd4988116be690be37af72d607b7e9eed69dc5fe"
     },
     {
       "path": "packages/ui/src/ErrorBoundary.test.tsx",
@@ -1254,8 +1304,8 @@
     },
     {
       "path": "packages/ui/src/index.ts",
-      "size": 584,
-      "sha256": "22dc97a6405df022b9500135f3b1dd21d23d29a0a6630bbca2f60e8af3e0798a"
+      "size": 771,
+      "sha256": "1430a16286c2dc9e8ef4c0e3f1aee197598f3849b3ac17258f0752a3dce2f82c"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -1263,19 +1313,34 @@
       "sha256": "2e0bd7ea7ee165a239ada8383c954ac23ed6df4db78e4e3d03ae4beb7b4a8d44"
     },
     {
+      "path": "packages/ui/src/MobileBottomNavigation.tsx",
+      "size": 1922,
+      "sha256": "4c4efd4e26ae2f6049c5d16fe18f98b75b0b7edc8efeca81fb479f400a17ab70"
+    },
+    {
+      "path": "packages/ui/src/MobileHeader.tsx",
+      "size": 744,
+      "sha256": "75208be81a4a5a463d64cf43cfcd136245cb2774bd9e09b00fa6cc049ffea00c"
+    },
+    {
       "path": "packages/ui/src/NavIcon.tsx",
-      "size": 1331,
-      "sha256": "7dd526abb2feb75ea022dfcf1900bc77ccaece9fbfe2c56673862312343853de"
+      "size": 1562,
+      "sha256": "318fff6e1bfe65e51a361bd39664b72940721cb3d80d6c88081a00b81eb30052"
+    },
+    {
+      "path": "packages/ui/src/QuickActionSheet.tsx",
+      "size": 2681,
+      "sha256": "e5cf9338289009b7564aec108d1ea1c10b9322eb264ae3cf5585985e0c743906"
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 3931,
-      "sha256": "4304179e800b040fa3976006e1898c8aacd39d04307d3c34da7a3d1dde4c8dd6"
+      "size": 4002,
+      "sha256": "503cc940b03b3a1dc047deede1cc7cb8cd2b8222b67eaa9d91672073150d0365"
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 10808,
-      "sha256": "dcafa844bd176719dfb162c28eaff66dcdb34364e35833a5958ac67620e9066f"
+      "size": 14632,
+      "sha256": "1876f2ad19591a7ffcb6b255b0bdd0edb1354503e8ccdfd340f254f2b2c5c7a1"
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
@@ -1339,8 +1404,8 @@
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
-      "size": 1924,
-      "sha256": "36a80a6177c7449ac4d4e4f54cfdc3dfee3677a2d8f3247ca85b97d0cbb5a858"
+      "size": 2530,
+      "sha256": "669534081dc03d8f718e455561be740ada54e69e24be42f0e35237ce3ce132f1"
     },
     {
       "path": "test/e2e/backup-restore.spec.ts",
@@ -1384,8 +1449,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 591,
-      "sha256": "aae819409b6599ab95f9f8a96050d46197f4ff94a901359b98b460a8b1ac0ef5"
+      "size": 720,
+      "sha256": "8569b488f62c26e7ef735f7bda81bbb6d543e730df2e0d1f2dae53b0d88e4f58"
     },
     {
       "path": "test/e2e/imports.spec.ts",

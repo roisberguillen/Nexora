@@ -46,6 +46,30 @@ describe("Nexora app", () => {
     expect(screen.queryByLabelText("Riepilogo finanziario")).not.toBeInTheDocument();
   });
 
+  it("apre la registrazione dal menu rapido", async () => {
+    const user = userEvent.setup();
+    render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
+
+    await user.click(await screen.findByRole("button", { name: "Nuova operazione" }));
+    await user.click(screen.getByRole("button", { name: /Aggiungi nuovo movimento/ }));
+
+    expect(await screen.findByRole("heading", { name: "Nuova registrazione" })).toBeInTheDocument();
+    expect(screen.getAllByText("Aggiungi movimento")).toHaveLength(2);
+    expect(screen.getByRole("complementary", { name: "Aggiungi movimento" })).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Uscita" })).toBeChecked();
+    await user.click(screen.getByRole("radio", { name: "Entrata" }));
+    expect(screen.getByRole("radio", { name: "Entrata" })).toBeChecked();
+  });
+
+  it("apre il centro notifiche locale senza simulare notifiche cloud", async () => {
+    window.history.replaceState(null, "", "#notifications");
+    render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
+
+    expect(await screen.findByRole("heading", { name: "Notifiche" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Nessuna notifica" })).toBeInTheDocument();
+    expect(screen.getByText(/Nessun dato viene inviato online/)).toBeInTheDocument();
+  });
+
   it("proietta il seed sintetico in metriche, conti e attività", async () => {
     const user = userEvent.setup();
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);

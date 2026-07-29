@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Avviata la vertical slice UI mobile: barra inferiore accessibile, menu rapido con cinque azioni,
+  route della nuova registrazione e selettore unificato Entrata/Uscita/Trasferimento.
+- Aggiunti Profilo, Impostazioni locali e Centro notifiche derivato da budget, rate e ricorrenze;
+  lo stato letto o ignorato resta separato dal ledger nel solo storage locale.
+- La UI Backup mobile integra Google Drive solo dopo configurazione OAuth esplicita: token in
+  memoria, scope `drive.appdata` e upload di archivi già cifrati e verificati localmente.
+
 - Completata la vertical slice Backup ed export: backup SQLite/OPFS cifrati con checksum,
   ripristino protetto da UI e sincronizzazione opzionale su Google Drive `appDataFolder`.
   I token OAuth restano in memoria e Drive riceve esclusivamente archivi AES-GCM già verificati.

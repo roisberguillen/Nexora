@@ -1,20 +1,27 @@
-import { type PropsWithChildren, useEffect, useState } from "react";
+import { type PropsWithChildren, useEffect, useRef, useState } from "react";
 
 import { SidebarNavigation, type NavigationRoute } from "./SidebarNavigation";
 import type { GlobalSearchResult } from "./GlobalSearch";
 import { TopHeader } from "./TopHeader";
+import { MobileBottomNavigation } from "./MobileBottomNavigation";
+import { MobileHeader } from "./MobileHeader";
+import { QuickActionSheet, type QuickAction } from "./QuickActionSheet";
 
 interface AppShellProps extends PropsWithChildren {
   readonly activeRoute?: NavigationRoute;
+  readonly quickActions?: readonly QuickAction[];
   readonly searchResults?: readonly GlobalSearchResult[];
 }
 
 export function AppShell({
   activeRoute = "overview",
   children,
+  quickActions = [],
   searchResults = [],
 }: AppShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
+  const quickActionTriggerRef = useRef<HTMLButtonElement>(null);
   const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
   useEffect(() => {
@@ -59,6 +66,10 @@ export function AppShell({
   const closeNavigation = () => {
     setIsNavigationOpen(false);
   };
+  const closeQuickActions = () => {
+    setIsQuickActionsOpen(false);
+    requestAnimationFrame(() => quickActionTriggerRef.current?.focus());
+  };
 
   return (
     <div className="app-frame">
@@ -78,6 +89,7 @@ export function AppShell({
         type="button"
       />
       <div className="app-workspace">
+        <MobileHeader activeRoute={activeRoute} />
         <TopHeader
           isNavigationOpen={isNavigationOpen}
           isOnline={isOnline}
@@ -89,7 +101,15 @@ export function AppShell({
         <main className="main-content" id="main-content" tabIndex={-1}>
           {children}
         </main>
+        <MobileBottomNavigation
+          activeRoute={activeRoute}
+          onQuickAction={() => setIsQuickActionsOpen(true)}
+          quickActionRef={quickActionTriggerRef}
+        />
       </div>
+      {isQuickActionsOpen ? (
+        <QuickActionSheet actions={quickActions} onClose={closeQuickActions} />
+      ) : null}
     </div>
   );
 }

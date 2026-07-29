@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -16,10 +16,11 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: /Nexora/i })).toBeInTheDocument();
     expect(screen.getByRole("main")).toHaveTextContent("Contenuto di prova");
     expect(screen.getByRole("searchbox", { name: "Ricerca globale" })).toBeEnabled();
-    expect(screen.getByRole("link", { name: "Movimenti" })).toHaveAttribute(
-      "href",
-      "./#transactions",
-    );
+    expect(
+      within(screen.getByRole("navigation", { name: "Navigazione principale" })).getByRole("link", {
+        name: "Movimenti",
+      }),
+    ).toHaveAttribute("href", "./#transactions");
   });
 
   it("apre e chiude la navigazione mobile con tastiera", async () => {
@@ -40,5 +41,34 @@ describe("AppShell", () => {
 
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByLabelText("Pannello di navigazione")).not.toHaveClass("is-open");
+  });
+
+  it("espone la barra mobile e restituisce l'azione rapida", async () => {
+    const user = userEvent.setup();
+    let quickActionCount = 0;
+    render(
+      <AppShell
+        activeRoute="transactions"
+        quickActions={[
+          {
+            icon: "transactions",
+            label: "Aggiungi nuovo movimento",
+            onSelect: () => quickActionCount++,
+          },
+        ]}
+      >
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    expect(screen.getByRole("navigation", { name: "Navigazione mobile" })).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("navigation", { name: "Navigazione mobile" })).getByRole("link", {
+        name: "Movimenti",
+      }),
+    ).toHaveAttribute("aria-current", "page");
+    await user.click(screen.getByRole("button", { name: "Nuova operazione" }));
+    await user.click(screen.getByRole("button", { name: "Aggiungi nuovo movimento" }));
+    expect(quickActionCount).toBe(1);
   });
 });

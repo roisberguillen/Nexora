@@ -11,7 +11,9 @@ import {
 import type { TransactionsViewModel } from "./buildTransactionsViewModel";
 
 interface TransactionsPageProps {
+  readonly initialEditorOpen?: boolean;
   readonly model: TransactionsViewModel;
+  readonly standaloneEditor?: boolean;
   readonly tags: readonly Tag[];
   readonly onCancel: (id: string, isTransfer: boolean) => Promise<void>;
   readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<readonly string[]>;
@@ -22,14 +24,16 @@ interface TransactionsPageProps {
 type FormKind = "income" | "expense" | "adjustment" | "transfer";
 
 export function TransactionsPage({
+  initialEditorOpen = false,
   model,
+  standaloneEditor = false,
   tags,
   onCancel,
   onCreateManual,
   onCreateTransfer,
   onExecuteSalaryAllocations,
 }: TransactionsPageProps) {
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(initialEditorOpen);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -142,27 +146,33 @@ export function TransactionsPage({
   };
 
   return (
-    <div id="transactions">
+    <div
+      className={standaloneEditor ? "transactions-page is-standalone" : "transactions-page"}
+      id="transactions"
+    >
       <header className="accounts-heading">
         <div>
-          <p className="eyebrow">Ledger locale</p>
-          <h1>Gestisci i movimenti</h1>
+          <p className="eyebrow">{standaloneEditor ? "Nuova registrazione" : "Ledger locale"}</p>
+          <h1>{standaloneEditor ? "Nuova registrazione" : "Gestisci i movimenti"}</h1>
           <p>
-            Registra entrate, spese, rettifiche e trasferimenti. I trasferimenti non alterano
-            entrate o spese.
+            {standaloneEditor
+              ? "Aggiungi movimento"
+              : "Registra entrate, spese, rettifiche e trasferimenti. I trasferimenti non alterano entrate o spese."}
           </p>
         </div>
-        <button
-          className="primary-action"
-          onClick={() => {
-            setIsEditorOpen(true);
-            setError(null);
-            setMessage(null);
-          }}
-          type="button"
-        >
-          Nuovo movimento
-        </button>
+        {standaloneEditor ? null : (
+          <button
+            className="primary-action"
+            onClick={() => {
+              setIsEditorOpen(true);
+              setError(null);
+              setMessage(null);
+            }}
+            type="button"
+          >
+            Nuovo movimento
+          </button>
+        )}
       </header>
 
       <div aria-live="polite" className="account-message-region">
@@ -297,6 +307,7 @@ export function TransactionsPage({
             onKindChange={setKind}
             onSubmit={save}
             tags={tags}
+            useSegmentedKinds={standaloneEditor}
           />
         ) : (
           <aside aria-labelledby="transaction-help-title" className="account-help-panel">
@@ -322,6 +333,7 @@ function TransactionForm({
   onKindChange,
   onSubmit,
   tags,
+  useSegmentedKinds,
 }: {
   readonly accounts: TransactionsViewModel["accounts"];
   readonly categories: TransactionsViewModel["categories"];
@@ -331,6 +343,7 @@ function TransactionForm({
   readonly onKindChange: (kind: FormKind) => void;
   readonly onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   readonly tags: readonly Tag[];
+  readonly useSegmentedKinds: boolean;
 }) {
   const [splitRows, setSplitRows] = useState<readonly string[]>([]);
   const [splitAmounts, setSplitAmounts] = useState<Record<string, string>>({});
@@ -374,19 +387,45 @@ function TransactionForm({
         </button>
       </div>
       <form className="account-form" onSubmit={onSubmit}>
-        <label>
-          Tipo
-          <select
-            name="kind"
-            onChange={(event) => onKindChange(event.currentTarget.value as FormKind)}
-            value={kind}
-          >
-            <option value="expense">Spesa</option>
-            <option value="income">Entrata</option>
-            <option value="adjustment">Rettifica</option>
-            <option value="transfer">Trasferimento</option>
-          </select>
-        </label>
+        {useSegmentedKinds ? (
+          <fieldset className="transaction-kind-segmented">
+            <legend>Tipo movimento</legend>
+            <div aria-label="Tipo movimento" role="radiogroup">
+              {(
+                [
+                  ["income", "Entrata"],
+                  ["expense", "Uscita"],
+                  ["transfer", "Trasferimento"],
+                ] as const
+              ).map(([value, label]) => (
+                <label key={value}>
+                  <input
+                    checked={kind === value}
+                    name="kind"
+                    onChange={() => onKindChange(value)}
+                    type="radio"
+                    value={value}
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : (
+          <label>
+            Tipo
+            <select
+              name="kind"
+              onChange={(event) => onKindChange(event.currentTarget.value as FormKind)}
+              value={kind}
+            >
+              <option value="expense">Spesa</option>
+              <option value="income">Entrata</option>
+              <option value="adjustment">Rettifica</option>
+              <option value="transfer">Trasferimento</option>
+            </select>
+          </label>
+        )}
         <label>
           {isTransfer ? "Conto origine" : "Conto"}
           <select

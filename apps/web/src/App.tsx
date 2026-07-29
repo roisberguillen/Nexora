@@ -14,7 +14,7 @@ import type {
   Tag,
   Transaction,
 } from "@nexora/domain";
-import { AppShell, ErrorBoundary, type GlobalSearchResult } from "@nexora/ui";
+import { AppShell, ErrorBoundary, type GlobalSearchResult, type QuickAction } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
 
 import {
@@ -72,6 +72,9 @@ import { BackupPage } from "./backup/BackupPage";
 import { JournalPage } from "./journal/JournalPage";
 import { saveMonthlyJournal, type MonthlyJournalInput } from "./journal/journalCommands";
 import { AnalyticsPage } from "./analytics/AnalyticsPage";
+import { ProfilePage } from "./profile/ProfilePage";
+import { SettingsPage } from "./settings/SettingsPage";
+import { NotificationsPage } from "./notifications/NotificationsPage";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -369,6 +372,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     >
       <AppShell
         activeRoute={route}
+        quickActions={quickActions}
         searchResults={ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []}
       >
         {ledgerState.status === "ready" ? (
@@ -379,9 +383,11 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               onSetArchived={setAccountArchived}
               onUpdate={updateAccount}
             />
-          ) : route === "transactions" ? (
+          ) : route === "transactions" || route === "new-transaction" ? (
             <TransactionsPage
+              initialEditorOpen={route === "new-transaction"}
               model={ledgerState.transactions}
+              standaloneEditor={route === "new-transaction"}
               tags={ledgerState.tags}
               onCancel={cancelMovement}
               onCreateManual={createManualMovement}
@@ -455,6 +461,17 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
           ) : route === "analytics" ? (
             <AnalyticsPage transactions={ledgerState.rawTransactions} />
+          ) : route === "notifications" ? (
+            <NotificationsPage
+              budgets={ledgerState.budgets}
+              loans={ledgerState.loans}
+              recurringRules={ledgerState.recurringRules}
+              transactions={ledgerState.rawTransactions}
+            />
+          ) : route === "profile" ? (
+            <ProfilePage ledger={ledgerState.ledger} />
+          ) : route === "settings" ? (
+            <SettingsPage />
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
@@ -472,6 +489,45 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     </ErrorBoundary>
   );
 }
+
+const quickActions: readonly QuickAction[] = [
+  {
+    label: "Aggiungi nuovo movimento",
+    description: "Entrata, uscita o trasferimento",
+    icon: "transactions",
+    onSelect: () => {
+      window.location.hash = "#new-transaction";
+    },
+  },
+  {
+    label: "Nuovo conto",
+    icon: "accounts",
+    onSelect: () => {
+      window.location.hash = "#accounts";
+    },
+  },
+  {
+    label: "Nuova ricorrenza",
+    icon: "recurring",
+    onSelect: () => {
+      window.location.hash = "#recurring";
+    },
+  },
+  {
+    label: "Nuovo prestito",
+    icon: "accounts",
+    onSelect: () => {
+      window.location.hash = "#loans";
+    },
+  },
+  {
+    label: "Nuovo investimento",
+    icon: "overview",
+    onSelect: () => {
+      window.location.hash = "#investments";
+    },
+  },
+];
 
 function PersistenceState({ state }: { readonly state: Exclude<LedgerState, ReadyLedgerState> }) {
   if (state.status === "loading") {
@@ -603,7 +659,11 @@ function useAppRoute():
   | "exports"
   | "backup"
   | "journal"
-  | "analytics" {
+  | "analytics"
+  | "profile"
+  | "settings"
+  | "notifications"
+  | "new-transaction" {
   const [route, setRoute] = useState<
     | "accounts"
     | "overview"
@@ -619,6 +679,10 @@ function useAppRoute():
     | "backup"
     | "journal"
     | "analytics"
+    | "profile"
+    | "settings"
+    | "notifications"
+    | "new-transaction"
   >(readAppRoute);
 
   useEffect(() => {
@@ -646,7 +710,11 @@ function readAppRoute():
   | "exports"
   | "backup"
   | "journal"
-  | "analytics" {
+  | "analytics"
+  | "profile"
+  | "settings"
+  | "notifications"
+  | "new-transaction" {
   if (window.location.hash === "#accounts") {
     return "accounts";
   }
@@ -664,6 +732,10 @@ function readAppRoute():
   if (window.location.hash === "#backup") return "backup";
   if (window.location.hash === "#journal") return "journal";
   if (window.location.hash === "#analytics") return "analytics";
+  if (window.location.hash === "#profile") return "profile";
+  if (window.location.hash === "#settings") return "settings";
+  if (window.location.hash === "#notifications") return "notifications";
+  if (window.location.hash === "#new-transaction") return "new-transaction";
   return "overview";
 }
 

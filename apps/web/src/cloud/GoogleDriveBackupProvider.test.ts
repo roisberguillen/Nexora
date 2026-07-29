@@ -17,6 +17,24 @@ describe("GoogleDriveBackupProvider", () => {
       "cloud_session_expired",
     );
   });
+  it("downloads a private archive through an encoded Drive identifier", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValue(new Response(new Uint8Array([7, 8, 9]), { status: 200 }));
+    const provider = new GoogleDriveBackupProvider(() => "token", fetcher);
+
+    await expect(provider.download("private/id")).resolves.toEqual(new Uint8Array([7, 8, 9]));
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.stringContaining("private%2Fid?alt=media"),
+      expect.objectContaining({ headers: { Authorization: "Bearer token" } }),
+    );
+  });
+  it("fails closed for an expired Drive session", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
+    const provider = new GoogleDriveBackupProvider(() => "expired", fetcher);
+
+    await expect(provider.download("backup-id")).rejects.toThrow("cloud_session_expired");
+  });
   it("preserves the local encrypted backup identifier in Drive metadata", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(null, { status: 200 }));
     const provider = new GoogleDriveBackupProvider(() => "token", fetcher);

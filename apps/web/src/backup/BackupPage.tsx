@@ -17,8 +17,8 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
   const [isCreating, setIsCreating] = useState(false);
   const [backupId, setBackupId] = useState("");
   const [isRestoring, setIsRestoring] = useState(false);
-  const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
   const [isCloudBusy, setIsCloudBusy] = useState(false);
+  const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
   const cloudConfig = useMemo(readGoogleCloudConfig, []);
   const cloudAuth = useMemo(
     () => new GoogleIdentityAuth(cloudConfig.clientId),
@@ -78,7 +78,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       await loadGoogleIdentity();
       await cloudAuth.connect();
       setCloudBackups(await cloudProvider.list());
-      setMessage("Google Drive collegato: vengono mostrati solo backup cifrati privati.");
+      setMessage("Google Drive collegato: vengono gestiti solo backup cifrati privati.");
     } catch {
       setMessage("Collegamento Google Drive non riuscito. Nessun dato locale è stato condiviso.");
     } finally {
@@ -105,9 +105,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       );
       setPassphrase("");
       setCloudBackups(await cloudProvider.list());
-      setMessage(
-        "Backup cifrato caricato su Google Drive e verificato localmente prima dell’invio.",
-      );
+      setMessage("Backup cifrato caricato su Google Drive dopo la verifica locale.");
     } catch {
       setMessage("Caricamento cloud non completato: l’archivio locale non è stato modificato.");
     } finally {
@@ -127,7 +125,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       window.location.reload();
     } catch {
       setMessage(
-        "Ripristino cloud non completato: il database locale corrente è rimasto protetto.",
+        "Ripristino Google Drive non completato: l’archivio locale corrente è rimasto protetto.",
       );
       setIsCloudBusy(false);
     }
@@ -206,29 +204,6 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
               {isRestoring ? "Ripristino verificato…" : "Scegli cartella NAS e ripristina"}
             </button>
           </div>
-          {cloudBackups.length > 0 ? (
-            <section aria-labelledby="cloud-backup-title">
-              <h2 id="cloud-backup-title">Cronologia Google Drive</h2>
-              <ul className="account-list">
-                {cloudBackups.map((backup) => (
-                  <li key={backup.id}>
-                    <div className="account-copy">
-                      <strong>{backup.backupId}</strong>
-                      <small>{new Date(backup.createdAt).toLocaleString("it-IT")}</small>
-                    </div>
-                    <button
-                      className="secondary-action"
-                      disabled={passphrase.trim().length < 12 || isCloudBusy}
-                      onClick={() => void restoreCloud(backup)}
-                      type="button"
-                    >
-                      Ripristina
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
         </>
       ) : (
         <p className="account-error" role="alert">
@@ -236,6 +211,34 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
           usa l’export JSON completo.
         </p>
       )}
+      <section aria-labelledby="cloud-backup-title" className="backup-cloud-unavailable">
+        <h2 id="cloud-backup-title">Backup cloud</h2>
+        {cloudConfig.enabled ? (
+          <p>Drive usa `appDataFolder` e riceve esclusivamente archivi già cifrati.</p>
+        ) : (
+          <p>Configura `VITE_GOOGLE_CLIENT_ID` e `VITE_GOOGLE_DRIVE_ENABLED=true` per attivarlo.</p>
+        )}
+        {cloudBackups.length === 0 ? null : (
+          <ul className="account-list">
+            {cloudBackups.map((backup) => (
+              <li key={backup.id}>
+                <div className="account-copy">
+                  <strong>{backup.backupId}</strong>
+                  <small>{new Date(backup.createdAt).toLocaleString("it-IT")}</small>
+                </div>
+                <button
+                  className="secondary-action"
+                  disabled={passphrase.trim().length < 12 || isCloudBusy}
+                  onClick={() => void restoreCloud(backup)}
+                  type="button"
+                >
+                  Ripristina da Drive
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       {message === null ? null : (
         <p aria-live="polite" className="import-help" role="status">
           {message}
