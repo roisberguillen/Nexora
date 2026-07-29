@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 1907,
-      "sha256": "d6892030af164ce86c05993cccbd66c27cc6ebc8f0584bf1bfac6f6ecff6b040"
+      "size": 2033,
+      "sha256": "47b668f02eb3fce424cc60cc2721095207f387f94d1b336658d280631247f4a2"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -399,13 +399,13 @@
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
-      "size": 3204,
-      "sha256": "61dcd37605d8cf11f09b0eb3c9a2c8af3c9639f332b6d6e2526b94f3bd84586b"
+      "size": 3832,
+      "sha256": "bc68ad101a531ee47b22fdf33a13e475abe99273ab0a9b977a17e5eb6646050e"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.ts",
-      "size": 3412,
-      "sha256": "adc7c39487dfe9c643233ac276ff04004f7945992b4809905def95a089dd8100"
+      "size": 4083,
+      "sha256": "4e58018335d730412bcada1fbb440d18c2151af79c4914a0a1eba642896956ed"
     },
     {
       "path": "apps/web/src/profile/ProfilePage.tsx",
@@ -824,8 +824,8 @@
     },
     {
       "path": "docs/reports/startup-baseline.md",
-      "size": 1232,
-      "sha256": "d3ac8e15843831daeb9c6e7a22efde03c84c6db0e95339c058226ea1d3576b91"
+      "size": 1397,
+      "sha256": "8ef422672681b2f449fe7c87f575b2e672b7c1f79cf900feaf4870a7fbf90e1e"
     },
     {
       "path": "docs/ROADMAP.md",

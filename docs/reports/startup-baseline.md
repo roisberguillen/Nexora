@@ -25,6 +25,9 @@ Discovery e apertura usano ora la stessa predicate
 discovery non tenta né crea file OPFS e lo marca `unavailable`; la policy può quindi
 scegliere IndexedDB per un’installazione nuova.
 
+La preferenza del backend viene inoltre salvata solo dopo che l'orchestratore ha
+concluso tutte le verifiche con stato `READY`, non durante l'apertura preliminare.
+
 ## Verifiche mirate
 
 - `StorageDiscovery.test.ts`, `StorageSelection.test.ts`,

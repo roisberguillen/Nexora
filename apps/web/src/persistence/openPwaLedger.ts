@@ -17,6 +17,8 @@ export interface OpenPwaLedgerOptions {
   readonly browser?: Omit<OpenBrowserLedgerOptions, "preferredStorageKind">;
   /** A verified startup selection takes precedence over the non-authoritative stored hint. */
   readonly selectedStorageKind?: BrowserLedgerStorageKind;
+  /** Bootstrap persists only after validation has reached READY. */
+  readonly persistSelection?: boolean;
   readonly preferenceStorage?: LedgerPreferenceStorage;
   readonly openLedger?: (options: OpenBrowserLedgerOptions) => Promise<BrowserLedger>;
 }
@@ -42,7 +44,10 @@ export async function openPwaLedger(options: OpenPwaLedgerOptions = {}): Promise
     );
   }
 
-  if (options.selectedStorageKind !== undefined || selectedStorageKind === undefined) {
+  if (
+    options.persistSelection !== false &&
+    (options.selectedStorageKind !== undefined || selectedStorageKind === undefined)
+  ) {
     try {
       preferenceStorage.setItem(PWA_LEDGER_STORAGE_KEY, ledger.storageKind);
     } catch (cause) {
@@ -56,6 +61,22 @@ export async function openPwaLedger(options: OpenPwaLedgerOptions = {}): Promise
   }
 
   return ledger;
+}
+
+/** Persists a backend only after the caller has validated the opened ledger. */
+export function persistPwaLedgerSelection(
+  storageKind: BrowserLedgerStorageKind,
+  preferenceStorage: LedgerPreferenceStorage = getDefaultPreferenceStorage(),
+): void {
+  try {
+    preferenceStorage.setItem(PWA_LEDGER_STORAGE_KEY, storageKind);
+  } catch (cause) {
+    throw new PersistenceError(
+      "database_operation_failed",
+      "The selected ledger backend could not be persisted safely.",
+      cause,
+    );
+  }
 }
 
 function getDefaultPreferenceStorage(): LedgerPreferenceStorage {

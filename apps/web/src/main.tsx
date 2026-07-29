@@ -8,7 +8,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
-import { openPwaLedger } from "./persistence/openPwaLedger";
+import { openPwaLedger, persistPwaLedgerSelection } from "./persistence/openPwaLedger";
 import { StartupOrchestrator } from "./startup/StartupOrchestrator";
 import { StorageDiscovery } from "./startup/StorageDiscovery";
 import { selectStorage } from "./startup/StorageSelection";
@@ -26,10 +26,14 @@ const ledgerPromise = (async () => {
     throw new Error("Nexora requires guided recovery before it can choose an archive safely.");
   }
   const startupOrchestrator = new StartupOrchestrator({
-    openLedger: () => openPwaLedger({ selectedStorageKind: selection.storageKind }),
+    openLedger: () =>
+      openPwaLedger({ selectedStorageKind: selection.storageKind, persistSelection: false }),
   });
   const result = await startupOrchestrator.run();
-  if (result.ledger !== undefined) return result.ledger;
+  if (result.ledger !== undefined) {
+    persistPwaLedgerSelection(result.ledger.storageKind);
+    return result.ledger;
+  }
   throw result.failure?.cause ?? new Error("Nexora startup did not return a ledger.");
 })();
 

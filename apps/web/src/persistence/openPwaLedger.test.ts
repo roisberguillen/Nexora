@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   openPwaLedger,
   PWA_LEDGER_STORAGE_KEY,
+  persistPwaLedgerSelection,
   type LedgerPreferenceStorage,
 } from "./openPwaLedger";
 
@@ -52,6 +53,22 @@ describe("openPwaLedger", () => {
       preferredStorageKind: "indexeddb",
     });
     expect(preferenceStorage.setItem).not.toHaveBeenCalled();
+  });
+
+  it("può ritardare la persistenza fino alla verifica completa dell'avvio", async () => {
+    const preferenceStorage = memoryPreference();
+    const openedLedger = ledger("indexeddb");
+
+    await openPwaLedger({
+      selectedStorageKind: "indexeddb",
+      persistSelection: false,
+      openLedger: vi.fn(async () => openedLedger),
+      preferenceStorage,
+    });
+
+    expect(preferenceStorage.setItem).not.toHaveBeenCalled();
+    persistPwaLedgerSelection("indexeddb", preferenceStorage);
+    expect(preferenceStorage.setItem).toHaveBeenCalledWith(PWA_LEDGER_STORAGE_KEY, "indexeddb");
   });
 
   it("rifiuta una preferenza corrotta prima di aprire un archivio", async () => {
