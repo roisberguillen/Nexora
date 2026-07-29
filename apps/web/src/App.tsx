@@ -97,6 +97,10 @@ import { readGoogleCloudConfig } from "./cloud/cloudConfig";
 import { loadGoogleIdentity } from "./cloud/loadGoogleIdentity";
 import { StartupLoadingScreen } from "./startup/StartupLoadingScreen";
 import { StartupRecoveryScreen } from "./startup/StartupRecoveryScreen";
+import {
+  createStartupDiagnostics,
+  serializeStartupDiagnostics,
+} from "./startup/StartupDiagnostics";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -775,7 +779,7 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
 
   return (
     <StartupRecoveryScreen
-      onExportDiagnostics={() => window.dispatchEvent(new Event("nexora:startup-diagnostics"))}
+      onExportDiagnostics={downloadStartupDiagnostics}
       onOpenSafeCopy={() => {
         window.location.hash = "#backup";
       }}
@@ -785,6 +789,22 @@ function PersistenceState({ state }: { readonly state: Exclude<LedgerState, Read
       onRetry={() => window.location.reload()}
     />
   );
+}
+
+function downloadStartupDiagnostics(): void {
+  const report = serializeStartupDiagnostics(
+    createStartupDiagnostics({
+      appVersion: import.meta.env.VITE_APP_VERSION,
+      buildId: import.meta.env.VITE_APP_VERSION,
+      archives: [],
+      errorCode: "NX-START-001",
+    }),
+  );
+  const anchor = document.createElement("a");
+  anchor.href = URL.createObjectURL(new Blob([report], { type: "application/json" }));
+  anchor.download = "nexora-startup-diagnostics.json";
+  anchor.click();
+  URL.revokeObjectURL(anchor.href);
 }
 
 interface AppModels {

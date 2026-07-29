@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 34673,
-      "sha256": "45689ffc2ad762b05132ea17b686ea8d3fe36d149cbc25a00631329725639d49"
+      "size": 35274,
+      "sha256": "867267860c75609267736be9602c080cb1df2b5e9dfb6e369f6327dea0ce657f"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
