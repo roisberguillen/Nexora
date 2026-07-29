@@ -1,27 +1,52 @@
-import type { Budget, Loan, RecurringRule, Transaction } from "@nexora/domain";
+import type { Account, Budget, Loan, RecurringRule, Transaction } from "@nexora/domain";
 import { useMemo, useState } from "react";
 
+import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { enableBrowserNotifications, type BrowserNotificationStatus } from "./browserNotifications";
 import {
   deriveLocalNotifications,
+  readLocalNotificationPreferences,
   readLocalNotificationStates,
+  writeLocalNotificationPreferences,
   writeLocalNotificationStates,
+  type LocalNotificationPreferences,
   type LocalNotificationStates,
 } from "./localNotifications";
 
 export function NotificationsPage({
+  accounts,
   budgets,
   loans,
   recurringRules,
   transactions,
 }: {
+  readonly accounts: readonly Account[];
   readonly budgets: readonly Budget[];
   readonly loans: readonly Loan[];
   readonly recurringRules: readonly RecurringRule[];
   readonly transactions: readonly Transaction[];
 }) {
+  const [preferences, setPreferences] = useState<LocalNotificationPreferences>(() =>
+    readLocalNotificationPreferences(),
+  );
+  const [thresholdText, setThresholdText] = useState(() =>
+    formatEditableAmountMinor(preferences.lowBalanceThresholdMinor, "EUR"),
+  );
+  const [preferenceError, setPreferenceError] = useState<string>();
+  const [browserNotificationStatus, setBrowserNotificationStatus] = useState<
+    BrowserNotificationStatus | undefined
+  >();
   const notifications = useMemo(
-    () => deriveLocalNotifications({ budgets, loans, recurringRules, transactions }),
-    [budgets, loans, recurringRules, transactions],
+    () =>
+      deriveLocalNotifications({
+        accounts,
+        budgets,
+        loans,
+        lowBalanceThresholdMinor: preferences.lowBalanceThresholdMinor,
+        recurringRules,
+        transactions,
+      }),
+    [accounts, budgets, loans, preferences.lowBalanceThresholdMinor, recurringRules, transactions],
   );
   const [states, setStates] = useState<LocalNotificationStates>(() =>
     readLocalNotificationStates(),
@@ -30,9 +55,9 @@ export function NotificationsPage({
     setStates(next);
     writeLocalNotificationStates(next);
   };
-  const visible = notifications.filter(
-    (notification) => states[notification.id]?.dismissed !== true,
-  );
+  const visible = notifications
+    .filter((notification) => states[notification.id]?.dismissed !== true)
+    .sort((left, right) => priorityRank(right.priority) - priorityRank(left.priority));
   const unread = visible.filter((notification) => states[notification.id]?.readAt === undefined);
 
   return (
@@ -62,6 +87,84 @@ export function NotificationsPage({
           </button>
         )}
       </header>
+      <section aria-labelledby="system-notification-heading" className="data-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Dispositivo</p>
+            <h2 id="system-notification-heading">Notifiche di sistema</h2>
+            <p>
+              Il centro notifiche interno resta disponibile anche se il browser non supporta o nega
+              le notifiche di sistema.
+            </p>
+          </div>
+          <button
+            className="secondary-action"
+            onClick={() => void enableBrowserNotifications().then(setBrowserNotificationStatus)}
+            type="button"
+          >
+            Attiva sul dispositivo
+          </button>
+        </div>
+        {browserNotificationStatus === undefined ? null : (
+          <p aria-live="polite" className="form-success" role="status">
+            {browserNotificationStatus === "granted"
+              ? "Notifiche di sistema abilitate."
+              : browserNotificationStatus === "denied"
+                ? "Permesso non concesso: continuerai a vedere gli avvisi in questa schermata."
+                : "Notifiche di sistema non supportate: continuerai a vedere gli avvisi in questa schermata."}
+          </p>
+        )}
+      </section>
+      <section aria-labelledby="notification-preferences-heading" className="data-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Soglie</p>
+            <h2 id="notification-preferences-heading">Preferenze avvisi</h2>
+          </div>
+        </div>
+        <form
+          className="inline-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            try {
+              const next = {
+                lowBalanceThresholdMinor: parseLocalizedAmountMinor(thresholdText, "EUR"),
+              };
+              writeLocalNotificationPreferences(next);
+              setPreferences(next);
+              setPreferenceError(undefined);
+            } catch (error) {
+              setPreferenceError(error instanceof Error ? error.message : "Soglia non valida.");
+            }
+          }}
+        >
+          <label>
+            Soglia saldo basso (EUR)
+            <input
+              aria-describedby="notification-threshold-help notification-threshold-error"
+              inputMode="decimal"
+              onChange={(event) => setThresholdText(event.currentTarget.value)}
+              value={thresholdText}
+            />
+          </label>
+          <button className="secondary-action" type="submit">
+            Salva soglia
+          </button>
+        </form>
+        <p id="notification-threshold-help">
+          Vengono segnalati gli account attivi con saldo uguale o inferiore a questa soglia.
+        </p>
+        {preferenceError === undefined ? null : (
+          <p
+            aria-live="polite"
+            className="form-error"
+            id="notification-threshold-error"
+            role="alert"
+          >
+            {preferenceError}
+          </p>
+        )}
+      </section>
       <section aria-label="Elenco notifiche" className="data-panel notification-list">
         {visible.length === 0 ? (
           <div className="account-list-empty">
@@ -79,7 +182,14 @@ export function NotificationsPage({
                 <li className={isRead ? "is-read" : ""} key={notification.id}>
                   <div className="account-copy">
                     <strong>{notification.title}</strong>
-                    <small>{notification.description}</small>
+                    <small>
+                      {notification.priority === "high"
+                        ? "Priorità alta · "
+                        : notification.priority === "medium"
+                          ? "Priorità media · "
+                          : "Priorità bassa · "}
+                      {notification.description}
+                    </small>
                   </div>
                   <div className="notification-actions">
                     <a className="text-action" href={notification.href}>
@@ -107,4 +217,8 @@ export function NotificationsPage({
       </section>
     </div>
   );
+}
+
+function priorityRank(priority: "high" | "medium" | "low"): number {
+  return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }

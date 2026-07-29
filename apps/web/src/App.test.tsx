@@ -66,7 +66,7 @@ describe("Nexora app", () => {
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
 
     expect(await screen.findByRole("heading", { name: "Notifiche" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Nessuna notifica" })).toBeInTheDocument();
+    expect(screen.getByText("Backup da verificare")).toBeInTheDocument();
     expect(screen.getByText(/Nessun dato viene inviato online/)).toBeInTheDocument();
   });
 

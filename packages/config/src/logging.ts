@@ -52,6 +52,16 @@ export function classifyErrorName(error: unknown): SafeErrorName {
   }
 }
 
+export function redactSensitiveText(value: string): string {
+  return value
+    .replace(/\bBearer\s+[A-Za-z0-9._~-]+/giu, "Bearer [REDACTED]")
+    .replace(
+      /\b(access_token|authorization_code|passphrase|pin)\s*[:=]\s*[^\s,;]+/giu,
+      "$1=[REDACTED]",
+    )
+    .replace(/\bIT\d{2}[A-Z]\d{10}[A-Z0-9]{12}\b/giu, "[REDACTED_IBAN]");
+}
+
 export function createSafeLogger(
   sink: SafeLogSink = defaultSink,
   now: () => Date = () => new Date(),

@@ -29,8 +29,12 @@ export async function commitMoneyManagerImport(
     sourceFilename: input.filename,
     sourceSha256: input.sourceSha256,
   });
+  const [activeTransactions, trashedTransactions] = await Promise.all([
+    repository.listTransactions(),
+    repository.listTrashedTransactions(),
+  ]);
   const existingFingerprints = new Set(
-    (await repository.listTransactions())
+    [...activeTransactions, ...trashedTransactions.map((entry) => entry.transaction)]
       .filter(
         (transaction) =>
           transaction.source === "import" && transaction.sourceFingerprint !== undefined,

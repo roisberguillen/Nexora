@@ -15,6 +15,7 @@ import {
   Loan,
   InvestmentPosition,
   MonthlyJournal,
+  type TrashedTransaction,
   LocalDate,
   Money,
   validateImportCommit,
@@ -41,8 +42,10 @@ import {
   transactionSplitFromRecord,
   transactionSplitToRecord,
   type TransactionSplitRecord,
+  tagToRecord,
 } from "../records/LedgerRecords";
 import { PersistenceError } from "./PersistenceError";
+import type { ValidatedPortableLedgerSnapshot } from "../backup/PortableLedgerSnapshot";
 import type { SqliteDatabase } from "./SqliteDatabase";
 
 type EntityTable =
@@ -105,6 +108,133 @@ export class SqliteLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
 
   public constructor(private readonly database: SqliteDatabase) {}
+
+  public runAtomically<Result>(operation: () => Promise<Result>): Promise<Result> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() => this.withWriteTransaction(operation)),
+    );
+  }
+
+  public replacePortableSnapshot(snapshot: ValidatedPortableLedgerSnapshot): Promise<void> {
+    return this.runAtomically(async () => {
+      for (const table of [
+        "transaction_trash",
+        "transaction_tags",
+        "transaction_splits",
+        "transfers",
+        "import_rows",
+        "import_batches",
+        "recurring_rules",
+        "allocation_plans",
+        "budgets",
+        "loans",
+        "investment_positions",
+        "monthly_journals",
+        "transactions",
+        "tags",
+        "accounts",
+        "categories",
+      ])
+        await this.database.execute(`DELETE FROM ${table};`);
+      for (const category of snapshot.categories) {
+        const record = categoryToRecord(category);
+        await this.database.run(
+          "INSERT INTO categories (id, name, kind_scope, parent_id, is_archived) VALUES (?, ?, ?, ?, ?)",
+          [record.id, record.name, record.kind_scope, record.parent_id, record.is_archived],
+        );
+      }
+      for (const account of snapshot.accounts) {
+        const record = accountToRecord(account);
+        await this.database.run(
+          "INSERT INTO accounts (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            record.id,
+            record.name,
+            record.type,
+            record.institution,
+            record.currency,
+            record.parent_account_id,
+            record.opening_balance_minor,
+            record.is_archived,
+          ],
+        );
+      }
+      for (const tag of snapshot.tags) {
+        const record = tagToRecord(tag);
+        await this.database.run("INSERT INTO tags (id, name, is_archived) VALUES (?, ?, ?)", [
+          record.id,
+          record.name,
+          record.is_archived,
+        ]);
+      }
+      for (const batch of snapshot.importBatches) await this.insertPortableImportBatch(batch);
+      for (const row of snapshot.importRows) await this.insertPortableImportRow(row);
+      for (const transaction of snapshot.transactions) await this.insertTransaction(transaction);
+      for (const split of snapshot.splits) {
+        const record = transactionSplitToRecord(split);
+        await this.database.run(
+          "INSERT INTO transaction_splits (id, transaction_id, category_id, amount_minor, currency, note) VALUES (?, ?, ?, ?, ?, ?)",
+          [
+            record.id,
+            record.transaction_id,
+            record.category_id,
+            record.amount_minor,
+            record.currency,
+            record.note,
+          ],
+        );
+      }
+      for (const transfer of snapshot.transfers) {
+        const record = transferToRecord(transfer);
+        await this.database.run(
+          "INSERT INTO transfers (id, debit_transaction_id, credit_transaction_id, fee_transaction_id) VALUES (?, ?, ?, ?)",
+          [
+            record.id,
+            record.debit_transaction_id,
+            record.credit_transaction_id,
+            record.fee_transaction_id,
+          ],
+        );
+      }
+      for (const [transactionId, tagIds] of snapshot.transactionTagIds)
+        for (const tagId of tagIds)
+          await this.database.run(
+            "INSERT INTO transaction_tags (transaction_id, tag_id) VALUES (?, ?)",
+            [transactionId, tagId],
+          );
+      for (const rule of snapshot.recurringRules) await this.insertRecurringRule(rule);
+      for (const plan of snapshot.allocationPlans) await this.insertAllocationPlan(plan);
+      for (const budget of snapshot.budgets) await this.insertBudget(budget);
+      for (const loan of snapshot.loans) await this.insertLoan(loan);
+      for (const position of snapshot.investmentPositions)
+        await this.insertInvestmentPosition(position);
+      for (const journal of snapshot.monthlyJournals) await this.insertMonthlyJournal(journal);
+    });
+  }
+
+  public resetFinancialData(): Promise<void> {
+    return this.runAtomically(async () => {
+      for (const table of [
+        "transaction_trash",
+        "transaction_tags",
+        "transaction_splits",
+        "transfers",
+        "import_rows",
+        "import_batches",
+        "recurring_rules",
+        "allocation_plans",
+        "budgets",
+        "loans",
+        "investment_positions",
+        "monthly_journals",
+        "transactions",
+        "tags",
+        "accounts",
+        "categories",
+      ])
+        await this.database.execute(`DELETE FROM ${table};`);
+    });
+  }
 
   public saveAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
@@ -254,6 +384,35 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public deleteUnusedAccount(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findAccountByIdInternal(id)) === undefined)
+            throw new DomainError("missing_reference", "Account does not exist.");
+          const references = await this.database.query<{ readonly found: number }>(
+            `
+              SELECT 1 AS found FROM transactions WHERE account_id = ?
+              UNION ALL SELECT 1 FROM accounts WHERE parent_account_id = ?
+              UNION ALL SELECT 1 FROM recurring_rules WHERE account_id = ?
+              UNION ALL SELECT 1 FROM allocation_plans WHERE source_account_id = ? OR target_account_id = ?
+              UNION ALL SELECT 1 FROM loans WHERE account_id = ?
+              UNION ALL SELECT 1 FROM investment_positions WHERE account_id = ?
+              LIMIT 1
+            `,
+            [id, id, id, id, id, id, id],
+          );
+          if (references.length > 0)
+            throw new DomainError(
+              "invalid_account",
+              "An account with financial references must be archived instead of deleted.",
+            );
+          await this.database.run("DELETE FROM accounts WHERE id = ?", [id]);
+        }),
+      ),
+    );
+  }
+
   public updateCategory(category: Category): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -284,6 +443,59 @@ export class SqliteLedgerRepository implements LedgerRepository {
             tag.name,
             tag.isArchived ? 1 : 0,
           ]);
+        }),
+      ),
+    );
+  }
+
+  public deleteUnusedCategory(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findCategoryByIdInternal(id)) === undefined)
+            throw new DomainError("missing_reference", "Category does not exist.");
+          const references = await this.database.query<{ readonly found: number }>(
+            `
+              SELECT 1 AS found FROM categories WHERE parent_id = ?
+              UNION ALL SELECT 1 FROM transactions WHERE category_id = ?
+              UNION ALL SELECT 1 FROM transaction_splits WHERE category_id = ?
+              UNION ALL SELECT 1 FROM budgets WHERE category_id = ?
+              UNION ALL SELECT 1 FROM recurring_rules WHERE category_id = ?
+              LIMIT 1
+            `,
+            [id, id, id, id, id],
+          );
+          if (references.length > 0)
+            throw new DomainError(
+              "invalid_category",
+              "A referenced category must be archived or reassigned.",
+            );
+          await this.database.run("DELETE FROM categories WHERE id = ?", [id]);
+        }),
+      ),
+    );
+  }
+
+  public deleteUnusedTag(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const rows = await this.database.query<{
+            readonly tag_count: number;
+            readonly reference_count: number;
+          }>(
+            "SELECT (SELECT COUNT(*) FROM tags WHERE id = ?) AS tag_count, (SELECT COUNT(*) FROM transaction_tags WHERE tag_id = ?) AS reference_count",
+            [id, id],
+          );
+          const counts = rows[0];
+          if (counts === undefined || counts.tag_count === 0)
+            throw new DomainError("missing_reference", "Tag does not exist.");
+          if (counts.reference_count > 0)
+            throw new DomainError(
+              "invalid_transaction",
+              "A referenced tag must be archived or removed globally.",
+            );
+          await this.database.run("DELETE FROM tags WHERE id = ?", [id]);
         }),
       ),
     );
@@ -530,6 +742,25 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public deleteRecurringRule(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("recurring_rules", id, "Recurring rule");
+  }
+  public deleteAllocationPlan(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("allocation_plans", id, "Allocation plan");
+  }
+  public deleteBudget(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("budgets", id, "Budget");
+  }
+  public deleteLoan(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("loans", id, "Loan");
+  }
+  public deleteInvestmentPosition(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("investment_positions", id, "Investment position");
+  }
+  public deleteMonthlyJournal(id: string): Promise<void> {
+    return this.deleteIsolatedEntity("monthly_journals", id, "Monthly journal");
+  }
+
   public saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -560,7 +791,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           );
           for (const row of rows)
             await this.database.run(
-              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
               [
                 row.id,
                 row.batchId,
@@ -570,6 +801,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
                 row.status,
                 row.errorCode ?? null,
                 row.createdTransactionId ?? null,
+                row.deletedTransactionId ?? null,
               ],
             );
         }),
@@ -641,7 +873,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           }
           for (const row of rows)
             await this.database.run(
-              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
               [
                 row.id,
                 row.batchId,
@@ -651,6 +883,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
                 row.status,
                 row.errorCode ?? null,
                 row.createdTransactionId ?? null,
+                row.deletedTransactionId ?? null,
               ],
             );
           return committed;
@@ -990,6 +1223,115 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public trashTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findTransactionByIdInternal(id)) === undefined)
+            throw new DomainError("missing_reference", "Transaction does not exist.");
+          const transferRows = await this.database.query<TransferRecord>(
+            `SELECT ${transferColumns} FROM transfers WHERE debit_transaction_id = ? OR credit_transaction_id = ? OR fee_transaction_id = ?`,
+            [id, id, id],
+          );
+          const transfer = transferRows[0];
+          const transactionIds =
+            transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
+          const deletedAt = new Date().toISOString();
+          const deletionGroupId =
+            transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+          for (const transactionId of transactionIds) {
+            if ((await this.findTransactionByIdInternal(transactionId)) === undefined)
+              throw new DomainError("missing_reference", "Transfer leg does not exist.");
+            await this.database.run(
+              "INSERT OR IGNORE INTO transaction_trash (transaction_id, deleted_at, deletion_group_id) VALUES (?, ?, ?)",
+              [transactionId, deletedAt, deletionGroupId],
+            );
+          }
+        }),
+      ),
+    );
+  }
+
+  public restoreTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const rows = await this.database.query<{ readonly deletion_group_id: string }>(
+            "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?",
+            [id],
+          );
+          const entry = rows[0];
+          if (entry === undefined)
+            throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+          await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [
+            entry.deletion_group_id,
+          ]);
+        }),
+      ),
+    );
+  }
+
+  public purgeTrashedTransaction(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const rows = await this.database.query<{ readonly deletion_group_id: string }>(
+            "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?",
+            [id],
+          );
+          const entry = rows[0];
+          if (entry === undefined)
+            throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+          const trashed = await this.database.query<{ readonly transaction_id: string }>(
+            "SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?",
+            [entry.deletion_group_id],
+          );
+          for (const { transaction_id } of trashed) {
+            await this.database.run(
+              "UPDATE import_rows SET deleted_transaction_id = created_transaction_id, created_transaction_id = NULL WHERE created_transaction_id = ?",
+              [transaction_id],
+            );
+          }
+          const ids = trashed.map(({ transaction_id }) => transaction_id);
+          for (const transactionId of ids) {
+            await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [
+              transactionId,
+            ]);
+            await this.database.run("DELETE FROM transaction_splits WHERE transaction_id = ?", [
+              transactionId,
+            ]);
+          }
+          await this.database.run(
+            "DELETE FROM transfers WHERE debit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR credit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR fee_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?)",
+            [entry.deletion_group_id, entry.deletion_group_id, entry.deletion_group_id],
+          );
+          await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [
+            entry.deletion_group_id,
+          ]);
+          for (const transactionId of ids)
+            await this.database.run("DELETE FROM transactions WHERE id = ?", [transactionId]);
+        }),
+      ),
+    );
+  }
+
+  public listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(async () => {
+        const rows = await this.database.query<
+          TransactionRecord & { readonly deleted_at: string; readonly deletion_group_id: string }
+        >(
+          `SELECT ${transactionColumns}, transaction_trash.deleted_at, transaction_trash.deletion_group_id FROM transactions JOIN transaction_trash ON transaction_trash.transaction_id = transactions.id ORDER BY transaction_trash.deleted_at ASC, transactions.id ASC`,
+        );
+        return rows.map((row) => ({
+          transaction: transactionFromRecord(row),
+          deletedAt: row.deleted_at,
+          deletionGroupId: row.deletion_group_id,
+        }));
+      }),
+    );
+  }
+
   public findCategoryById(id: string): Promise<Category | undefined> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() => this.findCategoryByIdInternal(id)),
@@ -998,7 +1340,9 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
   public findTransactionById(id: string): Promise<Transaction | undefined> {
     return this.enqueue(() =>
-      this.performDatabaseOperation(() => this.findTransactionByIdInternal(id)),
+      this.performDatabaseOperation(async () =>
+        (await this.isTransactionTrashed(id)) ? undefined : this.findTransactionByIdInternal(id),
+      ),
     );
   }
 
@@ -1020,6 +1364,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
           `SELECT ${transactionColumns} FROM transactions WHERE id IN (${placeholders})`,
           transactionIds,
         );
+        if (
+          transactionRows.length !== transactionIds.length ||
+          (
+            await Promise.all(
+              transactionIds.map((transactionId) => this.isTransactionTrashed(transactionId)),
+            )
+          ).some(Boolean)
+        )
+          return undefined;
         return transferFromRecord(row, transactionRecordMap(transactionRows));
       }),
     );
@@ -1085,7 +1438,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(async () => {
         const rows = await this.database.query<TransactionRecord>(
-          `SELECT ${transactionColumns} FROM transactions ORDER BY created_at ASC, id ASC`,
+          `SELECT ${transactionColumns} FROM transactions WHERE NOT EXISTS (SELECT 1 FROM transaction_trash WHERE transaction_trash.transaction_id = transactions.id) ORDER BY created_at ASC, id ASC`,
         );
         return rows.map(transactionFromRecord);
       }),
@@ -1096,7 +1449,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(async () => {
         const transferRows = await this.database.query<TransferRecord>(
-          `SELECT ${transferColumns} FROM transfers ORDER BY created_at ASC, id ASC`,
+          `SELECT ${transferColumns} FROM transfers WHERE NOT EXISTS (SELECT 1 FROM transaction_trash WHERE transaction_id = transfers.debit_transaction_id OR transaction_id = transfers.credit_transaction_id OR transaction_id = transfers.fee_transaction_id) ORDER BY created_at ASC, id ASC`,
         );
         if (transferRows.length === 0) {
           return [];
@@ -1135,7 +1488,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.performDatabaseOperation(async () =>
       (
         await this.database.query<ImportRowRecord>(
-          "SELECT id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id FROM import_rows WHERE batch_id = ? ORDER BY row_number",
+          "SELECT id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id FROM import_rows WHERE batch_id = ? ORDER BY row_number",
           [batchId],
         )
       ).map(importRowFromRecord),
@@ -1229,6 +1582,22 @@ export class SqliteLedgerRepository implements LedgerRepository {
         cause,
       );
     }
+  }
+
+  private deleteIsolatedEntity(table: EntityTable, id: string, entityName: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            `SELECT id FROM ${table} WHERE id = ?`,
+            [id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", `${entityName} does not exist.`);
+          await this.database.run(`DELETE FROM ${table} WHERE id = ?`, [id]);
+        }),
+      ),
+    );
   }
 
   private async withWriteTransaction<Result>(operation: () => Promise<Result>): Promise<Result> {
@@ -1331,6 +1700,40 @@ export class SqliteLedgerRepository implements LedgerRepository {
         record.amount_minor,
         record.currency,
         record.enabled,
+      ],
+    );
+  }
+  private async insertPortableImportBatch(batch: ImportBatch): Promise<void> {
+    await this.database.run(
+      "INSERT INTO import_batches (id, importer_type, importer_type_v2, source_filename, source_sha256, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        batch.id,
+        batch.importerType,
+        batch.importerType,
+        batch.sourceFilename,
+        batch.sourceSha256,
+        batch.status,
+        new Date().toISOString(),
+        batch.rowsTotal,
+        batch.rowsImported,
+        batch.rowsSkipped,
+        batch.rowsFailed,
+      ],
+    );
+  }
+  private async insertPortableImportRow(row: ImportRow): Promise<void> {
+    await this.database.run(
+      "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        row.id,
+        row.batchId,
+        row.rowNumber,
+        row.rawJson,
+        row.normalizedJson ?? null,
+        row.status,
+        row.errorCode ?? null,
+        row.createdTransactionId ?? null,
+        row.deletedTransactionId ?? null,
       ],
     );
   }
@@ -1513,6 +1916,14 @@ export class SqliteLedgerRepository implements LedgerRepository {
       [id],
     );
     return rows[0] === undefined ? undefined : transactionFromRecord(rows[0]);
+  }
+
+  private async isTransactionTrashed(id: string): Promise<boolean> {
+    const rows = await this.database.query<{ readonly found: number }>(
+      "SELECT 1 AS found FROM transaction_trash WHERE transaction_id = ?",
+      [id],
+    );
+    return rows.length > 0;
   }
 }
 
@@ -1766,6 +2177,7 @@ interface ImportRowRecord {
   readonly status: "imported" | "skipped_duplicate" | "needs_review" | "failed";
   readonly error_code: string | null;
   readonly created_transaction_id: string | null;
+  readonly deleted_transaction_id: string | null;
 }
 function importBatchFromRecord(row: ImportBatchRecord): ImportBatch {
   return ImportBatch.create({
@@ -1792,5 +2204,8 @@ function importRowFromRecord(row: ImportRowRecord): ImportRow {
     ...(row.created_transaction_id === null
       ? {}
       : { createdTransactionId: row.created_transaction_id }),
+    ...(row.deleted_transaction_id === null
+      ? {}
+      : { deletedTransactionId: row.deleted_transaction_id }),
   });
 }

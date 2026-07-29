@@ -3,6 +3,8 @@
 import { beforeAll, describe, expect, it } from "vitest";
 
 import {
+  createEncryptedPayloadBackup,
+  decryptEncryptedPayloadBackup,
   createEncryptedSqliteBackup,
   decryptSqliteBackup,
   PBKDF2_ITERATIONS,
@@ -82,5 +84,23 @@ describe("EncryptedSqliteBackup", () => {
         passphrase: "corta-123",
       }),
     ).rejects.toMatchObject({ code: "backup_failed" });
+  });
+
+  it("supports a separately typed encrypted portable-ledger payload", async () => {
+    const payload = new TextEncoder().encode('{"formatVersion":1,"entities":{}}');
+    const portableArchive = await createEncryptedPayloadBackup({
+      payloadBytes: payload,
+      path: "ledger.json",
+      schemaVersion: 11,
+      createdAt,
+      passphrase,
+    });
+    const decrypted = await decryptEncryptedPayloadBackup(portableArchive, passphrase);
+
+    expect(decrypted.manifest.files[0].path).toBe("ledger.json");
+    expect(decrypted.payloadBytes).toEqual(payload);
+    await expect(decryptSqliteBackup(portableArchive, passphrase)).rejects.toMatchObject({
+      code: "unsupported_backup",
+    });
   });
 });

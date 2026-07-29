@@ -12,6 +12,7 @@ import type {
   ImportBatch,
   RecurringRule,
   Tag,
+  TrashedTransaction,
   Transaction,
 } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult, type QuickAction } from "@nexora/ui";
@@ -75,6 +76,10 @@ import { AnalyticsPage } from "./analytics/AnalyticsPage";
 import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
 import { NotificationsPage } from "./notifications/NotificationsPage";
+import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
+import { AppLockScreen } from "./security/AppLockScreen";
+import { getAppLockTimeoutMilliseconds, readAppLock, type AppLockConfig } from "./security/appLock";
+import { resetLocalApp } from "./reset/resetLocalApp";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -95,6 +100,7 @@ interface ReadyLedgerState {
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
+  readonly trashedTransactions: readonly TrashedTransaction[];
   readonly dashboard: DashboardViewModel;
   readonly transactions: TransactionsViewModel;
   readonly ledger: BrowserLedger;
@@ -118,6 +124,30 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   });
   const [isSeeding, setIsSeeding] = useState(false);
   const [hasSeedFeedback, setHasSeedFeedback] = useState(false);
+  const [appLockConfig, setAppLockConfig] = useState<AppLockConfig | undefined>(() =>
+    readAppLock(),
+  );
+  const [isAppLocked, setIsAppLocked] = useState(() => readAppLock() !== undefined);
+
+  useEffect(() => {
+    if (!appLockConfig || isAppLocked) return;
+    let timeoutId: number | undefined;
+    const refreshTimeout = () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(
+        () => setIsAppLocked(true),
+        getAppLockTimeoutMilliseconds(appLockConfig),
+      );
+    };
+    window.addEventListener("pointerdown", refreshTimeout);
+    window.addEventListener("keydown", refreshTimeout);
+    refreshTimeout();
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      window.removeEventListener("pointerdown", refreshTimeout);
+      window.removeEventListener("keydown", refreshTimeout);
+    };
+  }, [appLockConfig, isAppLocked]);
 
   useEffect(() => {
     let isActive = true;
@@ -139,6 +169,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           rawAccounts,
           rawTransactions,
           tags,
+          trashedTransactions,
           transactions,
           ledger,
         }) => {
@@ -166,6 +197,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             rawTransactions,
             status: "ready",
             tags,
+            trashedTransactions,
             transactions,
           });
         },
@@ -260,6 +292,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await updateLedgerCategory(ledger.repository, id, input);
     });
+  const deleteUnusedCategory = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteUnusedCategory(id);
+    });
 
   const createTag = (input: TagInput): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -271,6 +307,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   ): Promise<void> =>
     mutateLedger(async (ledger) => {
       await updateLedgerTag(ledger.repository, id, input);
+    });
+  const deleteUnusedTag = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteUnusedTag(id);
     });
 
   const createManualMovement = async (
@@ -310,6 +350,31 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         await ledger.repository.cancelTransaction(id);
       }
     });
+  const trashMovement = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.trashTransaction(id);
+    });
+  const deleteUnusedAccount = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteUnusedAccount(id);
+    });
+  const resetFinancialData = (): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.resetFinancialData();
+    });
+  const restoreTrashedTransaction = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.restoreTransaction(id);
+    });
+  const purgeTrashedTransaction = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.purgeTrashedTransaction(id);
+    });
+  const resetApplication = async (): Promise<void> => {
+    if (ledgerState.status !== "ready") return;
+    await resetLocalApp(ledgerState.ledger);
+    window.location.reload();
+  };
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
       await commitMoneyManagerImport(ledger.repository, input);
@@ -370,122 +435,157 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
         });
       }}
     >
-      <AppShell
-        activeRoute={route}
-        quickActions={quickActions}
-        searchResults={ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []}
-      >
-        {ledgerState.status === "ready" ? (
-          route === "accounts" ? (
-            <AccountsPage
-              model={ledgerState.accounts}
-              onCreate={createAccount}
-              onSetArchived={setAccountArchived}
-              onUpdate={updateAccount}
-            />
-          ) : route === "transactions" || route === "new-transaction" ? (
-            <TransactionsPage
-              initialEditorOpen={route === "new-transaction"}
-              model={ledgerState.transactions}
-              standaloneEditor={route === "new-transaction"}
-              tags={ledgerState.tags}
-              onCancel={cancelMovement}
-              onCreateManual={createManualMovement}
-              onCreateTransfer={createTransferMovement}
-              onExecuteSalaryAllocations={executeAllocations}
-            />
-          ) : route === "categories" ? (
-            <CategoriesPage
-              categories={ledgerState.categories}
-              onCreate={createCategory}
-              onUpdate={updateCategory}
-            />
-          ) : route === "tags" ? (
-            <TagsPage tags={ledgerState.tags} onCreate={createTag} onUpdate={updateTag} />
-          ) : route === "imports" ? (
-            <Suspense
-              fallback={
-                <section aria-live="polite" className="ledger-state-card is-loading" role="status">
-                  Preparazione dell’anteprima XLSX…
-                </section>
-              }
-            >
-              <ImportsPage
+      {appLockConfig && isAppLocked ? (
+        <AppLockScreen config={appLockConfig} onUnlock={() => setIsAppLocked(false)} />
+      ) : (
+        <AppShell
+          activeRoute={route}
+          quickActions={quickActions}
+          searchResults={
+            ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []
+          }
+        >
+          {ledgerState.status === "ready" ? (
+            route === "accounts" ? (
+              <AccountsPage
+                model={ledgerState.accounts}
+                onCreate={createAccount}
+                onDeleteUnused={deleteUnusedAccount}
+                onSetArchived={setAccountArchived}
+                onUpdate={updateAccount}
+              />
+            ) : route === "transactions" || route === "new-transaction" ? (
+              <TransactionsPage
+                initialEditorOpen={route === "new-transaction"}
+                model={ledgerState.transactions}
+                standaloneEditor={route === "new-transaction"}
+                tags={ledgerState.tags}
+                onCancel={cancelMovement}
+                onTrash={trashMovement}
+                onCreateManual={createManualMovement}
+                onCreateTransfer={createTransferMovement}
+                onExecuteSalaryAllocations={executeAllocations}
+              />
+            ) : route === "categories" ? (
+              <CategoriesPage
+                categories={ledgerState.categories}
+                onCreate={createCategory}
+                onDeleteUnused={deleteUnusedCategory}
+                onUpdate={updateCategory}
+              />
+            ) : route === "tags" ? (
+              <TagsPage
+                tags={ledgerState.tags}
+                onCreate={createTag}
+                onDeleteUnused={deleteUnusedTag}
+                onUpdate={updateTag}
+              />
+            ) : route === "imports" ? (
+              <Suspense
+                fallback={
+                  <section
+                    aria-live="polite"
+                    className="ledger-state-card is-loading"
+                    role="status"
+                  >
+                    Preparazione dell’anteprima XLSX…
+                  </section>
+                }
+              >
+                <ImportsPage
+                  accounts={ledgerState.rawAccounts}
+                  categories={ledgerState.categories}
+                  transactions={ledgerState.rawTransactions}
+                  onCommit={commitImport}
+                  onUndo={undoImport}
+                  batches={ledgerState.importBatches}
+                />
+              </Suspense>
+            ) : route === "budgets" ? (
+              <BudgetsPage
+                budgets={ledgerState.budgets}
+                categories={ledgerState.categories}
+                onCreate={createMonthlyBudget}
+                transactions={ledgerState.rawTransactions}
+              />
+            ) : route === "loans" ? (
+              <LoansPage
+                accounts={ledgerState.rawAccounts}
+                loans={ledgerState.loans}
+                onCreate={createLoanPosition}
+              />
+            ) : route === "investments" ? (
+              <InvestmentsPage
+                accounts={ledgerState.rawAccounts}
+                onCreate={createInvestment}
+                positions={ledgerState.investmentPositions}
+              />
+            ) : route === "recurring" ? (
+              <RecurringPage
+                accounts={ledgerState.rawAccounts}
+                allocationPlans={ledgerState.allocationPlans}
+                categories={ledgerState.categories}
+                onCreateAllocation={createAllocation}
+                onExecuteAllocations={executeAllocations}
+                rules={ledgerState.recurringRules}
+                onCreate={createRecurring}
+                onUpdate={updateRecurring}
+              />
+            ) : route === "exports" ? (
+              <ExportsPage
                 accounts={ledgerState.rawAccounts}
                 categories={ledgerState.categories}
                 transactions={ledgerState.rawTransactions}
-                onCommit={commitImport}
-                onUndo={undoImport}
-                batches={ledgerState.importBatches}
               />
-            </Suspense>
-          ) : route === "budgets" ? (
-            <BudgetsPage
-              budgets={ledgerState.budgets}
-              categories={ledgerState.categories}
-              onCreate={createMonthlyBudget}
-              transactions={ledgerState.rawTransactions}
-            />
-          ) : route === "loans" ? (
-            <LoansPage
-              accounts={ledgerState.rawAccounts}
-              loans={ledgerState.loans}
-              onCreate={createLoanPosition}
-            />
-          ) : route === "investments" ? (
-            <InvestmentsPage
-              accounts={ledgerState.rawAccounts}
-              onCreate={createInvestment}
-              positions={ledgerState.investmentPositions}
-            />
-          ) : route === "recurring" ? (
-            <RecurringPage
-              accounts={ledgerState.rawAccounts}
-              allocationPlans={ledgerState.allocationPlans}
-              categories={ledgerState.categories}
-              onCreateAllocation={createAllocation}
-              onExecuteAllocations={executeAllocations}
-              rules={ledgerState.recurringRules}
-              onCreate={createRecurring}
-              onUpdate={updateRecurring}
-            />
-          ) : route === "exports" ? (
-            <ExportsPage
-              accounts={ledgerState.rawAccounts}
-              categories={ledgerState.categories}
-              transactions={ledgerState.rawTransactions}
-            />
-          ) : route === "backup" ? (
-            <BackupPage ledger={ledgerState.ledger} />
-          ) : route === "journal" ? (
-            <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
-          ) : route === "analytics" ? (
-            <AnalyticsPage transactions={ledgerState.rawTransactions} />
-          ) : route === "notifications" ? (
-            <NotificationsPage
-              budgets={ledgerState.budgets}
-              loans={ledgerState.loans}
-              recurringRules={ledgerState.recurringRules}
-              transactions={ledgerState.rawTransactions}
-            />
-          ) : route === "profile" ? (
-            <ProfilePage ledger={ledgerState.ledger} />
-          ) : route === "settings" ? (
-            <SettingsPage />
+            ) : route === "backup" ? (
+              <BackupPage ledger={ledgerState.ledger} />
+            ) : route === "journal" ? (
+              <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
+            ) : route === "analytics" ? (
+              <AnalyticsPage transactions={ledgerState.rawTransactions} />
+            ) : route === "notifications" ? (
+              <NotificationsPage
+                accounts={ledgerState.rawAccounts}
+                budgets={ledgerState.budgets}
+                loans={ledgerState.loans}
+                recurringRules={ledgerState.recurringRules}
+                transactions={ledgerState.rawTransactions}
+              />
+            ) : route === "profile" ? (
+              <ProfilePage ledger={ledgerState.ledger} />
+            ) : route === "settings" ? (
+              <SettingsPage
+                onResetFinancialData={resetFinancialData}
+                onResetApplication={resetApplication}
+                onRestoreTransaction={restoreTrashedTransaction}
+                onPurgeTransaction={purgeTrashedTransaction}
+                trashedTransactions={ledgerState.trashedTransactions}
+              />
+            ) : route === "privacy-security" ? (
+              <PrivacySecurityPage
+                ledger={ledgerState.ledger}
+                lockConfig={appLockConfig}
+                onLockConfigChanged={(config) => {
+                  setAppLockConfig(config);
+                  setIsAppLocked(false);
+                }}
+                onManualLock={() => setIsAppLocked(true)}
+              />
+            ) : (
+              <Dashboard
+                hasSeedFeedback={hasSeedFeedback}
+                isSeeding={isSeeding}
+                model={ledgerState.dashboard}
+                onAddDemoData={() => void addDemoData()}
+                schemaVersion={ledgerState.ledger.schemaVersion}
+                storageKind={ledgerState.ledger.storageKind}
+              />
+            )
           ) : (
-            <Dashboard
-              hasSeedFeedback={hasSeedFeedback}
-              isSeeding={isSeeding}
-              model={ledgerState.dashboard}
-              onAddDemoData={() => void addDemoData()}
-              schemaVersion={ledgerState.ledger.schemaVersion}
-              storageKind={ledgerState.ledger.storageKind}
-            />
-          )
-        ) : (
-          <PersistenceState state={ledgerState} />
-        )}
-      </AppShell>
+            <PersistenceState state={ledgerState} />
+          )}
+        </AppShell>
+      )}
     </ErrorBoundary>
   );
 }
@@ -573,6 +673,7 @@ interface AppModels {
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
+  readonly trashedTransactions: readonly TrashedTransaction[];
   readonly dashboard: DashboardViewModel;
   readonly transactions: TransactionsViewModel;
 }
@@ -591,6 +692,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     tags,
     transactions,
     transfers,
+    trashedTransactions,
   ] = await Promise.all([
     ledger.repository.listAccounts(),
     ledger.repository.listAllocationPlans(),
@@ -604,6 +706,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     ledger.repository.listTags(),
     ledger.repository.listTransactions(),
     ledger.repository.listTransfers(),
+    ledger.repository.listTrashedTransactions(),
   ]);
   return {
     allocationPlans,
@@ -617,6 +720,7 @@ async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
     rawTransactions: transactions,
     categories,
     tags,
+    trashedTransactions,
     accounts: buildAccountsViewModel({ accounts, transactions }),
     dashboard: buildDashboardViewModel({
       accounts,
@@ -663,6 +767,7 @@ function useAppRoute():
   | "profile"
   | "settings"
   | "notifications"
+  | "privacy-security"
   | "new-transaction" {
   const [route, setRoute] = useState<
     | "accounts"
@@ -682,6 +787,7 @@ function useAppRoute():
     | "profile"
     | "settings"
     | "notifications"
+    | "privacy-security"
     | "new-transaction"
   >(readAppRoute);
 
@@ -714,6 +820,7 @@ function readAppRoute():
   | "profile"
   | "settings"
   | "notifications"
+  | "privacy-security"
   | "new-transaction" {
   if (window.location.hash === "#accounts") {
     return "accounts";
@@ -735,6 +842,7 @@ function readAppRoute():
   if (window.location.hash === "#profile") return "profile";
   if (window.location.hash === "#settings") return "settings";
   if (window.location.hash === "#notifications") return "notifications";
+  if (window.location.hash === "#privacy-security") return "privacy-security";
   if (window.location.hash === "#new-transaction") return "new-transaction";
   return "overview";
 }

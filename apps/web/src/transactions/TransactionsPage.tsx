@@ -16,6 +16,7 @@ interface TransactionsPageProps {
   readonly standaloneEditor?: boolean;
   readonly tags: readonly Tag[];
   readonly onCancel: (id: string, isTransfer: boolean) => Promise<void>;
+  readonly onTrash: (id: string) => Promise<void>;
   readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<readonly string[]>;
   readonly onCreateTransfer: (input: CreateTransferInput) => Promise<void>;
   readonly onExecuteSalaryAllocations: (planIds: readonly string[]) => Promise<void>;
@@ -29,6 +30,7 @@ export function TransactionsPage({
   standaloneEditor = false,
   tags,
   onCancel,
+  onTrash,
   onCreateManual,
   onCreateTransfer,
   onExecuteSalaryAllocations,
@@ -138,6 +140,24 @@ export function TransactionsPage({
     try {
       await onCancel(id, isTransfer);
       setMessage(isTransfer ? "Trasferimento annullato in modo atomico." : "Movimento annullato.");
+    } catch (cause) {
+      setError(transactionErrorMessage(cause));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const trash = async (id: string, isTransfer: boolean) => {
+    setIsSaving(true);
+    setError(null);
+    setMessage(null);
+    try {
+      await onTrash(id);
+      setMessage(
+        isTransfer
+          ? "Trasferimento spostato nel cestino come gruppo."
+          : "Movimento spostato nel cestino.",
+      );
     } catch (cause) {
       setError(transactionErrorMessage(cause));
     } finally {
@@ -278,14 +298,24 @@ export function TransactionsPage({
                       </td>
                       <td data-label="Azioni">
                         {item.canCancel ? (
-                          <button
-                            className="text-action"
-                            disabled={isSaving}
-                            onClick={() => void cancel(item.id, item.isTransfer)}
-                            type="button"
-                          >
-                            Annulla
-                          </button>
+                          <span className="table-actions">
+                            <button
+                              className="text-action"
+                              disabled={isSaving}
+                              onClick={() => void cancel(item.id, item.isTransfer)}
+                              type="button"
+                            >
+                              Annulla
+                            </button>
+                            <button
+                              className="text-action"
+                              disabled={isSaving}
+                              onClick={() => void trash(item.id, item.isTransfer)}
+                              type="button"
+                            >
+                              Cestina
+                            </button>
+                          </span>
                         ) : (
                           <span className="table-muted">Non annullabile</span>
                         )}

@@ -1,7 +1,7 @@
 {
   "name": "nexora",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0-rc.1",
   "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">=24.14.0 <25",
@@ -17,9 +17,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "pnpm build && playwright test",
+    "doctor": "node scripts/doctor.mjs",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "manifest:update": "node scripts/project-manifest.mjs --write",
     "manifest:check": "node scripts/project-manifest.mjs --check"
+  },
+  "volta": {
+    "node": "24.15.0",
+    "pnpm": "11.9.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",

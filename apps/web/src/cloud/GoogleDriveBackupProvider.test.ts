@@ -35,6 +35,29 @@ describe("GoogleDriveBackupProvider", () => {
 
     await expect(provider.download("backup-id")).rejects.toThrow("cloud_session_expired");
   });
+  it("distingue permessi negati e archivi non trovati", async () => {
+    const denied = new GoogleDriveBackupProvider(
+      () => "token",
+      vi.fn().mockResolvedValue(new Response(null, { status: 403 })),
+    );
+    const missing = new GoogleDriveBackupProvider(
+      () => "token",
+      vi.fn().mockResolvedValue(new Response(null, { status: 404 })),
+    );
+
+    await expect(denied.list()).rejects.toThrow("cloud_permission_denied");
+    await expect(missing.download("missing")).rejects.toThrow("cloud_backup_not_found");
+  });
+  it("ritenta soltanto i guasti temporanei", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ files: [] }), { status: 200 }));
+    const provider = new GoogleDriveBackupProvider(() => "token", fetcher, { maxAttempts: 2 });
+
+    await expect(provider.list()).resolves.toEqual([]);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
   it("preserves the local encrypted backup identifier in Drive metadata", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(null, { status: 200 }));
     const provider = new GoogleDriveBackupProvider(() => "token", fetcher);

@@ -1,152 +1,49 @@
-# Roadmap di implementazione
+# Roadmap Release Candidate
 
-## Milestone 0 — Fondazioni ✅
-Monorepo, TypeScript strict, lint, test, CI, PWA shell, design tokens, error boundary, logging sicuro, ADR.
+Fonte: `NEXORA_ROADMAP_RELEASE_CANDIDATE.md`, 29 luglio 2026. Nexora è in
+`0.5.0-rc.1`; il passaggio a `1.0.0` è vietato finché tutte le fasi seguenti non sono provate
+con codice, test, quality gate, commit e push.
 
-Completata il 2026-07-27. Verificata con unit test, build PWA, controllo accessibilità,
-viewport 320/768/1440 e ricaricamento offline.
+## R0 — Riallineamento del progetto
 
-## Milestone 1 — Dominio contabile ✅
-Money, Account, Transaction, Transfer, Category, repository in-memory e test invarianti.
+- [x] Documentazione, versioning, toolchain e CI coerenti;
+- [x] `pnpm doctor` verifica ambiente e configurazione non sensibile;
+- [x] roadmap pre-release archiviata.
 
-Completata il 2026-07-27. Include report income/expense senza trasferimenti, saldi
-ricostruibili e commit logico atomico delle due gambe nel repository in-memory.
+## R1 — Protezione dei dati locali e trasparenza privacy
 
-## Milestone 2 — Persistenza offline ✅
-SQLite/OPFS adapter, fallback IndexedDB, migrazioni, seed demo, backup locale basilare.
+- [x] Stato di cifratura del ledger documentato senza affermazioni fuorvianti;
+- [x] pagina Privacy e sicurezza, redazione log e blocco applicazione opzionale;
+- [x] test sicurezza, timeout e accessibilità.
 
-Avanzamento:
+## R2 — Backup equivalente
 
-- [x] Schema SQLite v1 per conti, categorie, transazioni e trasferimenti.
-- [x] Migrazione iniziale reversibile e testata su SQLite.
-- [x] Runner atomico e blocco preventivo per migrazioni senza backup verificato.
-- [x] Adapter SQLite/OPFS in worker con riapertura browser verificata.
-- [x] Adapter fallback IndexedDB e selettore OPFS→IndexedDB fail-safe.
-- [x] Seed dimostrativo sintetico, idempotente e verificato sui due adapter.
-- [x] Provider fisico SQLite/OPFS cifrato e ripristino locale verificato.
-- [x] Integrazione con la PWA e verifica offline.
+- [x] formato `.nexora-backup` cifrato canonico per SQLite/OPFS e IndexedDB;
+- [x] restore incrociato, picker accessibile, verifica manifest/checksum e rollback;
+- [x] test round-trip e corruzione su entrambi i backend.
 
-Completata il 2026-07-27. La PWA mantiene stabile il backend scelto, non inserisce dati
-automaticamente e riapre ledger OPFS e IndexedDB con rete indisponibile.
+## R3 — Cronologia e recovery drill
 
-## Milestone 3 — UI core ✅
-Dashboard base, conti, transazioni, categorie, tag, ricerca e responsive layout.
+- [x] cronologia persistente di backup, restore e controlli;
+- [x] recovery drill non distruttivo e avvisi temporali;
+- [x] UI, test backend ed E2E equivalenti.
 
-Avanzamento:
+## R4 — Google Drive pronto per uso reale
 
-- [x] Dashboard di sola lettura collegata al ledger persistente.
-- [x] Metriche esatte per patrimonio EUR, entrate, spese e saldo dei flussi.
-- [x] Riepilogo conti e movimenti recenti responsive, con trasferimenti collassati.
-- [x] Componenti `FinancialAmount` e `MetricCard` riutilizzabili.
-- [x] Gestione conti con creazione, modifica conservativa, archiviazione e riattivazione.
-- [x] Gestione movimenti, split e rettifiche.
-  - [x] Registrazioni manuali di entrate, spese e rettifiche, trasferimenti atomici e
-    annullamento conservativo.
-  - [x] Split con raggruppamento persistente e migrazione dedicata.
-  - [x] Modello e migrazione v2 per split persistenti, con UI e controlli E2E iniziali.
-- [x] Gestione categorie e tag, inclusa l'assegnazione atomica dei tag ai movimenti.
-- [x] Ricerca globale offline per conti, categorie, tag e movimenti.
+- [x] stati OAuth espliciti, retry, timeout, disconnessione e diagnostica sicura;
+- [x] upload/download registrati e verificati prima del restore;
+- [x] mock CI e guida di configurazione reale.
 
-Completata il 2026-07-28. Verificata con unit/integration test, flussi E2E responsive
-320/768/1440, audit Axe, persistenza locale e baseline visuali aggiornate.
+## R5 — Notifiche finanziarie e operative
 
-## Milestone 4 — Money Manager XLSX ✅
-Parser, mapping wizard, preview, validazione, deduplica, dry-run, import atomico, undo batch, report.
+- [x] backup/restore scaduti, saldo basso ed entrata attesa mancante;
+- [x] priorità, preferenze, deduplica e storico;
+- [x] fallback interno senza Notifications API.
 
-Avanzamento:
+## R6 — Prestazioni, accessibilità e RC
 
-- [x] Lettura locale e immutabile dei workbook XLSX con selezione dei fogli disponibili.
-- [x] Rilevamento iniziale delle intestazioni Money Manager e anteprima delle righe.
-- [x] Normalizzazione conservativa di date e importi in minor units, con righe ambigue
-  indirizzate alla revisione anziché importate.
-- [x] Schermata responsive per caricamento locale, scelta del foglio e correzione del mapping.
-- [x] Dry-run conservativo con risoluzione di conto/categoria, validazione della valuta e
-  righe ambigue mantenute fuori dal commit.
-- [x] Deduplica locale e persistente tramite fingerprint SHA-256 per conto e riga sorgente.
-- [x] Commit atomico del batch, delle righe auditabili e delle transazioni su SQLite/OPFS e
-  IndexedDB, con migrazione additiva v4.
-- [x] Storico locale dei batch e annullamento conservativo: le transazioni importate sono
-  annullate, mentre batch e righe restano auditabili.
-- [x] Test unitari, adapter, riapertura IndexedDB e flusso E2E completo su 320/768/1440 px.
+- [x] benchmark 1k–100k per operazioni critiche;
+- [x] audit Axe, tastiera, zoom e visual regression 320–1440;
+- [x] checklist, report RC e quality gate completi.
 
-Completata il 2026-07-28. L’importatore Money Manager legge esclusivamente file locali,
-richiede una conferma esplicita per il commit e conserva un audit persistente dei batch,
-delle righe duplicate e delle righe da revisionare.
-
-## Milestone 5 — Ricorrenze e allocazioni ✅
-
-- [x] Regole mensili persistenti per entrate e spese, con data nominale e policy italiana
-  per lo stipendio se il 28 cade nel fine settimana.
-- [x] Piani di allocazione persistenti a importo fisso per stipendio e reddito fotografico,
-  fra conti attivi della stessa valuta.
-- [x] Rilevamento conservativo dello stipendio contabilizzato atteso e proposta esplicita
-  di esecuzione; nessun trasferimento è creato senza un secondo consenso.
-- [x] UI responsive per configurare, annullare o confermare le proposte a 320/768/1440 px.
-
-Completata il 2026-07-28. Le allocazioni sono configurabili: gli importi €170 e €60
-restano esempi da impostare sui conti effettivi dell'utente e non vengono precompilati.
-
-## Milestone 6 — Budget, prestiti e investimenti ✅
-
-- [x] Budget mensili globali o per categoria, con soglie 80%/100% calcolate dalle sole
-  spese contabilizzate.
-- [x] Prestiti persistenti con rata, capitale residuo/originario, scadenza e progresso.
-- [x] Posizioni di investimento manuali con capitale, valore corrente e rendimento.
-- [x] Dashboard con debito residuo e valore/rendimento degli investimenti separati dai flussi.
-
-Completata il 2026-07-28. Migrazioni additive v7-v9 e upgrade IndexedDB equivalenti
-conservano tutti i record esistenti.
-
-## Milestone 7 — Importatori bancari ✅
-Mediobanca XLSX, N26 PDF, riconoscimento trasferimenti e revisione.
-
-Avanzamento:
-
-- [x] Anteprima locale per Mediobanca XLSX e N26 PDF, separata dal parser Money Manager.
-- [x] Batch auditabili con tipo di importatore persistente e migrazione additiva v10.
-- [x] Possibili trasferimenti verso conti locali trattenuti per revisione manuale.
-- [x] Revisione riga per riga e conferma esplicita dei trasferimenti riconosciuti, con
-  commit e undo atomici delle due gambe su tutti gli adapter.
-
-Completata il 2026-07-28. Gli estratti restano locali; i trasferimenti fra conti propri
-non sono mai classificati come entrate o spese e richiedono una conferma per riga.
-
-## Milestone 8 — Backup ed export ✅
-CSV/XLSX/JSON, backup NAS e Google Drive, cifratura, checksum, restore test.
-
-Avanzamento:
-
-- [x] Export locale CSV dei movimenti e JSON del ledger, con precisione minor units e
-  protezione da formula injection.
-- [x] Filtri export per intervallo, conto e categoria.
-- [x] Export XLSX locale rileggibile, costruito dalle stesse righe canoniche del CSV.
-- [x] Backup cifrato SQLite/OPFS verso cartella locale o NAS selezionata nel browser, con
-  passphrase non persistita e checksum verificato.
-- [x] Ripristino UI da cartella locale/NAS, cronologia Google Drive privata e destinazione
-  Google Drive tramite OAuth, con token solo in memoria e archivi già cifrati prima dell’upload.
-
-Completata il 2026-07-29. La connessione Google richiede la configurazione esplicita di un
-client OAuth nel deployment; Drive riceve soltanto archivi AES-GCM nel suo `appDataFolder`.
-
-## Milestone 9 — Analisi e diario ✅
-Trend mensili, forecast prudente e diario persistente con obiettivi e percezione di controllo.
-
-Completata il 2026-07-29. Le analisi escludono trasferimenti, rettifiche e annullamenti; la
-previsione esplicita la mediana storica e una fascia prudente, senza presentarsi come consiglio.
-
-## Milestone 10 — Hardening e release ✅
-Accessibilità, performance 100k record, threat review, recovery drill, packaging PWA.
-
-Avanzamento:
-
-- [x] Benchmark sintetico su 100.000 movimenti per l’aggregazione dei trend, con importi `bigint`.
-- [x] Threat model documentato per ledger, backup, OAuth e importazioni locali.
-- [x] Recovery drill coperto dai test di backup/restore SQLite e OPFS; PWA con manifest e precache.
-- [x] Esecuzione finale di lint, typecheck, build, manifest, audit dipendenze e E2E su
-  320/768/1440 px, con baseline visuali desktop aggiornate dopo l’estensione della navigazione.
-
-Completata il 2026-07-29. Le verifiche E2E backend-specifiche vengono eseguite sul browser
-capace di OPFS/IndexedDB; gli skip espliciti rappresentano funzionalità non disponibili in una
-specifica matrice, non successi simulati.
-
-Ogni milestone deve produrre una demo verticale e soddisfare `docs/testing/QUALITY_GATES.md`.
+Ogni fase resta non selezionata finché i rispettivi criteri sono verificati e pubblicati.

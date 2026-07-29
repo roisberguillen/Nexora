@@ -19,6 +19,13 @@ import {
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import {
+  capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
+} from "../backup/PortableLedgerSnapshot";
+import { InMemoryLedgerRepository } from "../in-memory/InMemoryLedgerRepository";
 import type { IndexedDbLedger } from "./openIndexedDbLedger";
 import { seedDemoLedger } from "../seed/demoLedgerSeed";
 import { INDEXED_DB_SCHEMA_VERSION, openIndexedDbLedger } from "./openIndexedDbLedger";
@@ -87,6 +94,88 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("elimina solo conti senza riferimenti finanziari", async () => {
+    const unused = account("account-unused");
+    const used = account("account-used");
+    await ledger.repository.saveAccount(unused);
+    await ledger.repository.saveAccount(used);
+    await ledger.repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-used-account",
+        kind: "expense",
+        status: "booked",
+        accountId: used.id,
+        amount: Money.fromMinor(-100n, "EUR"),
+        bookedDate,
+      }),
+    );
+
+    await ledger.repository.deleteUnusedAccount(unused.id);
+    await expect(ledger.repository.findAccountById(unused.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.deleteUnusedAccount(used.id)).rejects.toMatchObject({
+      code: "invalid_account",
+    });
+  });
+
+  it("azzera atomicamente tutti i dati finanziari", async () => {
+    const main = account("account-reset");
+    await ledger.repository.saveAccount(main);
+    await ledger.repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-reset",
+        kind: "income",
+        status: "booked",
+        accountId: main.id,
+        amount: Money.fromMinor(100n, "EUR"),
+        bookedDate,
+      }),
+    );
+    await ledger.repository.resetFinancialData();
+    await expect(ledger.repository.listAccounts()).resolves.toEqual([]);
+    await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
+  });
+
+  it("elimina solo categorie e tag non referenziati", async () => {
+    const main = account("account-taxonomy-delete");
+    const unusedCategory = Category.create({
+      id: "category-unused",
+      name: "Libera",
+      kindScope: "expense",
+    });
+    const usedCategory = Category.create({
+      id: "category-used",
+      name: "Usata",
+      kindScope: "expense",
+    });
+    const unusedTag = Tag.create({ id: "tag-unused", name: "Libero" });
+    const usedTag = Tag.create({ id: "tag-used", name: "Usato" });
+    await ledger.repository.saveAccount(main);
+    await ledger.repository.saveCategory(unusedCategory);
+    await ledger.repository.saveCategory(usedCategory);
+    await ledger.repository.saveTag(unusedTag);
+    await ledger.repository.saveTag(usedTag);
+    const transaction = Transaction.create({
+      id: "taxonomy-reference",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: usedCategory.id,
+    });
+    await ledger.repository.saveTransaction(transaction);
+    await ledger.repository.setTransactionTags(transaction.id, [usedTag.id]);
+
+    await ledger.repository.deleteUnusedCategory(unusedCategory.id);
+    await ledger.repository.deleteUnusedTag(unusedTag.id);
+    await expect(ledger.repository.deleteUnusedCategory(usedCategory.id)).rejects.toMatchObject({
+      code: "invalid_category",
+    });
+    await expect(ledger.repository.deleteUnusedTag(usedTag.id)).rejects.toMatchObject({
+      code: "invalid_transaction",
+    });
+  });
+
   it("persiste e aggiorna il diario mensile dopo la riapertura", async () => {
     const journal = MonthlyJournal.create({
       id: "journal-2026-07",
@@ -109,6 +198,16 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listMonthlyJournals()).toEqual([updated]);
   });
 
+  it("elimina un diario mensile senza toccare il ledger", async () => {
+    const journal = MonthlyJournal.create({ id: "journal-delete", period: "2026-08" });
+    await ledger.repository.saveMonthlyJournal(journal);
+    await ledger.repository.deleteMonthlyJournal(journal.id);
+    await expect(ledger.repository.listMonthlyJournals()).resolves.toEqual([]);
+    await expect(ledger.repository.deleteMonthlyJournal(journal.id)).rejects.toMatchObject({
+      code: "missing_reference",
+    });
+  });
+
   it("crea atomicamente lo schema v1 con indici e metadati", async () => {
     expect(ledger.schemaVersion).toBe(INDEXED_DB_SCHEMA_VERSION);
     expect([...ledger.database.objectStoreNames]).toEqual([
@@ -126,6 +225,7 @@ describe("IndexedDbLedgerRepository", () => {
       "tags",
       "transaction_splits",
       "transaction_tags",
+      "transaction_trash",
       "transactions",
       "transfers",
     ]);
@@ -144,7 +244,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 11 });
+    expect(metadata).toEqual({ key: "schema_version", value: 13 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -304,6 +404,24 @@ describe("IndexedDbLedgerRepository", () => {
     ).resolves.toMatchObject({ status: "cancelled" });
   });
 
+  it("sposta nel cestino un trasferimento in modo atomico e lo ripristina", async () => {
+    await ledger.repository.saveAccount(account("account-trash-a"));
+    await ledger.repository.saveAccount(account("account-trash-b", "savings"));
+    const debitTransaction = transferLeg("transfer-trash-debit", "account-trash-a", -100n);
+    const creditTransaction = transferLeg("transfer-trash-credit", "account-trash-b", 100n);
+    const transfer = Transfer.create({ id: "transfer-trash", debitTransaction, creditTransaction });
+    await ledger.repository.saveTransfer({ transfer, debitTransaction, creditTransaction });
+
+    await ledger.repository.trashTransaction(debitTransaction.id);
+    await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
+    await expect(ledger.repository.findTransferById(transfer.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.listTrashedTransactions()).resolves.toHaveLength(2);
+
+    await ledger.repository.restoreTransaction(creditTransaction.id);
+    await expect(ledger.repository.findTransferById(transfer.id)).resolves.toEqual(transfer);
+    await expect(ledger.repository.listTransactions()).resolves.toHaveLength(2);
+  });
+
   it("aggiorna un conto senza perdere precisione e blocca saldi retroattivi", async () => {
     const original = Account.create({
       id: "account-editable",
@@ -392,7 +510,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(11);
+    expect(ledger.schemaVersion).toBe(13);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -510,6 +628,35 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.close();
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
+  });
+  it("ripristina uno snapshot portabile e lo conserva alla riapertura", async () => {
+    const source = new InMemoryLedgerRepository();
+    const sourceAccount = account("portable-account");
+    const sourceTransaction = Transaction.create({
+      accountId: sourceAccount.id,
+      amount: Money.fromMinor(9_007_199_254_740_993n, "EUR"),
+      bookedDate,
+      id: "portable-income",
+      kind: "income",
+      status: "booked",
+    });
+    await source.saveAccount(sourceAccount);
+    await source.saveTransaction(sourceTransaction);
+
+    await ledger.repository.replacePortableSnapshot(
+      validatePortableLedgerSnapshot(
+        decodePortableLedgerSnapshot(
+          encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(source)),
+        ),
+      ),
+    );
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+
+    await expect(ledger.repository.listAccounts()).resolves.toEqual([sourceAccount]);
+    await expect(ledger.repository.findTransactionById(sourceTransaction.id)).resolves.toEqual(
+      sourceTransaction,
+    );
   });
 
   it("persiste un piano di allocazione", async () => {

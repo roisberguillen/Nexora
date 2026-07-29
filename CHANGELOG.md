@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+- Aggiunto il cestino persistente dei movimenti: trasferimenti trattati come gruppo atomico,
+  ripristino esplicito ed esclusione da saldi, budget e analisi.
+- Aggiunta la cancellazione definitiva protetta dal cestino, con rimozione atomica di split e tag
+  e conservazione dell'audit tecnico delle righe d'importazione.
+- Introdotta la migrazione additiva SQLite/IndexedDB v13 per il riferimento storico delle righe
+  importate a un movimento eliminato definitivamente.
+
+## [0.5.0-rc.1] - 2026-07-29
+
+- Introdotto il backup logico `.nexora-backup` cifrato e portabile tra SQLite/OPFS e IndexedDB,
+  con restore atomico, verifica non distruttiva e cronologia locale delle operazioni.
+- Reso il backup Google Drive più robusto con stato OAuth esplicito, disconnessione, timeout,
+  retry dei soli fallimenti temporanei e messaggi sicuri.
+- Completato il centro notifiche locale: backup e recovery drill scaduti, saldo basso configurabile,
+  entrata attesa mancante, priorità, stato letto/ignorato e fallback interno.
+- Aggiunti round-trip cross-adapter, benchmark da 1k a 100k movimenti e gate RC su 320/768/1440.
+
+- Aggiunto il blocco opzionale dell’app con verificatore PBKDF2, timeout di inattività e blocco
+  manuale. PIN e passphrase non vengono mai salvati; il ledger locale resta esplicitamente non
+  cifrato a riposo dal browser.
+- Rafforzata la comunicazione di sicurezza e aggiunta redazione per token, passphrase e IBAN nei
+  testi diagnostici prima di un eventuale uso nei log.
+
 - Avviata la vertical slice UI mobile: barra inferiore accessibile, menu rapido con cinque azioni,
   route della nuova registrazione e selettore unificato Entrata/Uscita/Trasferimento.
 - Aggiunti Profilo, Impostazioni locali e Centro notifiche derivato da budget, rate e ricorrenze;

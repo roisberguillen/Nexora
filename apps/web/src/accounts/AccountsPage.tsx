@@ -18,6 +18,7 @@ import {
 interface AccountsPageProps {
   readonly model: AccountsViewModel;
   readonly onCreate: (input: CreateLedgerAccountInput) => Promise<void>;
+  readonly onDeleteUnused: (accountId: string) => Promise<void>;
   readonly onSetArchived: (accountId: string, isArchived: boolean) => Promise<void>;
   readonly onUpdate: (accountId: string, input: UpdateLedgerAccountInput) => Promise<void>;
 }
@@ -58,7 +59,13 @@ const emptyForm: AccountFormValues = {
   type: "checking",
 };
 
-export function AccountsPage({ model, onCreate, onSetArchived, onUpdate }: AccountsPageProps) {
+export function AccountsPage({
+  model,
+  onCreate,
+  onDeleteUnused,
+  onSetArchived,
+  onUpdate,
+}: AccountsPageProps) {
   const [editor, setEditor] = useState<AccountEditor | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -142,6 +149,20 @@ export function AccountsPage({ model, onCreate, onSetArchived, onUpdate }: Accou
       if (editor?.mode === "edit" && editor.accountId === account.id) {
         setEditor(null);
       }
+    } catch (error) {
+      setErrorMessage(accountErrorMessage(error));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deleteUnused = async (account: AccountManagementItem) => {
+    if (isSaving) return;
+    setIsSaving(true);
+    clearMessages();
+    try {
+      await onDeleteUnused(account.id);
+      setFeedback("Conto vuoto eliminato definitivamente.");
     } catch (error) {
       setErrorMessage(accountErrorMessage(error));
     } finally {
@@ -239,6 +260,7 @@ export function AccountsPage({ model, onCreate, onSetArchived, onUpdate }: Accou
           accounts={model.accounts}
           isSaving={isSaving}
           onEdit={openEdit}
+          onDeleteUnused={(account) => void deleteUnused(account)}
           onToggleArchived={(account) => void toggleArchived(account)}
         />
         {editor === null ? (
@@ -274,10 +296,17 @@ interface AccountListProps {
   readonly accounts: readonly AccountManagementItem[];
   readonly isSaving: boolean;
   readonly onEdit: (account: AccountManagementItem) => void;
+  readonly onDeleteUnused: (account: AccountManagementItem) => void;
   readonly onToggleArchived: (account: AccountManagementItem) => void;
 }
 
-function AccountList({ accounts, isSaving, onEdit, onToggleArchived }: AccountListProps) {
+function AccountList({
+  accounts,
+  isSaving,
+  onDeleteUnused,
+  onEdit,
+  onToggleArchived,
+}: AccountListProps) {
   return (
     <section aria-labelledby="account-list-title" className="data-panel account-management-panel">
       <div className="panel-heading">
@@ -360,6 +389,15 @@ function AccountList({ accounts, isSaving, onEdit, onToggleArchived }: AccountLi
                         type="button"
                       >
                         {account.isArchived ? "Riattiva" : "Archivia"}
+                      </button>
+                      <button
+                        aria-label={`Elimina il conto vuoto ${account.name}`}
+                        className="text-action"
+                        disabled={isSaving}
+                        onClick={() => onDeleteUnused(account)}
+                        type="button"
+                      >
+                        Elimina
                       </button>
                     </div>
                   </td>

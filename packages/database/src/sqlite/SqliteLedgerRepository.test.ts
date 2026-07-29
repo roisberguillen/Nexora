@@ -24,6 +24,13 @@ import {
 } from "@nexora/domain";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import {
+  capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
+} from "../backup/PortableLedgerSnapshot";
+import { InMemoryLedgerRepository } from "../in-memory/InMemoryLedgerRepository";
 import type { SqliteDatabase, SqliteValue } from "./SqliteDatabase";
 import { seedDemoLedger } from "../seed/demoLedgerSeed";
 import { initializeSqliteLedger } from "./initializeSqliteLedger";
@@ -111,6 +118,88 @@ describe("SqliteLedgerRepository", () => {
     expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("elimina solo conti senza riferimenti finanziari", async () => {
+    const unused = account("account-unused");
+    const used = account("account-used");
+    await repository.saveAccount(unused);
+    await repository.saveAccount(used);
+    await repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-used-account",
+        kind: "expense",
+        status: "booked",
+        accountId: used.id,
+        amount: Money.fromMinor(-100n, "EUR"),
+        bookedDate,
+      }),
+    );
+
+    await repository.deleteUnusedAccount(unused.id);
+    await expect(repository.findAccountById(unused.id)).resolves.toBeUndefined();
+    await expect(repository.deleteUnusedAccount(used.id)).rejects.toMatchObject({
+      code: "invalid_account",
+    });
+  });
+
+  it("azzera atomicamente tutti i dati finanziari", async () => {
+    const main = account("account-reset");
+    await repository.saveAccount(main);
+    await repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-reset",
+        kind: "income",
+        status: "booked",
+        accountId: main.id,
+        amount: Money.fromMinor(100n, "EUR"),
+        bookedDate,
+      }),
+    );
+    await repository.resetFinancialData();
+    await expect(repository.listAccounts()).resolves.toEqual([]);
+    await expect(repository.listTransactions()).resolves.toEqual([]);
+  });
+
+  it("elimina solo categorie e tag non referenziati", async () => {
+    const main = account("account-taxonomy-delete");
+    const unusedCategory = Category.create({
+      id: "category-unused",
+      name: "Libera",
+      kindScope: "expense",
+    });
+    const usedCategory = Category.create({
+      id: "category-used",
+      name: "Usata",
+      kindScope: "expense",
+    });
+    const unusedTag = Tag.create({ id: "tag-unused", name: "Libero" });
+    const usedTag = Tag.create({ id: "tag-used", name: "Usato" });
+    await repository.saveAccount(main);
+    await repository.saveCategory(unusedCategory);
+    await repository.saveCategory(usedCategory);
+    await repository.saveTag(unusedTag);
+    await repository.saveTag(usedTag);
+    const transaction = Transaction.create({
+      id: "taxonomy-reference",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: usedCategory.id,
+    });
+    await repository.saveTransaction(transaction);
+    await repository.setTransactionTags(transaction.id, [usedTag.id]);
+
+    await repository.deleteUnusedCategory(unusedCategory.id);
+    await repository.deleteUnusedTag(unusedTag.id);
+    await expect(repository.deleteUnusedCategory(usedCategory.id)).rejects.toMatchObject({
+      code: "invalid_category",
+    });
+    await expect(repository.deleteUnusedTag(usedTag.id)).rejects.toMatchObject({
+      code: "invalid_transaction",
+    });
+  });
+
   it("persiste e aggiorna il diario mensile", async () => {
     const journal = MonthlyJournal.create({
       id: "journal-2026-07",
@@ -129,6 +218,16 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.updateMonthlyJournal(updated);
     expect(await repository.listMonthlyJournals()).toEqual([updated]);
+  });
+
+  it("elimina un diario mensile senza toccare il ledger", async () => {
+    const journal = MonthlyJournal.create({ id: "journal-delete", period: "2026-08" });
+    await repository.saveMonthlyJournal(journal);
+    await repository.deleteMonthlyJournal(journal.id);
+    await expect(repository.listMonthlyJournals()).resolves.toEqual([]);
+    await expect(repository.deleteMonthlyJournal(journal.id)).rejects.toMatchObject({
+      code: "missing_reference",
+    });
   });
 
   it("ricostruisce conti, categorie e transazioni senza perdere precisione", async () => {
@@ -285,6 +384,24 @@ describe("SqliteLedgerRepository", () => {
     });
   });
 
+  it("sposta nel cestino un trasferimento in modo atomico e lo ripristina", async () => {
+    await repository.saveAccount(account("account-trash-a"));
+    await repository.saveAccount(account("account-trash-b", "savings"));
+    const debitTransaction = transferLeg("transfer-trash-debit", "account-trash-a", -100n);
+    const creditTransaction = transferLeg("transfer-trash-credit", "account-trash-b", 100n);
+    const transfer = Transfer.create({ id: "transfer-trash", debitTransaction, creditTransaction });
+    await repository.saveTransfer({ transfer, debitTransaction, creditTransaction });
+
+    await repository.trashTransaction(debitTransaction.id);
+    await expect(repository.listTransactions()).resolves.toEqual([]);
+    await expect(repository.findTransferById(transfer.id)).resolves.toBeUndefined();
+    await expect(repository.listTrashedTransactions()).resolves.toHaveLength(2);
+
+    await repository.restoreTransaction(creditTransaction.id);
+    await expect(repository.findTransferById(transfer.id)).resolves.toEqual(transfer);
+    await expect(repository.listTransactions()).resolves.toHaveLength(2);
+  });
+
   it("serializza operazioni concorrenti sulla stessa connessione", async () => {
     await Promise.all([
       repository.saveAccount(account("account-concurrent-a")),
@@ -401,8 +518,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 11,
-        toVersion: 11,
+        fromVersion: 13,
+        toVersion: 13,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -573,5 +690,32 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.saveLoan(loan);
     await expect(repository.listLoans()).resolves.toEqual([loan]);
+  });
+  it("ripristina uno snapshot portabile senza perdere precisione monetaria", async () => {
+    const source = new InMemoryLedgerRepository();
+    const sourceAccount = account("portable-account");
+    const sourceTransaction = Transaction.create({
+      accountId: sourceAccount.id,
+      amount: Money.fromMinor(9_007_199_254_740_993n, "EUR"),
+      bookedDate,
+      id: "portable-income",
+      kind: "income",
+      status: "booked",
+    });
+    await source.saveAccount(sourceAccount);
+    await source.saveTransaction(sourceTransaction);
+
+    await repository.replacePortableSnapshot(
+      validatePortableLedgerSnapshot(
+        decodePortableLedgerSnapshot(
+          encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(source)),
+        ),
+      ),
+    );
+
+    await expect(repository.listAccounts()).resolves.toEqual([sourceAccount]);
+    await expect(repository.findTransactionById(sourceTransaction.id)).resolves.toEqual(
+      sourceTransaction,
+    );
   });
 });

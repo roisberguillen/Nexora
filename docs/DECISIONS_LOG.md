@@ -2,6 +2,15 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-07-29 — Cestino transazioni senza cascade impliciti
+
+- **Contesto:** la roadmap di cancellazione richiede recupero, coerenza dei trasferimenti e
+  assenza di riferimenti orfani su due backend.
+- **Scelta:** usare soft-delete esplicito per le transazioni e trattare un trasferimento come
+  bundle atomico; le rimozioni fisiche restano deliberate e non usano `ON DELETE CASCADE`.
+- **Conseguenze:** query finanziarie filtrano i record nel cestino; reset e svuotamento usano un
+  confine atomico e sono preceduti da backup proposto.
+
 ## 2026-07-27 — Toolchain della Milestone 0
 
 - **Contesto:** serviva rendere eseguibile lo scaffold mantenendo un monolite modulare.

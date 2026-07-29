@@ -11,6 +11,8 @@ export interface CreateImportRowProps {
   readonly status: ImportRowStatus;
   readonly errorCode?: string;
   readonly createdTransactionId?: string;
+  /** Historical reference retained when an imported transaction is permanently purged. */
+  readonly deletedTransactionId?: string;
 }
 export class ImportRow {
   public readonly id: string;
@@ -21,6 +23,7 @@ export class ImportRow {
   public readonly status: ImportRowStatus;
   public readonly errorCode: string | undefined;
   public readonly createdTransactionId: string | undefined;
+  public readonly deletedTransactionId: string | undefined;
   private constructor(props: CreateImportRowProps) {
     this.id = requireIdentifier(props.id, "Import row id");
     this.batchId = requireIdentifier(props.batchId, "Import row batch id");
@@ -36,10 +39,19 @@ export class ImportRow {
       props.createdTransactionId === undefined
         ? undefined
         : requireIdentifier(props.createdTransactionId, "Created transaction id");
-    if ((this.status === "imported") !== (this.createdTransactionId !== undefined))
+    this.deletedTransactionId =
+      props.deletedTransactionId === undefined
+        ? undefined
+        : requireIdentifier(props.deletedTransactionId, "Deleted transaction id");
+    const hasTransactionReference =
+      this.createdTransactionId !== undefined || this.deletedTransactionId !== undefined;
+    if (
+      (this.status === "imported") !== hasTransactionReference ||
+      (this.createdTransactionId !== undefined && this.deletedTransactionId !== undefined)
+    )
       throw new DomainError(
         "invalid_import",
-        "Imported rows must match their transaction reference.",
+        "Imported rows must have exactly one transaction reference.",
       );
     Object.freeze(this);
   }

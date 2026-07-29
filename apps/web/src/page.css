@@ -1103,6 +1103,27 @@
   gap: 1rem;
   margin-top: 1rem;
 }
+.app-lock-screen {
+  display: grid;
+  min-block-size: 100dvh;
+  padding: 1rem;
+  place-items: center;
+}
+.app-lock-card {
+  display: grid;
+  gap: 0.875rem;
+  inline-size: min(100%, 28rem);
+  padding: 1.5rem;
+}
+.app-lock-setup {
+  display: grid;
+  gap: 0.75rem;
+}
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
 .profile-group h2,
 .settings-group h2 {
   padding: 1rem 1.25rem 0;

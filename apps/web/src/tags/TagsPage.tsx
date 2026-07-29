@@ -6,10 +6,12 @@ import type { TagInput } from "./tagCommands";
 export function TagsPage({
   tags,
   onCreate,
+  onDeleteUnused,
   onUpdate,
 }: {
   readonly tags: readonly Tag[];
   readonly onCreate: (input: TagInput) => Promise<void>;
+  readonly onDeleteUnused: (id: string) => Promise<void>;
   readonly onUpdate: (
     id: string,
     input: TagInput & { readonly isArchived: boolean },
@@ -29,6 +31,15 @@ export function TagsPage({
       event.currentTarget.reset();
     } catch {
       setError("Impossibile salvare il tag.");
+    }
+  };
+  const remove = async (id: string) => {
+    try {
+      setError(null);
+      await onDeleteUnused(id);
+      if (editing?.id === id) setEditing(null);
+    } catch {
+      setError("Il tag è usato: archivialo o rimuovilo prima dai movimenti.");
     }
   };
 
@@ -80,6 +91,13 @@ export function TagsPage({
                           type="button"
                         >
                           Modifica
+                        </button>
+                        <button
+                          className="text-action"
+                          onClick={() => void remove(tag.id)}
+                          type="button"
+                        >
+                          Elimina
                         </button>
                       </td>
                     </tr>

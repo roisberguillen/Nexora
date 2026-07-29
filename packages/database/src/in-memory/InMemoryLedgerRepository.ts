@@ -9,7 +9,7 @@ import {
   type TransferBundle,
   type Tag,
   type ImportBatch,
-  type ImportRow,
+  ImportRow,
   type ImportTransferBundle,
   type RecurringRule,
   type AllocationPlan,
@@ -17,6 +17,7 @@ import {
   type Loan,
   type InvestmentPosition,
   type MonthlyJournal,
+  type TrashedTransaction,
   validateImportCommit,
   validateAccountUpdate,
 } from "@nexora/domain";
@@ -25,6 +26,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly accounts = new Map<string, Account>();
   private readonly categories = new Map<string, Category>();
   private readonly transactions = new Map<string, Transaction>();
+  private readonly transactionTrash = new Map<string, Omit<TrashedTransaction, "transaction">>();
   private readonly transfers = new Map<string, Transfer>();
   private readonly transactionSplits = new Map<string, TransactionSplit>();
   private readonly tags = new Map<string, Tag>();
@@ -37,6 +39,37 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly loans = new Map<string, Loan>();
   private readonly investmentPositions = new Map<string, InvestmentPosition>();
   private readonly monthlyJournals = new Map<string, MonthlyJournal>();
+
+  public async runAtomically<Result>(operation: () => Promise<Result>): Promise<Result> {
+    const snapshot = this.captureState();
+    try {
+      return await operation();
+    } catch (cause) {
+      this.restoreState(snapshot);
+      throw cause;
+    }
+  }
+
+  public async resetFinancialData(): Promise<void> {
+    await this.runAtomically(async () => {
+      this.accounts.clear();
+      this.categories.clear();
+      this.transactions.clear();
+      this.transactionTrash.clear();
+      this.transfers.clear();
+      this.transactionSplits.clear();
+      this.tags.clear();
+      this.transactionTags.clear();
+      this.importBatches.clear();
+      this.importRows.clear();
+      this.recurringRules.clear();
+      this.allocationPlans.clear();
+      this.budgets.clear();
+      this.loans.clear();
+      this.investmentPositions.clear();
+      this.monthlyJournals.clear();
+    });
+  }
 
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
@@ -89,6 +122,26 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.accounts.set(account.id, account);
   }
 
+  public async deleteUnusedAccount(id: string): Promise<void> {
+    if (!this.accounts.has(id))
+      throw new DomainError("missing_reference", "Account does not exist.");
+    const isReferenced =
+      [...this.transactions.values()].some((transaction) => transaction.accountId === id) ||
+      [...this.accounts.values()].some((account) => account.parentAccountId === id) ||
+      [...this.recurringRules.values()].some((rule) => rule.accountId === id) ||
+      [...this.allocationPlans.values()].some(
+        (plan) => plan.sourceAccountId === id || plan.targetAccountId === id,
+      ) ||
+      [...this.loans.values()].some((loan) => loan.accountId === id) ||
+      [...this.investmentPositions.values()].some((position) => position.accountId === id);
+    if (isReferenced)
+      throw new DomainError(
+        "invalid_account",
+        "An account with financial references must be archived instead of deleted.",
+      );
+    this.accounts.delete(id);
+  }
+
   public async saveCategory(category: Category): Promise<void> {
     this.assertNew(this.categories, category.id, "Category");
     if (category.parentId !== undefined && !this.categories.has(category.parentId)) {
@@ -101,6 +154,23 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (!this.categories.has(category.id))
       throw new DomainError("missing_reference", "Category does not exist.");
     this.categories.set(category.id, category);
+  }
+
+  public async deleteUnusedCategory(id: string): Promise<void> {
+    if (!this.categories.has(id))
+      throw new DomainError("missing_reference", "Category does not exist.");
+    const isReferenced =
+      [...this.categories.values()].some((category) => category.parentId === id) ||
+      [...this.transactions.values()].some((transaction) => transaction.categoryId === id) ||
+      [...this.transactionSplits.values()].some((split) => split.categoryId === id) ||
+      [...this.budgets.values()].some((budget) => budget.categoryId === id) ||
+      [...this.recurringRules.values()].some((rule) => rule.categoryId === id);
+    if (isReferenced)
+      throw new DomainError(
+        "invalid_category",
+        "A referenced category must be archived or reassigned.",
+      );
+    this.categories.delete(id);
   }
 
   public async saveTag(tag: Tag): Promise<void> {
@@ -118,6 +188,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateRecurringRuleReferences(rule);
     this.recurringRules.set(rule.id, rule);
   }
+  public async deleteRecurringRule(id: string): Promise<void> {
+    this.deleteExisting(this.recurringRules, id, "Recurring rule");
+  }
   public async saveAllocationPlan(plan: AllocationPlan): Promise<void> {
     this.assertNew(this.allocationPlans, plan.id, "Allocation plan");
     this.validateAllocationPlanReferences(plan);
@@ -128,6 +201,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Allocation plan does not exist.");
     this.validateAllocationPlanReferences(plan);
     this.allocationPlans.set(plan.id, plan);
+  }
+  public async deleteAllocationPlan(id: string): Promise<void> {
+    this.deleteExisting(this.allocationPlans, id, "Allocation plan");
   }
   public async saveBudget(budget: Budget): Promise<void> {
     this.assertNew(this.budgets, budget.id, "Budget");
@@ -140,6 +216,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateBudgetReferences(budget);
     this.budgets.set(budget.id, budget);
   }
+  public async deleteBudget(id: string): Promise<void> {
+    this.deleteExisting(this.budgets, id, "Budget");
+  }
   public async saveLoan(loan: Loan): Promise<void> {
     this.assertNew(this.loans, loan.id, "Loan");
     this.validateLoanReferences(loan);
@@ -151,6 +230,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateLoanReferences(loan);
     this.loans.set(loan.id, loan);
   }
+  public async deleteLoan(id: string): Promise<void> {
+    this.deleteExisting(this.loans, id, "Loan");
+  }
   public async saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
     this.assertNew(this.investmentPositions, position.id, "Investment position");
     this.investmentPositions.set(position.id, position);
@@ -159,6 +241,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (!this.investmentPositions.has(position.id))
       throw new DomainError("missing_reference", "Investment position does not exist.");
     this.investmentPositions.set(position.id, position);
+  }
+  public async deleteInvestmentPosition(id: string): Promise<void> {
+    this.deleteExisting(this.investmentPositions, id, "Investment position");
   }
   public async saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
     this.assertNew(this.monthlyJournals, journal.id, "Monthly journal");
@@ -170,6 +255,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Monthly journal does not exist.");
     this.assertJournalPeriodAvailable(journal);
     this.monthlyJournals.set(journal.id, journal);
+  }
+  public async deleteMonthlyJournal(id: string): Promise<void> {
+    this.deleteExisting(this.monthlyJournals, id, "Monthly journal");
   }
   public async saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void> {
     this.assertNew(this.importBatches, batch.id, "Import batch");
@@ -249,6 +337,16 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async updateTag(tag: Tag): Promise<void> {
     if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");
     this.tags.set(tag.id, tag);
+  }
+
+  public async deleteUnusedTag(id: string): Promise<void> {
+    if (!this.tags.has(id)) throw new DomainError("missing_reference", "Tag does not exist.");
+    if ([...this.transactionTags.values()].some((tagIds) => tagIds.has(id)))
+      throw new DomainError(
+        "invalid_transaction",
+        "A referenced tag must be archived or removed globally.",
+      );
+    this.tags.delete(id);
   }
   public async setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
     if (!this.transactions.has(transactionId))
@@ -394,6 +492,97 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     }
   }
 
+  public async trashTransaction(id: string): Promise<void> {
+    const transaction = this.transactions.get(id);
+    if (transaction === undefined)
+      throw new DomainError("missing_reference", "Transaction does not exist.");
+    if (this.transactionTrash.has(id)) return;
+    const transfer = [...this.transfers.values()].find(
+      (candidate) =>
+        candidate.debitTransactionId === id ||
+        candidate.creditTransactionId === id ||
+        candidate.feeTransactionId === id,
+    );
+    const ids =
+      transfer === undefined
+        ? [id]
+        : [
+            transfer.debitTransactionId,
+            transfer.creditTransactionId,
+            ...(transfer.feeTransactionId === undefined ? [] : [transfer.feeTransactionId]),
+          ];
+    const deletedAt = new Date().toISOString();
+    const deletionGroupId =
+      transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+    for (const transactionId of ids) {
+      if (!this.transactions.has(transactionId))
+        throw new DomainError("missing_reference", "Transfer leg does not exist.");
+      this.transactionTrash.set(transactionId, { deletedAt, deletionGroupId });
+    }
+  }
+
+  public async restoreTransaction(id: string): Promise<void> {
+    const entry = this.transactionTrash.get(id);
+    if (entry === undefined)
+      throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+    for (const [transactionId, candidate] of this.transactionTrash) {
+      if (candidate.deletionGroupId === entry.deletionGroupId)
+        this.transactionTrash.delete(transactionId);
+    }
+  }
+
+  public async purgeTrashedTransaction(id: string): Promise<void> {
+    await this.runAtomically(async () => {
+      const entry = this.transactionTrash.get(id);
+      if (entry === undefined)
+        throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+      const ids = [...this.transactionTrash.entries()]
+        .filter(([, candidate]) => candidate.deletionGroupId === entry.deletionGroupId)
+        .map(([transactionId]) => transactionId);
+      for (const [rowId, row] of this.importRows) {
+        if (row.createdTransactionId !== undefined && ids.includes(row.createdTransactionId))
+          this.importRows.set(
+            rowId,
+            ImportRow.create({
+              id: row.id,
+              batchId: row.batchId,
+              rowNumber: row.rowNumber,
+              rawJson: row.rawJson,
+              status: row.status,
+              ...(row.normalizedJson === undefined ? {} : { normalizedJson: row.normalizedJson }),
+              ...(row.errorCode === undefined ? {} : { errorCode: row.errorCode }),
+              deletedTransactionId: row.createdTransactionId,
+            }),
+          );
+      }
+      for (const [transferId, transfer] of this.transfers) {
+        if (
+          ids.includes(transfer.debitTransactionId) ||
+          ids.includes(transfer.creditTransactionId) ||
+          (transfer.feeTransactionId !== undefined && ids.includes(transfer.feeTransactionId))
+        )
+          this.transfers.delete(transferId);
+      }
+      for (const transactionId of ids) {
+        this.transactionTrash.delete(transactionId);
+        this.transactions.delete(transactionId);
+        this.transactionTags.delete(transactionId);
+        for (const [splitId, split] of this.transactionSplits)
+          if (split.transactionId === transactionId) this.transactionSplits.delete(splitId);
+      }
+    });
+  }
+
+  public async listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {
+    return [...this.transactionTrash.entries()]
+      .map(([id, entry]) => {
+        const transaction = this.transactions.get(id);
+        return transaction === undefined ? undefined : { transaction, ...entry };
+      })
+      .filter((entry): entry is TrashedTransaction => entry !== undefined)
+      .sort((left, right) => left.deletedAt.localeCompare(right.deletedAt));
+  }
+
   public async findAccountById(id: string): Promise<Account | undefined> {
     return this.accounts.get(id);
   }
@@ -403,11 +592,18 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
 
   public async findTransactionById(id: string): Promise<Transaction | undefined> {
-    return this.transactions.get(id);
+    return this.transactionTrash.has(id) ? undefined : this.transactions.get(id);
   }
 
   public async findTransferById(id: string): Promise<Transfer | undefined> {
-    return this.transfers.get(id);
+    const transfer = this.transfers.get(id);
+    return transfer === undefined ||
+      this.transactionTrash.has(transfer.debitTransactionId) ||
+      this.transactionTrash.has(transfer.creditTransactionId) ||
+      (transfer.feeTransactionId !== undefined &&
+        this.transactionTrash.has(transfer.feeTransactionId))
+      ? undefined
+      : transfer;
   }
   public async findImportBatchById(id: string): Promise<ImportBatch | undefined> {
     return this.importBatches.get(id);
@@ -430,11 +626,19 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
 
   public async listTransactions(): Promise<readonly Transaction[]> {
-    return [...this.transactions.values()];
+    return [...this.transactions.values()].filter(
+      (transaction) => !this.transactionTrash.has(transaction.id),
+    );
   }
 
   public async listTransfers(): Promise<readonly Transfer[]> {
-    return [...this.transfers.values()];
+    return [...this.transfers.values()].filter(
+      (transfer) =>
+        !this.transactionTrash.has(transfer.debitTransactionId) &&
+        !this.transactionTrash.has(transfer.creditTransactionId) &&
+        (transfer.feeTransactionId === undefined ||
+          !this.transactionTrash.has(transfer.feeTransactionId)),
+    );
   }
 
   public async listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]> {
@@ -483,6 +687,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     if (collection.has(id)) {
       throw new DomainError("duplicate_entity", `${entityName} id already exists.`);
     }
+  }
+
+  private deleteExisting<T>(collection: Map<string, T>, id: string, entityName: string): void {
+    if (!collection.delete(id))
+      throw new DomainError("missing_reference", `${entityName} does not exist.`);
   }
 
   private validateTransactionReferences(transaction: Transaction): void {
@@ -575,5 +784,48 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         transfer.creditTransactionId === transactionId ||
         transfer.feeTransactionId === transactionId,
     );
+  }
+
+  private captureState() {
+    return {
+      accounts: new Map(this.accounts),
+      categories: new Map(this.categories),
+      transactions: new Map(this.transactions),
+      transactionTrash: new Map(this.transactionTrash),
+      transfers: new Map(this.transfers),
+      transactionSplits: new Map(this.transactionSplits),
+      tags: new Map(this.tags),
+      transactionTags: new Map([...this.transactionTags].map(([id, tags]) => [id, new Set(tags)])),
+      importBatches: new Map(this.importBatches),
+      importRows: new Map(this.importRows),
+      recurringRules: new Map(this.recurringRules),
+      allocationPlans: new Map(this.allocationPlans),
+      budgets: new Map(this.budgets),
+      loans: new Map(this.loans),
+      investmentPositions: new Map(this.investmentPositions),
+      monthlyJournals: new Map(this.monthlyJournals),
+    };
+  }
+  private restoreState(state: ReturnType<InMemoryLedgerRepository["captureState"]>): void {
+    const replace = <Value>(target: Map<string, Value>, source: Map<string, Value>) => {
+      target.clear();
+      for (const [id, value] of source) target.set(id, value);
+    };
+    replace(this.accounts, state.accounts);
+    replace(this.categories, state.categories);
+    replace(this.transactions, state.transactions);
+    replace(this.transactionTrash, state.transactionTrash);
+    replace(this.transfers, state.transfers);
+    replace(this.transactionSplits, state.transactionSplits);
+    replace(this.tags, state.tags);
+    replace(this.transactionTags, state.transactionTags);
+    replace(this.importBatches, state.importBatches);
+    replace(this.importRows, state.importRows);
+    replace(this.recurringRules, state.recurringRules);
+    replace(this.allocationPlans, state.allocationPlans);
+    replace(this.budgets, state.budgets);
+    replace(this.loans, state.loans);
+    replace(this.investmentPositions, state.investmentPositions);
+    replace(this.monthlyJournals, state.monthlyJournals);
   }
 }

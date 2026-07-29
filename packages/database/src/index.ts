@@ -1,9 +1,20 @@
 export { InMemoryLedgerRepository } from "./in-memory/InMemoryLedgerRepository";
 export { BackupError, type BackupErrorCode } from "./backup/BackupError";
 export {
+  capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  PORTABLE_LEDGER_SNAPSHOT_VERSION,
+  type PortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
+  type ValidatedPortableLedgerSnapshot,
+} from "./backup/PortableLedgerSnapshot";
+export {
   BACKUP_FILE_EXTENSION,
   BACKUP_FORMAT_VERSION,
   createEncryptedSqliteBackup,
+  createEncryptedPayloadBackup,
+  decryptEncryptedPayloadBackup,
   decryptSqliteBackup,
   PBKDF2_ITERATIONS,
   sha256Hex,
@@ -11,6 +22,8 @@ export {
   type BackupManifestFile,
   type CreateEncryptedSqliteBackupOptions,
   type DecryptedSqliteBackup,
+  type CreateEncryptedPayloadBackupOptions,
+  type DecryptedBackupPayload,
 } from "./backup/EncryptedSqliteBackup";
 export {
   LocalSqliteBackupService,
@@ -76,6 +89,14 @@ export {
   BANK_IMPORTER_TYPES_SCHEMA_VERSION,
   bankImporterTypesMigration,
 } from "./migrations/0010-bank-importer-types";
+export {
+  TRANSACTION_TRASH_SCHEMA_VERSION,
+  transactionTrashMigration,
+} from "./migrations/0012-transaction-trash";
+export {
+  IMPORT_ROW_DELETION_AUDIT_SCHEMA_VERSION,
+  importRowDeletionAuditMigration,
+} from "./migrations/0013-import-row-deletion-audit";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,
