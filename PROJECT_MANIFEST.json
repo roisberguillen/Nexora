@@ -1339,8 +1339,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 14632,
-      "sha256": "1876f2ad19591a7ffcb6b255b0bdd0edb1354503e8ccdfd340f254f2b2c5c7a1"
+      "size": 14628,
+      "sha256": "d73139d22d63e544c1ef472d35b141c180817eecde7a94aad3c908e1d006f90c"
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
