@@ -64,11 +64,11 @@ export function SettingsPage() {
         <SettingsGroup title="Dati e sicurezza">
           <SettingsLink label="Backup" href="./#backup" />
           <SettingsLink label="Esportazione completa" href="./#exports" />
-          <SettingsRow label="Archivio locale" value="Protetto" />
+          <SettingsRow label="Archivio locale" value="Locale; non cifrato a riposo" />
         </SettingsGroup>
         <SettingsGroup title="Applicazione">
           <SettingsRow label="Versione app" value="0.4.0" />
-          <SettingsLink label="Privacy" href="./#profile" />
+          <SettingsLink label="Privacy e sicurezza" href="./#privacy-security" />
           <SettingsLink label="Note di rilascio" href="./#overview" />
         </SettingsGroup>
       </div>

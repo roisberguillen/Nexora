@@ -75,6 +75,7 @@ import { AnalyticsPage } from "./analytics/AnalyticsPage";
 import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
 import { NotificationsPage } from "./notifications/NotificationsPage";
+import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -472,6 +473,8 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             <ProfilePage ledger={ledgerState.ledger} />
           ) : route === "settings" ? (
             <SettingsPage />
+          ) : route === "privacy-security" ? (
+            <PrivacySecurityPage ledger={ledgerState.ledger} />
           ) : (
             <Dashboard
               hasSeedFeedback={hasSeedFeedback}
@@ -663,6 +666,7 @@ function useAppRoute():
   | "profile"
   | "settings"
   | "notifications"
+  | "privacy-security"
   | "new-transaction" {
   const [route, setRoute] = useState<
     | "accounts"
@@ -682,6 +686,7 @@ function useAppRoute():
     | "profile"
     | "settings"
     | "notifications"
+    | "privacy-security"
     | "new-transaction"
   >(readAppRoute);
 
@@ -714,6 +719,7 @@ function readAppRoute():
   | "profile"
   | "settings"
   | "notifications"
+  | "privacy-security"
   | "new-transaction" {
   if (window.location.hash === "#accounts") {
     return "accounts";
@@ -735,6 +741,7 @@ function readAppRoute():
   if (window.location.hash === "#profile") return "profile";
   if (window.location.hash === "#settings") return "settings";
   if (window.location.hash === "#notifications") return "notifications";
+  if (window.location.hash === "#privacy-security") return "privacy-security";
   if (window.location.hash === "#new-transaction") return "new-transaction";
   return "overview";
 }

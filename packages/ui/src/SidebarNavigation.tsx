@@ -25,6 +25,7 @@ export type NavigationRoute =
   | "profile"
   | "settings"
   | "notifications"
+  | "privacy-security"
   | "new-transaction";
 
 const navigationItems: readonly NavigationItem[] = [

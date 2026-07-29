@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 25122,
-      "sha256": "531f6e0b9506ae969a9bf9acea285f3860c766e3cd1bf00baa5b140812df1cd9"
+      "size": 25453,
+      "sha256": "5a31d084772f78b3bb34556a7e4f4030d0fdfbc174a528b81e4e29e602872a14"
     },
     {
       "path": "apps/web/src/backup/BackupPage.test.tsx",
@@ -398,6 +398,11 @@
       "sha256": "8e3551d976fbdb81a389aba661d871342ebcc574d5a4660738165d45cd1d21f4"
     },
     {
+      "path": "apps/web/src/security/PrivacySecurityPage.tsx",
+      "size": 1804,
+      "sha256": "b984b4861a79bb51d2ebb73c45dc893c3e46158d9a7e8702cf31644ccde7ac32"
+    },
+    {
       "path": "apps/web/src/settings/preferences.test.ts",
       "size": 659,
       "sha256": "129a9e21701672032a943f68a0793f7329b5efd34b0b484bf180437e295fea0b"
@@ -409,8 +414,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 4464,
-      "sha256": "6f3449dbd877405107df720fc6bed3c88e66d3c9bc2a2c5e404a33431f72128c"
+      "size": 4505,
+      "sha256": "c8e619c038bbd08e26592c8fcf709a5ce33e83baa48ed6cf1b39eb81c3cbf507"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -1349,8 +1354,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 4002,
-      "sha256": "503cc940b03b3a1dc047deede1cc7cb8cd2b8222b67eaa9d91672073150d0365"
+      "size": 4025,
+      "sha256": "7cb3359357bda88359332bb6899184f9f338cf0c4534589cca6592472af5a9af"
     },
     {
       "path": "packages/ui/src/styles.css",
@@ -1399,8 +1404,8 @@
     },
     {
       "path": "scripts/doctor.mjs",
-      "size": 2232,
-      "sha256": "f48a1f2d6575772d1163098a1f114fb6076e962f20c71379d2ed68cdf730c5c9"
+      "size": 2344,
+      "sha256": "9302edea84af16114e24bcf09d5da5da7a92d538f543aa23a490d83f7f353c06"
     },
     {
       "path": "scripts/project-manifest.mjs",
