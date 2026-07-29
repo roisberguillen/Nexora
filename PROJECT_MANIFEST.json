@@ -824,8 +824,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 61620,
-      "sha256": "480b5072c5e5e793d1d66b2f2e70b92e0ed493ba7cd171db51eeb7507e2f09ef"
+      "size": 62364,
+      "sha256": "29d5c016baa360193b75579a0502ddf1cec5a1daf9298c2392c907e96b193c72"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -984,8 +984,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 66269,
-      "sha256": "4018c69bd966389d21d50aa82816d2db900f98b3766f9313277a58246e8d1ea4"
+      "size": 66476,
+      "sha256": "20a59373416c8482a768245b07edb8ad59ee5f828ee1fab68f89f2135a242199"
     },
     {
       "path": "packages/database/tsconfig.json",

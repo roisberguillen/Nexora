@@ -71,6 +71,36 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
 
   public constructor(private readonly database: IDBDatabase) {}
 
+  public runAtomically<Result>(
+    operation: (transaction: IDBTransaction) => Promise<Result>,
+  ): Promise<Result> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          [
+            "accounts",
+            "categories",
+            "transactions",
+            "transfers",
+            "transaction_splits",
+            "tags",
+            "transaction_tags",
+            "import_batches",
+            "import_rows",
+            "recurring_rules",
+            "allocation_plans",
+            "budgets",
+            "loans",
+            "investment_positions",
+            "monthly_journals",
+          ],
+          "readwrite",
+          operation,
+        ),
+      ),
+    );
+  }
+
   public saveAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

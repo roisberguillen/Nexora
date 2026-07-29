@@ -106,6 +106,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
   public constructor(private readonly database: SqliteDatabase) {}
 
+  public runAtomically<Result>(operation: () => Promise<Result>): Promise<Result> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() => this.withWriteTransaction(operation)),
+    );
+  }
+
   public saveAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
