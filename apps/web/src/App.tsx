@@ -370,6 +370,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.trashTransaction(id);
     });
+  const trashMovements = (ids: readonly string[]): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.trashTransactions(ids);
+    });
   const deleteUnusedAccount = (id: string): Promise<void> =>
     mutateLedger(async (ledger) => {
       await ledger.repository.deleteUnusedAccount(id);
@@ -421,6 +425,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   const purgeTrashedTransaction = (id: string): Promise<void> =>
     mutateLedger(async (ledger) => {
       await ledger.repository.purgeTrashedTransaction(id);
+    });
+  const purgeTrashedTransactions = (ids: readonly string[]): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.purgeTrashedTransactions(ids);
     });
   const resetApplication = async (input: { readonly deleteCloud: boolean }) => {
     if (ledgerState.status !== "ready") throw new Error("Ledger non pronto");
@@ -537,6 +545,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 tags={ledgerState.tags}
                 onCancel={cancelMovement}
                 onTrash={trashMovement}
+                onTrashMany={trashMovements}
                 onCreateManual={createManualMovement}
                 onCreateTransfer={createTransferMovement}
                 onExecuteSalaryAllocations={executeAllocations}
@@ -638,6 +647,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 onResetApplication={resetApplication}
                 onRestoreTransaction={restoreTrashedTransaction}
                 onPurgeTransaction={purgeTrashedTransaction}
+                onPurgeTransactions={purgeTrashedTransactions}
                 trashedTransactions={ledgerState.trashedTransactions}
               />
             ) : route === "privacy-security" ? (

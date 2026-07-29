@@ -28,7 +28,7 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M4 — Cestino e cancellazione multipla
 
-- [ ] Selezione multipla, preview, rollback, svuotamento, retention e undo sicuro.
+- [x] Selezione multipla, preview, rollback, svuotamento, retention e undo sicuro.
 
 ## M5 — Conti, categorie e tag
 

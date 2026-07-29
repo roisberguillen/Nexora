@@ -4,6 +4,8 @@ export interface AppPreferences {
   readonly reduceMotion: boolean;
   readonly theme: AppTheme;
   readonly textScale: "medium" | "large";
+  /** Local display policy only: expiry never triggers background deletion. */
+  readonly trashRetentionDays: 7 | 30 | 90;
 }
 
 const preferencesKey = "nexora.app-preferences.v1";
@@ -11,6 +13,7 @@ const defaults: AppPreferences = Object.freeze({
   reduceMotion: false,
   theme: "light",
   textScale: "medium",
+  trashRetentionDays: 30,
 });
 
 export function readAppPreferences(
@@ -24,6 +27,10 @@ export function readAppPreferences(
       reduceMotion: candidate.reduceMotion === true,
       theme: candidate.theme === "dark" || candidate.theme === "system" ? candidate.theme : "light",
       textScale: candidate.textScale === "large" ? "large" : "medium",
+      trashRetentionDays:
+        candidate.trashRetentionDays === 7 || candidate.trashRetentionDays === 90
+          ? candidate.trashRetentionDays
+          : 30,
     });
   } catch {
     return defaults;

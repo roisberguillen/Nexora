@@ -495,32 +495,39 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
 
   public async trashTransaction(id: string): Promise<void> {
-    const transaction = this.transactions.get(id);
-    if (transaction === undefined)
-      throw new DomainError("missing_reference", "Transaction does not exist.");
-    if (this.transactionTrash.has(id)) return;
-    const transfer = [...this.transfers.values()].find(
-      (candidate) =>
-        candidate.debitTransactionId === id ||
-        candidate.creditTransactionId === id ||
-        candidate.feeTransactionId === id,
-    );
-    const ids =
-      transfer === undefined
-        ? [id]
-        : [
-            transfer.debitTransactionId,
-            transfer.creditTransactionId,
-            ...(transfer.feeTransactionId === undefined ? [] : [transfer.feeTransactionId]),
-          ];
-    const deletedAt = new Date().toISOString();
-    const deletionGroupId =
-      transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
-    for (const transactionId of ids) {
-      if (!this.transactions.has(transactionId))
-        throw new DomainError("missing_reference", "Transfer leg does not exist.");
-      this.transactionTrash.set(transactionId, { deletedAt, deletionGroupId });
-    }
+    await this.trashTransactions([id]);
+  }
+
+  public async trashTransactions(ids: readonly string[]): Promise<void> {
+    await this.runAtomically(async () => {
+      const deletedAt = new Date().toISOString();
+      for (const id of new Set(ids)) {
+        const transaction = this.transactions.get(id);
+        if (transaction === undefined)
+          throw new DomainError("missing_reference", "Transaction does not exist.");
+        const transfer = [...this.transfers.values()].find(
+          (candidate) =>
+            candidate.debitTransactionId === id ||
+            candidate.creditTransactionId === id ||
+            candidate.feeTransactionId === id,
+        );
+        const group =
+          transfer === undefined
+            ? [id]
+            : [
+                transfer.debitTransactionId,
+                transfer.creditTransactionId,
+                ...(transfer.feeTransactionId === undefined ? [] : [transfer.feeTransactionId]),
+              ];
+        const deletionGroupId =
+          transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+        for (const transactionId of group) {
+          if (!this.transactions.has(transactionId))
+            throw new DomainError("missing_reference", "Transfer leg does not exist.");
+          this.transactionTrash.set(transactionId, { deletedAt, deletionGroupId });
+        }
+      }
+    });
   }
 
   public async restoreTransaction(id: string): Promise<void> {
@@ -572,6 +579,19 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         for (const [splitId, split] of this.transactionSplits)
           if (split.transactionId === transactionId) this.transactionSplits.delete(splitId);
       }
+    });
+  }
+
+  public async purgeTrashedTransactions(ids: readonly string[]): Promise<void> {
+    await this.runAtomically(async () => {
+      const groupHeads = new Map<string, string>();
+      for (const id of new Set(ids)) {
+        const entry = this.transactionTrash.get(id);
+        if (entry === undefined)
+          throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+        if (!groupHeads.has(entry.deletionGroupId)) groupHeads.set(entry.deletionGroupId, id);
+      }
+      for (const id of groupHeads.values()) await this.purgeTrashedTransaction(id);
     });
   }
 

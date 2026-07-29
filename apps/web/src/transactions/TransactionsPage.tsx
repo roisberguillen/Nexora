@@ -9,6 +9,7 @@ import {
   type CreateTransferInput,
 } from "./transactionCommands";
 import type { TransactionsViewModel } from "./buildTransactionsViewModel";
+import { previewTrashSelection } from "./trashSelection";
 
 interface TransactionsPageProps {
   readonly initialEditorOpen?: boolean;
@@ -17,6 +18,7 @@ interface TransactionsPageProps {
   readonly tags: readonly Tag[];
   readonly onCancel: (id: string, isTransfer: boolean) => Promise<void>;
   readonly onTrash: (id: string) => Promise<void>;
+  readonly onTrashMany: (ids: readonly string[]) => Promise<void>;
   readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<readonly string[]>;
   readonly onCreateTransfer: (input: CreateTransferInput) => Promise<void>;
   readonly onExecuteSalaryAllocations: (planIds: readonly string[]) => Promise<void>;
@@ -31,6 +33,7 @@ export function TransactionsPage({
   tags,
   onCancel,
   onTrash,
+  onTrashMany,
   onCreateManual,
   onCreateTransfer,
   onExecuteSalaryAllocations,
@@ -41,6 +44,9 @@ export function TransactionsPage({
   const [error, setError] = useState<string | null>(null);
   const [kind, setKind] = useState<FormKind>("expense");
   const [salaryAllocationPlanIds, setSalaryAllocationPlanIds] = useState<readonly string[]>([]);
+  const [selectedForTrash, setSelectedForTrash] = useState<ReadonlySet<string>>(new Set());
+  const [isTrashConfirmOpen, setIsTrashConfirmOpen] = useState(false);
+  const selectionPreview = previewTrashSelection(model.items, selectedForTrash);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -164,6 +170,20 @@ export function TransactionsPage({
       setIsSaving(false);
     }
   };
+  const trashSelected = async () => {
+    setIsSaving(true);
+    setError(null);
+    try {
+      await onTrashMany(selectionPreview.selectedIds);
+      setSelectedForTrash(new Set());
+      setIsTrashConfirmOpen(false);
+      setMessage("Movimenti selezionati spostati nel cestino in modo atomico.");
+    } catch (cause) {
+      setError(transactionErrorMessage(cause));
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div
@@ -247,6 +267,64 @@ export function TransactionsPage({
             </div>
             <span className="panel-meta">{model.items.length}</span>
           </div>
+          {selectionPreview.transactionGroups === 0 ? null : (
+            <div aria-live="polite" className="account-feedback">
+              <strong>{selectionPreview.transactionGroups} gruppi selezionati</strong> ·
+              trasferimenti: {selectionPreview.transfers} · conti:{" "}
+              {selectionPreview.accountLabels.join(", ")}
+              <span className="sr-only">
+                Entrate: {selectionPreview.incomeMinor.toString()} minor units; uscite:{" "}
+                {selectionPreview.expenseMinor.toString()} minor units.
+              </span>
+              <button
+                className="text-action"
+                disabled={isSaving}
+                onClick={() => setIsTrashConfirmOpen(true)}
+                type="button"
+              >
+                Cestina selezione
+              </button>
+            </div>
+          )}
+          {isTrashConfirmOpen ? (
+            <div
+              aria-labelledby="trash-selection-title"
+              aria-modal="true"
+              className="account-feedback"
+              role="dialog"
+            >
+              <h3 id="trash-selection-title">Spostare nel cestino?</h3>
+              <p>
+                {selectionPreview.transactionGroups} gruppi · {selectionPreview.transfers}{" "}
+                trasferimenti · conti: {selectionPreview.accountLabels.join(", ")}.
+              </p>
+              <p>
+                Entrate:{" "}
+                <FinancialAmount amountMinor={selectionPreview.incomeMinor} currency="EUR" />
+                {" · "}Uscite:{" "}
+                <FinancialAmount amountMinor={selectionPreview.expenseMinor} currency="EUR" />
+              </p>
+              <p>I movimenti resteranno ripristinabili dal cestino.</p>
+              <div className="form-actions">
+                <button
+                  className="secondary-action"
+                  disabled={isSaving}
+                  onClick={() => setIsTrashConfirmOpen(false)}
+                  type="button"
+                >
+                  Annulla
+                </button>
+                <button
+                  className="primary-action"
+                  disabled={isSaving}
+                  onClick={() => void trashSelected()}
+                  type="button"
+                >
+                  {isSaving ? "Spostamento…" : "Sposta nel cestino"}
+                </button>
+              </div>
+            </div>
+          ) : null}
           {model.items.length === 0 ? (
             <div className="account-list-empty">
               <h3>Nessun movimento registrato</h3>
@@ -258,6 +336,7 @@ export function TransactionsPage({
                 <caption className="sr-only">Movimenti registrati nel ledger</caption>
                 <thead>
                   <tr>
+                    <th scope="col">Seleziona</th>
                     <th scope="col">Operazione</th>
                     <th scope="col">Conto</th>
                     <th scope="col">Data</th>
@@ -269,6 +348,22 @@ export function TransactionsPage({
                 <tbody>
                   {model.items.map((item) => (
                     <tr key={item.id}>
+                      <td data-label="Seleziona">
+                        <input
+                          aria-label={`Seleziona ${item.title}`}
+                          checked={selectedForTrash.has(item.id)}
+                          disabled={!item.canCancel || isSaving}
+                          onChange={(event) =>
+                            setSelectedForTrash((current) => {
+                              const next = new Set(current);
+                              if (event.currentTarget.checked) next.add(item.id);
+                              else next.delete(item.id);
+                              return next;
+                            })
+                          }
+                          type="checkbox"
+                        />
+                      </td>
                       <td data-label="Operazione">
                         <span>
                           <strong>{item.title}</strong>

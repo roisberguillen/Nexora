@@ -1055,6 +1055,10 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   }
 
   public trashTransaction(id: string): Promise<void> {
+    return this.trashTransactions([id]);
+  }
+
+  public trashTransactions(ids: readonly string[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(
@@ -1062,33 +1066,35 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           "readwrite",
           async (transaction) => {
             const transactions = transaction.objectStore("transactions");
-            if ((await requestResult<unknown>(transactions.get(id))) === undefined)
-              throw new DomainError("missing_reference", "Transaction does not exist.");
             const transfers = (await requestResult<unknown[]>(
               transaction.objectStore("transfers").getAll(),
             )) as readonly TransferRecord[];
-            const transfer = transfers.find(
-              (candidate) =>
-                candidate.debit_transaction_id === id ||
-                candidate.credit_transaction_id === id ||
-                candidate.fee_transaction_id === id,
-            );
-            const transactionIds =
-              transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
             const deleted_at = new Date().toISOString();
-            const deletion_group_id =
-              transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
             const trash = transaction.objectStore("transaction_trash");
-            for (const transaction_id of transactionIds) {
-              if ((await requestResult<unknown>(transactions.get(transaction_id))) === undefined)
-                throw new DomainError("missing_reference", "Transfer leg does not exist.");
-              await requestResult(
-                trash.put({
-                  transaction_id,
-                  deleted_at,
-                  deletion_group_id,
-                } satisfies TransactionTrashRecord),
+            for (const id of new Set(ids)) {
+              if ((await requestResult<unknown>(transactions.get(id))) === undefined)
+                throw new DomainError("missing_reference", "Transaction does not exist.");
+              const transfer = transfers.find(
+                (candidate) =>
+                  candidate.debit_transaction_id === id ||
+                  candidate.credit_transaction_id === id ||
+                  candidate.fee_transaction_id === id,
               );
+              const transactionIds =
+                transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
+              const deletion_group_id =
+                transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+              for (const transaction_id of transactionIds) {
+                if ((await requestResult<unknown>(transactions.get(transaction_id))) === undefined)
+                  throw new DomainError("missing_reference", "Transfer leg does not exist.");
+                await requestResult(
+                  trash.put({
+                    transaction_id,
+                    deleted_at,
+                    deletion_group_id,
+                  } satisfies TransactionTrashRecord),
+                );
+              }
             }
           },
         ),
@@ -1118,6 +1124,10 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   }
 
   public purgeTrashedTransaction(id: string): Promise<void> {
+    return this.purgeTrashedTransactions([id]);
+  }
+
+  public purgeTrashedTransactions(ids: readonly string[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(
@@ -1132,66 +1142,81 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           "readwrite",
           async (transaction) => {
             const trash = transaction.objectStore("transaction_trash");
-            const entry = await requestResult<unknown>(trash.get(id));
-            if (entry === undefined)
-              throw new DomainError("missing_reference", "Trashed transaction does not exist.");
-            const deletionGroupId = (entry as TransactionTrashRecord).deletion_group_id;
-            const entries = (await requestResult<unknown[]>(
-              trash.getAll(),
-            )) as TransactionTrashRecord[];
-            const ids = entries
-              .filter((item) => item.deletion_group_id === deletionGroupId)
-              .map((item) => item.transaction_id);
-            const importRows = transaction.objectStore("import_rows");
-            for (const rawRow of await requestResult<unknown[]>(importRows.getAll())) {
-              const row = rawRow as ImportRowRecord;
-              if (row.created_transaction_id !== null && ids.includes(row.created_transaction_id))
-                await requestResult(
-                  importRows.put({
-                    ...row,
-                    created_transaction_id: null,
-                    deleted_transaction_id: row.created_transaction_id,
-                  }),
-                );
+            const groupHeads = new Map<string, string>();
+            for (const id of new Set(ids)) {
+              const entry = await requestResult<unknown>(trash.get(id));
+              if (entry === undefined)
+                throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+              const deletionGroupId = (entry as TransactionTrashRecord).deletion_group_id;
+              if (!groupHeads.has(deletionGroupId)) groupHeads.set(deletionGroupId, id);
             }
-            const transfers = transaction.objectStore("transfers");
-            for (const rawTransfer of await requestResult<unknown[]>(transfers.getAll())) {
-              const transfer = rawTransfer as StoredTransferRecord;
-              if (
-                ids.includes(transfer.debit_transaction_id) ||
-                ids.includes(transfer.credit_transaction_id) ||
-                (transfer.fee_transaction_id !== null && ids.includes(transfer.fee_transaction_id))
-              )
-                await requestResult(transfers.delete(transfer.id));
-            }
-            for (const transactionId of ids) {
-              const tags = transaction.objectStore("transaction_tags").index("by_transaction_id");
-              for (const tag of await requestResult<unknown[]>(
-                tags.getAll(IDBKeyRange.only(transactionId)),
-              ))
-                await requestResult(
-                  transaction
-                    .objectStore("transaction_tags")
-                    .delete([transactionId, (tag as { tag_id: string }).tag_id]),
-                );
-              for (const split of await requestResult<unknown[]>(
-                transaction
-                  .objectStore("transaction_splits")
-                  .index("by_transaction_id")
-                  .getAll(IDBKeyRange.only(transactionId)),
-              ))
-                await requestResult(
-                  transaction
-                    .objectStore("transaction_splits")
-                    .delete((split as { id: string }).id),
-                );
-              await requestResult(trash.delete(transactionId));
-              await requestResult(transaction.objectStore("transactions").delete(transactionId));
-            }
+            for (const id of groupHeads.values())
+              await this.purgeTrashedTransactionInTransaction(transaction, id);
           },
         ),
       ),
     );
+  }
+
+  private async purgeTrashedTransactionInTransaction(
+    transaction: IDBTransaction,
+    id: string,
+  ): Promise<void> {
+    const trash = transaction.objectStore("transaction_trash");
+    const entry = await requestResult<unknown>(trash.get(id));
+    if (entry === undefined)
+      throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+    const deletionGroupId = (entry as TransactionTrashRecord).deletion_group_id;
+    const entries = (await requestResult<unknown[]>(trash.getAll())) as TransactionTrashRecord[];
+    const transactionIds = entries
+      .filter((item) => item.deletion_group_id === deletionGroupId)
+      .map((item) => item.transaction_id);
+    const importRows = transaction.objectStore("import_rows");
+    for (const rawRow of await requestResult<unknown[]>(importRows.getAll())) {
+      const row = rawRow as ImportRowRecord;
+      if (
+        row.created_transaction_id !== null &&
+        transactionIds.includes(row.created_transaction_id)
+      )
+        await requestResult(
+          importRows.put({
+            ...row,
+            created_transaction_id: null,
+            deleted_transaction_id: row.created_transaction_id,
+          }),
+        );
+    }
+    const transfers = transaction.objectStore("transfers");
+    for (const rawTransfer of await requestResult<unknown[]>(transfers.getAll())) {
+      const transfer = rawTransfer as StoredTransferRecord;
+      if (
+        transactionIds.includes(transfer.debit_transaction_id) ||
+        transactionIds.includes(transfer.credit_transaction_id) ||
+        (transfer.fee_transaction_id !== null &&
+          transactionIds.includes(transfer.fee_transaction_id))
+      )
+        await requestResult(transfers.delete(transfer.id));
+    }
+    for (const transactionId of transactionIds) {
+      const tags = transaction.objectStore("transaction_tags").index("by_transaction_id");
+      for (const tag of await requestResult<unknown[]>(tags.getAll(transactionId)))
+        await requestResult(
+          transaction
+            .objectStore("transaction_tags")
+            .delete([transactionId, (tag as { tag_id: string }).tag_id]),
+        );
+      for (const split of await requestResult<unknown[]>(
+        transaction
+          .objectStore("transaction_splits")
+          .index("by_transaction_id")
+          .getAll(transactionId),
+      ))
+        await requestResult(
+          transaction.objectStore("transaction_splits").delete((split as { id: string }).id),
+        );
+      await requestResult(trash.delete(transactionId));
+      await requestResult(transaction.objectStore("transactions").delete(transactionId));
+    }
   }
 
   public listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {

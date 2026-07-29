@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Completato il cestino dei movimenti: selezione multipla con riepilogo e conferma, rollback
+  atomico su SQLite/OPFS e IndexedDB, svuotamento esplicito del cestino e ripristino per gruppo.
+  La conservazione è configurabile localmente (30 giorni di default); gli elementi scaduti sono
+  soltanto segnalati, senza eliminazioni automatiche in background.
+
 - Il ripristino totale distingue reset locale e pulizia Google Drive opzionale, richiede
   autorizzazione al momento dell’azione e conserva un report tecnico non sensibile tra reload.
 

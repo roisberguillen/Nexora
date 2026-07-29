@@ -4,6 +4,7 @@ import type { TrashedTransaction } from "@nexora/domain";
 import { appVersion } from "../appVersion";
 import type { FinancialResetPreview } from "../reset/financialReset";
 import type { TotalResetReport } from "../reset/totalReset";
+import { countExpiredTrashEntries } from "../transactions/trashRetention";
 
 import {
   applyAppPreferences,
@@ -20,6 +21,7 @@ export function SettingsPage({
   onPreviewFinancialReset,
   onRestoreTransaction,
   onPurgeTransaction,
+  onPurgeTransactions,
   onResetApplication,
   trashedTransactions = [],
 }: {
@@ -33,6 +35,7 @@ export function SettingsPage({
   readonly onPreviewFinancialReset?: () => Promise<FinancialResetPreview>;
   readonly onRestoreTransaction?: (id: string) => Promise<void>;
   readonly onPurgeTransaction?: (id: string) => Promise<void>;
+  readonly onPurgeTransactions?: (ids: readonly string[]) => Promise<void>;
   readonly onResetApplication?: (input: {
     readonly deleteCloud: boolean;
   }) => Promise<TotalResetReport>;
@@ -56,6 +59,7 @@ export function SettingsPage({
   const [isResetting, setIsResetting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const [purgeId, setPurgeId] = useState<string | null>(null);
+  const [isPurgeAllOpen, setIsPurgeAllOpen] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
   const [purgeMessage, setPurgeMessage] = useState<string | null>(null);
   const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
@@ -63,6 +67,10 @@ export function SettingsPage({
   const [deleteCloudBackups, setDeleteCloudBackups] = useState(false);
   const [applicationResetReport, setApplicationResetReport] = useState<TotalResetReport | null>(
     null,
+  );
+  const expiredTrashEntries = countExpiredTrashEntries(
+    trashedTransactions,
+    preferences.trashRetentionDays,
   );
   const resetFinancialData = async () => {
     if (
@@ -141,45 +149,77 @@ export function SettingsPage({
         {onRestoreTransaction === undefined ? null : (
           <SettingsGroup title="Cestino movimenti">
             <p>I movimenti nel cestino non incidono su saldi, budget o analisi.</p>
+            <SettingsSelect
+              label="Conservazione cestino"
+              value={String(preferences.trashRetentionDays)}
+              onChange={(value) =>
+                update({
+                  trashRetentionDays: Number(value) as AppPreferences["trashRetentionDays"],
+                })
+              }
+              options={[
+                ["7", "7 giorni"],
+                ["30", "30 giorni (predefinito)"],
+                ["90", "90 giorni"],
+              ]}
+            />
+            {expiredTrashEntries === 0 ? null : (
+              <p className="account-feedback" role="status">
+                {expiredTrashEntries} elementi hanno superato la conservazione scelta: verifica e
+                conferma manualmente l&apos;eliminazione. Nexora non elimina dati in background.
+              </p>
+            )}
             {trashedTransactions.length === 0 ? (
               <p>Il cestino è vuoto.</p>
             ) : (
-              <ul className="settings-list">
-                {trashedTransactions.map(({ transaction, deletedAt }) => (
-                  <li key={transaction.id}>
-                    <span>
-                      {transaction.description ?? transaction.payee ?? "Movimento"} ·{" "}
-                      {transaction.bookedDate.toString()}
-                    </span>
-                    <button
-                      className="text-action"
-                      disabled={isRestoring}
-                      onClick={() => {
-                        setIsRestoring(true);
-                        void onRestoreTransaction(transaction.id).finally(() =>
-                          setIsRestoring(false),
-                        );
-                      }}
-                      type="button"
-                    >
-                      Ripristina
-                    </button>
-                    {onPurgeTransaction === undefined ? null : (
+              <>
+                {onPurgeTransactions === undefined ? null : (
+                  <button
+                    className="secondary-action"
+                    disabled={isRestoring || isPurging}
+                    onClick={() => setIsPurgeAllOpen(true)}
+                    type="button"
+                  >
+                    Svuota cestino
+                  </button>
+                )}
+                <ul className="settings-list">
+                  {trashedTransactions.map(({ transaction, deletedAt }) => (
+                    <li key={transaction.id}>
+                      <span>
+                        {transaction.description ?? transaction.payee ?? "Movimento"} ·{" "}
+                        {transaction.bookedDate.toString()}
+                      </span>
                       <button
                         className="text-action"
-                        disabled={isRestoring || isPurging}
-                        onClick={() => setPurgeId(transaction.id)}
+                        disabled={isRestoring}
+                        onClick={() => {
+                          setIsRestoring(true);
+                          void onRestoreTransaction(transaction.id).finally(() =>
+                            setIsRestoring(false),
+                          );
+                        }}
                         type="button"
                       >
-                        Elimina definitivamente
+                        Ripristina
                       </button>
-                    )}
-                    <small>
-                      Eliminato il {new Intl.DateTimeFormat("it-IT").format(new Date(deletedAt))}
-                    </small>
-                  </li>
-                ))}
-              </ul>
+                      {onPurgeTransaction === undefined ? null : (
+                        <button
+                          className="text-action"
+                          disabled={isRestoring || isPurging}
+                          onClick={() => setPurgeId(transaction.id)}
+                          type="button"
+                        >
+                          Elimina definitivamente
+                        </button>
+                      )}
+                      <small>
+                        Eliminato il {new Intl.DateTimeFormat("it-IT").format(new Date(deletedAt))}
+                      </small>
+                    </li>
+                  ))}
+                </ul>
+              </>
             )}
             {purgeMessage === null ? null : <p role="status">{purgeMessage}</p>}
             {purgeId === null ? null : (
@@ -229,6 +269,55 @@ export function SettingsPage({
                 </div>
               </div>
             )}
+            {isPurgeAllOpen ? (
+              <div
+                aria-labelledby="purge-all-transactions-title"
+                aria-modal="true"
+                className="account-feedback"
+                role="dialog"
+              >
+                <h2 id="purge-all-transactions-title">Svuotare il cestino?</h2>
+                <p>
+                  Saranno eliminati definitivamente {trashedTransactions.length} movimenti.
+                  L&apos;operazione è atomica e conserva l&apos;audit delle importazioni.
+                </p>
+                <div className="form-actions">
+                  <button
+                    className="secondary-action"
+                    disabled={isPurging}
+                    onClick={() => setIsPurgeAllOpen(false)}
+                    type="button"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    className="primary-action"
+                    disabled={isPurging}
+                    onClick={() => {
+                      if (onPurgeTransactions === undefined) return;
+                      setIsPurging(true);
+                      setPurgeMessage(null);
+                      void onPurgeTransactions(
+                        trashedTransactions.map(({ transaction }) => transaction.id),
+                      )
+                        .then(() => {
+                          setIsPurgeAllOpen(false);
+                          setPurgeMessage("Cestino svuotato definitivamente.");
+                        })
+                        .catch(() =>
+                          setPurgeMessage(
+                            "Svuotamento non completato: i dati sono rimasti invariati.",
+                          ),
+                        )
+                        .finally(() => setIsPurging(false));
+                    }}
+                    type="button"
+                  >
+                    {isPurging ? "Svuotamento…" : "Svuota cestino"}
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </SettingsGroup>
         )}
         {onResetFinancialData === undefined ? null : (

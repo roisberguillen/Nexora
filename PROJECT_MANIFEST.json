@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 32896,
-      "sha256": "2b284eef509ade645962c4e1122ab5e8a528a1c84c25ff3e58c297dd5275c6c7"
+      "size": 33355,
+      "sha256": "a67d798d8fc2afa251d130d40e5eb411a9645797e9d8a0a46659cb876f10275c"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -479,23 +479,23 @@
     },
     {
       "path": "apps/web/src/settings/preferences.test.ts",
-      "size": 659,
-      "sha256": "129a9e21701672032a943f68a0793f7329b5efd34b0b484bf180437e295fea0b"
+      "size": 732,
+      "sha256": "b941259f95c25b0f58dfcc10d9516a9d9322622991396346576803629a88d5c1"
     },
     {
       "path": "apps/web/src/settings/preferences.ts",
-      "size": 1415,
-      "sha256": "ac9d586389432efcb2aa212554c375d1935238e87131aa0423b86e455ecdc40a"
+      "size": 1729,
+      "sha256": "7549aac05d440c3c7ace4747183d706ebbba560f1d1d8fe4e36b0cad7d5bdbdd"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 5993,
-      "sha256": "e7620ed7913305e027e248ec0191df48eb7840eccf372f66112e34760a2c0892"
+      "size": 6802,
+      "sha256": "bedd5b0e00efdc80785b99df552dcd732958d5dd285d872a3879b83c742529fe"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 20563,
-      "sha256": "683cde58199085642a2feec01a7c2f8aa6f1a96df2e45c52c774cc84ecf082d9"
+      "size": 24325,
+      "sha256": "e29c4be9958e7aaa99584a9e129ad371a8d97bf3049bf16ef2a04e4c85702e70"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -534,8 +534,28 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 24206,
-      "sha256": "116bdda51ea36654a2921a4c8c6412579e6b5410e97ec6aaf10599da5c842124"
+      "size": 28289,
+      "sha256": "862e2dc1cec3a25d752f63fa5e3032b438e18f7d36edf17b248f37870dd057b5"
+    },
+    {
+      "path": "apps/web/src/transactions/trashRetention.test.ts",
+      "size": 826,
+      "sha256": "2f606ca0dc20c419e28171c1059bdd8e8d2659f5269857ea5694610719fd86f5"
+    },
+    {
+      "path": "apps/web/src/transactions/trashRetention.ts",
+      "size": 802,
+      "sha256": "42c7a202fb4d63793d663428fef0ada040489e66c7c5ed0701093745ccc9e555"
+    },
+    {
+      "path": "apps/web/src/transactions/trashSelection.test.ts",
+      "size": 972,
+      "sha256": "6668066f2751e191900b28a9a7cccdc3ee523f5f2ba04b75ca0bdeb916732b75"
+    },
+    {
+      "path": "apps/web/src/transactions/trashSelection.ts",
+      "size": 1258,
+      "sha256": "9402cfeb503b561a4eafdef7986cce197df0bd2fe4d8cc73842b453f182b5845"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -554,8 +574,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 11702,
-      "sha256": "d2c468bb54e384cadf839cbe0a983b1bd74335a53ddc5e9ff83a62943149fad5"
+      "size": 12058,
+      "sha256": "38804d95cc7b9d271ee0ac6fa457d796819dab3e8cd1658bf8107c5e88706263"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -679,8 +699,8 @@
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
-      "size": 3977,
-      "sha256": "537223314aa0fd0c4e87191a5f1d3e22adaa08dd034742088f1f5e44f957cbbb"
+      "size": 4427,
+      "sha256": "71d039eed238ca94b49dd830ac56bb816aa5a42e8a093d073e387b484707d94f"
     },
     {
       "path": "docs/DATA_MODEL.md",
@@ -735,7 +755,7 @@
     {
       "path": "docs/ROADMAP.md",
       "size": 1957,
-      "sha256": "3d613985c0374df639c338acb208fa7f685f57b0eaf8cbd1efb984f1933321e6"
+      "sha256": "9cdedcf42d4a945b52495964672813e677406ba8ea693bec44e13c89c31a22e1"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -884,8 +904,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 34997,
-      "sha256": "ab932a0a7f378865e14ba25ba687228a9c4b662ea0d152d186344f789ae84c92"
+      "size": 35863,
+      "sha256": "e495c05c751ac91b333dddb386c5c124aa98efacc0b7aaeb93b8994917439afc"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -894,13 +914,13 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 25945,
-      "sha256": "046bfc604cdc4a61d24cf56a001f45fb635875509e6299fff01d3d94d2357db8"
+      "size": 27897,
+      "sha256": "2aebd8a8696d271ee80923ad5fa059df33dd7f15bc7acd2e7a2eb88ca187b831"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 82872,
-      "sha256": "8fa2cd39fb9dfa1440fd38c3c550105df190d9cb681917d3ebf78f4325683fa8"
+      "size": 83610,
+      "sha256": "c44168bc3b3f699c116196640a6940ab2d6e6884bd349e0474c135c231a7c0f5"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -1064,13 +1084,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 25778,
-      "sha256": "3e72b0d954d5a1c21b81768aaa310431971d8f26d31d7cbe252e725954fe6c63"
+      "size": 27626,
+      "sha256": "869c78860739eff6d65ff0eaddfcbca0cc4e3aa828b224eda607ab6324efe8e8"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 84520,
-      "sha256": "6e33a79c1ba1f4f8f2fd300c3d01c153a15ebd80e85089c265ca959c2d42bcd3"
+      "size": 85069,
+      "sha256": "bbed65fedfba16231d6ec8f9683d62ab323038a52601831c0edd123220cca90c"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -1234,8 +1254,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 5233,
-      "sha256": "eae4327746c59f892c6f22a6f17819fd844f50496e03967ec3750e316ce925c1"
+      "size": 5512,
+      "sha256": "63b75f3aed3749dff1f3dfb713be93f17d352cb47c58845df3de1e8c2759414d"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",

@@ -416,6 +416,54 @@ describe("SqliteLedgerRepository", () => {
     await expect(repository.listTransactions()).resolves.toHaveLength(2);
   });
 
+  it("fa rollback della selezione batch se un movimento non esiste", async () => {
+    await repository.saveAccount(account("account-batch"));
+    const transaction = Transaction.create({
+      id: "transaction-batch",
+      kind: "expense",
+      status: "booked",
+      accountId: "account-batch",
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+    });
+    await repository.saveTransaction(transaction);
+    await expect(
+      repository.trashTransactions([transaction.id, "missing-batch"]),
+    ).rejects.toMatchObject({ code: "missing_reference" });
+    await expect(repository.listTrashedTransactions()).resolves.toEqual([]);
+    await expect(repository.findTransactionById(transaction.id)).resolves.toEqual(transaction);
+  });
+
+  it("svuota gruppi del cestino in un unico commit", async () => {
+    const savedAccount = account("account-purge-batch");
+    const first = Transaction.create({
+      id: "purge-batch-first",
+      kind: "expense",
+      status: "booked",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+    });
+    const second = Transaction.create({
+      id: "purge-batch-second",
+      kind: "income",
+      status: "booked",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(200n, "EUR"),
+      bookedDate,
+    });
+    await repository.saveAccount(savedAccount);
+    await repository.saveTransaction(first);
+    await repository.saveTransaction(second);
+    await repository.trashTransactions([first.id, second.id]);
+
+    await repository.purgeTrashedTransactions([first.id, second.id]);
+
+    await expect(repository.listTrashedTransactions()).resolves.toEqual([]);
+    await expect(repository.findTransactionById(first.id)).resolves.toBeUndefined();
+    await expect(repository.findTransactionById(second.id)).resolves.toBeUndefined();
+  });
+
   it("serializza operazioni concorrenti sulla stessa connessione", async () => {
     await Promise.all([
       repository.saveAccount(account("account-concurrent-a")),

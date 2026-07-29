@@ -1236,28 +1236,34 @@ export class SqliteLedgerRepository implements LedgerRepository {
   }
 
   public trashTransaction(id: string): Promise<void> {
+    return this.trashTransactions([id]);
+  }
+
+  public trashTransactions(ids: readonly string[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
-          if ((await this.findTransactionByIdInternal(id)) === undefined)
-            throw new DomainError("missing_reference", "Transaction does not exist.");
-          const transferRows = await this.database.query<TransferRecord>(
-            `SELECT ${transferColumns} FROM transfers WHERE debit_transaction_id = ? OR credit_transaction_id = ? OR fee_transaction_id = ?`,
-            [id, id, id],
-          );
-          const transfer = transferRows[0];
-          const transactionIds =
-            transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
           const deletedAt = new Date().toISOString();
-          const deletionGroupId =
-            transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
-          for (const transactionId of transactionIds) {
-            if ((await this.findTransactionByIdInternal(transactionId)) === undefined)
-              throw new DomainError("missing_reference", "Transfer leg does not exist.");
-            await this.database.run(
-              "INSERT OR IGNORE INTO transaction_trash (transaction_id, deleted_at, deletion_group_id) VALUES (?, ?, ?)",
-              [transactionId, deletedAt, deletionGroupId],
+          for (const id of new Set(ids)) {
+            if ((await this.findTransactionByIdInternal(id)) === undefined)
+              throw new DomainError("missing_reference", "Transaction does not exist.");
+            const transferRows = await this.database.query<TransferRecord>(
+              `SELECT ${transferColumns} FROM transfers WHERE debit_transaction_id = ? OR credit_transaction_id = ? OR fee_transaction_id = ?`,
+              [id, id, id],
             );
+            const transfer = transferRows[0];
+            const transactionIds =
+              transfer === undefined ? [id] : transferRecordTransactionIds(transfer);
+            const deletionGroupId =
+              transfer === undefined ? `transaction:${id}` : `transfer:${transfer.id}`;
+            for (const transactionId of transactionIds) {
+              if ((await this.findTransactionByIdInternal(transactionId)) === undefined)
+                throw new DomainError("missing_reference", "Transfer leg does not exist.");
+              await this.database.run(
+                "INSERT OR IGNORE INTO transaction_trash (transaction_id, deleted_at, deletion_group_id) VALUES (?, ?, ?)",
+                [transactionId, deletedAt, deletionGroupId],
+              );
+            }
           }
         }),
       ),
@@ -1284,47 +1290,60 @@ export class SqliteLedgerRepository implements LedgerRepository {
   }
 
   public purgeTrashedTransaction(id: string): Promise<void> {
+    return this.purgeTrashedTransactions([id]);
+  }
+
+  public purgeTrashedTransactions(ids: readonly string[]): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
-          const rows = await this.database.query<{ readonly deletion_group_id: string }>(
-            "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?",
-            [id],
-          );
-          const entry = rows[0];
-          if (entry === undefined)
-            throw new DomainError("missing_reference", "Trashed transaction does not exist.");
-          const trashed = await this.database.query<{ readonly transaction_id: string }>(
-            "SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?",
-            [entry.deletion_group_id],
-          );
-          for (const { transaction_id } of trashed) {
-            await this.database.run(
-              "UPDATE import_rows SET deleted_transaction_id = created_transaction_id, created_transaction_id = NULL WHERE created_transaction_id = ?",
-              [transaction_id],
+          const processedGroups = new Set<string>();
+          for (const id of new Set(ids)) {
+            const rows = await this.database.query<{ readonly deletion_group_id: string }>(
+              "SELECT deletion_group_id FROM transaction_trash WHERE transaction_id = ?",
+              [id],
             );
+            const entry = rows[0];
+            if (entry === undefined)
+              throw new DomainError("missing_reference", "Trashed transaction does not exist.");
+            if (processedGroups.has(entry.deletion_group_id)) continue;
+            processedGroups.add(entry.deletion_group_id);
+            await this.purgeTrashedTransactionGroup(entry.deletion_group_id);
           }
-          const ids = trashed.map(({ transaction_id }) => transaction_id);
-          for (const transactionId of ids) {
-            await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [
-              transactionId,
-            ]);
-            await this.database.run("DELETE FROM transaction_splits WHERE transaction_id = ?", [
-              transactionId,
-            ]);
-          }
-          await this.database.run(
-            "DELETE FROM transfers WHERE debit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR credit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR fee_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?)",
-            [entry.deletion_group_id, entry.deletion_group_id, entry.deletion_group_id],
-          );
-          await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [
-            entry.deletion_group_id,
-          ]);
-          for (const transactionId of ids)
-            await this.database.run("DELETE FROM transactions WHERE id = ?", [transactionId]);
         }),
       ),
     );
+  }
+
+  private async purgeTrashedTransactionGroup(deletionGroupId: string): Promise<void> {
+    const trashed = await this.database.query<{ readonly transaction_id: string }>(
+      "SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?",
+      [deletionGroupId],
+    );
+    for (const { transaction_id } of trashed) {
+      await this.database.run(
+        "UPDATE import_rows SET deleted_transaction_id = created_transaction_id, created_transaction_id = NULL WHERE created_transaction_id = ?",
+        [transaction_id],
+      );
+    }
+    const ids = trashed.map(({ transaction_id }) => transaction_id);
+    for (const transactionId of ids) {
+      await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [
+        transactionId,
+      ]);
+      await this.database.run("DELETE FROM transaction_splits WHERE transaction_id = ?", [
+        transactionId,
+      ]);
+    }
+    await this.database.run(
+      "DELETE FROM transfers WHERE debit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR credit_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?) OR fee_transaction_id IN (SELECT transaction_id FROM transaction_trash WHERE deletion_group_id = ?)",
+      [deletionGroupId, deletionGroupId, deletionGroupId],
+    );
+    await this.database.run("DELETE FROM transaction_trash WHERE deletion_group_id = ?", [
+      deletionGroupId,
+    ]);
+    for (const transactionId of ids)
+      await this.database.run("DELETE FROM transactions WHERE id = ?", [transactionId]);
   }
 
   public listTrashedTransactions(): Promise<readonly TrashedTransaction[]> {

@@ -435,6 +435,56 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.listTransactions()).resolves.toHaveLength(2);
   });
 
+  it("fa rollback della selezione batch se un movimento non esiste", async () => {
+    await ledger.repository.saveAccount(account("account-batch"));
+    const transaction = Transaction.create({
+      id: "transaction-batch",
+      kind: "expense",
+      status: "booked",
+      accountId: "account-batch",
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+    });
+    await ledger.repository.saveTransaction(transaction);
+    await expect(
+      ledger.repository.trashTransactions([transaction.id, "missing-batch"]),
+    ).rejects.toMatchObject({ code: "missing_reference" });
+    await expect(ledger.repository.listTrashedTransactions()).resolves.toEqual([]);
+    await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toEqual(
+      transaction,
+    );
+  });
+
+  it("svuota gruppi del cestino in un unico commit", async () => {
+    const savedAccount = account("account-purge-batch");
+    const first = Transaction.create({
+      id: "purge-batch-first",
+      kind: "expense",
+      status: "booked",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+    });
+    const second = Transaction.create({
+      id: "purge-batch-second",
+      kind: "income",
+      status: "booked",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(200n, "EUR"),
+      bookedDate,
+    });
+    await ledger.repository.saveAccount(savedAccount);
+    await ledger.repository.saveTransaction(first);
+    await ledger.repository.saveTransaction(second);
+    await ledger.repository.trashTransactions([first.id, second.id]);
+
+    await ledger.repository.purgeTrashedTransactions([first.id, second.id]);
+
+    await expect(ledger.repository.listTrashedTransactions()).resolves.toEqual([]);
+    await expect(ledger.repository.findTransactionById(first.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.findTransactionById(second.id)).resolves.toBeUndefined();
+  });
+
   it("aggiorna un conto senza perdere precisione e blocca saldi retroattivi", async () => {
     const original = Account.create({
       id: "account-editable",

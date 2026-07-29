@@ -80,9 +80,13 @@ export interface LedgerRepository {
   cancelTransaction(id: string): Promise<void>;
   cancelTransfer(id: string): Promise<void>;
   trashTransaction(id: string): Promise<void>;
+  /** Atomically moves all selected transaction or transfer groups to the recycle bin. */
+  trashTransactions(ids: readonly string[]): Promise<void>;
   restoreTransaction(id: string): Promise<void>;
   /** Permanently deletes one recycle-bin group while retaining import audit rows. */
   purgeTrashedTransaction(id: string): Promise<void>;
+  /** Atomically empties the requested recycle-bin groups. */
+  purgeTrashedTransactions(ids: readonly string[]): Promise<void>;
   listTrashedTransactions(): Promise<readonly TrashedTransaction[]>;
   findAccountById(id: string): Promise<Account | undefined>;
   findCategoryById(id: string): Promise<Category | undefined>;

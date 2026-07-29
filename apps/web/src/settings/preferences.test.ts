@@ -9,11 +9,15 @@ describe("app preferences", () => {
       getItem: (key: string) => values.get(key) ?? null,
       setItem: (key: string, value: string) => values.set(key, value),
     };
-    writeAppPreferences({ reduceMotion: true, theme: "dark", textScale: "large" }, storage);
+    writeAppPreferences(
+      { reduceMotion: true, theme: "dark", textScale: "large", trashRetentionDays: 90 },
+      storage,
+    );
     expect(readAppPreferences(storage)).toEqual({
       reduceMotion: true,
       theme: "dark",
       textScale: "large",
+      trashRetentionDays: 90,
     });
   });
 });

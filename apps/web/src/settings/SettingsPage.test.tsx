@@ -82,6 +82,28 @@ describe("SettingsPage destructive flows", () => {
     );
   });
 
+  it("svuota il cestino solo dopo una conferma esplicita", async () => {
+    const user = userEvent.setup();
+    const purge = vi.fn(async () => undefined);
+    render(
+      <SettingsPage
+        onPurgeTransactions={purge}
+        onRestoreTransaction={async () => undefined}
+        trashedTransactions={[trashedTransaction]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Svuota cestino" }));
+    expect(purge).not.toHaveBeenCalled();
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Svuotare il cestino?" })).getByRole("button", {
+        name: "Svuota cestino",
+      }),
+    );
+    await waitFor(() => expect(purge).toHaveBeenCalledWith(["trashed-expense"]));
+    expect(await screen.findByRole("status")).toHaveTextContent("Cestino svuotato");
+  });
+
   it("protegge il ripristino totale con una frase distinta e consente l'annullamento", async () => {
     const user = userEvent.setup();
     const resetApplication = vi.fn(async () => ({
