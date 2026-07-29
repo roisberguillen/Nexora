@@ -18,6 +18,8 @@
   temporaneo, verificarne i movimenti e rimuovere la copia senza toccare il ledger attivo.
 - L'apertura e la migrazione del ledger usano Web Locks quando disponibili per evitare
   aperture concorrenti tra schede.
+- Se OPFS era assente e risulta indisponibile durante l'apertura, l'avvio passa
+  esplicitamente a IndexedDB; archivi OPFS esistenti non vengono mai mascherati.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

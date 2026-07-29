@@ -63,6 +63,25 @@ export async function openPwaLedger(options: OpenPwaLedgerOptions = {}): Promise
   return ledger;
 }
 
+/** Falls back only when discovery proved that no OPFS archive exists yet. */
+export async function openPwaLedgerWithSafeOpfsFallback(
+  options: OpenPwaLedgerOptions & { readonly allowOpfsFallback: boolean },
+): Promise<BrowserLedger> {
+  try {
+    return await openPwaLedger(options);
+  } catch (cause) {
+    if (
+      options.allowOpfsFallback &&
+      options.selectedStorageKind === "opfs" &&
+      cause instanceof PersistenceError &&
+      cause.code === "opfs_unavailable"
+    ) {
+      return openPwaLedger({ ...options, selectedStorageKind: "indexeddb" });
+    }
+    throw cause;
+  }
+}
+
 /** Persists a backend only after the caller has validated the opened ledger. */
 export function persistPwaLedgerSelection(
   storageKind: BrowserLedgerStorageKind,

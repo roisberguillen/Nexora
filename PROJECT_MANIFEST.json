@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 2636,
-      "sha256": "ca7177260da84021f57a28aa5bec08629f6fe1e1a98ac5ea29ad1b51150cc3ce"
+      "size": 2976,
+      "sha256": "79822f649ee4697105064cfcc69de63de604f1f7407705b51b26b8e08c3858fa"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -399,13 +399,13 @@
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
-      "size": 3832,
-      "sha256": "bc68ad101a531ee47b22fdf33a13e475abe99273ab0a9b977a17e5eb6646050e"
+      "size": 5205,
+      "sha256": "8355042fdba741fc8b7d95f655c67580f359e96ca534cb5d6e741aae75bbb33f"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.ts",
-      "size": 4083,
-      "sha256": "4e58018335d730412bcada1fbb440d18c2151af79c4914a0a1eba642896956ed"
+      "size": 4681,
+      "sha256": "017f3e5c38ac39e2ed5c1369e24338f6d7a9e64590465fdd6110eb17ddf3b232"
     },
     {
       "path": "apps/web/src/profile/ProfilePage.tsx",
@@ -689,8 +689,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 14623,
-      "sha256": "7dbe1774e4b12abd12d861057674bb76fdc7f6bbd777e4923246a813c8db3195"
+      "size": 14784,
+      "sha256": "ceb189aae10a460f5147f45dbc4ebbc571ee6fbcb6a5a997a042697e7633a2ed"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -884,8 +884,8 @@
     },
     {
       "path": "docs/reports/startup-baseline.md",
-      "size": 2456,
-      "sha256": "539fbb00bce2508c09985a8440232a1a74d0494604826610273db8f895be884d"
+      "size": 2671,
+      "sha256": "5ca11ea52cacfaf4e8a7982a10b0b91f7d78f6808577707ad3f655dec1ef4162"
     },
     {
       "path": "docs/reports/test-matrix.md",

@@ -45,6 +45,10 @@ effettivamente rilevati. La scelta è monouso e viene rimossa prima dell'apertur
 Il recovery può inoltre validare un backup cifrato scelto dall'utente senza aprire
 il ledger principale e senza modificare alcun archivio locale.
 
+Se OPFS non conteneva un archivio alla discovery ma l'apertura restituisce
+`opfs_unavailable`, Nexora può aprire IndexedDB. Lo stesso fallback è vietato quando
+OPFS contiene dati, è bloccato o risulta corrotto.
+
 ## Verifiche mirate
 
 - `StorageDiscovery.test.ts`, `StorageSelection.test.ts`,

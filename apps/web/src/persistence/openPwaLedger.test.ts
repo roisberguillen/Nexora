@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   openPwaLedger,
+  openPwaLedgerWithSafeOpfsFallback,
   PWA_LEDGER_STORAGE_KEY,
   persistPwaLedgerSelection,
   type LedgerPreferenceStorage,
@@ -111,5 +112,41 @@ describe("openPwaLedger", () => {
       code: "database_operation_failed",
     });
     expect(openedLedger.close).toHaveBeenCalledOnce();
+  });
+
+  it("passa a IndexedDB solo se OPFS era assente e diventa indisponibile", async () => {
+    const indexedDbLedger = ledger("indexeddb");
+    const openLedger = vi
+      .fn()
+      .mockRejectedValueOnce(new PersistenceError("opfs_unavailable", "unsupported"))
+      .mockResolvedValueOnce(indexedDbLedger);
+
+    await expect(
+      openPwaLedgerWithSafeOpfsFallback({
+        allowOpfsFallback: true,
+        openLedger,
+        persistSelection: false,
+        preferenceStorage: memoryPreference(),
+        selectedStorageKind: "opfs",
+      }),
+    ).resolves.toBe(indexedDbLedger);
+    expect(openLedger).toHaveBeenNthCalledWith(1, { preferredStorageKind: "opfs" });
+    expect(openLedger).toHaveBeenNthCalledWith(2, { preferredStorageKind: "indexeddb" });
+  });
+
+  it("non passa a IndexedDB quando il fallback OPFS non è esplicitamente sicuro", async () => {
+    const failure = new PersistenceError("opfs_unavailable", "unsupported");
+    const openLedger = vi.fn(async () => Promise.reject(failure));
+
+    await expect(
+      openPwaLedgerWithSafeOpfsFallback({
+        allowOpfsFallback: false,
+        openLedger,
+        persistSelection: false,
+        preferenceStorage: memoryPreference(),
+        selectedStorageKind: "opfs",
+      }),
+    ).rejects.toBe(failure);
+    expect(openLedger).toHaveBeenCalledOnce();
   });
 });

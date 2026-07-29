@@ -8,7 +8,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { App } from "./App";
-import { openPwaLedger, persistPwaLedgerSelection } from "./persistence/openPwaLedger";
+import {
+  openPwaLedgerWithSafeOpfsFallback,
+  persistPwaLedgerSelection,
+} from "./persistence/openPwaLedger";
 import { StartupOrchestrator } from "./startup/StartupOrchestrator";
 import { createStartupBootstrap } from "./startup/StartupBootstrap";
 import { StorageDiscovery } from "./startup/StorageDiscovery";
@@ -24,6 +27,7 @@ if (!(rootElement instanceof HTMLElement)) {
 }
 
 let selectedStorageKind: "opfs" | "indexeddb" | undefined;
+let allowOpfsFallback = false;
 const startupBootstrap = createStartupBootstrap(
   new StartupOrchestrator({
     discoverStorage: async () => {
@@ -31,6 +35,7 @@ const startupBootstrap = createStartupBootstrap(
       const recoverySelection = readRecoverySelection(discovery.archives);
       if (recoverySelection !== undefined) {
         selectedStorageKind = recoverySelection;
+        allowOpfsFallback = false;
         return;
       }
       const selection = selectStorage(discovery.archives, readStoragePreferenceHint());
@@ -38,13 +43,20 @@ const startupBootstrap = createStartupBootstrap(
         throw new StartupRecoveryRequiredError(discovery.archives);
       }
       selectedStorageKind = selection.storageKind;
+      allowOpfsFallback =
+        selection.storageKind === "opfs" &&
+        discovery.archives.some((archive) => archive.kind === "opfs" && archive.state === "absent");
     },
     openLedger: () => {
       if (selectedStorageKind === undefined)
         throw new Error("Nexora storage selection is missing.");
       const storageKind = selectedStorageKind;
       return withStartupLock(() =>
-        openPwaLedger({ selectedStorageKind: storageKind, persistSelection: false }),
+        openPwaLedgerWithSafeOpfsFallback({
+          allowOpfsFallback,
+          persistSelection: false,
+          selectedStorageKind: storageKind,
+        }),
       );
     },
     timeouts: {
