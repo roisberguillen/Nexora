@@ -24,6 +24,8 @@
   SQLite WebAssembly e con l'isolamento cross-origin richiesto da OPFS.
 - Estese le verifiche browser dell'avvio a 50 reload consecutivi e cinque schede
   simultanee, serializzate tramite Web Locks quando disponibili.
+- Aggiunto un benchmark Chromium su IndexedDB reale che inserisce, riapre e legge
+  100.000 movimenti sintetici in un archivio temporaneo eliminato al termine.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

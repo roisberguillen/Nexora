@@ -689,8 +689,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15081,
-      "sha256": "77936369d4ca78c4a871033e6fe97f31c1c96ba68f201b0d8af9c711d611b206"
+      "size": 15241,
+      "sha256": "3d6fb6e410d738f5b5d5d661798c28dad305c22e787eeedc8dd61c61ad13764a"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -879,8 +879,13 @@
     },
     {
       "path": "docs/reports/known-limitations.md",
-      "size": 2352,
-      "sha256": "5e894a3dc2b1e80808549cccb3310920b3b643128623f94e68285461db9a9ff6"
+      "size": 2488,
+      "sha256": "be16008308f033ad6c7dc505836630606718e11222ceddb51613f8cdf950ff8a"
+    },
+    {
+      "path": "docs/reports/performance-results.json",
+      "size": 995,
+      "sha256": "afd3503ecb1c1603e74c64f8a7fc7690c7ff3298caa02f890d638ad8ea6b3b9e"
     },
     {
       "path": "docs/reports/startup-baseline.md",
@@ -889,8 +894,8 @@
     },
     {
       "path": "docs/reports/test-matrix.md",
-      "size": 1182,
-      "sha256": "36d8997a062a0a3dd6595d7df37c4dbd555ee2d0b94f4c255c116501cb4641f7"
+      "size": 1315,
+      "sha256": "d9016b2c13907fd3bd074308b0300394353174b689d887282622587ce74cf5f5"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1763,6 +1768,11 @@
       "sha256": "74904ce08bea913dd9f1463110d1dcb88c51c9b8f3fc4047087c05d621eebadf"
     },
     {
+      "path": "test/e2e/fixtures/indexeddb-performance.ts",
+      "size": 3804,
+      "sha256": "6bf78a5c526ad8f63d8ef7f33be1062fd28435dc748e1d9836adba7201f1eb5c"
+    },
+    {
       "path": "test/e2e/fixtures/indexeddb-smoke.ts",
       "size": 2013,
       "sha256": "ba49bd7c76863a4b800df76385384777d82812e8a89a1f796090c73531030bea"
@@ -1781,6 +1791,11 @@
       "path": "test/e2e/imports.spec.ts",
       "size": 1999,
       "sha256": "4836b86e34cd033979c61c2bf181150ef84647a22c74195d59773a953e8c1ebb"
+    },
+    {
+      "path": "test/e2e/indexeddb-performance.spec.ts",
+      "size": 2056,
+      "sha256": "60309b5abe35b90b0e9eea3c7e7cef644b49f189a168d441164ceb55d367b762"
     },
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",

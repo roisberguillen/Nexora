@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-07-30",
+  "environment": {
+    "runtime": "Chromium via Playwright",
+    "backend": "IndexedDB",
+    "databaseScope": "temporary isolated database"
+  },
+  "runs": [
+    {
+      "records": 100000,
+      "insertedRecords": 100000,
+      "listedRecords": 100000,
+      "openMs": 10.2,
+      "insertMs": 113448.64,
+      "reopenMs": 13.95,
+      "listMs": 1721.1,
+      "result": "passed"
+    },
+    {
+      "records": 100000,
+      "insertedRecords": 100000,
+      "listedRecords": 100000,
+      "openMs": 5.53,
+      "insertMs": 106039.69,
+      "reopenMs": 2.58,
+      "listMs": 1601.18,
+      "result": "passed"
+    }
+  ],
+  "limitations": [
+    "Two IndexedDB runs are recorded; the roadmap requires a broader repeated campaign.",
+    "No equivalent OPFS run has been recorded.",
+    "The synthetic dataset covers transactions only, not the full roadmap entity matrix.",
+    "The 100,000-record list measurement exceeds the preliminary one-second search target."
+  ]
+}
