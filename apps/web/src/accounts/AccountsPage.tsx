@@ -16,9 +16,14 @@ import {
 } from "./buildAccountsViewModel";
 
 interface AccountsPageProps {
+  readonly activityByAccount: Readonly<
+    Record<string, { readonly transactions: number; readonly transfers: number }>
+  >;
   readonly model: AccountsViewModel;
   readonly onCreate: (input: CreateLedgerAccountInput) => Promise<void>;
   readonly onDeleteUnused: (accountId: string) => Promise<void>;
+  readonly onEmpty: (accountId: string, pin?: string) => Promise<void>;
+  readonly requiresEmptyPin?: boolean;
   readonly onSetArchived: (accountId: string, isArchived: boolean) => Promise<void>;
   readonly onUpdate: (accountId: string, input: UpdateLedgerAccountInput) => Promise<void>;
 }
@@ -60,9 +65,12 @@ const emptyForm: AccountFormValues = {
 };
 
 export function AccountsPage({
+  activityByAccount,
   model,
   onCreate,
   onDeleteUnused,
+  onEmpty,
+  requiresEmptyPin = false,
   onSetArchived,
   onUpdate,
 }: AccountsPageProps) {
@@ -70,6 +78,9 @@ export function AccountsPage({
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [emptyingAccount, setEmptyingAccount] = useState<AccountManagementItem | null>(null);
+  const [emptyPhrase, setEmptyPhrase] = useState("");
+  const [emptyPin, setEmptyPin] = useState("");
 
   const openCreate = () => {
     setEditor({ mode: "create", values: emptyForm });
@@ -169,6 +180,22 @@ export function AccountsPage({
       setIsSaving(false);
     }
   };
+  const empty = async () => {
+    if (emptyingAccount === null || emptyPhrase !== "SVUOTA CONTO") return;
+    setIsSaving(true);
+    clearMessages();
+    try {
+      await onEmpty(emptyingAccount.id, emptyPin === "" ? undefined : emptyPin);
+      setFeedback("Movimenti del conto spostati nel cestino in modo atomico.");
+      setEmptyingAccount(null);
+      setEmptyPhrase("");
+      setEmptyPin("");
+    } catch (error) {
+      setErrorMessage(accountErrorMessage(error));
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const updateValues = (changes: Partial<AccountFormValues>) => {
     setEditor((current) =>
@@ -258,7 +285,13 @@ export function AccountsPage({
       <div className={`accounts-layout${editor === null ? "" : " has-editor"}`}>
         <AccountList
           accounts={model.accounts}
+          activityByAccount={activityByAccount}
           isSaving={isSaving}
+          onEmpty={(account) => {
+            setEmptyingAccount(account);
+            setEmptyPhrase("");
+            setEmptyPin("");
+          }}
           onEdit={openEdit}
           onDeleteUnused={(account) => void deleteUnused(account)}
           onToggleArchived={(account) => void toggleArchived(account)}
@@ -288,22 +321,79 @@ export function AccountsPage({
           />
         )}
       </div>
+      {emptyingAccount === null ? null : (
+        <div
+          aria-labelledby="empty-account-title"
+          aria-modal="true"
+          className="account-feedback"
+          role="dialog"
+        >
+          <h2 id="empty-account-title">Svuotare {emptyingAccount.name}?</h2>
+          <p>
+            Saranno spostati nel cestino {activityByAccount[emptyingAccount.id]?.transactions ?? 0}{" "}
+            movimenti e {activityByAccount[emptyingAccount.id]?.transfers ?? 0} trasferimenti
+            coinvolti. Le gambe collegate saranno incluse e potranno essere ripristinate. Crea un
+            backup prima di proseguire se vuoi una copia esterna.
+          </p>
+          <label>
+            Scrivi SVUOTA CONTO per confermare
+            <input
+              onChange={(event) => setEmptyPhrase(event.currentTarget.value)}
+              value={emptyPhrase}
+            />
+          </label>
+          {requiresEmptyPin ? (
+            <label>
+              PIN o passphrase
+              <input
+                onChange={(event) => setEmptyPin(event.currentTarget.value)}
+                type="password"
+                value={emptyPin}
+              />
+            </label>
+          ) : null}
+          <div className="form-actions">
+            <button
+              className="secondary-action"
+              disabled={isSaving}
+              onClick={() => setEmptyingAccount(null)}
+              type="button"
+            >
+              Annulla
+            </button>
+            <button
+              className="primary-action"
+              disabled={
+                isSaving || emptyPhrase !== "SVUOTA CONTO" || (requiresEmptyPin && emptyPin === "")
+              }
+              onClick={() => void empty()}
+              type="button"
+            >
+              {isSaving ? "Svuotamento…" : "Svuota conto"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 interface AccountListProps {
+  readonly activityByAccount: AccountsPageProps["activityByAccount"];
   readonly accounts: readonly AccountManagementItem[];
   readonly isSaving: boolean;
   readonly onEdit: (account: AccountManagementItem) => void;
   readonly onDeleteUnused: (account: AccountManagementItem) => void;
+  readonly onEmpty: (account: AccountManagementItem) => void;
   readonly onToggleArchived: (account: AccountManagementItem) => void;
 }
 
 function AccountList({
   accounts,
+  activityByAccount,
   isSaving,
   onDeleteUnused,
+  onEmpty,
   onEdit,
   onToggleArchived,
 }: AccountListProps) {
@@ -398,6 +488,21 @@ function AccountList({
                         type="button"
                       >
                         Elimina
+                      </button>
+                      <button
+                        aria-label={`Svuota ${account.name}: ${activityByAccount[account.id]?.transactions ?? 0} movimenti`}
+                        className="text-action"
+                        disabled={
+                          isSaving ||
+                          accounts.some(
+                            (candidate) =>
+                              candidate.parentAccountId === account.id && !candidate.isArchived,
+                          )
+                        }
+                        onClick={() => onEmpty(account)}
+                        type="button"
+                      >
+                        Svuota conto
                       </button>
                     </div>
                   </td>

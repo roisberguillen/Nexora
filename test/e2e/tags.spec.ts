@@ -40,3 +40,24 @@ test("un tag attivo può essere assegnato a un nuovo movimento", async ({ page }
   await page.getByRole("button", { name: "Salva movimento" }).click();
   await expect(page.getByRole("status")).toContainText("Movimento salvato");
 });
+
+test("unisce e deduplica un tag", async ({ page }) => {
+  await page.goto("/#tags");
+  await page.getByLabel("Nome").fill("Origine tag");
+  await page.getByRole("button", { name: "Salva tag" }).click();
+  await expect(page.getByRole("table", { name: "Tag registrati nel ledger" })).toContainText(
+    "Origine tag",
+  );
+  await page.getByLabel("Nome").fill("Destinazione tag");
+  await page.getByRole("button", { name: "Salva tag" }).click();
+  await expect(page.getByRole("table", { name: "Tag registrati nel ledger" })).toContainText(
+    "Destinazione tag",
+  );
+  const sourceRow = page.getByRole("row").filter({ hasText: "Origine tag" });
+  await sourceRow.getByRole("button", { name: "Modifica" }).click();
+  await page.getByLabel("Unisci in").selectOption({ label: "Destinazione tag" });
+  await page.getByRole("button", { name: "Unisci e deduplica" }).click();
+  await expect(page.getByRole("table", { name: "Tag registrati nel ledger" })).not.toContainText(
+    "Origine tag",
+  );
+});

@@ -53,3 +53,19 @@ test("la pagina conti desktop resta coerente con la baseline visuale", async ({
     fullPage: true,
   });
 });
+
+test("svuota un conto con frase esplicita e conserva un percorso di ripristino", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#accounts");
+  const emptyButton = page.locator('button[aria-label^="Svuota Conto quotidiano demo"]');
+  await expect(emptyButton).toHaveCount(1);
+  await emptyButton.click();
+  const dialog = page.getByRole("dialog", { name: "Svuotare Conto quotidiano demo?" });
+  await expect(dialog).toBeVisible();
+  await page.getByLabel("Scrivi SVUOTA CONTO per confermare").fill("SVUOTA CONTO");
+  await dialog.getByRole("button", { name: "Svuota conto" }).click();
+  await expect(page.getByRole("status")).toContainText("spostati nel cestino");
+});

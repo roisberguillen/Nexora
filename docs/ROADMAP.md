@@ -32,7 +32,7 @@ documentazione, commit diretto su `main`, push e verifica del commit remoto.
 
 ## M5 — Conti, categorie e tag
 
-- [ ] Svuota conto protetto, unione/riassegnazione categorie e unione/rimozione tag.
+- [x] Svuota conto protetto, unione/riassegnazione categorie e unione/rimozione tag.
 
 ## M6 — Gestione dati e accessibilità
 

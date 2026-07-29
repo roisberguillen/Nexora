@@ -26,3 +26,18 @@ test("la gestione categorie crea, modifica e archivia senza overflow", async ({ 
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
+
+test("unisce una categoria e riassegna i riferimenti", async ({ page }) => {
+  await page.goto("/#categories");
+  await page.getByLabel("Nome").fill("Origine merge");
+  await page.getByRole("button", { name: "Salva categoria" }).click();
+  await expect(page.getByRole("table")).toContainText("Origine merge");
+  await page.getByLabel("Nome").fill("Destinazione merge");
+  await page.getByRole("button", { name: "Salva categoria" }).click();
+  await expect(page.getByRole("table")).toContainText("Destinazione merge");
+  const sourceRow = page.getByRole("row").filter({ hasText: "Origine merge" });
+  await sourceRow.getByRole("button", { name: "Modifica" }).click();
+  await page.getByLabel("Unisci in").selectOption({ label: "Destinazione merge" });
+  await page.getByRole("button", { name: "Unisci e riassegna" }).click();
+  await expect(page.getByRole("table")).not.toContainText("Origine merge");
+});

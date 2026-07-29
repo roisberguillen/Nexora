@@ -118,6 +118,43 @@ describe("SqliteLedgerRepository", () => {
     expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("unisce categorie e tag senza lasciare riferimenti orfani", async () => {
+    const main = account("account-management");
+    const source = Category.create({
+      id: "category-source",
+      name: "Vecchia",
+      kindScope: "expense",
+    });
+    const target = Category.create({ id: "category-target", name: "Nuova", kindScope: "expense" });
+    const transaction = Transaction.create({
+      id: "transaction-management",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: source.id,
+    });
+    const sourceTag = Tag.create({ id: "tag-source", name: "Vecchio" });
+    const targetTag = Tag.create({ id: "tag-target", name: "Nuovo" });
+    await repository.saveAccount(main);
+    await repository.saveCategory(source);
+    await repository.saveCategory(target);
+    await repository.saveTransaction(transaction);
+    await repository.saveTag(sourceTag);
+    await repository.saveTag(targetTag);
+    await repository.setTransactionTags(transaction.id, [sourceTag.id, targetTag.id]);
+
+    await repository.mergeCategory(source.id, target.id);
+    await repository.mergeTag(sourceTag.id, targetTag.id);
+
+    await expect(repository.findCategoryById(source.id)).resolves.toBeUndefined();
+    await expect(repository.findTransactionById(transaction.id)).resolves.toMatchObject({
+      categoryId: target.id,
+    });
+    await expect(repository.listTransactionTags(transaction.id)).resolves.toEqual([targetTag]);
+  });
+
   it("elimina solo conti senza riferimenti finanziari", async () => {
     const unused = account("account-unused");
     const used = account("account-used");

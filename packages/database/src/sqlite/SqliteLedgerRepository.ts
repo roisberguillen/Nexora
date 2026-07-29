@@ -23,6 +23,8 @@ import {
   type TransferBundle,
   validateAccountUpdate,
   createSystemCategories,
+  isSystemCategory,
+  validateCategoryMerge,
 } from "@nexora/domain";
 
 import {
@@ -429,6 +431,8 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
+          if (isSystemCategory(category.id))
+            throw new DomainError("invalid_category", "System categories are protected.");
           if ((await this.findCategoryByIdInternal(category.id)) === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
           const record = categoryToRecord(category);
@@ -464,6 +468,8 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
+          if (isSystemCategory(id))
+            throw new DomainError("invalid_category", "System categories are protected.");
           if ((await this.findCategoryByIdInternal(id)) === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
           const references = await this.database.query<{ readonly found: number }>(
@@ -488,6 +494,66 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public mergeCategory(sourceId: string, targetId: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const source = await this.findCategoryByIdInternal(sourceId);
+          const target = await this.findCategoryByIdInternal(targetId);
+          if (source === undefined || target === undefined)
+            throw new DomainError("missing_reference", "Category does not exist.");
+          validateCategoryMerge(source, target);
+          const incompatible = await this.database.query<{ readonly found: number }>(
+            `SELECT 1 AS found FROM transactions WHERE category_id = ? AND kind NOT IN ('income', 'expense')
+             UNION ALL SELECT 1 FROM transactions JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id
+               WHERE transaction_splits.category_id = ? AND transactions.kind NOT IN ('income', 'expense')
+             LIMIT 1`,
+            [sourceId, sourceId],
+          );
+          if (incompatible.length > 0)
+            throw new DomainError(
+              "invalid_category",
+              "Target category is not compatible with references.",
+            );
+          const kinds = await this.database.query<{ readonly kind: "income" | "expense" }>(
+            `SELECT kind FROM transactions WHERE category_id = ?
+             UNION SELECT transactions.kind FROM transactions JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id
+               WHERE transaction_splits.category_id = ?
+             UNION SELECT 'expense' FROM budgets WHERE category_id = ?
+             UNION SELECT kind FROM recurring_rules WHERE category_id = ?`,
+            [sourceId, sourceId, sourceId, sourceId],
+          );
+          if (kinds.some(({ kind }) => !target.accepts(kind)))
+            throw new DomainError(
+              "invalid_category",
+              "Target category is not compatible with references.",
+            );
+          await this.database.run("UPDATE transactions SET category_id = ? WHERE category_id = ?", [
+            targetId,
+            sourceId,
+          ]);
+          await this.database.run(
+            "UPDATE transaction_splits SET category_id = ? WHERE category_id = ?",
+            [targetId, sourceId],
+          );
+          await this.database.run("UPDATE budgets SET category_id = ? WHERE category_id = ?", [
+            targetId,
+            sourceId,
+          ]);
+          await this.database.run(
+            "UPDATE recurring_rules SET category_id = ? WHERE category_id = ?",
+            [targetId, sourceId],
+          );
+          await this.database.run("UPDATE categories SET parent_id = ? WHERE parent_id = ?", [
+            targetId,
+            sourceId,
+          ]);
+          await this.database.run("DELETE FROM categories WHERE id = ?", [sourceId]);
+        }),
+      ),
+    );
+  }
+
   public deleteUnusedTag(id: string): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -507,6 +573,49 @@ export class SqliteLedgerRepository implements LedgerRepository {
               "invalid_transaction",
               "A referenced tag must be archived or removed globally.",
             );
+          await this.database.run("DELETE FROM tags WHERE id = ?", [id]);
+        }),
+      ),
+    );
+  }
+
+  public mergeTag(sourceId: string, targetId: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if (sourceId === targetId)
+            throw new DomainError("invalid_transaction", "A tag cannot be merged into itself.");
+          const tags = await this.database.query<{
+            readonly id: string;
+            readonly is_archived: number;
+          }>("SELECT id, is_archived FROM tags WHERE id IN (?, ?)", [sourceId, targetId]);
+          if (tags.length !== 2) throw new DomainError("missing_reference", "Tag does not exist.");
+          if (tags.find((tag) => tag.id === targetId)?.is_archived !== 0)
+            throw new DomainError(
+              "invalid_transaction",
+              "A tag can only be merged into an active target.",
+            );
+          await this.database.run(
+            "INSERT OR IGNORE INTO transaction_tags (transaction_id, tag_id) SELECT transaction_id, ? FROM transaction_tags WHERE tag_id = ?",
+            [targetId, sourceId],
+          );
+          await this.database.run("DELETE FROM transaction_tags WHERE tag_id = ?", [sourceId]);
+          await this.database.run("DELETE FROM tags WHERE id = ?", [sourceId]);
+        }),
+      ),
+    );
+  }
+
+  public removeTagGlobally(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM tags WHERE id = ?",
+            [id],
+          );
+          if (found.length === 0) throw new DomainError("missing_reference", "Tag does not exist.");
+          await this.database.run("DELETE FROM transaction_tags WHERE tag_id = ?", [id]);
           await this.database.run("DELETE FROM tags WHERE id = ?", [id]);
         }),
       ),

@@ -312,6 +312,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.deleteUnusedCategory(id);
     });
+  const mergeCategory = (sourceId: string, targetId: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.mergeCategory(sourceId, targetId);
+    });
 
   const createTag = (input: TagInput): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -327,6 +331,14 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
   const deleteUnusedTag = (id: string): Promise<void> =>
     mutateLedger(async (ledger) => {
       await ledger.repository.deleteUnusedTag(id);
+    });
+  const mergeTag = (sourceId: string, targetId: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.mergeTag(sourceId, targetId);
+    });
+  const removeTagGlobally = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.removeTagGlobally(id);
     });
 
   const createManualMovement = async (
@@ -378,6 +390,20 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.deleteUnusedAccount(id);
     });
+  const emptyAccount = async (accountId: string, pin?: string): Promise<void> => {
+    if (appLockConfig && !(await verifyAppLock(pin ?? "", appLockConfig)))
+      throw new Error("PIN o passphrase non corretti.");
+    await mutateLedger(async (ledger) => {
+      const accounts = await ledger.repository.listAccounts();
+      if (accounts.some((account) => account.parentAccountId === accountId && !account.isArchived))
+        throw new Error("Archivia prima tutti i sottoconti attivi.");
+      const transactionIds = (await ledger.repository.listTransactions())
+        .filter((transaction) => transaction.accountId === accountId)
+        .map((transaction) => transaction.id);
+      if (transactionIds.length === 0) return;
+      await ledger.repository.trashTransactions(transactionIds);
+    });
+  };
   const previewResetFinancialData = () =>
     ledgerState.status === "ready"
       ? previewFinancialReset(ledgerState.ledger)
@@ -531,9 +557,27 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
           {ledgerState.status === "ready" ? (
             route === "accounts" ? (
               <AccountsPage
+                activityByAccount={Object.fromEntries(
+                  ledgerState.rawAccounts.map((account) => {
+                    const transactions = ledgerState.rawTransactions.filter(
+                      (transaction) => transaction.accountId === account.id,
+                    );
+                    return [
+                      account.id,
+                      {
+                        transactions: transactions.length,
+                        transfers: transactions.filter(
+                          (transaction) => transaction.kind === "transfer",
+                        ).length,
+                      },
+                    ];
+                  }),
+                )}
                 model={ledgerState.accounts}
                 onCreate={createAccount}
                 onDeleteUnused={deleteUnusedAccount}
+                onEmpty={emptyAccount}
+                requiresEmptyPin={appLockConfig !== undefined}
                 onSetArchived={setAccountArchived}
                 onUpdate={updateAccount}
               />
@@ -555,6 +599,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 categories={ledgerState.categories}
                 onCreate={createCategory}
                 onDeleteUnused={deleteUnusedCategory}
+                onMerge={mergeCategory}
                 onUpdate={updateCategory}
               />
             ) : route === "tags" ? (
@@ -562,6 +607,8 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
                 tags={ledgerState.tags}
                 onCreate={createTag}
                 onDeleteUnused={deleteUnusedTag}
+                onMerge={mergeTag}
+                onRemoveGlobally={removeTagGlobally}
                 onUpdate={updateTag}
               />
             ) : route === "imports" ? (

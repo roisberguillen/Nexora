@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Completata la gestione dati di conti, categorie e tag: `Svuota conto` sposta atomicamente i
+  movimenti nel cestino dopo frase di conferma e PIN opzionale; le categorie si uniscono con
+  riassegnazione coerente di movimenti, split, budget e ricorrenze; i tag possono essere uniti
+  con deduplica o rimossi globalmente. Le categorie di sistema restano protette.
+
 - Completato il cestino dei movimenti: selezione multipla con riepilogo e conferma, rollback
   atomico su SQLite/OPFS e IndexedDB, svuotamento esplicito del cestino e ripristino per gruppo.
   La conservazione è configurabile localmente (30 giorni di default); gli elementi scaduti sono

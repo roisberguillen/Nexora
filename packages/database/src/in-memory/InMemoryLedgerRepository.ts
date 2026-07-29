@@ -1,19 +1,19 @@
 import {
   type Account,
-  type Category,
+  Category,
   DomainError,
   type LedgerRepository,
-  type Transaction,
-  type TransactionSplit,
+  Transaction,
+  TransactionSplit,
   type Transfer,
   type TransferBundle,
   type Tag,
   type ImportBatch,
   ImportRow,
   type ImportTransferBundle,
-  type RecurringRule,
+  RecurringRule,
   type AllocationPlan,
-  type Budget,
+  Budget,
   type Loan,
   type InvestmentPosition,
   type MonthlyJournal,
@@ -21,6 +21,8 @@ import {
   validateImportCommit,
   validateAccountUpdate,
   createSystemCategories,
+  isSystemCategory,
+  validateCategoryMerge,
 } from "@nexora/domain";
 
 export class InMemoryLedgerRepository implements LedgerRepository {
@@ -155,12 +157,16 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async updateCategory(category: Category): Promise<void> {
     if (!this.categories.has(category.id))
       throw new DomainError("missing_reference", "Category does not exist.");
+    if (isSystemCategory(category.id))
+      throw new DomainError("invalid_category", "System categories are protected.");
     this.categories.set(category.id, category);
   }
 
   public async deleteUnusedCategory(id: string): Promise<void> {
     if (!this.categories.has(id))
       throw new DomainError("missing_reference", "Category does not exist.");
+    if (isSystemCategory(id))
+      throw new DomainError("invalid_category", "System categories are protected.");
     const isReferenced =
       [...this.categories.values()].some((category) => category.parentId === id) ||
       [...this.transactions.values()].some((transaction) => transaction.categoryId === id) ||
@@ -173,6 +179,58 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         "A referenced category must be archived or reassigned.",
       );
     this.categories.delete(id);
+  }
+
+  public async mergeCategory(sourceId: string, targetId: string): Promise<void> {
+    await this.runAtomically(async () => {
+      const source = this.categories.get(sourceId);
+      const target = this.categories.get(targetId);
+      if (source === undefined || target === undefined)
+        throw new DomainError("missing_reference", "Category does not exist.");
+      validateCategoryMerge(source, target);
+      const directTransactions = [...this.transactions.values()].filter(
+        (transaction) => transaction.categoryId === sourceId,
+      );
+      const splits = [...this.transactionSplits.values()].filter(
+        (split) => split.categoryId === sourceId,
+      );
+      const budgets = [...this.budgets.values()].filter((budget) => budget.categoryId === sourceId);
+      const rules = [...this.recurringRules.values()].filter(
+        (rule) => rule.categoryId === sourceId,
+      );
+      if (
+        directTransactions.some((transaction) => !target.accepts(transaction.kind)) ||
+        splits.some((split) => !target.accepts(this.transactions.get(split.transactionId)!.kind)) ||
+        (budgets.length > 0 && !target.accepts("expense")) ||
+        rules.some((rule) => !target.accepts(rule.kind))
+      )
+        throw new DomainError(
+          "invalid_category",
+          "Target category is not compatible with references.",
+        );
+      for (const transaction of directTransactions)
+        this.transactions.set(transaction.id, copyTransactionWithCategory(transaction, targetId));
+      for (const split of splits)
+        this.transactionSplits.set(split.id, copySplitWithCategory(split, targetId));
+      for (const budget of budgets)
+        this.budgets.set(budget.id, copyBudgetWithCategory(budget, targetId));
+      for (const rule of rules)
+        this.recurringRules.set(rule.id, copyRuleWithCategory(rule, targetId));
+      for (const category of [...this.categories.values()]) {
+        if (category.parentId === sourceId)
+          this.categories.set(
+            category.id,
+            Category.create({
+              id: category.id,
+              name: category.name,
+              kindScope: category.kindScope,
+              isArchived: category.isArchived,
+              parentId: targetId,
+            }),
+          );
+      }
+      this.categories.delete(sourceId);
+    });
   }
 
   public async saveTag(tag: Tag): Promise<void> {
@@ -349,6 +407,32 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         "A referenced tag must be archived or removed globally.",
       );
     this.tags.delete(id);
+  }
+
+  public async mergeTag(sourceId: string, targetId: string): Promise<void> {
+    await this.runAtomically(async () => {
+      if (sourceId === targetId)
+        throw new DomainError("invalid_transaction", "A tag cannot be merged into itself.");
+      if (!this.tags.has(sourceId) || !this.tags.has(targetId))
+        throw new DomainError("missing_reference", "Tag does not exist.");
+      if (this.tags.get(targetId)?.isArchived)
+        throw new DomainError(
+          "invalid_transaction",
+          "A tag can only be merged into an active target.",
+        );
+      for (const tagIds of this.transactionTags.values()) {
+        if (tagIds.delete(sourceId)) tagIds.add(targetId);
+      }
+      this.tags.delete(sourceId);
+    });
+  }
+
+  public async removeTagGlobally(id: string): Promise<void> {
+    await this.runAtomically(async () => {
+      if (!this.tags.has(id)) throw new DomainError("missing_reference", "Tag does not exist.");
+      for (const tagIds of this.transactionTags.values()) tagIds.delete(id);
+      this.tags.delete(id);
+    });
   }
   public async setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
     if (!this.transactions.has(transactionId))
@@ -850,4 +934,66 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     replace(this.investmentPositions, state.investmentPositions);
     replace(this.monthlyJournals, state.monthlyJournals);
   }
+}
+
+function copyTransactionWithCategory(transaction: Transaction, categoryId: string): Transaction {
+  return Transaction.create({
+    id: transaction.id,
+    kind: transaction.kind,
+    status: transaction.status,
+    accountId: transaction.accountId,
+    amount: transaction.amount,
+    bookedDate: transaction.bookedDate,
+    source: transaction.source,
+    categoryId,
+    ...(transaction.valueDate === undefined ? {} : { valueDate: transaction.valueDate }),
+    ...(transaction.payee === undefined ? {} : { payee: transaction.payee }),
+    ...(transaction.description === undefined ? {} : { description: transaction.description }),
+    ...(transaction.note === undefined ? {} : { note: transaction.note }),
+    ...(transaction.importBatchId === undefined
+      ? {}
+      : { importBatchId: transaction.importBatchId }),
+    ...(transaction.sourceFingerprint === undefined
+      ? {}
+      : { sourceFingerprint: transaction.sourceFingerprint }),
+  });
+}
+
+function copySplitWithCategory(split: TransactionSplit, categoryId: string): TransactionSplit {
+  return TransactionSplit.create({
+    id: split.id,
+    transactionId: split.transactionId,
+    categoryId,
+    amount: split.amount,
+    ...(split.note === undefined ? {} : { note: split.note }),
+  });
+}
+
+function copyBudgetWithCategory(budget: Budget, categoryId: string): Budget {
+  return Budget.create({
+    id: budget.id,
+    period: budget.period,
+    amount: budget.amount,
+    categoryId,
+    alertAt80: budget.alertAt80,
+    alertAt100: budget.alertAt100,
+  });
+}
+
+function copyRuleWithCategory(rule: RecurringRule, categoryId: string): RecurringRule {
+  return RecurringRule.create({
+    id: rule.id,
+    name: rule.name,
+    kind: rule.kind,
+    accountId: rule.accountId,
+    amount: rule.amount,
+    categoryId,
+    frequency: rule.frequency,
+    interval: rule.interval,
+    nominalDay: rule.nominalDay,
+    weekendPolicy: rule.weekendPolicy,
+    nextExpectedDate: rule.nextExpectedDate,
+    enabled: rule.enabled,
+    ...(rule.payee === undefined ? {} : { payee: rule.payee }),
+  });
 }

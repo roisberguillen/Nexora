@@ -22,6 +22,8 @@ import {
   type Transfer,
   type TransferBundle,
   validateAccountUpdate,
+  validateCategoryMerge,
+  isSystemCategory,
   createSystemCategories,
 } from "@nexora/domain";
 
@@ -362,6 +364,8 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(["categories"], "readwrite", async (transaction) => {
+          if (isSystemCategory(category.id))
+            throw new DomainError("invalid_category", "System categories are protected.");
           const categories = transaction.objectStore("categories");
           if ((await this.findCategoryInStore(categories, category.id)) === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
@@ -390,6 +394,8 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           ["categories", "transactions", "transaction_splits", "budgets", "recurring_rules"],
           "readwrite",
           async (transaction) => {
+            if (isSystemCategory(id))
+              throw new DomainError("invalid_category", "System categories are protected.");
             const categories = transaction.objectStore("categories");
             if ((await this.findCategoryInStore(categories, id)) === undefined)
               throw new DomainError("missing_reference", "Category does not exist.");
@@ -423,6 +429,95 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     );
   }
 
+  public mergeCategory(sourceId: string, targetId: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["categories", "transactions", "transaction_splits", "budgets", "recurring_rules"],
+          "readwrite",
+          async (transaction) => {
+            const categories = transaction.objectStore("categories");
+            const [sourceRaw, targetRaw, transactionRows, splitRows, budgetRows, ruleRows] =
+              await Promise.all([
+                requestResult<unknown>(categories.get(sourceId)),
+                requestResult<unknown>(categories.get(targetId)),
+                requestResult<unknown[]>(transaction.objectStore("transactions").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("transaction_splits").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("budgets").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("recurring_rules").getAll()),
+              ]);
+            if (sourceRaw === undefined || targetRaw === undefined)
+              throw new DomainError("missing_reference", "Category does not exist.");
+            const source = categoryFromRecord(sourceRaw as CategoryRecord);
+            const target = categoryFromRecord(targetRaw as CategoryRecord);
+            validateCategoryMerge(source, target);
+            const transactions = transactionRows as readonly TransactionRecord[];
+            const direct = transactions.filter((row) => row.category_id === sourceId);
+            const splits = (splitRows as readonly TransactionSplitRecord[]).filter(
+              (row) => row.category_id === sourceId,
+            );
+            const transactionById = new Map(transactions.map((row) => [String(row.id), row]));
+            const incompatible =
+              direct.some((row) => row.kind !== "income" && row.kind !== "expense") ||
+              splits.some((split) => {
+                const owner = transactionById.get(String(split.transaction_id));
+                return owner === undefined || (owner.kind !== "income" && owner.kind !== "expense");
+              });
+            if (incompatible)
+              throw new DomainError(
+                "invalid_category",
+                "Target category is not compatible with references.",
+              );
+            const referencedKinds = [
+              ...direct.map((row) => row.kind as "income" | "expense"),
+              ...splits.map(
+                (split) =>
+                  transactionById.get(String(split.transaction_id))!.kind as "income" | "expense",
+              ),
+              ...(budgetRows as readonly BudgetRecord[])
+                .filter((row) => row.category_id === sourceId)
+                .map(() => "expense" as const),
+              ...(ruleRows as readonly RecurringRuleRecord[])
+                .filter((row) => row.category_id === sourceId)
+                .map((row) => row.kind),
+            ];
+            if (referencedKinds.some((kind) => !target.accepts(kind)))
+              throw new DomainError(
+                "invalid_category",
+                "Target category is not compatible with references.",
+              );
+            for (const row of direct)
+              await requestResult(
+                transaction.objectStore("transactions").put({ ...row, category_id: targetId }),
+              );
+            for (const row of splits)
+              await requestResult(
+                transaction
+                  .objectStore("transaction_splits")
+                  .put({ ...row, category_id: targetId }),
+              );
+            for (const row of budgetRows as readonly BudgetRecord[])
+              if (row.category_id === sourceId)
+                await requestResult(
+                  transaction.objectStore("budgets").put({ ...row, category_id: targetId }),
+                );
+            for (const row of ruleRows as readonly RecurringRuleRecord[])
+              if (row.category_id === sourceId)
+                await requestResult(
+                  transaction.objectStore("recurring_rules").put({ ...row, category_id: targetId }),
+                );
+            for (const raw of await requestResult<unknown[]>(categories.getAll())) {
+              const row = raw as CategoryRecord;
+              if (row.parent_id === sourceId)
+                await requestResult(categories.put({ ...row, parent_id: targetId }));
+            }
+            await requestResult(categories.delete(sourceId));
+          },
+        ),
+      ),
+    );
+  }
+
   public deleteUnusedTag(id: string): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -438,6 +533,58 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
               "invalid_transaction",
               "A referenced tag must be archived or removed globally.",
             );
+          await requestResult(tags.delete(id));
+        }),
+      ),
+    );
+  }
+
+  public mergeTag(sourceId: string, targetId: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags", "transaction_tags"], "readwrite", async (transaction) => {
+          if (sourceId === targetId)
+            throw new DomainError("invalid_transaction", "A tag cannot be merged into itself.");
+          const tags = transaction.objectStore("tags");
+          const [source, target] = await Promise.all([
+            requestResult<unknown>(tags.get(sourceId)),
+            requestResult<unknown>(tags.get(targetId)),
+          ]);
+          if (source === undefined || target === undefined)
+            throw new DomainError("missing_reference", "Tag does not exist.");
+          if ((target as TagRecord).is_archived === 1)
+            throw new DomainError(
+              "invalid_transaction",
+              "A tag can only be merged into an active target.",
+            );
+          const links = transaction.objectStore("transaction_tags");
+          for (const raw of await requestResult<unknown[]>(links.getAll())) {
+            const link = raw as { readonly transaction_id: string; readonly tag_id: string };
+            if (link.tag_id === sourceId) {
+              await requestResult(
+                links.put({ transaction_id: link.transaction_id, tag_id: targetId }),
+              );
+              await requestResult(links.delete([link.transaction_id, sourceId]));
+            }
+          }
+          await requestResult(tags.delete(sourceId));
+        }),
+      ),
+    );
+  }
+
+  public removeTagGlobally(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags", "transaction_tags"], "readwrite", async (transaction) => {
+          const tags = transaction.objectStore("tags");
+          if ((await requestResult<unknown>(tags.get(id))) === undefined)
+            throw new DomainError("missing_reference", "Tag does not exist.");
+          const links = transaction.objectStore("transaction_tags");
+          for (const raw of await requestResult<unknown[]>(links.getAll())) {
+            const link = raw as { readonly transaction_id: string; readonly tag_id: string };
+            if (link.tag_id === id) await requestResult(links.delete([link.transaction_id, id]));
+          }
           await requestResult(tags.delete(id));
         }),
       ),

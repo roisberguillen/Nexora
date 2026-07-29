@@ -36,6 +36,7 @@ export interface LedgerRepository {
   saveCategory(category: Category): Promise<void>;
   updateCategory(category: Category): Promise<void>;
   deleteUnusedCategory(id: string): Promise<void>;
+  mergeCategory(sourceId: string, targetId: string): Promise<void>;
   saveTag(tag: Tag): Promise<void>;
   saveRecurringRule(rule: RecurringRule): Promise<void>;
   updateRecurringRule(rule: RecurringRule): Promise<void>;
@@ -65,6 +66,8 @@ export interface LedgerRepository {
   undoImportBatch(batchId: string): Promise<ImportBatch>;
   updateTag(tag: Tag): Promise<void>;
   deleteUnusedTag(id: string): Promise<void>;
+  mergeTag(sourceId: string, targetId: string): Promise<void>;
+  removeTagGlobally(id: string): Promise<void>;
   setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;
   saveTransactionWithSplits(

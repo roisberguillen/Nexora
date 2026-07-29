@@ -7,11 +7,13 @@ export function CategoriesPage({
   categories,
   onCreate,
   onDeleteUnused,
+  onMerge,
   onUpdate,
 }: {
   readonly categories: readonly Category[];
   readonly onCreate: (input: CategoryInput) => Promise<void>;
   readonly onDeleteUnused: (id: string) => Promise<void>;
+  readonly onMerge: (sourceId: string, targetId: string) => Promise<void>;
   readonly onUpdate: (
     id: string,
     input: CategoryInput & { readonly isArchived: boolean },
@@ -19,6 +21,7 @@ export function CategoriesPage({
 }) {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Category | null>(null);
+  const [mergeTargetId, setMergeTargetId] = useState("");
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -43,6 +46,17 @@ export function CategoriesPage({
       if (editing?.id === id) setEditing(null);
     } catch {
       setError("La categoria è usata: archiviala o riassegna prima i riferimenti.");
+    }
+  };
+  const merge = async () => {
+    if (editing === null || mergeTargetId === "") return;
+    try {
+      setError(null);
+      await onMerge(editing.id, mergeTargetId);
+      setEditing(null);
+      setMergeTargetId("");
+    } catch {
+      setError("Impossibile unire: scegli una categoria attiva e compatibile.");
     }
   };
   return (
@@ -87,6 +101,7 @@ export function CategoriesPage({
                     <td data-label="Azioni">
                       <button
                         className="text-action"
+                        disabled={isSystemCategory(category.id)}
                         onClick={() => setEditing(category)}
                         type="button"
                       >
@@ -94,6 +109,7 @@ export function CategoriesPage({
                       </button>
                       <button
                         className="text-action"
+                        disabled={isSystemCategory(category.id)}
                         onClick={() => void remove(category.id)}
                         type="button"
                       >
@@ -136,19 +152,51 @@ export function CategoriesPage({
               </select>
             </label>
             {editing === null ? null : (
-              <button
-                className="text-action"
-                onClick={() =>
-                  void onUpdate(editing.id, {
-                    name: editing.name,
-                    kindScope: editing.kindScope,
-                    isArchived: !editing.isArchived,
-                  })
-                }
-                type="button"
-              >
-                {editing.isArchived ? "Riattiva" : "Archivia"}
-              </button>
+              <>
+                <button
+                  className="text-action"
+                  onClick={() =>
+                    void onUpdate(editing.id, {
+                      name: editing.name,
+                      kindScope: editing.kindScope,
+                      isArchived: !editing.isArchived,
+                    })
+                  }
+                  type="button"
+                >
+                  {editing.isArchived ? "Riattiva" : "Archivia"}
+                </button>
+                <label>
+                  Unisci in
+                  <select
+                    onChange={(event) => setMergeTargetId(event.currentTarget.value)}
+                    value={mergeTargetId}
+                  >
+                    <option value="">Scegli categoria</option>
+                    {categories
+                      .filter(
+                        (category) =>
+                          category.id !== editing.id &&
+                          !category.isArchived &&
+                          (category.kindScope === "both" ||
+                            category.kindScope === editing.kindScope),
+                      )
+                      .map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <button
+                  className="text-action"
+                  disabled={mergeTargetId === ""}
+                  onClick={() => void merge()}
+                  type="button"
+                >
+                  Unisci e riassegna
+                </button>
+              </>
             )}
             <div className="form-actions">
               <button className="secondary-action" onClick={() => setEditing(null)} type="button">
@@ -167,4 +215,8 @@ export function CategoriesPage({
 
 function scopeLabel(scope: CategoryKindScope): string {
   return scope === "income" ? "Entrate" : scope === "expense" ? "Spese" : "Entrate e spese";
+}
+
+function isSystemCategory(id: string): boolean {
+  return id === "system-income" || id === "system-expense";
 }

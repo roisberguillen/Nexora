@@ -21,6 +21,13 @@ trasferimento. Le `ImportRow` non vengono eliminate: spostano il riferimento dal
 attiva a un identificatore storico non referenziale, così l'audit resta consultabile senza
 impedire la cancellazione fisica del movimento.
 
+`Svuota conto` non elimina il conto: richiede la frase esplicita, richiede nuovamente il PIN se
+il blocco locale è attivo e invia tutti i movimenti del conto al cestino nello stesso commit. Le
+gambe di trasferimento vengono incluse come gruppo, e un conto padre con sottoconti attivi è
+bloccato. Le unioni di categoria riassegnano riferimenti persistiti (movimenti, split, budget e
+ricorrenze); report, filtri e analisi sono proiezioni derivate e vengono rigenerati al reload del
+modello. Le categorie `Entrate` e `Spese` di sistema sono protette da modifica distruttiva.
+
 ## Matrice delle dipendenze
 
 | Entità | Riferimenti in ingresso | Eliminabile se inutilizzata | Eliminabile se usata | Archiviabile | Riassegnabile | Strategia |

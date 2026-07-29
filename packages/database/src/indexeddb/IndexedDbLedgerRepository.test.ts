@@ -94,6 +94,45 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("unisce categorie e tag senza lasciare riferimenti orfani", async () => {
+    const main = account("account-management");
+    const source = Category.create({
+      id: "category-source",
+      name: "Vecchia",
+      kindScope: "expense",
+    });
+    const target = Category.create({ id: "category-target", name: "Nuova", kindScope: "expense" });
+    const transaction = Transaction.create({
+      id: "transaction-management",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: source.id,
+    });
+    const sourceTag = Tag.create({ id: "tag-source", name: "Vecchio" });
+    const targetTag = Tag.create({ id: "tag-target", name: "Nuovo" });
+    await ledger.repository.saveAccount(main);
+    await ledger.repository.saveCategory(source);
+    await ledger.repository.saveCategory(target);
+    await ledger.repository.saveTransaction(transaction);
+    await ledger.repository.saveTag(sourceTag);
+    await ledger.repository.saveTag(targetTag);
+    await ledger.repository.setTransactionTags(transaction.id, [sourceTag.id, targetTag.id]);
+
+    await ledger.repository.mergeCategory(source.id, target.id);
+    await ledger.repository.mergeTag(sourceTag.id, targetTag.id);
+
+    await expect(ledger.repository.findCategoryById(source.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toMatchObject({
+      categoryId: target.id,
+    });
+    await expect(ledger.repository.listTransactionTags(transaction.id)).resolves.toEqual([
+      targetTag,
+    ]);
+  });
+
   it("elimina solo conti senza riferimenti finanziari", async () => {
     const unused = account("account-unused");
     const used = account("account-used");

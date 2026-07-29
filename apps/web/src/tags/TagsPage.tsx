@@ -7,11 +7,15 @@ export function TagsPage({
   tags,
   onCreate,
   onDeleteUnused,
+  onMerge,
+  onRemoveGlobally,
   onUpdate,
 }: {
   readonly tags: readonly Tag[];
   readonly onCreate: (input: TagInput) => Promise<void>;
   readonly onDeleteUnused: (id: string) => Promise<void>;
+  readonly onMerge: (sourceId: string, targetId: string) => Promise<void>;
+  readonly onRemoveGlobally: (id: string) => Promise<void>;
   readonly onUpdate: (
     id: string,
     input: TagInput & { readonly isArchived: boolean },
@@ -19,6 +23,7 @@ export function TagsPage({
 }) {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Tag | null>(null);
+  const [mergeTargetId, setMergeTargetId] = useState("");
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,6 +45,17 @@ export function TagsPage({
       if (editing?.id === id) setEditing(null);
     } catch {
       setError("Il tag è usato: archivialo o rimuovilo prima dai movimenti.");
+    }
+  };
+  const merge = async () => {
+    if (editing === null || mergeTargetId === "") return;
+    try {
+      setError(null);
+      await onMerge(editing.id, mergeTargetId);
+      setEditing(null);
+      setMergeTargetId("");
+    } catch {
+      setError("Impossibile unire il tag scelto.");
     }
   };
 
@@ -125,18 +141,51 @@ export function TagsPage({
               />
             </label>
             {editing === null ? null : (
-              <button
-                className="text-action"
-                onClick={() =>
-                  void onUpdate(editing.id, {
-                    name: editing.name,
-                    isArchived: !editing.isArchived,
-                  })
-                }
-                type="button"
-              >
-                {editing.isArchived ? "Riattiva" : "Archivia"}
-              </button>
+              <>
+                <button
+                  className="text-action"
+                  onClick={() =>
+                    void onUpdate(editing.id, {
+                      name: editing.name,
+                      isArchived: !editing.isArchived,
+                    })
+                  }
+                  type="button"
+                >
+                  {editing.isArchived ? "Riattiva" : "Archivia"}
+                </button>
+                <label>
+                  Unisci in
+                  <select
+                    onChange={(event) => setMergeTargetId(event.currentTarget.value)}
+                    value={mergeTargetId}
+                  >
+                    <option value="">Scegli tag</option>
+                    {tags
+                      .filter((tag) => tag.id !== editing.id && !tag.isArchived)
+                      .map((tag) => (
+                        <option key={tag.id} value={tag.id}>
+                          {tag.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <button
+                  className="text-action"
+                  disabled={mergeTargetId === ""}
+                  onClick={() => void merge()}
+                  type="button"
+                >
+                  Unisci e deduplica
+                </button>
+                <button
+                  className="text-action"
+                  onClick={() => void onRemoveGlobally(editing.id)}
+                  type="button"
+                >
+                  Rimuovi da tutti i movimenti
+                </button>
+              </>
             )}
             <div className="form-actions">
               <button className="secondary-action" onClick={() => setEditing(null)} type="button">
