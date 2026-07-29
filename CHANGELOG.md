@@ -13,6 +13,7 @@
   l’errore originale durante l’avvio o nei test browser.
 - Il recovery guidato può verificare un backup cifrato selezionato senza aprire o
   modificare l’archivio locale attivo.
+- Resa raggiungibile la pagina Impostazioni dalla navigazione desktop.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

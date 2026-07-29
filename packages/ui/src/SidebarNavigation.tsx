@@ -43,7 +43,7 @@ const navigationItems: readonly NavigationItem[] = [
   { label: "Backup", icon: "settings", available: true, route: "backup" },
   { label: "Diario", icon: "budget", available: true, route: "journal" },
   { label: "Analisi", icon: "overview", available: true, route: "analytics" },
-  { label: "Impostazioni", icon: "settings", available: false, route: "overview" },
+  { label: "Impostazioni", icon: "settings", available: true, route: "settings" },
 ];
 
 interface SidebarNavigationProps {
