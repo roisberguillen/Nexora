@@ -89,6 +89,10 @@ export {
   BANK_IMPORTER_TYPES_SCHEMA_VERSION,
   bankImporterTypesMigration,
 } from "./migrations/0010-bank-importer-types";
+export {
+  TRANSACTION_TRASH_SCHEMA_VERSION,
+  transactionTrashMigration,
+} from "./migrations/0012-transaction-trash";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

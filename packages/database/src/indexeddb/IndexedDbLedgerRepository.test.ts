@@ -131,6 +131,7 @@ describe("IndexedDbLedgerRepository", () => {
       "monthly_journals",
       "recurring_rules",
       "tags",
+      "transaction_trash",
       "transaction_splits",
       "transaction_tags",
       "transactions",
@@ -399,7 +400,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(11);
+    expect(ledger.schemaVersion).toBe(12);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );

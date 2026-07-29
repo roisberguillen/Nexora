@@ -108,7 +108,7 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 11,
+      toVersion: 12,
       appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     });
     expect(migrationRows(sqlite)).toEqual([
@@ -142,7 +142,7 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 11,
-      toVersion: 11,
+      toVersion: 12,
       appliedMigrations: [],
     });
     expect(migrationRows(sqlite)).toHaveLength(11);
@@ -167,7 +167,7 @@ describe("MigrationRunner", () => {
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 11,
+      toVersion: 12,
       appliedMigrations: [11],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
