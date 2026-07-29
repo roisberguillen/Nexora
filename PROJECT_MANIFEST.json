@@ -984,8 +984,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 66476,
-      "sha256": "20a59373416c8482a768245b07edb8ad59ee5f828ee1fab68f89f2135a242199"
+      "size": 71579,
+      "sha256": "846a8a314d80a09fb59f1d8c9ea10980ee36406bc0290b015cc2ad70b2d84d4e"
     },
     {
       "path": "packages/database/tsconfig.json",

@@ -41,8 +41,10 @@ import {
   transactionSplitFromRecord,
   transactionSplitToRecord,
   type TransactionSplitRecord,
+  tagToRecord,
 } from "../records/LedgerRecords";
 import { PersistenceError } from "./PersistenceError";
+import type { ValidatedPortableLedgerSnapshot } from "../backup/PortableLedgerSnapshot";
 import type { SqliteDatabase } from "./SqliteDatabase";
 
 type EntityTable =
@@ -110,6 +112,102 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.enqueue(() =>
       this.performDatabaseOperation(() => this.withWriteTransaction(operation)),
     );
+  }
+
+  public replacePortableSnapshot(snapshot: ValidatedPortableLedgerSnapshot): Promise<void> {
+    return this.runAtomically(async () => {
+      for (const table of [
+        "transaction_tags",
+        "transaction_splits",
+        "transfers",
+        "import_rows",
+        "import_batches",
+        "recurring_rules",
+        "allocation_plans",
+        "budgets",
+        "loans",
+        "investment_positions",
+        "monthly_journals",
+        "transactions",
+        "tags",
+        "accounts",
+        "categories",
+      ])
+        await this.database.execute(`DELETE FROM ${table};`);
+      for (const category of snapshot.categories) {
+        const record = categoryToRecord(category);
+        await this.database.run(
+          "INSERT INTO categories (id, name, kind_scope, parent_id, is_archived) VALUES (?, ?, ?, ?, ?)",
+          [record.id, record.name, record.kind_scope, record.parent_id, record.is_archived],
+        );
+      }
+      for (const account of snapshot.accounts) {
+        const record = accountToRecord(account);
+        await this.database.run(
+          "INSERT INTO accounts (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [
+            record.id,
+            record.name,
+            record.type,
+            record.institution,
+            record.currency,
+            record.parent_account_id,
+            record.opening_balance_minor,
+            record.is_archived,
+          ],
+        );
+      }
+      for (const tag of snapshot.tags) {
+        const record = tagToRecord(tag);
+        await this.database.run("INSERT INTO tags (id, name, is_archived) VALUES (?, ?, ?)", [
+          record.id,
+          record.name,
+          record.is_archived,
+        ]);
+      }
+      for (const batch of snapshot.importBatches) await this.insertPortableImportBatch(batch);
+      for (const row of snapshot.importRows) await this.insertPortableImportRow(row);
+      for (const transaction of snapshot.transactions) await this.insertTransaction(transaction);
+      for (const split of snapshot.splits) {
+        const record = transactionSplitToRecord(split);
+        await this.database.run(
+          "INSERT INTO transaction_splits (id, transaction_id, category_id, amount_minor, currency, note) VALUES (?, ?, ?, ?, ?, ?)",
+          [
+            record.id,
+            record.transaction_id,
+            record.category_id,
+            record.amount_minor,
+            record.currency,
+            record.note,
+          ],
+        );
+      }
+      for (const transfer of snapshot.transfers) {
+        const record = transferToRecord(transfer);
+        await this.database.run(
+          "INSERT INTO transfers (id, debit_transaction_id, credit_transaction_id, fee_transaction_id) VALUES (?, ?, ?, ?)",
+          [
+            record.id,
+            record.debit_transaction_id,
+            record.credit_transaction_id,
+            record.fee_transaction_id,
+          ],
+        );
+      }
+      for (const [transactionId, tagIds] of snapshot.transactionTagIds)
+        for (const tagId of tagIds)
+          await this.database.run(
+            "INSERT INTO transaction_tags (transaction_id, tag_id) VALUES (?, ?)",
+            [transactionId, tagId],
+          );
+      for (const rule of snapshot.recurringRules) await this.insertRecurringRule(rule);
+      for (const plan of snapshot.allocationPlans) await this.insertAllocationPlan(plan);
+      for (const budget of snapshot.budgets) await this.insertBudget(budget);
+      for (const loan of snapshot.loans) await this.insertLoan(loan);
+      for (const position of snapshot.investmentPositions)
+        await this.insertInvestmentPosition(position);
+      for (const journal of snapshot.monthlyJournals) await this.insertMonthlyJournal(journal);
+    });
   }
 
   public saveAccount(account: Account): Promise<void> {
@@ -1337,6 +1435,39 @@ export class SqliteLedgerRepository implements LedgerRepository {
         record.amount_minor,
         record.currency,
         record.enabled,
+      ],
+    );
+  }
+  private async insertPortableImportBatch(batch: ImportBatch): Promise<void> {
+    await this.database.run(
+      "INSERT INTO import_batches (id, importer_type, importer_type_v2, source_filename, source_sha256, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        batch.id,
+        batch.importerType,
+        batch.importerType,
+        batch.sourceFilename,
+        batch.sourceSha256,
+        batch.status,
+        new Date().toISOString(),
+        batch.rowsTotal,
+        batch.rowsImported,
+        batch.rowsSkipped,
+        batch.rowsFailed,
+      ],
+    );
+  }
+  private async insertPortableImportRow(row: ImportRow): Promise<void> {
+    await this.database.run(
+      "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        row.id,
+        row.batchId,
+        row.rowNumber,
+        row.rawJson,
+        row.normalizedJson ?? null,
+        row.status,
+        row.errorCode ?? null,
+        row.createdTransactionId ?? null,
       ],
     );
   }
