@@ -38,6 +38,16 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   private readonly investmentPositions = new Map<string, InvestmentPosition>();
   private readonly monthlyJournals = new Map<string, MonthlyJournal>();
 
+  public async runAtomically<Result>(operation: () => Promise<Result>): Promise<Result> {
+    const snapshot = this.captureState();
+    try {
+      return await operation();
+    } catch (cause) {
+      this.restoreState(snapshot);
+      throw cause;
+    }
+  }
+
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
 
@@ -575,5 +585,46 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         transfer.creditTransactionId === transactionId ||
         transfer.feeTransactionId === transactionId,
     );
+  }
+
+  private captureState() {
+    return {
+      accounts: new Map(this.accounts),
+      categories: new Map(this.categories),
+      transactions: new Map(this.transactions),
+      transfers: new Map(this.transfers),
+      transactionSplits: new Map(this.transactionSplits),
+      tags: new Map(this.tags),
+      transactionTags: new Map([...this.transactionTags].map(([id, tags]) => [id, new Set(tags)])),
+      importBatches: new Map(this.importBatches),
+      importRows: new Map(this.importRows),
+      recurringRules: new Map(this.recurringRules),
+      allocationPlans: new Map(this.allocationPlans),
+      budgets: new Map(this.budgets),
+      loans: new Map(this.loans),
+      investmentPositions: new Map(this.investmentPositions),
+      monthlyJournals: new Map(this.monthlyJournals),
+    };
+  }
+  private restoreState(state: ReturnType<InMemoryLedgerRepository["captureState"]>): void {
+    const replace = <Value>(target: Map<string, Value>, source: Map<string, Value>) => {
+      target.clear();
+      for (const [id, value] of source) target.set(id, value);
+    };
+    replace(this.accounts, state.accounts);
+    replace(this.categories, state.categories);
+    replace(this.transactions, state.transactions);
+    replace(this.transfers, state.transfers);
+    replace(this.transactionSplits, state.transactionSplits);
+    replace(this.tags, state.tags);
+    replace(this.transactionTags, state.transactionTags);
+    replace(this.importBatches, state.importBatches);
+    replace(this.importRows, state.importRows);
+    replace(this.recurringRules, state.recurringRules);
+    replace(this.allocationPlans, state.allocationPlans);
+    replace(this.budgets, state.budgets);
+    replace(this.loans, state.loans);
+    replace(this.investmentPositions, state.investmentPositions);
+    replace(this.monthlyJournals, state.monthlyJournals);
   }
 }

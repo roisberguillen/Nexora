@@ -804,13 +804,13 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
-      "size": 15677,
-      "sha256": "a2efc10cdef99b2f88449ce18bc241e7a50822969cb2a327cf84c6a50980c714"
+      "size": 1021,
+      "sha256": "de284e4506d700d68a73f57060a3ab2b7bf92184e919cceadbba112ebfeab1ee"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 24034,
-      "sha256": "148403de9a9facb159b136e26e8ddaf108d492320c1922dafe570c2a2da49c1a"
+      "size": 26142,
+      "sha256": "a74624d966d42b6d2b5935f26390ed6b0b45a626753abdc49b33d388d14c64aa"
     },
     {
       "path": "packages/database/src/index.ts",
