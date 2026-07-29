@@ -759,8 +759,8 @@
     },
     {
       "path": "packages/database/src/backup/EncryptedSqliteBackup.test.ts",
-      "size": 2444,
-      "sha256": "5427f95b387fe0018a27ecc090027311de97f0e46a4b591d20681011822c0328"
+      "size": 3213,
+      "sha256": "c92f6aca5f95345fa56b2c1425f16fd113fa48c1fddd91b517381c5eacb517dd"
     },
     {
       "path": "packages/database/src/backup/EncryptedSqliteBackup.ts",
