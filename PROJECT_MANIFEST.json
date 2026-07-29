@@ -629,8 +629,8 @@
     },
     {
       "path": "apps/web/vite.config.ts",
-      "size": 1862,
-      "sha256": "969ee86962b6fc7d0a942b4104253c8e54454e39581b8ab18e28ebaa5c6c3333"
+      "size": 1894,
+      "sha256": "fb376c6099dada20a4ab6d110c976d89c9bfc2837dd4dfe270bee2162101cfe2"
     },
     {
       "path": "CHANGELOG.md",
@@ -826,6 +826,11 @@
       "path": "docs/security/THREAT_MODEL.md",
       "size": 966,
       "sha256": "166faea11dc26e72c7d6279ad8f736fa44e1a3ee7ca092cec7ac164bbe112b16"
+    },
+    {
+      "path": "docs/startup/PWA_ORIGIN.md",
+      "size": 652,
+      "sha256": "90cb6c86ced0bf34fd2e5243a67abc94519b5264189f408129af402c90596326"
     },
     {
       "path": "docs/startup/STARTUP_BASELINE_AUDIT.md",
