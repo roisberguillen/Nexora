@@ -689,8 +689,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 14935,
-      "sha256": "2c904b0121cd1ea5db6b518e1809a1b1fdbe98192c0dfb602dff23c8272f50fd"
+      "size": 15081,
+      "sha256": "77936369d4ca78c4a871033e6fe97f31c1c96ba68f201b0d8af9c711d611b206"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/reports/known-limitations.md",
-      "size": 2309,
-      "sha256": "c81650ce3d2084684c22ce753e1292ec9b1b2742376885f1dbaffdb309e987b5"
+      "size": 2352,
+      "sha256": "5e894a3dc2b1e80808549cccb3310920b3b643128623f94e68285461db9a9ff6"
     },
     {
       "path": "docs/reports/startup-baseline.md",
@@ -889,8 +889,8 @@
     },
     {
       "path": "docs/reports/test-matrix.md",
-      "size": 1179,
-      "sha256": "5a447e1540ad34840ed1a1f40afae910505d068b2c1d5c40887bf1a6e0406316"
+      "size": 1182,
+      "sha256": "36d8997a062a0a3dd6595d7df37c4dbd555ee2d0b94f4c255c116501cb4641f7"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1814,8 +1814,8 @@
     },
     {
       "path": "test/e2e/startup-multitab.spec.ts",
-      "size": 724,
-      "sha256": "5e51d700c24b3f82d5ad8f9fc3650597b2f17c7810e55cdf04c56a4ba076f087"
+      "size": 721,
+      "sha256": "a0402ae1a8008808b2158b9757414ec3f2edaec482ea08d1db37fc4359d90fad"
     },
     {
       "path": "test/e2e/startup-orchestrator.spec.ts",
@@ -1824,8 +1824,8 @@
     },
     {
       "path": "test/e2e/startup-reload-resilience.spec.ts",
-      "size": 765,
-      "sha256": "16095cd41b8c461cf6b02fb0e86af725d86b747bc0af445528b0e6ce3b5d26b4"
+      "size": 769,
+      "sha256": "2e44c2027fe799fd507a40b22efbd113418ee55f23762f5e81fc4157ca56fcb5"
     },
     {
       "path": "test/e2e/tags.spec.ts",

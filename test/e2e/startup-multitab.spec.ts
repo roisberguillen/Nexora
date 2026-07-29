@@ -1,13 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-test("due schede aprono il ledger senza recovery concorrente", async ({ context }, testInfo) => {
+test("cinque schede aprono il ledger senza recovery concorrente", async ({ context }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium-1440", "Eseguito una volta sul backend reale.");
 
-  const first = await context.newPage();
-  const second = await context.newPage();
-  await Promise.all([first.goto("/"), second.goto("/")]);
+  const pages = await Promise.all(Array.from({ length: 5 }, () => context.newPage()));
+  await Promise.all(pages.map((page) => page.goto("/")));
 
-  for (const page of [first, second]) {
+  for (const page of pages) {
     await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible({
       timeout: 15_000,
     });

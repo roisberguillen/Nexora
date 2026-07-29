@@ -21,8 +21,9 @@ Data: 2026-07-30
 2. Non esiste una campagna ripetuta sui backend reali con 100.000 movimenti: il benchmark
    presente usa il repository in-memory e non misura IndexedDB/OPFS, rendering o memoria di
    Chromium.
-3. Web Locks serializza il bootstrap quando disponibile, ma mancano prove ripetute con cinque
-   schede, chiusure durante scrittura, quota insufficiente e aggiornamento Service Worker.
+3. Web Locks serializza il bootstrap quando disponibile e la prova browser copre cinque schede
+   simultanee e 50 reload. Restano da provare chiusure durante scrittura, quota insufficiente e
+   aggiornamento del Service Worker.
 4. I 34 skip E2E non sono fallimenti, ma richiedono una matrice esplicita di capacità prima
    che possano sostenere una dichiarazione di copertura totale.
 
