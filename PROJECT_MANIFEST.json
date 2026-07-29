@@ -784,13 +784,13 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
-      "size": 1109,
-      "sha256": "d8c429b0187ade164d612161acc73c3c89f4c0a6581c3661300f6c9ec5dc5404"
+      "size": 1279,
+      "sha256": "c8626da9a8f602fe034feb3c3f2aa037f0d05d3cc43fde994af69751b069ade5"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 3648,
-      "sha256": "08ba6275b5d87b7871644b5cfbc8aaaecd5b404733fddb327fc51fd1ae8ff441"
+      "size": 10341,
+      "sha256": "a429c1784e52132a080cb5dfe21237d930c8b976d5d878677aae1166080e59cb"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -814,8 +814,8 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 4078,
-      "sha256": "160be8e7c6217e8e8feb3060a0e867206eb4a7b8012c2401f7ac2a4f26f8721d"
+      "size": 4152,
+      "sha256": "60c6916ecbb8e326a4471b2fb88c3f7c074b4a8b8d907a0c3cdb06fcbde23fee"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",

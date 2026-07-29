@@ -6,6 +6,8 @@ export {
   encodePortableLedgerSnapshot,
   PORTABLE_LEDGER_SNAPSHOT_VERSION,
   type PortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
+  type ValidatedPortableLedgerSnapshot,
 } from "./backup/PortableLedgerSnapshot";
 export {
   BACKUP_FILE_EXTENSION,

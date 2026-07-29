@@ -4,6 +4,7 @@ import {
   capturePortableLedgerSnapshot,
   decodePortableLedgerSnapshot,
   encodePortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
 } from "./PortableLedgerSnapshot";
 import { InMemoryLedgerRepository } from "../in-memory/InMemoryLedgerRepository";
 
@@ -26,5 +27,8 @@ describe("portable ledger snapshot", () => {
       readonly openingBalance: { readonly amountMinor: string };
     };
     expect(account.openingBalance.amountMinor).toBe("9007199254740993");
+    expect(validatePortableLedgerSnapshot(snapshot).accounts[0]?.openingBalance.amountMinor).toBe(
+      9_007_199_254_740_993n,
+    );
   });
 });
