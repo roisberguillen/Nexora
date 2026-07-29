@@ -10,6 +10,8 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import { openPwaLedger } from "./persistence/openPwaLedger";
 import { StartupOrchestrator } from "./startup/StartupOrchestrator";
+import { StorageDiscovery } from "./startup/StorageDiscovery";
+import { selectStorage } from "./startup/StorageSelection";
 
 const rootElement = document.querySelector("#root");
 
@@ -17,13 +19,28 @@ if (!(rootElement instanceof HTMLElement)) {
   throw new Error("Nexora root element is missing");
 }
 
-const startupOrchestrator = new StartupOrchestrator({
-  openLedger: () => openPwaLedger(),
-});
-const ledgerPromise = startupOrchestrator.run().then((result) => {
+const ledgerPromise = (async () => {
+  const discovery = await new StorageDiscovery().inspect();
+  const selection = selectStorage(discovery.archives, readStoragePreferenceHint());
+  if (selection.kind === "guided-recovery") {
+    throw new Error("Nexora requires guided recovery before it can choose an archive safely.");
+  }
+  const startupOrchestrator = new StartupOrchestrator({
+    openLedger: () => openPwaLedger({ selectedStorageKind: selection.storageKind }),
+  });
+  const result = await startupOrchestrator.run();
   if (result.ledger !== undefined) return result.ledger;
   throw result.failure?.cause ?? new Error("Nexora startup did not return a ledger.");
-});
+})();
+
+function readStoragePreferenceHint(): "opfs" | "indexeddb" | undefined {
+  try {
+    const value = globalThis.localStorage?.getItem("nexora.ledger-storage.v1");
+    return value === "opfs" || value === "indexeddb" ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 window.addEventListener(
   "pagehide",

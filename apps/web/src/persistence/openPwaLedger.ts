@@ -15,13 +15,16 @@ export interface LedgerPreferenceStorage {
 
 export interface OpenPwaLedgerOptions {
   readonly browser?: Omit<OpenBrowserLedgerOptions, "preferredStorageKind">;
+  /** A verified startup selection takes precedence over the non-authoritative stored hint. */
+  readonly selectedStorageKind?: BrowserLedgerStorageKind;
   readonly preferenceStorage?: LedgerPreferenceStorage;
   readonly openLedger?: (options: OpenBrowserLedgerOptions) => Promise<BrowserLedger>;
 }
 
 export async function openPwaLedger(options: OpenPwaLedgerOptions = {}): Promise<BrowserLedger> {
   const preferenceStorage = options.preferenceStorage ?? getDefaultPreferenceStorage();
-  const selectedStorageKind = readSelectedStorageKind(preferenceStorage);
+  const selectedStorageKind =
+    options.selectedStorageKind ?? readSelectedStorageKind(preferenceStorage);
   const openOptions =
     selectedStorageKind === undefined
       ? (options.browser ?? {})
@@ -39,7 +42,7 @@ export async function openPwaLedger(options: OpenPwaLedgerOptions = {}): Promise
     );
   }
 
-  if (selectedStorageKind === undefined) {
+  if (options.selectedStorageKind !== undefined || selectedStorageKind === undefined) {
     try {
       preferenceStorage.setItem(PWA_LEDGER_STORAGE_KEY, ledger.storageKind);
     } catch (cause) {

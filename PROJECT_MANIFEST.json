@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 1144,
-      "sha256": "51707aacde90feade7fd10efd23d8ef649907cce9113ea69fad4ab14f7253f92"
+      "size": 1907,
+      "sha256": "d6892030af164ce86c05993cccbd66c27cc6ebc8f0584bf1bfac6f6ecff6b040"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -404,8 +404,8 @@
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.ts",
-      "size": 3178,
-      "sha256": "d2cf8dd05dfa0a06e29a0c4137be866ca90809d13bae0952f89f86a5bced6d0f"
+      "size": 3412,
+      "sha256": "adc7c39487dfe9c643233ac276ff04004f7945992b4809905def95a089dd8100"
     },
     {
       "path": "apps/web/src/profile/ProfilePage.tsx",
