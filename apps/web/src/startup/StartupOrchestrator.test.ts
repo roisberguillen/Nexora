@@ -84,6 +84,41 @@ describe("StartupOrchestrator", () => {
       state: "BLOCKING_ERROR",
       failure: { code: "NX-START-001", kind: "blocking", cause: failure },
     });
+    expect(ledger.close).toHaveBeenCalled();
+  });
+
+  it("esegue la discovery prima dell'apertura e non avvia due aperture concorrenti", async () => {
+    let resolveOpen: ((value: BrowserLedger) => void) | undefined;
+    const discoverStorage = vi.fn();
+    const openLedger = vi.fn(
+      () =>
+        new Promise<BrowserLedger>((resolve) => {
+          resolveOpen = resolve;
+        }),
+    );
+    const orchestrator = new StartupOrchestrator({ discoverStorage, openLedger });
+
+    const firstRun = orchestrator.run();
+    const secondRun = orchestrator.run();
+    await vi.waitFor(() => {
+      expect(discoverStorage).toHaveBeenCalledOnce();
+      expect(openLedger).toHaveBeenCalledOnce();
+    });
+    resolveOpen?.(ledger);
+
+    await expect(Promise.all([firstRun, secondRun])).resolves.toHaveLength(2);
+  });
+
+  it("classifica il timeout dell'apertura come recuperabile", async () => {
+    const orchestrator = new StartupOrchestrator({
+      openLedger: () => new Promise<BrowserLedger>(() => undefined),
+      timeouts: { storage: 1 },
+    });
+
+    await expect(orchestrator.run()).resolves.toMatchObject({
+      state: "RECOVERABLE_ERROR",
+      failure: { code: "NX-STORAGE-001", kind: "recoverable" },
+    });
   });
 
   it("classifica errori non noti come bloccanti", () => {

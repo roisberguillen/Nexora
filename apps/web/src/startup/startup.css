@@ -32,6 +32,10 @@
   display: grid;
   gap: 0.35rem;
 }
+.startup-loading__steps .is-current {
+  color: #0e3ec7;
+  font-weight: 700;
+}
 .startup-loading__notice {
   color: #4b587a;
 }

@@ -28,10 +28,20 @@ scegliere IndexedDB per un’installazione nuova.
 La preferenza del backend viene inoltre salvata solo dopo che l'orchestratore ha
 concluso tutte le verifiche con stato `READY`, non durante l'apertura preliminare.
 
+## Stato di avvio deterministico
+
+Il bootstrap ora propaga alla schermata di avvio la fase effettiva emessa
+dall'orchestratore. Discovery, apertura, validazione, migrazione e verifica hanno
+timeout espliciti; una risorsa già aperta viene chiusa se una fase successiva
+fallisce. Invocazioni concorrenti riusano lo stesso tentativo, evitando aperture
+duplicate durante il rendering React in sviluppo.
+
 ## Verifiche mirate
 
 - `StorageDiscovery.test.ts`, `StorageSelection.test.ts`,
-  `openPwaLedger.test.ts`: 18 test superati.
+  `openPwaLedger.test.ts`: 19 test superati.
+- `StartupOrchestrator.test.ts`, `StartupBootstrap.test.ts`, `App.test.tsx`:
+  17 test superati.
 - Typecheck di `@nexora/web`: superato.
 
 La verifica completa dei gate segue il completamento dei successivi step di

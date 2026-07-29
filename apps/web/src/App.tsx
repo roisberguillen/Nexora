@@ -101,6 +101,8 @@ import {
   createStartupDiagnostics,
   serializeStartupDiagnostics,
 } from "./startup/StartupDiagnostics";
+import type { StartupBootstrap } from "./startup/StartupBootstrap";
+import type { StartupProgressEvent } from "./startup/StartupOrchestrator";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -135,14 +137,18 @@ type LedgerState =
 
 interface AppProps {
   readonly ledgerPromise: Promise<BrowserLedger>;
+  readonly startupBootstrap?: Pick<StartupBootstrap, "getProgress" | "subscribe">;
   readonly seedLedger?: typeof seedDemoLedger;
 }
 
-export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
+export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstrap }: AppProps) {
   const route = useAppRoute();
   const [ledgerState, setLedgerState] = useState<LedgerState>({
     status: "loading",
   });
+  const [startupProgress, setStartupProgress] = useState<StartupProgressEvent | undefined>(() =>
+    startupBootstrap?.getProgress(),
+  );
   const [isSeeding, setIsSeeding] = useState(false);
   const [hasSeedFeedback, setHasSeedFeedback] = useState(false);
   const [appLockConfig, setAppLockConfig] = useState<AppLockConfig | undefined>(() =>
@@ -240,6 +246,8 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
       isActive = false;
     };
   }, [ledgerPromise]);
+
+  useEffect(() => startupBootstrap?.subscribe(setStartupProgress), [startupBootstrap]);
 
   const addDemoData = async (): Promise<void> => {
     if (ledgerState.status !== "ready" || isSeeding) {
@@ -725,7 +733,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               />
             )
           ) : (
-            <PersistenceState state={ledgerState} />
+            <PersistenceState progress={startupProgress} state={ledgerState} />
           )}
         </AppShell>
       )}
@@ -772,9 +780,15 @@ const quickActions: readonly QuickAction[] = [
   },
 ];
 
-function PersistenceState({ state }: { readonly state: Exclude<LedgerState, ReadyLedgerState> }) {
+function PersistenceState({
+  progress,
+  state,
+}: {
+  readonly progress: StartupProgressEvent | undefined;
+  readonly state: Exclude<LedgerState, ReadyLedgerState>;
+}) {
   if (state.status === "loading") {
-    return <StartupLoadingScreen />;
+    return <StartupLoadingScreen progress={progress} />;
   }
 
   return (

@@ -1,6 +1,20 @@
 import { type ReactElement, useEffect, useState } from "react";
 
-export function StartupLoadingScreen(): ReactElement {
+import type { StartupProgressEvent } from "./StartupOrchestrator";
+
+const steps = [
+  { label: "Verifica ambiente", states: ["CHECKING_ENVIRONMENT"] },
+  { label: "Ricerca archivio", states: ["DISCOVERING_STORAGE", "OPENING_EXISTING_STORAGE"] },
+  { label: "Controllo dati", states: ["VALIDATING_LEDGER"] },
+  { label: "Aggiornamento archivio", states: ["RUNNING_MIGRATIONS"] },
+  { label: "Preparazione interfaccia", states: ["VERIFYING_DATA", "READY"] },
+] as const;
+
+export function StartupLoadingScreen({
+  progress,
+}: {
+  readonly progress: StartupProgressEvent | undefined;
+}): ReactElement {
   const [isLongRunning, setIsLongRunning] = useState(false);
   useEffect(() => {
     const timeout = window.setTimeout(() => setIsLongRunning(true), 8_000);
@@ -14,11 +28,19 @@ export function StartupLoadingScreen(): ReactElement {
         <h1>Preparazione del tuo archivio</h1>
         <p>Stiamo verificando e proteggendo i tuoi dati.</p>
         <ol aria-label="Fasi di avvio" className="startup-loading__steps">
-          <li>Verifica ambiente</li>
-          <li>Ricerca archivio</li>
-          <li>Controllo dati</li>
-          <li>Aggiornamento archivio</li>
-          <li>Preparazione interfaccia</li>
+          {steps.map((step) => {
+            const current = progress !== undefined && step.states.includes(progress.state as never);
+            return (
+              <li
+                aria-current={current ? "step" : undefined}
+                className={current ? "is-current" : undefined}
+                key={step.label}
+              >
+                {step.label}
+                {current ? ": in corso" : ""}
+              </li>
+            );
+          })}
         </ol>
         {isLongRunning ? (
           <p className="startup-loading__notice">

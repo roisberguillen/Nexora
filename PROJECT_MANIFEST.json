@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 35274,
-      "sha256": "867267860c75609267736be9602c080cb1df2b5e9dfb6e369f6327dea0ce657f"
+      "size": 35866,
+      "sha256": "e60298bfb4709bebb4d05afa244de8f1539f67b18c59e6084db44e6d96c8eaa9"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 2033,
-      "sha256": "47b668f02eb3fce424cc60cc2721095207f387f94d1b336658d280631247f4a2"
+      "size": 2425,
+      "sha256": "318b6f074c15b10312496547292b1b50345f0202eb0a60a3b94ea4a4aff71f6d"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -504,8 +504,18 @@
     },
     {
       "path": "apps/web/src/startup/startup.css",
-      "size": 1979,
-      "sha256": "3709ba41a9122a0d122026a9aa2b2e5ba2a2ff5c41b1d7f9f3f197f52dfb915b"
+      "size": 2057,
+      "sha256": "6531b2bd08da034e716bb89d7a8271c93b7acb0b2b18ce125453d4d7a393d942"
+    },
+    {
+      "path": "apps/web/src/startup/StartupBootstrap.test.ts",
+      "size": 1002,
+      "sha256": "72817c4d32fe487bd77eb1dbf868a2c356c93f74a48ec375a8ead2e4d47fadf8"
+    },
+    {
+      "path": "apps/web/src/startup/StartupBootstrap.ts",
+      "size": 1140,
+      "sha256": "6fb9e7cc4fe9128dd1e25fe293ef74da1462a22bd4766c4d6072622dab041070"
     },
     {
       "path": "apps/web/src/startup/StartupDiagnostics.test.ts",
@@ -519,18 +529,18 @@
     },
     {
       "path": "apps/web/src/startup/StartupLoadingScreen.tsx",
-      "size": 1158,
-      "sha256": "59488293fe62df33f82b8dcf1d39af02fd2dccb8512b5f8b5a37c55f78047cb8"
+      "size": 1979,
+      "sha256": "37f3efbe0aad148667f5d2d352fe4af21c0a7d39fbc3f265b6f4b8c582b01fb4"
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.test.ts",
-      "size": 3350,
-      "sha256": "edb32cf0c2160eb2ab304f8cb60376fa53bc4b2c6542414baf350bd62aa247fb"
+      "size": 4575,
+      "sha256": "671e70a943d3304af384b251cb93872bca90b4039b8feb7965d5010d8ea1ce50"
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.ts",
-      "size": 4101,
-      "sha256": "fe740a68e0ff09e4ce286f8b2da66a82a062700abb60b7824cfb79e1b005d7c1"
+      "size": 5521,
+      "sha256": "22bb84a33702493aa45da9bae11558a07c2b2329a5e3dcc187423d7b5088c520"
     },
     {
       "path": "apps/web/src/startup/StartupRecoveryScreen.tsx",
@@ -634,8 +644,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 13426,
-      "sha256": "77863641fa1eb280af29399bb6fc64312dfadc9b065d80b85aab28e8a54fd1eb"
+      "size": 13662,
+      "sha256": "6c61830457fd9aa2711f21bdf638659d00d432d49c6db25fbde0506694a574b8"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -824,8 +834,8 @@
     },
     {
       "path": "docs/reports/startup-baseline.md",
-      "size": 1397,
-      "sha256": "8ef422672681b2f449fe7c87f575b2e672b7c1f79cf900feaf4870a7fbf90e1e"
+      "size": 1895,
+      "sha256": "5a16d43cdcafc5d0fd89c04c097f07f55e8027e2bfe68490eaa763e5eed13143"
     },
     {
       "path": "docs/ROADMAP.md",

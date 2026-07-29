@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Reso deterministico il bootstrap del ledger: la UI mostra la fase reale di
+  discovery/apertura/verifica, i timeout sono espliciti, un errore chiude il ledger
+  parzialmente aperto e invocazioni concorrenti non duplicano l'apertura.
+
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica
   di capability Worker, WASM e cross-origin.
