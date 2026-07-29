@@ -117,6 +117,7 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         "accounts",
         "categories",
         "transactions",
+        "transaction_trash",
         "transfers",
         "transaction_splits",
         "tags",

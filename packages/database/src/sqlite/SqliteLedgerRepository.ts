@@ -118,6 +118,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public replacePortableSnapshot(snapshot: ValidatedPortableLedgerSnapshot): Promise<void> {
     return this.runAtomically(async () => {
       for (const table of [
+        "transaction_trash",
         "transaction_tags",
         "transaction_splits",
         "transfers",
