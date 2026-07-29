@@ -109,7 +109,7 @@ describe("MigrationRunner", () => {
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
       toVersion: 12,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -138,14 +138,15 @@ describe("MigrationRunner", () => {
       { version: 9, name: "investment-positions" },
       { version: 10, name: "bank-importer-types" },
       { version: 11, name: "monthly-journals" },
+      { version: 12, name: "transaction-trash" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 11,
+      fromVersion: 12,
       toVersion: 12,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(11);
+    expect(migrationRows(sqlite)).toHaveLength(12);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -168,7 +169,7 @@ describe("MigrationRunner", () => {
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
       toVersion: 12,
-      appliedMigrations: [11],
+      appliedMigrations: [11, 12],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({

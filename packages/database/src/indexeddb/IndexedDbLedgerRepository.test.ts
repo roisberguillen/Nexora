@@ -131,9 +131,9 @@ describe("IndexedDbLedgerRepository", () => {
       "monthly_journals",
       "recurring_rules",
       "tags",
-      "transaction_trash",
       "transaction_splits",
       "transaction_tags",
+      "transaction_trash",
       "transactions",
       "transfers",
     ]);
@@ -152,7 +152,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 11 });
+    expect(metadata).toEqual({ key: "schema_version", value: 12 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
