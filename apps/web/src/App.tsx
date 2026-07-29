@@ -79,6 +79,7 @@ import { NotificationsPage } from "./notifications/NotificationsPage";
 import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
 import { AppLockScreen } from "./security/AppLockScreen";
 import { getAppLockTimeoutMilliseconds, readAppLock, type AppLockConfig } from "./security/appLock";
+import { resetLocalApp } from "./reset/resetLocalApp";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -357,6 +358,11 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.restoreTransaction(id);
     });
+  const resetApplication = async (): Promise<void> => {
+    if (ledgerState.status !== "ready") return;
+    await resetLocalApp(ledgerState.ledger);
+    window.location.reload();
+  };
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
       await commitMoneyManagerImport(ledger.repository, input);
@@ -532,6 +538,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             ) : route === "settings" ? (
               <SettingsPage
                 onResetFinancialData={resetFinancialData}
+                onResetApplication={resetApplication}
                 onRestoreTransaction={restoreTrashedTransaction}
                 trashedTransactions={ledgerState.trashedTransactions}
               />

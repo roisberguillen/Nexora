@@ -11,10 +11,12 @@ import {
 export function SettingsPage({
   onResetFinancialData,
   onRestoreTransaction,
+  onResetApplication,
   trashedTransactions = [],
 }: {
   readonly onResetFinancialData?: () => Promise<void>;
   readonly onRestoreTransaction?: (id: string) => Promise<void>;
+  readonly onResetApplication?: () => Promise<void>;
   readonly trashedTransactions?: readonly TrashedTransaction[];
 }) {
   const [preferences, setPreferences] = useState<AppPreferences>(() => readAppPreferences());
@@ -29,6 +31,8 @@ export function SettingsPage({
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+  const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
+  const [applicationResetPhrase, setApplicationResetPhrase] = useState("");
   const resetFinancialData = async () => {
     if (onResetFinancialData === undefined || resetPhrase !== "RESETTA DATI FINANZIARI") return;
     setIsResetting(true);
@@ -179,6 +183,64 @@ export function SettingsPage({
                     type="button"
                   >
                     {isResetting ? "Reset in corso…" : "Conferma reset"}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </SettingsGroup>
+        )}
+        {onResetApplication === undefined ? null : (
+          <SettingsGroup title="Ripristino totale">
+            <p>
+              Rimuove tutti i dati locali Nexora, inclusi preferenze, blocco app e cache. I backup
+              Google Drive non vengono eliminati.
+            </p>
+            <button
+              className="secondary-action"
+              onClick={() => setIsApplicationResetOpen(true)}
+              type="button"
+            >
+              Ripristino totale dell’app
+            </button>
+            {isApplicationResetOpen ? (
+              <div
+                aria-labelledby="reset-application-title"
+                aria-modal="true"
+                className="account-feedback"
+                role="dialog"
+              >
+                <h2 id="reset-application-title">Conferma ripristino totale</h2>
+                <p>
+                  Crea un backup dalla sezione Backup prima di continuare. Scrivi la frase richiesta
+                  per confermare.
+                </p>
+                <label>
+                  Frase di conferma
+                  <input
+                    aria-label="Frase di conferma ripristino totale"
+                    onChange={(event) => setApplicationResetPhrase(event.currentTarget.value)}
+                    value={applicationResetPhrase}
+                  />
+                </label>
+                <div className="form-actions">
+                  <button
+                    className="secondary-action"
+                    disabled={isResetting}
+                    onClick={() => setIsApplicationResetOpen(false)}
+                    type="button"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    className="primary-action"
+                    disabled={isResetting || applicationResetPhrase !== "RIPRISTINA NEXORA"}
+                    onClick={() => {
+                      setIsResetting(true);
+                      void onResetApplication().finally(() => setIsResetting(false));
+                    }}
+                    type="button"
+                  >
+                    {isResetting ? "Ripristino in corso…" : "Ripristina app"}
                   </button>
                 </div>
               </div>
