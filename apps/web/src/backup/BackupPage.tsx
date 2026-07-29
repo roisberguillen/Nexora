@@ -15,7 +15,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
   const [passphrase, setPassphrase] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [backupId, setBackupId] = useState("");
+  const [selectedArchive, setSelectedArchive] = useState<File>();
   const [isRestoring, setIsRestoring] = useState(false);
   const [isCloudBusy, setIsCloudBusy] = useState(false);
   const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
@@ -51,19 +51,21 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     }
   };
 
-  const restore = async () => {
+  const restoreSelectedArchive = async () => {
     if (
-      !canCreate ||
-      backupId.trim() === "" ||
+      !selectedArchive ||
       passphrase.trim().length < 12 ||
-      ledger.restoreEncryptedBackup === undefined
+      ledger.restoreEncryptedBackupArchive === undefined
     )
       return;
     setIsRestoring(true);
     setMessage(null);
     try {
-      const directory = await (window as DirectoryPickerWindow).showDirectoryPicker!();
-      await ledger.restoreEncryptedBackup({ directory, id: backupId.trim(), passphrase });
+      await ledger.restoreEncryptedBackupArchive({
+        archive: new Uint8Array(await selectedArchive.arrayBuffer()),
+        id: selectedArchive.name,
+        passphrase,
+      });
       window.location.reload();
     } catch {
       setMessage("Ripristino non completato: l’archivio locale corrente è rimasto protetto.");
@@ -143,17 +145,17 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
           </p>
         </div>
       </div>
+      <label className="account-form-label">
+        Passphrase (minimo 12 caratteri)
+        <input
+          autoComplete="new-password"
+          onChange={(event) => setPassphrase(event.target.value)}
+          type="password"
+          value={passphrase}
+        />
+      </label>
       {canCreate ? (
         <>
-          <label className="account-form-label">
-            Passphrase (minimo 12 caratteri)
-            <input
-              autoComplete="new-password"
-              onChange={(event) => setPassphrase(event.target.value)}
-              type="password"
-              value={passphrase}
-            />
-          </label>
           <div className="form-actions">
             <button
               className="primary-action"
@@ -185,25 +187,6 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
             ) : null}
           </div>
           <hr />
-          <h2>Ripristina un backup</h2>
-          <label className="account-form-label">
-            Nome file backup
-            <input
-              onChange={(event) => setBackupId(event.target.value)}
-              placeholder="nexora-v10-….nexora-backup"
-              value={backupId}
-            />
-          </label>
-          <div className="form-actions">
-            <button
-              className="secondary-action"
-              disabled={backupId.trim() === "" || passphrase.trim().length < 12 || isRestoring}
-              onClick={() => void restore()}
-              type="button"
-            >
-              {isRestoring ? "Ripristino verificato…" : "Scegli cartella NAS e ripristina"}
-            </button>
-          </div>
         </>
       ) : (
         <p className="account-error" role="alert">
@@ -211,6 +194,31 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
           usa l’export JSON completo.
         </p>
       )}
+      <hr />
+      <h2>Ripristina un archivio portabile</h2>
+      <label className="account-form-label">
+        File `.nexora-backup`
+        <input
+          accept=".nexora-backup,application/octet-stream"
+          onChange={(event) => setSelectedArchive(event.target.files?.[0])}
+          type="file"
+        />
+      </label>
+      <div className="form-actions">
+        <button
+          className="secondary-action"
+          disabled={
+            !selectedArchive ||
+            passphrase.trim().length < 12 ||
+            isRestoring ||
+            ledger.restoreEncryptedBackupArchive === undefined
+          }
+          onClick={() => void restoreSelectedArchive()}
+          type="button"
+        >
+          {isRestoring ? "Ripristino verificato…" : "Ripristina archivio selezionato"}
+        </button>
+      </div>
       <section aria-labelledby="cloud-backup-title" className="backup-cloud-unavailable">
         <h2 id="cloud-backup-title">Backup cloud</h2>
         {cloudConfig.enabled ? (
