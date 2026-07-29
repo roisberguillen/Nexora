@@ -55,9 +55,9 @@ export function NotificationsPage({
     setStates(next);
     writeLocalNotificationStates(next);
   };
-  const visible = notifications.filter(
-    (notification) => states[notification.id]?.dismissed !== true,
-  );
+  const visible = notifications
+    .filter((notification) => states[notification.id]?.dismissed !== true)
+    .sort((left, right) => priorityRank(right.priority) - priorityRank(left.priority));
   const unread = visible.filter((notification) => states[notification.id]?.readAt === undefined);
 
   return (
@@ -182,7 +182,14 @@ export function NotificationsPage({
                 <li className={isRead ? "is-read" : ""} key={notification.id}>
                   <div className="account-copy">
                     <strong>{notification.title}</strong>
-                    <small>{notification.description}</small>
+                    <small>
+                      {notification.priority === "high"
+                        ? "Priorità alta · "
+                        : notification.priority === "medium"
+                          ? "Priorità media · "
+                          : "Priorità bassa · "}
+                      {notification.description}
+                    </small>
                   </div>
                   <div className="notification-actions">
                     <a className="text-action" href={notification.href}>
@@ -210,4 +217,8 @@ export function NotificationsPage({
       </section>
     </div>
   );
+}
+
+function priorityRank(priority: "high" | "medium" | "low"): number {
+  return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }

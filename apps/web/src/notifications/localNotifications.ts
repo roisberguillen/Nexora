@@ -16,6 +16,7 @@ export interface LocalNotification {
   readonly href: string;
   readonly id: string;
   readonly kind: LocalNotificationKind;
+  readonly priority: "high" | "medium" | "low";
   readonly title: string;
 }
 
@@ -71,6 +72,7 @@ export function deriveLocalNotifications(input: {
     notifications.push({
       id: `backup_overdue:${currentPeriod}`,
       kind: "backup",
+      priority: "high",
       title: "Backup da verificare",
       description: "Non risulta un backup riuscito negli ultimi 7 giorni.",
       href: "./#backup",
@@ -79,6 +81,7 @@ export function deriveLocalNotifications(input: {
     notifications.push({
       id: `restore_test_overdue:${currentPeriod}`,
       kind: "recovery",
+      priority: "high",
       title: "Recovery drill da eseguire",
       description: "Verifica un archivio senza ripristinarlo almeno una volta al mese.",
       href: "./#backup",
@@ -92,6 +95,7 @@ export function deriveLocalNotifications(input: {
       href: "./#accounts",
       id: `low_balance:${account.id}:${currentPeriod}:${lowBalanceThresholdMinor}`,
       kind: "balance",
+      priority: "high",
       title: `Saldo basso: ${account.name}`,
     });
   }
@@ -104,6 +108,7 @@ export function deriveLocalNotifications(input: {
         href: "./#budgets",
         id: `budget-exceeded:${budget.id}:${budget.period}`,
         kind: "budget",
+        priority: "high",
         title: "Budget superato",
       });
     } else if (budget.alertAt80 && usage >= 80) {
@@ -112,6 +117,7 @@ export function deriveLocalNotifications(input: {
         href: "./#budgets",
         id: `budget-warning:${budget.id}:${budget.period}`,
         kind: "budget",
+        priority: "medium",
         title: "Budget vicino al limite",
       });
     }
@@ -129,6 +135,7 @@ export function deriveLocalNotifications(input: {
         href: "./#recurring",
         id: `expected_income_missing:${rule.id}:${rule.nextExpectedDate.toString()}`,
         kind: "income",
+        priority: "high",
         title: `Entrata attesa: ${rule.name}`,
       });
     }
@@ -138,6 +145,7 @@ export function deriveLocalNotifications(input: {
       href: "./#recurring",
       id: `recurring:${rule.id}:${rule.nextExpectedDate.toString()}`,
       kind: "recurring",
+      priority: "low",
       title: rule.name,
     });
   }
@@ -150,6 +158,7 @@ export function deriveLocalNotifications(input: {
       href: "./#loans",
       id: `loan:${loan.id}:${loan.nextDueDate.toString()}`,
       kind: "loan",
+      priority: "high",
       title: `Rata ${loan.lender}`,
     });
   }
