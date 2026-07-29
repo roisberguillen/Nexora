@@ -33,22 +33,26 @@ describe("calculateMonthlyTrends", () =>
   }));
 
 describe("calculateMonthlyTrends performance", () =>
-  it("aggregates a synthetic 100k-record ledger without precision loss", () => {
-    const transactions = Array.from({ length: 100_000 }, (_, index) =>
-      Transaction.create({
-        id: `benchmark-${index}`,
-        kind: index % 3 === 0 ? "income" : "expense",
-        status: "booked",
-        accountId: "benchmark-account",
-        amount: Money.fromMinor(index % 3 === 0 ? 10_000n : -2_500n, "EUR"),
-        bookedDate: LocalDate.parse(`2026-${String((index % 12) + 1).padStart(2, "0")}-15`),
-      }),
-    );
+  it.each([1_000, 10_000, 100_000])(
+    "aggregates a synthetic %i-record ledger without precision loss",
+    (count) => {
+      const transactions = Array.from({ length: count }, (_, index) =>
+        Transaction.create({
+          id: `benchmark-${index}`,
+          kind: index % 3 === 0 ? "income" : "expense",
+          status: "booked",
+          accountId: "benchmark-account",
+          amount: Money.fromMinor(index % 3 === 0 ? 10_000n : -2_500n, "EUR"),
+          bookedDate: LocalDate.parse(`2026-${String((index % 12) + 1).padStart(2, "0")}-15`),
+        }),
+      );
 
-    const trends = calculateMonthlyTrends(transactions, "EUR");
+      const trends = calculateMonthlyTrends(transactions, "EUR");
 
-    expect(trends).toHaveLength(12);
-    expect(
-      trends.reduce((total, trend) => total.add(trend.income), Money.zero("EUR")).amountMinor,
-    ).toBe(333_340_000n);
+      expect(trends).toHaveLength(12);
+      expect(
+        trends.reduce((total, trend) => total.add(trend.income), Money.zero("EUR")).amountMinor,
+      ).toBe(BigInt(Math.ceil(count / 3)) * 10_000n);
+    },
+  ));
   }));
