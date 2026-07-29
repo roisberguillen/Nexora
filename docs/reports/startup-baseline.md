@@ -38,6 +38,10 @@ timeout espliciti; una risorsa già aperta viene chiusa se una fase successiva
 fallisce. Invocazioni concorrenti riusano lo stesso tentativo, evitando aperture
 duplicate durante il rendering React in sviluppo.
 
+Quando due archivi con dati sono presenti, Nexora non ne apre uno in modo implicito:
+la schermata di recupero consente di scegliere esplicitamente solo uno degli archivi
+effettivamente rilevati. La scelta è monouso e viene rimossa prima dell'apertura.
+
 ## Verifiche mirate
 
 - `StorageDiscovery.test.ts`, `StorageSelection.test.ts`,

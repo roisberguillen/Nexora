@@ -7,6 +7,8 @@
   parzialmente aperto e invocazioni concorrenti non duplicano l'apertura.
 - Le preferenze storage malformate vengono rimosse in sicurezza prima della discovery,
   senza compromettere l'accesso a un archivio IndexedDB valido.
+- Il recovery guidato consente ora di aprire esplicitamente un archivio OPFS o IndexedDB
+  rilevato, senza selezioni automatiche quando esistono più archivi locali.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

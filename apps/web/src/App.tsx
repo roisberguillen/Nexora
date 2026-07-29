@@ -98,6 +98,11 @@ import { loadGoogleIdentity } from "./cloud/loadGoogleIdentity";
 import { StartupLoadingScreen } from "./startup/StartupLoadingScreen";
 import { StartupRecoveryScreen } from "./startup/StartupRecoveryScreen";
 import {
+  selectableRecoveryArchives,
+  StartupRecoveryRequiredError,
+  writeRecoverySelection,
+} from "./startup/StartupRecovery";
+import {
   createStartupDiagnostics,
   serializeStartupDiagnostics,
 } from "./startup/StartupDiagnostics";
@@ -794,8 +799,14 @@ function PersistenceState({
   return (
     <StartupRecoveryScreen
       onExportDiagnostics={downloadStartupDiagnostics}
-      onOpenSafeCopy={() => {
-        window.location.hash = "#backup";
+      recoveryArchives={
+        state.error instanceof StartupRecoveryRequiredError
+          ? selectableRecoveryArchives(state.error.archives)
+          : undefined
+      }
+      onOpenSafeCopy={(storageKind) => {
+        writeRecoverySelection(storageKind);
+        window.location.reload();
       }}
       onRestoreBackup={() => {
         window.location.hash = "#backup";

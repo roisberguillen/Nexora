@@ -13,6 +13,7 @@ import { StartupOrchestrator } from "./startup/StartupOrchestrator";
 import { createStartupBootstrap } from "./startup/StartupBootstrap";
 import { StorageDiscovery } from "./startup/StorageDiscovery";
 import { selectStorage } from "./startup/StorageSelection";
+import { readRecoverySelection, StartupRecoveryRequiredError } from "./startup/StartupRecovery";
 import { readStoragePreferenceHint } from "./startup/storagePreference";
 
 const rootElement = document.querySelector("#root");
@@ -26,9 +27,14 @@ const startupBootstrap = createStartupBootstrap(
   new StartupOrchestrator({
     discoverStorage: async () => {
       const discovery = await new StorageDiscovery().inspect();
+      const recoverySelection = readRecoverySelection(discovery.archives);
+      if (recoverySelection !== undefined) {
+        selectedStorageKind = recoverySelection;
+        return;
+      }
       const selection = selectStorage(discovery.archives, readStoragePreferenceHint());
       if (selection.kind === "guided-recovery") {
-        throw new Error("Nexora requires guided recovery before it can choose an archive safely.");
+        throw new StartupRecoveryRequiredError(discovery.archives);
       }
       selectedStorageKind = selection.storageKind;
     },

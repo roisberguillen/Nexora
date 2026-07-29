@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 35866,
-      "sha256": "e60298bfb4709bebb4d05afa244de8f1539f67b18c59e6084db44e6d96c8eaa9"
+      "size": 36223,
+      "sha256": "72f2592e1244cd13471062ba4847a12b21e590c3185f78c24e5bb478595b39af"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 2222,
-      "sha256": "2aafefff30bb7ca152bae6a0942ddc899f75177ea1a90f1ef8e3dacf5fdd1d36"
+      "size": 2480,
+      "sha256": "64ea734ecac35638241a396d2c2cf20cc2dd9514eaf4685fea081cfacdc649b5"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -543,9 +543,19 @@
       "sha256": "22bb84a33702493aa45da9bae11558a07c2b2329a5e3dcc187423d7b5088c520"
     },
     {
+      "path": "apps/web/src/startup/StartupRecovery.test.ts",
+      "size": 1065,
+      "sha256": "55b15b424013f9cde55144af3c5cb81fcc00eb1c0028e37bf337532d7b356952"
+    },
+    {
+      "path": "apps/web/src/startup/StartupRecovery.ts",
+      "size": 1352,
+      "sha256": "1dd5be16914f715737031b2502d36ccf62b625163d298c9bd81320c47a0c4a77"
+    },
+    {
       "path": "apps/web/src/startup/StartupRecoveryScreen.tsx",
-      "size": 1780,
-      "sha256": "6d2d85e9fb478b5df9fa42fc7e116d025a32119d3b5aeaf170ca992035eace72"
+      "size": 2157,
+      "sha256": "ef5ca9f5dca96a9aeac351cf19222c2fbb069dc57d559e4e04ba2c8dae6aa171"
     },
     {
       "path": "apps/web/src/startup/StorageDiscovery.test.ts",
@@ -654,8 +664,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 13813,
-      "sha256": "5aaeb96d8a333416fbacdc49faedf44225382cdfa9041fa157a51509499c73f0"
+      "size": 13979,
+      "sha256": "4a8be2fb716deafc7ca13ac1a753889dc7ee9d1fb608776afa7cc84e2e435322"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -844,8 +854,8 @@
     },
     {
       "path": "docs/reports/startup-baseline.md",
-      "size": 2054,
-      "sha256": "46f3e7edb1c79fcb8827e8328fb918fbf3b78e673da4e3be31263eed3c1b2ea2"
+      "size": 2308,
+      "sha256": "d01229f604d61f6d3318ee4ddd5aed8f9d71764c66140d7a57e32ed2db22711c"
     },
     {
       "path": "docs/ROADMAP.md",

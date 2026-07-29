@@ -1,8 +1,11 @@
 import { type ReactElement, useState } from "react";
 
+import type { StorageArchiveInspection } from "./StorageDiscovery";
+
 export interface StartupRecoveryScreenProps {
   readonly onRetry: () => void;
-  readonly onOpenSafeCopy: () => void;
+  readonly recoveryArchives: readonly StorageArchiveInspection[] | undefined;
+  readonly onOpenSafeCopy: (storageKind: "opfs" | "indexeddb") => void;
   readonly onRestoreBackup: () => void;
   readonly onExportDiagnostics: () => void;
 }
@@ -24,9 +27,15 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
         <button onClick={() => setIsGuidanceOpen((open) => !open)} type="button">
           Avvia recupero guidato
         </button>
-        <button onClick={props.onOpenSafeCopy} type="button">
-          Apri una copia sicura
-        </button>
+        {props.recoveryArchives?.map((archive) => (
+          <button
+            key={archive.kind}
+            onClick={() => props.onOpenSafeCopy(archive.kind)}
+            type="button"
+          >
+            Apri archivio {archive.kind === "opfs" ? "OPFS" : "IndexedDB"}
+          </button>
+        ))}
         <button onClick={props.onRestoreBackup} type="button">
           Ripristina da backup
         </button>
