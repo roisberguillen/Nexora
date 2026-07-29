@@ -326,6 +326,63 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+
+  public deleteUnusedCategory(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["categories", "transactions", "transaction_splits", "budgets", "recurring_rules"],
+          "readwrite",
+          async (transaction) => {
+            const categories = transaction.objectStore("categories");
+            if ((await this.findCategoryInStore(categories, id)) === undefined)
+              throw new DomainError("missing_reference", "Category does not exist.");
+            const [categoryRows, transactionCount, splitCount, budgetRows, recurringRows] =
+              await Promise.all([
+                requestResult<unknown[]>(categories.getAll()),
+                requestResult<number>(transaction.objectStore("transactions").index("by_category_id").count(id)),
+                requestResult<number>(transaction.objectStore("transaction_splits").index("by_category_id").count(id)),
+                requestResult<unknown[]>(transaction.objectStore("budgets").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("recurring_rules").getAll()),
+              ]);
+            const isReferenced =
+              categoryRows.some((row) => (row as CategoryRecord).parent_id === id) ||
+              transactionCount > 0 ||
+              splitCount > 0 ||
+              budgetRows.some((row) => (row as BudgetRecord).category_id === id) ||
+              recurringRows.some((row) => (row as RecurringRuleRecord).category_id === id);
+            if (isReferenced)
+              throw new DomainError(
+                "invalid_category",
+                "A referenced category must be archived or reassigned.",
+              );
+            await requestResult(categories.delete(id));
+          },
+        ),
+      ),
+    );
+  }
+
+  public deleteUnusedTag(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["tags", "transaction_tags"], "readwrite", async (transaction) => {
+          const tags = transaction.objectStore("tags");
+          if ((await requestResult<unknown>(tags.get(id))) === undefined)
+            throw new DomainError("missing_reference", "Tag does not exist.");
+          const references = await requestResult<unknown[]>(
+            transaction.objectStore("transaction_tags").getAll(),
+          );
+          if (references.some((row) => (row as { readonly tag_id: string }).tag_id === id))
+            throw new DomainError(
+              "invalid_transaction",
+              "A referenced tag must be archived or removed globally.",
+            );
+          await requestResult(tags.delete(id));
+        }),
+      ),
+    );
+  }
   public saveRecurringRule(rule: RecurringRule): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

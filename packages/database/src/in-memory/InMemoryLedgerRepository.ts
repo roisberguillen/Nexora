@@ -135,6 +135,19 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.categories.set(category.id, category);
   }
 
+  public async deleteUnusedCategory(id: string): Promise<void> {
+    if (!this.categories.has(id)) throw new DomainError("missing_reference", "Category does not exist.");
+    const isReferenced =
+      [...this.categories.values()].some((category) => category.parentId === id) ||
+      [...this.transactions.values()].some((transaction) => transaction.categoryId === id) ||
+      [...this.transactionSplits.values()].some((split) => split.categoryId === id) ||
+      [...this.budgets.values()].some((budget) => budget.categoryId === id) ||
+      [...this.recurringRules.values()].some((rule) => rule.categoryId === id);
+    if (isReferenced)
+      throw new DomainError("invalid_category", "A referenced category must be archived or reassigned.");
+    this.categories.delete(id);
+  }
+
   public async saveTag(tag: Tag): Promise<void> {
     this.assertNew(this.tags, tag.id, "Tag");
     this.tags.set(tag.id, tag);
@@ -281,6 +294,13 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async updateTag(tag: Tag): Promise<void> {
     if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");
     this.tags.set(tag.id, tag);
+  }
+
+  public async deleteUnusedTag(id: string): Promise<void> {
+    if (!this.tags.has(id)) throw new DomainError("missing_reference", "Tag does not exist.");
+    if ([...this.transactionTags.values()].some((tagIds) => tagIds.has(id)))
+      throw new DomainError("invalid_transaction", "A referenced tag must be archived or removed globally.");
+    this.tags.delete(id);
   }
   public async setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void> {
     if (!this.transactions.has(transactionId))

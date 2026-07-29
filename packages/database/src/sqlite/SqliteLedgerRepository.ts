@@ -423,6 +423,48 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ),
     );
   }
+
+  public deleteUnusedCategory(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findCategoryByIdInternal(id)) === undefined)
+            throw new DomainError("missing_reference", "Category does not exist.");
+          const references = await this.database.query<{ readonly found: number }>(
+            `
+              SELECT 1 AS found FROM categories WHERE parent_id = ?
+              UNION ALL SELECT 1 FROM transactions WHERE category_id = ?
+              UNION ALL SELECT 1 FROM transaction_splits WHERE category_id = ?
+              UNION ALL SELECT 1 FROM budgets WHERE category_id = ?
+              UNION ALL SELECT 1 FROM recurring_rules WHERE category_id = ?
+              LIMIT 1
+            `,
+            [id, id, id, id, id],
+          );
+          if (references.length > 0)
+            throw new DomainError("invalid_category", "A referenced category must be archived or reassigned.");
+          await this.database.run("DELETE FROM categories WHERE id = ?", [id]);
+        }),
+      ),
+    );
+  }
+
+  public deleteUnusedTag(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const rows = await this.database.query<{ readonly found: number }>(
+            "SELECT 1 AS found FROM tags WHERE id = ? UNION ALL SELECT 1 FROM transaction_tags WHERE tag_id = ? LIMIT 1",
+            [id, id],
+          );
+          if (rows.length === 0) throw new DomainError("missing_reference", "Tag does not exist.");
+          if (rows.length > 1)
+            throw new DomainError("invalid_transaction", "A referenced tag must be archived or removed globally.");
+          await this.database.run("DELETE FROM tags WHERE id = ?", [id]);
+        }),
+      ),
+    );
+  }
   public saveRecurringRule(rule: RecurringRule): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
