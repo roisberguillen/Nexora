@@ -118,6 +118,29 @@ describe("SqliteLedgerRepository", () => {
     expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("elimina solo conti senza riferimenti finanziari", async () => {
+    const unused = account("account-unused");
+    const used = account("account-used");
+    await repository.saveAccount(unused);
+    await repository.saveAccount(used);
+    await repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-used-account",
+        kind: "expense",
+        status: "booked",
+        accountId: used.id,
+        amount: Money.fromMinor(-100n, "EUR"),
+        bookedDate,
+      }),
+    );
+
+    await repository.deleteUnusedAccount(unused.id);
+    await expect(repository.findAccountById(unused.id)).resolves.toBeUndefined();
+    await expect(repository.deleteUnusedAccount(used.id)).rejects.toMatchObject({
+      code: "invalid_account",
+    });
+  });
+
   it("persiste e aggiorna il diario mensile", async () => {
     const journal = MonthlyJournal.create({
       id: "journal-2026-07",

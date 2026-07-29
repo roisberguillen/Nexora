@@ -251,6 +251,57 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     );
   }
 
+  public deleteUnusedAccount(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          [
+            "accounts",
+            "transactions",
+            "recurring_rules",
+            "allocation_plans",
+            "loans",
+            "investment_positions",
+          ],
+          "readwrite",
+          async (transaction) => {
+            const accounts = transaction.objectStore("accounts");
+            if ((await this.findAccountInStore(accounts, id)) === undefined)
+              throw new DomainError("missing_reference", "Account does not exist.");
+            const [accountRows, transactionCount, rules, plans, loans, positions] =
+              await Promise.all([
+                requestResult<unknown[]>(accounts.getAll()),
+                requestResult<number>(
+                  transaction.objectStore("transactions").index("by_account_id").count(id),
+                ),
+                requestResult<unknown[]>(transaction.objectStore("recurring_rules").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("allocation_plans").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("loans").getAll()),
+                requestResult<unknown[]>(transaction.objectStore("investment_positions").getAll()),
+              ]);
+            const isReferenced =
+              transactionCount > 0 ||
+              accountRows.some((row) => (row as AccountRecord).parent_account_id === id) ||
+              rules.some((row) => (row as RecurringRuleRecord).account_id === id) ||
+              plans.some(
+                (row) =>
+                  (row as AllocationPlanRecord).source_account_id === id ||
+                  (row as AllocationPlanRecord).target_account_id === id,
+              ) ||
+              loans.some((row) => (row as LoanRecord).account_id === id) ||
+              positions.some((row) => (row as InvestmentPositionRecord).account_id === id);
+            if (isReferenced)
+              throw new DomainError(
+                "invalid_account",
+                "An account with financial references must be archived instead of deleted.",
+              );
+            await requestResult(accounts.delete(id));
+          },
+        ),
+      ),
+    );
+  }
+
   public updateCategory(category: Category): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

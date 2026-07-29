@@ -94,6 +94,29 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("elimina solo conti senza riferimenti finanziari", async () => {
+    const unused = account("account-unused");
+    const used = account("account-used");
+    await ledger.repository.saveAccount(unused);
+    await ledger.repository.saveAccount(used);
+    await ledger.repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-used-account",
+        kind: "expense",
+        status: "booked",
+        accountId: used.id,
+        amount: Money.fromMinor(-100n, "EUR"),
+        bookedDate,
+      }),
+    );
+
+    await ledger.repository.deleteUnusedAccount(unused.id);
+    await expect(ledger.repository.findAccountById(unused.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.deleteUnusedAccount(used.id)).rejects.toMatchObject({
+      code: "invalid_account",
+    });
+  });
+
   it("persiste e aggiorna il diario mensile dopo la riapertura", async () => {
     const journal = MonthlyJournal.create({
       id: "journal-2026-07",

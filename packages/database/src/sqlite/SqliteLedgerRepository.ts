@@ -360,6 +360,35 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public deleteUnusedAccount(id: string): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if ((await this.findAccountByIdInternal(id)) === undefined)
+            throw new DomainError("missing_reference", "Account does not exist.");
+          const references = await this.database.query<{ readonly found: number }>(
+            `
+              SELECT 1 AS found FROM transactions WHERE account_id = ?
+              UNION ALL SELECT 1 FROM accounts WHERE parent_account_id = ?
+              UNION ALL SELECT 1 FROM recurring_rules WHERE account_id = ?
+              UNION ALL SELECT 1 FROM allocation_plans WHERE source_account_id = ? OR target_account_id = ?
+              UNION ALL SELECT 1 FROM loans WHERE account_id = ?
+              UNION ALL SELECT 1 FROM investment_positions WHERE account_id = ?
+              LIMIT 1
+            `,
+            [id, id, id, id, id, id, id],
+          );
+          if (references.length > 0)
+            throw new DomainError(
+              "invalid_account",
+              "An account with financial references must be archived instead of deleted.",
+            );
+          await this.database.run("DELETE FROM accounts WHERE id = ?", [id]);
+        }),
+      ),
+    );
+  }
+
   public updateCategory(category: Category): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

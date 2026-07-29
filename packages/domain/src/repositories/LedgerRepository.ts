@@ -30,6 +30,7 @@ export interface TrashedTransaction {
 export interface LedgerRepository {
   saveAccount(account: Account): Promise<void>;
   updateAccount(account: Account): Promise<void>;
+  deleteUnusedAccount(id: string): Promise<void>;
   saveCategory(category: Category): Promise<void>;
   updateCategory(category: Category): Promise<void>;
   saveTag(tag: Tag): Promise<void>;

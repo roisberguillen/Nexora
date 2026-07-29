@@ -101,6 +101,26 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.accounts.set(account.id, account);
   }
 
+  public async deleteUnusedAccount(id: string): Promise<void> {
+    if (!this.accounts.has(id))
+      throw new DomainError("missing_reference", "Account does not exist.");
+    const isReferenced =
+      [...this.transactions.values()].some((transaction) => transaction.accountId === id) ||
+      [...this.accounts.values()].some((account) => account.parentAccountId === id) ||
+      [...this.recurringRules.values()].some((rule) => rule.accountId === id) ||
+      [...this.allocationPlans.values()].some(
+        (plan) => plan.sourceAccountId === id || plan.targetAccountId === id,
+      ) ||
+      [...this.loans.values()].some((loan) => loan.accountId === id) ||
+      [...this.investmentPositions.values()].some((position) => position.accountId === id);
+    if (isReferenced)
+      throw new DomainError(
+        "invalid_account",
+        "An account with financial references must be archived instead of deleted.",
+      );
+    this.accounts.delete(id);
+  }
+
   public async saveCategory(category: Category): Promise<void> {
     this.assertNew(this.categories, category.id, "Category");
     if (category.parentId !== undefined && !this.categories.has(category.parentId)) {

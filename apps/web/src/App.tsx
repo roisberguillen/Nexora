@@ -341,6 +341,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.trashTransaction(id);
     });
+  const deleteUnusedAccount = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteUnusedAccount(id);
+    });
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
       await commitMoneyManagerImport(ledger.repository, input);
@@ -416,6 +420,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
               <AccountsPage
                 model={ledgerState.accounts}
                 onCreate={createAccount}
+                onDeleteUnused={deleteUnusedAccount}
                 onSetArchived={setAccountArchived}
                 onUpdate={updateAccount}
               />
