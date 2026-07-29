@@ -105,6 +105,7 @@ describe("commitMoneyManagerImport", () => {
           preview: {
             account: "Conto demo",
             amountMinor: -1250n,
+            category: undefined,
             currency: "EUR",
             date: "2026-07-28",
             message: "",
