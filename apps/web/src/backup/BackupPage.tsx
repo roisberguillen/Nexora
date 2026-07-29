@@ -12,6 +12,27 @@ interface DirectoryPickerWindow extends Window {
   showDirectoryPicker?: () => Promise<FileSystemDirectoryHandle>;
 }
 
+function errorCode(error: unknown): string | undefined {
+  return error instanceof Error ? error.message : undefined;
+}
+
+function describeCloudError(error: unknown): string {
+  switch (errorCode(error)) {
+    case "cloud_session_expired":
+      return "La sessione Google Drive è scaduta: ricollega l'account e riprova.";
+    case "cloud_permission_denied":
+      return "Google Drive ha negato l'accesso all'area privata dell'app.";
+    case "cloud_backup_not_found":
+      return "L'archivio cloud selezionato non è più disponibile.";
+    case "cloud_rate_limited":
+      return "Google Drive sta limitando le richieste: riprova tra qualche minuto.";
+    case "cloud_timeout":
+      return "La connessione a Google Drive ha superato il tempo massimo: riprova.";
+    default:
+      return "La connessione a Google Drive non è disponibile: riprova quando torni online.";
+  }
+}
+
 export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
   const [passphrase, setPassphrase] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -24,6 +45,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
   const [cloudStatus, setCloudStatus] = useState<
     "idle" | "authorizing" | "connected" | "expired" | "error"
   >("idle");
+  const [cloudError, setCloudError] = useState<string>();
   const cloudConfig = useMemo(readGoogleCloudConfig, []);
   const cloudAuth = useMemo(
     () => new GoogleIdentityAuth(cloudConfig.clientId),
@@ -144,14 +166,16 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     if (!cloudConfig.enabled) return;
     setIsCloudBusy(true);
     setMessage(null);
+    setCloudError(undefined);
     try {
       await loadGoogleIdentity();
       await cloudAuth.connect();
       setCloudStatus(cloudAuth.getStatus());
       setCloudBackups(await cloudProvider.list());
       setMessage("Google Drive collegato: vengono gestiti solo backup cifrati privati.");
-    } catch {
+    } catch (error) {
       setCloudStatus(cloudAuth.getStatus());
+      setCloudError(describeCloudError(error));
       setMessage("Collegamento Google Drive non riuscito. Nessun dato locale è stato condiviso.");
     } finally {
       setIsCloudBusy(false);
@@ -167,6 +191,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     if (ledger.createEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
     setIsCloudBusy(true);
     setMessage(null);
+    setCloudError(undefined);
     try {
       const backup = await ledger.createEncryptedBackupArchive({ passphrase });
       await cloudProvider.upload(
@@ -192,8 +217,9 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       setPassphrase("");
       setCloudBackups(await cloudProvider.list());
       setMessage("Backup cifrato caricato su Google Drive dopo la verifica locale.");
-    } catch {
-      setCloudStatus("expired");
+    } catch (error) {
+      setCloudStatus(errorCode(error) === "cloud_session_expired" ? "expired" : "error");
+      setCloudError(describeCloudError(error));
       appendBackupHistory({
         operation: "cloud_upload",
         storageKind: ledger.storageKind,
@@ -209,6 +235,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     if (ledger.restoreEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
     setIsCloudBusy(true);
     setMessage(null);
+    setCloudError(undefined);
     try {
       await ledger.restoreEncryptedBackupArchive({
         archive: await cloudProvider.download(backup.id),
@@ -224,8 +251,9 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       });
       setHistory(readBackupHistory());
       window.location.reload();
-    } catch {
-      setCloudStatus("expired");
+    } catch (error) {
+      setCloudStatus(errorCode(error) === "cloud_session_expired" ? "expired" : "error");
+      setCloudError(describeCloudError(error));
       appendBackupHistory({
         operation: "cloud_download",
         storageKind: ledger.storageKind,
@@ -351,19 +379,26 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       <section aria-labelledby="cloud-backup-title" className="backup-cloud-unavailable">
         <h2 id="cloud-backup-title">Backup cloud</h2>
         {cloudConfig.enabled ? (
-          <p>
-            Stato Drive:{" "}
-            {cloudStatus === "idle"
-              ? "non collegato"
-              : cloudStatus === "authorizing"
-                ? "collegamento in corso"
-                : cloudStatus === "connected"
-                  ? "collegato"
-                  : cloudStatus === "expired"
-                    ? "sessione scaduta"
-                    : "errore autorizzazione"}
-            . Drive usa `appDataFolder` e riceve esclusivamente archivi già cifrati.
-          </p>
+          <>
+            <p>
+              Stato Drive:{" "}
+              {cloudStatus === "idle"
+                ? "non collegato"
+                : cloudStatus === "authorizing"
+                  ? "collegamento in corso"
+                  : cloudStatus === "connected"
+                    ? "collegato"
+                    : cloudStatus === "expired"
+                      ? "sessione scaduta"
+                      : "errore autorizzazione"}
+              . Drive usa `appDataFolder` e riceve esclusivamente archivi già cifrati.
+            </p>
+            {cloudError === undefined ? null : (
+              <p aria-live="polite" className="form-error" role="alert">
+                {cloudError}
+              </p>
+            )}
+          </>
         ) : (
           <p>Configura `VITE_GOOGLE_CLIENT_ID` e `VITE_GOOGLE_DRIVE_ENABLED=true` per attivarlo.</p>
         )}

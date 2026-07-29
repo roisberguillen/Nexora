@@ -2,10 +2,16 @@ import type { CloudBackupMetadata, CloudBackupProvider } from "./cloudTypes";
 
 const endpoint = "https://www.googleapis.com/drive/v3/files";
 
+export interface GoogleDriveBackupProviderOptions {
+  readonly maxAttempts?: number;
+  readonly timeoutMs?: number;
+}
+
 export class GoogleDriveBackupProvider implements CloudBackupProvider {
   public constructor(
     private readonly token: () => string | undefined,
     private readonly fetcher: typeof fetch = fetch,
+    private readonly options: GoogleDriveBackupProviderOptions = {},
   ) {}
   public async list(): Promise<readonly CloudBackupMetadata[]> {
     const response = await this.request(
@@ -66,12 +72,59 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
   private async request(url: string, init: RequestInit = {}): Promise<Response> {
     const token = this.token();
     if (token === undefined) throw new Error("cloud_session_expired");
-    const response = await this.fetcher(url, {
-      ...init,
-      headers: { ...init.headers, Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok)
-      throw new Error(response.status === 401 ? "cloud_session_expired" : "cloud_network_error");
-    return response;
+    const maxAttempts = this.options.maxAttempts ?? 2;
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        const response = await this.fetchWithTimeout(url, {
+          ...init,
+          headers: { ...init.headers, Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) return response;
+        const errorCode = errorCodeForStatus(response.status);
+        if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
+          throw new Error(errorCode);
+        }
+        lastError = new Error(errorCode);
+      } catch (error) {
+        const errorCode = error instanceof Error ? error.message : "cloud_network_error";
+        if (!isRetryableError(errorCode) || attempt === maxAttempts) throw error;
+        lastError = error;
+      }
+    }
+    throw lastError instanceof Error ? lastError : new Error("cloud_network_error");
   }
+
+  private async fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), this.options.timeoutMs ?? 10_000);
+    try {
+      return await this.fetcher(url, { ...init, signal: controller.signal });
+    } catch (error) {
+      if (controller.signal.aborted) throw new Error("cloud_timeout");
+      throw new Error("cloud_network_error");
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+}
+
+function errorCodeForStatus(status: number): string {
+  if (status === 401) return "cloud_session_expired";
+  if (status === 403) return "cloud_permission_denied";
+  if (status === 404) return "cloud_backup_not_found";
+  if (status === 429) return "cloud_rate_limited";
+  return "cloud_network_error";
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+function isRetryableError(errorCode: string): boolean {
+  return (
+    errorCode === "cloud_network_error" ||
+    errorCode === "cloud_timeout" ||
+    errorCode === "cloud_rate_limited"
+  );
 }

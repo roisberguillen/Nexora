@@ -209,8 +209,8 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 14702,
-      "sha256": "5a2eccf62a657a2510f64d740fbfbc751993c0350335adefdb6716425fee58a7"
+      "size": 16252,
+      "sha256": "4980cf861a1e6e3fb67cf4eea57290fab2bcb927861091ede14249132d127464"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -249,13 +249,13 @@
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.test.ts",
-      "size": 2608,
-      "sha256": "f38bb0b0173b1634f49a8a2a243ba07030ddd1724a1a670fb55b52c3c4dd50d5"
+      "size": 3604,
+      "sha256": "67c2c0ff76b2c735a32abca1d3f6f03756784351dba3f8befd43dd4a704814b6"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
-      "size": 3072,
-      "sha256": "cb212c2949ae8fb66463349e551b7d24dfd3c0170b58f6e976bebbdc2b92fbc8"
+      "size": 5005,
+      "sha256": "d80c28b1c0ad93cd919d308db419a91808cec64ff7a8cfd88c41fe74743ab8ea"
     },
     {
       "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",
