@@ -164,8 +164,8 @@
     },
     {
       "path": "apps/web/src/accounts/AccountsPage.tsx",
-      "size": 18068,
-      "sha256": "42cd5b9a1e2d960114a8426463494f1ee908992b0665c4a6f5151fb8a236d9fa"
+      "size": 19088,
+      "sha256": "e6a6f02f79aaea937943ab9228cca0292cd8c329f38f20d8ce46b50950e0e52c"
     },
     {
       "path": "apps/web/src/accounts/buildAccountsViewModel.test.ts",
@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 27349,
-      "sha256": "3857e810aa9821c6d41754df0c38f5e18a07634c9bc6bf4dfe9c57c309f91460"
+      "size": 29360,
+      "sha256": "5645204e8fbe37c7460dad79b04ecba70fb9a77553393d9fabd90ba8a8e2e3fe"
     },
     {
       "path": "apps/web/src/backup/backupHistory.test.ts",
@@ -224,8 +224,8 @@
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
-      "size": 5264,
-      "sha256": "751ed6a118497b28e6a277827b5b6d73cdef718812d35a3780f175ae6fd575ad"
+      "size": 5873,
+      "sha256": "2a9d3a665d0b587665874956cb5599b434e2073a0e51aad62ef300084e63608e"
     },
     {
       "path": "apps/web/src/categories/categoryCommands.ts",
@@ -304,13 +304,13 @@
     },
     {
       "path": "apps/web/src/imports/importCommands.test.ts",
-      "size": 4365,
-      "sha256": "f40fc7ff04ed6d90a2735fedddfe0af94ce54987e9f1c29afcc0468b058ac26b"
+      "size": 5747,
+      "sha256": "58478c11edb5b75ff1f563e022a930a8a69e499b99cce10bc61a16daa003a859"
     },
     {
       "path": "apps/web/src/imports/importCommands.ts",
-      "size": 7833,
-      "sha256": "6d71067b719e4dd16e3385edd5c2bfe16e1d480ef36536335cfe81c14a855909"
+      "size": 8032,
+      "sha256": "157a67735eae8caaea3f7e4b358063f6bfc008c82126c4ea8ca97b2b2f0feec5"
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
@@ -418,6 +418,16 @@
       "sha256": "8e3551d976fbdb81a389aba661d871342ebcc574d5a4660738165d45cd1d21f4"
     },
     {
+      "path": "apps/web/src/reset/resetLocalApp.test.ts",
+      "size": 999,
+      "sha256": "e9ac83c06ef4a099487182d6eae354fd5e48eb43a6cd0e1eea229f6d05084528"
+    },
+    {
+      "path": "apps/web/src/reset/resetLocalApp.ts",
+      "size": 2059,
+      "sha256": "4fb83820b997d598c60f0702dd550e34a83e85babddb6e3f36336311cf4479ff"
+    },
+    {
       "path": "apps/web/src/security/appLock.test.ts",
       "size": 1441,
       "sha256": "4caa13bb83b11a266aba224ae95bbf23341ab947521d4ff33b8732da7de22f2d"
@@ -449,8 +459,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 4505,
-      "sha256": "c8e619c038bbd08e26592c8fcf709a5ce33e83baa48ed6cf1b39eb81c3cbf507"
+      "size": 11865,
+      "sha256": "7454e4459c0015cbca0e99cfb054f6ed140cab0172ad179507bc35d02230824d"
     },
     {
       "path": "apps/web/src/tags/tagCommands.test.ts",
@@ -464,8 +474,8 @@
     },
     {
       "path": "apps/web/src/tags/TagsPage.tsx",
-      "size": 4640,
-      "sha256": "7f229cb9299f7cf2763cc02a67785af145475569e20f5c4f6d2a5d669e4e61fb"
+      "size": 5252,
+      "sha256": "3d7aa08430baf621c1d6d7b593b1991e2f6ab809970b8d362fc03acc8e1f85fc"
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.test.ts",
@@ -489,8 +499,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 23222,
-      "sha256": "326c972d6f0d715861b3c720c45f56e7c77bf0cd5e27aec60a5680f8739bb010"
+      "size": 24206,
+      "sha256": "116bdda51ea36654a2921a4c8c6412579e6b5410e97ec6aaf10599da5c842124"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -800,7 +810,7 @@
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
       "size": 7946,
-      "sha256": "68a07e2ee7abdcad65fb7e9b92ad6c30962f562bafbf0833046077783dfb3e7b"
+      "sha256": "1812d09fde552fed524e425741bc89ca8595aa7faab054e6f952cf02a0e77b0f"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
@@ -839,8 +849,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 26142,
-      "sha256": "a74624d966d42b6d2b5935f26390ed6b0b45a626753abdc49b33d388d14c64aa"
+      "size": 33004,
+      "sha256": "429718225761ab9f6cb04014e61ee5847333710d1a7af85be6bd6d61c3553c5e"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -849,13 +859,13 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 20670,
-      "sha256": "1dd172d15a85d7d26dd0ea468129d9f2dcf67bec467f413401f1b3a1a9e6ecef"
+      "size": 25380,
+      "sha256": "7c04c1dd5a357e774dcfe09971cfc4e8507a35c2c6266fb1ce18b36901b58ec1"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 64717,
-      "sha256": "6650a6e3b3bccc56dffa7de94640644b2585cf83e2dba1bc53b0056fb5d8e903"
+      "size": 78953,
+      "sha256": "cd44db4143e88d709abd6edeee2c731479ce14e1c58a36804426a1ffeaef3db1"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -944,8 +954,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 9990,
-      "sha256": "556b9645f28d1016eff3087699dc9889d82f277997811deb36f64974eca6d8a5"
+      "size": 10048,
+      "sha256": "04b68f530a7a256c85a0a85c4afd24c3ef2219211448189ecfb3e12bd65b713d"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -1014,13 +1024,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 20791,
-      "sha256": "6acad879993a75144135b5dfdc1732399ad4b6a949720b8ad054a6c954a59dfd"
+      "size": 25249,
+      "sha256": "3e33cd56c40873d13d95d74c4131cf3a2310cbfa639a3dad199c0cfb935b9ab6"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 71579,
-      "sha256": "846a8a314d80a09fb59f1d8c9ea10980ee36406bc0290b015cc2ad70b2d84d4e"
+      "size": 81070,
+      "sha256": "6e0019a152c17afe703502b0b60950402960bb8bfd92bdadaea24f073685d515"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -1179,13 +1189,13 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 2407,
-      "sha256": "32748e921d169cbfe3a2cb39205cfaadc4153ebf337614716ed923d801b6d060"
+      "size": 2434,
+      "sha256": "d73e4d8f4236d8af4f7006009d519967b8663ce2e578ad7fe412a4a3883a9e84"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 4113,
-      "sha256": "f823b28cedfd02ef4710ae560f17d3dfd8df1d46b88329cd25764ccc521d2a8f"
+      "size": 5093,
+      "sha256": "049ff62b2658d4af5af8f2bc7c73919f0a6c7fb4dc6f1e63f8db8b5e96d9bc84"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",
