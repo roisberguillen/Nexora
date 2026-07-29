@@ -2,6 +2,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 import "@nexora/ui/styles.css";
 import "./page.css";
+import "./startup/startup.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

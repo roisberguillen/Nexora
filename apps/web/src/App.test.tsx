@@ -24,10 +24,12 @@ describe("Nexora app", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: "Preparazione dell’archivio locale",
+        name: "Preparazione del tuo archivio",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent("Nexora sta verificando backend");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Stiamo verificando e proteggendo i tuoi dati.",
+    );
   });
 
   it("mostra una dashboard vuota senza inserire dati automaticamente", async () => {

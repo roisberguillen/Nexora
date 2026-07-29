@@ -184,13 +184,13 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 8172,
-      "sha256": "0fc19127f71c657f6328eefaa14e635bbf12567f61dd37c0ac64a986998d17ab"
+      "size": 8194,
+      "sha256": "5882328f497a41430abd5e9078e26753e565c3ba58cafa60accefdaae3ff7645"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 35611,
-      "sha256": "5d6e24a4caa3e98b93cb092fe7d05d6b22890a562f00346cef5e4f3407b0d885"
+      "size": 35332,
+      "sha256": "7c40272b0c1ed5ddb7e6f6cabf9a4a1660fb03d1a1a2cbd8bed6ed51b4d296eb"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 1112,
-      "sha256": "1280ff7ac5024a567ac5d8de6c0e3db0153bacf69b4820801206fdc99ef3986d"
+      "size": 1144,
+      "sha256": "51707aacde90feade7fd10efd23d8ef649907cce9113ea69fad4ab14f7253f92"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -501,6 +501,16 @@
       "path": "apps/web/src/settings/SettingsPage.tsx",
       "size": 25618,
       "sha256": "a4b8da802e66f23f32b96180d0b80a67a580573ea7fbecf30e02765386736110"
+    },
+    {
+      "path": "apps/web/src/startup/startup.css",
+      "size": 1113,
+      "sha256": "472fc98bc2710ab1d83d5ec1dfca08d4414d44a863f75bf20e38160d3a0f4926"
+    },
+    {
+      "path": "apps/web/src/startup/StartupLoadingScreen.tsx",
+      "size": 1158,
+      "sha256": "59488293fe62df33f82b8dcf1d39af02fd2dccb8512b5f8b5a37c55f78047cb8"
     },
     {
       "path": "apps/web/src/startup/StartupOrchestrator.test.ts",

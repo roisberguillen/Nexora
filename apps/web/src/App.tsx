@@ -95,6 +95,7 @@ import { GoogleDriveBackupProvider } from "./cloud/GoogleDriveBackupProvider";
 import { GoogleIdentityAuth } from "./cloud/GoogleIdentityAuth";
 import { readGoogleCloudConfig } from "./cloud/cloudConfig";
 import { loadGoogleIdentity } from "./cloud/loadGoogleIdentity";
+import { StartupLoadingScreen } from "./startup/StartupLoadingScreen";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -768,17 +769,7 @@ const quickActions: readonly QuickAction[] = [
 
 function PersistenceState({ state }: { readonly state: Exclude<LedgerState, ReadyLedgerState> }) {
   if (state.status === "loading") {
-    return (
-      <section aria-live="polite" className="ledger-state-card is-loading" role="status">
-        <span aria-hidden="true" className="ledger-state-mark">
-          …
-        </span>
-        <div>
-          <h1>Preparazione dell’archivio locale</h1>
-          <p>Nexora sta verificando backend, schema e disponibilità offline.</p>
-        </div>
-      </section>
-    );
+    return <StartupLoadingScreen />;
   }
 
   return (
