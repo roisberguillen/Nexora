@@ -863,9 +863,19 @@
       "sha256": "be7b744edb7469ef3f0dbff19a5ca35088c555ebe9f447b171d9d03e1addb8fa"
     },
     {
+      "path": "docs/reports/known-limitations.md",
+      "size": 2114,
+      "sha256": "837f27aaa9824b6e1f458a0404b9cf479713924529b044d681a336324f9da73c"
+    },
+    {
       "path": "docs/reports/startup-baseline.md",
       "size": 2456,
       "sha256": "539fbb00bce2508c09985a8440232a1a74d0494604826610273db8f895be884d"
+    },
+    {
+      "path": "docs/reports/test-matrix.md",
+      "size": 968,
+      "sha256": "dbece59c7fb4182bea5f6f47f6f4db3d908c2fbe3522f7f154fe82361a177df0"
     },
     {
       "path": "docs/ROADMAP.md",
