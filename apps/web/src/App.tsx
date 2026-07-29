@@ -345,6 +345,10 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
     mutateLedger(async (ledger) => {
       await ledger.repository.deleteUnusedAccount(id);
     });
+  const resetFinancialData = (): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.resetFinancialData();
+    });
   const commitImport = (input: Parameters<typeof commitMoneyManagerImport>[1]): Promise<void> =>
     mutateLedger(async (ledger) => {
       await commitMoneyManagerImport(ledger.repository, input);
@@ -518,7 +522,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger }: AppProps) {
             ) : route === "profile" ? (
               <ProfilePage ledger={ledgerState.ledger} />
             ) : route === "settings" ? (
-              <SettingsPage />
+              <SettingsPage onResetFinancialData={resetFinancialData} />
             ) : route === "privacy-security" ? (
               <PrivacySecurityPage
                 ledger={ledgerState.ledger}

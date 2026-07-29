@@ -7,7 +7,11 @@ import {
   type AppPreferences,
 } from "./preferences";
 
-export function SettingsPage() {
+export function SettingsPage({
+  onResetFinancialData,
+}: {
+  readonly onResetFinancialData?: () => Promise<void>;
+}) {
   const [preferences, setPreferences] = useState<AppPreferences>(() => readAppPreferences());
   useEffect(() => {
     applyAppPreferences(preferences);
@@ -15,6 +19,25 @@ export function SettingsPage() {
   }, [preferences]);
   const update = (patch: Partial<AppPreferences>) =>
     setPreferences((current) => ({ ...current, ...patch }));
+  const [isResetOpen, setIsResetOpen] = useState(false);
+  const [resetPhrase, setResetPhrase] = useState("");
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
+  const resetFinancialData = async () => {
+    if (onResetFinancialData === undefined || resetPhrase !== "RESETTA DATI FINANZIARI") return;
+    setIsResetting(true);
+    setResetMessage(null);
+    try {
+      await onResetFinancialData();
+      setResetPhrase("");
+      setIsResetOpen(false);
+      setResetMessage("Dati finanziari resettati. Preferenze e backup non sono stati modificati.");
+    } catch {
+      setResetMessage("Reset non completato: i dati esistenti non sono stati modificati.");
+    } finally {
+      setIsResetting(false);
+    }
+  };
   return (
     <div id="settings">
       <header className="accounts-heading">
@@ -66,6 +89,61 @@ export function SettingsPage() {
           <SettingsLink label="Esportazione completa" href="./#exports" />
           <SettingsRow label="Archivio locale" value="Locale; non cifrato a riposo" />
         </SettingsGroup>
+        {onResetFinancialData === undefined ? null : (
+          <SettingsGroup title="Zona pericolosa">
+            <p>
+              Il reset rimuove conti, movimenti, importazioni, budget e pianificazioni dal ledger
+              locale.
+            </p>
+            {resetMessage === null ? null : (
+              <p className="account-feedback" role="status">
+                {resetMessage}
+              </p>
+            )}
+            <button className="secondary-action" onClick={() => setIsResetOpen(true)} type="button">
+              Reset dati finanziari
+            </button>
+            {isResetOpen ? (
+              <div
+                aria-labelledby="reset-financial-title"
+                aria-modal="true"
+                className="account-feedback"
+                role="dialog"
+              >
+                <h2 id="reset-financial-title">Conferma reset dati finanziari</h2>
+                <p>
+                  Backup e preferenze restano disponibili. Scrivi la frase richiesta per continuare.
+                </p>
+                <label>
+                  Frase di conferma
+                  <input
+                    aria-label="Frase di conferma reset"
+                    onChange={(event) => setResetPhrase(event.currentTarget.value)}
+                    value={resetPhrase}
+                  />
+                </label>
+                <div className="form-actions">
+                  <button
+                    className="secondary-action"
+                    disabled={isResetting}
+                    onClick={() => setIsResetOpen(false)}
+                    type="button"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    className="primary-action"
+                    disabled={isResetting || resetPhrase !== "RESETTA DATI FINANZIARI"}
+                    onClick={() => void resetFinancialData()}
+                    type="button"
+                  >
+                    {isResetting ? "Reset in corso…" : "Conferma reset"}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </SettingsGroup>
+        )}
         <SettingsGroup title="Applicazione">
           <SettingsRow label="Versione app" value="0.4.0" />
           <SettingsLink label="Privacy e sicurezza" href="./#privacy-security" />
