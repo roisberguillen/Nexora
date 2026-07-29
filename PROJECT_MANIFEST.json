@@ -1,6 +1,6 @@
 {
   "project": "Nexora",
-  "version": "0.4.0",
+  "version": "0.5.0-beta.1",
   "files": [
     {
       "path": ".codex/agents/domain-architect.md",
@@ -94,8 +94,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 721,
-      "sha256": "6bccfc6815ac4869d809a04adbf79aaec2f39c3c1fdc9fd6d78e60aee648a09b"
+      "size": 746,
+      "sha256": "bdb9d55d28f18c1f3a2e3423dc73a200d8822e2b85bd64b7df1aef70d638696f"
     },
     {
       "path": ".gitignore",
@@ -103,9 +103,19 @@
       "sha256": "bb7c9936c300a966d75a314b2b9efb9248c7e6769b4e681511483701638fb2b5"
     },
     {
+      "path": ".node-version",
+      "size": 8,
+      "sha256": "b911698dc3cf3227d34d0ad6727f1c4408791203c9665de99ab959331a1fb07d"
+    },
+    {
       "path": ".npmrc",
       "size": 65,
       "sha256": "a6b535050ffed7bf041c71335beb770abb893edc91eb663b0e54955cf9170758"
+    },
+    {
+      "path": ".nvmrc",
+      "size": 8,
+      "sha256": "b911698dc3cf3227d34d0ad6727f1c4408791203c9665de99ab959331a1fb07d"
     },
     {
       "path": ".prettierignore",
@@ -573,6 +583,11 @@
       "sha256": "22b7fe048fe2610db6fdad410ed5943d76eee5a09110d24cfb4e9202e50378c3"
     },
     {
+      "path": "docs/archive/ROADMAP_PRE_RELEASE_2026-07-29.md",
+      "size": 309,
+      "sha256": "e578970835d9a6ef144ca99074c647ed1b0520d89903eb83a212c4a664ef6542"
+    },
+    {
       "path": "docs/CONTEXT.md",
       "size": 1305,
       "sha256": "6d93fc9e6a1c57cb4bbee790501d08a0aff0f4c622bbab2391dfa339b4e54bf6"
@@ -619,8 +634,8 @@
     },
     {
       "path": "docs/ROADMAP.md",
-      "size": 8205,
-      "sha256": "c838f6c529d50dee63ea2ffcff84dcc3885cbd06f5e82cfa3396eaa3da5fbdc4"
+      "size": 1935,
+      "sha256": "5b7d73537dd02a7a037e0fdc17598cd504f1194a459ca2fdce7932d38cf2ab50"
     },
     {
       "path": "docs/security/THREAT_MODEL.md",
@@ -674,8 +689,8 @@
     },
     {
       "path": "package.json",
-      "size": 1513,
-      "sha256": "be1d884921e82cd87ad75a2caa5b27a5f0aa0bbac219ae6d0fb0b3b514892d42"
+      "size": 1623,
+      "sha256": "4777e3a42b036dffa5994b07d106b4332bb87b57d26cb39e95f821d2fe25c120"
     },
     {
       "path": "packages/config/package.json",
@@ -1369,8 +1384,8 @@
     },
     {
       "path": "README.md",
-      "size": 1810,
-      "sha256": "8f197744c026cecd03930b711b6d96e48e85be2ca4521c34d07717c99ccb7f4d"
+      "size": 2448,
+      "sha256": "ba55fd99f9100030e6dd1ba621ce064b7f78013939cddf43037851edf807e563"
     },
     {
       "path": "schemas/backup-manifest.schema.json",
@@ -1381,6 +1396,11 @@
       "path": "schemas/import-mapping.schema.json",
       "size": 651,
       "sha256": "b4a74a8a302a9b1fa892f29b92b0878174c0b038519d32c9f6ead0ef51540cc8"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "size": 2232,
+      "sha256": "f48a1f2d6575772d1163098a1f114fb6076e962f20c71379d2ed68cdf730c5c9"
     },
     {
       "path": "scripts/project-manifest.mjs",

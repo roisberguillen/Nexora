@@ -1,54 +1,78 @@
 # Nexora
 
-Nexora è una Progressive Web App offline-first per la gestione completa della finanza personale: conti, N26 Spaces, entrate, spese, trasferimenti, budget, prestiti, investimenti, obiettivi, importazioni, backup e analisi.
+Nexora è una PWA offline-first per finanze personali. I dati restano nel browser: SQLite WASM
+su OPFS è il backend preferito; IndexedDB è il fallback esplicito quando OPFS non è disponibile.
 
-## Stato del repository
+## Stato prodotto
 
-Le **Milestone 0, 1 e 2 sono completate**. La Milestone 3 è in corso: il repository
-contiene PWA installabile, persistenza offline SQLite/OPFS con fallback IndexedDB,
-dashboard, gestione conti e primi flussi Movimenti (entrate, spese, rettifiche,
-trasferimenti atomici e annullamento conservativo).
+Versione corrente: **0.5.0-beta.1**. Non è una release di produzione. La roadmap Release
+Candidate in `docs/ROADMAP.md` distingue in modo verificabile funzionalità completate, limiti e
+lavoro ancora necessario prima di una RC.
 
-I prossimi flussi della Milestone 3 sono split persistenti, categorie/tag e ricerca,
-descritti in `docs/ROADMAP.md`.
+## Requisiti
 
-## Sviluppo locale
+- Node.js `>=24.14.0 <25` (versione consigliata: 24.15.0);
+- pnpm `>=11.9.0 <12`;
+- Chromium/Chrome recente per OPFS e File System Access API. Altri browser possono usare
+  IndexedDB, con capacità backup inferiori finché il formato comune non sarà completato.
 
-Prerequisiti: Node 24 e pnpm 11.
+## Installazione
+
+Su Windows, macOS e Linux:
 
 ```sh
+corepack enable
 pnpm install --frozen-lockfile
+pnpm doctor
 pnpm dev
 ```
 
-Quality gate completo:
+Apri l’URL mostrato da Vite. `pnpm doctor` non mostra mai valori di variabili o credenziali;
+segnala soltanto presenza e compatibilità dell’ambiente.
+
+## Comandi
 
 ```sh
-pnpm verify
-pnpm test:e2e
+pnpm dev
+pnpm doctor
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 pnpm manifest:check
+pnpm test:e2e
+pnpm audit --prod
 ```
 
-## Workspace
+`pnpm verify` esegue format, lint, typecheck, test e build. Gli E2E richiedono Chromium.
 
-- `apps/web`: PWA e composizione dell’applicazione;
-- `packages/ui`: componenti accessibili e token semantici;
-- `packages/config`: impostazioni condivise e logging sicuro;
-- `packages/domain`: value object, entità e invarianti contabili;
-- `packages/database`: repository in-memory; persistenza offline dalla Milestone 2;
-- `packages/importers`: pipeline di importazione, dalla Milestone 4.
+## Google Drive
 
-## Principi non negoziabili
+Google Drive è facoltativo. L’app usa il solo scope `drive.appdata`: token OAuth in memoria e
+archivi cifrati prima dell’upload. Non inserire mai un client secret nel repository.
 
-- offline-first;
-- dati finanziari locali e privati;
-- importazioni reversibili e idempotenti;
-- trasferimenti esclusi da entrate e spese;
-- importazione Money Manager XLSX prioritaria;
-- calcoli monetari senza floating point binario;
-- backup verificabili;
-- nessuna feature implementata senza specifica e criteri di accettazione.
+```env
+VITE_GOOGLE_CLIENT_ID=...apps.googleusercontent.com
+VITE_GOOGLE_DRIVE_ENABLED=true
+```
 
-## Mockup UX/UI
+Configura gli Authorized JavaScript Origins per l’origine locale e quella di produzione. Senza
+queste variabili la UI comunica correttamente che Drive non è configurato e il backup locale resta
+disponibile dove supportato dal browser.
 
-Il mockup ufficiale è incluso in `design/mockup/stitch/`. Per trasformarlo in componenti applicativi usare il prompt `.codex/prompts/03-ui-from-mockup.md`.
+## Struttura
+
+- `apps/web`: PWA React/Vite;
+- `packages/domain`: entità, value object e invarianti contabili;
+- `packages/database`: repository, migrazioni, SQLite/OPFS e IndexedDB;
+- `packages/ui`: componenti accessibili e token CSS;
+- `packages/importers`: importatori locali;
+- `docs`: architettura, ADR, sicurezza, roadmap e procedure operative.
+
+## Limiti noti
+
+- il ledger aperto nel browser non è cifrato a riposo dal solo browser; i backup cifrati usano una
+  passphrase temporanea;
+- le operazioni in background non sono garantite quando PWA/browser sono chiusi;
+- nessun client OAuth o dato finanziario reale è incluso nel repository.
