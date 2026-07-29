@@ -254,8 +254,8 @@
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
-      "size": 5005,
-      "sha256": "d80c28b1c0ad93cd919d308db419a91808cec64ff7a8cfd88c41fe74743ab8ea"
+      "size": 4997,
+      "sha256": "abfa187a9016d5d39487e20a5a14c3cfc87ef7811d77213a365e4d337b037a77"
     },
     {
       "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",

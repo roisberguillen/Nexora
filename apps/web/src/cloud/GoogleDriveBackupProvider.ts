@@ -100,7 +100,7 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
     const timeout = setTimeout(() => controller.abort(), this.options.timeoutMs ?? 10_000);
     try {
       return await this.fetcher(url, { ...init, signal: controller.signal });
-    } catch (error) {
+    } catch {
       if (controller.signal.aborted) throw new Error("cloud_timeout");
       throw new Error("cloud_network_error");
     } finally {
