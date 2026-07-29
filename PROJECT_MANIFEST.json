@@ -889,8 +889,8 @@
     },
     {
       "path": "docs/reports/test-matrix.md",
-      "size": 968,
-      "sha256": "dbece59c7fb4182bea5f6f47f6f4db3d908c2fbe3522f7f154fe82361a177df0"
+      "size": 1078,
+      "sha256": "52a9fb9bfd51fed1fe352909524398077bc65840fd33bf1c35a5a299e517754e"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1816,6 +1816,11 @@
       "path": "test/e2e/startup-orchestrator.spec.ts",
       "size": 5613,
       "sha256": "c72d82d63aaf35d054f39c9c07ff4df145dcac4945c090b7758d992e317b0f26"
+    },
+    {
+      "path": "test/e2e/startup-reload-resilience.spec.ts",
+      "size": 765,
+      "sha256": "16095cd41b8c461cf6b02fb0e86af725d86b747bc0af445528b0e6ce3b5d26b4"
     },
     {
       "path": "test/e2e/tags.spec.ts",
