@@ -24,6 +24,13 @@ import {
 } from "@nexora/domain";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import {
+  capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
+} from "../backup/PortableLedgerSnapshot";
+import { InMemoryLedgerRepository } from "../in-memory/InMemoryLedgerRepository";
 import type { SqliteDatabase, SqliteValue } from "./SqliteDatabase";
 import { seedDemoLedger } from "../seed/demoLedgerSeed";
 import { initializeSqliteLedger } from "./initializeSqliteLedger";
@@ -573,5 +580,32 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.saveLoan(loan);
     await expect(repository.listLoans()).resolves.toEqual([loan]);
+  });
+  it("ripristina uno snapshot portabile senza perdere precisione monetaria", async () => {
+    const source = new InMemoryLedgerRepository();
+    const sourceAccount = account("portable-account");
+    const sourceTransaction = Transaction.create({
+      accountId: sourceAccount.id,
+      amount: Money.fromMinor(9_007_199_254_740_993n, "EUR"),
+      bookedDate,
+      id: "portable-income",
+      kind: "income",
+      status: "booked",
+    });
+    await source.saveAccount(sourceAccount);
+    await source.saveTransaction(sourceTransaction);
+
+    await repository.replacePortableSnapshot(
+      validatePortableLedgerSnapshot(
+        decodePortableLedgerSnapshot(
+          encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(source)),
+        ),
+      ),
+    );
+
+    await expect(repository.listAccounts()).resolves.toEqual([sourceAccount]);
+    await expect(repository.findTransactionById(sourceTransaction.id)).resolves.toEqual(
+      sourceTransaction,
+    );
   });
 });

@@ -19,6 +19,13 @@ import {
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import {
+  capturePortableLedgerSnapshot,
+  decodePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  validatePortableLedgerSnapshot,
+} from "../backup/PortableLedgerSnapshot";
+import { InMemoryLedgerRepository } from "../in-memory/InMemoryLedgerRepository";
 import type { IndexedDbLedger } from "./openIndexedDbLedger";
 import { seedDemoLedger } from "../seed/demoLedgerSeed";
 import { INDEXED_DB_SCHEMA_VERSION, openIndexedDbLedger } from "./openIndexedDbLedger";
@@ -510,6 +517,35 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.close();
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
+  });
+  it("ripristina uno snapshot portabile e lo conserva alla riapertura", async () => {
+    const source = new InMemoryLedgerRepository();
+    const sourceAccount = account("portable-account");
+    const sourceTransaction = Transaction.create({
+      accountId: sourceAccount.id,
+      amount: Money.fromMinor(9_007_199_254_740_993n, "EUR"),
+      bookedDate,
+      id: "portable-income",
+      kind: "income",
+      status: "booked",
+    });
+    await source.saveAccount(sourceAccount);
+    await source.saveTransaction(sourceTransaction);
+
+    await ledger.repository.replacePortableSnapshot(
+      validatePortableLedgerSnapshot(
+        decodePortableLedgerSnapshot(
+          encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(source)),
+        ),
+      ),
+    );
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+
+    await expect(ledger.repository.listAccounts()).resolves.toEqual([sourceAccount]);
+    await expect(ledger.repository.findTransactionById(sourceTransaction.id)).resolves.toEqual(
+      sourceTransaction,
+    );
   });
 
   it("persiste un piano di allocazione", async () => {
