@@ -141,6 +141,24 @@ describe("SqliteLedgerRepository", () => {
     });
   });
 
+  it("azzera atomicamente tutti i dati finanziari", async () => {
+    const main = account("account-reset");
+    await repository.saveAccount(main);
+    await repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-reset",
+        kind: "income",
+        status: "booked",
+        accountId: main.id,
+        amount: Money.fromMinor(100n, "EUR"),
+        bookedDate,
+      }),
+    );
+    await repository.resetFinancialData();
+    await expect(repository.listAccounts()).resolves.toEqual([]);
+    await expect(repository.listTransactions()).resolves.toEqual([]);
+  });
+
   it("elimina solo categorie e tag non referenziati", async () => {
     const main = account("account-taxonomy-delete");
     const unusedCategory = Category.create({

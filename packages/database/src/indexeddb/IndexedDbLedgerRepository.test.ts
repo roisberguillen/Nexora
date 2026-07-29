@@ -117,6 +117,24 @@ describe("IndexedDbLedgerRepository", () => {
     });
   });
 
+  it("azzera atomicamente tutti i dati finanziari", async () => {
+    const main = account("account-reset");
+    await ledger.repository.saveAccount(main);
+    await ledger.repository.saveTransaction(
+      Transaction.create({
+        id: "transaction-reset",
+        kind: "income",
+        status: "booked",
+        accountId: main.id,
+        amount: Money.fromMinor(100n, "EUR"),
+        bookedDate,
+      }),
+    );
+    await ledger.repository.resetFinancialData();
+    await expect(ledger.repository.listAccounts()).resolves.toEqual([]);
+    await expect(ledger.repository.listTransactions()).resolves.toEqual([]);
+  });
+
   it("elimina solo categorie e tag non referenziati", async () => {
     const main = account("account-taxonomy-delete");
     const unusedCategory = Category.create({

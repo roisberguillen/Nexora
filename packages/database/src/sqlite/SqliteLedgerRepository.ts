@@ -212,6 +212,30 @@ export class SqliteLedgerRepository implements LedgerRepository {
     });
   }
 
+  public resetFinancialData(): Promise<void> {
+    return this.runAtomically(async () => {
+      for (const table of [
+        "transaction_trash",
+        "transaction_tags",
+        "transaction_splits",
+        "transfers",
+        "import_rows",
+        "import_batches",
+        "recurring_rules",
+        "allocation_plans",
+        "budgets",
+        "loans",
+        "investment_positions",
+        "monthly_journals",
+        "transactions",
+        "tags",
+        "accounts",
+        "categories",
+      ])
+        await this.database.execute(`DELETE FROM ${table};`);
+    });
+  }
+
   public saveAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

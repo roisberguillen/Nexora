@@ -161,6 +161,56 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     });
   }
 
+  public resetFinancialData(): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          [
+            "accounts",
+            "categories",
+            "transactions",
+            "transaction_trash",
+            "transfers",
+            "transaction_splits",
+            "tags",
+            "transaction_tags",
+            "import_batches",
+            "import_rows",
+            "recurring_rules",
+            "allocation_plans",
+            "budgets",
+            "loans",
+            "investment_positions",
+            "monthly_journals",
+          ],
+          "readwrite",
+          async (transaction) => {
+            await Promise.all(
+              [
+                "accounts",
+                "categories",
+                "transactions",
+                "transaction_trash",
+                "transfers",
+                "transaction_splits",
+                "tags",
+                "transaction_tags",
+                "import_batches",
+                "import_rows",
+                "recurring_rules",
+                "allocation_plans",
+                "budgets",
+                "loans",
+                "investment_positions",
+                "monthly_journals",
+              ].map((store) => requestResult(transaction.objectStore(store).clear())),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   public saveAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>

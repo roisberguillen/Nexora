@@ -50,6 +50,27 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     }
   }
 
+  public async resetFinancialData(): Promise<void> {
+    await this.runAtomically(async () => {
+      this.accounts.clear();
+      this.categories.clear();
+      this.transactions.clear();
+      this.transactionTrash.clear();
+      this.transfers.clear();
+      this.transactionSplits.clear();
+      this.tags.clear();
+      this.transactionTags.clear();
+      this.importBatches.clear();
+      this.importRows.clear();
+      this.recurringRules.clear();
+      this.allocationPlans.clear();
+      this.budgets.clear();
+      this.loans.clear();
+      this.investmentPositions.clear();
+      this.monthlyJournals.clear();
+    });
+  }
+
   public async saveAccount(account: Account): Promise<void> {
     this.assertNew(this.accounts, account.id, "Account");
 

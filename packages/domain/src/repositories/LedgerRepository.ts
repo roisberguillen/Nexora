@@ -28,6 +28,8 @@ export interface TrashedTransaction {
 }
 
 export interface LedgerRepository {
+  /** Atomically removes all ledger data while application preferences remain outside this boundary. */
+  resetFinancialData(): Promise<void>;
   saveAccount(account: Account): Promise<void>;
   updateAccount(account: Account): Promise<void>;
   deleteUnusedAccount(id: string): Promise<void>;
