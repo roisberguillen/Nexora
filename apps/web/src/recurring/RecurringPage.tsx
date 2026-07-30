@@ -374,7 +374,7 @@ function AllocationPlans({
           </button>
         );
       })}
-      <form className="account-form" onSubmit={(event) => void save(event)}>
+      <form className="account-form allocation-plan-form" onSubmit={(event) => void save(event)}>
         <label>
           Nome piano
           <input name="allocationName" required />

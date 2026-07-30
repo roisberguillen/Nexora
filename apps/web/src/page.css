@@ -684,6 +684,19 @@
   margin-top: 1.25rem;
 }
 
+#recurring > .recurring-allocation-panel > .allocation-plan-form {
+  margin: 1.25rem 1.5rem 1.5rem;
+}
+
+#recurring > .recurring-allocation-panel > .account-error,
+#recurring > .recurring-allocation-panel > .secondary-action {
+  margin-inline: 1.5rem;
+}
+
+#recurring > .recurring-allocation-panel > .account-list > li {
+  padding-inline: 1.5rem;
+}
+
 .account-form small {
   color: var(--color-on-surface-muted);
   font-size: 0.6875rem;

@@ -22,5 +22,6 @@ describe("RecurringPage", () => {
     expect(screen.getByRole("region", { name: "Piani di allocazione" })).toHaveClass(
       "recurring-allocation-panel",
     );
+    expect(screen.getByLabelText("Nome piano").closest("form")).toHaveClass("allocation-plan-form");
   });
 });
