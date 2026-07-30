@@ -71,7 +71,7 @@ export function TopHeader({
 
       <div aria-live="polite" className={`connectivity ${isOnline ? "is-online" : "is-offline"}`}>
         <span aria-hidden="true" className="status-dot" />
-        <span>{isOnline ? "Online" : "Offline"}</span>
+        <span>{isOnline ? "Rete online" : "Rete offline"}</span>
       </div>
     </header>
   );
