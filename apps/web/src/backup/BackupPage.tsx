@@ -290,7 +290,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       </label>
       {canCreate ? (
         <>
-          <div className="form-actions">
+          <div className="form-actions backup-create-actions">
             <button
               className="primary-action"
               disabled={passphrase.trim().length < 12 || isCreating}

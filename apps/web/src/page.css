@@ -974,6 +974,10 @@
   padding: 0.5rem 0 0;
 }
 
+#backup > .backup-create-actions {
+  justify-content: flex-start;
+}
+
 .import-layout {
   display: grid;
   gap: 1.25rem;
