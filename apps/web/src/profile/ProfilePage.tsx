@@ -31,7 +31,6 @@ export function ProfilePage({ ledger }: { readonly ledger: BrowserLedger }) {
         <div>
           <p className="eyebrow">Profilo locale</p>
           <h1>Nexora</h1>
-          <span className="profile-chip">Dati locali attivi</span>
         </div>
       </header>
       <section className="profile-status" aria-label="Stato archivio">
