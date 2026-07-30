@@ -26,6 +26,7 @@ describe("local sync host", () => {
     const operation = { idempotencyKey: "op-001", entityId: "transaction-1", baseRevision: 0, payloadDigest: "sha256:one", createdAt: "2026-07-30T00:00:00.000Z" };
     expect(await (await fetch(`${url}/v1/operations`, { method: "POST", headers, body: JSON.stringify(operation) })).json()).toEqual({ status: "applied", cursor: 1, revision: 1 });
     expect(await (await fetch(`${url}/v1/operations`, { method: "POST", headers, body: JSON.stringify(operation) })).json()).toEqual({ status: "duplicate", cursor: 1, revision: 1 });
+    expect(await (await fetch(`${url}/v1/operations?cursor=0`, { headers })).json()).toEqual({ operations: [{ cursor: 1, operation, revision: 1 }] });
   });
 
   it("does not expose a LAN listener until TLS configuration exists", async () => {

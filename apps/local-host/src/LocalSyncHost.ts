@@ -35,6 +35,7 @@ export function createLocalSyncHost(options: LocalSyncHostOptions) {
     if (request.method === "POST" && request.url === "/v1/operations") return handleOperation(request, response, options, now, requests);
     if (request.method !== "GET") return respond(response, 405, { error: "method_not_allowed" });
     if (request.url === "/v1/health") return respond(response, 200, { status: "ok", apiVersion: 1 });
+    if (request.url?.startsWith("/v1/operations?")) return handlePull(request, response, options, now, requests);
     if (request.url !== "/v1/ledger") return respond(response, 404, { error: "not_found" });
     const token = header(request, "authorization")?.replace(/^Bearer /, "");
     const deviceId = header(request, "x-nexora-device-id");
@@ -50,6 +51,21 @@ export function createLocalSyncHost(options: LocalSyncHostOptions) {
       return respond(response, 403, { error: "forbidden" });
     }
   });
+}
+
+function handlePull(request: IncomingMessage, response: ServerResponse, options: LocalSyncHostOptions, now: () => Date, requests: Map<string, { count: number; windowStartedAt: number }>): void {
+  const origin = header(request, "origin");
+  const token = header(request, "authorization")?.replace(/^Bearer /, "");
+  const deviceId = header(request, "x-nexora-device-id");
+  if (options.operationLog === undefined || origin === undefined || token === undefined || deviceId === undefined) return respond(response, 401, { error: "unauthorized" });
+  if (!allowRequest(requests, deviceId, now().getTime())) return respond(response, 429, { error: "rate_limited" });
+  const grant = options.resolveGrant(token);
+  if (grant === undefined) return respond(response, 401, { error: "unauthorized" });
+  try { authorizeLocalRequest({ grant, deviceId, token, hostFingerprint: options.hostFingerprint, origin, policy: options.policy, now: now() }); } catch { return respond(response, 403, { error: "forbidden" }); }
+  const cursor = Number(new URL(request.url ?? "", "http://localhost").searchParams.get("cursor") ?? "0");
+  if (!Number.isSafeInteger(cursor) || cursor < 0) return respond(response, 400, { error: "invalid_cursor" });
+  response.setHeader("Access-Control-Allow-Origin", origin);
+  return respond(response, 200, { operations: options.operationLog.after(cursor) });
 }
 
 function handleOperation(
