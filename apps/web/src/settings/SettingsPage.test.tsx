@@ -187,11 +187,24 @@ describe("SettingsPage destructive flows", () => {
     expect(screen.getByRole("region", { name: "Gestione dati" })).toBeVisible();
   });
 
-  it("spiega lo stato locale della futura sincronizzazione senza promettere condivisione", () => {
-    render(<SettingsPage />);
+  it("collega e disattiva un host solo dopo averlo verificato", async () => {
+    const user = userEvent.setup();
+    render(
+      <SettingsPage
+        onProbeLocalHost={async () => ({ apiVersion: 1, appUrl: "https://nexora.home" })}
+      />,
+    );
     expect(screen.getByRole("region", { name: "Connessione dispositivi" })).toHaveTextContent(
       "Solo locale",
     );
-    expect(screen.getByText(/nessun host condiviso configurato/i)).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Attiva host" }));
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Apri Nexora da: https://nexora.home",
+    );
+    expect(screen.getByText("Host collegato")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Disattiva host" }));
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Host disattivato in questo browser",
+    );
   });
 });

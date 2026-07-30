@@ -14,6 +14,12 @@ import {
   writeAppPreferences,
   type AppPreferences,
 } from "./preferences";
+import {
+  probeLocalHost,
+  readLocalHostConnection,
+  writeLocalHostConnection,
+  type LocalHostHealth,
+} from "./localHostConnection";
 
 export function SettingsPage({
   onResetFinancialData,
@@ -26,6 +32,7 @@ export function SettingsPage({
   onPurgeTransactions,
   onResetApplication,
   trashedTransactions = [],
+  onProbeLocalHost = probeLocalHost,
 }: {
   readonly onResetFinancialData?: (input: {
     readonly backupChecksumPrefix?: string;
@@ -42,6 +49,7 @@ export function SettingsPage({
     readonly deleteCloud: boolean;
   }) => Promise<TotalResetReport>;
   readonly trashedTransactions?: readonly TrashedTransaction[];
+  readonly onProbeLocalHost?: (endpoint: string) => Promise<LocalHostHealth>;
 }) {
   const [preferences, setPreferences] = useState<AppPreferences>(() => readAppPreferences());
   useEffect(() => {
@@ -50,6 +58,40 @@ export function SettingsPage({
   }, [preferences]);
   const update = (patch: Partial<AppPreferences>) =>
     setPreferences((current) => ({ ...current, ...patch }));
+  const [hostConnection, setHostConnection] = useState(() => readLocalHostConnection());
+  const [hostMessage, setHostMessage] = useState<string | null>(null);
+  const [isCheckingHost, setIsCheckingHost] = useState(false);
+  const activateHost = async () => {
+    setIsCheckingHost(true);
+    setHostMessage(null);
+    try {
+      const health = await onProbeLocalHost(hostConnection.endpoint);
+      const next = {
+        enabled: true,
+        endpoint: hostConnection.endpoint,
+        ...(health.appUrl === undefined ? {} : { appUrl: health.appUrl }),
+      };
+      writeLocalHostConnection(next);
+      setHostConnection(next);
+      setHostMessage(
+        health.appUrl === undefined
+          ? "Host collegato. L’host non ha pubblicato un indirizzo dell’app."
+          : `Host attivo. Apri Nexora da: ${health.appUrl}`,
+      );
+    } catch {
+      setHostMessage(
+        "Host non raggiungibile. Avvialo sul PC e verifica l’indirizzo prima di collegarlo.",
+      );
+    } finally {
+      setIsCheckingHost(false);
+    }
+  };
+  const deactivateHost = () => {
+    const next = { enabled: false, endpoint: hostConnection.endpoint };
+    writeLocalHostConnection(next);
+    setHostConnection(next);
+    setHostMessage("Host disattivato in questo browser. Il servizio sul PC resta invariato.");
+  };
   const [isResetOpen, setIsResetOpen] = useState(false);
   const [resetPhrase, setResetPhrase] = useState("");
   const [resetPreview, setResetPreview] = useState<FinancialResetPreview | null>(null);
@@ -155,11 +197,51 @@ export function SettingsPage({
             Questo dispositivo usa il proprio archivio locale. La sincronizzazione con un host
             Nexora sarà disponibile solo dopo pairing esplicito e connessione protetta.
           </p>
-          <SettingsRow label="Stato connessione" value="Solo locale" />
+          <SettingsRow
+            label="Stato connessione"
+            value={hostConnection.enabled ? "Host collegato" : "Solo locale"}
+          />
           <SettingsRow label="Origine dati" value="Archivio di questo browser" />
-          <p className="account-feedback">
-            Nessun host condiviso configurato: anche offline puoi continuare a usare Nexora.
-          </p>
+          <label className="settings-row">
+            <span>Indirizzo host</span>
+            <input
+              aria-label="Indirizzo host"
+              disabled={isCheckingHost || hostConnection.enabled}
+              inputMode="url"
+              onChange={(event) =>
+                setHostConnection((current) => ({
+                  ...current,
+                  endpoint: event.currentTarget.value,
+                }))
+              }
+              value={hostConnection.endpoint}
+            />
+          </label>
+          <div className="settings-actions">
+            {hostConnection.enabled ? (
+              <button className="secondary-action" onClick={deactivateHost} type="button">
+                Disattiva host
+              </button>
+            ) : (
+              <button
+                className="primary-action"
+                disabled={isCheckingHost}
+                onClick={() => void activateHost()}
+                type="button"
+              >
+                {isCheckingHost ? "Verifica host…" : "Attiva host"}
+              </button>
+            )}
+          </div>
+          {hostMessage === null ? (
+            <p className="account-feedback">
+              Nessun host condiviso configurato: anche offline puoi continuare a usare Nexora.
+            </p>
+          ) : (
+            <p className="account-feedback" role="status">
+              {hostMessage}
+            </p>
+          )}
         </SettingsGroup>
         {onRestoreTransaction === undefined ? null : (
           <SettingsGroup title="Cestino">

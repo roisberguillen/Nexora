@@ -20,6 +20,8 @@ export interface LocalSyncHostOptions {
   readonly resolveGrant: (token: string) => PairingGrant | undefined;
   readonly ledgerMetadata: () => LedgerMetadata;
   readonly operationLog?: SyncOperationStore;
+  /** Reachable Nexora UI address advertised after an explicit local host setup. */
+  readonly appUrl?: string;
   readonly now?: () => Date;
 }
 
@@ -36,7 +38,11 @@ export function createLocalSyncHost(options: LocalSyncHostOptions) {
       return handleOperation(request, response, options, now, requests);
     if (request.method !== "GET") return respond(response, 405, { error: "method_not_allowed" });
     if (request.url === "/v1/health")
-      return respond(response, 200, { status: "ok", apiVersion: 1 });
+      return respond(response, 200, {
+        status: "ok",
+        apiVersion: 1,
+        ...(options.appUrl === undefined ? {} : { appUrl: options.appUrl }),
+      });
     if (request.url?.startsWith("/v1/operations?"))
       return handlePull(request, response, options, now, requests);
     if (request.url !== "/v1/ledger") return respond(response, 404, { error: "not_found" });

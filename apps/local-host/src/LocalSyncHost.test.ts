@@ -39,7 +39,7 @@ describe("local sync host", () => {
     const address = server.address();
     if (address === null || typeof address === "string") throw new Error("missing address");
     const url = `http://127.0.0.1:${address.port}`;
-    expect((await fetch(`${url}/v1/health`)).status).toBe(200);
+    expect(await (await fetch(`${url}/v1/health`)).json()).toEqual({ status: "ok", apiVersion: 1 });
     expect((await fetch(`${url}/v1/ledger`)).status).toBe(401);
     expect(
       (
