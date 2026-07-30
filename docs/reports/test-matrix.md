@@ -6,6 +6,7 @@
 | E2E startup | `startup-orchestrator.spec.ts` | Verde: 1 pass, 4 skip per progetto |
 | E2E reload ripetuto | `startup-reload-resilience.spec.ts` | Verde: 50 reload consecutivi su Chromium 1440 |
 | E2E avvio multi-tab | `startup-multitab.spec.ts` | Verde: cinque schede Chromium 1440 contemporanee |
+| E2E rollback atomico | `atomic-rollback.spec.ts` | Verde: scrittura interrotta, riapertura senza record parziali su IndexedDB e OPFS |
 | E2E funzioni principali | conti, movimenti, categorie, tag, dashboard | Verde: 72 passati, 8 skip |
 | E2E persistenza/backup/import | IndexedDB, OPFS, PWA, backup, import | Verde: 15 passati, 20 skip |
 | E2E funzioni finanziarie/UI shell | budget, ricorrenze, prestiti, investimenti, ricerca, shell | Verde: 29 passati, 6 skip |

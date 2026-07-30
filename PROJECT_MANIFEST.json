@@ -689,8 +689,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15399,
-      "sha256": "e9bfdb3342d788dc2390e2c8eb15ae4431e6567c4c19dc23b58a30cfc395ec5d"
+      "size": 15546,
+      "sha256": "f134e3ecc229434fbb17a7691adaf0b77a1043f480e2bfc51c60a49a2ca47c5f"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -879,8 +879,8 @@
     },
     {
       "path": "docs/reports/final-verification.md",
-      "size": 1169,
-      "sha256": "5b8ad12077810277082324d551fd8533f8d5dffd00fb105b5f78581edaa0392d"
+      "size": 1317,
+      "sha256": "0fe616d6b6c1ff8ec3596a85b737216cde5f43bf8cc4ea8f3c6d23040932d453"
     },
     {
       "path": "docs/reports/known-limitations.md",
@@ -899,8 +899,8 @@
     },
     {
       "path": "docs/reports/test-matrix.md",
-      "size": 1459,
-      "sha256": "37f320513e23c900541693e5cd1a0c42028c068469dd9d7ebe5f5f1d76458224"
+      "size": 1596,
+      "sha256": "59dcc403669f227bdb8214adb752770ad6f7fb17366b1a68138e2f37ccbca75b"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1743,6 +1743,11 @@
       "sha256": "669534081dc03d8f718e455561be740ada54e69e24be42f0e35237ce3ce132f1"
     },
     {
+      "path": "test/e2e/atomic-rollback.spec.ts",
+      "size": 1710,
+      "sha256": "c8d8cc525a04e9e391ba70bf5e1fec6816fb7bc24690ae3c2c03cf55636abec5"
+    },
+    {
       "path": "test/e2e/backup-restore.spec.ts",
       "size": 2202,
       "sha256": "c8ccadf22e28851d242156f59c219f7df33b316c84f58b6d62cb855c5ee4356e"
@@ -1766,6 +1771,11 @@
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
       "size": 216887,
       "sha256": "49e6032107deff3cf8b91a4e492d24b58c2f59192e0c3a3b52f4e55135579945"
+    },
+    {
+      "path": "test/e2e/fixtures/atomic-rollback.ts",
+      "size": 2855,
+      "sha256": "84d95c90652a556f6dc90e0fcc8cd4e0b6f657fb593466b44c9b561bf5c53729"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",

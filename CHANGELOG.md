@@ -28,6 +28,8 @@
   100.000 movimenti sintetici in un archivio temporaneo eliminato al termine.
 - Aggiunta l'equivalente prova Chromium su SQLite WASM/OPFS con 100.000 movimenti
   sintetici, isolata in una directory OPFS temporanea e rimossa al termine.
+- Verificato in Chromium il rollback di una scrittura interrotta sia su IndexedDB
+  sia su SQLite WASM/OPFS, con riapertura senza record parziali.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica
