@@ -893,6 +893,11 @@
       "sha256": "ca3a15c3610fe13c8ce8e13276f314d921131fa0e4f3de1a033a289f48bc94b8"
     },
     {
+      "path": "docs/reports/roadmap-completion-audit.md",
+      "size": 2825,
+      "sha256": "d3f102b6aed71e4e010060e0606e9397e7d03c0f0c5ca35bd2e88a3254124a83"
+    },
+    {
       "path": "docs/reports/startup-baseline.md",
       "size": 2671,
       "sha256": "5ca11ea52cacfaf4e8a7982a10b0b91f7d78f6808577707ad3f655dec1ef4162"
