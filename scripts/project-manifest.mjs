@@ -21,7 +21,7 @@ async function collectFiles(directory) {
   const files = [];
 
   for (const entry of entries) {
-    if (entry.isDirectory() && ignoredDirectories.has(entry.name)) {
+    if (ignoredDirectories.has(entry.name)) {
       continue;
     }
 

@@ -98,11 +98,6 @@
       "sha256": "d290a5557ce52319048b0d4510835c8fc28cae36b3345bb329e6b620c360b613"
     },
     {
-      "path": ".git",
-      "size": 86,
-      "sha256": "b47de60a6047ec62140ebe4d6e929ad1d04ad555b0fa4351741facbe7402f626"
-    },
-    {
       "path": ".github/workflows/ci.yml",
       "size": 781,
       "sha256": "82827b20b82fba27b5cc103c611ca41ee35a2bf63d90cdd2c4414387d8395430"
@@ -1849,8 +1844,8 @@
     },
     {
       "path": "scripts/project-manifest.mjs",
-      "size": 2550,
-      "sha256": "b320e1251c8f8ab097349dc678019fba1d50d5c2978ba6c7886206766445d9ef"
+      "size": 2521,
+      "sha256": "f8aec4dbd08741ec20d7a1a795abd2d3a5ce275796f745dc70e8fab91a26a2ac"
     },
     {
       "path": "scripts/verify-project.sh",
