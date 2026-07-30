@@ -689,8 +689,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15241,
-      "sha256": "3d6fb6e410d738f5b5d5d661798c28dad305c22e787eeedc8dd61c61ad13764a"
+      "size": 15399,
+      "sha256": "e9bfdb3342d788dc2390e2c8eb15ae4431e6567c4c19dc23b58a30cfc395ec5d"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -879,18 +879,18 @@
     },
     {
       "path": "docs/reports/final-verification.md",
-      "size": 1181,
-      "sha256": "04f59f3d290abb4e29da1d96ed31c1a086ff1cf1ef0147b41c7699612f43a3b8"
+      "size": 1169,
+      "sha256": "5b8ad12077810277082324d551fd8533f8d5dffd00fb105b5f78581edaa0392d"
     },
     {
       "path": "docs/reports/known-limitations.md",
-      "size": 2488,
-      "sha256": "be16008308f033ad6c7dc505836630606718e11222ceddb51613f8cdf950ff8a"
+      "size": 2510,
+      "sha256": "3f8f16647b9b6b654fcf785970b8ba788aca157fec37ee0aaf335cf58c028a82"
     },
     {
       "path": "docs/reports/performance-results.json",
-      "size": 1224,
-      "sha256": "70285ab17b95d95c45934c0e8831ac17693b93a3757aea8d218b956c8f7170b8"
+      "size": 1463,
+      "sha256": "ca3a15c3610fe13c8ce8e13276f314d921131fa0e4f3de1a033a289f48bc94b8"
     },
     {
       "path": "docs/reports/startup-baseline.md",
@@ -899,8 +899,8 @@
     },
     {
       "path": "docs/reports/test-matrix.md",
-      "size": 1393,
-      "sha256": "ce6f59f216913b262a70f44b18b63ff880a74a27b260fbb102ae332e1f52f342"
+      "size": 1459,
+      "sha256": "37f320513e23c900541693e5cd1a0c42028c068469dd9d7ebe5f5f1d76458224"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1783,6 +1783,11 @@
       "sha256": "ba49bd7c76863a4b800df76385384777d82812e8a89a1f796090c73531030bea"
     },
     {
+      "path": "test/e2e/fixtures/opfs-performance.ts",
+      "size": 3606,
+      "sha256": "74e68c50d2c517d775d5ed0d5239f008f65395c302fe5b4693bb058fd45f3009"
+    },
+    {
       "path": "test/e2e/fixtures/opfs-smoke.ts",
       "size": 1746,
       "sha256": "f39daf72543367120c400e31ec5769d8460e115dc36ead4fb17fea79071c8adb"
@@ -1816,6 +1821,11 @@
       "path": "test/e2e/loans.spec.ts",
       "size": 1419,
       "sha256": "0a349f428cd8b3ce899a87a3b4674e52d32371f244a37167f8cb6de00952f9a3"
+    },
+    {
+      "path": "test/e2e/opfs-performance.spec.ts",
+      "size": 2068,
+      "sha256": "8ac1434ec35a2e56d7bef7e89b2681f72f6614dd5ee606712ef3f729cb8d9da4"
     },
     {
       "path": "test/e2e/opfs-persistence.spec.ts",

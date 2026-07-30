@@ -18,10 +18,10 @@ Data: 2026-07-30
 
 1. Il recovery verifica e ripristina un backup portabile in un archivio temporaneo poi rimosso,
    ma non offre ancora l'apertura navigabile di quella copia come sessione separata.
-2. Esiste una prova Chromium su IndexedDB reale con 100.000 movimenti, ma non è ancora una
-   campagna ripetuta completa e non copre OPFS, il dataset completo della roadmap, rendering o
-   memoria. La lettura della lista completa ha inoltre misurato circa 1,6 s, oltre la soglia
-   preliminare di un secondo per ricerca o filtro.
+2. Esistono prove Chromium su IndexedDB e OPFS reali con 100.000 movimenti, ma non sono ancora
+   una campagna ripetuta completa né coprono il dataset completo della roadmap, rendering o
+   memoria. La lettura della lista completa ha misurato circa 1,6 s su IndexedDB e 3,2 s su
+   OPFS, oltre la soglia preliminare di un secondo per ricerca o filtro.
 3. Web Locks serializza il bootstrap quando disponibile e la prova browser copre cinque schede
    simultanee e 50 reload. Restano da provare chiusure durante scrittura, quota insufficiente e
    aggiornamento del Service Worker.

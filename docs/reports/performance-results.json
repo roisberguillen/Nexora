@@ -2,7 +2,7 @@
   "generatedAt": "2026-07-30",
   "environment": {
     "runtime": "Chromium via Playwright",
-    "backend": "IndexedDB",
+    "backends": ["IndexedDB", "SQLite WASM/OPFS"],
     "databaseScope": "temporary isolated database"
   },
   "runs": [
@@ -37,10 +37,21 @@
       "result": "passed"
     }
   ],
+  "opfsRuns": [
+    {
+      "records": 100000,
+      "insertedRecords": 100000,
+      "listedRecords": 100000,
+      "openMs": 833.39,
+      "insertMs": 5783.99,
+      "reopenMs": 153.6,
+      "listMs": 3184.84,
+      "result": "passed"
+    }
+  ],
   "limitations": [
     "Three IndexedDB runs are recorded; the roadmap requires a broader repeated campaign.",
-    "No equivalent OPFS run has been recorded.",
     "The synthetic dataset covers transactions only, not the full roadmap entity matrix.",
-    "The 100,000-record list measurement exceeds the preliminary one-second search target."
+    "The 100,000-record list measurement exceeds the preliminary one-second search target on both backends."
   ]
 }
