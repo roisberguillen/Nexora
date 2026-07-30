@@ -14,7 +14,14 @@ export interface PairingGrant {
 }
 
 export class LocalSyncSecurityError extends Error {
-  public constructor(public readonly code: "lan_consent_required" | "pairing_rejected" | "token_expired" | "untrusted_host" | "unauthorized_origin") {
+  public constructor(
+    public readonly code:
+      | "lan_consent_required"
+      | "pairing_rejected"
+      | "token_expired"
+      | "untrusted_host"
+      | "unauthorized_origin",
+  ) {
     super(code);
     this.name = "LocalSyncSecurityError";
   }
@@ -83,7 +90,9 @@ export function authorizeLocalRequest(input: {
 function isSafeLocalOrigin(origin: string): boolean {
   try {
     const url = new URL(origin);
-    return url.protocol === "https:" || url.hostname === "localhost" || url.hostname === "127.0.0.1";
+    return (
+      url.protocol === "https:" || url.hostname === "localhost" || url.hostname === "127.0.0.1"
+    );
   } catch {
     return false;
   }

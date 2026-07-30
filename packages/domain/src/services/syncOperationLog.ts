@@ -13,7 +13,11 @@ export type SyncApplyResult =
 
 export interface SyncOperationStore {
   apply(operation: SyncOperation): SyncApplyResult;
-  after(cursor: number): ReadonlyArray<{ readonly cursor: number; readonly operation: SyncOperation; readonly revision: number }>;
+  after(cursor: number): ReadonlyArray<{
+    readonly cursor: number;
+    readonly operation: SyncOperation;
+    readonly revision: number;
+  }>;
 }
 
 /** In-memory contract model for adapters: retries are idempotent and stale writes never overwrite. */
@@ -21,7 +25,11 @@ export class SyncOperationLog implements SyncOperationStore {
   private readonly keys = new Map<string, { cursor: number; revision: number }>();
   private readonly revisions = new Map<string, number>();
   private cursor = 0;
-  private readonly operations: Array<{ cursor: number; operation: SyncOperation; revision: number }> = [];
+  private readonly operations: Array<{
+    cursor: number;
+    operation: SyncOperation;
+    revision: number;
+  }> = [];
   private readonly conflicts: SyncOperation[] = [];
 
   public apply(operation: SyncOperation): SyncApplyResult {
@@ -40,7 +48,11 @@ export class SyncOperationLog implements SyncOperationStore {
     return { status: "applied", cursor, revision };
   }
 
-  public after(cursor: number): ReadonlyArray<{ readonly cursor: number; readonly operation: SyncOperation; readonly revision: number }> {
+  public after(cursor: number): ReadonlyArray<{
+    readonly cursor: number;
+    readonly operation: SyncOperation;
+    readonly revision: number;
+  }> {
     return this.operations.filter((entry) => entry.cursor > cursor);
   }
 
