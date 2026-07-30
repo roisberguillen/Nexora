@@ -7,6 +7,7 @@ const groups = [
       ["Conti", "accounts", "./#accounts"],
       ["Categorie", "transactions", "./#categories"],
       ["Tag", "transactions", "./#tags"],
+      ["Budget", "budget", "./#budgets"],
       ["Ricorrenze", "recurring", "./#recurring"],
     ],
   },

@@ -9,5 +9,6 @@ describe("ProfilePage", () => {
 
     expect(screen.queryByText("Dati locali attivi")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Stato archivio")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Budget" })).toHaveAttribute("href", "./#budgets");
   });
 });
