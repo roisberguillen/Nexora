@@ -37,4 +37,15 @@ describe("local sync host", () => {
       ledgerMetadata: () => ({ ledgerId: "ledger", schemaVersion: 13, updatedAt: "2026-07-30T00:00:00.000Z" }),
     })).rejects.toThrow("lan_tls_configuration_required");
   });
+
+  it("limits requests from one device", async () => {
+    const fingerprint = `sha256:${"a".repeat(64)}`;
+    const grant = issuePairingGrant({ deviceId: "phone-001", hostFingerprint: fingerprint, now: new Date(), randomToken: () => "x".repeat(32) });
+    const server = createLocalSyncHost({ policy: { binding: "loopback", lanConsent: false, allowedOrigins: ["http://localhost"] }, hostFingerprint: fingerprint, resolveGrant: () => grant, ledgerMetadata: () => ({ ledgerId: "ledger", schemaVersion: 13, updatedAt: "2026-07-30T00:00:00.000Z" }) });
+    servers.push(server); await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address(); if (address === null || typeof address === "string") throw new Error("missing address");
+    const headers = { Origin: "http://localhost", Authorization: `Bearer ${grant.token}`, "X-Nexora-Device-Id": "phone-001" };
+    const responses = await Promise.all(Array.from({ length: 61 }, () => fetch(`http://127.0.0.1:${address.port}/v1/ledger`, { headers })));
+    expect(responses.at(-1)?.status).toBe(429);
+  });
 });

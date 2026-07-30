@@ -87,9 +87,16 @@ function handleOperation(
   } catch { return respond(response, 403, { error: "forbidden" }); }
   let body = "";
   request.setEncoding("utf8");
-  request.on("data", (chunk: string) => { body += chunk; });
+  request.on("data", (chunk: string) => {
+    body += chunk;
+    if (body.length > 32_768) {
+      request.destroy();
+      respond(response, 413, { error: "payload_too_large" });
+    }
+  });
   request.on("end", () => {
     try {
+      if (body.length > 32_768) return;
       const operation = JSON.parse(body) as SyncOperation;
       if (!isOperation(operation)) return respond(response, 400, { error: "invalid_operation" });
       response.setHeader("Access-Control-Allow-Origin", origin);
