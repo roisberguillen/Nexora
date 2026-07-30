@@ -6,7 +6,7 @@
 |---|---|
 | `pnpm verify` | Verde: 298 test passati, 4 skip; format, lint, typecheck e build completati |
 | `pnpm manifest:check` | Verde |
-| `pnpm test:e2e` | Verde: 120 passati, 50 skip condizionati dalle viewport o da capability deliberate |
+| `pnpm test:e2e` | Verde: 122 passati, 58 skip condizionati dalle viewport o da capability deliberate |
 | `pnpm audit --prod` | Verde nell'ultima esecuzione registrata |
 
 ## Evidenze principali
