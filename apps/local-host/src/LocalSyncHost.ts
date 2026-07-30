@@ -2,8 +2,8 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 
 import {
   authorizeLocalRequest,
-  SyncOperationLog,
   type SyncOperation,
+  type SyncOperationStore,
   type LocalHostPolicy,
   type PairingGrant,
 } from "@nexora/domain";
@@ -19,7 +19,7 @@ export interface LocalSyncHostOptions {
   readonly hostFingerprint: string;
   readonly resolveGrant: (token: string) => PairingGrant | undefined;
   readonly ledgerMetadata: () => LedgerMetadata;
-  readonly operationLog?: SyncOperationLog;
+  readonly operationLog?: SyncOperationStore;
   readonly now?: () => Date;
 }
 

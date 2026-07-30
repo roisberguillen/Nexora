@@ -11,8 +11,13 @@ export type SyncApplyResult =
   | { readonly status: "duplicate"; readonly cursor: number; readonly revision: number }
   | { readonly status: "conflict"; readonly currentRevision: number };
 
+export interface SyncOperationStore {
+  apply(operation: SyncOperation): SyncApplyResult;
+  after(cursor: number): ReadonlyArray<{ readonly cursor: number; readonly operation: SyncOperation; readonly revision: number }>;
+}
+
 /** In-memory contract model for adapters: retries are idempotent and stale writes never overwrite. */
-export class SyncOperationLog {
+export class SyncOperationLog implements SyncOperationStore {
   private readonly keys = new Map<string, { cursor: number; revision: number }>();
   private readonly revisions = new Map<string, number>();
   private cursor = 0;

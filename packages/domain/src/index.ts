@@ -64,7 +64,7 @@ export { createSystemCategories } from "./services/systemCategories";
 export { isSystemCategory, validateCategoryMerge } from "./services/dataManagement";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
-export { SyncOperationLog, type SyncApplyResult, type SyncOperation } from "./services/syncOperationLog";
+export { SyncOperationLog, type SyncApplyResult, type SyncOperation, type SyncOperationStore } from "./services/syncOperationLog";
 export {
   authorizeLocalRequest,
   issuePairingGrant,
