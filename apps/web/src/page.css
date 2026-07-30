@@ -697,6 +697,10 @@
   padding-inline: 1.5rem;
 }
 
+#budgets > .accounts-heading {
+  margin-bottom: 1rem;
+}
+
 .account-form small {
   color: var(--color-on-surface-muted);
   font-size: 0.6875rem;
