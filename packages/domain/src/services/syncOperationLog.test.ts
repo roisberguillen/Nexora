@@ -10,5 +10,6 @@ describe("SyncOperationLog", () => {
     expect(log.apply(operation)).toEqual({ status: "duplicate", cursor: 1, revision: 1 });
     expect(log.apply({ ...operation, idempotencyKey: "op-002", payloadDigest: "sha256:two" })).toEqual({ status: "conflict", currentRevision: 1 });
     expect(log.after(0)).toEqual([{ cursor: 1, operation, revision: 1 }]);
+    expect(log.pendingConflicts()).toEqual([{ ...operation, idempotencyKey: "op-002", payloadDigest: "sha256:two" }]);
   });
 });

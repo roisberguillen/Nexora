@@ -17,12 +17,16 @@ export class SyncOperationLog {
   private readonly revisions = new Map<string, number>();
   private cursor = 0;
   private readonly operations: Array<{ cursor: number; operation: SyncOperation; revision: number }> = [];
+  private readonly conflicts: SyncOperation[] = [];
 
   public apply(operation: SyncOperation): SyncApplyResult {
     const previous = this.keys.get(operation.idempotencyKey);
     if (previous !== undefined) return { status: "duplicate", ...previous };
     const currentRevision = this.revisions.get(operation.entityId) ?? 0;
-    if (operation.baseRevision !== currentRevision) return { status: "conflict", currentRevision };
+    if (operation.baseRevision !== currentRevision) {
+      this.conflicts.push(operation);
+      return { status: "conflict", currentRevision };
+    }
     const revision = currentRevision + 1;
     const cursor = ++this.cursor;
     this.revisions.set(operation.entityId, revision);
@@ -33,5 +37,9 @@ export class SyncOperationLog {
 
   public after(cursor: number): ReadonlyArray<{ readonly cursor: number; readonly operation: SyncOperation; readonly revision: number }> {
     return this.operations.filter((entry) => entry.cursor > cursor);
+  }
+
+  public pendingConflicts(): readonly SyncOperation[] {
+    return this.conflicts;
   }
 }
