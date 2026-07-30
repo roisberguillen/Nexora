@@ -969,6 +969,11 @@
   margin-block: 1.25rem;
 }
 
+#backup > .form-actions {
+  margin: 0 var(--backup-content-inset) 1.5rem;
+  padding: 0.5rem 0 0;
+}
+
 .import-layout {
   display: grid;
   gap: 1.25rem;
