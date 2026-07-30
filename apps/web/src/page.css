@@ -1000,6 +1000,10 @@
   gap: 1rem;
 }
 
+#exports > .mapping-grid {
+  margin: 1.25rem 1.5rem;
+}
+
 .import-summary {
   display: flex;
   flex-wrap: wrap;
