@@ -19,5 +19,8 @@ describe("RecurringPage", () => {
     );
 
     expect(screen.getByLabelText("Attiva").parentElement).toHaveClass("form-toggle");
+    expect(screen.getByRole("region", { name: "Piani di allocazione" })).toHaveClass(
+      "recurring-allocation-panel",
+    );
   });
 });

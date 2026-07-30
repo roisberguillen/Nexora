@@ -298,7 +298,10 @@ function AllocationPlans({
     }
   };
   return (
-    <section className="data-panel account-management-panel" aria-labelledby="allocation-title">
+    <section
+      aria-labelledby="allocation-title"
+      className="data-panel account-management-panel recurring-allocation-panel"
+    >
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Solo dopo conferma</p>

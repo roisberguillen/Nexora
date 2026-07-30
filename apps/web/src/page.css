@@ -680,6 +680,10 @@
   accent-color: var(--color-primary);
 }
 
+#recurring > .recurring-allocation-panel {
+  margin-top: 1.25rem;
+}
+
 .account-form small {
   color: var(--color-on-surface-muted);
   font-size: 0.6875rem;
