@@ -638,6 +638,16 @@
       "sha256": "9d1d852633cc15b021396ea85e5519657227cae806e0a855880f6dcc7ce3e893"
     },
     {
+      "path": "apps/web/src/transactions/pagination.test.ts",
+      "size": 850,
+      "sha256": "a6361829a659cc826ce387ee0bf83b56e8c226d6f2f606025516e81d74b6b07e"
+    },
+    {
+      "path": "apps/web/src/transactions/pagination.ts",
+      "size": 575,
+      "sha256": "af3e0e80d7e0447b29959cf6c0579ae598714475625ec127127cf495dbd3edee"
+    },
+    {
       "path": "apps/web/src/transactions/transactionCommands.test.ts",
       "size": 3243,
       "sha256": "c12c33635df7ce495840cebafea636ff2c3e20b1edbf07d274e05ad7dd15af0e"
@@ -648,9 +658,14 @@
       "sha256": "bffe73b59a10ec62e3c9b4e3a25e3260c56de37e45c0793683abfdaa39cecf5b"
     },
     {
+      "path": "apps/web/src/transactions/transactions.css",
+      "size": 397,
+      "sha256": "cf59863adec6d84860e5b67a127c99e60afe6b1da09783e9fe5864bd424ffe2a"
+    },
+    {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 28289,
-      "sha256": "862e2dc1cec3a25d752f63fa5e3032b438e18f7d36edf17b248f37870dd057b5"
+      "size": 29801,
+      "sha256": "51b8f3f25af1309cebe58b1d257dadbb612840282073b7898d261dcfe95aaced"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -689,8 +704,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15546,
-      "sha256": "f134e3ecc229434fbb17a7691adaf0b77a1043f480e2bfc51c60a49a2ca47c5f"
+      "size": 15689,
+      "sha256": "c73e14955fba8337d0ec5d9e5203496d31f85de9bd93b7173d1f4cd0d88d3d92"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -884,8 +899,8 @@
     },
     {
       "path": "docs/reports/known-limitations.md",
-      "size": 2510,
-      "sha256": "3f8f16647b9b6b654fcf785970b8ba788aca157fec37ee0aaf335cf58c028a82"
+      "size": 2631,
+      "sha256": "a31e18d7d217458057cf1992a6cc734df2705f6177a3150217e14c7ac99b1163"
     },
     {
       "path": "docs/reports/performance-results.json",
@@ -894,8 +909,8 @@
     },
     {
       "path": "docs/reports/roadmap-completion-audit.md",
-      "size": 2825,
-      "sha256": "d3f102b6aed71e4e010060e0606e9397e7d03c0f0c5ca35bd2e88a3254124a83"
+      "size": 2868,
+      "sha256": "26b6b0475a5557a0c047d75cb4d8b5acde286d01e03a0b0c837df9b47bd955d7"
     },
     {
       "path": "docs/reports/startup-baseline.md",

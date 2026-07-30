@@ -30,6 +30,8 @@
   sintetici, isolata in una directory OPFS temporanea e rimossa al termine.
 - Verificato in Chromium il rollback di una scrittura interrotta sia su IndexedDB
   sia su SQLite WASM/OPFS, con riapertura senza record parziali.
+- La tabella Movimenti è ora paginata e rende al massimo 100 righe per pagina,
+  preservando selezione e azioni anche su ledger molto grandi.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

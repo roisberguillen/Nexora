@@ -1,7 +1,8 @@
 import { FinancialAmount } from "@nexora/ui";
 import type { Tag } from "@nexora/domain";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
+import "./transactions.css";
 import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import {
   signedAmountForKind,
@@ -10,6 +11,7 @@ import {
 } from "./transactionCommands";
 import type { TransactionsViewModel } from "./buildTransactionsViewModel";
 import { previewTrashSelection } from "./trashSelection";
+import { paginateTransactions, transactionPageSize } from "./pagination";
 
 interface TransactionsPageProps {
   readonly initialEditorOpen?: boolean;
@@ -46,7 +48,14 @@ export function TransactionsPage({
   const [salaryAllocationPlanIds, setSalaryAllocationPlanIds] = useState<readonly string[]>([]);
   const [selectedForTrash, setSelectedForTrash] = useState<ReadonlySet<string>>(new Set());
   const [isTrashConfirmOpen, setIsTrashConfirmOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const selectionPreview = previewTrashSelection(model.items, selectedForTrash);
+  const pagination = paginateTransactions(model.items, currentPage);
+  const { currentPage: visiblePage, items: visibleItems, pageCount } = pagination;
+
+  useEffect(() => {
+    if (currentPage !== visiblePage) setCurrentPage(visiblePage);
+  }, [currentPage, visiblePage]);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -346,7 +355,7 @@ export function TransactionsPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {model.items.map((item) => (
+                  {visibleItems.map((item) => (
                     <tr key={item.id}>
                       <td data-label="Seleziona">
                         <input
@@ -421,6 +430,32 @@ export function TransactionsPage({
               </table>
             </div>
           )}
+          {model.items.length > transactionPageSize ? (
+            <nav aria-label="Paginazione movimenti" className="table-pagination">
+              <p aria-live="polite">
+                Pagina {visiblePage} di {pageCount} · visualizzati {visibleItems.length} di{" "}
+                {model.items.length} movimenti
+              </p>
+              <div className="table-actions">
+                <button
+                  className="secondary-action"
+                  disabled={visiblePage === 1}
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  type="button"
+                >
+                  Precedente
+                </button>
+                <button
+                  className="secondary-action"
+                  disabled={visiblePage === pageCount}
+                  onClick={() => setCurrentPage((page) => Math.min(pageCount, page + 1))}
+                  type="button"
+                >
+                  Successiva
+                </button>
+              </div>
+            </nav>
+          ) : null}
         </section>
         {isEditorOpen ? (
           <TransactionForm

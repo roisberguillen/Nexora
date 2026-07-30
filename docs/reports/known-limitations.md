@@ -21,7 +21,8 @@ Data: 2026-07-30
 2. Esistono prove Chromium su IndexedDB e OPFS reali con 100.000 movimenti, ma non sono ancora
    una campagna ripetuta completa né coprono il dataset completo della roadmap, rendering o
    memoria. La lettura della lista completa ha misurato circa 1,6 s su IndexedDB e 3,2 s su
-   OPFS, oltre la soglia preliminare di un secondo per ricerca o filtro.
+   OPFS, oltre la soglia preliminare di un secondo per ricerca o filtro. La tabella Movimenti
+   limita ora il rendering a 100 righe, ma il caricamento dell'intero dataset resta da ottimizzare.
 3. Web Locks serializza il bootstrap quando disponibile e la prova browser copre cinque schede
    simultanee e 50 reload. Restano da provare chiusure durante scrittura, quota insufficiente e
    aggiornamento del Service Worker.
