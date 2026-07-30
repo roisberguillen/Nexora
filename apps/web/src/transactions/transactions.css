@@ -27,7 +27,22 @@
   }
 
   .transaction-management-table tr {
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.875rem;
+    box-shadow: 0 0.2rem 0.75rem rgb(17 24 39 / 0.05);
+    margin-bottom: 0.75rem;
     padding: 0.875rem !important;
+  }
+
+  .transaction-management-table td[data-label="Operazione"] strong {
+    font-size: 1rem;
+  }
+
+  .transaction-management-table td[data-label="Importo"] {
+    align-items: center;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 0.35rem;
+    padding-top: 0.65rem;
   }
 
   .transaction-management-table td,
@@ -42,6 +57,7 @@
   .transaction-management-table td[data-label="Azioni"] {
     grid-template-columns: 1fr;
     margin-top: 0.25rem;
+    padding-top: 0.5rem;
   }
 
   .transaction-management-table td[data-label="Azioni"]::before {
