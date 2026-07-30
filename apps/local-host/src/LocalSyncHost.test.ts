@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { issuePairingGrant } from "@nexora/domain";
 
-import { createLocalSyncHost } from "./LocalSyncHost";
+import { createLocalSyncHost, startLocalSyncHost } from "./LocalSyncHost";
 
 const servers: Array<ReturnType<typeof createLocalSyncHost>> = [];
 afterEach(async () => Promise.all(servers.splice(0).map((server) => new Promise<void>((resolve) => server.close(() => resolve())))));
@@ -22,5 +22,14 @@ describe("local sync host", () => {
     expect((await fetch(`${url}/v1/ledger`)).status).toBe(401);
     expect((await fetch(`${url}/v1/ledger`, { headers: { Origin: "https://nexora.local", Authorization: `Bearer ${grant.token}`, "X-Nexora-Device-Id": "phone-001" } })).status).toBe(200);
     expect((await fetch(`${url}/v1/ledger`, { headers: { Origin: "https://evil.example", Authorization: `Bearer ${grant.token}`, "X-Nexora-Device-Id": "phone-001" } })).status).toBe(403);
+  });
+
+  it("does not expose a LAN listener until TLS configuration exists", async () => {
+    await expect(startLocalSyncHost({
+      policy: { binding: "lan", lanConsent: true, allowedOrigins: ["https://nexora.local"] },
+      hostFingerprint: `sha256:${"a".repeat(64)}`,
+      resolveGrant: () => undefined,
+      ledgerMetadata: () => ({ ledgerId: "ledger", schemaVersion: 13, updatedAt: "2026-07-30T00:00:00.000Z" }),
+    })).rejects.toThrow("lan_tls_configuration_required");
   });
 });

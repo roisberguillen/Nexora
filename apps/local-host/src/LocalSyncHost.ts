@@ -48,6 +48,25 @@ export function createLocalSyncHost(options: LocalSyncHostOptions) {
   });
 }
 
+/** Starts only on loopback. LAN startup is deferred until TLS material is configured. */
+export async function startLocalSyncHost(
+  options: LocalSyncHostOptions,
+  port = 43173,
+): Promise<ReturnType<typeof createLocalSyncHost>> {
+  if (options.policy.binding !== "loopback") {
+    throw new Error("lan_tls_configuration_required");
+  }
+  const server = createLocalSyncHost(options);
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(port, "127.0.0.1", () => {
+      server.off("error", reject);
+      resolve();
+    });
+  });
+  return server;
+}
+
 function header(request: IncomingMessage, name: string): string | undefined {
   const value = request.headers[name];
   return typeof value === "string" ? value : undefined;
