@@ -19,7 +19,7 @@ repository. Un check verde non equivale a copertura totale di uno step.
 | 9 — Backup/restore | Parziale | backup cifrato e restore locale/temporaneo | Restore incrociato ripetuto, digest completo e casi d'errore mancanti. |
 | 10 — UI/accessibilità | Parziale | axe shell, screenshot desktop, viewport 320–1440, paginazione Movimenti a 100 righe | Caricamento backend, altre liste, zoom 200% e audit di tutte le pagine mancanti. |
 | 11 — PWA | Parziale | offline e persistenza OPFS/IndexedDB | installazione e aggiornamento sicuro del service worker mancanti. |
-| 12 — Sicurezza | Parziale | audit dipendenze, CSP/COOP/COEP e diagnostica | import/export malevoli e formula injection da verificare in modo esplicito. |
+| 12 — Sicurezza | Parziale | audit dipendenze, CSP/COOP/COEP, diagnostica e CSV anti-formula | Import malevoli e verifica esplicita degli altri formati restano da provare. |
 | 13 — Gate finale | Parziale | verify, E2E, manifest e audit verdi | Non può chiudersi finché i gap precedenti restano aperti. |
 
 ## Decisione di stato
