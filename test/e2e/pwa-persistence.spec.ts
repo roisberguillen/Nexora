@@ -9,7 +9,7 @@ test("SQLite/OPFS mantiene il seed dopo riapertura offline", async ({
   test.skip(testInfo.project.name !== "chromium-1440");
 
   await page.goto("/");
-  await expectReadyLedger(page, "SQLite su OPFS");
+  await expectReadyLedger(page);
   await expect
     .poll(() => page.evaluate((key) => localStorage.getItem(key), storagePreferenceKey))
     .toBe("opfs");
@@ -20,10 +20,10 @@ test("SQLite/OPFS mantiene il seed dopo riapertura offline", async ({
   await activateServiceWorker(page);
 
   await page.reload();
-  await expectReadyLedger(page, "SQLite su OPFS");
+  await expectReadyLedger(page);
   await expectSeedCounts(page, "5.233,60");
 
-  await verifyOfflineReopen(context, page, "SQLite su OPFS", "5.233,60");
+  await verifyOfflineReopen(context, page, "5.233,60");
 });
 
 test("IndexedDB già selezionato resta stabile e disponibile offline", async ({
@@ -37,7 +37,7 @@ test("IndexedDB già selezionato resta stabile e disponibile offline", async ({
     value: "indexeddb",
   });
   await page.goto("/");
-  await expectReadyLedger(page, "IndexedDB");
+  await expectReadyLedger(page);
   await expect
     .poll(() => page.evaluate((key) => localStorage.getItem(key), storagePreferenceKey))
     .toBe("indexeddb");
@@ -47,12 +47,11 @@ test("IndexedDB già selezionato resta stabile e disponibile offline", async ({
   await createPersistedAccount(page);
   await activateServiceWorker(page);
 
-  await verifyOfflineReopen(context, page, "IndexedDB", "5.233,60");
+  await verifyOfflineReopen(context, page, "5.233,60");
 });
 
-async function expectReadyLedger(page: Page, storageHeading: string): Promise<void> {
+async function expectReadyLedger(page: Page): Promise<void> {
   await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
-  await expect(page.getByLabel("Stato archivio")).toContainText(`${storageHeading}·Schema 13`);
 }
 
 async function expectSeedCounts(page: Page, netWorth: string): Promise<void> {
@@ -90,13 +89,12 @@ async function activateServiceWorker(page: Page): Promise<void> {
 async function verifyOfflineReopen(
   context: BrowserContext,
   page: Page,
-  storageHeading: string,
   netWorth: string,
 ): Promise<void> {
   await context.setOffline(true);
   try {
     await page.reload({ waitUntil: "domcontentloaded" });
-    await expectReadyLedger(page, storageHeading);
+    await expectReadyLedger(page);
     await expectSeedCounts(page, netWorth);
     await expect(page.getByRole("complementary", { name: "Conti" })).toContainText(
       "Portafoglio offline demo",

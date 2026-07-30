@@ -1844,8 +1844,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
-      "size": 120796,
-      "sha256": "6ac57c221f23acb4d28c4c60cd43de87fcc87500c806d54c13a1a4f17a6aa035"
+      "size": 118568,
+      "sha256": "913f9f93335fb653768ae8d2bb1438c2fa3ab45dce8f410e3e6d06930b6874ca"
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
@@ -1879,8 +1879,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 216887,
-      "sha256": "49e6032107deff3cf8b91a4e492d24b58c2f59192e0c3a3b52f4e55135579945"
+      "size": 210544,
+      "sha256": "552c08d84e61f65e3a77be3a3a0e8de7d02ae1f6139e3bbc286b52660ff3f9c2"
     },
     {
       "path": "test/e2e/fixtures/atomic-rollback.ts",
@@ -1954,8 +1954,8 @@
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",
-      "size": 4638,
-      "sha256": "648188f81a8401c68c475f6992f223be555caa2a2b4df44e972f32ad0d83176d"
+      "size": 4395,
+      "sha256": "9c7e0e638c3232cf551ad8db5b994d3507716ea62a6c7bfbdf7e17582972d217"
     },
     {
       "path": "test/e2e/recurring.spec.ts",
