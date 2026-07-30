@@ -938,6 +938,16 @@
       "sha256": "06bf17cdef6abab07ec226f1c8227c9e591185486ea838e6ffc7bec3a5874dc4"
     },
     {
+      "path": "docs/reports/ui-ux-audit-2026-07-30.md",
+      "size": 2847,
+      "sha256": "b00ad221934250ca4e54a0259468d72a194070d76aceb63d007591c3617fc81c"
+    },
+    {
+      "path": "docs/ROADMAP_NEXT_SHARED_LAN.md",
+      "size": 2248,
+      "sha256": "df16f895ce3e6ad8a65687dffe08bf883fed9cec2fb3c65785a66b22f1196c72"
+    },
+    {
       "path": "docs/ROADMAP.md",
       "size": 1976,
       "sha256": "55f1e7e1ffc1490c0f25dc8d6f0e2b9804be09f36dba17aaa0e3b7d6a94c045f"
