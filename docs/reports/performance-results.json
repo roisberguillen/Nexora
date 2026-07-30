@@ -25,10 +25,20 @@
       "reopenMs": 2.58,
       "listMs": 1601.18,
       "result": "passed"
+    },
+    {
+      "records": 100000,
+      "insertedRecords": 100000,
+      "listedRecords": 100000,
+      "openMs": 9.92,
+      "insertMs": 126557.58,
+      "reopenMs": 2.86,
+      "listMs": 1628.38,
+      "result": "passed"
     }
   ],
   "limitations": [
-    "Two IndexedDB runs are recorded; the roadmap requires a broader repeated campaign.",
+    "Three IndexedDB runs are recorded; the roadmap requires a broader repeated campaign.",
     "No equivalent OPFS run has been recorded.",
     "The synthetic dataset covers transactions only, not the full roadmap entity matrix.",
     "The 100,000-record list measurement exceeds the preliminary one-second search target."

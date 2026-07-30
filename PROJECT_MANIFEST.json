@@ -878,14 +878,19 @@
       "sha256": "be7b744edb7469ef3f0dbff19a5ca35088c555ebe9f447b171d9d03e1addb8fa"
     },
     {
+      "path": "docs/reports/final-verification.md",
+      "size": 1181,
+      "sha256": "04f59f3d290abb4e29da1d96ed31c1a086ff1cf1ef0147b41c7699612f43a3b8"
+    },
+    {
       "path": "docs/reports/known-limitations.md",
       "size": 2488,
       "sha256": "be16008308f033ad6c7dc505836630606718e11222ceddb51613f8cdf950ff8a"
     },
     {
       "path": "docs/reports/performance-results.json",
-      "size": 995,
-      "sha256": "afd3503ecb1c1603e74c64f8a7fc7690c7ff3298caa02f890d638ad8ea6b3b9e"
+      "size": 1224,
+      "sha256": "70285ab17b95d95c45934c0e8831ac17693b93a3757aea8d218b956c8f7170b8"
     },
     {
       "path": "docs/reports/startup-baseline.md",
@@ -894,8 +899,8 @@
     },
     {
       "path": "docs/reports/test-matrix.md",
-      "size": 1315,
-      "sha256": "d9016b2c13907fd3bd074308b0300394353174b689d887282622587ce74cf5f5"
+      "size": 1393,
+      "sha256": "ce6f59f216913b262a70f44b18b63ff880a74a27b260fbb102ae332e1f52f342"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1729,8 +1734,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
-      "size": 120621,
-      "sha256": "6b0e46239766bd6d1d088e3719e2d5d4fe8f6f60e6a4adf870163be574d38a49"
+      "size": 120796,
+      "sha256": "6ac57c221f23acb4d28c4c60cd43de87fcc87500c806d54c13a1a4f17a6aa035"
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
@@ -1759,8 +1764,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
-      "size": 216748,
-      "sha256": "1839e5ae87de173bf76f1632c860709dae33cf37f564aa4bd5bebc229b5c0f43"
+      "size": 216887,
+      "sha256": "49e6032107deff3cf8b91a4e492d24b58c2f59192e0c3a3b52f4e55135579945"
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
