@@ -16,6 +16,7 @@ export class SyncOperationLog {
   private readonly keys = new Map<string, { cursor: number; revision: number }>();
   private readonly revisions = new Map<string, number>();
   private cursor = 0;
+  private readonly operations: Array<{ cursor: number; operation: SyncOperation; revision: number }> = [];
 
   public apply(operation: SyncOperation): SyncApplyResult {
     const previous = this.keys.get(operation.idempotencyKey);
@@ -26,6 +27,11 @@ export class SyncOperationLog {
     const cursor = ++this.cursor;
     this.revisions.set(operation.entityId, revision);
     this.keys.set(operation.idempotencyKey, { cursor, revision });
+    this.operations.push({ cursor, operation, revision });
     return { status: "applied", cursor, revision };
+  }
+
+  public after(cursor: number): ReadonlyArray<{ readonly cursor: number; readonly operation: SyncOperation; readonly revision: number }> {
+    return this.operations.filter((entry) => entry.cursor > cursor);
   }
 }
