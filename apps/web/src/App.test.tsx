@@ -38,7 +38,7 @@ describe("Nexora app", () => {
     expect(
       await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Stato archivio")).toHaveTextContent("IndexedDB·Schema 1");
+    expect(screen.queryByLabelText("Stato archivio")).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         name: "Il ledger è pronto per i primi dati",

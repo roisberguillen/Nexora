@@ -1,5 +1,4 @@
 import { DEFAULT_LOCALE } from "@nexora/config";
-import type { BrowserLedgerStorageKind } from "@nexora/database";
 import { FinancialAmount, MetricCard } from "@nexora/ui";
 
 import type { DashboardActivityItem, DashboardViewModel } from "./buildDashboardViewModel";
@@ -10,8 +9,6 @@ interface DashboardProps {
   readonly isSeeding: boolean;
   readonly model: DashboardViewModel;
   readonly onAddDemoData: () => void;
-  readonly schemaVersion: number;
-  readonly storageKind: BrowserLedgerStorageKind;
   readonly totalResetReport?: TotalResetReport;
 }
 
@@ -20,12 +17,8 @@ export function Dashboard({
   isSeeding,
   model,
   onAddDemoData,
-  schemaVersion,
-  storageKind,
   totalResetReport,
 }: DashboardProps) {
-  const storageLabel = storageKind === "opfs" ? "SQLite su OPFS" : "IndexedDB";
-
   return (
     <div id="overview">
       <header className="dashboard-heading">
@@ -36,12 +29,6 @@ export function Dashboard({
             Saldi e flussi vengono calcolati dal ledger locale verificato. I trasferimenti interni
             non alterano entrate o spese.
           </p>
-        </div>
-        <div aria-label="Stato archivio" className="storage-pill">
-          <span aria-hidden="true" className="status-dot" />
-          <span>{storageLabel}</span>
-          <span aria-hidden="true">·</span>
-          <span>Schema {schemaVersion}</span>
         </div>
       </header>
       {totalResetReport === undefined ? null : (

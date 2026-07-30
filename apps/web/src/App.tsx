@@ -733,8 +733,6 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstr
                 model={ledgerState.dashboard}
                 {...(totalResetReport === undefined ? {} : { totalResetReport })}
                 onAddDemoData={() => void addDemoData()}
-                schemaVersion={ledgerState.ledger.schemaVersion}
-                storageKind={ledgerState.ledger.storageKind}
               />
             )
           ) : (
