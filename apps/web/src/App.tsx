@@ -702,7 +702,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstr
                 transactions={ledgerState.rawTransactions}
               />
             ) : route === "profile" ? (
-              <ProfilePage ledger={ledgerState.ledger} />
+              <ProfilePage />
             ) : route === "settings" ? (
               <SettingsPage
                 onResetFinancialData={resetFinancialData}

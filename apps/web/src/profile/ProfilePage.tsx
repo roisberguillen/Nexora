@@ -1,4 +1,3 @@
-import type { BrowserLedger } from "@nexora/database";
 import { NavIcon } from "@nexora/ui";
 
 const groups = [
@@ -21,7 +20,7 @@ const groups = [
   },
 ] as const;
 
-export function ProfilePage({ ledger }: { readonly ledger: BrowserLedger }) {
+export function ProfilePage() {
   return (
     <div id="profile">
       <header className="profile-hero">
@@ -33,12 +32,6 @@ export function ProfilePage({ ledger }: { readonly ledger: BrowserLedger }) {
           <h1>Nexora</h1>
         </div>
       </header>
-      <section className="profile-status" aria-label="Stato archivio">
-        <span>
-          Archivio attivo: <strong>{ledger.storageKind === "opfs" ? "OPFS" : "IndexedDB"}</strong>
-        </span>
-        <span>Schema {ledger.schemaVersion}</span>
-      </section>
       <div className="profile-groups">
         {groups.map((group) => (
           <section className="data-panel profile-group" key={group.title}>
