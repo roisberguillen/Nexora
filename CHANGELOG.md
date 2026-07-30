@@ -36,6 +36,8 @@
   all'utente di ricaricarla in modo controllato, evitando sessioni con chunk obsoleti.
 - La navigazione hash ripristina lo scroll in alto, evitando che i titoli delle nuove
   pagine restino sotto la barra desktop fissa.
+- La lista Movimenti mobile riduce la densità delle etichette, separa le azioni e
+  aggiunge spazio sicuro sopra la navigazione inferiore.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica

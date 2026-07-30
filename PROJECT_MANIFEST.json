@@ -674,8 +674,8 @@
     },
     {
       "path": "apps/web/src/transactions/transactions.css",
-      "size": 397,
-      "sha256": "cf59863adec6d84860e5b67a127c99e60afe6b1da09783e9fe5864bd424ffe2a"
+      "size": 1172,
+      "sha256": "db87b64949e59b529dea3193ef392d31dade22da29eff0f7d98a8f5d183e0f2d"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
@@ -719,8 +719,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15992,
-      "sha256": "768c6ae719d6e9a9686e5e087fa0f6053e088746cc9263a488b4d8e0277974c5"
+      "size": 16132,
+      "sha256": "b215c7958bcf93481aba3e2c791dfafa7c0eda04c73696bbd90ceb6f767a86cf"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -939,8 +939,8 @@
     },
     {
       "path": "docs/reports/ui-ux-audit-2026-07-30.md",
-      "size": 2847,
-      "sha256": "b00ad221934250ca4e54a0259468d72a194070d76aceb63d007591c3617fc81c"
+      "size": 2786,
+      "sha256": "9756c385be660f2ea3e7dc538dc4c9081957911226f3820b639027d226f40e23"
     },
     {
       "path": "docs/ROADMAP_NEXT_SHARED_LAN.md",

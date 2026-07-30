@@ -15,7 +15,7 @@ Data: 2026-07-30. Superfici osservate: dashboard e Movimenti su preview di produ
 | Priorità | Superficie | Criticità | Impatto | Azione proposta |
 |---|---|---|---|---|
 | P0 | PC + smartphone | `localhost`/`127.0.0.1`, OPFS e IndexedDB sono locali a dispositivo e profilo: non condividono il ledger fra PC e smartphone. | Il requisito di database condiviso non è realizzabile con la PWA corrente. | Nuovo servizio LAN autenticato o protocollo di sync con conflitti, backup e autorizzazioni. |
-| P1 | Mobile Movimenti | Una riga contiene selezione, sette campi e due azioni; la scansione verticale è pesante e le azioni possono restare sotto la barra inferiore. | L’azione rapida su smartphone è lenta e soggetta a errori. | Card compatta con menu azioni e area sicura sotto la bottom navigation. |
+| P1 | Mobile Movimenti | La densità della riga resta elevata, pur con etichette compatte, azioni separate e safe area già applicate. | L’azione rapida su smartphone può rimanere lenta. | Card compatta con menu azioni nel prossimo ciclo UX. |
 | P1 | Liste grandi | La UI limita la tabella a 100 righe ma carica ancora il dataset completo dal backend. | Con 100k record, apertura e filtro non raggiungono la soglia UX. | Query paginata/cursore sul repository e ricerca server-side/indice. |
 | P1 | PWA update | Le vecchie sessioni possono rimanere su asset storici fino a un aggiornamento del Service Worker. | Rischio di UI/schema non allineati. | Prompt di update già introdotto; aggiungere E2E con due build e migrazione senza perdita dati. |
 | P2 | Desktop | I bundle principali superano 500 kB minificati. | Primo caricamento e update più pesanti, soprattutto su rete mobile. | Spezzare route/moduli pesanti e misurare LCP/TTI. |
