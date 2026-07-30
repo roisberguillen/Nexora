@@ -28,6 +28,11 @@
       "sha256": "ac832e11ef38ed20d80318f859e377e38572a95f07df882648f81face5e54d69"
     },
     {
+      "path": ".codex/agents/ui-reviewer.md",
+      "size": 1049,
+      "sha256": "b556b2c3ac2ced72b131b6b3ca8382b25ec5cefd96e0b13fb4a0fe7b66c4bfab"
+    },
+    {
       "path": ".codex/agents/ux-reviewer.md",
       "size": 515,
       "sha256": "f4ecdc80b64f58697a47ddd48ae253c965a3d58c827a7a3d4381f518ac67a9f4"
@@ -131,6 +136,41 @@
       "path": "AGENTS.md",
       "size": 2075,
       "sha256": "02938c20d6666ca9badcfd673af3978fe35a77cf3f835bef2c0bf887a34d8f84"
+    },
+    {
+      "path": "apps/local-host/package.json",
+      "size": 254,
+      "sha256": "0ef1440790f5e35babb4b0e55af8506e5f44bc4a1d8b31113d43d99d77ecc55f"
+    },
+    {
+      "path": "apps/local-host/src/index.ts",
+      "size": 203,
+      "sha256": "0273a1d21b163e4305d44d3ac96228d8d0800da8f397fa51ceb4f64c3a9bacad"
+    },
+    {
+      "path": "apps/local-host/src/LocalSyncHost.test.ts",
+      "size": 5118,
+      "sha256": "e7cff1bc122c08f1ca012a0a2c43cc76007f5c2e698cd0b81a017b5fac8009c6"
+    },
+    {
+      "path": "apps/local-host/src/LocalSyncHost.ts",
+      "size": 8381,
+      "sha256": "275bcfb34b4d212c6d95a156a49320e0b2a5815c541a0dd30d0278580c1afb61"
+    },
+    {
+      "path": "apps/local-host/src/SqliteSyncOperationStore.test.ts",
+      "size": 1189,
+      "sha256": "c5faebb0d2e9dd1c852df6de349715e253d31f1b6eac36ac6577662ead16e26c"
+    },
+    {
+      "path": "apps/local-host/src/SqliteSyncOperationStore.ts",
+      "size": 3484,
+      "sha256": "b01d90715827b0d683418e7aa65a9977cb7905bf52832a12fe0a2eb232922c53"
+    },
+    {
+      "path": "apps/local-host/tsconfig.json",
+      "size": 118,
+      "sha256": "71283cc3c8caea1b7750a4bbd315951a4794833a2ff08489244a49c1680d06f3"
     },
     {
       "path": "apps/web/index.html",
@@ -509,13 +549,13 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 7870,
-      "sha256": "60686454e2cbe92d2a80f7da01e992e9fa0d920aef76143714d0f35fc0b8167f"
+      "size": 8211,
+      "sha256": "e3b96b00f68735d5329769374c1c6cef1a8d4bcb05ceea5934982259556d854a"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 25618,
-      "sha256": "a4b8da802e66f23f32b96180d0b80a67a580573ea7fbecf30e02765386736110"
+      "size": 26217,
+      "sha256": "d17c2db5d4656915779d3e994a452a39617b0c4b6b597298c127fe2a95255b1c"
     },
     {
       "path": "apps/web/src/startup/RecoveryBackupVerification.test.ts",
@@ -719,8 +759,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 16132,
-      "sha256": "b215c7958bcf93481aba3e2c791dfafa7c0eda04c73696bbd90ceb6f767a86cf"
+      "size": 16319,
+      "sha256": "a3ee2953d9686a5b0d584a669d100a88fa5099fae0fa3d24a447f069aef89bad"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -826,6 +866,11 @@
       "path": "docs/adr/0015-google-drive-appdata-oauth.md",
       "size": 440,
       "sha256": "39acaf4ae54c329e26fa003678e969a1ca45461297ec6e7bc5168ee909f0f32e"
+    },
+    {
+      "path": "docs/adr/0016-local-lan-sync-security.md",
+      "size": 1216,
+      "sha256": "52e3cbbfacb705d859aa03652ccbb8e606f163496255f23bc2e9d7db2bb9e471"
     },
     {
       "path": "docs/ARCHITECTURE.md",
@@ -944,8 +989,8 @@
     },
     {
       "path": "docs/ROADMAP_NEXT_SHARED_LAN.md",
-      "size": 2248,
-      "sha256": "df16f895ce3e6ad8a65687dffe08bf883fed9cec2fb3c65785a66b22f1196c72"
+      "size": 2256,
+      "sha256": "ec0d95f1749f4ebcd2d14c6eeba4a491318e6a93248ada945770ed8cfc852022"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1454,8 +1499,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 2589,
-      "sha256": "ed14ef540336a17a8d8a9fcd92acebfb08347ea1d8ae3dbb95655acbf308c842"
+      "size": 2946,
+      "sha256": "b018b58b946772144e64a6c2d656b47a4e652c5a425eab78113ec7a8fd82e91c"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -1503,6 +1548,16 @@
       "sha256": "ae948800076bc94764f765fb5a53fa51df494f3049a6d5fbbf87cb51562849d8"
     },
     {
+      "path": "packages/domain/src/services/localSyncSecurity.test.ts",
+      "size": 1901,
+      "sha256": "c1e5450ac71b27041bf75f2d75ba7e4d9ed26fb06abfc86b762b7833b315f076"
+    },
+    {
+      "path": "packages/domain/src/services/localSyncSecurity.ts",
+      "size": 3386,
+      "sha256": "2949e4bdfbc08515799975dacc31789e30ce6493e71c022dc167d697456c4d55"
+    },
+    {
       "path": "packages/domain/src/services/monthlyTrends.test.ts",
       "size": 2049,
       "sha256": "c86a1de46981e5e19f5ad28b6240c689914507cebf43e4562ed3f2c8c25cdb9f"
@@ -1521,6 +1576,16 @@
       "path": "packages/domain/src/services/prudentForecast.ts",
       "size": 1135,
       "sha256": "2cbf8366560befac12d6610cdd2dd0343cd91a0fc01b18907a63561bc5de2cec"
+    },
+    {
+      "path": "packages/domain/src/services/syncOperationLog.test.ts",
+      "size": 1036,
+      "sha256": "2ec4e14750afefd4fd7cad6f9ef0687a0fe762bb9c6078f1ea3bfb11aeb5406f"
+    },
+    {
+      "path": "packages/domain/src/services/syncOperationLog.ts",
+      "size": 2271,
+      "sha256": "f955308eca0a54d46218d49c67b7592821db6dc42c7dbacd3a1c14343bd641fd"
     },
     {
       "path": "packages/domain/src/services/systemCategories.ts",
@@ -1729,8 +1794,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 199433,
-      "sha256": "4de0addedc293727b45f215aae5c39f2c9c678e4c60486a264f33686e987f6ba"
+      "size": 199570,
+      "sha256": "184a1fd028d5c103423473bbcb6b36d094c10ba9ba0c1f5969a8fc88850f9899"
     },
     {
       "path": "pnpm-workspace.yaml",
