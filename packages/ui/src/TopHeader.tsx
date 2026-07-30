@@ -4,17 +4,11 @@ import { filterGlobalSearchResults, type GlobalSearchResult } from "./GlobalSear
 
 interface TopHeaderProps {
   readonly isNavigationOpen: boolean;
-  readonly isOnline: boolean;
   readonly onToggleNavigation: () => void;
   readonly searchResults: readonly GlobalSearchResult[];
 }
 
-export function TopHeader({
-  isNavigationOpen,
-  isOnline,
-  onToggleNavigation,
-  searchResults,
-}: TopHeaderProps) {
+export function TopHeader({ isNavigationOpen, onToggleNavigation, searchResults }: TopHeaderProps) {
   const [query, setQuery] = useState("");
   const results = filterGlobalSearchResults(searchResults, query).slice(0, 8);
   return (
@@ -67,11 +61,6 @@ export function TopHeader({
             )}
           </div>
         )}
-      </div>
-
-      <div aria-live="polite" className={`connectivity ${isOnline ? "is-online" : "is-offline"}`}>
-        <span aria-hidden="true" className="status-dot" />
-        <span>{isOnline ? "Rete online" : "Rete offline"}</span>
       </div>
     </header>
   );

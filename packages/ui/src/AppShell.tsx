@@ -22,25 +22,6 @@ export function AppShell({
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const quickActionTriggerRef = useRef<HTMLButtonElement>(null);
-  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
-
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
   useEffect(() => {
     if (!isNavigationOpen) {
       return;
@@ -92,7 +73,6 @@ export function AppShell({
         <MobileHeader activeRoute={activeRoute} />
         <TopHeader
           isNavigationOpen={isNavigationOpen}
-          isOnline={isOnline}
           onToggleNavigation={() => {
             setIsNavigationOpen((isOpen) => !isOpen);
           }}

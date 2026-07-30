@@ -1130,6 +1130,13 @@
   margin: 0;
   font-size: 0.875rem;
 }
+.settings-group > p {
+  margin: 0.75rem 1.25rem 1rem;
+}
+.settings-group > .secondary-action {
+  align-self: flex-start;
+  margin: 0.25rem 1.25rem 1.25rem;
+}
 .profile-row,
 .settings-row {
   display: flex;
