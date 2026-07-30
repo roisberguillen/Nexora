@@ -1844,8 +1844,8 @@
     },
     {
       "path": "scripts/project-manifest.mjs",
-      "size": 2673,
-      "sha256": "61c759c55f9d197b4e99133f2d6f39a7a4c141d127e5c986a352915f71265e2f"
+      "size": 2781,
+      "sha256": "0253eb40744e76a8e9c3591c4d865c7ff662e4e5f47fdc1bc4ce7a6b7a10d731"
     },
     {
       "path": "scripts/verify-project.sh",

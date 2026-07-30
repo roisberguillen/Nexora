@@ -16,12 +16,16 @@ const ignoredDirectories = new Set([
 ]);
 const ignoredFiles = new Set(["PROJECT_MANIFEST.json"]);
 
+function normalizeLineEndings(contents) {
+  return contents.replaceAll("\r\n", "\n");
+}
+
 function canonicalizeManifestContents(contents) {
   if (contents.includes(0)) {
     return contents;
   }
 
-  return Buffer.from(contents.toString("utf8").replaceAll("\r\n", "\n"), "utf8");
+  return Buffer.from(normalizeLineEndings(contents.toString("utf8")), "utf8");
 }
 
 async function collectFiles(directory) {
@@ -80,7 +84,7 @@ if (mode === "--write") {
   await writeFile(manifestPath, expected, "utf8");
   process.stdout.write("PROJECT_MANIFEST.json updated.\n");
 } else if (mode === "--check") {
-  const actual = await readFile(manifestPath, "utf8");
+  const actual = normalizeLineEndings(await readFile(manifestPath, "utf8"));
   if (actual !== expected) {
     process.stderr.write("PROJECT_MANIFEST.json is stale. Run pnpm manifest:update.\n");
     process.exitCode = 1;
