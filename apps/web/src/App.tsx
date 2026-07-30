@@ -768,6 +768,14 @@ const quickActions: readonly QuickAction[] = [
     },
   },
   {
+    label: "Nuovo budget",
+    description: "Limite mensile di spesa",
+    icon: "budget",
+    onSelect: () => {
+      window.location.hash = "#budgets";
+    },
+  },
+  {
     label: "Nuovo prestito",
     icon: "accounts",
     onSelect: () => {

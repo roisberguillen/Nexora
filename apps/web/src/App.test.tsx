@@ -63,6 +63,17 @@ describe("Nexora app", () => {
     expect(screen.getByRole("radio", { name: "Entrata" })).toBeChecked();
   });
 
+  it("apre la creazione di un budget dal menu rapido", async () => {
+    const user = userEvent.setup();
+    render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
+
+    await user.click(await screen.findByRole("button", { name: "Nuova operazione" }));
+    await user.click(screen.getByRole("button", { name: /Nuovo budget/ }));
+
+    expect(await screen.findByRole("heading", { name: "Budget" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Nuovo budget" })).toBeInTheDocument();
+  });
+
   it("apre il centro notifiche locale senza simulare notifiche cloud", async () => {
     window.history.replaceState(null, "", "#notifications");
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
