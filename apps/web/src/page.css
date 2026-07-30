@@ -1000,8 +1000,21 @@
   gap: 1rem;
 }
 
+#exports {
+  --exports-content-inset: 1.5rem;
+}
+
+#exports > :not(.panel-heading) {
+  margin-inline: var(--exports-content-inset);
+}
+
 #exports > .mapping-grid {
-  margin: 1.25rem 1.5rem;
+  margin-block: 1.25rem;
+}
+
+#exports > .form-actions {
+  margin-block: 0.75rem;
+  padding: 0;
 }
 
 .import-summary {
