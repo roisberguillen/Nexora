@@ -189,8 +189,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 36141,
-      "sha256": "a0847b7186247d545d9ad36bd80e0aa9959b58849a358fece6b6d5784ca5193a"
+      "size": 36170,
+      "sha256": "6e37487266a1c999ded74a34f2d55c071a625a4f3027435288cbc722ffce0e51"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -719,8 +719,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15859,
-      "sha256": "cfd4e98567e146556681ab02647029f22881986a5c9cc77fa727f806442363a8"
+      "size": 15992,
+      "sha256": "768c6ae719d6e9a9686e5e087fa0f6053e088746cc9263a488b4d8e0277974c5"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",

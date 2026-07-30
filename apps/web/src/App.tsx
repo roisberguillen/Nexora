@@ -953,6 +953,7 @@ function useAppRoute():
   useEffect(() => {
     const handleHashChange = () => {
       setRoute(readAppRoute());
+      window.scrollTo(0, 0);
     };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
