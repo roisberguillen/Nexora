@@ -64,6 +64,15 @@ export { createSystemCategories } from "./services/systemCategories";
 export { isSystemCategory, validateCategoryMerge } from "./services/dataManagement";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
+export {
+  authorizeLocalRequest,
+  issuePairingGrant,
+  LocalSyncSecurityError,
+  validateLocalHostPolicy,
+  type LocalHostBinding,
+  type LocalHostPolicy,
+  type PairingGrant,
+} from "./services/localSyncSecurity";
 export { MonthlyJournal, type CreateMonthlyJournalProps } from "./entities/MonthlyJournal";
 export { currencyCode, type CurrencyCode } from "./value-objects/CurrencyCode";
 export { LocalDate } from "./value-objects/LocalDate";

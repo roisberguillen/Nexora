@@ -1,6 +1,6 @@
 # Roadmap proposta — Nexora condivisa tra smartphone e desktop
 
-Stato: **bozza, da approvare prima dell’implementazione**.
+Stato: **in corso — approvata il 30 luglio 2026**.
 
 ## Obiettivo
 
@@ -8,10 +8,10 @@ Consentire a smartphone e PC di usare lo stesso ledger attraverso un servizio lo
 
 ## M1 — Decisione architetturale e threat model
 
-- Definire server locale, binding LAN esplicito, autenticazione per dispositivo e cifratura in transito.
-- Stabilire ownership del ledger, backup e recovery in caso di indisponibilità host.
-- ADR per replica/sync, conflitti, idempotenza e migrazioni.
-- Test: pairing rifiutato, token scaduto, host non affidabile, accesso non autorizzato.
+- [x] Definire server locale, binding LAN esplicito, autenticazione per dispositivo e cifratura in transito.
+- [x] Stabilire ownership del ledger, backup e recovery in caso di indisponibilità host.
+- [x] ADR per replica/sync, conflitti, idempotenza e migrazioni.
+- [x] Test: pairing rifiutato, token scaduto, host non affidabile, accesso non autorizzato.
 
 ## M2 — API locale sicura
 

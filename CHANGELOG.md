@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Avviata la roadmap LAN: l'host locale è opt-in, il pairing è vincolato al fingerprint
+  dell'host e i token per dispositivo sono a breve durata, con controlli di origine e scadenza.
+
 - Reso deterministico il bootstrap del ledger: la UI mostra la fase reale di
   discovery/apertura/verifica, i timeout sono espliciti, un errore chiude il ledger
   parzialmente aperto e invocazioni concorrenti non duplicano l'apertura.
