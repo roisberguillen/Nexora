@@ -761,13 +761,6 @@ const quickActions: readonly QuickAction[] = [
     },
   },
   {
-    label: "Nuova ricorrenza",
-    icon: "recurring",
-    onSelect: () => {
-      window.location.hash = "#recurring";
-    },
-  },
-  {
     label: "Nuovo budget",
     description: "Limite mensile di spesa",
     icon: "budget",

@@ -68,6 +68,7 @@ describe("Nexora app", () => {
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
 
     await user.click(await screen.findByRole("button", { name: "Nuova operazione" }));
+    expect(screen.queryByRole("button", { name: "Nuova ricorrenza" })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Nuovo budget/ }));
 
     expect(await screen.findByRole("heading", { name: "Budget" })).toBeInTheDocument();
