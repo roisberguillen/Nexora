@@ -957,8 +957,16 @@
   color: var(--color-on-surface);
 }
 
+#backup {
+  --backup-content-inset: 1.5rem;
+}
+
+#backup > :not(.panel-heading):not(hr) {
+  margin-inline: var(--backup-content-inset);
+}
+
 #backup > .backup-passphrase {
-  margin: 1.25rem 1.5rem;
+  margin-block: 1.25rem;
 }
 
 .import-layout {
