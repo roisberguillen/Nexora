@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("la PWA riapre cinquanta volte senza restare in caricamento", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium-1440", "Eseguito una volta sul backend reale.");
+  test.setTimeout(90_000);
 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible({

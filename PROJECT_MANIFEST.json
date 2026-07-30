@@ -1899,8 +1899,8 @@
     },
     {
       "path": "test/e2e/startup-reload-resilience.spec.ts",
-      "size": 769,
-      "sha256": "2e44c2027fe799fd507a40b22efbd113418ee55f23762f5e81fc4157ca56fcb5"
+      "size": 796,
+      "sha256": "c25ecf53bfbda920647ab750db96fc7b43b741d5d982118b9ad19bd211d4ac36"
     },
     {
       "path": "test/e2e/tags.spec.ts",
