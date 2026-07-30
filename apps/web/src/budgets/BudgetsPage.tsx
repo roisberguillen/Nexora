@@ -136,10 +136,10 @@ export function BudgetsPage({
               Importo
               <input inputMode="decimal" name="amount" placeholder="0,00" required />
             </label>
-            <label>
+            <label className="budget-alert-toggle">
               <input defaultChecked name="alertAt80" type="checkbox" /> Avvisa all’80%
             </label>
-            <label>
+            <label className="budget-alert-toggle">
               <input defaultChecked name="alertAt100" type="checkbox" /> Avvisa al 100%
             </label>
             <div className="form-actions">
