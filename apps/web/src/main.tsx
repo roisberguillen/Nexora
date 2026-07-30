@@ -6,8 +6,15 @@ import "./startup/startup.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { registerSW } from "virtual:pwa-register";
 
 import { App } from "./App";
+import {
+  PwaUpdateNotice,
+  pwaUpdateEventName,
+  type PwaUpdateEventDetail,
+} from "./pwa/PwaUpdateNotice";
+import "./pwa/pwa.css";
 import {
   openPwaLedgerWithSafeOpfsFallback,
   persistPwaLedgerSelection,
@@ -25,6 +32,16 @@ const rootElement = document.querySelector("#root");
 if (!(rootElement instanceof HTMLElement)) {
   throw new Error("Nexora root element is missing");
 }
+
+const applyPwaUpdate = registerSW({
+  onNeedRefresh() {
+    window.dispatchEvent(
+      new CustomEvent<PwaUpdateEventDetail>(pwaUpdateEventName, {
+        detail: { applyUpdate: () => applyPwaUpdate(true) },
+      }),
+    );
+  },
+});
 
 let selectedStorageKind: "opfs" | "indexeddb" | undefined;
 let allowOpfsFallback = false;
@@ -83,6 +100,7 @@ window.addEventListener(
 
 createRoot(rootElement).render(
   <StrictMode>
+    <PwaUpdateNotice />
     <App ledgerPromise={ledgerPromise} startupBootstrap={startupBootstrap} />
   </StrictMode>,
 );

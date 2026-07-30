@@ -1,0 +1,27 @@
+.pwa-update-notice {
+  align-items: center;
+  background: var(--surface-raised, #ffffff);
+  border: 1px solid var(--line-strong, #c9d3ee);
+  border-radius: 0.75rem;
+  bottom: 1rem;
+  box-shadow: 0 0.75rem 2rem rgb(13 32 74 / 18%);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  left: 1rem;
+  max-width: min(32rem, calc(100vw - 2rem));
+  padding: 0.875rem 1rem;
+  position: fixed;
+  z-index: 50;
+}
+
+.pwa-update-notice p {
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .pwa-update-notice {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

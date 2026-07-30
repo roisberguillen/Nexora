@@ -18,7 +18,7 @@ repository. Un check verde non equivale a copertura totale di uno step.
 | 8 — Resilienza | Parziale | 50 reload, cinque schede | Quota, chiusura in scrittura/import/backup, worker terminato e SW update mancanti. |
 | 9 — Backup/restore | Parziale | backup cifrato e restore locale/temporaneo | Restore incrociato ripetuto, digest completo e casi d'errore mancanti. |
 | 10 — UI/accessibilità | Parziale | axe shell, screenshot desktop, viewport 320–1440, paginazione Movimenti a 100 righe | Caricamento backend, altre liste, zoom 200% e audit di tutte le pagine mancanti. |
-| 11 — PWA | Parziale | offline e persistenza OPFS/IndexedDB | installazione e aggiornamento sicuro del service worker mancanti. |
+| 11 — PWA | Parziale | offline/persistenza OPFS/IndexedDB e prompt di aggiornamento testato | Installazione e prova E2E di aggiornamento reale del service worker mancanti. |
 | 12 — Sicurezza | Parziale | audit dipendenze, CSP/COOP/COEP, diagnostica e CSV anti-formula | Import malevoli e verifica esplicita degli altri formati restano da provare. |
 | 13 — Gate finale | Parziale | verify, E2E, manifest e audit verdi | Non può chiudersi finché i gap precedenti restano aperti. |
 

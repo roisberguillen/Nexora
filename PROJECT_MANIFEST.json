@@ -139,8 +139,8 @@
     },
     {
       "path": "apps/web/package.json",
-      "size": 663,
-      "sha256": "b1af110aac04f317a35e1658c2133abe0dcc1dc55b6ab77f62c8f4c7686f4da2"
+      "size": 695,
+      "sha256": "04383c0958a5d926b7e0561d9e9642f29a12a7cb0cae8e8261c5d08edbce1f2c"
     },
     {
       "path": "apps/web/public/icon.svg",
@@ -364,8 +364,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 2976,
-      "sha256": "79822f649ee4697105064cfcc69de63de604f1f7407705b51b26b8e08c3858fa"
+      "size": 3422,
+      "sha256": "43263a4b92f1741f37a3d2bcf8283d08df3a4eb560962bce850fa8ac3fdfc348"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -411,6 +411,21 @@
       "path": "apps/web/src/profile/ProfilePage.tsx",
       "size": 2142,
       "sha256": "1f021e8b5642ea1b5615f43423e79ec592f6cfbe1f761a34d220f1eb733efcae"
+    },
+    {
+      "path": "apps/web/src/pwa/pwa.css",
+      "size": 567,
+      "sha256": "02fd53a97d89bc17073da03297fcec5077578f3793047b062aa8630fd99ff118"
+    },
+    {
+      "path": "apps/web/src/pwa/PwaUpdateNotice.test.tsx",
+      "size": 696,
+      "sha256": "4e9674d6ce94e72808f1d16c5b46278c040194583fee7653763a8d72a3625b72"
+    },
+    {
+      "path": "apps/web/src/pwa/PwaUpdateNotice.tsx",
+      "size": 1109,
+      "sha256": "2794af11587e96faae48359efd57ed3e805a705c9a53243f4ee323e9e4b397bb"
     },
     {
       "path": "apps/web/src/recurring/allocationCommands.ts",
@@ -699,13 +714,13 @@
     },
     {
       "path": "apps/web/vite.config.ts",
-      "size": 2382,
-      "sha256": "4144d8c0f8400a79b7c0a673670cd64416ccd5866b1d10e2319c2d4c9f7fe05c"
+      "size": 2376,
+      "sha256": "3202b152badc33a07011de652c639f4f749942ae29e98e1fc7a1a3ba03e20902"
     },
     {
       "path": "CHANGELOG.md",
-      "size": 15689,
-      "sha256": "c73e14955fba8337d0ec5d9e5203496d31f85de9bd93b7173d1f4cd0d88d3d92"
+      "size": 15859,
+      "sha256": "cfd4e98567e146556681ab02647029f22881986a5c9cc77fa727f806442363a8"
     },
     {
       "path": "design/mockup/ChatGPT Image 29 lug 2026, 02_33_12.png",
@@ -909,8 +924,8 @@
     },
     {
       "path": "docs/reports/roadmap-completion-audit.md",
-      "size": 2887,
-      "sha256": "709bc9532f41cc050b5e10bcbe464af68e728b94d626e47a9f4e3529275a17c1"
+      "size": 2931,
+      "sha256": "75ea8c0572073fa87a41e02a7b35c6a12d1168a56f13e348061a4942cdb17c7b"
     },
     {
       "path": "docs/reports/startup-baseline.md",
@@ -1704,8 +1719,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 199362,
-      "sha256": "5a437e5daa4c9fb9c794f8abd3b2092d4d6430d934a4b3fbf51b1ff952185a21"
+      "size": 199433,
+      "sha256": "4de0addedc293727b45f215aae5c39f2c9c678e4c60486a264f33686e987f6ba"
     },
     {
       "path": "pnpm-workspace.yaml",

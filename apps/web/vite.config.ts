@@ -31,8 +31,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
-      injectRegister: "auto",
+      registerType: "prompt",
+      injectRegister: null,
       includeAssets: ["icon.svg"],
       manifest: {
         name: "Nexora — Finanza personale",

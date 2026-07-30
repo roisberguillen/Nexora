@@ -32,6 +32,8 @@
   sia su SQLite WASM/OPFS, con riapertura senza record parziali.
 - La tabella Movimenti è ora paginata e rende al massimo 100 righe per pagina,
   preservando selezione e azioni anche su ledger molto grandi.
+- La PWA avvisa esplicitamente quando è disponibile una nuova versione e permette
+  all'utente di ricaricarla in modo controllato, evitando sessioni con chunk obsoleti.
 
 - Rafforzata la chiusura della roadmap di avvio: test browser della policy fail-safe per
   preferenze storage, archivi ambigui/bloccati/corrotti, retry, migrazioni e diagnostica
