@@ -150,6 +150,17 @@ export function SettingsPage({
           <SettingsLink label="Esportazione completa" href="./#exports" />
           <SettingsRow label="Archivio locale" value="Locale; non cifrato a riposo" />
         </SettingsGroup>
+        <SettingsGroup title="Connessione dispositivi">
+          <p>
+            Questo dispositivo usa il proprio archivio locale. La sincronizzazione con un host
+            Nexora sarà disponibile solo dopo pairing esplicito e connessione protetta.
+          </p>
+          <SettingsRow label="Stato connessione" value="Solo locale" />
+          <SettingsRow label="Origine dati" value="Archivio di questo browser" />
+          <p className="account-feedback">
+            Nessun host condiviso configurato: anche offline puoi continuare a usare Nexora.
+          </p>
+        </SettingsGroup>
         {onRestoreTransaction === undefined ? null : (
           <SettingsGroup title="Cestino">
             <p>I movimenti nel cestino non incidono su saldi, budget o analisi.</p>

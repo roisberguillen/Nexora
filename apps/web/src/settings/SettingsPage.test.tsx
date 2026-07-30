@@ -186,4 +186,12 @@ describe("SettingsPage destructive flows", () => {
     expect(screen.getByText(/non sono ancora configurabili/i)).toBeVisible();
     expect(screen.getByRole("region", { name: "Gestione dati" })).toBeVisible();
   });
+
+  it("spiega lo stato locale della futura sincronizzazione senza promettere condivisione", () => {
+    render(<SettingsPage />);
+    expect(screen.getByRole("region", { name: "Connessione dispositivi" })).toHaveTextContent(
+      "Solo locale",
+    );
+    expect(screen.getByText(/nessun host condiviso configurato/i)).toBeVisible();
+  });
 });
