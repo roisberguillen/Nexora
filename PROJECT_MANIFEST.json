@@ -910,7 +910,7 @@
     {
       "path": "docs/reports/final-verification.md",
       "size": 1317,
-      "sha256": "0fe616d6b6c1ff8ec3596a85b737216cde5f43bf8cc4ea8f3c6d23040932d453"
+      "sha256": "9689b9e5bed2b12dde66887c54a9b5780f0c1c9a5942e7b29d21dac0be2d0006"
     },
     {
       "path": "docs/reports/known-limitations.md",
@@ -935,7 +935,7 @@
     {
       "path": "docs/reports/test-matrix.md",
       "size": 1596,
-      "sha256": "59dcc403669f227bdb8214adb752770ad6f7fb17366b1a68138e2f37ccbca75b"
+      "sha256": "9096a77ad4f9faabe718a557de81176c833a49cd7d5bc643d8c6768f760eb78d"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1869,8 +1869,8 @@
     },
     {
       "path": "test/e2e/opfs-performance.spec.ts",
-      "size": 2068,
-      "sha256": "8ac1434ec35a2e56d7bef7e89b2681f72f6614dd5ee606712ef3f729cb8d9da4"
+      "size": 2043,
+      "sha256": "61585a75724a71ff72dbf5080347b60e9b930e3501fd32f1e0f741d67605a184"
     },
     {
       "path": "test/e2e/opfs-persistence.spec.ts",

@@ -4,7 +4,7 @@
 
 | Comando | Esito |
 |---|---|
-| `pnpm verify` | Verde: 295 test passati, 4 skip; format, lint, typecheck e build completati |
+| `pnpm verify` | Verde: 298 test passati, 4 skip; format, lint, typecheck e build completati |
 | `pnpm manifest:check` | Verde |
 | `pnpm test:e2e` | Verde: 120 passati, 50 skip condizionati dalle viewport o da capability deliberate |
 | `pnpm audit --prod` | Verde nell'ultima esecuzione registrata |

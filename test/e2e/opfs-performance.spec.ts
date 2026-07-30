@@ -30,9 +30,7 @@ test("SQLite OPFS reale conserva e legge 100.000 movimenti sintetici", async ({
     const result = await page.evaluate(
       async ({ moduleUrl, filename }) => {
         const performanceModule = (await import(moduleUrl)) as {
-          runOpfsPerformanceTest(
-            value: string,
-          ): Promise<{
+          runOpfsPerformanceTest(value: string): Promise<{
             insertedRecords: number;
             listedRecords: number;
             openMs: number;
