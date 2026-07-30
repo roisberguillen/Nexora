@@ -1131,7 +1131,14 @@
   font-size: 0.875rem;
 }
 .settings-group > p {
-  margin: 0.75rem 1.25rem 1rem;
+  box-sizing: border-box;
+  margin: 0.75rem 0 1rem;
+  padding-inline: 1.25rem;
+}
+
+.settings-group > p.account-feedback,
+.settings-group > p.account-error {
+  padding-block: 0.75rem;
 }
 .settings-group > .secondary-action {
   align-self: flex-start;
