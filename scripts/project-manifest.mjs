@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -15,6 +15,14 @@ const ignoredDirectories = new Set([
   "test-results",
 ]);
 const ignoredFiles = new Set(["PROJECT_MANIFEST.json"]);
+
+function canonicalizeManifestContents(contents) {
+  if (contents.includes(0)) {
+    return contents;
+  }
+
+  return Buffer.from(contents.toString("utf8").replaceAll("\r\n", "\n"), "utf8");
+}
 
 async function collectFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -43,12 +51,13 @@ async function collectFiles(directory) {
 
 async function describeFile(relativePath) {
   const absolutePath = path.join(root, relativePath);
-  const [contents, fileStat] = await Promise.all([readFile(absolutePath), stat(absolutePath)]);
+  const contents = await readFile(absolutePath);
+  const canonicalContents = canonicalizeManifestContents(contents);
 
   return {
     path: relativePath,
-    size: fileStat.size,
-    sha256: createHash("sha256").update(contents).digest("hex"),
+    size: canonicalContents.byteLength,
+    sha256: createHash("sha256").update(canonicalContents).digest("hex"),
   };
 }
 
