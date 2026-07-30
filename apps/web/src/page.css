@@ -957,7 +957,7 @@
   color: var(--color-on-surface);
 }
 
-#backup > .panel-heading + .account-form-label {
+#backup > .backup-passphrase {
   margin: 1.25rem 1.5rem;
 }
 

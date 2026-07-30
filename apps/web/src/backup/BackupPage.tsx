@@ -279,7 +279,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
           </p>
         </div>
       </div>
-      <label className="account-form-label">
+      <label className="account-form-label backup-passphrase">
         Passphrase (minimo 12 caratteri)
         <input
           autoComplete="new-password"

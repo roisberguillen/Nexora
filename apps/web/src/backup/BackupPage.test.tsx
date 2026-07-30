@@ -20,5 +20,8 @@ describe("BackupPage", () => {
     expect(screen.getByRole("heading", { name: "Backup cloud" })).toBeInTheDocument();
     expect(screen.getByText(/VITE_GOOGLE_CLIENT_ID/)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /collega google drive/i })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Passphrase (minimo 12 caratteri)").parentElement).toHaveClass(
+      "backup-passphrase",
+    );
   });
 });
