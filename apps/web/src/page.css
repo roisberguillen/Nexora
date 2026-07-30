@@ -661,7 +661,8 @@
   color: var(--color-on-surface-muted);
 }
 
-.account-form .budget-alert-toggle {
+.account-form .budget-alert-toggle,
+.account-form .form-toggle {
   display: flex;
   min-height: 2.75rem;
   align-items: center;
@@ -669,7 +670,8 @@
   padding: 0.5rem 0;
 }
 
-.account-form .budget-alert-toggle input[type="checkbox"] {
+.account-form .budget-alert-toggle input[type="checkbox"],
+.account-form .form-toggle input[type="checkbox"] {
   width: 1.25rem;
   min-height: 1.25rem;
   height: 1.25rem;

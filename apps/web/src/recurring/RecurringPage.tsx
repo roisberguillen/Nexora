@@ -219,7 +219,7 @@ export function RecurringPage({
               Controparte
               <input defaultValue={editing?.payee ?? ""} name="payee" />
             </label>
-            <label>
+            <label className="form-toggle">
               <input defaultChecked={editing?.enabled ?? true} name="enabled" type="checkbox" />{" "}
               Attiva
             </label>
