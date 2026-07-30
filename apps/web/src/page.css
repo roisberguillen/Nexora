@@ -946,6 +946,7 @@
 }
 
 .file-picker input,
+.account-form-label input,
 .account-form-label select {
   max-width: 100%;
   min-height: 2.75rem;
@@ -954,6 +955,10 @@
   border-radius: var(--radius-md);
   background: var(--color-card);
   color: var(--color-on-surface);
+}
+
+#backup > .panel-heading + .account-form-label {
+  margin: 1.25rem 1.5rem;
 }
 
 .import-layout {
