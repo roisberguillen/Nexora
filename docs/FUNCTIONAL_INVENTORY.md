@@ -1,7 +1,8 @@
 # Inventario funzionale e di interfaccia
 
-Stato iniziale della Fase 0. La Fase 1 completa la matrice dettagliata schermata → route → query
-→ command → repository, usando le 98 schermate Stitch come riferimento.
+Stato aggiornato alla Fase 1. La matrice dettagliata schermata → route → query → command →
+repository, basata sulle 98 schermate Stitch, è in
+[STITCH_SCREEN_MATRIX.md](ux/STITCH_SCREEN_MATRIX.md).
 
 | Area | Route/superficie corrente | Stato Fase 0 | Destinazione |
 |---|---|---|---|
@@ -20,5 +21,6 @@ Stato iniziale della Fase 0. La Fase 1 completa la matrice dettagliata schermata
 | Piattaforme native | Tauri desktop/Android | nuova | Fasi 7, 13, 14 |
 | Sincronizzazione | Nexora Local Hub | nuova, sostituisce local-host Node | Fasi 15–16 |
 
-Le schermate prive di feature o contratto dati non sono autorizzate in produzione; eventuali
-duplicati vengono consolidati nella Fase 1.
+Le schermate prive di feature o contratto dati non sono autorizzate in produzione. La Fase 1 ha
+consolidato gli stati in superfici esistenti: non vengono introdotte route duplicate per gli stati
+Stitch o per le allocazioni finché non è dimostrata una necessità di navigazione.

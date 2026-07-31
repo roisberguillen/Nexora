@@ -784,8 +784,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 16651,
-      "sha256": "bd10fc8c798b5295e076fd0c2a779474486f54ee8120bbca76ba8ddc3b503e7f"
+      "size": 16841,
+      "sha256": "ea1055b27c97f07f8abc1f96c032cd7805f67b62ba2dd38ab31cd3619d83f721"
     },
     {
       "path": "design/mockup/README.md",
@@ -939,13 +939,13 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 13045,
-      "sha256": "bbbcf8dafecf385e1cb06244c2d5ae579d042768fc02b34a909cca326dcf070c"
+      "size": 13572,
+      "sha256": "f2a6ee027a48010f82f9100d2d5f1cba7d22f6048108f049dda2eeb69effa679"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
-      "size": 1594,
-      "sha256": "1aa76fb26233fb20adcbbb6b694ea20719fe0b1e0cc62ed645af754cca4db9b6"
+      "size": 1766,
+      "sha256": "2b42df3fbdfbc4a30b5de95ee6c2a0df6e6ca5b044a11436716e177cc0f61b6f"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 1867,
-      "sha256": "c6bca4a8ff7f09bb30dfc9c9ca6daae298640382478564b8cf6a6b0854c0f917"
+      "size": 2401,
+      "sha256": "b96b8cb6c7d11480395aa120bdc22122636de3b84cef5450e56a55b83714e0e4"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1106,6 +1106,11 @@
       "path": "docs/ux/PRIMARY_FLOWS.md",
       "size": 1313,
       "sha256": "efc6af4fb5f1b383191abd28ce4ac4e4e2da287c2758367255bc84bd6dd7c969"
+    },
+    {
+      "path": "docs/ux/STITCH_SCREEN_MATRIX.md",
+      "size": 6997,
+      "sha256": "4eac99716abe72e58dd515a79cae795e2974f43444986bb166b731212dbaace5"
     },
     {
       "path": "docs/ux/STITCH_UI_REFERENCE.md",

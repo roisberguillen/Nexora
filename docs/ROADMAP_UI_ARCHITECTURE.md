@@ -7,7 +7,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | Fase | Obiettivo | Stato |
 |---|---|---|
 | 0 | Congelamento delle specifiche | completata |
-| 1 | Audit e mappatura del mockup | pianificata |
+| 1 | Audit e mappatura del mockup | completata |
 | 2 | Rimozione NAS e funzioni eliminate | pianificata |
 | 3 | Fondamenta applicative | pianificata |
 | 4 | Design system e App Shell | pianificata |
@@ -36,3 +36,12 @@ Commit e push su `origin/main`.
 - [x] Target Tauri 2, SQLite nativo e Local Hub Rust fissati negli ADR 0017–0019.
 - [x] Inventario funzionale, matrice piattaforme, strategia test, specifiche backup/sync e design
   congelati.
+
+## Evidenze Fase 1
+
+- [x] Verificati 98 screenshot e 98 prototipi Stitch contro l'hash ufficiale.
+- [x] Pubblicata la matrice schermata → route → letture → scritture → componenti → fase.
+- [x] Consolidati gli stati Stitch in superfici funzionali: nessuna route fittizia o duplicata.
+- [x] Definiti i confini Shell, primitivi UI, form/overlay, feedback e feature.
+- [x] Registrata la sequenza di refactoring: Shell (4), startup (5), conti/movimenti/dashboard
+  (6), import/export (8), backup (9–11), restante dominio (12).

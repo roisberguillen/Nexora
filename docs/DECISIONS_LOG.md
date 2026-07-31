@@ -221,3 +221,10 @@ Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e
   domenica→29.
 - **Conseguenze:** dati pianificati e contabilità effettiva non si confondono; una data
   attesa non entra in saldi o report finché l'utente non conferma un movimento.
+# 2026-07-31 — Fase 1: la mappa Stitch non crea route nuove
+
+Le 98 schermate Stitch sono trattate come stati e superfici di una stessa applicazione, non come
+98 route da implementare. Ogni schermata è mappata a una route, alle letture/scritture del ledger,
+ai componenti e alla fase responsabile in `docs/ux/STITCH_SCREEN_MATRIX.md`. In particolare le
+allocazioni restano nella superficie ricorrenze finché una route distinta non sia giustificata dal
+flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
