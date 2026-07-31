@@ -11,6 +11,8 @@
 
 - Replaced browser directory/NAS backup selection with an explicit encrypted `.nexora-backup`
   download; portable restore and Google Drive remain available.
+- Added the platform-independent `@nexora/application` read layer and migrated the web shell to
+  its shared ledger snapshot contract.
 
 - Completata la Fase 0 della roadmap UI e multipiattaforma: il mockup Stitch è ora il
   riferimento ufficiale per struttura e responsive, mentre palette, font e invarianti Nexora

@@ -179,8 +179,8 @@
     },
     {
       "path": "apps/web/package.json",
-      "size": 695,
-      "sha256": "04383c0958a5d926b7e0561d9e9642f29a12a7cb0cae8e8261c5d08edbce1f2c"
+      "size": 737,
+      "sha256": "a91ed64690ca443e170a4154ce13e3c54860f5cccd7803622feb756acbd5b25c"
     },
     {
       "path": "apps/web/public/icon.svg",
@@ -229,8 +229,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 36051,
-      "sha256": "3fa63575b0cede0cbf57dc31d352127c4b1941ff34af455aab427750e04aa229"
+      "size": 35617,
+      "sha256": "3416511193e1de7bcfee6966172814d73bdab292272381a06bbe64b73b641941"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -784,8 +784,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 17013,
-      "sha256": "d2bcd72d1f42624e65fdac393927d7a45d69c883d503d5a1e972b6a5b2eb8630"
+      "size": 17148,
+      "sha256": "f8fa61d4e79b65e5c1a15313c4e1c21fcdbc78a7052528d9255dc8442b0c5425"
     },
     {
       "path": "design/mockup/README.md",
@@ -906,6 +906,11 @@
       "path": "docs/adr/0019-stitch-ui-reference.md",
       "size": 580,
       "sha256": "f505836c20348b19cac0bcd1700fede373ef0250bf806387afe21da61985fd12"
+    },
+    {
+      "path": "docs/APPLICATION_LAYER.md",
+      "size": 1192,
+      "sha256": "50d19ef69e1895e91d29d8b5240aa8473bbd403d356043f92df8eaeb385edeb2"
     },
     {
       "path": "docs/ARCHITECTURE.md",
@@ -1044,8 +1049,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 2797,
-      "sha256": "c1f84c99b9a28e97dc86c77543ac398f255c71444fd108e46530db8b54aaa100"
+      "size": 3190,
+      "sha256": "7b340e514d84d8334d6627bb668a7b2d4cd124cd1004fc4aca5156d03313d331"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1136,6 +1141,31 @@
       "path": "package.json",
       "size": 1621,
       "sha256": "0db05058fd7b950c012466fe3ae1d8229fac9b1900b9748e16268f808be66bd7"
+    },
+    {
+      "path": "packages/application/package.json",
+      "size": 286,
+      "sha256": "10c5a28b77811f9d6ad1a5eb6b3452a1c4e8735b8d71b69eba8b510ce2bfc740"
+    },
+    {
+      "path": "packages/application/src/index.ts",
+      "size": 114,
+      "sha256": "6530febbadb07d778981d5ee1479514294a19e674e02bbe147d2ef4014736be3"
+    },
+    {
+      "path": "packages/application/src/LedgerSnapshot.test.ts",
+      "size": 1315,
+      "sha256": "ec710ca9b730988cfb20231374334b7df1971f40894bce475601c509560c3375"
+    },
+    {
+      "path": "packages/application/src/LedgerSnapshot.ts",
+      "size": 2540,
+      "sha256": "1680f72615b4f56717409da9133867637cc5e8be7ad7dfeb9437de68713da154"
+    },
+    {
+      "path": "packages/application/tsconfig.json",
+      "size": 134,
+      "sha256": "450fb7e27289c48110296b4b14ea741bf297524c3d2fe4f1edc55c07f88a8337"
     },
     {
       "path": "packages/config/package.json",
@@ -1874,8 +1904,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 199570,
-      "sha256": "184a1fd028d5c103423473bbcb6b36d094c10ba9ba0c1f5969a8fc88850f9899"
+      "size": 199809,
+      "sha256": "6dcc4b37e5d34e60df79242cc175df2c7153c63091eeb5c58fc80521803b376d"
     },
     {
       "path": "pnpm-workspace.yaml",

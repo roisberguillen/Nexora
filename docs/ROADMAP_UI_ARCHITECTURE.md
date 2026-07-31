@@ -9,7 +9,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 0 | Congelamento delle specifiche | completata |
 | 1 | Audit e mappatura del mockup | completata |
 | 2 | Rimozione NAS e funzioni eliminate | completata |
-| 3 | Fondamenta applicative | pianificata |
+| 3 | Fondamenta applicative | completata |
 | 4 | Design system e App Shell | pianificata |
 | 5 | Startup e stati trasversali | pianificata |
 | 6 | Modulo pilota conti/movimenti/dashboard | pianificata |
@@ -53,3 +53,10 @@ Commit e push su `origin/main`.
 - [x] Eliminato l'adapter pubblico filesystem-directory; il restore portabile e Google Drive
   restano disponibili.
 - [x] Rimossi riferimenti operativi a NAS/SMB dalla documentazione e dagli inventari correnti.
+
+## Evidenze Fase 3
+
+- [x] Creato il package `@nexora/application`, dipendente esclusivamente dal dominio.
+- [x] Definito `LedgerSnapshot` come contratto di lettura multipiattaforma sul `LedgerRepository`.
+- [x] La shell web carica ora il proprio modello tramite il layer applicativo condiviso.
+- [x] Documentata la direzione delle dipendenze per browser, Tauri e futuri adapter SQLite nativi.

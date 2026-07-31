@@ -93,6 +93,9 @@ importers:
       '@fontsource-variable/jetbrains-mono':
         specifier: 5.3.0
         version: 5.3.0
+      '@nexora/application':
+        specifier: workspace:*
+        version: link:../../packages/application
       '@nexora/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -117,6 +120,12 @@ importers:
       workbox-window:
         specifier: ^7.4.1
         version: 7.4.1
+
+  packages/application:
+    dependencies:
+      '@nexora/domain':
+        specifier: workspace:*
+        version: link:../domain
 
   packages/config: {}
 

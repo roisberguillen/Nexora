@@ -1,4 +1,5 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
+import { readLedgerSnapshot } from "@nexora/application";
 import { seedDemoLedger, type BrowserLedger } from "@nexora/database";
 import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
 import type {
@@ -847,35 +848,22 @@ interface AppModels {
 }
 
 async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
-  const [
+  const snapshot = await readLedgerSnapshot(ledger.repository);
+  const {
     accounts,
     allocationPlans,
     budgets,
-    loans,
-    investmentPositions,
-    monthlyJournals,
     categories,
     importBatches,
+    investmentPositions,
+    loans,
+    monthlyJournals,
     recurringRules,
     tags,
     transactions,
     transfers,
     trashedTransactions,
-  ] = await Promise.all([
-    ledger.repository.listAccounts(),
-    ledger.repository.listAllocationPlans(),
-    ledger.repository.listBudgets(),
-    ledger.repository.listLoans(),
-    ledger.repository.listInvestmentPositions(),
-    ledger.repository.listMonthlyJournals(),
-    ledger.repository.listCategories(),
-    ledger.repository.listImportBatches(),
-    ledger.repository.listRecurringRules(),
-    ledger.repository.listTags(),
-    ledger.repository.listTransactions(),
-    ledger.repository.listTransfers(),
-    ledger.repository.listTrashedTransactions(),
-  ]);
+  } = snapshot;
   return {
     allocationPlans,
     budgets,
