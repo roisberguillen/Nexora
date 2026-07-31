@@ -244,23 +244,23 @@
     },
     {
       "path": "apps/web/src/backup/backupHistory.test.ts",
-      "size": 1069,
-      "sha256": "6ecac2b10171d18de243c3762f838b41b3d2fd52385cee733c6472a7b6433e7a"
+      "size": 1727,
+      "sha256": "45d58b2a12541cec8dcfaca3ffd240ba0e885893be0a971c5dac3e5c7cc4cc02"
     },
     {
       "path": "apps/web/src/backup/backupHistory.ts",
-      "size": 1926,
-      "sha256": "51a650d04c2c793748ce320303ae67afa5bd074a7c83c068dd7c79a253fe36b4"
+      "size": 1946,
+      "sha256": "e47d4139747f14c5c42eef7f26b08e57a7aad7496fbdfe2b6812934c51c8866f"
     },
     {
       "path": "apps/web/src/backup/BackupPage.test.tsx",
-      "size": 904,
-      "sha256": "f1e4203c603ec12b412e6e9fe11be1c9d21e7aa4c430cff8bf1acc44e3548bea"
+      "size": 1112,
+      "sha256": "8f9bbcb3e2f80edd2fcdf662844113cc7cb71a3fd6a11e12cf33e9085bd07511"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 16292,
-      "sha256": "9d71522535a29db573aed3d22cca9bfdabedf2145295a6dd3f296183b994dae8"
+      "size": 16400,
+      "sha256": "3e598c15d1c5e09eaebef05bbb275c0074991fc83e49d34d6ab3f080830200cb"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -784,8 +784,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 16841,
-      "sha256": "ea1055b27c97f07f8abc1f96c032cd7805f67b62ba2dd38ab31cd3619d83f721"
+      "size": 17013,
+      "sha256": "d2bcd72d1f42624e65fdac393927d7a45d69c883d503d5a1e972b6a5b2eb8630"
     },
     {
       "path": "design/mockup/README.md",
@@ -864,8 +864,8 @@
     },
     {
       "path": "docs/adr/0011-encrypted-physical-sqlite-backup.md",
-      "size": 2607,
-      "sha256": "7cebb0748c817467b868b7f132d96fb997d9ed45876511f29ae0f237ecf7be8d"
+      "size": 2627,
+      "sha256": "8a0dfb79e9a4e923bd1c4e8be5e3cc5cec540249d183ccf7770a29c3fc0a39db"
     },
     {
       "path": "docs/adr/0012-stable-pwa-ledger-bootstrap.md",
@@ -944,8 +944,8 @@
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
-      "size": 1766,
-      "sha256": "2b42df3fbdfbc4a30b5de95ee6c2a0df6e6ca5b044a11436716e177cc0f61b6f"
+      "size": 1783,
+      "sha256": "3556d472fcd5c69ca60bbd68ee78d63f77c59b11ca0de5cfc4a9ab32276febff"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -959,8 +959,8 @@
     },
     {
       "path": "docs/operations/BACKUP_RESTORE.md",
-      "size": 2355,
-      "sha256": "ea715453c26501194cd55c3496a8a654fb31dae2c6ed87bf30cf5f7fcd1914d0"
+      "size": 2374,
+      "sha256": "33f6a7996d518522287a458486b3f0766fddf7ffa5ae258e25b08de1c842968d"
     },
     {
       "path": "docs/operations/GOOGLE_DRIVE_OAUTH.md",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 2401,
-      "sha256": "b96b8cb6c7d11480395aa120bdc22122636de3b84cef5450e56a55b83714e0e4"
+      "size": 2797,
+      "sha256": "c1f84c99b9a28e97dc86c77543ac398f255c71444fd108e46530db8b54aaa100"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1174,8 +1174,8 @@
     },
     {
       "path": "packages/database/README.md",
-      "size": 3716,
-      "sha256": "60a622a9309fa9d8a145c7abb286ba5804953475f4c130c592a459571cc132a6"
+      "size": 3779,
+      "sha256": "65996f1cd299025fb20a8145b8ba3c5166f976d069c57bf813ecef4d2e402613"
     },
     {
       "path": "packages/database/src/backup/BackupError.ts",
@@ -1204,8 +1204,8 @@
     },
     {
       "path": "packages/database/src/backup/PhysicalBackupStore.ts",
-      "size": 2738,
-      "sha256": "af8dcf6dd0f8a0de679bbb81868a7bd822c04b3eb5fd78432e4b485864ac38a9"
+      "size": 655,
+      "sha256": "9fbb942eb6d72977f01b7218e8017054a771b726118ad42a6c2a1b4e852fbb22"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
@@ -1224,8 +1224,8 @@
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 8472,
-      "sha256": "bcbb573afd7ca0d050306789e64ab1c55219b79eb98e5a797e124fc2f7f2140e"
+      "size": 7688,
+      "sha256": "70a932c2b504d075fe9efcfebee81e1385996fe327ce3f8e03b15d8f7aac9b44"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
@@ -1239,8 +1239,8 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 4414,
-      "sha256": "473bf6b1e423c9779a10e7989b47d7180541a59e1cedfcb5b770469a4632211f"
+      "size": 4377,
+      "sha256": "85cd40386cf14d5c9977d9ded0df177a992d08fa7e9d1506661d9278f038ace2"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
@@ -1939,8 +1939,8 @@
     },
     {
       "path": "test/e2e/backup-restore.spec.ts",
-      "size": 2202,
-      "sha256": "c8ccadf22e28851d242156f59c219f7df33b316c84f58b6d62cb855c5ee4356e"
+      "size": 2011,
+      "sha256": "94703212ba72422c7f1e55ea977c0e4f6dde961d3d18c9b67be5b9f0bba50430"
     },
     {
       "path": "test/e2e/budgets.spec.ts",
@@ -1969,8 +1969,8 @@
     },
     {
       "path": "test/e2e/fixtures/backup-restore-smoke.ts",
-      "size": 3831,
-      "sha256": "74904ce08bea913dd9f1463110d1dcb88c51c9b8f3fc4047087c05d621eebadf"
+      "size": 3969,
+      "sha256": "7c991c5f54bc1ade2c06e51c26f47d529c38dd593df2fea1080da2e14f51a199"
     },
     {
       "path": "test/e2e/fixtures/indexeddb-performance.ts",

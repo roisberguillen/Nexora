@@ -23,5 +23,8 @@ describe("BackupPage", () => {
     expect(screen.getByLabelText("Passphrase (minimo 12 caratteri)").parentElement).toHaveClass(
       "backup-passphrase",
     );
+    expect(screen.getByText(/Crea un file/)).toBeInTheDocument();
+    expect(screen.queryByText(/cartella NAS/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/My Cloud/i)).not.toBeInTheDocument();
   });
 });

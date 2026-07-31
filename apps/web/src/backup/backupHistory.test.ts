@@ -32,4 +32,28 @@ describe("backup history", () => {
       },
     ]);
   });
+
+  it("accepts the manual portable backup receipt", () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    };
+    vi.stubGlobal("crypto", { randomUUID: () => "manual-history-1" });
+
+    appendBackupHistory(
+      {
+        operation: "manual_backup",
+        storageKind: "opfs",
+        outcome: "succeeded",
+      },
+      storage,
+    );
+
+    expect(readBackupHistory(storage)[0]).toMatchObject({
+      id: "manual-history-1",
+      operation: "manual_backup",
+      storageKind: "opfs",
+    });
+  });
 });

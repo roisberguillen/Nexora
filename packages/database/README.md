@@ -48,9 +48,9 @@ esecuzione sul seed completo restituisce `already_present`.
 
 `LocalSqliteBackupService` esporta il database SQLite fisico, costruisce un manifest
 versionato con checksum SHA-256 e cifra l'intero archivio con AES-256-GCM derivando la
-chiave dalla passphrase. `FileSystemDirectoryBackupStore` scrive l'archivio nella
-directory scelta, lo rilegge e ne verifica il checksum prima di emettere una ricevuta
-valida per `MigrationBackupProvider`.
+chiave dalla passphrase. La UI browser produce un archivio portabile `.nexora-backup` da
+scaricare manualmente, lo verifica prima del download e conserva una ricevuta valida per
+`MigrationBackupProvider`. NAS, SMB e selezione di directory non fanno parte del prodotto.
 
 Il ripristino autentica e verifica archivio, manifest, checksum e versione dello schema
 prima di sostituire il database. Il worker convalida prima i byte in un database

@@ -1,5 +1,4 @@
 import {
-  FileSystemDirectoryBackupStore,
   LocalSqliteBackupService,
   openOpfsLedger,
   type OpfsLedger,
@@ -14,9 +13,22 @@ export interface BackupRestoreSmokeResult {
   readonly reopenedSchemaVersion: number;
 }
 
+class MemoryBackupStore {
+  private readonly archives = new Map<string, Uint8Array>();
+
+  public async write(id: string, archive: Uint8Array): Promise<void> {
+    this.archives.set(id, archive.slice());
+  }
+
+  public async read(id: string): Promise<Uint8Array> {
+    const archive = this.archives.get(id);
+    if (archive === undefined) throw new Error("The synthetic backup does not exist.");
+    return archive.slice();
+  }
+}
+
 export async function runBackupRestoreSmokeTest(options: {
   readonly filename: string;
-  readonly backupDirectoryName: string;
 }): Promise<BackupRestoreSmokeResult> {
   const originalAccount = Account.create({
     id: "backup-smoke-original",
@@ -38,9 +50,6 @@ export async function runBackupRestoreSmokeTest(options: {
   }
 
   const root = await navigator.storage.getDirectory();
-  const backupDirectory = await root.getDirectoryHandle(options.backupDirectoryName, {
-    create: true,
-  });
   let ledger: OpfsLedger | undefined;
 
   try {
@@ -48,7 +57,7 @@ export async function runBackupRestoreSmokeTest(options: {
     await ledger.repository.saveAccount(originalAccount);
     const backupService = new LocalSqliteBackupService({
       database: ledger.database,
-      store: new FileSystemDirectoryBackupStore(backupDirectory),
+      store: new MemoryBackupStore(),
       passphrase: "passphrase-sintetica-e2e-backup",
       appVersion: "0.4.0",
       now: () => new Date("2026-07-27T10:00:00.000Z"),
@@ -88,7 +97,6 @@ export async function runBackupRestoreSmokeTest(options: {
   } finally {
     await ledger?.close();
     await root.removeEntry(databaseDirectoryName, { recursive: true });
-    await root.removeEntry(options.backupDirectoryName, { recursive: true });
   }
 }
 

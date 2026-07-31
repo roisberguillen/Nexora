@@ -5,6 +5,7 @@ const MAX_ENTRIES = 100;
 
 export type BackupHistoryOperation =
   | "local_backup"
+  | "manual_backup"
   | "cloud_upload"
   | "cloud_download"
   | "restore"

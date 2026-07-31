@@ -12,7 +12,7 @@ repository, basata sulle 98 schermate Stitch, è in
 | Conti | `#accounts` | esistente da rifattorizzare | Fase 6 |
 | Movimenti | `#transactions` | esistente da rifattorizzare | Fase 6 |
 | Import/export | `#imports`, `#exports` | esistente incompleto | Fase 8 |
-| Backup | `#backup` | esistente, percorso NAS da eliminare | Fasi 2, 9–11 |
+| Backup | `#backup` | file portabile manuale e Drive; engine da rifattorizzare | Fasi 9–11 |
 | Pianificazione | budget, ricorrenze, allocazioni | esistente da rifattorizzare | Fase 12 |
 | Patrimonio | prestiti, investimenti | esistente da rifattorizzare | Fase 12 |
 | Analisi e diario | analytics, journal | esistente da rifattorizzare | Fase 12 |

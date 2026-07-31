@@ -8,10 +8,6 @@ import type { CloudBackupMetadata } from "../cloud/cloudTypes";
 import { loadGoogleIdentity } from "../cloud/loadGoogleIdentity";
 import { appendBackupHistory, readBackupHistory } from "./backupHistory";
 
-interface DirectoryPickerWindow extends Window {
-  showDirectoryPicker?: () => Promise<FileSystemDirectoryHandle>;
-}
-
 function errorCode(error: unknown): string | undefined {
   return error instanceof Error ? error.message : undefined;
 }
@@ -55,20 +51,31 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
     () => new GoogleDriveBackupProvider(() => cloudAuth.getAccessToken()),
     [cloudAuth],
   );
-  const canCreate =
-    ledger.createEncryptedBackup !== undefined &&
-    (window as DirectoryPickerWindow).showDirectoryPicker !== undefined;
+  const canCreate = ledger.createEncryptedBackupArchive !== undefined;
 
   const create = async () => {
-    if (!canCreate || passphrase.trim().length < 12 || ledger.createEncryptedBackup === undefined)
+    if (
+      !canCreate ||
+      passphrase.trim().length < 12 ||
+      ledger.createEncryptedBackupArchive === undefined
+    )
       return;
     setIsCreating(true);
     setMessage(null);
     try {
-      const directory = await (window as DirectoryPickerWindow).showDirectoryPicker!();
-      const backup = await ledger.createEncryptedBackup({ directory, passphrase });
+      const backup = await ledger.createEncryptedBackupArchive({ passphrase });
+      const anchor = document.createElement("a");
+      const archiveBytes = new Uint8Array(backup.archive.byteLength);
+      archiveBytes.set(backup.archive);
+      const archiveUrl = URL.createObjectURL(
+        new Blob([archiveBytes.buffer], { type: "application/octet-stream" }),
+      );
+      anchor.href = archiveUrl;
+      anchor.download = backup.id;
+      anchor.click();
+      URL.revokeObjectURL(archiveUrl);
       appendBackupHistory({
-        operation: "local_backup",
+        operation: "manual_backup",
         storageKind: ledger.storageKind,
         outcome: "succeeded",
         size: backup.size,
@@ -77,7 +84,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
       setHistory(readBackupHistory());
       setPassphrase("");
       setMessage(
-        `Backup verificato creato: ${backup.id}. Checksum ${backup.checksumSha256.slice(0, 12)}…`,
+        `Backup verificato scaricato: ${backup.id}. Checksum ${backup.checksumSha256.slice(0, 12)}…`,
       );
     } catch {
       appendBackupHistory({
@@ -274,8 +281,8 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
           <p className="eyebrow">Backup cifrato</p>
           <h1>Proteggi l’archivio locale</h1>
           <p>
-            Seleziona la cartella NAS nel browser, ad esempio la cartella Nexora sul tuo My Cloud.
-            La passphrase non viene salvata.
+            Crea un file `.nexora-backup` cifrato da conservare dove preferisci. La passphrase non
+            viene salvata.
           </p>
         </div>
       </div>
@@ -297,7 +304,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
               onClick={() => void create()}
               type="button"
             >
-              {isCreating ? "Verifica backup…" : "Scegli cartella NAS e crea backup"}
+              {isCreating ? "Verifica backup…" : "Scarica backup cifrato"}
             </button>
             {cloudConfig.enabled ? (
               <button
@@ -334,8 +341,7 @@ export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
         </>
       ) : (
         <p className="account-error" role="alert">
-          Il backup fisico richiede SQLite su OPFS e un browser con selezione cartella. Su IndexedDB
-          usa l’export JSON completo.
+          Il backup portabile non è disponibile per questo archivio. Nessun dato è stato modificato.
         </p>
       )}
       <hr />

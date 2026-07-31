@@ -30,8 +30,8 @@ esporrebbe dati finanziari a chiunque possa leggere la destinazione.
   `VerifiedMigrationBackup`.
 - Limitare database e restore a 512 MiB in questa prima versione per evitare
   allocazioni non controllate nel browser.
-- Usare `FileSystemDirectoryBackupStore` come destinazione fisica locale. La directory
-  deve essere scelta esplicitamente dall'utente nella futura integrazione UI.
+- Usare file `.nexora-backup` portabili, cifrati e scaricati esplicitamente dall'utente. La
+  destinazione resta sotto il suo controllo senza introdurre selezione directory, NAS o SMB.
 - Prima del restore:
   - autenticare e decifrare l'archivio;
   - verificare manifest, checksum e compatibilità schema;

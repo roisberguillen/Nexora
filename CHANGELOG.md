@@ -7,6 +7,11 @@
 - Completed UI architecture roadmap Phase 1 with the verified Stitch screen-to-feature matrix,
   component boundaries, data-contract mapping and implementation sequence.
 
+### Changed
+
+- Replaced browser directory/NAS backup selection with an explicit encrypted `.nexora-backup`
+  download; portable restore and Google Drive remain available.
+
 - Completata la Fase 0 della roadmap UI e multipiattaforma: il mockup Stitch è ora il
   riferimento ufficiale per struttura e responsive, mentre palette, font e invarianti Nexora
   restano la fonte applicativa. Tauri 2/SQLite nativo, Local Hub Rust e la policy backup

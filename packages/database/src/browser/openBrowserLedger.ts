@@ -27,10 +27,7 @@ import {
   encodePortableLedgerSnapshot,
   validatePortableLedgerSnapshot,
 } from "../backup/PortableLedgerSnapshot";
-import {
-  FileSystemDirectoryBackupStore,
-  type PhysicalBackupStore,
-} from "../backup/PhysicalBackupStore";
+import { type PhysicalBackupStore } from "../backup/PhysicalBackupStore";
 
 export type BrowserLedgerStorageKind = "opfs" | "indexeddb";
 
@@ -38,15 +35,6 @@ export interface BrowserLedger {
   readonly repository: LedgerRepository;
   readonly schemaVersion: number;
   readonly storageKind: BrowserLedgerStorageKind;
-  createEncryptedBackup?(input: {
-    readonly directory: FileSystemDirectoryHandle;
-    readonly passphrase: string;
-  }): Promise<CreatedLocalBackup>;
-  restoreEncryptedBackup?(input: {
-    readonly directory: FileSystemDirectoryHandle;
-    readonly id: string;
-    readonly passphrase: string;
-  }): Promise<void>;
   createEncryptedBackupArchive?(input: {
     readonly passphrase: string;
   }): Promise<CreatedLocalBackup & { readonly archive: Uint8Array }>;
@@ -116,19 +104,6 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
     repository: ledger.repository,
     schemaVersion: ledger.migration.toVersion,
     storageKind: "opfs",
-    createEncryptedBackup: ({ directory, passphrase }) =>
-      createBackupService(
-        ledger,
-        new FileSystemDirectoryBackupStore(directory),
-        passphrase,
-      ).createBackup(),
-    restoreEncryptedBackup: async ({ directory, id, passphrase }) => {
-      await createBackupService(
-        ledger,
-        new FileSystemDirectoryBackupStore(directory),
-        passphrase,
-      ).restoreBackup(id);
-    },
     createEncryptedBackupArchive: async ({ passphrase }) => {
       return createPortableArchive(ledger.repository, ledger.migration.toVersion, passphrase);
     },

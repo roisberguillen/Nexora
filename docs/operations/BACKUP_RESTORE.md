@@ -37,8 +37,8 @@ La Milestone 2 implementa il sottoinsieme fisico del database primario:
 - SHA-256 dell'intero archivio cifrato nella ricevuta;
 - limite 512 MiB.
 
-Il provider considera riuscito il backup soltanto dopo aver riletto il file dalla
-directory, confrontato il checksum, decifrato il contenuto e verificato il manifest.
+Il provider considera riuscito il backup soltanto dopo aver verificato il file portabile,
+confrontato il checksum, decifrato il contenuto e verificato il manifest.
 La passphrase non viene salvata nell'archivio e non è recuperabile.
 
 Il restore è sempre un'azione esplicita. Prima della sostituzione:
@@ -49,6 +49,6 @@ Il restore è sempre un'azione esplicita. Prima della sostituzione:
 4. importa il backup e ripete i controlli;
 5. in caso di errore tenta di ripristinare automaticamente la copia precedente.
 
-Il flusso UI per scegliere directory, passphrase e confermare la sostituzione appartiene
+Il flusso UI per scaricare/selezionare il file, inserire la passphrase e confermare la sostituzione appartiene
 alla successiva integrazione PWA. Configurazione, allegati, IndexedDB, cronologia e Google Drive
 restano nel perimetro della Milestone 8.

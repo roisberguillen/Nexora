@@ -31,10 +31,7 @@ export {
   type LocalSqliteBackupServiceOptions,
   type RestoredLocalBackup,
 } from "./backup/LocalSqliteBackupService";
-export {
-  FileSystemDirectoryBackupStore,
-  type PhysicalBackupStore,
-} from "./backup/PhysicalBackupStore";
+export type { PhysicalBackupStore } from "./backup/PhysicalBackupStore";
 export {
   openBrowserLedger,
   type BrowserLedger,

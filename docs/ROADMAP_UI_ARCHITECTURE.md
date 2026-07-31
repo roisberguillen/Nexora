@@ -8,7 +8,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 |---|---|---|
 | 0 | Congelamento delle specifiche | completata |
 | 1 | Audit e mappatura del mockup | completata |
-| 2 | Rimozione NAS e funzioni eliminate | pianificata |
+| 2 | Rimozione NAS e funzioni eliminate | completata |
 | 3 | Fondamenta applicative | pianificata |
 | 4 | Design system e App Shell | pianificata |
 | 5 | Startup e stati trasversali | pianificata |
@@ -45,3 +45,11 @@ Commit e push su `origin/main`.
 - [x] Definiti i confini Shell, primitivi UI, form/overlay, feedback e feature.
 - [x] Registrata la sequenza di refactoring: Shell (4), startup (5), conti/movimenti/dashboard
   (6), import/export (8), backup (9–11), restante dominio (12).
+
+## Evidenze Fase 2
+
+- [x] Rimosso il percorso UI/API di selezione directory per backup cifrati.
+- [x] Il backup manuale scarica ora esclusivamente un archivio `.nexora-backup` cifrato.
+- [x] Eliminato l'adapter pubblico filesystem-directory; il restore portabile e Google Drive
+  restano disponibili.
+- [x] Rimossi riferimenti operativi a NAS/SMB dalla documentazione e dagli inventari correnti.

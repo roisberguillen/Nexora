@@ -35,12 +35,9 @@ test("backup cifrato e restore SQLite funzionano su OPFS reale", async ({ page }
 
     await page.goto(applicationUrl);
     const result = await page.evaluate(
-      async ({ moduleUrl, filename, backupDirectoryName }) => {
+      async ({ moduleUrl, filename }) => {
         const smokeModule = (await import(moduleUrl)) as {
-          runBackupRestoreSmokeTest(options: {
-            filename: string;
-            backupDirectoryName: string;
-          }): Promise<{
+          runBackupRestoreSmokeTest(options: { filename: string }): Promise<{
             archiveChecksumLength: number;
             failedRestorePreservedData: boolean;
             restoredAmountMinor: string;
@@ -50,13 +47,11 @@ test("backup cifrato e restore SQLite funzionano su OPFS reale", async ({ page }
         };
         return smokeModule.runBackupRestoreSmokeTest({
           filename,
-          backupDirectoryName,
         });
       },
       {
         moduleUrl: `${applicationUrl}@fs/${fixturePath}`,
         filename: `/nexora-backup-e2e-${crypto.randomUUID()}/ledger.sqlite3`,
-        backupDirectoryName: `nexora-backup-store-${crypto.randomUUID()}`,
       },
     );
 
