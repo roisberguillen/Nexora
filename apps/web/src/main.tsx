@@ -1,3 +1,4 @@
+import "@vitejs/plugin-react/preamble";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 import "@nexora/ui/styles.css";
@@ -26,10 +27,12 @@ import { selectStorage } from "./startup/StorageSelection";
 import { readRecoverySelection, StartupRecoveryRequiredError } from "./startup/StartupRecovery";
 import { readStoragePreferenceHint } from "./startup/storagePreference";
 import { withStartupLock } from "./startup/StartupLock";
+import { renderPreMountError } from "./startup/PreMountError";
 
 const rootElement = document.querySelector("#root");
 
 if (!(rootElement instanceof HTMLElement)) {
+  renderPreMountError(null);
   throw new Error("Nexora root element is missing");
 }
 
@@ -98,9 +101,17 @@ window.addEventListener(
   { once: true },
 );
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <PwaUpdateNotice />
-    <App ledgerPromise={ledgerPromise} startupBootstrap={startupBootstrap} />
-  </StrictMode>,
-);
+try {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <PwaUpdateNotice />
+      <App ledgerPromise={ledgerPromise} startupBootstrap={startupBootstrap} />
+    </StrictMode>,
+  );
+} catch (error) {
+  console.error(
+    "[Nexora startup] React mount failed.",
+    error instanceof Error ? error.name : "UnknownError",
+  );
+  renderPreMountError(rootElement);
+}

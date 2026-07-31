@@ -75,6 +75,10 @@ Commit e push su `origin/main`.
 
 ## Evidenze Fase 6
 
+- [x] Corretta la regressione di avvio introdotta dal refresh runtime di Vite: il preambolo React
+  è ora una dipendenza esplicita dell'entrypoint, prima della valutazione dei moduli della shell.
+- [x] `NavIcon` usa un fallback sicuro per chiavi non mappate e non può più interrompere il mount.
+- [x] Verificati avvio, reload, sidebar desktop e navigazione mobile sulla build di produzione.
 - [x] Dashboard, conti e movimenti leggono dati dal ledger tramite snapshot e view model separati.
 - [x] Registrazione manuale, trasferimento, annullamento, cestino e split mantengono le invarianti
   contabili già testate nel dominio e negli adapter.

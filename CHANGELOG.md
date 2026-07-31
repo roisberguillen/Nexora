@@ -9,6 +9,8 @@
 
 ### Changed
 
+- Restored application startup after the Phase 6 Vite React preamble regression. Navigation icon
+  lookup now has a safe default and a pre-mount recovery screen prevents blank pages.
 - Replaced browser directory/NAS backup selection with an explicit encrypted `.nexora-backup`
   download; portable restore and Google Drive remain available.
 - Added the platform-independent `@nexora/application` read layer and migrated the web shell to

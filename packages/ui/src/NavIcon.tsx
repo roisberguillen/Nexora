@@ -29,10 +29,22 @@ const iconPaths: Record<NavIconName, readonly string[]> = {
 };
 
 interface NavIconProps {
-  readonly name: NavIconName;
+  /**
+   * The shell can receive navigation descriptors from platform adapters. Keep this
+   * boundary defensive so a malformed descriptor cannot prevent the application
+   * from rendering.
+   */
+  readonly name: NavIconName | string;
 }
 
 export function NavIcon({ name }: NavIconProps) {
+  const paths = iconPaths[name as NavIconName];
+  const resolvedPaths = paths ?? iconPaths.overview;
+
+  if (paths === undefined) {
+    console.warn("[Nexora UI] Unknown navigation icon; using the default icon.");
+  }
+
   return (
     <svg
       aria-hidden="true"
@@ -44,7 +56,7 @@ export function NavIcon({ name }: NavIconProps) {
       strokeLinejoin="round"
       strokeWidth="1.8"
     >
-      {iconPaths[name].map((path) => (
+      {resolvedPaths.map((path) => (
         <path d={path} key={path} />
       ))}
     </svg>

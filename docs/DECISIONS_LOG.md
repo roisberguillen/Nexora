@@ -228,3 +228,15 @@ Le 98 schermate Stitch sono trattate come stati e superfici di una stessa applic
 ai componenti e alla fase responsabile in `docs/ux/STITCH_SCREEN_MATRIX.md`. In particolare le
 allocazioni restano nella superficie ricorrenze finché una route distinta non sia giustificata dal
 flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
+
+## 2026-07-31 — Ripristino dell'avvio dopo la Fase 6
+
+- **Contesto:** in sviluppo l'app mostrava una pagina bianca con l'errore di Vite React
+  “can't detect preamble”, attribuito al primo modulo UI caricato (`NavIcon`). Il preambolo era
+  presente nell'HTML trasformato, ma non era una dipendenza esplicita dell'entrypoint e poteva
+  non essere inizializzato prima del grafo dei moduli React.
+- **Scelta:** importare `@vitejs/plugin-react/preamble` come prima dipendenza di `main.tsx`.
+  Rendere inoltre `NavIcon` difensivo rispetto a chiavi sconosciute e mostrare una schermata
+  statica di recovery se React non riesce a montare.
+- **Conseguenze:** i dati locali e i contratti del ledger restano invariati; un errore di icona o
+  bootstrap non genera più una pagina vuota. Il log tecnico non contiene dati finanziari.
