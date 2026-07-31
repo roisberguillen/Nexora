@@ -3,17 +3,20 @@
 ## Stile
 Modular monolith TypeScript in monorepo, con confini di dominio chiari e possibilità di estrarre servizi solo in futuro.
 
-## Stack raccomandato
+## Stack di destinazione
 - Frontend: React + TypeScript + Vite.
-- PWA: Workbox/Vite PWA plugin.
+- PWA browser: Workbox/Vite PWA plugin, opzionale e separata.
+- Desktop Windows/macOS e Android: Tauri 2.
 - UI: componenti accessibili, design tokens, CSS modulare o Tailwind.
 - Stato server/local: TanStack Query per orchestrazione; stato UI locale separato.
 - Database browser: SQLite WASM con OPFS quando disponibile; fallback IndexedDB tramite adapter.
+- Database nativo: SQLite, dietro gli stessi contratti di repository delle feature condivise.
 - Validazione: Zod.
 - Test: Vitest, Testing Library, Playwright.
 - Import XLSX: SheetJS (`xlsx`) isolato nel package importers.
 - PDF: parser dedicato e revisione manuale; nessun OCR come percorso primario.
-- Backend opzionale V1: piccolo servizio locale/self-hosted solo per backup Google Drive e automazioni non supportate dal browser.
+- Backend locale incorporato: Rust; Nexora Local Hub usa Axum, Tokio, Rustls, mDNS/DNS-SD e
+  pairing crittografico esplicito per la sola sincronizzazione locale.
 
 ## Layer
 1. `apps/web`: shell PWA, routing, UI.
@@ -21,7 +24,8 @@ Modular monolith TypeScript in monorepo, con confini di dominio chiari e possibi
 3. `packages/database`: repository, migrazioni, transazioni atomiche.
 4. `packages/importers`: parser, normalizzatori, mapping, deduplica.
 5. `packages/ui`: componenti condivisi.
-6. `infra`: container e servizi opzionali.
+6. `platform`: adapter Tauri, SQLite nativo, secure storage e integrazioni di dispositivo.
+7. `infra`: nessun agente NAS, SMB o Docker di backup.
 
 ## Regola dipendenze
 UI → application/domain → repository interface. Gli adapter infrastrutturali implementano le interfacce; il dominio non importa React, database o librerie XLSX.
@@ -87,3 +91,11 @@ una copia di rollback prima di sostituire OPFS.
 - Segreti mai inclusi nel bundle.
 - Token OAuth custoditi nel servizio locale quando utilizzato.
 - Backup cifrati lato client o prima della trasmissione.
+
+## Direzione multipiattaforma
+
+Le feature React condividono dominio, query e command. La PWA conserva gli adapter browser;
+Tauri 2 usa SQLite nativo e secure storage. Nessun file SQLite aperto viene condiviso in rete:
+il Local Hub sincronizza esclusivamente operation log incrementali dopo pairing esplicito.
+Google Drive e il file `.nexora` manuale sono le sole destinazioni di backup; il Local Hub non è
+un servizio di backup.

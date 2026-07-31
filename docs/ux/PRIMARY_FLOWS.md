@@ -17,6 +17,7 @@ Barra inferiore → pulsante “+” → “Aggiungi nuovo movimento” → pagi
 Entrata, Uscita o Trasferimento → validazione del command layer → conferma locale.
 
 ## Backup e notifiche locali
-Profilo → Backup → selezione cartella locale/NAS → backup cifrato verificato o ripristino
-protetto. Google Drive non è una funzione operativa della UI mobile. La campanella apre avvisi
-derivati dal ledger locale, con stato letto/ignorato conservato separatamente dai dati finanziari.
+Profilo → Backup → crea o seleziona file `.nexora` → backup cifrato verificato o ripristino
+protetto. Google Drive è una destinazione opzionale separata dal file manuale. La campanella apre
+avvisi derivati dal ledger locale, con stato letto/ignorato conservato separatamente dai dati
+finanziari.

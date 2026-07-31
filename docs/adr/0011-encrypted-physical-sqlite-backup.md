@@ -50,7 +50,6 @@ esporrebbe dati finanziari a chiunque possa leggere la destinazione.
 - Una passphrase dimenticata non può essere recuperata da Nexora.
 - Creazione e restore richiedono memoria proporzionale alla dimensione del database.
 - Il provider copre il backend primario SQLite/OPFS. Backup logico del fallback
-  IndexedDB, configurazione, allegati, cronologia, NAS e Google Drive restano nella
-  Milestone 8.
+  IndexedDB, configurazione, allegati, cronologia e Google Drive restano nella Milestone 8.
 - Il restore non viene eseguito automaticamente e dovrà richiedere conferma esplicita
   nell'interfaccia PWA.

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Completata la Fase 0 della roadmap UI e multipiattaforma: il mockup Stitch è ora il
+  riferimento ufficiale per struttura e responsive, mentre palette, font e invarianti Nexora
+  restano la fonte applicativa. Tauri 2/SQLite nativo, Local Hub Rust e la policy backup
+  `.nexora`/Google Drive sono documentati negli ADR dedicati.
+
 - Avviata la roadmap LAN: l'host locale è opt-in, il pairing è vincolato al fingerprint
   dell'host e i token per dispositivo sono a breve durata, con controlli di origine e scadenza.
 

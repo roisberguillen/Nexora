@@ -94,8 +94,9 @@ Requisito prioritario e distinto dagli estratti conto.
 - Export completo e per intervallo/conti/categorie.
 
 ### 4.12 Backup e ripristino
-- Manuale e schedulato.
-- Destinazioni: filesystem/NAS WD My Cloud, Google Drive o entrambe.
+- Backup manuale cifrato esportabile e automazione opzionale Google Drive.
+- Destinazioni: file `.nexora` scelto dall'utente e Google Drive; NAS, SMB, cartelle di rete e
+  backup agent non sono supportati.
 - Include database, configurazione e allegati.
 - Manifest, checksum, versione schema e verifica integrità.
 - Cronologia versioni e test di ripristino.
@@ -115,7 +116,8 @@ Rata in scadenza, stipendio mancante, budget superato, backup scaduto, ricorrenz
 Sintesi narrativa mensile automatica con entrate, risparmio, investimenti, variazioni di spesa, budget e patrimonio netto.
 
 ## 5. Requisiti non funzionali
-- Offline-first e PWA installabile.
+- Offline-first: applicazioni installabili Windows, macOS e Android; PWA browser opzionale e
+  separata.
 - Integrità contabile e audit trail.
 - Prestazioni fluide con almeno 100.000 transazioni.
 - Cifratura dei backup.

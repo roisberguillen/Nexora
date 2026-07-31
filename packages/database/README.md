@@ -59,4 +59,4 @@ accetta `backupProviderFactory` per collegare questo provider alle future migraz
 distruttive solo dopo l'apertura della connessione fisica.
 
 Il formato corrente copre SQLite/OPFS fino a 512 MiB. Backup completi del fallback
-IndexedDB, impostazioni, allegati e destinazioni NAS/cloud restano nella Milestone 8.
+IndexedDB, impostazioni, allegati e Google Drive restano nella Milestone 8.

@@ -5,9 +5,9 @@ Formato bundle suggerito: archivio cifrato contenente database, attachments, set
 Il manifest include: versione formato, versione schema, timestamp UTC, app version, file list, dimensioni e SHA-256.
 
 Destinazioni:
-- cartella locale o share NAS WD My Cloud;
+- file manuale cifrato `.nexora`, scelto dall'utente;
 - Google Drive tramite adapter OAuth;
-- entrambe, con esito separato.
+- entrambe, con esito separato quando l'utente abilita Drive.
 
 Un backup è “riuscito” solo dopo verifica checksum. Periodicamente Nexora deve eseguire un restore test su database temporaneo.
 
@@ -50,5 +50,5 @@ Il restore è sempre un'azione esplicita. Prima della sostituzione:
 5. in caso di errore tenta di ripristinare automaticamente la copia precedente.
 
 Il flusso UI per scegliere directory, passphrase e confermare la sostituzione appartiene
-alla successiva integrazione PWA. Configurazione, allegati, IndexedDB, cronologia, NAS e
-Google Drive restano nel perimetro della Milestone 8.
+alla successiva integrazione PWA. Configurazione, allegati, IndexedDB, cronologia e Google Drive
+restano nel perimetro della Milestone 8.

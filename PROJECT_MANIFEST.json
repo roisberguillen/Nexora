@@ -784,8 +784,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 16319,
-      "sha256": "a3ee2953d9686a5b0d584a669d100a88fa5099fae0fa3d24a447f069aef89bad"
+      "size": 16651,
+      "sha256": "bd10fc8c798b5295e076fd0c2a779474486f54ee8120bbca76ba8ddc3b503e7f"
     },
     {
       "path": "design/mockup/README.md",
@@ -864,8 +864,8 @@
     },
     {
       "path": "docs/adr/0011-encrypted-physical-sqlite-backup.md",
-      "size": 2614,
-      "sha256": "36757ebe58aa0005ce0adc36679213e03a173ebac0c54d5cc39e2de732686314"
+      "size": 2607,
+      "sha256": "7cebb0748c817467b868b7f132d96fb997d9ed45876511f29ae0f237ecf7be8d"
     },
     {
       "path": "docs/adr/0012-stable-pwa-ledger-bootstrap.md",
@@ -893,9 +893,24 @@
       "sha256": "52e3cbbfacb705d859aa03652ccbb8e606f163496255f23bc2e9d7db2bb9e471"
     },
     {
+      "path": "docs/adr/0017-multiplatform-native-target.md",
+      "size": 532,
+      "sha256": "6e62294f76106973e4561d23a006e7681a3d023d4f8367c4b463da396a961e4d"
+    },
+    {
+      "path": "docs/adr/0018-backup-destinations-policy.md",
+      "size": 524,
+      "sha256": "613fa00c770c49eb50e1bf963cbfa12d59486e020761bce2ad1c28947e9ec160"
+    },
+    {
+      "path": "docs/adr/0019-stitch-ui-reference.md",
+      "size": 580,
+      "sha256": "f505836c20348b19cac0bcd1700fede373ef0250bf806387afe21da61985fd12"
+    },
+    {
       "path": "docs/ARCHITECTURE.md",
-      "size": 5080,
-      "sha256": "22b7fe048fe2610db6fdad410ed5943d76eee5a09110d24cfb4e9202e50378c3"
+      "size": 5817,
+      "sha256": "c4e6dfea11268190dd472340c837c35396af86cf0046e994a7de1169064522af"
     },
     {
       "path": "docs/archive/ROADMAP_PRE_RELEASE_2026-07-29.md",
@@ -903,9 +918,14 @@
       "sha256": "e578970835d9a6ef144ca99074c647ed1b0520d89903eb83a212c4a664ef6542"
     },
     {
+      "path": "docs/BACKUP_SPEC.md",
+      "size": 802,
+      "sha256": "72342ad79db37b0fa27c1cf9c1022aeb4e8e75791b935a811c858d58116e15e8"
+    },
+    {
       "path": "docs/CONTEXT.md",
-      "size": 1305,
-      "sha256": "6d93fc9e6a1c57cb4bbee790501d08a0aff0f4c622bbab2391dfa339b4e54bf6"
+      "size": 1420,
+      "sha256": "e13afbc3fea436579ef7e1ba8d391204766021fb47ddae8348739aedf4c3eef2"
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
@@ -919,8 +939,13 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 12484,
-      "sha256": "8e4ea6e50cb84e087d245c960fdc7d815182df3b622317a4d12618059b8c473a"
+      "size": 13045,
+      "sha256": "bbbcf8dafecf385e1cb06244c2d5ae579d042768fc02b34a909cca326dcf070c"
+    },
+    {
+      "path": "docs/FUNCTIONAL_INVENTORY.md",
+      "size": 1594,
+      "sha256": "1aa76fb26233fb20adcbbb6b694ea20719fe0b1e0cc62ed645af754cca4db9b6"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -934,13 +959,18 @@
     },
     {
       "path": "docs/operations/BACKUP_RESTORE.md",
-      "size": 2319,
-      "sha256": "2715f57dec7c6b6732a3cf8668e08c89c55e6427faf298d8c7c04e59c976dea0"
+      "size": 2355,
+      "sha256": "ea715453c26501194cd55c3496a8a654fb31dae2c6ed87bf30cf5f7fcd1914d0"
     },
     {
       "path": "docs/operations/GOOGLE_DRIVE_OAUTH.md",
       "size": 727,
       "sha256": "cfdd80b6254b124f724af5072a7b07b3912724de2295c7cd8b913f1a43f0501e"
+    },
+    {
+      "path": "docs/PLATFORM_MATRIX.md",
+      "size": 667,
+      "sha256": "97261c1362bba9a24d10ad2b7f5578c43119dfaf3f204ae08a1ea9efbe40ffdb"
     },
     {
       "path": "docs/PRD_Nexora_Reference.docx",
@@ -949,8 +979,8 @@
     },
     {
       "path": "docs/PRD.md",
-      "size": 5223,
-      "sha256": "5a638013cdaf2f61b6de4142fb572460d3f0b7f3454ae3170de2ce5e3afdaa18"
+      "size": 5405,
+      "sha256": "073214b5fa0be209b8f636402e563b42fe5662951a2123144759d65c5f9158b6"
     },
     {
       "path": "docs/release/BASELINE_AUDIT_2026-07-29.md",
@@ -1013,6 +1043,11 @@
       "sha256": "ec0d95f1749f4ebcd2d14c6eeba4a491318e6a93248ada945770ed8cfc852022"
     },
     {
+      "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
+      "size": 1867,
+      "sha256": "c6bca4a8ff7f09bb30dfc9c9ca6daae298640382478564b8cf6a6b0854c0f917"
+    },
+    {
       "path": "docs/ROADMAP.md",
       "size": 1976,
       "sha256": "55f1e7e1ffc1490c0f25dc8d6f0e2b9804be09f36dba17aaa0e3b7d6a94c045f"
@@ -1033,6 +1068,16 @@
       "sha256": "8f3019aebbca1aa499fbd17a28740dff2469774712c3740283dd4b7a41120967"
     },
     {
+      "path": "docs/SYNC_SPEC.md",
+      "size": 654,
+      "sha256": "32e49da3ab56c01cb6ef243ea23bee994f05203c35d52f81d49c3b3093d3ae1a"
+    },
+    {
+      "path": "docs/TEST_STRATEGY.md",
+      "size": 717,
+      "sha256": "b4a6a1a1473bbf86ea1b02423c392b94eca0990ce03ef6ec11fc8edb4af5fab2"
+    },
+    {
       "path": "docs/testing/QUALITY_GATES.md",
       "size": 3164,
       "sha256": "23acff0908f2c18ffd146a7f90e60f83a6c80d8c4fef68d03a33f15b5f1040ed"
@@ -1041,6 +1086,11 @@
       "path": "docs/THREAT_MODEL.md",
       "size": 1985,
       "sha256": "3808faa4a7f58c57b12bb88172b494177299506c7e28023073c8377a67814405"
+    },
+    {
+      "path": "docs/ux/DESIGN.md",
+      "size": 1565,
+      "sha256": "359256fa062867a42bc81fd85b02a8881087bd0d55f916cbb4c691bd601eac93"
     },
     {
       "path": "docs/ux/MOBILE_UI_IMPLEMENTATION_PLAN.md",
@@ -1054,8 +1104,13 @@
     },
     {
       "path": "docs/ux/PRIMARY_FLOWS.md",
-      "size": 1301,
-      "sha256": "d41fd254ad5a52cd64885e05743c43957fe49fe10bbf15854e134a8c288c5f34"
+      "size": 1313,
+      "sha256": "efc6af4fb5f1b383191abd28ce4ac4e4e2da287c2758367255bc84bd6dd7c969"
+    },
+    {
+      "path": "docs/ux/STITCH_UI_REFERENCE.md",
+      "size": 1291,
+      "sha256": "192fc330a296fdf989d7c3fdd8f6bb52ac7582fd20f5d11ea26e2355808bd387"
     },
     {
       "path": "eslint.config.mjs",
@@ -1114,8 +1169,8 @@
     },
     {
       "path": "packages/database/README.md",
-      "size": 3726,
-      "sha256": "f78b484bb44de2be19f3c621d154510d43b229eb03a350aa5e31cb8da3ff9f7c"
+      "size": 3716,
+      "sha256": "60a622a9309fa9d8a145c7abb286ba5804953475f4c130c592a459571cc132a6"
     },
     {
       "path": "packages/database/src/backup/BackupError.ts",

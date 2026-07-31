@@ -2,6 +2,15 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-07-31 — Congelamento roadmap UI e multipiattaforma
+
+- **Contesto:** la nuova roadmap definisce Tauri 2, SQLite nativo, Local Hub Rust, backup
+  manuale/Google Drive e il mockup Stitch come direzione definitiva.
+- **Scelta:** registrare il mockup tramite checksum e usare i nuovi ADR 0017–0019; non copiare
+  HTML Stitch e non introdurre NAS/SMB o backup agent come percorsi alternativi.
+- **Conseguenze:** la Fase 1 deve mappare tutte le 98 schermate e ogni implementazione futura
+  deve rispettare la nuova matrice piattaforme e la policy backup.
+
 ## 2026-07-29 — Preferenze finanziarie non operative nascoste
 
 - **Contesto:** valuta principale, formato data e “Mese finanziario: Gennaio” erano mostrati come

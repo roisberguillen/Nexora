@@ -13,11 +13,13 @@
 - Redditi fotografici: entrate extra con proposta automatica di allocazione tra risparmio, investimenti e spesa discrezionale.
 
 ## Decisioni di prodotto
-- PWA installabile su Android e desktop.
+- PWA browser opzionale e separata; app installabili Windows, macOS e Android sono la
+  destinazione di prodotto.
 - Offline-first.
 - Nessuna integrazione PSD2/open banking nella Versione 1.
 - Inserimento manuale e importazione estratti conto.
-- Backup manuale e automatico su WD My Cloud, Google Drive o entrambi.
+- Backup manuale cifrato esportabile e Google Drive; NAS, SMB e cartelle di rete non fanno
+  parte del prodotto.
 - Import/export Excel, CSV e JSON; PDF opzionale per report.
 - Importazione Money Manager XLSX prioritaria per preservare lo storico esistente.
 - Asset fisici rinviati alla Versione 2.
