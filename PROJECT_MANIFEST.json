@@ -789,8 +789,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 17398,
-      "sha256": "745ff0676e14494e7fb9a8c96fa34687f778e68cbb68e132eea91b754862acfa"
+      "size": 17493,
+      "sha256": "a2aa64d2fdc26199ba8b5c8415a26050311e85c75b1c1884e08b5f02159f20bf"
     },
     {
       "path": "design/mockup/README.md",
@@ -1054,8 +1054,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 3798,
-      "sha256": "b151fd6e073487695fc6fb9fde6c6bc4d6d15289e017ea3dde2ee8f82848524d"
+      "size": 4260,
+      "sha256": "9f506bc2190783fa281cbb4dd5a73ed49428eb4ba6f8a3409d79046f18b4ed19"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -2086,6 +2086,11 @@
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1794,
       "sha256": "66a7b2a21f5a8365b713c43612b7e230b6aa53bc229f81aa366b40f0de319bf6"
+    },
+    {
+      "path": "test/e2e/pilot-ledger-flow.spec.ts",
+      "size": 1778,
+      "sha256": "3995c35f33c61249f1aa5299c77ed3b86feb11859085cc8390627d51c695c1d3"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",

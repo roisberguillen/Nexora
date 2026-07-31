@@ -12,7 +12,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 3 | Fondamenta applicative | completata |
 | 4 | Design system e App Shell | completata |
 | 5 | Startup e stati trasversali | completata |
-| 6 | Modulo pilota conti/movimenti/dashboard | pianificata |
+| 6 | Modulo pilota conti/movimenti/dashboard | completata |
 | 7 | SQLite nativo multipiattaforma | pianificata |
 | 8 | Importazione, esportazione e qualità dati | pianificata |
 | 9 | Backup Engine indipendente | pianificata |
@@ -72,3 +72,11 @@ Commit e push su `origin/main`.
 - [x] Verificati stati di avvio, progress, recovery guidato e diagnostica non distruttiva.
 - [x] Aggiunto banner offline trasversale, visibile soltanto durante la disconnessione.
 - [x] Il lavoro locale resta esplicitamente disponibile offline e il badge online non viene mostrato.
+
+## Evidenze Fase 6
+
+- [x] Dashboard, conti e movimenti leggono dati dal ledger tramite snapshot e view model separati.
+- [x] Registrazione manuale, trasferimento, annullamento, cestino e split mantengono le invarianti
+  contabili già testate nel dominio e negli adapter.
+- [x] Aggiunto E2E del verticale completo: seed, conto, movimento e aggiornamento dashboard.
+- [x] Confermati layout responsive, keyboard path e assenza di overflow nella superficie pilota.

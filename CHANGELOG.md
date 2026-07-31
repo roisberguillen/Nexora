@@ -17,6 +17,7 @@
   the Stitch reference palette and geometry.
 - Added a screen-reader-friendly offline state while preserving local-first work and a silent
   online state.
+- Added end-to-end coverage for the pilot dashboard, accounts and transactions vertical slice.
 
 - Completata la Fase 0 della roadmap UI e multipiattaforma: il mockup Stitch è ora il
   riferimento ufficiale per struttura e responsive, mentre palette, font e invarianti Nexora
