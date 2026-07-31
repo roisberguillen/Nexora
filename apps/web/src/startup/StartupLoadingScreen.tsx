@@ -2,7 +2,7 @@ import { type ReactElement, useEffect, useState } from "react";
 
 import type { StartupProgressEvent } from "./StartupOrchestrator";
 
-const steps = [
+export const startupLoadingSteps = [
   { label: "Verifica ambiente", states: ["CHECKING_ENVIRONMENT"] },
   { label: "Ricerca archivio", states: ["DISCOVERING_STORAGE", "OPENING_EXISTING_STORAGE"] },
   { label: "Controllo dati", states: ["VALIDATING_LEDGER"] },
@@ -28,7 +28,7 @@ export function StartupLoadingScreen({
         <h1>Preparazione del tuo archivio</h1>
         <p>Stiamo verificando e proteggendo i tuoi dati.</p>
         <ol aria-label="Fasi di avvio" className="startup-loading__steps">
-          {steps.map((step) => {
+          {startupLoadingSteps.map((step) => {
             const current = progress !== undefined && step.states.includes(progress.state as never);
             return (
               <li

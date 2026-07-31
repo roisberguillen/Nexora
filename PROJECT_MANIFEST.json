@@ -618,9 +618,14 @@
       "sha256": "8593696b70430a966255a08feeb07bb1dd60a0b2674485634ccc979183700d4b"
     },
     {
+      "path": "apps/web/src/startup/StartupLoadingScreen.test.tsx",
+      "size": 706,
+      "sha256": "750c55b577d89af431ae9903817e5d4f3ed87d8fa655e676dcf7546f3a4550bb"
+    },
+    {
       "path": "apps/web/src/startup/StartupLoadingScreen.tsx",
-      "size": 1979,
-      "sha256": "37f3efbe0aad148667f5d2d352fe4af21c0a7d39fbc3f265b6f4b8c582b01fb4"
+      "size": 2014,
+      "sha256": "ac6216da45bd99e15026059ae0641b1633e578400887e1b79fa5b6417866b0f2"
     },
     {
       "path": "apps/web/src/startup/StartupLock.test.ts",
@@ -784,8 +789,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 17288,
-      "sha256": "a94f740c39c8cfabc2d30636f8cb53bdb3591442376f98e60bf37681bed9927a"
+      "size": 17398,
+      "sha256": "745ff0676e14494e7fb9a8c96fa34687f778e68cbb68e132eea91b754862acfa"
     },
     {
       "path": "design/mockup/README.md",
@@ -1049,8 +1054,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 3497,
-      "sha256": "31f463595455b0e63b7afd511537071bbf44e1b42f8b10d63bf06a817352ed26"
+      "size": 3798,
+      "sha256": "b151fd6e073487695fc6fb9fde6c6bc4d6d15289e017ea3dde2ee8f82848524d"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1814,8 +1819,8 @@
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
-      "size": 3018,
-      "sha256": "7eadaebe9d92f6ad12f483e125d5a296198fc8da7506b3b4f8c47db9ff879a24"
+      "size": 3093,
+      "sha256": "009c542503d96a5c68f48269122000c4a562dde64d66fdba06d8fc2ae18fc2a7"
     },
     {
       "path": "packages/ui/src/ErrorBoundary.test.tsx",
@@ -1849,8 +1854,8 @@
     },
     {
       "path": "packages/ui/src/index.ts",
-      "size": 831,
-      "sha256": "ee34341004aa14ee2b01a65970bcd7c33ccec8da5d5ac0db635c1760de423be3"
+      "size": 880,
+      "sha256": "683d2f7ca5484ec352a9fbdb96107944effdbab0149d8002c3a22e628e7cffc6"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -1873,6 +1878,16 @@
       "sha256": "318fff6e1bfe65e51a361bd39664b72940721cb3d80d6c88081a00b81eb30052"
     },
     {
+      "path": "packages/ui/src/OfflineBanner.test.tsx",
+      "size": 706,
+      "sha256": "b43ae93a9bb0cc9514b27204914c1761635f0274ed374cb85e673d998653aa8b"
+    },
+    {
+      "path": "packages/ui/src/OfflineBanner.tsx",
+      "size": 945,
+      "sha256": "59c80ef8c9627f875363c6a49da84c2871696cb125b35a599e4aab8ca756eadc"
+    },
+    {
       "path": "packages/ui/src/QuickActionSheet.tsx",
       "size": 2681,
       "sha256": "e5cf9338289009b7564aec108d1ea1c10b9322eb264ae3cf5585985e0c743906"
@@ -1884,8 +1899,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 14816,
-      "sha256": "e03b4b01dbb181e85553c85c3f5d55a89cf71d81e939fddc0723494ded0f604a"
+      "size": 15081,
+      "sha256": "3f8fd070af83b349cc0741596165609e1c7dbc5403ffbf9f44118fe7784bb1e9"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",

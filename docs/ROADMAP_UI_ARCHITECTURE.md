@@ -11,7 +11,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 2 | Rimozione NAS e funzioni eliminate | completata |
 | 3 | Fondamenta applicative | completata |
 | 4 | Design system e App Shell | completata |
-| 5 | Startup e stati trasversali | pianificata |
+| 5 | Startup e stati trasversali | completata |
 | 6 | Modulo pilota conti/movimenti/dashboard | pianificata |
 | 7 | SQLite nativo multipiattaforma | pianificata |
 | 8 | Importazione, esportazione e qualità dati | pianificata |
@@ -66,3 +66,9 @@ Commit e push su `origin/main`.
 - [x] Formalizzati palette semantica, spaziatura, raggi e viewport nei token `@nexora/ui`.
 - [x] Allineata la shell condivisa ai token Stitch senza duplicare la navigazione desktop/mobile.
 - [x] Mantenuti skip link, focus visibile, dialog con trap focus e bottom navigation accessibile.
+
+## Evidenze Fase 5
+
+- [x] Verificati stati di avvio, progress, recovery guidato e diagnostica non distruttiva.
+- [x] Aggiunto banner offline trasversale, visibile soltanto durante la disconnessione.
+- [x] Il lavoro locale resta esplicitamente disponibile offline e il badge online non viene mostrato.

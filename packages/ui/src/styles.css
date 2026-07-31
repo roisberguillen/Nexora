@@ -335,6 +335,19 @@ a {
   margin-left: var(--sidebar-width);
 }
 
+.offline-banner {
+  position: sticky;
+  z-index: 35;
+  top: 0;
+  padding: var(--space-2) var(--page-gutter);
+  margin: 0;
+  background: var(--color-danger-container);
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .top-header {
   position: sticky;
   top: 0;

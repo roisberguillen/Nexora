@@ -6,6 +6,7 @@ import { TopHeader } from "./TopHeader";
 import { MobileBottomNavigation } from "./MobileBottomNavigation";
 import { MobileHeader } from "./MobileHeader";
 import { QuickActionSheet, type QuickAction } from "./QuickActionSheet";
+import { OfflineBanner } from "./OfflineBanner";
 
 interface AppShellProps extends PropsWithChildren {
   readonly activeRoute?: NavigationRoute;
@@ -70,6 +71,7 @@ export function AppShell({
         type="button"
       />
       <div className="app-workspace">
+        <OfflineBanner />
         <MobileHeader activeRoute={activeRoute} />
         <TopHeader
           isNavigationOpen={isNavigationOpen}
