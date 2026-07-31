@@ -13,6 +13,8 @@
   download; portable restore and Google Drive remain available.
 - Added the platform-independent `@nexora/application` read layer and migrated the web shell to
   its shared ledger snapshot contract.
+- Formalized the shared Nexora visual tokens and aligned the responsive application shell with
+  the Stitch reference palette and geometry.
 
 - Completata la Fase 0 della roadmap UI e multipiattaforma: il mockup Stitch è ora il
   riferimento ufficiale per struttura e responsive, mentre palette, font e invarianti Nexora

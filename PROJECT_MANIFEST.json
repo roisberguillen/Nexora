@@ -784,8 +784,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 17148,
-      "sha256": "f8fa61d4e79b65e5c1a15313c4e1c21fcdbc78a7052528d9255dc8442b0c5425"
+      "size": 17288,
+      "sha256": "a94f740c39c8cfabc2d30636f8cb53bdb3591442376f98e60bf37681bed9927a"
     },
     {
       "path": "design/mockup/README.md",
@@ -1049,8 +1049,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 3190,
-      "sha256": "7b340e514d84d8334d6627bb668a7b2d4cd124cd1004fc4aca5156d03313d331"
+      "size": 3497,
+      "sha256": "31f463595455b0e63b7afd511537071bbf44e1b42f8b10d63bf06a817352ed26"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1849,8 +1849,8 @@
     },
     {
       "path": "packages/ui/src/index.ts",
-      "size": 771,
-      "sha256": "1430a16286c2dc9e8ef4c0e3f1aee197598f3849b3ac17258f0752a3dce2f82c"
+      "size": 831,
+      "sha256": "ee34341004aa14ee2b01a65970bcd7c33ccec8da5d5ac0db635c1760de423be3"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -1884,8 +1884,18 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 14628,
-      "sha256": "d73139d22d63e544c1ef472d35b141c180817eecde7a94aad3c908e1d006f90c"
+      "size": 14816,
+      "sha256": "e03b4b01dbb181e85553c85c3f5d55a89cf71d81e939fddc0723494ded0f604a"
+    },
+    {
+      "path": "packages/ui/src/tokens.test.ts",
+      "size": 502,
+      "sha256": "8dedc418ac873c4f5ffe1f2ecc29fb75c519245dd0f55f2b4e6379bfa30a876b"
+    },
+    {
+      "path": "packages/ui/src/tokens.ts",
+      "size": 975,
+      "sha256": "aa075d55b794ab69ee78d6c0e339a77bed2e8d51d98f813452c4d4712ddfa107"
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",

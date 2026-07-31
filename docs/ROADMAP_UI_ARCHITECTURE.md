@@ -10,7 +10,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 1 | Audit e mappatura del mockup | completata |
 | 2 | Rimozione NAS e funzioni eliminate | completata |
 | 3 | Fondamenta applicative | completata |
-| 4 | Design system e App Shell | pianificata |
+| 4 | Design system e App Shell | completata |
 | 5 | Startup e stati trasversali | pianificata |
 | 6 | Modulo pilota conti/movimenti/dashboard | pianificata |
 | 7 | SQLite nativo multipiattaforma | pianificata |
@@ -60,3 +60,9 @@ Commit e push su `origin/main`.
 - [x] Definito `LedgerSnapshot` come contratto di lettura multipiattaforma sul `LedgerRepository`.
 - [x] La shell web carica ora il proprio modello tramite il layer applicativo condiviso.
 - [x] Documentata la direzione delle dipendenze per browser, Tauri e futuri adapter SQLite nativi.
+
+## Evidenze Fase 4
+
+- [x] Formalizzati palette semantica, spaziatura, raggi e viewport nei token `@nexora/ui`.
+- [x] Allineata la shell condivisa ai token Stitch senza duplicare la navigazione desktop/mobile.
+- [x] Mantenuti skip link, focus visibile, dialog con trap focus e bottom navigation accessibile.
