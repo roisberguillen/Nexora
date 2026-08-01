@@ -1,4 +1,4 @@
-import type { BrowserLedger } from "@nexora/database";
+import type { Ledger } from "@nexora/database";
 import { useState } from "react";
 
 import { createAppLock, removeAppLock, type AppLockConfig } from "./appLock";
@@ -9,12 +9,17 @@ export function PrivacySecurityPage({
   onLockConfigChanged,
   onManualLock,
 }: {
-  readonly ledger: BrowserLedger;
+  readonly ledger: Ledger;
   readonly lockConfig: AppLockConfig | undefined;
   readonly onLockConfigChanged: (config: AppLockConfig | undefined) => void;
   readonly onManualLock: () => void;
 }) {
-  const backend = ledger.storageKind === "opfs" ? "SQLite su OPFS" : "IndexedDB";
+  const backend =
+    ledger.storageKind === "opfs"
+      ? "SQLite su OPFS"
+      : ledger.storageKind === "native-sqlite"
+        ? "SQLite nativo"
+        : "IndexedDB";
   return (
     <div id="privacy-security">
       <header className="accounts-heading">

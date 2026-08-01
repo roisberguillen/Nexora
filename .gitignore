@@ -5,6 +5,8 @@ coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
+apps/web/src-tauri/target/
+apps/web/src-tauri/gen/
 .env
 .env.*
 !.env.example

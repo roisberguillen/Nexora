@@ -13,7 +13,7 @@ import type {
   Transaction,
   TrashedTransaction,
 } from "@nexora/domain";
-import type { BrowserLedger } from "@nexora/database";
+import type { Ledger } from "@nexora/database";
 
 import { buildAccountsViewModel, type AccountsViewModel } from "./accounts/buildAccountsViewModel";
 import {
@@ -54,7 +54,7 @@ export class AppModelBuildError extends Error {
   }
 }
 
-export async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
+export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
   const snapshot = await readLedgerSnapshot(ledger.repository);
   const {
     accounts,

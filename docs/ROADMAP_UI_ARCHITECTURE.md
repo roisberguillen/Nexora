@@ -13,7 +13,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 4 | Design system e App Shell | completata |
 | 5 | Startup e stati trasversali | completata |
 | 6 | Modulo pilota conti/movimenti/dashboard | completata |
-| 7 | SQLite nativo multipiattaforma | pianificata |
+| 7 | SQLite nativo multipiattaforma | completata |
 | 8 | Importazione, esportazione e qualità dati | pianificata |
 | 9 | Backup Engine indipendente | pianificata |
 | 10 | Backup manuale | pianificata |
@@ -83,7 +83,7 @@ Commit e push su `origin/main`.
 - [x] La preferenza `nexora.ledger-storage.v1` viene scritta solo dopo apertura e verifica;
   un localStorage bloccato non invalida un ledger già verificato.
 - [x] Verificata l'apertura reale nel browser con il ledger OPFS esistente e dati persistiti;
-  la Fase 7 resta sospesa.
+  lo sblocco della Fase 7 è stato registrato senza modificare l'archivio browser.
 - [x] Corretta la regressione di avvio introdotta dal refresh runtime di Vite: il preambolo React
   è ora una dipendenza esplicita dell'entrypoint, prima della valutazione dei moduli della shell.
 - [x] `NavIcon` usa un fallback sicuro per chiavi non mappate e non può più interrompere il mount.
@@ -96,3 +96,16 @@ Commit e push su `origin/main`.
   contabili già testate nel dominio e negli adapter.
 - [x] Aggiunto E2E del verticale completo: seed, conto, movimento e aggiornamento dashboard.
 - [x] Confermati layout responsive, keyboard path e assenza di overflow nella superficie pilota.
+
+## Evidenze Fase 7
+
+- [x] Aggiunta la shell Tauri 2 per Windows con la stessa applicazione React/Vite condivisa.
+- [x] Creato `@nexora/database-tauri`, adapter del plugin SQL verso la porta `SqliteDatabase`.
+- [x] Il ledger nativo riusa repository, codec, backup portabile e catalogo completo delle 13
+  migrazioni SQLite, senza introdurre uno schema parallelo.
+- [x] Il bootstrap seleziona `native-sqlite` esclusivamente nel runtime Tauri; OPFS e IndexedDB
+  conservano discovery, preferenza e recovery non distruttivo nel browser.
+- [x] Il database applicativo è stato aperto realmente, chiuso e riaperto su Windows; il controllo
+  di integrità restituisce `ok` e la cronologia contiene tutte le 13 migrazioni.
+- [x] Verificati adapter, classificazione degli errori, backup, reset non distruttivo, typecheck,
+  lint, unit/component test, build web e build release nativa.

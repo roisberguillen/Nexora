@@ -1,4 +1,4 @@
-import type { BrowserLedger } from "@nexora/database";
+import type { Ledger } from "@nexora/database";
 import { useMemo, useState } from "react";
 
 import { GoogleDriveBackupProvider } from "../cloud/GoogleDriveBackupProvider";
@@ -29,7 +29,7 @@ function describeCloudError(error: unknown): string {
   }
 }
 
-export function BackupPage({ ledger }: { readonly ledger: BrowserLedger }) {
+export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const [passphrase, setPassphrase] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);

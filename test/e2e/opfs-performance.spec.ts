@@ -19,7 +19,7 @@ test("SQLite OPFS reale conserva e legge 100.000 movimenti sintetici", async ({
     root: webRoot,
     configFile: resolve(webRoot, "vite.config.ts"),
     logLevel: "silent",
-    server: { host: "127.0.0.1", port: 0 },
+    server: { host: "127.0.0.1", port: 0, strictPort: false },
   });
 
   try {

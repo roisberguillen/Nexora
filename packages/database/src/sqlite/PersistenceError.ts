@@ -2,6 +2,7 @@ export type PersistenceErrorCode =
   | "corrupt_record"
   | "database_operation_failed"
   | "indexeddb_unavailable"
+  | "native_sqlite_unavailable"
   | "opfs_unavailable"
   | "persistence_closed"
   | "restore_failed"

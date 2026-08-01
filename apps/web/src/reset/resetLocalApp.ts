@@ -1,4 +1,4 @@
-import type { BrowserLedger } from "@nexora/database";
+import type { Ledger } from "@nexora/database";
 
 const nexoraStorageKeys = [
   "nexora.app-preferences.v1",
@@ -17,12 +17,12 @@ export interface LocalResetEnvironment {
 
 /** Removes only Nexora-owned local state. Cloud backups are intentionally out of scope. */
 export async function resetLocalApp(
-  ledger: BrowserLedger,
+  ledger: Ledger,
   environment: LocalResetEnvironment = {},
 ): Promise<void> {
   // OPFS SQLite needs its directory and schema container to remain available to reopen reliably.
   // Clear every financial store atomically before closing it; only technical schema metadata remains.
-  if (ledger.storageKind === "opfs") {
+  if (ledger.storageKind === "opfs" || ledger.storageKind === "native-sqlite") {
     await ledger.repository.resetFinancialData();
   }
   await ledger.close();

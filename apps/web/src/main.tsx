@@ -7,6 +7,9 @@ import "./startup/startup.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { isTauri } from "@tauri-apps/api/core";
+import type { LedgerStorageKind } from "@nexora/database";
+import { openTauriLedger } from "@nexora/database-tauri";
 import { registerSW } from "virtual:pwa-register";
 
 import { App, type StartupDiagnosticsContext } from "./App";
@@ -38,24 +41,30 @@ if (!(rootElement instanceof HTMLElement)) {
   throw new Error("Nexora root element is missing");
 }
 
-const applyPwaUpdate = import.meta.env.PROD
-  ? registerSW({
-      onNeedRefresh() {
-        window.dispatchEvent(
-          new CustomEvent<PwaUpdateEventDetail>(pwaUpdateEventName, {
-            detail: { applyUpdate: () => applyPwaUpdate?.(true) },
-          }),
-        );
-      },
-    })
-  : undefined;
+const nativeRuntime = isTauri();
+const applyPwaUpdate =
+  import.meta.env.PROD && !nativeRuntime
+    ? registerSW({
+        onNeedRefresh() {
+          window.dispatchEvent(
+            new CustomEvent<PwaUpdateEventDetail>(pwaUpdateEventName, {
+              detail: { applyUpdate: () => applyPwaUpdate?.(true) },
+            }),
+          );
+        },
+      })
+    : undefined;
 
-let selectedStorageKind: "opfs" | "indexeddb" | undefined;
+let selectedStorageKind: LedgerStorageKind | undefined;
 let allowOpfsFallback = false;
 let discoveredArchives: readonly StorageArchiveInspection[] = [];
 const startupBootstrap = createStartupBootstrap(
   new StartupOrchestrator({
     discoverStorage: async () => {
+      if (nativeRuntime) {
+        selectedStorageKind = "native-sqlite";
+        return;
+      }
       const discovery = await new StorageDiscovery().inspect();
       discoveredArchives = discovery.archives;
       const recoverySelection = readRecoverySelection(discovery.archives);
@@ -77,6 +86,9 @@ const startupBootstrap = createStartupBootstrap(
       if (selectedStorageKind === undefined)
         throw new Error("Nexora storage selection is missing.");
       const storageKind = selectedStorageKind;
+      if (storageKind === "native-sqlite") {
+        return withStartupLock(() => openTauriLedger());
+      }
       return withStartupLock(() =>
         openPwaLedgerWithSafeOpfsFallback({
           allowOpfsFallback,
@@ -93,6 +105,7 @@ const startupBootstrap = createStartupBootstrap(
       }
     },
     validateEnvironment: () => {
+      if (nativeRuntime) return;
       if (
         typeof indexedDB === "undefined" &&
         typeof navigator.storage?.getDirectory !== "function"
@@ -115,6 +128,7 @@ const startupBootstrap = createStartupBootstrap(
   }),
 );
 const ledgerPromise = startupBootstrap.ledgerPromise.then((ledger) => {
+  if (ledger.storageKind === "native-sqlite") return ledger;
   try {
     // The ledger is already opened and verified here; a blocked preference store must
     // not turn a valid local ledger into a startup failure.

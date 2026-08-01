@@ -1,4 +1,4 @@
-import { MigrationError, PersistenceError, type BrowserLedger } from "@nexora/database";
+import { MigrationError, PersistenceError, type Ledger } from "@nexora/database";
 
 import { StartupRecoveryRequiredError } from "./StartupRecovery";
 
@@ -39,6 +39,7 @@ export type StartupFailureCategory =
   | "unknown"
   | "opfs-open"
   | "indexeddb-open"
+  | "native-sqlite-open"
   | "migration"
   | "timeout"
   | "database-incompatible"
@@ -55,7 +56,7 @@ export interface StartupFailureDetail {
     | "verification"
     | "read-model"
     | "ui-model";
-  readonly backend: "opfs" | "indexeddb" | "unknown";
+  readonly backend: "opfs" | "indexeddb" | "native-sqlite" | "unknown";
   readonly errorCode: string;
   readonly errorName: string;
   readonly safeMessage: string;
@@ -85,18 +86,18 @@ class StartupTimeoutError extends Error {
 }
 
 export interface StartupRunResult {
-  readonly ledger?: BrowserLedger;
+  readonly ledger?: Ledger;
   readonly state: StartupState;
   readonly failure?: StartupFailure;
 }
 
 export interface StartupOrchestratorDependencies {
-  readonly openLedger: () => Promise<BrowserLedger>;
+  readonly openLedger: () => Promise<Ledger>;
   readonly discoverStorage?: () => void | Promise<void>;
   readonly validateEnvironment?: () => void | Promise<void>;
-  readonly validateLedger?: (ledger: BrowserLedger) => void | Promise<void>;
-  readonly runMigrations?: (ledger: BrowserLedger) => void | Promise<void>;
-  readonly verifyData?: (ledger: BrowserLedger) => void | Promise<void>;
+  readonly validateLedger?: (ledger: Ledger) => void | Promise<void>;
+  readonly runMigrations?: (ledger: Ledger) => void | Promise<void>;
+  readonly verifyData?: (ledger: Ledger) => void | Promise<void>;
   readonly timeouts?: Partial<Record<StartupProgressPhase, number>>;
   readonly now?: () => Date;
 }
@@ -119,7 +120,7 @@ export class StartupOrchestrator {
   private async runOnce(
     onProgress?: (event: StartupProgressEvent) => void,
   ): Promise<StartupRunResult> {
-    let ledger: BrowserLedger | undefined;
+    let ledger: Ledger | undefined;
     let lastPhase: StartupProgressPhase = "environment";
     try {
       lastPhase = "environment";
@@ -189,7 +190,7 @@ export class StartupOrchestrator {
   }
 }
 
-async function closeOpenedLedger(ledger: BrowserLedger | undefined): Promise<void> {
+async function closeOpenedLedger(ledger: Ledger | undefined): Promise<void> {
   if (typeof ledger?.close !== "function") return;
   await ledger.close().catch(() => undefined);
 }
@@ -294,6 +295,15 @@ export function classifyStartupError(
         "recoverable",
         "opening",
         "indexeddb",
+      );
+    }
+    if (cause.code === "native_sqlite_unavailable") {
+      return createFailure(
+        "native-sqlite-open",
+        "NX-STORAGE-001",
+        "recoverable",
+        "opening",
+        "native-sqlite",
       );
     }
     if (cause.code === "worker_failed")

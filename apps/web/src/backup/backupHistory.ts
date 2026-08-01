@@ -1,4 +1,4 @@
-import type { BrowserLedgerStorageKind } from "@nexora/database";
+import type { LedgerStorageKind } from "@nexora/database";
 
 const STORAGE_KEY = "nexora.backup-history.v1";
 const MAX_ENTRIES = 100;
@@ -14,7 +14,7 @@ export type BackupHistoryOperation =
 export interface BackupHistoryEntry {
   readonly id: string;
   readonly operation: BackupHistoryOperation;
-  readonly storageKind: BrowserLedgerStorageKind;
+  readonly storageKind: LedgerStorageKind;
   readonly occurredAt: string;
   readonly outcome: "succeeded" | "failed";
   readonly size?: number;
@@ -58,6 +58,8 @@ function isEntry(value: unknown): value is BackupHistoryEntry {
     typeof item.occurredAt === "string" &&
     typeof item.operation === "string" &&
     typeof item.outcome === "string" &&
-    (item.storageKind === "opfs" || item.storageKind === "indexeddb")
+    (item.storageKind === "opfs" ||
+      item.storageKind === "indexeddb" ||
+      item.storageKind === "native-sqlite")
   );
 }

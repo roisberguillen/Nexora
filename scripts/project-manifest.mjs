@@ -12,6 +12,7 @@ const ignoredDirectories = new Set([
   "dist",
   "node_modules",
   "playwright-report",
+  "target",
   "test-results",
 ]);
 const ignoredFiles = new Set(["PROJECT_MANIFEST.json"]);

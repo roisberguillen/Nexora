@@ -1,5 +1,5 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
-import { seedDemoLedger, type BrowserLedger } from "@nexora/database";
+import { seedDemoLedger, type Ledger } from "@nexora/database";
 import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult, type QuickAction } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
@@ -100,7 +100,7 @@ const ImportsPage = lazy(async () => {
 });
 
 interface ReadyLedgerState extends AppModels {
-  readonly ledger: BrowserLedger;
+  readonly ledger: Ledger;
   readonly status: "ready";
 }
 
@@ -110,7 +110,7 @@ type LedgerState =
   | ReadyLedgerState;
 
 interface AppProps {
-  readonly ledgerPromise: Promise<BrowserLedger>;
+  readonly ledgerPromise: Promise<Ledger>;
   readonly startupBootstrap?: Pick<StartupBootstrap, "getFailure" | "getProgress" | "subscribe">;
   readonly startupDiagnostics?: () => StartupDiagnosticsContext;
   readonly seedLedger?: typeof seedDemoLedger;
@@ -121,7 +121,7 @@ export interface StartupDiagnosticsContext {
   readonly errorCode?: StartupErrorCode;
   readonly failureCategory?: StartupFailureCategory;
   readonly failureDetail?: StartupFailureDetail;
-  readonly selectedBackend?: BrowserLedger["storageKind"];
+  readonly selectedBackend?: Ledger["storageKind"];
 }
 
 export function App({
@@ -289,9 +289,7 @@ export function App({
     }
   };
 
-  const mutateLedger = async (
-    operation: (ledger: BrowserLedger) => Promise<void>,
-  ): Promise<void> => {
+  const mutateLedger = async (operation: (ledger: Ledger) => Promise<void>): Promise<void> => {
     if (ledgerState.status !== "ready") {
       return;
     }

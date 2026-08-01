@@ -70,12 +70,22 @@ describe("StartupOrchestrator", () => {
   });
 
   it("distingue indisponibilità di backend e timeout", () => {
-    for (const code of ["opfs_unavailable", "indexeddb_unavailable"] as const) {
+    for (const code of [
+      "opfs_unavailable",
+      "indexeddb_unavailable",
+      "native_sqlite_unavailable",
+    ] as const) {
       expect(classifyStartupError(new PersistenceError(code, code))).toMatchObject({
         code: "NX-STORAGE-001",
         kind: "recoverable",
       });
     }
+    expect(
+      classifyStartupError(new PersistenceError("native_sqlite_unavailable", "native unavailable")),
+    ).toMatchObject({
+      category: "native-sqlite-open",
+      detail: { backend: "native-sqlite", phase: "opening" },
+    });
     expect(classifyStartupError(new PersistenceError("worker_failed", "timeout"))).toMatchObject({
       category: "timeout",
       code: "NX-TIMEOUT-001",

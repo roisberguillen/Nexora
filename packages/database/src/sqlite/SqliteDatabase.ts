@@ -10,7 +10,7 @@ export interface SqliteDatabase {
 }
 
 export interface CloseableSqliteDatabase extends SqliteDatabase {
-  readonly storageKind: "opfs";
+  readonly storageKind: "opfs" | "native-sqlite";
   close(): Promise<void>;
 }
 

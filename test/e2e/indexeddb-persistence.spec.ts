@@ -23,6 +23,7 @@ test("IndexedDB conserva i dati dopo la riapertura", async ({ page }, testInfo) 
     server: {
       host: "127.0.0.1",
       port: 0,
+      strictPort: false,
     },
   });
 

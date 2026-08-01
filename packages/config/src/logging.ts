@@ -10,7 +10,7 @@ export type SafeLogEvent =
   | "pwa.update";
 export type SafeLogComponent = "app" | "error-boundary" | "persistence" | "service-worker";
 export type SafeLogStatus = "started" | "completed" | "failed" | "online" | "offline";
-export type SafeStorageKind = "indexeddb" | "opfs";
+export type SafeStorageKind = "indexeddb" | "opfs" | "native-sqlite";
 export type SafeErrorName =
   "Error" | "RangeError" | "ReferenceError" | "SyntaxError" | "TypeError" | "UnknownError";
 

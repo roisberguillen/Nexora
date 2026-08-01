@@ -73,6 +73,9 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     headers: crossOriginIsolationHeaders,
+    watch: {
+      ignored: ["**/src-tauri/**"],
+    },
   },
   preview: {
     host: "127.0.0.1",

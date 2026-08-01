@@ -21,7 +21,7 @@ test("un errore atomico non persiste record parziali su IndexedDB e OPFS", async
     root: webRoot,
     configFile: resolve(webRoot, "vite.config.ts"),
     logLevel: "silent",
-    server: { host: "127.0.0.1", port: 0 },
+    server: { host: "127.0.0.1", port: 0, strictPort: false },
   });
   try {
     await server.listen();

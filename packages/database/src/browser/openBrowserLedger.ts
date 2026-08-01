@@ -28,26 +28,12 @@ import {
   validatePortableLedgerSnapshot,
 } from "../backup/PortableLedgerSnapshot";
 import { type PhysicalBackupStore } from "../backup/PhysicalBackupStore";
+import type { Ledger } from "../Ledger";
 
 export type BrowserLedgerStorageKind = "opfs" | "indexeddb";
 
-export interface BrowserLedger {
-  readonly repository: LedgerRepository;
-  readonly schemaVersion: number;
+export interface BrowserLedger extends Ledger {
   readonly storageKind: BrowserLedgerStorageKind;
-  createEncryptedBackupArchive?(input: {
-    readonly passphrase: string;
-  }): Promise<CreatedLocalBackup & { readonly archive: Uint8Array }>;
-  restoreEncryptedBackupArchive?(input: {
-    readonly archive: Uint8Array;
-    readonly id: string;
-    readonly passphrase: string;
-  }): Promise<void>;
-  verifyEncryptedBackupArchive?(input: {
-    readonly archive: Uint8Array;
-    readonly passphrase: string;
-  }): Promise<void>;
-  close(): Promise<void>;
 }
 
 export interface OpenBrowserLedgerOptions {

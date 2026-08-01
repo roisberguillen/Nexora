@@ -1,4 +1,4 @@
-import type { BrowserLedgerStorageKind } from "@nexora/database";
+import type { LedgerStorageKind } from "@nexora/database";
 
 import type { StorageArchiveInspection } from "./StorageDiscovery";
 import type {
@@ -11,7 +11,7 @@ import type {
 export interface StartupDiagnosticsInput {
   readonly appVersion: string;
   readonly buildId: string;
-  readonly selectedBackend?: BrowserLedgerStorageKind;
+  readonly selectedBackend?: LedgerStorageKind;
   readonly archives: readonly StorageArchiveInspection[];
   readonly errorCode?: StartupErrorCode;
   readonly failureCategory?: StartupFailureCategory;
@@ -42,7 +42,7 @@ export interface StartupDiagnosticsReport {
     readonly crossOriginIsolated: boolean;
     readonly webAssembly: boolean;
   };
-  readonly selectedBackend?: BrowserLedgerStorageKind;
+  readonly selectedBackend?: LedgerStorageKind;
   readonly archives: readonly Pick<
     StorageArchiveInspection,
     "kind" | "available" | "state" | "schemaVersion" | "lastCheckedAt"

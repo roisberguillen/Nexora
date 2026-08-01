@@ -1,4 +1,5 @@
 export { InMemoryLedgerRepository } from "./in-memory/InMemoryLedgerRepository";
+export type { Ledger, LedgerStorageKind } from "./Ledger";
 export { BackupError, type BackupErrorCode } from "./backup/BackupError";
 export {
   capturePortableLedgerSnapshot,

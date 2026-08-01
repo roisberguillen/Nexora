@@ -1,4 +1,4 @@
-import type { BrowserLedger } from "@nexora/database";
+import type { Ledger } from "@nexora/database";
 
 import {
   StartupOrchestrator,
@@ -7,7 +7,7 @@ import {
 } from "./StartupOrchestrator";
 
 export interface StartupBootstrap {
-  readonly ledgerPromise: Promise<BrowserLedger>;
+  readonly ledgerPromise: Promise<Ledger>;
   getFailure(): StartupFailure | undefined;
   getProgress(): StartupProgressEvent | undefined;
   subscribe(listener: (event: StartupProgressEvent) => void): () => void;

@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Completata la Fase 7 multipiattaforma: Nexora dispone ora di una shell Tauri 2 e di un ledger
+  SQLite nativo che riusa le 13 migrazioni, i repository e i backup portabili condivisi, mantenendo
+  invariati OPFS e IndexedDB nella PWA.
+
 - Restored application startup after the Phase 6 Vite React preamble regression. Navigation icon
   lookup now has a safe default and a pre-mount recovery screen prevents blank pages.
 - Hardened non-destructive ledger startup diagnostics and verification: OPFS/IndexedDB discovery

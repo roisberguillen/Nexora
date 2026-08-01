@@ -1,4 +1,4 @@
-import type { BrowserLedger } from "@nexora/database";
+import type { Ledger } from "@nexora/database";
 
 export interface FinancialResetPreview {
   readonly accounts: number;
@@ -12,7 +12,7 @@ export interface FinancialResetPreview {
   readonly kept: readonly string[];
 }
 
-export async function previewFinancialReset(ledger: BrowserLedger): Promise<FinancialResetPreview> {
+export async function previewFinancialReset(ledger: Ledger): Promise<FinancialResetPreview> {
   const repository = ledger.repository;
   const [
     accounts,
@@ -51,7 +51,7 @@ export async function previewFinancialReset(ledger: BrowserLedger): Promise<Fina
 export interface FinancialResetReceipt {
   readonly version: 1;
   readonly occurredAt: string;
-  readonly storageKind: BrowserLedger["storageKind"];
+  readonly storageKind: Ledger["storageKind"];
   readonly backupChecksumPrefix?: string;
   readonly reset: FinancialResetPreview;
 }
@@ -64,7 +64,7 @@ export function writeFinancialResetReceipt(
 }
 
 export async function createVerifiedResetBackup(
-  ledger: BrowserLedger,
+  ledger: Ledger,
   passphrase: string,
   saveArchive: (archive: Uint8Array, filename: string) => void,
 ): Promise<string> {

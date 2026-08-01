@@ -2,6 +2,16 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-01 — Un solo catalogo migrazioni per SQLite browser e nativo
+
+- **Contesto:** la Fase 7 introduce SQLite nativo con Tauri senza poter creare una seconda
+  interpretazione dello schema o perdere compatibilità con i ledger esistenti.
+- **Scelta:** adattare il plugin SQL ufficiale alla porta `SqliteDatabase` e riusare integralmente
+  `MigrationRunner`, repository, codec e snapshot portabili già verificati; il percorso del file
+  nativo è limitato a un URL relativo di proprietà dell'app.
+- **Conseguenze:** browser e runtime nativo evolvono con le stesse migrazioni; ogni nuova versione
+  dello schema deve superare test su entrambi gli adapter.
+
 ## 2026-07-31 — Congelamento roadmap UI e multipiattaforma
 
 - **Contesto:** la nuova roadmap definisce Tauri 2, SQLite nativo, Local Hub Rust, backup

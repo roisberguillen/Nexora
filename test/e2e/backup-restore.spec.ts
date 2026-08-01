@@ -23,6 +23,7 @@ test("backup cifrato e restore SQLite funzionano su OPFS reale", async ({ page }
     server: {
       host: "127.0.0.1",
       port: 0,
+      strictPort: false,
     },
   });
 

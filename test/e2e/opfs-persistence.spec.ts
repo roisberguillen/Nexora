@@ -20,6 +20,7 @@ test("SQLite WASM conserva i dati in OPFS dopo la riapertura", async ({ page }, 
     server: {
       host: "127.0.0.1",
       port: 0,
+      strictPort: false,
     },
   });
 

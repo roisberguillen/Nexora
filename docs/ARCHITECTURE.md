@@ -27,6 +27,12 @@ Modular monolith TypeScript in monorepo, con confini di dominio chiari e possibi
 6. `platform`: adapter Tauri, SQLite nativo, secure storage e integrazioni di dispositivo.
 7. `infra`: nessun agente NAS, SMB o Docker di backup.
 
+`packages/database-tauri` è l'adapter nativo della porta `SqliteDatabase`. Traduce le operazioni
+del plugin SQL ufficiale di Tauri senza esporlo al dominio o al layer applicativo e restituisce lo
+stesso contratto `Ledger` usato dalla PWA. Il file `sqlite:nexora.db` vive nella directory dati
+privata dell'app; repository, codec, snapshot portabili e catalogo delle migrazioni restano quelli
+di `packages/database`, evitando divergenze di schema tra runtime.
+
 ## Regola dipendenze
 UI → application/domain → repository interface. Gli adapter infrastrutturali implementano le interfacce; il dominio non importa React, database o librerie XLSX.
 
@@ -95,7 +101,8 @@ una copia di rollback prima di sostituire OPFS.
 ## Direzione multipiattaforma
 
 Le feature React condividono dominio, query e command. La PWA conserva gli adapter browser;
-Tauri 2 usa SQLite nativo e secure storage. Nessun file SQLite aperto viene condiviso in rete:
+Tauri 2 usa SQLite nativo tramite il plugin SQL ufficiale; il service worker non viene registrato
+nel runtime nativo. Nessun file SQLite aperto viene condiviso in rete:
 il Local Hub sincronizza esclusivamente operation log incrementali dopo pairing esplicito.
 Google Drive e il file `.nexora` manuale sono le sole destinazioni di backup; il Local Hub non è
 un servizio di backup.

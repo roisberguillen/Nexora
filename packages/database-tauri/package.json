@@ -1,0 +1,16 @@
+{
+  "name": "@nexora/database-tauri",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@nexora/database": "workspace:*",
+    "@nexora/domain": "workspace:*",
+    "@tauri-apps/plugin-sql": "2.4.0"
+  }
+}
