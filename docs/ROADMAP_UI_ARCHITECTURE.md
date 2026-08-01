@@ -75,10 +75,22 @@ Commit e push su `origin/main`.
 
 ## Evidenze Fase 6
 
+- [x] Corretto il blocco reale di startup sui ledger OPFS esistenti: la cronologia v13
+  legacy `import-fingerprint-tombstones` viene riconosciuta, riparata in modo additivo
+  (solo se manca `deleted_transaction_id`) e normalizzata senza reset o sostituzione dei dati.
+- [x] Gli errori di migrazione, apertura OPFS/IndexedDB, timeout, incompatibilità, recovery
+  guidato e caricamento dei modelli espongono codice, fase e categoria nella diagnostica.
+- [x] La preferenza `nexora.ledger-storage.v1` viene scritta solo dopo apertura e verifica;
+  un localStorage bloccato non invalida un ledger già verificato.
+- [x] Verificata l'apertura reale nel browser con il ledger OPFS esistente e dati persistiti;
+  la Fase 7 resta sospesa.
 - [x] Corretta la regressione di avvio introdotta dal refresh runtime di Vite: il preambolo React
   è ora una dipendenza esplicita dell'entrypoint, prima della valutazione dei moduli della shell.
 - [x] `NavIcon` usa un fallback sicuro per chiavi non mappate e non può più interrompere il mount.
 - [x] Verificati avvio, reload, sidebar desktop e navigazione mobile sulla build di produzione.
+- [x] La discovery di OPFS e IndexedDB è limitata per sonda, distingue archivi bloccati da timeout
+  e conserva diagnostica non sensibile con fase, codice e archivio selezionato.
+- [x] La persistenza della selezione avviene soltanto dopo la lettura riuscita dei modelli UI.
 - [x] Dashboard, conti e movimenti leggono dati dal ledger tramite snapshot e view model separati.
 - [x] Registrazione manuale, trasferimento, annullamento, cestino e split mantengono le invarianti
   contabili già testate nel dominio e negli adapter.

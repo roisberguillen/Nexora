@@ -240,3 +240,26 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   statica di recovery se React non riesce a montare.
 - **Conseguenze:** i dati locali e i contratti del ledger restano invariati; un errore di icona o
   bootstrap non genera più una pagina vuota. Il log tecnico non contiene dati finanziari.
+
+## 2026-07-31 — Discovery e verifica del ledger non distruttive
+
+- **Contesto:** la discovery di un browser può restare sospesa su OPFS o `indexedDB.databases()`;
+  inoltre `loadAppModels()` era eseguito dopo il completamento del bootstrap e dopo la scrittura
+  della preferenza del backend.
+- **Scelta:** limitare separatamente le sonde e rappresentare una sonda scaduta come archivio
+  `blocked`, senza aprire o creare alcun database. Portare il caricamento dei modelli nella fase
+  `VERIFYING_DATA` e salvare `nexora.ledger-storage.v1` solo dopo il suo esito positivo.
+- **Conseguenze:** la diagnostica espone codice, fase, categoria tecnica, archivi rilevati e
+  backend selezionato, mai record finanziari. Due archivi presenti richiedono sempre una scelta
+  esplicita; OPFS può ripiegare su IndexedDB soltanto quando la sua assenza è stata verificata.
+
+## 2026-08-01 — Recupero compatibile della cronologia migrazioni v13
+
+- **Causa reale:** il ledger OPFS esistente riportava la migrazione v13 con il nome storico
+  `import-fingerprint-tombstones`, incompatibile con il catalogo corrente
+  `import-row-deletion-audit`; l'apertura si interrompeva prima della dashboard.
+- **Scelta:** accettare esclusivamente l'alias v13 noto, aggiungere la colonna audit soltanto se
+  assente e normalizzare la cronologia nella stessa transazione. Le letture snapshot e i modelli
+  UI riportano ora codici per entità e fase, senza serializzare dati finanziari nella diagnostica.
+- **Conseguenze:** nessun reset di OPFS/IndexedDB/localStorage; i database con cronologia diversa
+  restano in recovery non distruttivo e richiedono intervento esplicito.

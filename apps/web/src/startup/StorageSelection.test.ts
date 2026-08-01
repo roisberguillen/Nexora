@@ -42,6 +42,20 @@ describe("selectStorage", () => {
     });
   });
 
+  it("sceglie OPFS solo quando entrambi gli archivi sono assenti", () => {
+    expect(selectStorage([archive("opfs", "absent"), archive("indexeddb", "absent")])).toEqual({
+      kind: "open",
+      storageKind: "opfs",
+    });
+  });
+
+  it("non apre IndexedDB quando la sua ispezione è bloccata", () => {
+    expect(selectStorage([archive("opfs", "absent"), archive("indexeddb", "blocked")])).toEqual({
+      kind: "guided-recovery",
+      reason: "unsafe-state",
+    });
+  });
+
   it("ignora una preferenza non valida e sceglie OPFS disponibile", () => {
     expect(
       selectStorage(

@@ -11,6 +11,13 @@
 
 - Restored application startup after the Phase 6 Vite React preamble regression. Navigation icon
   lookup now has a safe default and a pre-mount recovery screen prevents blank pages.
+- Hardened non-destructive ledger startup diagnostics and verification: OPFS/IndexedDB discovery
+  is bounded, model loading completes before backend selection is persisted, and recovery reports
+  the safe technical failure category.
+- Restored existing OPFS ledger loading when a known legacy v13 migration name is present;
+  compatibility repair is additive and transactionally normalizes only that migration record.
+- Startup diagnostics now identify safe read-model/UI-model phases and named repository reads;
+  development no longer registers the Service Worker and the dev server is fixed to port 5173.
 - Replaced browser directory/NAS backup selection with an explicit encrypted `.nexora-backup`
   download; portable restore and Google Drive remain available.
 - Added the platform-independent `@nexora/application` read layer and migrated the web shell to

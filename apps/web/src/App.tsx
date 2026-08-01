@@ -1,21 +1,6 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
-import { readLedgerSnapshot } from "@nexora/application";
 import { seedDemoLedger, type BrowserLedger } from "@nexora/database";
 import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
-import type {
-  Account,
-  AllocationPlan,
-  Budget,
-  Loan,
-  InvestmentPosition,
-  MonthlyJournal,
-  Category,
-  ImportBatch,
-  RecurringRule,
-  Tag,
-  TrashedTransaction,
-  Transaction,
-} from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult, type QuickAction } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
 
@@ -35,11 +20,6 @@ import {
   type CategoryInput,
 } from "./categories/categoryCommands";
 import { createLedgerTag, updateLedgerTag, type TagInput } from "./tags/tagCommands";
-import { buildAccountsViewModel, type AccountsViewModel } from "./accounts/buildAccountsViewModel";
-import {
-  buildDashboardViewModel,
-  type DashboardViewModel,
-} from "./dashboard/buildDashboardViewModel";
 import { Dashboard } from "./dashboard/Dashboard";
 import {
   createManualTransaction,
@@ -47,10 +27,7 @@ import {
   type CreateManualTransactionInput,
   type CreateTransferInput,
 } from "./transactions/transactionCommands";
-import {
-  buildTransactionsViewModel,
-  type TransactionsViewModel,
-} from "./transactions/buildTransactionsViewModel";
+import { loadAppModels, type AppModels } from "./appModels";
 import { TransactionsPage } from "./transactions/TransactionsPage";
 import { commitMoneyManagerImport } from "./imports/importCommands";
 import { RecurringPage } from "./recurring/RecurringPage";
@@ -108,7 +85,13 @@ import {
   serializeStartupDiagnostics,
 } from "./startup/StartupDiagnostics";
 import type { StartupBootstrap } from "./startup/StartupBootstrap";
-import type { StartupProgressEvent } from "./startup/StartupOrchestrator";
+import type {
+  StartupErrorCode,
+  StartupFailureDetail,
+  StartupFailureCategory,
+  StartupProgressEvent,
+} from "./startup/StartupOrchestrator";
+import type { StorageArchiveInspection } from "./startup/StorageDiscovery";
 
 const logger = createSafeLogger();
 const ImportsPage = lazy(async () => {
@@ -116,22 +99,7 @@ const ImportsPage = lazy(async () => {
   return { default: module.ImportsPage };
 });
 
-interface ReadyLedgerState {
-  readonly rawAccounts: readonly Account[];
-  readonly rawTransactions: readonly Transaction[];
-  readonly importBatches: readonly ImportBatch[];
-  readonly recurringRules: readonly RecurringRule[];
-  readonly allocationPlans: readonly AllocationPlan[];
-  readonly budgets: readonly Budget[];
-  readonly loans: readonly Loan[];
-  readonly investmentPositions: readonly InvestmentPosition[];
-  readonly monthlyJournals: readonly MonthlyJournal[];
-  readonly accounts: AccountsViewModel;
-  readonly categories: readonly Category[];
-  readonly tags: readonly Tag[];
-  readonly trashedTransactions: readonly TrashedTransaction[];
-  readonly dashboard: DashboardViewModel;
-  readonly transactions: TransactionsViewModel;
+interface ReadyLedgerState extends AppModels {
   readonly ledger: BrowserLedger;
   readonly status: "ready";
 }
@@ -143,11 +111,25 @@ type LedgerState =
 
 interface AppProps {
   readonly ledgerPromise: Promise<BrowserLedger>;
-  readonly startupBootstrap?: Pick<StartupBootstrap, "getProgress" | "subscribe">;
+  readonly startupBootstrap?: Pick<StartupBootstrap, "getFailure" | "getProgress" | "subscribe">;
+  readonly startupDiagnostics?: () => StartupDiagnosticsContext;
   readonly seedLedger?: typeof seedDemoLedger;
 }
 
-export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstrap }: AppProps) {
+export interface StartupDiagnosticsContext {
+  readonly archives: readonly StorageArchiveInspection[];
+  readonly errorCode?: StartupErrorCode;
+  readonly failureCategory?: StartupFailureCategory;
+  readonly failureDetail?: StartupFailureDetail;
+  readonly selectedBackend?: BrowserLedger["storageKind"];
+}
+
+export function App({
+  ledgerPromise,
+  seedLedger = seedDemoLedger,
+  startupBootstrap,
+  startupDiagnostics,
+}: AppProps) {
   const route = useAppRoute();
   const [ledgerState, setLedgerState] = useState<LedgerState>({
     status: "loading",
@@ -240,6 +222,22 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstr
         if (!isActive) {
           return;
         }
+        const diagnostics = startupDiagnostics?.();
+        console.error(
+          "[Nexora startup] ledger bootstrap failed.",
+          JSON.stringify({
+            category: diagnostics?.failureCategory ?? "unknown",
+            code: diagnostics?.errorCode ?? "NX-START-001",
+            phase: startupBootstrap?.getProgress()?.phase ?? "unknown",
+            selectedBackend: diagnostics?.selectedBackend ?? "none",
+          }),
+        );
+        console.error(
+          "[Nexora startup] technical cause.",
+          error instanceof Error
+            ? `${error.name}: ${error.message}\n${error.stack ?? ""}`
+            : "UnknownError",
+        );
         logger.error("persistence.failed", {
           component: "persistence",
           status: "failed",
@@ -251,7 +249,7 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstr
     return () => {
       isActive = false;
     };
-  }, [ledgerPromise]);
+  }, [ledgerPromise, startupBootstrap, startupDiagnostics]);
 
   useEffect(() => startupBootstrap?.subscribe(setStartupProgress), [startupBootstrap]);
 
@@ -737,7 +735,11 @@ export function App({ ledgerPromise, seedLedger = seedDemoLedger, startupBootstr
               />
             )
           ) : (
-            <PersistenceState progress={startupProgress} state={ledgerState} />
+            <PersistenceState
+              diagnostics={startupDiagnostics?.()}
+              progress={startupProgress}
+              state={ledgerState}
+            />
           )}
         </AppShell>
       )}
@@ -786,9 +788,11 @@ const quickActions: readonly QuickAction[] = [
 ];
 
 function PersistenceState({
+  diagnostics,
   progress,
   state,
 }: {
+  readonly diagnostics: StartupDiagnosticsContext | undefined;
   readonly progress: StartupProgressEvent | undefined;
   readonly state: Exclude<LedgerState, ReadyLedgerState>;
 }) {
@@ -796,13 +800,35 @@ function PersistenceState({
     return <StartupLoadingScreen progress={progress} />;
   }
 
+  if (
+    diagnostics?.failureDetail?.phase === "read-model" ||
+    diagnostics?.failureDetail?.phase === "ui-model"
+  ) {
+    return (
+      <section aria-live="polite" className="startup-recovery" role="alert">
+        <h1>L’archivio è stato aperto, ma i dati non sono ancora visualizzabili.</h1>
+        <p>
+          I tuoi dati locali non sono stati modificati. Puoi riprovare o esportare la diagnostica.
+        </p>
+        <div className="startup-recovery__actions">
+          <button onClick={() => window.location.reload()} type="button">
+            Riprova
+          </button>
+          <button onClick={() => downloadStartupDiagnostics(diagnostics, progress)} type="button">
+            Esporta diagnostica
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <StartupRecoveryScreen
-      onExportDiagnostics={downloadStartupDiagnostics}
+      onExportDiagnostics={() => downloadStartupDiagnostics(diagnostics, progress)}
       recoveryArchives={
         state.error instanceof StartupRecoveryRequiredError
           ? selectableRecoveryArchives(state.error.archives)
-          : undefined
+          : selectableDiagnosticRecoveryArchives(diagnostics)
       }
       onOpenSafeCopy={(storageKind) => {
         writeRecoverySelection(storageKind);
@@ -813,13 +839,39 @@ function PersistenceState({
   );
 }
 
-function downloadStartupDiagnostics(): void {
+function selectableDiagnosticRecoveryArchives(
+  diagnostics: StartupDiagnosticsContext | undefined,
+): readonly StorageArchiveInspection[] | undefined {
+  const archives = diagnostics?.archives.filter(
+    (archive) => archive.available && archive.state === "present",
+  );
+  return archives !== undefined && archives.length > 1 ? archives : undefined;
+}
+
+function downloadStartupDiagnostics(
+  diagnostics: StartupDiagnosticsContext | undefined,
+  progress: StartupProgressEvent | undefined,
+): void {
   const report = serializeStartupDiagnostics(
     createStartupDiagnostics({
       appVersion: import.meta.env.VITE_APP_VERSION,
       buildId: import.meta.env.VITE_APP_VERSION,
-      archives: [],
-      errorCode: "NX-START-001",
+      archives: diagnostics?.archives ?? [],
+      errorCode: diagnostics?.errorCode ?? "NX-START-001",
+      ...(diagnostics?.failureCategory === undefined
+        ? {}
+        : { failureCategory: diagnostics.failureCategory }),
+      ...(diagnostics?.failureDetail === undefined
+        ? {}
+        : {
+            errorName: diagnostics.failureDetail.errorName,
+            safeMessage: diagnostics.failureDetail.safeMessage,
+            phase: diagnostics.failureDetail.phase,
+          }),
+      ...(progress?.phase === undefined ? {} : { phase: progress.phase }),
+      ...(diagnostics?.selectedBackend === undefined
+        ? {}
+        : { selectedBackend: diagnostics.selectedBackend }),
     }),
   );
   const anchor = document.createElement("a");
@@ -827,72 +879,6 @@ function downloadStartupDiagnostics(): void {
   anchor.download = "nexora-startup-diagnostics.json";
   anchor.click();
   URL.revokeObjectURL(anchor.href);
-}
-
-interface AppModels {
-  readonly budgets: readonly Budget[];
-  readonly loans: readonly Loan[];
-  readonly investmentPositions: readonly InvestmentPosition[];
-  readonly monthlyJournals: readonly MonthlyJournal[];
-  readonly importBatches: readonly ImportBatch[];
-  readonly recurringRules: readonly RecurringRule[];
-  readonly allocationPlans: readonly AllocationPlan[];
-  readonly rawAccounts: readonly Account[];
-  readonly rawTransactions: readonly Transaction[];
-  readonly accounts: AccountsViewModel;
-  readonly categories: readonly Category[];
-  readonly tags: readonly Tag[];
-  readonly trashedTransactions: readonly TrashedTransaction[];
-  readonly dashboard: DashboardViewModel;
-  readonly transactions: TransactionsViewModel;
-}
-
-async function loadAppModels(ledger: BrowserLedger): Promise<AppModels> {
-  const snapshot = await readLedgerSnapshot(ledger.repository);
-  const {
-    accounts,
-    allocationPlans,
-    budgets,
-    categories,
-    importBatches,
-    investmentPositions,
-    loans,
-    monthlyJournals,
-    recurringRules,
-    tags,
-    transactions,
-    transfers,
-    trashedTransactions,
-  } = snapshot;
-  return {
-    allocationPlans,
-    budgets,
-    loans,
-    investmentPositions,
-    monthlyJournals,
-    importBatches,
-    recurringRules,
-    rawAccounts: accounts,
-    rawTransactions: transactions,
-    categories,
-    tags,
-    trashedTransactions,
-    accounts: buildAccountsViewModel({ accounts, transactions }),
-    dashboard: buildDashboardViewModel({
-      accounts,
-      categories,
-      loans,
-      investmentPositions,
-      transactions,
-      transfers,
-    }),
-    transactions: buildTransactionsViewModel({
-      accounts,
-      categories,
-      transactions,
-      transfers,
-    }),
-  };
 }
 
 function useAppRoute():

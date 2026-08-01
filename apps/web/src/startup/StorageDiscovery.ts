@@ -18,6 +18,7 @@ export interface StorageDiscoveryResult {
 
 export interface StorageDiscoveryDependencies {
   readonly now?: () => Date;
+  readonly probeTimeoutMs?: number;
   readonly indexedDbDatabases?: () => Promise<readonly { name?: string; version?: number }[]>;
   /** Uses the same runtime predicate as the SQLite OPFS adapter. */
   readonly opfsSqliteSupported?: () => boolean;
@@ -43,9 +44,14 @@ export class StorageDiscovery {
     const getRoot = this.dependencies.opfsRoot ?? defaultOpfsRoot();
     if (getRoot === undefined) return unavailable("opfs", checkedAt);
     try {
-      const root = await getRoot();
-      const directory = await root.getDirectoryHandle(opfsPath[0], { create: false });
-      await directory.getFileHandle(opfsPath[1], { create: false });
+      await withProbeTimeout(
+        (async () => {
+          const root = await getRoot();
+          const directory = await root.getDirectoryHandle(opfsPath[0], { create: false });
+          await directory.getFileHandle(opfsPath[1], { create: false });
+        })(),
+        this.probeTimeoutMs(),
+      );
       return present("opfs", checkedAt);
     } catch (error) {
       if (isNotFound(error)) return absent("opfs", checkedAt);
@@ -58,7 +64,9 @@ export class StorageDiscovery {
     const databases = this.dependencies.indexedDbDatabases ?? defaultIndexedDbDatabases();
     if (databases === undefined) return unavailable("indexeddb", checkedAt);
     try {
-      const database = (await databases()).find((candidate) => candidate.name === indexedDbName);
+      const database = (await withProbeTimeout(databases(), this.probeTimeoutMs())).find(
+        (candidate) => candidate.name === indexedDbName,
+      );
       return database === undefined
         ? absent("indexeddb", checkedAt)
         : present("indexeddb", checkedAt, database.version);
@@ -70,6 +78,29 @@ export class StorageDiscovery {
   private now(): string {
     return (this.dependencies.now ?? (() => new Date()))().toISOString();
   }
+
+  private probeTimeoutMs(): number {
+    return this.dependencies.probeTimeoutMs ?? 4_000;
+  }
+}
+
+function withProbeTimeout<T>(operation: Promise<T>, timeoutMs: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeoutId = globalThis.setTimeout(
+      () => reject(new Error("Storage probe timed out.")),
+      timeoutMs,
+    );
+    void operation.then(
+      (value) => {
+        globalThis.clearTimeout(timeoutId);
+        resolve(value);
+      },
+      (error: unknown) => {
+        globalThis.clearTimeout(timeoutId);
+        reject(error);
+      },
+    );
+  });
 }
 
 function defaultOpfsRoot(): (() => Promise<FileSystemDirectoryHandle>) | undefined {

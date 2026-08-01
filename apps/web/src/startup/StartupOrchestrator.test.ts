@@ -1,7 +1,12 @@
 import { InMemoryLedgerRepository, PersistenceError, type BrowserLedger } from "@nexora/database";
 import { describe, expect, it, vi } from "vitest";
 
-import { StartupOrchestrator, classifyStartupError } from "./StartupOrchestrator";
+import {
+  StartupModelLoadError,
+  StartupOrchestrator,
+  classifyStartupError,
+} from "./StartupOrchestrator";
+import { StartupRecoveryRequiredError } from "./StartupRecovery";
 
 const ledger: BrowserLedger = {
   repository: new InMemoryLedgerRepository(),
@@ -64,13 +69,18 @@ describe("StartupOrchestrator", () => {
     expect(verifyData).toHaveBeenCalledWith(ledger);
   });
 
-  it("interrompe in modo recuperabile se il worker o il backend non sono disponibili", () => {
-    for (const code of ["worker_failed", "opfs_unavailable", "indexeddb_unavailable"] as const) {
+  it("distingue indisponibilità di backend e timeout", () => {
+    for (const code of ["opfs_unavailable", "indexeddb_unavailable"] as const) {
       expect(classifyStartupError(new PersistenceError(code, code))).toMatchObject({
         code: "NX-STORAGE-001",
         kind: "recoverable",
       });
     }
+    expect(classifyStartupError(new PersistenceError("worker_failed", "timeout"))).toMatchObject({
+      category: "timeout",
+      code: "NX-TIMEOUT-001",
+      kind: "recoverable",
+    });
   });
 
   it("ferma l'avvio se la verifica dei dati segnala un archivio corrotto", async () => {
@@ -81,8 +91,8 @@ describe("StartupOrchestrator", () => {
     });
 
     await expect(orchestrator.run()).resolves.toMatchObject({
-      state: "BLOCKING_ERROR",
-      failure: { code: "NX-START-001", kind: "blocking", cause: failure },
+      state: "RECOVERABLE_ERROR",
+      failure: { category: "database-incompatible", code: "NX-DATABASE-001", cause: failure },
     });
     expect(ledger.close).toHaveBeenCalled();
   });
@@ -117,8 +127,22 @@ describe("StartupOrchestrator", () => {
 
     await expect(orchestrator.run()).resolves.toMatchObject({
       state: "RECOVERABLE_ERROR",
-      failure: { code: "NX-STORAGE-001", kind: "recoverable" },
+      failure: { category: "timeout", code: "NX-TIMEOUT-001", kind: "recoverable" },
     });
+  });
+
+  it("distingue un errore di caricamento modelli dopo l'apertura del ledger", async () => {
+    const failure = new StartupModelLoadError(new Error("view model unavailable"));
+    const orchestrator = new StartupOrchestrator({
+      openLedger: async () => ledger,
+      verifyData: async () => Promise.reject(failure),
+    });
+
+    await expect(orchestrator.run()).resolves.toMatchObject({
+      state: "RECOVERABLE_ERROR",
+      failure: { category: "model-loading", code: "NX-MODEL-001", cause: failure },
+    });
+    expect(ledger.close).toHaveBeenCalled();
   });
 
   it("non maschera l'errore originale se una fixture senza close fallisce dopo l'apertura", async () => {
@@ -130,8 +154,8 @@ describe("StartupOrchestrator", () => {
     });
 
     await expect(orchestrator.run()).resolves.toMatchObject({
-      state: "BLOCKING_ERROR",
-      failure: { cause: failure },
+      state: "RECOVERABLE_ERROR",
+      failure: { category: "database-incompatible", cause: failure },
     });
   });
 
@@ -140,5 +164,22 @@ describe("StartupOrchestrator", () => {
       code: "NX-START-001",
       kind: "blocking",
     });
+  });
+
+  it("classifica la selezione esplicita richiesta quando sono presenti due archivi", async () => {
+    const recovery = new StartupRecoveryRequiredError([]);
+    const progress: string[] = [];
+    const orchestrator = new StartupOrchestrator({
+      discoverStorage: async () => Promise.reject(recovery),
+      openLedger: async () => ledger,
+    });
+
+    await expect(
+      orchestrator.run((event) => progress.push(`${event.state}:${event.phase}`)),
+    ).resolves.toMatchObject({
+      state: "RECOVERABLE_ERROR",
+      failure: { category: "guided-recovery", code: "NX-RECOVERY-001", cause: recovery },
+    });
+    expect(progress.at(-1)).toBe("RECOVERABLE_ERROR:storage");
   });
 });

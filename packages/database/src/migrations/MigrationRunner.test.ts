@@ -178,6 +178,52 @@ describe("MigrationRunner", () => {
     });
   });
 
+  it("ripara senza perdita il nome storico della migrazione v13", async () => {
+    const legacyRunner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations.filter((migration) => migration.version <= 12),
+      now: () => fixedNow,
+    });
+    await legacyRunner.migrateToLatest();
+    await database.run(
+      "INSERT INTO import_batches (id, importer_type, source_filename, source_sha256, status, started_at, rows_total) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [
+        "legacy-batch",
+        "money_manager_xlsx",
+        "legacy.xlsx",
+        "a".repeat(64),
+        "committed",
+        fixedNow.toISOString(),
+        0,
+      ],
+    );
+    await database.run(
+      "INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, ?)",
+      [13, "import-fingerprint-tombstones", fixedNow.toISOString()],
+    );
+
+    const runner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations,
+      now: () => fixedNow,
+    });
+    await expect(runner.migrateToLatest()).resolves.toMatchObject({
+      fromVersion: 13,
+      toVersion: 13,
+      appliedMigrations: [],
+    });
+    expect(
+      sqlite
+        .prepare("PRAGMA table_info(import_rows)")
+        .all()
+        .some((column) => (column as { name: string }).name === "deleted_transaction_id"),
+    ).toBe(true);
+    expect(migrationRows(sqlite).at(-1)).toEqual({
+      version: 13,
+      name: "import-row-deletion-audit",
+    });
+  });
+
   it("annulla l'intera migrazione quando un'istruzione fallisce", async () => {
     const failingMigration = markerMigration({
       requiresBackup: false,

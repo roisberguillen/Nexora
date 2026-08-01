@@ -9,7 +9,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 
-import { App } from "./App";
+import { App, type StartupDiagnosticsContext } from "./App";
+import { loadAppModels } from "./appModels";
 import {
   PwaUpdateNotice,
   pwaUpdateEventName,
@@ -22,9 +23,10 @@ import {
 } from "./persistence/openPwaLedger";
 import { StartupOrchestrator } from "./startup/StartupOrchestrator";
 import { createStartupBootstrap } from "./startup/StartupBootstrap";
-import { StorageDiscovery } from "./startup/StorageDiscovery";
+import { StorageDiscovery, type StorageArchiveInspection } from "./startup/StorageDiscovery";
 import { selectStorage } from "./startup/StorageSelection";
 import { readRecoverySelection, StartupRecoveryRequiredError } from "./startup/StartupRecovery";
+import { StartupModelLoadError } from "./startup/StartupOrchestrator";
 import { readStoragePreferenceHint } from "./startup/storagePreference";
 import { withStartupLock } from "./startup/StartupLock";
 import { renderPreMountError } from "./startup/PreMountError";
@@ -36,22 +38,26 @@ if (!(rootElement instanceof HTMLElement)) {
   throw new Error("Nexora root element is missing");
 }
 
-const applyPwaUpdate = registerSW({
-  onNeedRefresh() {
-    window.dispatchEvent(
-      new CustomEvent<PwaUpdateEventDetail>(pwaUpdateEventName, {
-        detail: { applyUpdate: () => applyPwaUpdate(true) },
-      }),
-    );
-  },
-});
+const applyPwaUpdate = import.meta.env.PROD
+  ? registerSW({
+      onNeedRefresh() {
+        window.dispatchEvent(
+          new CustomEvent<PwaUpdateEventDetail>(pwaUpdateEventName, {
+            detail: { applyUpdate: () => applyPwaUpdate?.(true) },
+          }),
+        );
+      },
+    })
+  : undefined;
 
 let selectedStorageKind: "opfs" | "indexeddb" | undefined;
 let allowOpfsFallback = false;
+let discoveredArchives: readonly StorageArchiveInspection[] = [];
 const startupBootstrap = createStartupBootstrap(
   new StartupOrchestrator({
     discoverStorage: async () => {
       const discovery = await new StorageDiscovery().inspect();
+      discoveredArchives = discovery.archives;
       const recoverySelection = readRecoverySelection(discovery.archives);
       if (recoverySelection !== undefined) {
         selectedStorageKind = recoverySelection;
@@ -79,6 +85,26 @@ const startupBootstrap = createStartupBootstrap(
         }),
       );
     },
+    verifyData: async (ledger) => {
+      try {
+        await loadAppModels(ledger);
+      } catch (cause) {
+        throw new StartupModelLoadError(cause);
+      }
+    },
+    validateEnvironment: () => {
+      if (
+        typeof indexedDB === "undefined" &&
+        typeof navigator.storage?.getDirectory !== "function"
+      ) {
+        throw new Error("No supported local browser storage is available.");
+      }
+    },
+    validateLedger: async (ledger) => {
+      await ledger.repository.listAccounts();
+    },
+    // SQLite and IndexedDB adapters apply their own atomic migrations while opening.
+    runMigrations: () => undefined,
     timeouts: {
       environment: 5_000,
       storage: 15_000,
@@ -89,9 +115,29 @@ const startupBootstrap = createStartupBootstrap(
   }),
 );
 const ledgerPromise = startupBootstrap.ledgerPromise.then((ledger) => {
-  persistPwaLedgerSelection(ledger.storageKind);
+  try {
+    // The ledger is already opened and verified here; a blocked preference store must
+    // not turn a valid local ledger into a startup failure.
+    persistPwaLedgerSelection(ledger.storageKind);
+  } catch (error) {
+    console.warn(
+      "[Nexora startup] Could not persist the verified storage preference.",
+      error instanceof Error ? error.name : "UnknownError",
+    );
+  }
   return ledger;
 });
+
+const getStartupDiagnostics = (): StartupDiagnosticsContext => {
+  const failure = startupBootstrap.getFailure();
+  return {
+    archives: discoveredArchives,
+    ...(failure === undefined ? {} : { errorCode: failure.code }),
+    ...(failure === undefined ? {} : { failureCategory: failure.category }),
+    ...(failure === undefined ? {} : { failureDetail: failure.detail }),
+    ...(selectedStorageKind === undefined ? {} : { selectedBackend: selectedStorageKind }),
+  };
+};
 
 window.addEventListener(
   "pagehide",
@@ -105,7 +151,11 @@ try {
   createRoot(rootElement).render(
     <StrictMode>
       <PwaUpdateNotice />
-      <App ledgerPromise={ledgerPromise} startupBootstrap={startupBootstrap} />
+      <App
+        ledgerPromise={ledgerPromise}
+        startupBootstrap={startupBootstrap}
+        startupDiagnostics={getStartupDiagnostics}
+      />
     </StrictMode>,
   );
 } catch (error) {

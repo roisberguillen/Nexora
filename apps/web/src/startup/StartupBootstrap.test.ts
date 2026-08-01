@@ -1,8 +1,8 @@
-import { InMemoryLedgerRepository, type BrowserLedger } from "@nexora/database";
+import { InMemoryLedgerRepository, PersistenceError, type BrowserLedger } from "@nexora/database";
 import { describe, expect, it, vi } from "vitest";
 
 import { createStartupBootstrap } from "./StartupBootstrap";
-import { StartupOrchestrator } from "./StartupOrchestrator";
+import { StartupModelLoadError, StartupOrchestrator } from "./StartupOrchestrator";
 
 const ledger: BrowserLedger = {
   repository: new InMemoryLedgerRepository(),
@@ -24,5 +24,35 @@ describe("createStartupBootstrap", () => {
 
     expect(bootstrap.getProgress()).toMatchObject({ state: "READY", phase: "ready" });
     expect(states).toContain("READY");
+  });
+
+  it("conserva la classificazione dell'errore per la diagnostica di recovery", async () => {
+    const failure = new PersistenceError("indexeddb_unavailable", "blocked");
+    const bootstrap = createStartupBootstrap(
+      new StartupOrchestrator({ openLedger: async () => Promise.reject(failure) }),
+    );
+
+    await expect(bootstrap.ledgerPromise).rejects.toBe(failure);
+
+    expect(bootstrap.getFailure()).toMatchObject({
+      category: "indexeddb-open",
+      code: "NX-STORAGE-001",
+    });
+  });
+
+  it("non consente di persistere una selezione prima della verifica dei modelli", async () => {
+    const persistSelection = vi.fn();
+    const bootstrap = createStartupBootstrap(
+      new StartupOrchestrator({
+        openLedger: async () => ledger,
+        verifyData: async () => Promise.reject(new StartupModelLoadError(new Error("models"))),
+      }),
+    );
+
+    await expect(bootstrap.ledgerPromise.then(persistSelection)).rejects.toBeInstanceOf(
+      StartupModelLoadError,
+    );
+
+    expect(persistSelection).not.toHaveBeenCalled();
   });
 });

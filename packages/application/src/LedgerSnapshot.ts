@@ -52,11 +52,40 @@ export type LedgerSnapshotRepository = Pick<
   | "listTrashedTransactions"
 >;
 
+export type LedgerReadCode =
+  | "NX-READ-ACCOUNTS"
+  | "NX-READ-ALLOCATION-PLANS"
+  | "NX-READ-BUDGETS"
+  | "NX-READ-CATEGORIES"
+  | "NX-READ-IMPORTS"
+  | "NX-READ-INVESTMENTS"
+  | "NX-READ-LOANS"
+  | "NX-READ-JOURNALS"
+  | "NX-READ-RECURRING"
+  | "NX-READ-TAGS"
+  | "NX-READ-TRANSACTIONS"
+  | "NX-READ-TRANSFERS"
+  | "NX-READ-TRASH";
+
+/** Safe, entity-level startup context. It deliberately never includes record data. */
+export class LedgerReadError extends Error {
+  public constructor(
+    readonly code: LedgerReadCode,
+    readonly operation: string,
+    cause: unknown,
+  ) {
+    super(`The ledger ${operation} read failed.`, { cause });
+    this.name = "LedgerReadError";
+  }
+}
+
 export async function readLedgerSnapshot(
   repository: LedgerSnapshotRepository,
 ): Promise<LedgerSnapshot> {
+  const accounts = await readLedgerCollection("NX-READ-ACCOUNTS", "accounts", () =>
+    repository.listAccounts(),
+  );
   const [
-    accounts,
     allocationPlans,
     budgets,
     categories,
@@ -70,19 +99,30 @@ export async function readLedgerSnapshot(
     transfers,
     trashedTransactions,
   ] = await Promise.all([
-    repository.listAccounts(),
-    repository.listAllocationPlans(),
-    repository.listBudgets(),
-    repository.listCategories(),
-    repository.listImportBatches(),
-    repository.listInvestmentPositions(),
-    repository.listLoans(),
-    repository.listMonthlyJournals(),
-    repository.listRecurringRules(),
-    repository.listTags(),
-    repository.listTransactions(),
-    repository.listTransfers(),
-    repository.listTrashedTransactions(),
+    readLedgerCollection("NX-READ-ALLOCATION-PLANS", "allocation plans", () =>
+      repository.listAllocationPlans(),
+    ),
+    readLedgerCollection("NX-READ-BUDGETS", "budgets", () => repository.listBudgets()),
+    readLedgerCollection("NX-READ-CATEGORIES", "categories", () => repository.listCategories()),
+    readLedgerCollection("NX-READ-IMPORTS", "import batches", () => repository.listImportBatches()),
+    readLedgerCollection("NX-READ-INVESTMENTS", "investment positions", () =>
+      repository.listInvestmentPositions(),
+    ),
+    readLedgerCollection("NX-READ-LOANS", "loans", () => repository.listLoans()),
+    readLedgerCollection("NX-READ-JOURNALS", "monthly journals", () =>
+      repository.listMonthlyJournals(),
+    ),
+    readLedgerCollection("NX-READ-RECURRING", "recurring rules", () =>
+      repository.listRecurringRules(),
+    ),
+    readLedgerCollection("NX-READ-TAGS", "tags", () => repository.listTags()),
+    readLedgerCollection("NX-READ-TRANSACTIONS", "transactions", () =>
+      repository.listTransactions(),
+    ),
+    readLedgerCollection("NX-READ-TRANSFERS", "transfers", () => repository.listTransfers()),
+    readLedgerCollection("NX-READ-TRASH", "trashed transactions", () =>
+      repository.listTrashedTransactions(),
+    ),
   ]);
 
   return Object.freeze({
@@ -100,4 +140,16 @@ export async function readLedgerSnapshot(
     transfers,
     trashedTransactions,
   });
+}
+
+async function readLedgerCollection<T>(
+  code: LedgerReadCode,
+  operation: string,
+  read: () => Promise<T>,
+): Promise<T> {
+  try {
+    return await read();
+  } catch (cause) {
+    throw new LedgerReadError(code, operation, cause);
+  }
 }

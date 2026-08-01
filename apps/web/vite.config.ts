@@ -61,16 +61,17 @@ export default defineConfig({
       },
       workbox: {
         cleanupOutdatedCaches: true,
-        clientsClaim: true,
+        clientsClaim: false,
         globPatterns: ["**/*.{css,html,ico,js,png,svg,wasm,woff2}"],
         navigateFallback: "index.html",
-        skipWaiting: true,
+        skipWaiting: false,
       },
     }),
   ],
   server: {
     host: "127.0.0.1",
     port: 5173,
+    strictPort: true,
     headers: crossOriginIsolationHeaders,
   },
   preview: {

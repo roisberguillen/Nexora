@@ -35,6 +35,41 @@ describe("StorageDiscovery", () => {
     expect(getFileHandle).toHaveBeenCalledWith("nexora.sqlite3", { create: false });
   });
 
+  it("rileva OPFS presente senza aprire IndexedDB e mantiene la distinzione degli archivi", async () => {
+    const getFileHandle = vi.fn(async () => ({ name: "nexora.sqlite3" }));
+    const getDirectoryHandle = vi.fn(async () => ({ getFileHandle }));
+    const databases = vi.fn(async () => []);
+    const result = await new StorageDiscovery({
+      now,
+      opfsSqliteSupported: () => true,
+      opfsRoot: async () => ({ getDirectoryHandle }) as unknown as FileSystemDirectoryHandle,
+      indexedDbDatabases: databases,
+    }).inspect();
+
+    expect(result.archives).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: "opfs", available: true, state: "present" }),
+        expect.objectContaining({ kind: "indexeddb", available: true, state: "absent" }),
+      ]),
+    );
+  });
+
+  it("classifica il timeout della sonda OPFS come bloccato senza creare l'archivio", async () => {
+    const getDirectoryHandle = vi.fn(() => new Promise<never>(() => undefined));
+    const result = await new StorageDiscovery({
+      now,
+      probeTimeoutMs: 1,
+      opfsSqliteSupported: () => true,
+      opfsRoot: async () => ({ getDirectoryHandle }) as unknown as FileSystemDirectoryHandle,
+      indexedDbDatabases: async () => [],
+    }).inspect();
+
+    expect(result.archives.find((archive) => archive.kind === "opfs")).toMatchObject({
+      available: true,
+      state: "blocked",
+    });
+  });
+
   it("non dichiara OPFS utilizzabile se il runtime SQLite non è isolato", async () => {
     const getDirectoryHandle = vi.fn();
     const result = await new StorageDiscovery({
@@ -57,6 +92,19 @@ describe("StorageDiscovery", () => {
     }).inspect();
 
     expect(result.archives.find((archive) => archive.kind === "indexeddb")).toMatchObject({
+      state: "blocked",
+    });
+  });
+
+  it("trasforma una sonda IndexedDB bloccata in recovery non distruttivo", async () => {
+    const result = await new StorageDiscovery({
+      now,
+      probeTimeoutMs: 1,
+      indexedDbDatabases: () => new Promise(() => undefined),
+    }).inspect();
+
+    expect(result.archives.find((archive) => archive.kind === "indexeddb")).toMatchObject({
+      available: true,
       state: "blocked",
     });
   });

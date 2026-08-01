@@ -53,6 +53,7 @@ export class MigrationRunner {
       await this.database.execute(requiredSqlitePragmas);
       const appliedMigrations = await this.readAppliedMigrations();
       validateAppliedMigrations(appliedMigrations, this.migrations);
+      await this.repairLegacyMigrations(appliedMigrations);
 
       const fromVersion = appliedMigrations.at(-1)?.version ?? 0;
       const appliedVersions: number[] = [];
@@ -77,6 +78,47 @@ export class MigrationRunner {
       };
     } finally {
       this.isRunning = false;
+    }
+  }
+
+  private async repairLegacyMigrations(
+    appliedMigrations: readonly AppliedMigrationRow[],
+  ): Promise<void> {
+    const repairs = appliedMigrations
+      .map((applied, index) => ({ applied, migration: this.migrations[index] }))
+      .filter(
+        (
+          entry,
+        ): entry is {
+          applied: AppliedMigrationRow;
+          migration: DatabaseMigration;
+        } =>
+          entry.migration !== undefined &&
+          entry.migration.legacyNames?.includes(entry.applied.name) === true,
+      );
+    if (repairs.length === 0) return;
+
+    await this.database.execute("BEGIN IMMEDIATE;");
+    try {
+      for (const { applied, migration } of repairs) {
+        await migration.legacyRepair?.(this.database);
+        await this.database.run("UPDATE schema_migrations SET name = ? WHERE version = ?", [
+          migration.name,
+          applied.version,
+        ]);
+      }
+      await this.database.execute("COMMIT;");
+    } catch (cause) {
+      try {
+        await this.database.execute("ROLLBACK;");
+      } catch {
+        // The original repair error remains actionable.
+      }
+      throw new MigrationError(
+        "migration_failed",
+        "A legacy migration history could not be repaired safely.",
+        cause,
+      );
     }
   }
 
@@ -214,10 +256,13 @@ function validateAppliedMigrations(
         `Database version ${applied.version} is newer than this application.`,
       );
     }
-    if (knownMigration.name !== applied.name) {
+    if (
+      knownMigration.name !== applied.name &&
+      !knownMigration.legacyNames?.includes(applied.name)
+    ) {
       throw new MigrationError(
         "applied_migration_mismatch",
-        `Applied migration ${applied.version} does not match the application catalog.`,
+        `Applied migration ${applied.version} (${applied.name}) does not match the application catalog (${knownMigration.name}).`,
       );
     }
   }

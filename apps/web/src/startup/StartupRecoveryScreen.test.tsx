@@ -25,4 +25,24 @@ describe("StartupRecoveryScreen", () => {
     ).toBeDisabled();
     expect(screen.getByRole("button", { name: "Prova ripristino temporaneo" })).toBeDisabled();
   });
+
+  it("permette di aprire esplicitamente uno dei due archivi rilevati", async () => {
+    const user = userEvent.setup();
+    const onOpenSafeCopy = vi.fn();
+    render(
+      <StartupRecoveryScreen
+        onExportDiagnostics={vi.fn()}
+        onOpenSafeCopy={onOpenSafeCopy}
+        onRetry={vi.fn()}
+        recoveryArchives={[
+          { kind: "opfs", available: true, state: "present", lastCheckedAt: "now" },
+          { kind: "indexeddb", available: true, state: "present", lastCheckedAt: "now" },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Apri archivio IndexedDB" }));
+
+    expect(onOpenSafeCopy).toHaveBeenCalledWith("indexeddb");
+  });
 });

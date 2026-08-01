@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { readRecoverySelection, selectableRecoveryArchives } from "./StartupRecovery";
+import {
+  readRecoverySelection,
+  selectableRecoveryArchives,
+  writeRecoverySelection,
+} from "./StartupRecovery";
 
 const archives = [
   { kind: "opfs", available: true, state: "present", lastCheckedAt: "2026-07-30T00:00:00.000Z" },
@@ -27,6 +31,22 @@ describe("startup recovery selection", () => {
     vi.stubGlobal("localStorage", storage);
     expect(readRecoverySelection(archives)).toBe("indexeddb");
     expect(storage.removeItem).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it("non consuma né applica una selezione che non corrisponde a un archivio presente", () => {
+    const storage = { getItem: vi.fn(() => "opfs"), removeItem: vi.fn() };
+    vi.stubGlobal("localStorage", storage);
+    expect(readRecoverySelection([archives[1]])).toBeUndefined();
+    expect(storage.removeItem).toHaveBeenCalledWith("nexora.startup-recovery-storage.v1");
+    vi.unstubAllGlobals();
+  });
+
+  it("salva solo la scelta esplicita richiesta dal recupero guidato", () => {
+    const storage = { setItem: vi.fn() };
+    vi.stubGlobal("localStorage", storage);
+    writeRecoverySelection("indexeddb");
+    expect(storage.setItem).toHaveBeenCalledWith("nexora.startup-recovery-storage.v1", "indexeddb");
     vi.unstubAllGlobals();
   });
 });

@@ -5,6 +5,7 @@ playwright-report/
 test-results/
 AGENTS.md
 .codex/
+.tmp-stitch-instructions/
 design/
 docs/
 examples/

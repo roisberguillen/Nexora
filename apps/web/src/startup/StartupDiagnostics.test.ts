@@ -10,6 +10,8 @@ describe("startup diagnostics", () => {
         userAgent: "test",
         platform: "test-os",
         errorCode: "NX-STORAGE-001",
+        failureCategory: "opfs-open",
+        phase: "storage",
         now: () => new Date("2026-07-29T00:00:00.000Z"),
         capabilities: {
           worker: true,
@@ -30,6 +32,8 @@ describe("startup diagnostics", () => {
       }),
     );
     expect(serialized).toContain("NX-STORAGE-001");
-    expect(serialized).not.toMatch(/amount|balance|token|passphrase|category|transaction/i);
+    expect(serialized).toContain("opfs-open");
+    expect(serialized).toContain("storage");
+    expect(serialized).not.toMatch(/amount|balance|token|passphrase|transaction/i);
   });
 });

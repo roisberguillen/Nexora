@@ -42,4 +42,39 @@ describe("readLedgerSnapshot", () => {
     expect(repository.listAccounts).toHaveBeenCalledOnce();
     expect(repository.listTrashedTransactions).toHaveBeenCalledOnce();
   });
+
+  it.each([
+    ["listTransactions", "NX-READ-TRANSACTIONS"],
+    ["listMonthlyJournals", "NX-READ-JOURNALS"],
+    ["listTrashedTransactions", "NX-READ-TRASH"],
+  ] as const)("identifies a failed %s read without exposing records", async (method, code) => {
+    const repository = Object.fromEntries(
+      [
+        "listAccounts",
+        "listAllocationPlans",
+        "listBudgets",
+        "listCategories",
+        "listImportBatches",
+        "listInvestmentPositions",
+        "listLoans",
+        "listMonthlyJournals",
+        "listRecurringRules",
+        "listTags",
+        "listTransactions",
+        "listTransfers",
+        "listTrashedTransactions",
+      ].map((name) => [
+        name,
+        vi.fn(async () => {
+          if (name === method) throw new Error("repository unavailable");
+          return [];
+        }),
+      ]),
+    ) as unknown as LedgerSnapshotRepository;
+
+    await expect(readLedgerSnapshot(repository)).rejects.toMatchObject({
+      code,
+      name: "LedgerReadError",
+    });
+  });
 });

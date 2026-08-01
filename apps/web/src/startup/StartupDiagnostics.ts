@@ -1,7 +1,12 @@
 import type { BrowserLedgerStorageKind } from "@nexora/database";
 
 import type { StorageArchiveInspection } from "./StorageDiscovery";
-import type { StartupErrorCode } from "./StartupOrchestrator";
+import type {
+  StartupErrorCode,
+  StartupFailureCategory,
+  StartupFailureDetail,
+  StartupProgressPhase,
+} from "./StartupOrchestrator";
 
 export interface StartupDiagnosticsInput {
   readonly appVersion: string;
@@ -9,6 +14,10 @@ export interface StartupDiagnosticsInput {
   readonly selectedBackend?: BrowserLedgerStorageKind;
   readonly archives: readonly StorageArchiveInspection[];
   readonly errorCode?: StartupErrorCode;
+  readonly failureCategory?: StartupFailureCategory;
+  readonly phase?: StartupProgressPhase | StartupFailureDetail["phase"];
+  readonly errorName?: string;
+  readonly safeMessage?: string;
   readonly now?: () => Date;
   readonly userAgent?: string;
   readonly platform?: string;
@@ -39,6 +48,10 @@ export interface StartupDiagnosticsReport {
     "kind" | "available" | "state" | "schemaVersion" | "lastCheckedAt"
   >[];
   readonly errorCode?: StartupErrorCode;
+  readonly failureCategory?: StartupFailureCategory;
+  readonly phase?: StartupProgressPhase | StartupFailureDetail["phase"];
+  readonly errorName?: string;
+  readonly safeMessage?: string;
   readonly timestamp: string;
 }
 
@@ -65,6 +78,10 @@ export function createStartupDiagnostics(input: StartupDiagnosticsInput): Startu
       ...(schemaVersion === undefined ? {} : { schemaVersion }),
     })),
     ...(input.errorCode === undefined ? {} : { errorCode: input.errorCode }),
+    ...(input.failureCategory === undefined ? {} : { failureCategory: input.failureCategory }),
+    ...(input.errorName === undefined ? {} : { errorName: input.errorName }),
+    ...(input.safeMessage === undefined ? {} : { safeMessage: input.safeMessage }),
+    ...(input.phase === undefined ? {} : { phase: input.phase }),
     timestamp: (input.now ?? (() => new Date()))().toISOString(),
   };
 }
