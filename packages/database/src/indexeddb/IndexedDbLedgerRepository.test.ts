@@ -296,7 +296,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 13 });
+    expect(metadata).toEqual({ key: "schema_version", value: 14 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -612,7 +612,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(13);
+    expect(ledger.schemaVersion).toBe(14);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -648,6 +648,7 @@ describe("IndexedDbLedgerRepository", () => {
       rowsTotal: 1,
       sourceFilename: "movimenti.xlsx",
       sourceSha256: "a".repeat(64),
+      mappingProfileId: "mapping-profile-idb",
     });
     const row = ImportRow.create({
       id: "row-idb",

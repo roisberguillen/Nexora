@@ -1942,6 +1942,7 @@ interface ImportBatchRecord {
   readonly importer_type: ImportBatch["importerType"];
   readonly source_filename: string;
   readonly source_sha256: string;
+  readonly mapping_profile_id?: string;
   readonly status: "previewed" | "committed" | "undone" | "failed";
   readonly rows_total: number;
   readonly rows_imported: number;
@@ -2205,6 +2206,7 @@ function importBatchToRecord(batch: ImportBatch): ImportBatchRecord {
     importer_type: batch.importerType,
     source_filename: batch.sourceFilename,
     source_sha256: batch.sourceSha256,
+    ...(batch.mappingProfileId === undefined ? {} : { mapping_profile_id: batch.mappingProfileId }),
     status: batch.status,
     rows_total: batch.rowsTotal,
     rows_imported: batch.rowsImported,
@@ -2218,6 +2220,7 @@ function importBatchFromRecord(row: ImportBatchRecord): ImportBatch {
     importerType: row.importer_type,
     sourceFilename: row.source_filename,
     sourceSha256: row.source_sha256,
+    ...(row.mapping_profile_id === undefined ? {} : { mappingProfileId: row.mapping_profile_id }),
     status: row.status,
     rowsTotal: row.rows_total,
     rowsImported: row.rows_imported,

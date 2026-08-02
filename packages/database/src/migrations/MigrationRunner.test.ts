@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 13,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+      toVersion: 14,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -140,14 +140,15 @@ describe("MigrationRunner", () => {
       { version: 11, name: "monthly-journals" },
       { version: 12, name: "transaction-trash" },
       { version: 13, name: "import-row-deletion-audit" },
+      { version: 14, name: "import-mapping-profiles" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 13,
-      toVersion: 13,
+      fromVersion: 14,
+      toVersion: 14,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(13);
+    expect(migrationRows(sqlite)).toHaveLength(14);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -169,8 +170,8 @@ describe("MigrationRunner", () => {
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 13,
-      appliedMigrations: [11, 12, 13],
+      toVersion: 14,
+      appliedMigrations: [11, 12, 13, 14],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
@@ -209,8 +210,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 13,
-      toVersion: 13,
-      appliedMigrations: [],
+      toVersion: 14,
+      appliedMigrations: [14],
     });
     expect(
       sqlite
@@ -218,7 +219,7 @@ describe("MigrationRunner", () => {
         .all()
         .some((column) => (column as { name: string }).name === "deleted_transaction_id"),
     ).toBe(true);
-    expect(migrationRows(sqlite).at(-1)).toEqual({
+    expect(migrationRows(sqlite).find(({ version }) => version === 13)).toEqual({
       version: 13,
       name: "import-row-deletion-audit",
     });

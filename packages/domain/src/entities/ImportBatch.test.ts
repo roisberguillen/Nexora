@@ -17,9 +17,11 @@ describe("ImportBatch", () => {
       rowsTotal: 2,
       sourceFilename: "movimenti.xlsx",
       sourceSha256,
+      mappingProfileId: "mapping-profile-1",
     });
     const committed = batch.commit({ rowsImported: 1, rowsSkipped: 1, rowsFailed: 0 });
     expect(committed.status).toBe("committed");
+    expect(committed.mappingProfileId).toBe("mapping-profile-1");
     expect(committed.undo().status).toBe("undone");
   });
 

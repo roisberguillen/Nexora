@@ -309,6 +309,9 @@ export function validatePortableLedgerSnapshot(
         "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf",
       sourceFilename: text(value, "sourceFilename"),
       sourceSha256: text(value, "sourceSha256"),
+      ...(optionalText(value, "mappingProfileId") === undefined
+        ? {}
+        : { mappingProfileId: optionalText(value, "mappingProfileId")! }),
       status: text(value, "status") as "previewed" | "committed" | "undone" | "failed",
       rowsTotal: number(value, "rowsTotal"),
       rowsImported: number(value, "rowsImported"),

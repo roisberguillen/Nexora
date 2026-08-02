@@ -95,6 +95,10 @@ export {
   IMPORT_ROW_DELETION_AUDIT_SCHEMA_VERSION,
   importRowDeletionAuditMigration,
 } from "./migrations/0013-import-row-deletion-audit";
+export {
+  IMPORT_MAPPING_PROFILES_SCHEMA_VERSION,
+  importMappingProfilesMigration,
+} from "./migrations/0014-import-mapping-profiles";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

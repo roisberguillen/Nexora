@@ -11,6 +11,7 @@ import { bankImporterTypesMigration } from "./0010-bank-importer-types";
 import { monthlyJournalsMigration } from "./0011-monthly-journals";
 import { transactionTrashMigration } from "./0012-transaction-trash";
 import { importRowDeletionAuditMigration } from "./0013-import-row-deletion-audit";
+import { importMappingProfilesMigration } from "./0014-import-mapping-profiles";
 
 export const INITIAL_LEDGER_SCHEMA_VERSION = 1;
 const INITIAL_LEDGER_SCHEMA_NAME = "initial-ledger-schema";
@@ -280,4 +281,5 @@ export const databaseMigrations: readonly DatabaseMigration[] = [
   monthlyJournalsMigration,
   transactionTrashMigration,
   importRowDeletionAuditMigration,
+  importMappingProfilesMigration,
 ];

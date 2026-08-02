@@ -617,8 +617,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 13,
-        toVersion: 13,
+        fromVersion: 14,
+        toVersion: 14,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -638,6 +638,7 @@ describe("SqliteLedgerRepository", () => {
       rowsTotal: 1,
       sourceFilename: "movimenti.xlsx",
       sourceSha256: "a".repeat(64),
+      mappingProfileId: "mapping-profile-sqlite",
     });
     const row = ImportRow.create({
       id: "row-sqlite",

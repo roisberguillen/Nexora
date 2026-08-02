@@ -20,6 +20,7 @@ export interface CreateImportBatchProps {
   readonly importerType: ImporterType;
   readonly sourceFilename: string;
   readonly sourceSha256: string;
+  readonly mappingProfileId?: string | undefined;
   readonly status?: ImportBatchStatus;
   readonly rowsTotal: number;
   readonly rowsImported?: number;
@@ -32,6 +33,7 @@ export class ImportBatch {
   public readonly importerType: ImporterType;
   public readonly sourceFilename: string;
   public readonly sourceSha256: string;
+  public readonly mappingProfileId: string | undefined;
   public readonly status: ImportBatchStatus;
   public readonly rowsTotal: number;
   public readonly rowsImported: number;
@@ -43,6 +45,10 @@ export class ImportBatch {
     this.importerType = props.importerType;
     this.sourceFilename = requireText(props.sourceFilename, 500, "Source filename");
     this.sourceSha256 = requireSha256(props.sourceSha256);
+    this.mappingProfileId =
+      props.mappingProfileId === undefined
+        ? undefined
+        : requireIdentifier(props.mappingProfileId, "Mapping profile id");
     this.status = props.status ?? "previewed";
     this.rowsTotal = requireCount(props.rowsTotal, "Rows total");
     this.rowsImported = requireCount(props.rowsImported ?? 0, "Rows imported");

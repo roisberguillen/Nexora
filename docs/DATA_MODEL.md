@@ -141,10 +141,15 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
   `mediobanca_xlsx` e `n26_pdf`, mantenendo il campo v4 e tutti i record precedenti.
 - v11: `monthly_journals` aggiunge riflessioni mensili, con periodo univoco e vincoli
   sui testi e sul valore di controllo, senza intervenire sulle tabelle esistenti.
+- v12: `transaction_trash` conserva i movimenti eliminati logicamente fuori da saldi e report.
+- v13: `import_rows.deleted_transaction_id` preserva l'audit dopo l'eliminazione definitiva.
+- v14: `import_batches.mapping_profile_id` associa in modo opzionale il profilo di mapping scelto;
+  l'upgrade è nullable, additivo e conserva integralmente i batch v13.
 
-IndexedDB usa gli object store equivalenti fino a `recurring_rules` e `allocation_plans`,
+IndexedDB usa gli object store equivalenti,
 con indici per scadenza, conto e trigger. Lo store `monthly_journals` ha un indice
-univoco sul periodo; l'upgrade è alla versione 11 e conserva store e record esistenti.
+univoco sul periodo; l'upgrade è alla versione 14, conserva store e record esistenti e aggiunge
+il campo opzionale ai record `import_batches` nuovi.
 
 Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite
 migrazioni versionate insieme alle rispettive milestone. La decisione completa è descritta in
