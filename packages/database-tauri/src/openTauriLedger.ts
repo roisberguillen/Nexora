@@ -58,9 +58,8 @@ export async function openTauriLedger(options: OpenTauriLedgerOptions = {}): Pro
       createEncryptedBackupArchive: ({ passphrase }) => backupEngine.createBackup(passphrase),
       restoreEncryptedBackupArchive: ({ archive, passphrase }) =>
         backupEngine.restoreBackup(archive, passphrase),
-      verifyEncryptedBackupArchive: async ({ archive, passphrase }) => {
-        await backupEngine.verifyBackup(archive, passphrase);
-      },
+      verifyEncryptedBackupArchive: ({ archive, passphrase }) =>
+        backupEngine.verifyBackup(archive, passphrase),
       close: () => openedDatabase.close(),
     };
   } catch (cause) {

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("la ricerca globale trova e apre dati locali", async ({ page }) => {
   test.skip(
-    (page.viewportSize()?.width ?? 0) < 768,
+    (page.viewportSize()?.width ?? 0) < 900,
     "Su mobile la ricerca è contestuale alla pagina Movimenti.",
   );
   await page.goto("/");

@@ -1018,6 +1018,59 @@
   justify-content: flex-start;
 }
 
+.backup-verification-report {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-md);
+  background: var(--color-success-container);
+}
+
+.backup-verification-report h3,
+.backup-verification-report p,
+.backup-verification-report dl,
+.backup-verification-report dd {
+  margin: 0;
+}
+
+.backup-verification-report dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.backup-verification-report dl > div {
+  min-width: 0;
+}
+
+.backup-verification-report dt {
+  color: var(--color-on-surface-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.backup-verification-report dd {
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+@media (max-width: 35rem) {
+  #backup {
+    --backup-content-inset: 1rem;
+  }
+
+  #backup > .form-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .backup-verification-report dl {
+    grid-template-columns: 1fr;
+  }
+}
+
 .import-layout {
   display: grid;
   gap: 1.25rem;

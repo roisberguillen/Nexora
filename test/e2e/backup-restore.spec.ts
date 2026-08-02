@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 
 import { expect, test } from "@playwright/test";
+
+import { databaseMigrations } from "../../packages/database/src/migrations/0001-initial-ledger-schema";
 import { createServer } from "vite";
 
 const workspaceRoot = process.cwd();
@@ -61,7 +63,7 @@ test("backup cifrato e restore SQLite funzionano su OPFS reale", async ({ page }
       failedRestorePreservedData: true,
       restoredAmountMinor: "900719925474099312345678901234567890",
       laterAccountRemoved: true,
-      reopenedSchemaVersion: 13,
+      reopenedSchemaVersion: databaseMigrations.at(-1)?.version,
     });
   } finally {
     await server.close();

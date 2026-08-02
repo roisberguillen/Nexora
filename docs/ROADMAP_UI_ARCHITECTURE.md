@@ -16,7 +16,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 7 | SQLite nativo multipiattaforma | completata |
 | 8 | Importazione, esportazione e qualità dati | completata |
 | 9 | Backup Engine indipendente | completata |
-| 10 | Backup manuale | pianificata |
+| 10 | Backup manuale | completata |
 | 11 | Google Drive | pianificata |
 | 12 | Feature finanziarie con nuova UI | pianificata |
 | 13 | Applicazione Windows e macOS | pianificata |
@@ -144,3 +144,16 @@ Commit e push su `origin/main`.
   ripristina automaticamente il checkpoint se la sostituzione o la verifica post-write fallisce.
 - [x] Verificato round-trip cross-adapter IndexedDB→SQLite, restore IndexedDB, rollback dopo errore
   post-write, adapter browser/Tauri, typecheck, lint, test completi e build di produzione.
+
+## Evidenze Fase 10
+
+- [x] Il download manuale usa esclusivamente l'archivio cifrato e autoverificato prodotto dal
+  Backup Engine condiviso; la passphrase resta soltanto nello stato volatile della pagina.
+- [x] Il file selezionato deve superare una verifica read-only prima di abilitare il restore; la
+  ricevuta mostra file, schema, data e prefisso checksum senza esporre dati finanziari.
+- [x] Cambio file o passphrase invalida la ricevuta e il restore richiede un secondo dialogo con
+  conferma esplicita, focus contenuto, Escape e ritorno del focus.
+- [x] Errori di verifica o ripristino sono annunciati in modo accessibile e confermano che il ledger
+  corrente non è stato modificato; checkpoint e rollback restano responsabilità dell'engine.
+- [x] Verificati test component, round-trip OPFS reale, download/selezione/verifica tramite browser,
+  WCAG automatizzata e assenza di overflow a 320, 375, 768, 1024 e 1440 px.

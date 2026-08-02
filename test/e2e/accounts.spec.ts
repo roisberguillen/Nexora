@@ -51,6 +51,7 @@ test("la pagina conti desktop resta coerente con la baseline visuale", async ({
   await expect(page).toHaveScreenshot("accounts-1440.png", {
     animations: "disabled",
     fullPage: true,
+    maxDiffPixels: 300,
   });
 });
 

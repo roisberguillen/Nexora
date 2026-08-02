@@ -1,17 +1,17 @@
 # Current task
 
-- Task: destination-independent portable Backup Engine
-- Roadmap phase: Phase 9
-- Category: repository_refactor
+- Task: manual encrypted backup and explicit file restore workflow
+- Roadmap phase: Phase 10
+- Category: manual_backup
 - Profile: ADVANCED
-- Data risk: medium; verified restore with in-memory rollback checkpoint
+- Data risk: medium; restore enabled only after read-only verification and explicit confirmation
 - Status: ready for commit and push
-- Initial files: shared backup engine, browser/native adapters, tests and backup documentation
+- Initial files: BackupPage, ledger verification receipt, responsive CSS, component/E2E tests and docs
 - Extra reads: none
-- Attempts: 1; normalized runtime value objects before validating rollback snapshots
-- Checkpoint: every restore captures and verifies the active portable snapshot before replacement
-- Targeted tests: encrypted payload, cross-adapter round-trip, schema rejection, tampering and rollback
-- Completed gates: 21 initial backup/adapter tests and package typechecks
-- Completed gates: 14 cross-adapter/adapter tests and package typechecks
-- Completed gates: full repository verification and production build
-- Next task: Phase 10 manual backup UX and file workflow
+- Attempts: 1; updated stale E2E schema expectation to use the live migration catalog
+- Checkpoint: UI receipt is invalidated by file/passphrase changes; engine retains rollback checkpoint
+- Targeted tests: component confirmation/error paths; real OPFS round-trip; responsive browser flow
+- Completed gates: 19 targeted unit/component tests; web/database package typechecks
+- Completed gates: manual UI E2E at five viewports and OPFS restore smoke
+- Completed gates: full verify, 152-test E2E suite, manifest and orchestrator validation
+- Next task: Phase 11 Google Drive, only after final Phase 10 gates and commit

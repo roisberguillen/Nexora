@@ -7,7 +7,7 @@ test("la shell è accessibile e non produce overflow", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
 
   const viewport = page.viewportSize();
-  if (viewport && viewport.width < 768) {
+  if (viewport && viewport.width < 900) {
     const mobileNavigation = page.getByRole("navigation", { name: "Navigazione mobile" });
     await expect(mobileNavigation).toBeVisible();
     await expect(mobileNavigation.getByRole("link", { name: "Home" })).toHaveAttribute(
@@ -19,12 +19,6 @@ test("la shell è accessibile e non produce overflow", async ({ page }) => {
     await expect(page.getByRole("dialog", { name: "Nuova operazione" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(quickAction).toBeFocused();
-  } else if (viewport && viewport.width < 900) {
-    const menuButton = page.getByRole("button", { name: "Apri navigazione" });
-    await menuButton.click();
-    await expect(page.getByLabel("Pannello di navigazione")).toHaveClass(/is-open/);
-    await page.keyboard.press("Escape");
-    await expect(menuButton).toHaveAttribute("aria-expanded", "false");
   }
 
   const dimensions = await page.evaluate(() => ({

@@ -1,6 +1,6 @@
 import type { LedgerRepository } from "@nexora/domain";
 
-import type { CreatedPortableBackup } from "./backup/PortableBackupEngine";
+import type { CreatedPortableBackup, VerifiedPortableBackup } from "./backup/PortableBackupEngine";
 
 export type LedgerStorageKind = "opfs" | "indexeddb" | "native-sqlite";
 
@@ -20,6 +20,6 @@ export interface Ledger {
   verifyEncryptedBackupArchive?(input: {
     readonly archive: Uint8Array;
     readonly passphrase: string;
-  }): Promise<void>;
+  }): Promise<VerifiedPortableBackup>;
   close(): Promise<void>;
 }

@@ -32,3 +32,18 @@ download, OAuth o Google Drive. OPFS, IndexedDB e SQLite nativo usano lo stesso 
 Gli adapter di destinazione ricevono soltanto archivi già verificati. La Fase 9 non modifica i
 primitivi AES-GCM/PBKDF2 né introduce destinazioni; file manuale e Drive restano rispettivamente
 nelle Fasi 10 e 11.
+
+## Flusso file manuale
+
+La Fase 10 collega il Backup Engine al download e al restore esplicito della PWA:
+
+1. il download viene offerto solo dopo l'autoverifica dell'archivio cifrato;
+2. la passphrase non viene persistita e viene cancellata dopo la creazione riuscita;
+3. un file selezionato viene verificato in sola lettura prima di abilitare il restore;
+4. la ricevuta UI espone solo nome file, schema, data e prefisso checksum;
+5. qualsiasi cambio di file o passphrase invalida la ricevuta;
+6. un dialogo separato richiede conferma esplicita prima della sostituzione;
+7. l'engine crea il checkpoint, verifica il risultato e applica rollback in caso di errore.
+
+La cronologia locale conserva esclusivamente metadati tecnici dell'operazione. Google Drive non
+fa parte della Fase 10 e riusa lo stesso archivio cifrato soltanto nella Fase 11.

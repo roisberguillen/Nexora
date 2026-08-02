@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Completata la Fase 10: il backup manuale scarica un archivio autoverificato e il restore è
+  abilitato solo dopo verifica read-only, ricevuta tecnica e conferma esplicita; cambio file o
+  passphrase revoca la verifica senza modificare il ledger attivo.
+
 - Completata la Fase 9 con un Backup Engine portabile condiviso da OPFS, IndexedDB e SQLite
   nativo: creazione autoverificata, controllo schema pre-write, restore cross-adapter e rollback
   automatico verificato, senza cambiare cifratura o destinazioni supportate.

@@ -5,7 +5,8 @@ test("il verticale pilota aggiorna dashboard, conti e movimenti dal ledger local
 }) => {
   await page.goto("/");
   await expect(page.getByRole("main")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Panoramica" })).toBeVisible();
+  const navigationLabel = (page.viewportSize()?.width ?? 0) < 900 ? "Home" : "Panoramica";
+  await expect(page.getByRole("link", { name: navigationLabel })).toBeVisible();
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Spese896,40");
 

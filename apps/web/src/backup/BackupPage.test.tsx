@@ -1,6 +1,7 @@
-import type { BrowserLedger } from "@nexora/database";
+import type { BrowserLedger, Ledger, VerifiedPortableBackup } from "@nexora/database";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
 import { BackupPage } from "./BackupPage";
 
@@ -27,4 +28,131 @@ describe("BackupPage", () => {
     expect(screen.queryByText(/cartella NAS/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/My Cloud/i)).not.toBeInTheDocument();
   });
+
+  it("verifica il file in sola lettura e mostra una ricevuta tecnica", async () => {
+    const user = userEvent.setup();
+    const verifyEncryptedBackupArchive = vi.fn(async () => verifiedReceipt);
+    render(<BackupPage ledger={createLedger({ verifyEncryptedBackupArchive })} />);
+
+    await selectArchiveAndEnterPassphrase(user);
+    const restoreButton = screen.getByRole("button", { name: "Ripristina archivio verificato" });
+    expect(restoreButton).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Verifica archivio senza ripristinare" }));
+
+    expect(verifyEncryptedBackupArchive).toHaveBeenCalledWith({
+      archive: new Uint8Array([1, 2, 3]),
+      passphrase: "passphrase-sicura",
+    });
+    expect(await screen.findByRole("heading", { name: "Archivio verificato" })).toBeInTheDocument();
+    expect(screen.getByText("backup-sintetico.nexora-backup")).toBeInTheDocument();
+    expect(screen.getByText("14")).toBeInTheDocument();
+    expect(screen.getByText("abcdef123456…")).toBeInTheDocument();
+    expect(restoreButton).toBeEnabled();
+  });
+
+  it("richiede una conferma distinta prima di invocare il restore", async () => {
+    const user = userEvent.setup();
+    const pendingRestore = new Promise<void>(() => undefined);
+    const restoreEncryptedBackupArchive = vi.fn(() => pendingRestore);
+    render(
+      <BackupPage
+        ledger={createLedger({
+          restoreEncryptedBackupArchive,
+          verifyEncryptedBackupArchive: vi.fn(async () => verifiedReceipt),
+        })}
+      />,
+    );
+
+    await selectArchiveAndEnterPassphrase(user);
+    await user.click(screen.getByRole("button", { name: "Verifica archivio senza ripristinare" }));
+    await user.click(await screen.findByRole("button", { name: "Ripristina archivio verificato" }));
+
+    expect(restoreEncryptedBackupArchive).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog", { name: "Confermare il ripristino?" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Conferma ripristino" }));
+    expect(restoreEncryptedBackupArchive).toHaveBeenCalledWith({
+      archive: new Uint8Array([1, 2, 3]),
+      id: "backup-sintetico.nexora-backup",
+      passphrase: "passphrase-sicura",
+    });
+  });
+
+  it("annulla senza scrivere e invalida la verifica quando cambia la passphrase", async () => {
+    const user = userEvent.setup();
+    const restoreEncryptedBackupArchive = vi.fn(async () => undefined);
+    render(
+      <BackupPage
+        ledger={createLedger({
+          restoreEncryptedBackupArchive,
+          verifyEncryptedBackupArchive: vi.fn(async () => verifiedReceipt),
+        })}
+      />,
+    );
+
+    await selectArchiveAndEnterPassphrase(user);
+    await user.click(screen.getByRole("button", { name: "Verifica archivio senza ripristinare" }));
+    await user.click(await screen.findByRole("button", { name: "Ripristina archivio verificato" }));
+    await user.click(screen.getByRole("button", { name: "Annulla" }));
+    expect(restoreEncryptedBackupArchive).not.toHaveBeenCalled();
+
+    await user.type(screen.getByLabelText("Passphrase (minimo 12 caratteri)"), "x");
+    expect(screen.queryByRole("heading", { name: "Archivio verificato" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ripristina archivio verificato" })).toBeDisabled();
+  });
+
+  it("espone un errore accessibile se il checksum o la passphrase non sono validi", async () => {
+    const user = userEvent.setup();
+    render(
+      <BackupPage
+        ledger={createLedger({
+          verifyEncryptedBackupArchive: vi.fn(async () => {
+            throw new Error("invalid_archive");
+          }),
+        })}
+      />,
+    );
+
+    await selectArchiveAndEnterPassphrase(user);
+    await user.click(screen.getByRole("button", { name: "Verifica archivio senza ripristinare" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Verifica non riuscita: il ledger attivo non è stato modificato",
+    );
+    expect(screen.getByRole("button", { name: "Ripristina archivio verificato" })).toBeDisabled();
+  });
 });
+
+const verifiedReceipt: VerifiedPortableBackup = {
+  checksumSha256: "abcdef123456" + "0".repeat(52),
+  size: 3,
+  manifest: {
+    formatVersion: 1,
+    schemaVersion: 14,
+    createdAt: "2026-08-02T10:00:00.000Z",
+    files: [{ path: "ledger.json", sha256: "1".repeat(64), size: 3 }],
+  },
+};
+
+function createLedger(overrides: Partial<Ledger> = {}): Ledger {
+  return {
+    repository: {} as Ledger["repository"],
+    schemaVersion: 14,
+    storageKind: "indexeddb",
+    createEncryptedBackupArchive: vi.fn(),
+    restoreEncryptedBackupArchive: vi.fn(async () => undefined),
+    verifyEncryptedBackupArchive: vi.fn(async () => verifiedReceipt),
+    close: vi.fn(async () => undefined),
+    ...overrides,
+  };
+}
+
+async function selectArchiveAndEnterPassphrase(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(screen.getByLabelText("Passphrase (minimo 12 caratteri)"), "passphrase-sicura");
+  await user.upload(
+    screen.getByLabelText("File `.nexora-backup`"),
+    new File([new Uint8Array([1, 2, 3])], "backup-sintetico.nexora-backup", {
+      type: "application/octet-stream",
+    }),
+  );
+}

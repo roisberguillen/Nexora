@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import { createServer } from "vite";
 
+import { databaseMigrations } from "../../packages/database/src/migrations/0001-initial-ledger-schema";
+
 const workspaceRoot = process.cwd();
 const webRoot = resolve(workspaceRoot, "apps/web");
 const fixturePath = resolve(workspaceRoot, "test/e2e/fixtures/opfs-smoke.ts").replaceAll("\\", "/");
@@ -52,8 +54,8 @@ test("SQLite WASM conserva i dati in OPFS dopo la riapertura", async ({ page }, 
 
     expect(result).toEqual({
       amountMinor: "900719925474099312345678901234567890",
-      firstMigrationVersion: 13,
-      reopenedFromVersion: 13,
+      firstMigrationVersion: databaseMigrations.at(-1)?.version,
+      reopenedFromVersion: databaseMigrations.at(-1)?.version,
       storageKind: "opfs",
     });
   } finally {

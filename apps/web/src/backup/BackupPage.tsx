@@ -1,4 +1,4 @@
-import type { Ledger } from "@nexora/database";
+import type { Ledger, VerifiedPortableBackup } from "@nexora/database";
 import { useMemo, useState } from "react";
 
 import { GoogleDriveBackupProvider } from "../cloud/GoogleDriveBackupProvider";
@@ -6,6 +6,7 @@ import { GoogleIdentityAuth } from "../cloud/GoogleIdentityAuth";
 import { readGoogleCloudConfig } from "../cloud/cloudConfig";
 import type { CloudBackupMetadata } from "../cloud/cloudTypes";
 import { loadGoogleIdentity } from "../cloud/loadGoogleIdentity";
+import { AccessibleDialog } from "../settings/AccessibleDialog";
 import { appendBackupHistory, readBackupHistory } from "./backupHistory";
 
 function errorCode(error: unknown): string | undefined {
@@ -32,8 +33,11 @@ function describeCloudError(error: unknown): string {
 export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const [passphrase, setPassphrase] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [operationError, setOperationError] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [selectedArchive, setSelectedArchive] = useState<File>();
+  const [verifiedArchive, setVerifiedArchive] = useState<VerifiedPortableBackup>();
+  const [isRestoreConfirmationOpen, setIsRestoreConfirmationOpen] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const [isCloudBusy, setIsCloudBusy] = useState(false);
   const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
@@ -62,6 +66,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       return;
     setIsCreating(true);
     setMessage(null);
+    setOperationError(null);
     try {
       const backup = await ledger.createEncryptedBackupArchive({ passphrase });
       const anchor = document.createElement("a");
@@ -93,7 +98,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         outcome: "failed",
       });
       setHistory(readBackupHistory());
-      setMessage("Backup non creato: nessun dato del ledger è stato modificato.");
+      setOperationError("Backup non creato: nessun dato del ledger è stato modificato.");
     } finally {
       setIsCreating(false);
     }
@@ -102,12 +107,14 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const restoreSelectedArchive = async () => {
     if (
       !selectedArchive ||
+      !verifiedArchive ||
       passphrase.trim().length < 12 ||
       ledger.restoreEncryptedBackupArchive === undefined
     )
       return;
     setIsRestoring(true);
     setMessage(null);
+    setOperationError(null);
     try {
       await ledger.restoreEncryptedBackupArchive({
         archive: new Uint8Array(await selectedArchive.arrayBuffer()),
@@ -121,6 +128,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         size: selectedArchive.size,
       });
       setHistory(readBackupHistory());
+      setIsRestoreConfirmationOpen(false);
       window.location.reload();
     } catch {
       appendBackupHistory({
@@ -129,7 +137,9 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         outcome: "failed",
       });
       setHistory(readBackupHistory());
-      setMessage("Ripristino non completato: l’archivio locale corrente è rimasto protetto.");
+      setOperationError(
+        "Ripristino non completato: l’archivio locale corrente è rimasto protetto.",
+      );
       setIsRestoring(false);
     }
   };
@@ -142,11 +152,14 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       return;
     setIsRestoring(true);
     setMessage(null);
+    setOperationError(null);
+    setVerifiedArchive(undefined);
     try {
-      await ledger.verifyEncryptedBackupArchive({
+      const receipt = await ledger.verifyEncryptedBackupArchive({
         archive: new Uint8Array(await selectedArchive.arrayBuffer()),
         passphrase,
       });
+      setVerifiedArchive(receipt);
       appendBackupHistory({
         operation: "restore_test",
         storageKind: ledger.storageKind,
@@ -154,9 +167,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         size: selectedArchive.size,
       });
       setHistory(readBackupHistory());
-      setMessage(
-        "Recovery drill superato: l’archivio è leggibile e il ledger attivo non è stato modificato.",
-      );
+      setMessage("Archivio verificato: il ledger attivo non è stato modificato.");
     } catch {
       appendBackupHistory({
         operation: "restore_test",
@@ -164,7 +175,9 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         outcome: "failed",
       });
       setHistory(readBackupHistory());
-      setMessage("Recovery drill non riuscito: il ledger attivo non è stato modificato.");
+      setOperationError(
+        "Verifica non riuscita: il ledger attivo non è stato modificato. Controlla file e passphrase.",
+      );
     } finally {
       setIsRestoring(false);
     }
@@ -290,7 +303,11 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         Passphrase (minimo 12 caratteri)
         <input
           autoComplete="new-password"
-          onChange={(event) => setPassphrase(event.target.value)}
+          onChange={(event) => {
+            setPassphrase(event.target.value);
+            setVerifiedArchive(undefined);
+            setIsRestoreConfirmationOpen(false);
+          }}
           type="password"
           value={passphrase}
         />
@@ -351,22 +368,53 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         <input
           accept=".nexora-backup,application/octet-stream"
           onChange={(event) => setSelectedArchive(event.target.files?.[0])}
+          onInput={() => {
+            setVerifiedArchive(undefined);
+            setIsRestoreConfirmationOpen(false);
+            setMessage(null);
+            setOperationError(null);
+          }}
           type="file"
         />
       </label>
+      {verifiedArchive === undefined || selectedArchive === undefined ? null : (
+        <section aria-labelledby="backup-verification-title" className="backup-verification-report">
+          <h3 id="backup-verification-title">Archivio verificato</h3>
+          <dl>
+            <div>
+              <dt>File</dt>
+              <dd>{selectedArchive.name}</dd>
+            </div>
+            <div>
+              <dt>Schema</dt>
+              <dd>{verifiedArchive.manifest.schemaVersion}</dd>
+            </div>
+            <div>
+              <dt>Creato</dt>
+              <dd>{new Date(verifiedArchive.manifest.createdAt).toLocaleString("it-IT")}</dd>
+            </div>
+            <div>
+              <dt>Integrità</dt>
+              <dd>{verifiedArchive.checksumSha256.slice(0, 12)}…</dd>
+            </div>
+          </dl>
+          <p>La verifica è avvenuta in sola lettura. I dati correnti non sono stati modificati.</p>
+        </section>
+      )}
       <div className="form-actions">
         <button
           className="secondary-action"
           disabled={
             !selectedArchive ||
+            !verifiedArchive ||
             passphrase.trim().length < 12 ||
             isRestoring ||
             ledger.restoreEncryptedBackupArchive === undefined
           }
-          onClick={() => void restoreSelectedArchive()}
+          onClick={() => setIsRestoreConfirmationOpen(true)}
           type="button"
         >
-          {isRestoring ? "Ripristino verificato…" : "Ripristina archivio selezionato"}
+          Ripristina archivio verificato
         </button>
         <button
           className="secondary-action"
@@ -382,6 +430,36 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
           Verifica archivio senza ripristinare
         </button>
       </div>
+      {isRestoreConfirmationOpen && selectedArchive !== undefined ? (
+        <AccessibleDialog
+          labelledBy="manual-restore-confirmation-title"
+          onClose={() => !isRestoring && setIsRestoreConfirmationOpen(false)}
+        >
+          <h2 id="manual-restore-confirmation-title">Confermare il ripristino?</h2>
+          <p>
+            Il ledger corrente sarà sostituito con “{selectedArchive.name}”. Nexora creerà un
+            checkpoint e ripristinerà i dati correnti se il controllo finale non riesce.
+          </p>
+          <div className="form-actions">
+            <button
+              className="secondary-action"
+              disabled={isRestoring}
+              onClick={() => setIsRestoreConfirmationOpen(false)}
+              type="button"
+            >
+              Annulla
+            </button>
+            <button
+              className="primary-action"
+              disabled={isRestoring}
+              onClick={() => void restoreSelectedArchive()}
+              type="button"
+            >
+              {isRestoring ? "Ripristino in corso…" : "Conferma ripristino"}
+            </button>
+          </div>
+        </AccessibleDialog>
+      ) : null}
       <section aria-labelledby="cloud-backup-title" className="backup-cloud-unavailable">
         <h2 id="cloud-backup-title">Backup cloud</h2>
         {cloudConfig.enabled ? (
@@ -452,6 +530,11 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       {message === null ? null : (
         <p aria-live="polite" className="import-help" role="status">
           {message}
+        </p>
+      )}
+      {operationError === null ? null : (
+        <p aria-live="assertive" className="account-error" role="alert">
+          {operationError}
         </p>
       )}
     </section>

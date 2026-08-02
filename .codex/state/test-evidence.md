@@ -84,3 +84,16 @@ Keep only the latest relevant evidence per completed phase.
 - Package typechecks for `@nexora/database` and `@nexora/database-tauri` passed.
 - `pnpm verify`: passed; 106 test files passed, 366 tests passed, 4 documented skips and the
   production PWA build completed.
+
+## Phase 10 manual backup — 2026-08-02
+
+- BackupPage, shared engine and browser/Tauri adapter suites: 4 files and 19 targeted tests passed.
+- Covered read-only verification receipt, invalid passphrase/tamper error, explicit confirmation,
+  cancellation and verification invalidation after file/passphrase changes.
+- Manual backup browser E2E passed at 320, 375, 768, 1024 and 1440 px with axe and overflow checks;
+  the 1440 flow downloaded, reselected and verified a real encrypted archive.
+- OPFS backup/restore smoke passed against the live schema catalog; full E2E passed with 152 tests
+  and 63 documented skips, including 100,000-record OPFS and IndexedDB checks.
+- `pnpm doctor`, `pnpm codex:validate`, `pnpm codex:test` and `pnpm manifest:check`: passed.
+- `pnpm verify`: passed; 106 test files passed, 370 tests passed, 4 documented skips and the
+  production PWA build completed.

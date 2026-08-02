@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import { createServer } from "vite";
 
+import { databaseMigrations } from "../../packages/database/src/migrations/0001-initial-ledger-schema";
+
 const workspaceRoot = process.cwd();
 const webRoot = resolve(workspaceRoot, "apps/web");
 const fixturePath = resolve(workspaceRoot, "test/e2e/fixtures/indexeddb-smoke.ts").replaceAll(
@@ -55,8 +57,8 @@ test("IndexedDB conserva i dati dopo la riapertura", async ({ page }, testInfo) 
 
     expect(result).toEqual({
       amountMinor: "900719925474099312345678901234567890",
-      firstSchemaVersion: 13,
-      reopenedSchemaVersion: 13,
+      firstSchemaVersion: databaseMigrations.at(-1)?.version,
+      reopenedSchemaVersion: databaseMigrations.at(-1)?.version,
       storageKind: "indexeddb",
     });
   } finally {

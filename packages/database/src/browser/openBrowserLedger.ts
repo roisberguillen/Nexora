@@ -91,9 +91,8 @@ function fromOpfsLedger(ledger: OpfsLedger): BrowserLedger {
         await createBackupService(ledger, store, passphrase).restoreBackup(id);
       }
     },
-    verifyEncryptedBackupArchive: async ({ archive, passphrase }) => {
-      await backupEngine.verifyBackup(archive, passphrase);
-    },
+    verifyEncryptedBackupArchive: ({ archive, passphrase }) =>
+      backupEngine.verifyBackup(archive, passphrase),
     close: () => ledger.close(),
   };
 }
@@ -143,9 +142,8 @@ function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {
     restoreEncryptedBackupArchive: async ({ archive, passphrase }) => {
       await backupEngine.restoreBackup(archive, passphrase);
     },
-    verifyEncryptedBackupArchive: async ({ archive, passphrase }) => {
-      await backupEngine.verifyBackup(archive, passphrase);
-    },
+    verifyEncryptedBackupArchive: ({ archive, passphrase }) =>
+      backupEngine.verifyBackup(archive, passphrase),
     close: () => ledger.close(),
   };
 }
