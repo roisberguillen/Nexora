@@ -20,12 +20,19 @@ interface GoogleIdentityWindow extends Window {
   google?: { readonly accounts?: { readonly oauth2?: GoogleAccountsOauth2 } };
 }
 
+export interface GoogleIdentityAuthOptions {
+  readonly authorizationTimeoutMs?: number;
+}
+
 export class GoogleIdentityAuth implements CloudAuthProvider {
   private status: CloudBackupStatus = "idle";
   private token: string | undefined;
+  private connection: Promise<void> | undefined;
+  private authorizationAttempt = 0;
   public constructor(
     private readonly clientId: string,
     private readonly windowRef: GoogleIdentityWindow = window,
+    private readonly options: GoogleIdentityAuthOptions = {},
   ) {}
 
   public getStatus(): CloudBackupStatus {
@@ -34,37 +41,64 @@ export class GoogleIdentityAuth implements CloudAuthProvider {
   public getAccessToken(): string | undefined {
     return this.token;
   }
-  public async connect(): Promise<void> {
+  public connect(): Promise<void> {
+    if (this.status === "connected" && this.token !== undefined) return Promise.resolve();
+    if (this.connection !== undefined) return this.connection;
+    const connection = this.authorize();
+    this.connection = connection;
+    const clearConnection = () => {
+      if (this.connection === connection) this.connection = undefined;
+    };
+    void connection.then(clearConnection, clearConnection);
+    return connection;
+  }
+  private async authorize(): Promise<void> {
     const oauth = this.windowRef.google?.accounts?.oauth2;
     if (oauth === undefined || this.clientId === "") {
       this.status = "error";
       throw new Error("google_identity_unavailable");
     }
+    const attempt = ++this.authorizationAttempt;
     this.status = "authorizing";
     await new Promise<void>((resolve, reject) => {
+      let settled = false;
+      const finish = (error?: Error) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        if (error === undefined) resolve();
+        else reject(error);
+      };
+      const timeout = setTimeout(() => {
+        if (attempt !== this.authorizationAttempt) return;
+        this.status = "error";
+        finish(new Error("google_identity_timeout"));
+      }, this.options.authorizationTimeoutMs ?? 60_000);
       const client = oauth.initTokenClient({
         client_id: this.clientId,
         scope: DRIVE_APPDATA_SCOPE,
         callback: (response) => {
-          if (response.access_token === undefined) {
+          if (settled || attempt !== this.authorizationAttempt) return;
+          if (response.access_token === undefined || response.access_token.length === 0) {
             this.status = "error";
-            reject(new Error(response.error ?? "google_consent_denied"));
+            finish(new Error(response.error ?? "google_consent_denied"));
             return;
           }
           this.token = response.access_token;
           this.status = "connected";
-          resolve();
+          finish();
         },
       });
       try {
         client.requestAccessToken({ prompt: "consent" });
       } catch (error) {
         this.status = "error";
-        reject(error);
+        finish(error instanceof Error ? error : new Error("google_identity_unavailable"));
       }
     });
   }
   public async disconnect(): Promise<void> {
+    this.authorizationAttempt += 1;
     const token = this.token;
     this.token = undefined;
     this.status = "idle";

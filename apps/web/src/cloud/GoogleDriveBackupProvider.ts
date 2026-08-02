@@ -1,6 +1,7 @@
 import type { CloudBackupMetadata, CloudBackupProvider } from "./cloudTypes";
 
 const endpoint = "https://www.googleapis.com/drive/v3/files";
+const maxCloudArchiveBytes = 512 * 1024 * 1024;
 
 export interface GoogleDriveBackupProviderOptions {
   readonly maxAttempts?: number;
@@ -15,7 +16,7 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
   ) {}
   public async list(): Promise<readonly CloudBackupMetadata[]> {
     const response = await this.request(
-      `${endpoint}?spaces=appDataFolder&q=trashed%3Dfalse&fields=files(id%2Cname%2Csize%2CcreatedTime%2CappProperties)`,
+      `${endpoint}?spaces=appDataFolder&q=trashed%3Dfalse&orderBy=createdTime%20desc&pageSize=100&fields=files(id%2Cname%2Csize%2CcreatedTime%2CappProperties)`,
     );
     const body = (await response.json()) as {
       files?: readonly {
@@ -26,17 +27,13 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
         appProperties?: Record<string, string>;
       }[];
     };
-    return (body.files ?? []).map((file) => ({
-      id: file.id,
-      backupId: file.appProperties?.backupId ?? file.name,
-      checksumSha256: file.appProperties?.checksumSha256 ?? "",
-      createdAt: file.createdTime,
-      formatVersion: Number(file.appProperties?.formatVersion ?? 1),
-      schemaVersion: Number(file.appProperties?.schemaVersion ?? 0),
-      size: Number(file.size ?? 0),
-    }));
+    return (body.files ?? []).flatMap((file) => {
+      const metadata = parseCloudBackupMetadata(file);
+      return metadata === undefined ? [] : [metadata];
+    });
   }
   public async upload(metadata: CloudBackupMetadata, archive: Uint8Array): Promise<void> {
+    assertUploadMetadata(metadata, archive);
     const boundary = `nexora-${crypto.randomUUID()}`;
     const meta = JSON.stringify({
       name: metadata.backupId,
@@ -46,6 +43,7 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
         backupId: metadata.backupId,
         formatVersion: String(metadata.formatVersion),
         schemaVersion: String(metadata.schemaVersion),
+        nexoraBackup: "1",
       },
     });
     const archiveCopy = new Uint8Array(archive.byteLength);
@@ -61,18 +59,47 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
       body,
     });
   }
-  public async download(id: string): Promise<Uint8Array> {
-    return new Uint8Array(
-      await (await this.request(`${endpoint}/${encodeURIComponent(id)}?alt=media`)).arrayBuffer(),
-    );
+  public async download(id: string, expectedSize?: number): Promise<Uint8Array> {
+    if (
+      expectedSize !== undefined &&
+      (!Number.isSafeInteger(expectedSize) ||
+        expectedSize < 1 ||
+        expectedSize > maxCloudArchiveBytes)
+    ) {
+      throw new Error("cloud_invalid_backup_metadata");
+    }
+    const response = await this.request(`${endpoint}/${encodeURIComponent(id)}?alt=media`);
+    const declaredSize = response.headers.get("content-length");
+    if (declaredSize !== null) {
+      const parsedSize = Number(declaredSize);
+      if (
+        !Number.isSafeInteger(parsedSize) ||
+        parsedSize < 1 ||
+        parsedSize > maxCloudArchiveBytes ||
+        (expectedSize !== undefined && parsedSize !== expectedSize)
+      ) {
+        throw new Error("cloud_invalid_backup_metadata");
+      }
+    }
+    const archive = new Uint8Array(await response.arrayBuffer());
+    if (
+      archive.byteLength < 1 ||
+      archive.byteLength > maxCloudArchiveBytes ||
+      (expectedSize !== undefined && archive.byteLength !== expectedSize)
+    ) {
+      throw new Error("cloud_invalid_backup_metadata");
+    }
+    return archive;
   }
   public async delete(id: string): Promise<void> {
+    if (id.length < 1 || id.length > 1024) throw new Error("cloud_invalid_backup_metadata");
     await this.request(`${endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" });
   }
   private async request(url: string, init: RequestInit = {}): Promise<Response> {
     const token = this.token();
     if (token === undefined) throw new Error("cloud_session_expired");
-    const maxAttempts = this.options.maxAttempts ?? 2;
+    const method = init.method?.toUpperCase() ?? "GET";
+    const maxAttempts = method === "GET" ? (this.options.maxAttempts ?? 2) : 1;
     let lastError: unknown;
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       try {
@@ -106,6 +133,59 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
     } finally {
       clearTimeout(timeout);
     }
+  }
+}
+
+function parseCloudBackupMetadata(file: {
+  readonly id: string;
+  readonly name: string;
+  readonly size?: string;
+  readonly createdTime: string;
+  readonly appProperties?: Record<string, string>;
+}): CloudBackupMetadata | undefined {
+  const backupId = file.appProperties?.backupId ?? file.name;
+  const checksumSha256 = file.appProperties?.checksumSha256 ?? "";
+  const formatVersion = Number(file.appProperties?.formatVersion);
+  const schemaVersion = Number(file.appProperties?.schemaVersion);
+  const size = Number(file.size);
+  if (
+    file.id.length === 0 ||
+    file.id.length > 1024 ||
+    !backupId.endsWith(".nexora-backup") ||
+    !/^[a-f0-9]{64}$/.test(checksumSha256) ||
+    formatVersion !== 1 ||
+    !Number.isInteger(schemaVersion) ||
+    schemaVersion < 0 ||
+    !Number.isSafeInteger(size) ||
+    size < 1 ||
+    size > maxCloudArchiveBytes ||
+    !Number.isFinite(Date.parse(file.createdTime))
+  ) {
+    return undefined;
+  }
+  return {
+    id: file.id,
+    backupId,
+    checksumSha256,
+    createdAt: file.createdTime,
+    formatVersion,
+    schemaVersion,
+    size,
+  };
+}
+
+function assertUploadMetadata(metadata: CloudBackupMetadata, archive: Uint8Array): void {
+  if (
+    !metadata.backupId.endsWith(".nexora-backup") ||
+    !/^[a-f0-9]{64}$/.test(metadata.checksumSha256) ||
+    metadata.formatVersion !== 1 ||
+    !Number.isInteger(metadata.schemaVersion) ||
+    metadata.schemaVersion < 0 ||
+    metadata.size !== archive.byteLength ||
+    archive.byteLength < 1 ||
+    archive.byteLength > maxCloudArchiveBytes
+  ) {
+    throw new Error("cloud_invalid_backup_metadata");
   }
 }
 

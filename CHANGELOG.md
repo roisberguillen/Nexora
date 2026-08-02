@@ -9,6 +9,11 @@
 
 ### Changed
 
+- Implementata la Fase 11 Google Drive con OAuth `drive.appdata`, token solo in memoria, provider
+  validato, upload cifrato senza retry duplicanti e restore abilitato soltanto dopo verifica
+  read-only di dimensione/checksum e conferma esplicita. Il collaudo OAuth live resta vincolato a
+  un Client ID autorizzato del deployment e non viene simulato nel repository.
+
 - Completata la Fase 10: il backup manuale scarica un archivio autoverificato e il restore è
   abilitato solo dopo verifica read-only, ricevuta tecnica e conferma esplicita; cambio file o
   passphrase revoca la verifica senza modificare il ledger attivo.

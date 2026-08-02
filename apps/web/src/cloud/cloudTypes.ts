@@ -26,7 +26,7 @@ export interface CloudAuthProvider {
 
 export interface CloudBackupProvider {
   delete(id: string): Promise<void>;
-  download(id: string): Promise<Uint8Array>;
+  download(id: string, expectedSize?: number): Promise<Uint8Array>;
   list(): Promise<readonly CloudBackupMetadata[]>;
   upload(metadata: CloudBackupMetadata, archive: Uint8Array): Promise<void>;
 }

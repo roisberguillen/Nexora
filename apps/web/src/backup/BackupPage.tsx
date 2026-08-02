@@ -25,6 +25,12 @@ function describeCloudError(error: unknown): string {
       return "Google Drive sta limitando le richieste: riprova tra qualche minuto.";
     case "cloud_timeout":
       return "La connessione a Google Drive ha superato il tempo massimo: riprova.";
+    case "cloud_invalid_backup_metadata":
+      return "Il backup Drive non contiene metadati Nexora validi.";
+    case "cloud_checksum_mismatch":
+      return "Il checksum del backup Drive non coincide con la ricevuta salvata.";
+    case "google_identity_timeout":
+      return "Google non ha completato il consenso entro il tempo previsto.";
     default:
       return "La connessione a Google Drive non è disponibile: riprova quando torni online.";
   }
@@ -41,6 +47,12 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const [isRestoring, setIsRestoring] = useState(false);
   const [isCloudBusy, setIsCloudBusy] = useState(false);
   const [cloudBackups, setCloudBackups] = useState<readonly CloudBackupMetadata[]>([]);
+  const [verifiedCloudArchive, setVerifiedCloudArchive] = useState<{
+    readonly metadata: CloudBackupMetadata;
+    readonly receipt: VerifiedPortableBackup;
+    readonly archive: Uint8Array;
+  }>();
+  const [isCloudRestoreConfirmationOpen, setIsCloudRestoreConfirmationOpen] = useState(false);
   const [history, setHistory] = useState(() => readBackupHistory());
   const [cloudStatus, setCloudStatus] = useState<
     "idle" | "authorizing" | "connected" | "expired" | "error"
@@ -88,6 +100,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       });
       setHistory(readBackupHistory());
       setPassphrase("");
+      setVerifiedArchive(undefined);
+      setVerifiedCloudArchive(undefined);
       setMessage(
         `Backup verificato scaricato: ${backup.id}. Checksum ${backup.checksumSha256.slice(0, 12)}…`,
       );
@@ -186,6 +200,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
     if (!cloudConfig.enabled) return;
     setIsCloudBusy(true);
     setMessage(null);
+    setOperationError(null);
     setCloudError(undefined);
     try {
       await loadGoogleIdentity();
@@ -204,6 +219,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const disconnectCloud = async () => {
     await cloudAuth.disconnect();
     setCloudBackups([]);
+    setVerifiedCloudArchive(undefined);
+    setIsCloudRestoreConfirmationOpen(false);
     setCloudStatus(cloudAuth.getStatus());
     setMessage("Google Drive disconnesso: nessun token è conservato nel browser.");
   };
@@ -235,11 +252,19 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       });
       setHistory(readBackupHistory());
       setPassphrase("");
+      setVerifiedArchive(undefined);
+      setVerifiedCloudArchive(undefined);
       setCloudBackups(await cloudProvider.list());
       setMessage("Backup cifrato caricato su Google Drive dopo la verifica locale.");
     } catch (error) {
-      setCloudStatus(errorCode(error) === "cloud_session_expired" ? "expired" : "error");
-      setCloudError(describeCloudError(error));
+      const code = errorCode(error);
+      if (code === "cloud_session_expired") setCloudStatus("expired");
+      else if (code?.startsWith("cloud_") === true) setCloudStatus("error");
+      setCloudError(
+        code?.startsWith("cloud_") === true
+          ? describeCloudError(error)
+          : "Il file o la passphrase non permettono di verificare questo backup Drive.",
+      );
       appendBackupHistory({
         operation: "cloud_upload",
         storageKind: ledger.storageKind,
@@ -251,36 +276,94 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       setIsCloudBusy(false);
     }
   };
-  const restoreCloud = async (backup: CloudBackupMetadata) => {
-    if (ledger.restoreEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
+  const verifyCloudRestore = async (backup: CloudBackupMetadata) => {
+    if (ledger.verifyEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
     setIsCloudBusy(true);
     setMessage(null);
+    setOperationError(null);
     setCloudError(undefined);
+    setVerifiedCloudArchive(undefined);
     try {
-      await ledger.restoreEncryptedBackupArchive({
-        archive: await cloudProvider.download(backup.id),
-        id: backup.backupId,
+      const archive = await cloudProvider.download(backup.id, backup.size);
+      const receipt = await ledger.verifyEncryptedBackupArchive({
+        archive,
         passphrase,
       });
+      if (receipt.checksumSha256 !== backup.checksumSha256) {
+        throw new Error("cloud_checksum_mismatch");
+      }
       appendBackupHistory({
-        operation: "cloud_download",
+        operation: "cloud_verify",
         storageKind: ledger.storageKind,
         outcome: "succeeded",
         size: backup.size,
         checksumPrefix: backup.checksumSha256.slice(0, 12),
       });
       setHistory(readBackupHistory());
+      setVerifiedCloudArchive({ metadata: backup, receipt, archive });
+      setMessage(
+        "Backup Drive verificato in sola lettura: il ledger attivo non è stato modificato.",
+      );
+    } catch (error) {
+      const code = errorCode(error);
+      if (code === "cloud_session_expired") setCloudStatus("expired");
+      else if (code?.startsWith("cloud_") === true && code !== "cloud_checksum_mismatch")
+        setCloudStatus("error");
+      setCloudError(
+        code?.startsWith("cloud_") === true
+          ? describeCloudError(error)
+          : "Il file o la passphrase non permettono di verificare questo backup Drive.",
+      );
+      appendBackupHistory({
+        operation: "cloud_verify",
+        storageKind: ledger.storageKind,
+        outcome: "failed",
+      });
+      setHistory(readBackupHistory());
+      setOperationError("Verifica Drive non riuscita: il ledger locale è rimasto protetto.");
+    } finally {
+      setIsCloudBusy(false);
+    }
+  };
+  const restoreVerifiedCloud = async () => {
+    if (
+      verifiedCloudArchive === undefined ||
+      ledger.restoreEncryptedBackupArchive === undefined ||
+      passphrase.trim().length < 12
+    )
+      return;
+    setIsCloudBusy(true);
+    setMessage(null);
+    setOperationError(null);
+    try {
+      await ledger.restoreEncryptedBackupArchive({
+        archive: verifiedCloudArchive.archive,
+        id: verifiedCloudArchive.metadata.backupId,
+        passphrase,
+      });
+      appendBackupHistory({
+        operation: "cloud_download",
+        storageKind: ledger.storageKind,
+        outcome: "succeeded",
+        size: verifiedCloudArchive.metadata.size,
+        checksumPrefix: verifiedCloudArchive.receipt.checksumSha256.slice(0, 12),
+      });
+      setHistory(readBackupHistory());
+      setIsCloudRestoreConfirmationOpen(false);
       window.location.reload();
     } catch (error) {
-      setCloudStatus(errorCode(error) === "cloud_session_expired" ? "expired" : "error");
-      setCloudError(describeCloudError(error));
+      const code = errorCode(error);
+      if (code === "cloud_session_expired") {
+        setCloudStatus("expired");
+        setCloudError(describeCloudError(error));
+      }
       appendBackupHistory({
         operation: "cloud_download",
         storageKind: ledger.storageKind,
         outcome: "failed",
       });
       setHistory(readBackupHistory());
-      setMessage(
+      setOperationError(
         "Ripristino Google Drive non completato: l’archivio locale corrente è rimasto protetto.",
       );
       setIsCloudBusy(false);
@@ -306,7 +389,9 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
           onChange={(event) => {
             setPassphrase(event.target.value);
             setVerifiedArchive(undefined);
+            setVerifiedCloudArchive(undefined);
             setIsRestoreConfirmationOpen(false);
+            setIsCloudRestoreConfirmationOpen(false);
           }}
           type="password"
           value={passphrase}
@@ -477,6 +562,10 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
                       : "errore autorizzazione"}
               . Drive usa `appDataFolder` e riceve esclusivamente archivi già cifrati.
             </p>
+            <p>
+              Account e cartella: l’account viene scelto nel consenso Google; Nexora usa soltanto la
+              propria cartella privata, non visibile alle altre app.
+            </p>
             {cloudError === undefined ? null : (
               <p aria-live="polite" className="form-error" role="alert">
                 {cloudError}
@@ -497,16 +586,87 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
                 <button
                   className="secondary-action"
                   disabled={passphrase.trim().length < 12 || isCloudBusy}
-                  onClick={() => void restoreCloud(backup)}
+                  onClick={() => void verifyCloudRestore(backup)}
                   type="button"
                 >
-                  Ripristina da Drive
+                  Verifica per il ripristino
                 </button>
               </li>
             ))}
           </ul>
         )}
+        {verifiedCloudArchive === undefined ? null : (
+          <section
+            aria-labelledby="cloud-verification-title"
+            className="backup-verification-report"
+          >
+            <h3 id="cloud-verification-title">Backup Drive verificato</h3>
+            <dl>
+              <div>
+                <dt>File</dt>
+                <dd>{verifiedCloudArchive.metadata.backupId}</dd>
+              </div>
+              <div>
+                <dt>Schema</dt>
+                <dd>{verifiedCloudArchive.receipt.manifest.schemaVersion}</dd>
+              </div>
+              <div>
+                <dt>Creato</dt>
+                <dd>
+                  {new Date(verifiedCloudArchive.receipt.manifest.createdAt).toLocaleString(
+                    "it-IT",
+                  )}
+                </dd>
+              </div>
+              <div>
+                <dt>Integrità</dt>
+                <dd>{verifiedCloudArchive.receipt.checksumSha256.slice(0, 12)}…</dd>
+              </div>
+            </dl>
+            <p>Il contenuto è rimasto cifrato su Drive ed è stato verificato localmente.</p>
+            <div className="form-actions">
+              <button
+                className="primary-action"
+                disabled={isCloudBusy}
+                onClick={() => setIsCloudRestoreConfirmationOpen(true)}
+                type="button"
+              >
+                Ripristina backup Drive verificato
+              </button>
+            </div>
+          </section>
+        )}
       </section>
+      {isCloudRestoreConfirmationOpen && verifiedCloudArchive !== undefined ? (
+        <AccessibleDialog
+          labelledBy="cloud-restore-confirmation-title"
+          onClose={() => !isCloudBusy && setIsCloudRestoreConfirmationOpen(false)}
+        >
+          <h2 id="cloud-restore-confirmation-title">Confermare il ripristino da Drive?</h2>
+          <p>
+            Il ledger corrente sarà sostituito con “{verifiedCloudArchive.metadata.backupId}”. Un
+            checkpoint verificato proteggerà i dati correnti in caso di errore.
+          </p>
+          <div className="form-actions">
+            <button
+              className="secondary-action"
+              disabled={isCloudBusy}
+              onClick={() => setIsCloudRestoreConfirmationOpen(false)}
+              type="button"
+            >
+              Annulla
+            </button>
+            <button
+              className="primary-action"
+              disabled={isCloudBusy}
+              onClick={() => void restoreVerifiedCloud()}
+              type="button"
+            >
+              {isCloudBusy ? "Ripristino in corso…" : "Conferma ripristino da Drive"}
+            </button>
+          </div>
+        </AccessibleDialog>
+      ) : null}
       <section aria-labelledby="backup-history-title" className="backup-cloud-unavailable">
         <h2 id="backup-history-title">Cronologia backup</h2>
         {history.length === 0 ? (

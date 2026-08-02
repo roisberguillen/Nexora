@@ -7,6 +7,7 @@ export type BackupHistoryOperation =
   | "local_backup"
   | "manual_backup"
   | "cloud_upload"
+  | "cloud_verify"
   | "cloud_download"
   | "restore"
   | "restore_test"

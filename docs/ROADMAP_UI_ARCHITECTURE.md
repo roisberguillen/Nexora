@@ -17,7 +17,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 8 | Importazione, esportazione e qualità dati | completata |
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
-| 11 | Google Drive | pianificata |
+| 11 | Google Drive | implementata; collaudo OAuth live pendente |
 | 12 | Feature finanziarie con nuova UI | pianificata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
@@ -157,3 +157,18 @@ Commit e push su `origin/main`.
   corrente non è stato modificato; checkpoint e rollback restano responsabilità dell'engine.
 - [x] Verificati test component, round-trip OPFS reale, download/selezione/verifica tramite browser,
   WCAG automatizzata e assenza di overflow a 320, 375, 768, 1024 e 1440 px.
+
+## Evidenze Fase 11
+
+- [x] Google Identity Services usa esclusivamente lo scope `drive.appdata`; il token resta in
+  memoria, viene revocato alla disconnessione e consenso negato/timeout falliscono in modo chiuso.
+- [x] Il provider elenca solo metadati Nexora validi nella cartella privata, limita gli archivi a
+  512 MiB e non ritenta upload POST per evitare copie duplicate dopo esiti di rete ambigui.
+- [x] Upload e restore riusano l'archivio cifrato del Backup Engine: il download deve coincidere con
+  dimensione e checksum Drive e superare la verifica read-only prima della conferma di restore.
+- [x] La cancellazione cloud resta separata e opt-in nel ripristino totale; il normale flusso backup
+  non elimina file remoti e la cancellazione opera soltanto sui backup Nexora enumerati.
+- [x] Verificati provider, OAuth negativo/timeout/concorrenza, configurazione, UI component,
+  accessibilità e layout backup sui viewport 320, 375, 768, 1024 e 1440 px.
+- [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
+  nessuna credenziale reale è disponibile o incorporata nel repository locale.

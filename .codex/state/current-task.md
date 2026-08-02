@@ -1,17 +1,17 @@
 # Current task
 
-- Task: manual encrypted backup and explicit file restore workflow
-- Roadmap phase: Phase 10
-- Category: manual_backup
-- Profile: ADVANCED
-- Data risk: medium; restore enabled only after read-only verification and explicit confirmation
-- Status: ready for commit and push
-- Initial files: BackupPage, ledger verification receipt, responsive CSS, component/E2E tests and docs
-- Extra reads: none
-- Attempts: 1; updated stale E2E schema expectation to use the live migration catalog
-- Checkpoint: UI receipt is invalidated by file/passphrase changes; engine retains rollback checkpoint
-- Targeted tests: component confirmation/error paths; real OPFS round-trip; responsive browser flow
-- Completed gates: 19 targeted unit/component tests; web/database package typechecks
-- Completed gates: manual UI E2E at five viewports and OPFS restore smoke
-- Completed gates: full verify, 152-test E2E suite, manifest and orchestrator validation
-- Next task: Phase 11 Google Drive, only after final Phase 10 gates and commit
+- Task: harden Google Drive backup and verified restore
+- Roadmap phase: Phase 11
+- Category: google_drive
+- Profile: ADVANCED with security checkpoint
+- Data risk: medium; OAuth token, encrypted remote archive and explicit destructive restore
+- Status: implementation verified locally; live OAuth deployment gate pending
+- Initial files: cloud provider/auth/config, BackupPage, tests, backup docs and roadmap evidence
+- Extra reads: ADR 0015, ADR 0018, backup specification and OAuth operations guide
+- Attempts: 2; restored the existing opt-in cloud deletion contract required by total reset
+- Checkpoint: token memory-only; upload encrypted; Drive restore requires read-only receipt and dialog
+- Completed gates: 34 targeted unit/component tests and web typecheck
+- Completed gates: production build and backup E2E at five viewports
+- Completed gates: full verify (383 tests), full E2E (152 passed, 63 documented skips)
+- Pending gate: OAuth account consent/upload/reopen/restore with an authorized deployment Client ID
+- Next task: complete Phase 11 live OAuth gate before starting Phase 12

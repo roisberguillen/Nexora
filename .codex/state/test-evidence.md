@@ -97,3 +97,19 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm doctor`, `pnpm codex:validate`, `pnpm codex:test` and `pnpm manifest:check`: passed.
 - `pnpm verify`: passed; 106 test files passed, 370 tests passed, 4 documented skips and the
   production PWA build completed.
+
+## Phase 11 Google Drive implementation — 2026-08-02
+
+- Provider, OAuth, loader, configuration, BackupPage, history and total-reset suites: 7 files and
+  34 targeted tests passed; strict web typecheck passed.
+- Covered invalid metadata, size mismatch, expired/denied sessions, GET retry, non-retried POST,
+  concurrent/denied/timed-out consent, checksum mismatch and explicit restore confirmation.
+- Production build passed; backup UI E2E passed at 320, 375, 768, 1024 and 1440 px with axe and
+  overflow checks (6 passed, 4 intentional duplicate round-trip skips).
+- `pnpm codex:validate` and `pnpm codex:test`: passed; `pnpm verify`: 107 test files passed,
+  1 skipped, 383 tests passed and 4 documented skips; production PWA build completed.
+- Full `pnpm test:e2e`: 152 passed and 63 documented skips, including startup/reload, OPFS,
+  IndexedDB, rollback, offline, all financial surfaces and 100,000-record performance checks.
+- Local secret/token persistence scan found only synthetic test tokens and the redaction rules.
+- Pending external evidence: live OAuth/Drive round-trip with a deployment Client ID and test
+  account; the local environment intentionally contains no Google credential.

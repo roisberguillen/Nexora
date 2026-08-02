@@ -47,3 +47,18 @@ La Fase 10 collega il Backup Engine al download e al restore esplicito della PWA
 
 La cronologia locale conserva esclusivamente metadati tecnici dell'operazione. Google Drive non
 fa parte della Fase 10 e riusa lo stesso archivio cifrato soltanto nella Fase 11.
+
+## Flusso Google Drive
+
+La Fase 11 usa Google Identity Services e lo scope minimo `drive.appdata`. L'account viene scelto
+nel consenso Google e la destinazione è la cartella privata Nexora `appDataFolder`; non sono
+supportate cartelle Drive arbitrarie. Il token resta soltanto in memoria.
+
+Il provider riceve esclusivamente un archivio già cifrato e autoverificato. Lista, upload e download
+validano identificatore, estensione, formato, schema, data, checksum e dimensione; archivi oltre
+512 MiB sono rifiutati. Prima del restore, dimensione e checksum remoti devono coincidere con la
+ricevuta e l'engine deve completare la verifica read-only. La sostituzione richiede quindi un dialogo
+esplicito e mantiene checkpoint, verifica post-write e rollback dell'engine.
+
+Gli upload non vengono ritentati automaticamente. La cancellazione remota è esclusa dai flussi
+ordinari ed è ammessa soltanto dalla scelta esplicita già prevista nel ripristino totale.

@@ -1,7 +1,10 @@
 const GOOGLE_IDENTITY_URL = "https://accounts.google.com/gsi/client";
 
 export function loadGoogleIdentity(documentRef: Document = document): Promise<void> {
-  if ("google" in window) return Promise.resolve();
+  const identityWindow = window as Window & {
+    readonly google?: { readonly accounts?: { readonly oauth2?: unknown } };
+  };
+  if (identityWindow.google?.accounts?.oauth2 !== undefined) return Promise.resolve();
   const existing = documentRef.querySelector<HTMLScriptElement>(
     `script[src="${GOOGLE_IDENTITY_URL}"]`,
   );

@@ -203,9 +203,14 @@
       "sha256": "618ddf2f1176ffb47bcf121b3e9bcd1e8141607e728abec25aa2cef219fa67a7"
     },
     {
+      "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-security.md",
+      "size": 1009,
+      "sha256": "4ca3b7584503a8a8f173fcf651a556ee0cecfa2a8f49f9e1c9588f313065bbed"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 1027,
-      "sha256": "ca934f7bb26b84e2054b57b96ba1674dee594346d585b3c92dab7f7f18bf4eb0"
+      "size": 1111,
+      "sha256": "6828ce979b5d15827b50414f8f3bb261e4258b7a969f6fdc8f90c33553c0471e"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -229,13 +234,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 697,
-      "sha256": "cb21373b40253f949120e28242fd647927950753584699891012a7741c02614c"
+      "size": 865,
+      "sha256": "9a549e9fd43e7038d2bf689729bfea171eacd89192e02ff9faed3fdde00e4916"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 5510,
-      "sha256": "6a4925ef9e3c80bbc3c6a287fa0f325181ec72dfc2546b95a69d8a2c0418d969"
+      "size": 6712,
+      "sha256": "4acaf0d5a5730c057c7e405c91650a653f33c96faed160cde61286dcc4e1da82"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -719,18 +724,18 @@
     },
     {
       "path": "apps/web/src/backup/backupHistory.ts",
-      "size": 1984,
-      "sha256": "26779aad24a539e7da162d0b55ac44110ff9c9d160462d69613cbd2575bc60e0"
+      "size": 2003,
+      "sha256": "977ce9a66ddd2f941ff4c550fa52a4c3e4c3890beb5aa89ff7d72a6088fab74e"
     },
     {
       "path": "apps/web/src/backup/BackupPage.test.tsx",
-      "size": 6397,
-      "sha256": "ac00d38a1ce870eff1e336a74ed3bfb42256490060ea88f78418e506723c8a29"
+      "size": 11347,
+      "sha256": "97dd7d2f270dbf5ab0ac1918e9097e8e97775e82752c9ee04f058644bfe2cda9"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 19620,
-      "sha256": "d7c044c0dfe40d0513b7f06eff5cd971bd5c5c53fbb996fbf174073b8d96c90f"
+      "size": 25911,
+      "sha256": "268c3870c9625a585d1a5230ec28a2944993f4f159bf00f288ec42ea181237e1"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
@@ -759,43 +764,48 @@
     },
     {
       "path": "apps/web/src/cloud/cloudConfig.test.ts",
-      "size": 635,
-      "sha256": "3f8335d3747e7c6baa59ea4d151f902c87113c0f3fbd8d0461aa8f45174f8f6e"
+      "size": 950,
+      "sha256": "50c6b40bb3416a52d39031746f42ea101b9b41675f420fc9db0dd0fd15471a6d"
     },
     {
       "path": "apps/web/src/cloud/cloudConfig.ts",
-      "size": 590,
-      "sha256": "93720537da3be55915b8f988be14dd902035c1fee36083c1efe485d2a6423948"
+      "size": 673,
+      "sha256": "f4f7e88d4a3b9d69c7e5517e485cd28775c91cb324005df9933878202a671401"
     },
     {
       "path": "apps/web/src/cloud/cloudTypes.ts",
-      "size": 993,
-      "sha256": "35585facb711b4e7e2039993e1c202a1de820cc473a81ae4f0b9bf786d1c22e9"
+      "size": 1016,
+      "sha256": "b68ce4d3881fe3b0a04bdc5dd390d57aec23747292389aef77b73f34d35acb7d"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.test.ts",
-      "size": 3604,
-      "sha256": "67c2c0ff76b2c735a32abca1d3f6f03756784351dba3f8befd43dd4a704814b6"
+      "size": 6211,
+      "sha256": "2922edddf246c99f6c61474b7264138e05cb804a4006d40411385f7e94de4990"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
-      "size": 4997,
-      "sha256": "abfa187a9016d5d39487e20a5a14c3cfc87ef7811d77213a365e4d337b037a77"
+      "size": 7663,
+      "sha256": "19a8277ce5c8f22f4fc226b9ff9625fba22cf519a8a5bcdaeab3fbfe86155bf5"
     },
     {
       "path": "apps/web/src/cloud/GoogleIdentityAuth.test.ts",
-      "size": 1143,
-      "sha256": "25feb229de4b8764bbdafc03cbd07244ea7d56abe84e0280b9e28df1e9a0017d"
+      "size": 3544,
+      "sha256": "bfdcdeac9102964dfe8396e49a0c0c30c4f456b270a8d877561225500f43202a"
     },
     {
       "path": "apps/web/src/cloud/GoogleIdentityAuth.ts",
-      "size": 2393,
-      "sha256": "fd0af0681705965ad37f8977b221ee42a261e0d427a00eb881feb2aac704a070"
+      "size": 3839,
+      "sha256": "e35810d64353ad7938549d04f0501406195e00a4d9b6a6dbfd43e7c6a419df63"
+    },
+    {
+      "path": "apps/web/src/cloud/loadGoogleIdentity.test.ts",
+      "size": 927,
+      "sha256": "4fb259f15ce00a87cec64d5a6356384901eec42bb1c02a0ceba0c0f90aad26ad"
     },
     {
       "path": "apps/web/src/cloud/loadGoogleIdentity.ts",
-      "size": 897,
-      "sha256": "98335862d0fbf0bc04a6f2b2780ff1d671cc3eb5112a3ff7c4555348b0082702"
+      "size": 1060,
+      "sha256": "db54e2db1b83e2b1d1d986ff11434851f2477809ca5ed7f62eec17a65d7a2efd"
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
@@ -1309,8 +1319,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 20429,
-      "sha256": "890725d9b5fa0216480ceaebcc92fe2afe21fa9398ae8fe056611511f4d68cda"
+      "size": 20798,
+      "sha256": "0bdf6f4142256153d340c7ba4ded1193b0dce68ea4d24c87eb7192f30a476fb6"
     },
     {
       "path": "design/mockup/README.md",
@@ -1449,8 +1459,8 @@
     },
     {
       "path": "docs/BACKUP_SPEC.md",
-      "size": 2540,
-      "sha256": "195fafa840e3c29e450187c0964474c4f4e56d7478df0b741a10da469dacf85d"
+      "size": 3496,
+      "sha256": "ec17fed9dfa641fc0b171274a45de17da162f75ee43ba22d98e3868616848530"
     },
     {
       "path": "docs/CONTEXT.md",
@@ -1474,8 +1484,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 16714,
-      "sha256": "c46c61fc0d16b79b4a7fc012fee62238416761063f1538e9df0ea8cf14e6cb2d"
+      "size": 17338,
+      "sha256": "14ee26bda33e694b72aa5502ab76c5939555977567af29d0cdf50baa01ef0e2c"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
@@ -1499,8 +1509,8 @@
     },
     {
       "path": "docs/operations/GOOGLE_DRIVE_OAUTH.md",
-      "size": 727,
-      "sha256": "cfdd80b6254b124f724af5072a7b07b3912724de2295c7cd8b913f1a43f0501e"
+      "size": 2627,
+      "sha256": "d32b5bf22cc20d97aa75932f742cf0e76e1d29ff197c6582657d2578536b75bb"
     },
     {
       "path": "docs/PLATFORM_MATRIX.md",
@@ -1579,8 +1589,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 9892,
-      "sha256": "b9a7c64497e2df99d6a3085b885be333110e6fff7cadd7111d83b25160ea664c"
+      "size": 11064,
+      "sha256": "672f97e46dd284bdc1aeed74849e0e01c66dde8f6ebc3ef978f0654b74f6c184"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -2614,8 +2624,8 @@
     },
     {
       "path": "test/e2e/backup-manual-ui.spec.ts",
-      "size": 2722,
-      "sha256": "9642d860dfdc816712ed006d16d87fad7c7c7e6a2af3165d66baa52698609a9c"
+      "size": 2967,
+      "sha256": "cbd7a698b0a2715531a5e829bf25b85adee704c77c0321b256dbdf622a5081be"
     },
     {
       "path": "test/e2e/backup-restore.spec.ts",

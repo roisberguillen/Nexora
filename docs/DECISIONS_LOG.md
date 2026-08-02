@@ -2,6 +2,15 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-02 — Cartella Google Drive privata a privilegio minimo
+
+- **Contesto:** la roadmap richiede account e cartella selezionati dall'utente, mentre l'ADR 0015
+  impone lo scope minimo `drive.appdata`, che non permette di sfogliare cartelle arbitrarie.
+- **Scelta:** l'account viene scelto nel consenso Google e la cartella supportata è la directory
+  privata Nexora `appDataFolder`. Nessun ampliamento silenzioso dello scope OAuth.
+- **Conseguenze:** i backup restano isolati e invisibili alle altre app; una futura selezione di
+  cartelle Drive visibili richiederà requisiti espliciti, threat model e nuovo ADR.
+
 ## 2026-08-01 — Un solo catalogo migrazioni per SQLite browser e nativo
 
 - **Contesto:** la Fase 7 introduce SQLite nativo con Tauri senza poter creare una seconda

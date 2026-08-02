@@ -1,11 +1,15 @@
 import type { BrowserLedger, Ledger, VerifiedPortableBackup } from "@nexora/database";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { BackupPage } from "./BackupPage";
 
 describe("BackupPage", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
   it("richiede configurazione esplicita prima di attivare Google Drive", () => {
     render(
       <BackupPage
@@ -120,6 +124,132 @@ describe("BackupPage", () => {
       "Verifica non riuscita: il ledger attivo non è stato modificato",
     );
     expect(screen.getByRole("button", { name: "Ripristina archivio verificato" })).toBeDisabled();
+  });
+
+  it("verifica il backup Drive prima di mostrare la conferma di restore", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("VITE_GOOGLE_CLIENT_ID", "123-client.apps.googleusercontent.com");
+    vi.stubEnv("VITE_GOOGLE_DRIVE_ENABLED", "true");
+    vi.stubGlobal("google", {
+      accounts: {
+        oauth2: {
+          initTokenClient: ({
+            callback,
+          }: {
+            callback: (value: { access_token: string }) => void;
+          }) => ({ requestAccessToken: () => callback({ access_token: "token-sintetico" }) }),
+          revoke: (_token: string, done: () => void) => done(),
+        },
+      },
+    });
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            files: [
+              {
+                id: "drive-backup-1",
+                name: "backup-drive.nexora-backup",
+                size: "3",
+                createdTime: "2026-08-02T10:00:00.000Z",
+                appProperties: {
+                  backupId: "backup-drive.nexora-backup",
+                  checksumSha256: verifiedReceipt.checksumSha256,
+                  formatVersion: "1",
+                  schemaVersion: "14",
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(new Response(new Uint8Array([1, 2, 3]), { status: 200 }));
+    vi.stubGlobal("fetch", fetcher);
+    const verifyEncryptedBackupArchive = vi.fn(async () => verifiedReceipt);
+    const pendingRestore = new Promise<void>(() => undefined);
+    const restoreEncryptedBackupArchive = vi.fn(() => pendingRestore);
+    render(
+      <BackupPage
+        ledger={createLedger({ verifyEncryptedBackupArchive, restoreEncryptedBackupArchive })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Collega Google Drive" }));
+    expect(await screen.findByText("backup-drive.nexora-backup")).toBeInTheDocument();
+    await user.type(screen.getByLabelText("Passphrase (minimo 12 caratteri)"), "passphrase-sicura");
+    await user.click(screen.getByRole("button", { name: "Verifica per il ripristino" }));
+
+    expect(restoreEncryptedBackupArchive).not.toHaveBeenCalled();
+    expect(
+      await screen.findByRole("heading", { name: "Backup Drive verificato" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Ripristina backup Drive verificato" }));
+    expect(
+      screen.getByRole("dialog", { name: "Confermare il ripristino da Drive?" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Conferma ripristino da Drive" }));
+    expect(restoreEncryptedBackupArchive).toHaveBeenCalledWith({
+      archive: new Uint8Array([1, 2, 3]),
+      id: "backup-drive.nexora-backup",
+      passphrase: "passphrase-sicura",
+    });
+  });
+
+  it("blocca il restore Drive se il checksum remoto non coincide", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("VITE_GOOGLE_CLIENT_ID", "123-client.apps.googleusercontent.com");
+    vi.stubEnv("VITE_GOOGLE_DRIVE_ENABLED", "true");
+    vi.stubGlobal("google", {
+      accounts: {
+        oauth2: {
+          initTokenClient: ({
+            callback,
+          }: {
+            callback: (value: { access_token: string }) => void;
+          }) => ({ requestAccessToken: () => callback({ access_token: "token-sintetico" }) }),
+          revoke: (_token: string, done: () => void) => done(),
+        },
+      },
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(
+          new Response(
+            JSON.stringify({
+              files: [
+                {
+                  id: "drive-backup-1",
+                  name: "backup-drive.nexora-backup",
+                  size: "3",
+                  createdTime: "2026-08-02T10:00:00.000Z",
+                  appProperties: {
+                    backupId: "backup-drive.nexora-backup",
+                    checksumSha256: "b".repeat(64),
+                    formatVersion: "1",
+                    schemaVersion: "14",
+                  },
+                },
+              ],
+            }),
+            { status: 200 },
+          ),
+        )
+        .mockResolvedValueOnce(new Response(new Uint8Array([1, 2, 3]), { status: 200 })),
+    );
+    render(<BackupPage ledger={createLedger()} />);
+
+    await user.click(screen.getByRole("button", { name: "Collega Google Drive" }));
+    await user.type(screen.getByLabelText("Passphrase (minimo 12 caratteri)"), "passphrase-sicura");
+    await user.click(await screen.findByRole("button", { name: "Verifica per il ripristino" }));
+
+    expect(await screen.findByText(/Verifica Drive non riuscita/)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Ripristina backup Drive verificato" }),
+    ).not.toBeInTheDocument();
   });
 });
 
