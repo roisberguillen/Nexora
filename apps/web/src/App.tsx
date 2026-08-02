@@ -74,10 +74,9 @@ import {
   writeFinancialResetReceipt,
 } from "./reset/financialReset";
 import { readTotalResetReport, runTotalReset, writeTotalResetReport } from "./reset/totalReset";
-import { GoogleDriveBackupProvider } from "./cloud/GoogleDriveBackupProvider";
-import { GoogleIdentityAuth } from "./cloud/GoogleIdentityAuth";
-import { readGoogleCloudConfig } from "./cloud/cloudConfig";
-import { loadGoogleIdentity } from "./cloud/loadGoogleIdentity";
+import { GoogleDriveOnboarding } from "./cloud/GoogleDriveOnboarding";
+import { GoogleDriveSessionProvider } from "./cloud/GoogleDriveSession";
+import { useGoogleDriveSession } from "./cloud/GoogleDriveSessionContext";
 import { StartupLoadingScreen } from "./startup/StartupLoadingScreen";
 import { StartupRecoveryScreen } from "./startup/StartupRecoveryScreen";
 import {
@@ -129,12 +128,21 @@ export interface StartupDiagnosticsContext {
   readonly selectedBackend?: Ledger["storageKind"];
 }
 
-export function App({
+export function App(props: AppProps) {
+  return (
+    <GoogleDriveSessionProvider>
+      <AppContent {...props} />
+    </GoogleDriveSessionProvider>
+  );
+}
+
+function AppContent({
   ledgerPromise,
   seedLedger = seedDemoLedger,
   startupBootstrap,
   startupDiagnostics,
 }: AppProps) {
+  const googleDriveSession = useGoogleDriveSession();
   const route = useAppRoute();
   const [ledgerState, setLedgerState] = useState<LedgerState>({
     status: "loading",
@@ -479,15 +487,12 @@ export function App({
     });
   const resetApplication = async (input: { readonly deleteCloud: boolean }) => {
     if (ledgerState.status !== "ready") throw new Error("Ledger non pronto");
-    let cloud: GoogleDriveBackupProvider | undefined;
+    let cloud: typeof googleDriveSession.provider | undefined;
     if (input.deleteCloud) {
-      const config = readGoogleCloudConfig();
-      if (config.enabled) {
+      if (googleDriveSession.config.enabled) {
         try {
-          await loadGoogleIdentity();
-          const auth = new GoogleIdentityAuth(config.clientId);
-          await auth.connect();
-          cloud = new GoogleDriveBackupProvider(() => auth.getAccessToken());
+          await googleDriveSession.connect();
+          cloud = googleDriveSession.provider;
         } catch {
           // The local reset remains independent from a failed optional cloud authorization.
         }
@@ -574,184 +579,187 @@ export function App({
       {appLockConfig && isAppLocked ? (
         <AppLockScreen config={appLockConfig} onUnlock={() => setIsAppLocked(false)} />
       ) : (
-        <AppShell
-          activeRoute={route}
-          quickActions={quickActions}
-          searchResults={
-            ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []
-          }
-        >
-          {ledgerState.status === "ready" ? (
-            route === "accounts" ? (
-              <AccountsPage
-                activityByAccount={Object.fromEntries(
-                  ledgerState.rawAccounts.map((account) => {
-                    const transactions = ledgerState.rawTransactions.filter(
-                      (transaction) => transaction.accountId === account.id,
-                    );
-                    return [
-                      account.id,
-                      {
-                        transactions: transactions.length,
-                        transfers: transactions.filter(
-                          (transaction) => transaction.kind === "transfer",
-                        ).length,
-                      },
-                    ];
-                  }),
-                )}
-                model={ledgerState.accounts}
-                onCreate={createAccount}
-                onDeleteUnused={deleteUnusedAccount}
-                onEmpty={emptyAccount}
-                requiresEmptyPin={appLockConfig !== undefined}
-                onSetArchived={setAccountArchived}
-                onUpdate={updateAccount}
-              />
-            ) : route === "transactions" || route === "new-transaction" ? (
-              <TransactionsPage
-                initialEditorOpen={route === "new-transaction"}
-                model={ledgerState.transactions}
-                standaloneEditor={route === "new-transaction"}
-                tags={ledgerState.tags}
-                onCancel={cancelMovement}
-                onTrash={trashMovement}
-                onTrashMany={trashMovements}
-                onCreateManual={createManualMovement}
-                onCreateTransfer={createTransferMovement}
-                onExecuteSalaryAllocations={executeAllocations}
-              />
-            ) : route === "categories" ? (
-              <CategoriesPage
-                categories={ledgerState.categories}
-                onCreate={createCategory}
-                onDeleteUnused={deleteUnusedCategory}
-                onMerge={mergeCategory}
-                onUpdate={updateCategory}
-              />
-            ) : route === "tags" ? (
-              <TagsPage
-                tags={ledgerState.tags}
-                onCreate={createTag}
-                onDeleteUnused={deleteUnusedTag}
-                onMerge={mergeTag}
-                onRemoveGlobally={removeTagGlobally}
-                onUpdate={updateTag}
-              />
-            ) : route === "imports" ? (
-              <Suspense
-                fallback={
-                  <section
-                    aria-live="polite"
-                    className="ledger-state-card is-loading"
-                    role="status"
-                  >
-                    Preparazione dell’anteprima XLSX…
-                  </section>
-                }
-              >
-                <ImportsPage
+        <>
+          <AppShell
+            activeRoute={route}
+            quickActions={quickActions}
+            searchResults={
+              ledgerState.status === "ready" ? buildGlobalSearchResults(ledgerState) : []
+            }
+          >
+            {ledgerState.status === "ready" ? (
+              route === "accounts" ? (
+                <AccountsPage
+                  activityByAccount={Object.fromEntries(
+                    ledgerState.rawAccounts.map((account) => {
+                      const transactions = ledgerState.rawTransactions.filter(
+                        (transaction) => transaction.accountId === account.id,
+                      );
+                      return [
+                        account.id,
+                        {
+                          transactions: transactions.length,
+                          transfers: transactions.filter(
+                            (transaction) => transaction.kind === "transfer",
+                          ).length,
+                        },
+                      ];
+                    }),
+                  )}
+                  model={ledgerState.accounts}
+                  onCreate={createAccount}
+                  onDeleteUnused={deleteUnusedAccount}
+                  onEmpty={emptyAccount}
+                  requiresEmptyPin={appLockConfig !== undefined}
+                  onSetArchived={setAccountArchived}
+                  onUpdate={updateAccount}
+                />
+              ) : route === "transactions" || route === "new-transaction" ? (
+                <TransactionsPage
+                  initialEditorOpen={route === "new-transaction"}
+                  model={ledgerState.transactions}
+                  standaloneEditor={route === "new-transaction"}
+                  tags={ledgerState.tags}
+                  onCancel={cancelMovement}
+                  onTrash={trashMovement}
+                  onTrashMany={trashMovements}
+                  onCreateManual={createManualMovement}
+                  onCreateTransfer={createTransferMovement}
+                  onExecuteSalaryAllocations={executeAllocations}
+                />
+              ) : route === "categories" ? (
+                <CategoriesPage
+                  categories={ledgerState.categories}
+                  onCreate={createCategory}
+                  onDeleteUnused={deleteUnusedCategory}
+                  onMerge={mergeCategory}
+                  onUpdate={updateCategory}
+                />
+              ) : route === "tags" ? (
+                <TagsPage
+                  tags={ledgerState.tags}
+                  onCreate={createTag}
+                  onDeleteUnused={deleteUnusedTag}
+                  onMerge={mergeTag}
+                  onRemoveGlobally={removeTagGlobally}
+                  onUpdate={updateTag}
+                />
+              ) : route === "imports" ? (
+                <Suspense
+                  fallback={
+                    <section
+                      aria-live="polite"
+                      className="ledger-state-card is-loading"
+                      role="status"
+                    >
+                      Preparazione dell’anteprima XLSX…
+                    </section>
+                  }
+                >
+                  <ImportsPage
+                    accounts={ledgerState.rawAccounts}
+                    categories={ledgerState.categories}
+                    transactions={ledgerState.rawTransactions}
+                    onCommit={commitImport}
+                    onUndo={undoImport}
+                    batches={ledgerState.importBatches}
+                  />
+                </Suspense>
+              ) : route === "budgets" ? (
+                <BudgetsPage
+                  budgets={ledgerState.budgets}
+                  categories={ledgerState.categories}
+                  onCreate={createMonthlyBudget}
+                  transactions={ledgerState.rawTransactions}
+                />
+              ) : route === "loans" ? (
+                <LoansPage
+                  accounts={ledgerState.rawAccounts}
+                  loans={ledgerState.loans}
+                  onCreate={createLoanPosition}
+                />
+              ) : route === "investments" ? (
+                <InvestmentsPage
+                  accounts={ledgerState.rawAccounts}
+                  onCreate={createInvestment}
+                  positions={ledgerState.investmentPositions}
+                />
+              ) : route === "recurring" ? (
+                <RecurringPage
+                  accounts={ledgerState.rawAccounts}
+                  allocationPlans={ledgerState.allocationPlans}
+                  categories={ledgerState.categories}
+                  onCreateAllocation={createAllocation}
+                  onExecuteAllocations={executeAllocations}
+                  rules={ledgerState.recurringRules}
+                  onCreate={createRecurring}
+                  onUpdate={updateRecurring}
+                />
+              ) : route === "exports" ? (
+                <ExportsPage
                   accounts={ledgerState.rawAccounts}
                   categories={ledgerState.categories}
+                  onExportCompleteJson={exportCompleteJson}
                   transactions={ledgerState.rawTransactions}
-                  onCommit={commitImport}
-                  onUndo={undoImport}
-                  batches={ledgerState.importBatches}
                 />
-              </Suspense>
-            ) : route === "budgets" ? (
-              <BudgetsPage
-                budgets={ledgerState.budgets}
-                categories={ledgerState.categories}
-                onCreate={createMonthlyBudget}
-                transactions={ledgerState.rawTransactions}
-              />
-            ) : route === "loans" ? (
-              <LoansPage
-                accounts={ledgerState.rawAccounts}
-                loans={ledgerState.loans}
-                onCreate={createLoanPosition}
-              />
-            ) : route === "investments" ? (
-              <InvestmentsPage
-                accounts={ledgerState.rawAccounts}
-                onCreate={createInvestment}
-                positions={ledgerState.investmentPositions}
-              />
-            ) : route === "recurring" ? (
-              <RecurringPage
-                accounts={ledgerState.rawAccounts}
-                allocationPlans={ledgerState.allocationPlans}
-                categories={ledgerState.categories}
-                onCreateAllocation={createAllocation}
-                onExecuteAllocations={executeAllocations}
-                rules={ledgerState.recurringRules}
-                onCreate={createRecurring}
-                onUpdate={updateRecurring}
-              />
-            ) : route === "exports" ? (
-              <ExportsPage
-                accounts={ledgerState.rawAccounts}
-                categories={ledgerState.categories}
-                onExportCompleteJson={exportCompleteJson}
-                transactions={ledgerState.rawTransactions}
-              />
-            ) : route === "backup" ? (
-              <BackupPage ledger={ledgerState.ledger} />
-            ) : route === "journal" ? (
-              <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
-            ) : route === "analytics" ? (
-              <AnalyticsPage transactions={ledgerState.rawTransactions} />
-            ) : route === "notifications" ? (
-              <NotificationsPage
-                accounts={ledgerState.rawAccounts}
-                budgets={ledgerState.budgets}
-                loans={ledgerState.loans}
-                recurringRules={ledgerState.recurringRules}
-                transactions={ledgerState.rawTransactions}
-              />
-            ) : route === "profile" ? (
-              <ProfilePage />
-            ) : route === "settings" ? (
-              <SettingsPage
-                onResetFinancialData={resetFinancialData}
-                onCreateResetBackup={createResetBackup}
-                cloudResetAvailable={readGoogleCloudConfig().enabled}
-                requiresResetPin={appLockConfig !== undefined}
-                onPreviewFinancialReset={previewResetFinancialData}
-                onResetApplication={resetApplication}
-                onRestoreTransaction={restoreTrashedTransaction}
-                onPurgeTransaction={purgeTrashedTransaction}
-                onPurgeTransactions={purgeTrashedTransactions}
-                trashedTransactions={ledgerState.trashedTransactions}
-              />
-            ) : route === "privacy-security" ? (
-              <PrivacySecurityPage
-                ledger={ledgerState.ledger}
-                lockConfig={appLockConfig}
-                onLockConfigChanged={(config) => {
-                  setAppLockConfig(config);
-                  setIsAppLocked(false);
-                }}
-                onManualLock={() => setIsAppLocked(true)}
-              />
+              ) : route === "backup" ? (
+                <BackupPage ledger={ledgerState.ledger} />
+              ) : route === "journal" ? (
+                <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
+              ) : route === "analytics" ? (
+                <AnalyticsPage transactions={ledgerState.rawTransactions} />
+              ) : route === "notifications" ? (
+                <NotificationsPage
+                  accounts={ledgerState.rawAccounts}
+                  budgets={ledgerState.budgets}
+                  loans={ledgerState.loans}
+                  recurringRules={ledgerState.recurringRules}
+                  transactions={ledgerState.rawTransactions}
+                />
+              ) : route === "profile" ? (
+                <ProfilePage />
+              ) : route === "settings" ? (
+                <SettingsPage
+                  onResetFinancialData={resetFinancialData}
+                  onCreateResetBackup={createResetBackup}
+                  cloudResetAvailable={googleDriveSession.config.enabled}
+                  requiresResetPin={appLockConfig !== undefined}
+                  onPreviewFinancialReset={previewResetFinancialData}
+                  onResetApplication={resetApplication}
+                  onRestoreTransaction={restoreTrashedTransaction}
+                  onPurgeTransaction={purgeTrashedTransaction}
+                  onPurgeTransactions={purgeTrashedTransactions}
+                  trashedTransactions={ledgerState.trashedTransactions}
+                />
+              ) : route === "privacy-security" ? (
+                <PrivacySecurityPage
+                  ledger={ledgerState.ledger}
+                  lockConfig={appLockConfig}
+                  onLockConfigChanged={(config) => {
+                    setAppLockConfig(config);
+                    setIsAppLocked(false);
+                  }}
+                  onManualLock={() => setIsAppLocked(true)}
+                />
+              ) : (
+                <Dashboard
+                  hasSeedFeedback={hasSeedFeedback}
+                  isSeeding={isSeeding}
+                  model={ledgerState.dashboard}
+                  {...(totalResetReport === undefined ? {} : { totalResetReport })}
+                  onAddDemoData={() => void addDemoData()}
+                />
+              )
             ) : (
-              <Dashboard
-                hasSeedFeedback={hasSeedFeedback}
-                isSeeding={isSeeding}
-                model={ledgerState.dashboard}
-                {...(totalResetReport === undefined ? {} : { totalResetReport })}
-                onAddDemoData={() => void addDemoData()}
+              <PersistenceState
+                diagnostics={startupDiagnostics?.()}
+                progress={startupProgress}
+                state={ledgerState}
               />
-            )
-          ) : (
-            <PersistenceState
-              diagnostics={startupDiagnostics?.()}
-              progress={startupProgress}
-              state={ledgerState}
-            />
-          )}
-        </AppShell>
+            )}
+          </AppShell>
+          {ledgerState.status === "ready" ? <GoogleDriveOnboarding /> : null}
+        </>
       )}
     </ErrorBoundary>
   );

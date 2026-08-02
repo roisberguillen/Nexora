@@ -113,3 +113,16 @@ Keep only the latest relevant evidence per completed phase.
 - Local secret/token persistence scan found only synthetic test tokens and the redaction rules.
 - Pending external evidence: live OAuth/Drive round-trip with a deployment Client ID and test
   account; the local environment intentionally contains no Google credential.
+
+## Phase 11 Google account onboarding — 2026-08-02
+
+- Shared-session, onboarding, App integration and OAuth prompt suites: 5 files and 38 targeted
+  tests passed; strict web typecheck and lint passed.
+- Configured synthetic production build and onboarding E2E passed at 320, 375, 768, 1024 and
+  1440 px (5/5), including focus containment, axe, overflow, offline continuation and reload.
+- The E2E Client ID is syntactically valid and synthetic; no token, account or financial fixture is
+  present. The authorized live OAuth round-trip remains the explicit external gate.
+- `pnpm verify`: 108 test files passed, 1 skipped; 388 tests passed and 4 documented skips;
+  formatting, lint, workspace typechecks and production PWA build completed.
+- Full `pnpm test:e2e`: 152 passed and 68 documented skips. The first run reached the five-minute
+  command limit without a test failure; the unchanged rerun completed in five minutes.

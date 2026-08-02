@@ -54,6 +54,12 @@ La Fase 11 usa Google Identity Services e lo scope minimo `drive.appdata`. L'acc
 nel consenso Google e la destinazione è la cartella privata Nexora `appDataFolder`; non sono
 supportate cartelle Drive arbitrarie. Il token resta soltanto in memoria.
 
+Quando il deployment dispone di un Client ID autorizzato, l'onboarding viene mostrato soltanto
+dopo che il ledger locale è stato aperto e verificato. Il consenso parte da un'azione esplicita e
+chiede di selezionare l'account Google; non è un login obbligatorio a Nexora. L'utente può continuare
+offline senza Drive e il rifiuto non modifica né blocca il ledger. Il rinvio è memorizzato soltanto
+per la sessione del browser, mentre token e dati OAuth non vengono persistiti.
+
 Il provider riceve esclusivamente un archivio già cifrato e autoverificato. Lista, upload e download
 validano identificatore, estensione, formato, schema, data, checksum e dimensione; archivi oltre
 512 MiB sono rifiutati. Prima del restore, dimensione e checksum remoti devono coincidere con la

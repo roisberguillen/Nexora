@@ -1,11 +1,8 @@
 import type { Ledger, VerifiedPortableBackup } from "@nexora/database";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { GoogleDriveBackupProvider } from "../cloud/GoogleDriveBackupProvider";
-import { GoogleIdentityAuth } from "../cloud/GoogleIdentityAuth";
-import { readGoogleCloudConfig } from "../cloud/cloudConfig";
+import { useGoogleDriveSession } from "../cloud/GoogleDriveSessionContext";
 import type { CloudBackupMetadata } from "../cloud/cloudTypes";
-import { loadGoogleIdentity } from "../cloud/loadGoogleIdentity";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import { appendBackupHistory, readBackupHistory } from "./backupHistory";
 
@@ -37,6 +34,7 @@ function describeCloudError(error: unknown): string {
 }
 
 export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
+  const googleDriveSession = useGoogleDriveSession();
   const [passphrase, setPassphrase] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [operationError, setOperationError] = useState<string | null>(null);
@@ -56,18 +54,27 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const [history, setHistory] = useState(() => readBackupHistory());
   const [cloudStatus, setCloudStatus] = useState<
     "idle" | "authorizing" | "connected" | "expired" | "error"
-  >("idle");
+  >(googleDriveSession.status);
   const [cloudError, setCloudError] = useState<string>();
-  const cloudConfig = useMemo(readGoogleCloudConfig, []);
-  const cloudAuth = useMemo(
-    () => new GoogleIdentityAuth(cloudConfig.clientId),
-    [cloudConfig.clientId],
-  );
-  const cloudProvider = useMemo(
-    () => new GoogleDriveBackupProvider(() => cloudAuth.getAccessToken()),
-    [cloudAuth],
-  );
+  const cloudConfig = googleDriveSession.config;
+  const cloudProvider = googleDriveSession.provider;
   const canCreate = ledger.createEncryptedBackupArchive !== undefined;
+
+  useEffect(() => {
+    setCloudStatus(googleDriveSession.status);
+    if (googleDriveSession.status !== "connected") return;
+    let isActive = true;
+    void cloudProvider.list().then(
+      (backups) => isActive && setCloudBackups(backups),
+      (error: unknown) => {
+        if (!isActive) return;
+        setCloudError(describeCloudError(error));
+      },
+    );
+    return () => {
+      isActive = false;
+    };
+  }, [cloudProvider, googleDriveSession.status]);
 
   const create = async () => {
     if (
@@ -203,13 +210,10 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
     setOperationError(null);
     setCloudError(undefined);
     try {
-      await loadGoogleIdentity();
-      await cloudAuth.connect();
-      setCloudStatus(cloudAuth.getStatus());
-      setCloudBackups(await cloudProvider.list());
+      await googleDriveSession.connect();
       setMessage("Google Drive collegato: vengono gestiti solo backup cifrati privati.");
     } catch (error) {
-      setCloudStatus(cloudAuth.getStatus());
+      setCloudStatus("error");
       setCloudError(describeCloudError(error));
       setMessage("Collegamento Google Drive non riuscito. Nessun dato locale è stato condiviso.");
     } finally {
@@ -217,11 +221,11 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
     }
   };
   const disconnectCloud = async () => {
-    await cloudAuth.disconnect();
+    await googleDriveSession.disconnect();
     setCloudBackups([]);
     setVerifiedCloudArchive(undefined);
     setIsCloudRestoreConfirmationOpen(false);
-    setCloudStatus(cloudAuth.getStatus());
+    setCloudStatus("idle");
     setMessage("Google Drive disconnesso: nessun token è conservato nel browser.");
   };
   const uploadCloud = async () => {

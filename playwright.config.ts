@@ -1,5 +1,8 @@
 import { defineConfig } from "@playwright/test";
 
+const e2ePort = Number(process.env.NEXORA_E2E_PORT ?? "4173");
+const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
+
 export default defineConfig({
   testDir: "./test/e2e",
   fullyParallel: true,
@@ -7,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: e2eBaseUrl,
     trace: "on-first-retry",
   },
   expect: {
@@ -36,8 +39,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "pnpm --filter @nexora/web run preview --host 127.0.0.1",
-    url: "http://127.0.0.1:4173",
+    command: `pnpm --filter @nexora/web run preview --host 127.0.0.1 --port ${e2ePort}`,
+    url: e2eBaseUrl,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

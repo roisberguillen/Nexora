@@ -2,6 +2,17 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-02 — Onboarding Google opzionale dopo l'apertura del ledger
+
+- **Contesto:** ogni utente deve poter collegare il proprio account Google all'accesso, senza
+  trasformare un backup opzionale in un requisito per aprire Nexora o i dati offline.
+- **Scelta:** mostrare l'onboarding soltanto dopo l'apertura verificata del ledger e avviare
+  `select_account` esclusivamente dopo il clic dell'utente. “Continua senza Drive” vale per la
+  sessione corrente; token e identità OAuth restano in memoria e non sono persistiti.
+- **Conseguenze:** Nexora resta offline-first e non perde accesso ai dati se Google è assente o il
+  consenso viene negato. Il deployment deve comunque fornire un Client ID Web autorizzato; il
+  collaudo reale con un account di test rimane un gate esterno della Fase 11.
+
 ## 2026-08-02 — Cartella Google Drive privata a privilegio minimo
 
 - **Contesto:** la roadmap richiede account e cartella selezionati dall'utente, mentre l'ADR 0015

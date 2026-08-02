@@ -1,7 +1,7 @@
 import { InMemoryLedgerRepository, PersistenceError, type BrowserLedger } from "@nexora/database";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "./App";
 
@@ -17,6 +17,12 @@ function browserLedger(storageKind: BrowserLedger["storageKind"] = "opfs"): Brow
 describe("Nexora app", () => {
   beforeEach(() => {
     window.history.replaceState(null, "", "#overview");
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
   });
 
   it("mostra lo stato di apertura prima di leggere il ledger", () => {
@@ -46,6 +52,23 @@ describe("Nexora app", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Carica dati dimostrativi" })).toBeEnabled();
     expect(screen.queryByLabelText("Riepilogo finanziario")).not.toBeInTheDocument();
+  });
+
+  it("propone il collegamento Google dopo l'apertura del ledger senza bloccare l'uso offline", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("VITE_GOOGLE_CLIENT_ID", "123-client.apps.googleusercontent.com");
+    vi.stubEnv("VITE_GOOGLE_DRIVE_ENABLED", "true");
+
+    render(<App ledgerPromise={Promise.resolve(browserLedger("indexeddb"))} />);
+
+    expect(
+      await screen.findByRole("dialog", { name: "Collega il tuo account Google" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Continua senza Drive" }));
+    expect(
+      screen.queryByRole("dialog", { name: "Collega il tuo account Google" }),
+    ).not.toBeInTheDocument();
   });
 
   it("apre la registrazione dal menu rapido", async () => {

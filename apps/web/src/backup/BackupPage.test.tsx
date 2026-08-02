@@ -1,9 +1,15 @@
 import type { BrowserLedger, Ledger, VerifiedPortableBackup } from "@nexora/database";
-import { render, screen } from "@testing-library/react";
+import { render as renderUi, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { GoogleDriveSessionProvider } from "../cloud/GoogleDriveSession";
 import { BackupPage } from "./BackupPage";
+
+function render(ui: ReactElement) {
+  return renderUi(<GoogleDriveSessionProvider>{ui}</GoogleDriveSessionProvider>);
+}
 
 describe("BackupPage", () => {
   afterEach(() => {

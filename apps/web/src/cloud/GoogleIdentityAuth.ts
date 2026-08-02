@@ -90,7 +90,7 @@ export class GoogleIdentityAuth implements CloudAuthProvider {
         },
       });
       try {
-        client.requestAccessToken({ prompt: "consent" });
+        client.requestAccessToken({ prompt: "select_account" });
       } catch (error) {
         this.status = "error";
         finish(error instanceof Error ? error : new Error("google_identity_unavailable"));
