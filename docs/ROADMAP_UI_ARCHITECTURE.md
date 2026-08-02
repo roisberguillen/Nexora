@@ -15,7 +15,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 6 | Modulo pilota conti/movimenti/dashboard | completata |
 | 7 | SQLite nativo multipiattaforma | completata |
 | 8 | Importazione, esportazione e qualità dati | completata |
-| 9 | Backup Engine indipendente | pianificata |
+| 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | pianificata |
 | 11 | Google Drive | pianificata |
 | 12 | Feature finanziarie con nuova UI | pianificata |
@@ -131,3 +131,16 @@ Commit e push su `origin/main`.
   dai filtri CSV/XLSX, e report aggregato che contabilizza righe importate, ignorate e fallite.
 - [x] Verificati parser e migrazioni, adapter SQLite/IndexedDB, import responsive, download JSON
   completo sui cinque viewport, lint, typecheck, unit/component test e build di produzione.
+
+## Evidenze Fase 9
+
+- [x] Estratto `PortableBackupEngine` come servizio unico, indipendente da UI, destinazione e
+  backend persistente; browser OPFS/IndexedDB e Tauri delegano allo stesso contratto.
+- [x] La creazione cifra lo snapshot portabile e lo decifra/valida prima di produrre ricevuta,
+  checksum, manifest e archivio scaricabile o inviabile a un provider.
+- [x] Verifica e compatibilità schema avvengono prima di ogni scrittura; passphrase errate,
+  tampering, payload non portabili e schemi futuri sono rifiutati senza modificare il ledger.
+- [x] Il restore conserva un checkpoint portabile del ledger corrente, verifica il risultato e
+  ripristina automaticamente il checkpoint se la sostituzione o la verifica post-write fallisce.
+- [x] Verificato round-trip cross-adapter IndexedDB→SQLite, restore IndexedDB, rollback dopo errore
+  post-write, adapter browser/Tauri, typecheck, lint, test completi e build di produzione.

@@ -75,3 +75,12 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm codex:validate`: passed with 17 routes.
 - `pnpm verify`: passed; 105 test files passed, 362 tests passed, 4 documented skips and the
   production PWA build completed.
+
+## Phase 9 destination-independent Backup Engine — 2026-08-02
+
+- Shared engine, encrypted envelope, portable snapshot and browser/Tauri adapter suites passed.
+- Covered archive autoverification, wrong passphrase, tampering, future schema rejection,
+  IndexedDB restore, IndexedDB→SQLite round-trip and verified rollback after a post-write failure.
+- Package typechecks for `@nexora/database` and `@nexora/database-tauri` passed.
+- `pnpm verify`: passed; 106 test files passed, 366 tests passed, 4 documented skips and the
+  production PWA build completed.

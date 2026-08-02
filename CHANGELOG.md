@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Completata la Fase 9 con un Backup Engine portabile condiviso da OPFS, IndexedDB e SQLite
+  nativo: creazione autoverificata, controllo schema pre-write, restore cross-adapter e rollback
+  automatico verificato, senza cambiare cifratura o destinazioni supportate.
+
 - Completata la Fase 8: l'export JSON usa lo snapshot portabile completo e versionato del ledger,
   senza filtri impliciti, mentre la cronologia import espone un report qualità aggregato e
   accessibile per righe importate, ignorate e fallite.

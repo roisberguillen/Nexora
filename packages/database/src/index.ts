@@ -34,6 +34,13 @@ export {
 } from "./backup/LocalSqliteBackupService";
 export type { PhysicalBackupStore } from "./backup/PhysicalBackupStore";
 export {
+  PortableBackupEngine,
+  type CreatedPortableBackup,
+  type PortableBackupEngineOptions,
+  type PortableBackupRepository,
+  type VerifiedPortableBackup,
+} from "./backup/PortableBackupEngine";
+export {
   openBrowserLedger,
   type BrowserLedger,
   type BrowserLedgerOpeners,

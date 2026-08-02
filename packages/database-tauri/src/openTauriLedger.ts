@@ -1,18 +1,9 @@
-import type { LedgerRepository } from "@nexora/domain";
 import {
-  capturePortableLedgerSnapshot,
-  createEncryptedPayloadBackup,
-  decodePortableLedgerSnapshot,
-  decryptEncryptedPayloadBackup,
-  encodePortableLedgerSnapshot,
   initializeSqliteLedger,
   PersistenceError,
-  sha256Hex,
-  validatePortableLedgerSnapshot,
+  PortableBackupEngine,
   type InitializedSqliteLedger,
   type Ledger,
-  type CreatedLocalBackup,
-  type SqliteLedgerRepository,
 } from "@nexora/database";
 
 import { TauriSqliteDatabase, type TauriSqlClient } from "./TauriSqliteDatabase";
@@ -54,18 +45,22 @@ export async function openTauriLedger(options: OpenTauriLedgerOptions = {}): Pro
     });
     const openedDatabase = database;
     const schemaVersion = initialized.migration.toVersion;
+    const backupEngine = new PortableBackupEngine({
+      repository: initialized.repository,
+      schemaVersion,
+    });
 
     return {
       database,
       repository: initialized.repository,
       schemaVersion,
       storageKind: "native-sqlite",
-      createEncryptedBackupArchive: ({ passphrase }) =>
-        createPortableArchive(initialized.repository, schemaVersion, passphrase),
+      createEncryptedBackupArchive: ({ passphrase }) => backupEngine.createBackup(passphrase),
       restoreEncryptedBackupArchive: ({ archive, passphrase }) =>
-        restorePortableArchive(initialized.repository, schemaVersion, archive, passphrase),
-      verifyEncryptedBackupArchive: ({ archive, passphrase }) =>
-        verifyPortableArchive(archive, passphrase),
+        backupEngine.restoreBackup(archive, passphrase),
+      verifyEncryptedBackupArchive: async ({ archive, passphrase }) => {
+        await backupEngine.verifyBackup(archive, passphrase);
+      },
       close: () => openedDatabase.close(),
     };
   } catch (cause) {
@@ -90,65 +85,4 @@ async function loadNativeDatabase(databaseUrl: string): Promise<TauriSqlClient> 
       cause,
     );
   }
-}
-
-async function createPortableArchive(
-  repository: LedgerRepository,
-  schemaVersion: number,
-  passphrase: string,
-): Promise<CreatedLocalBackup & { readonly archive: Uint8Array }> {
-  const createdAt = new Date().toISOString();
-  const payload = encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository));
-  const archive = await createEncryptedPayloadBackup({
-    payloadBytes: payload,
-    path: "ledger.json",
-    schemaVersion,
-    createdAt,
-    passphrase,
-  });
-  const checksumSha256 = await sha256Hex(archive);
-  return {
-    id: `nexora-portable-${crypto.randomUUID()}.nexora-backup`,
-    archive,
-    checksumSha256,
-    createdAt,
-    size: archive.byteLength,
-    manifest: {
-      formatVersion: 1 as const,
-      schemaVersion,
-      createdAt,
-      files: [
-        { path: "ledger.json", sha256: await sha256Hex(payload), size: payload.byteLength },
-      ] as const,
-    },
-  };
-}
-
-async function restorePortableArchive(
-  repository: SqliteLedgerRepository,
-  schemaVersion: number,
-  archive: Uint8Array,
-  passphrase: string,
-): Promise<void> {
-  const decrypted = await decryptEncryptedPayloadBackup(archive, passphrase);
-  if (decrypted.manifest.files[0]?.path !== "ledger.json") {
-    throw new PersistenceError("corrupt_record", "The native backup payload is invalid.");
-  }
-  if (decrypted.manifest.schemaVersion > schemaVersion) {
-    throw new PersistenceError(
-      "corrupt_record",
-      "The backup schema is newer than this native ledger.",
-    );
-  }
-  await repository.replacePortableSnapshot(
-    validatePortableLedgerSnapshot(decodePortableLedgerSnapshot(decrypted.payloadBytes)),
-  );
-}
-
-async function verifyPortableArchive(archive: Uint8Array, passphrase: string): Promise<void> {
-  const decrypted = await decryptEncryptedPayloadBackup(archive, passphrase);
-  if (decrypted.manifest.files[0]?.path !== "ledger.json") {
-    throw new PersistenceError("corrupt_record", "The native backup payload is invalid.");
-  }
-  validatePortableLedgerSnapshot(decodePortableLedgerSnapshot(decrypted.payloadBytes));
 }

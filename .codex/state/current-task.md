@@ -1,16 +1,17 @@
 # Current task
 
-- Task: complete ledger JSON export and aggregate import quality report
-- Roadmap phase: Phase 8
+- Task: destination-independent portable Backup Engine
+- Roadmap phase: Phase 9
 - Category: repository_refactor
 - Profile: ADVANCED
-- Data risk: low; read-only export and aggregate report
+- Data risk: medium; verified restore with in-memory rollback checkpoint
 - Status: ready for commit and push
-- Initial files: application shell, export/import UI, quality report and export E2E
+- Initial files: shared backup engine, browser/native adapters, tests and backup documentation
 - Extra reads: none
-- Attempts: 1; normalized the Uint8Array boundary used by browser downloads
-- Checkpoint: no destructive or data-changing operation; no backup checkpoint required
-- Targeted tests: quality report, portable snapshot, App mount and responsive complete-export E2E
-- Completed gates: targeted tests, production build and 5 responsive export E2E
-- Completed gates: orchestrator validation and full repository verification
-- Next task: Phase 9 backup engine audit
+- Attempts: 1; normalized runtime value objects before validating rollback snapshots
+- Checkpoint: every restore captures and verifies the active portable snapshot before replacement
+- Targeted tests: encrypted payload, cross-adapter round-trip, schema rejection, tampering and rollback
+- Completed gates: 21 initial backup/adapter tests and package typechecks
+- Completed gates: 14 cross-adapter/adapter tests and package typechecks
+- Completed gates: full repository verification and production build
+- Next task: Phase 10 manual backup UX and file workflow
