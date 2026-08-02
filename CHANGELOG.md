@@ -9,6 +9,9 @@
 
 ### Changed
 
+- Aggiunto l'import CSV generico locale con rilevamento sicuro del delimitatore, campi quotati,
+  anteprima/mapping, conferma esplicita e tipo batch dedicato tramite schema v15.
+
 - Aggiunti profili di mapping import riutilizzabili e validati, con selezione esplicita nella UI
   e associazione persistente al batch tramite migrazione additiva SQLite/IndexedDB v14.
 

@@ -134,7 +134,7 @@ describe("Nexora app", () => {
     expect(screen.queryByText("OPFS")).not.toBeInTheDocument();
   });
 
-  it("mostra l'anteprima XLSX come fase locale e segnala un file non leggibile", async () => {
+  it("mostra l'anteprima import locale e segnala un file non leggibile", async () => {
     const user = userEvent.setup();
     window.history.replaceState(null, "", "#imports");
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
@@ -147,7 +147,7 @@ describe("Nexora app", () => {
     ).not.toBeInTheDocument();
 
     await user.upload(
-      screen.getByLabelText("Seleziona un estratto XLSX o PDF"),
+      screen.getByLabelText("Seleziona un estratto CSV, XLSX o PDF"),
       new File(["non un workbook"], "movimenti.xlsx", {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       }),

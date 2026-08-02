@@ -17,7 +17,8 @@ Sources: PRD 4.9–4.11, repository map, importers, import/export UI and pertine
    conservatively rejected because it represents Excel's fictitious 1900-02-29.
 3. [Resolved] Original raw cells are preserved in the audit payload; validated reusable mapping
    profiles persist locally and their selected identifier survives in SQLite/IndexedDB batch data.
-4. Generic CSV import is absent.
+4. [Resolved] Generic UTF-8 CSV import supports safe delimiter detection, quoted records, source
+   audit, mapping preview and explicit atomic confirmation under schema v15.
 5. “Complete” JSON omits several ledger aggregates and applies transaction filters implicitly.
 6. Final import report is limited to batch history and lacks a dedicated quality report.
 

@@ -19,3 +19,4 @@ export {
   type MoneyManagerDryRunRow,
 } from "./moneyManagerDryRun";
 export { buildLedgerWorkbook } from "./ledgerWorkbookExport";
+export { readGenericCsv } from "./genericCsvPreview";

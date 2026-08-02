@@ -54,3 +54,14 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm codex:validate`: passed with 17 routes.
 - `pnpm verify`: passed; 102 test files passed, 354 tests passed, 4 documented skips and the
   production PWA build completed.
+
+## Phase 8 generic CSV and schema v15 — 2026-08-02
+
+- CSV parser, v14→v15 migration/rollback, catalog, SQLite/IndexedDB parity and backup compatibility:
+  6 files and 76 targeted tests passed; full workspace typecheck passed.
+- Covered semicolon/comma detection, quoted delimiters, escaped quotes, multiline fields, malformed
+  input and exact source-cell retention.
+- Import E2E including generic CSV: 20/20 passed at 320, 375, 768, 1024 and 1440 px.
+- `pnpm codex:validate`: passed with 17 routes.
+- `pnpm verify`: passed; 104 test files passed, 359 tests passed, 4 documented skips and the
+  production PWA build completed.

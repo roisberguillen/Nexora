@@ -126,5 +126,5 @@ Commit e push su `origin/main`.
 - [x] Conservazione dei valori sorgente e profili di mapping.
   - [x] Celle sorgente immutabili conservate nel record audit insieme ai valori normalizzati.
 - [x] Profili di mapping persistenti, riutilizzabili e associati al batch tramite schema v14.
-- [ ] Importazione CSV generica con anteprima e conferma.
+- [x] Importazione CSV generica con anteprima, mapping, audit sorgente e conferma esplicita.
 - [ ] Export JSON realmente completo e report finale di qualità import.

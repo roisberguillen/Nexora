@@ -5,6 +5,7 @@ import {
   readBankWorkbook,
   readMoneyManagerWorkbook,
   readBankPdf,
+  readGenericCsv,
   type DryRunStatus,
   type MoneyManagerField,
   type MoneyManagerDryRunRow,
@@ -95,15 +96,19 @@ export function ImportsPage({
       const filename = file.name.toLocaleLowerCase("it-IT");
       const importerType: ImporterType = filename.endsWith(".pdf")
         ? "n26_pdf"
-        : filename.includes("mediobanca")
-          ? "mediobanca_xlsx"
-          : "money_manager_xlsx";
+        : filename.endsWith(".csv")
+          ? "generic_csv"
+          : filename.includes("mediobanca")
+            ? "mediobanca_xlsx"
+            : "money_manager_xlsx";
       const workbook =
-        importerType === "n26_pdf"
-          ? await readBankPdf(bytes)
-          : importerType === "mediobanca_xlsx"
-            ? readBankWorkbook(bytes)
-            : readMoneyManagerWorkbook(bytes);
+        importerType === "generic_csv"
+          ? readGenericCsv(bytes)
+          : importerType === "n26_pdf"
+            ? await readBankPdf(bytes)
+            : importerType === "mediobanca_xlsx"
+              ? readBankWorkbook(bytes)
+              : readMoneyManagerWorkbook(bytes);
       const initialSheet = workbook.sheets[0];
       if (initialSheet === undefined) throw new Error("empty_workbook");
       setSheets(workbook.sheets);
@@ -124,7 +129,7 @@ export function ImportsPage({
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
       setError(
-        "Il file non è un estratto XLSX o PDF leggibile. I dati locali non sono stati modificati.",
+        "Il file non è un estratto CSV, XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
     }
   };
@@ -157,9 +162,9 @@ export function ImportsPage({
           <p>Il file resta nel browser: questa fase legge soltanto l’anteprima.</p>
         </div>
         <label className="file-picker">
-          <span>Seleziona un estratto XLSX o PDF</span>
+          <span>Seleziona un estratto CSV, XLSX o PDF</span>
           <input
-            accept=".xlsx,.pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf"
+            accept=".csv,.xlsx,.pdf,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf"
             onChange={(event) => void handleFile(event)}
             type="file"
           />

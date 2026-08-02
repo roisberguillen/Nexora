@@ -5,7 +5,7 @@ test("la pagina Importa è disponibile e non scrive dati prima del dry-run", asy
   await page.goto("/#imports");
 
   await expect(page.getByRole("heading", { name: "Importa estratti conto" })).toBeVisible();
-  await expect(page.getByLabel("Seleziona un estratto XLSX o PDF")).toBeVisible();
+  await expect(page.getByLabel("Seleziona un estratto CSV, XLSX o PDF")).toBeVisible();
   await expect(
     page.getByText("Il file resta nel browser: questa fase legge soltanto l’anteprima."),
   ).toBeVisible();
@@ -27,7 +27,7 @@ test("importa e annulla un batch Money Manager senza uscire dalla PWA", async ({
     "Movimenti",
   );
   const bytes = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  await page.getByLabel("Seleziona un estratto XLSX o PDF").setInputFiles({
+  await page.getByLabel("Seleziona un estratto CSV, XLSX o PDF").setInputFiles({
     name: "movimenti-sintetici.xlsx",
     mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     buffer: bytes,
@@ -65,7 +65,7 @@ test("conferma un batch contenente solo un trasferimento tra conti propri", asyn
     "Movimenti",
   );
   const bytes = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-  await page.getByLabel("Seleziona un estratto XLSX o PDF").setInputFiles({
+  await page.getByLabel("Seleziona un estratto CSV, XLSX o PDF").setInputFiles({
     name: "trasferimento-sintetico.xlsx",
     mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     buffer: bytes,
@@ -82,5 +82,29 @@ test("conferma un batch contenente solo un trasferimento tra conti propri", asyn
     .getByRole("heading", { name: "Importazioni recenti" })
     .locator("xpath=ancestor::section");
   await expect(history).toContainText("trasferimento-sintetico.xlsx");
+  await expect(history).toContainText("1 importate");
+});
+
+test("importa un CSV generico solo dopo anteprima e conferma", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#imports");
+
+  await page.getByLabel("Seleziona un estratto CSV, XLSX o PDF").setInputFiles({
+    name: "movimenti-generici.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "Data;Conto;Importo;Categoria;Valuta;Controparte\n02/08/2026;Conto quotidiano demo;-18,40;Tempo libero demo;EUR;Cinema",
+      "utf8",
+    ),
+  });
+
+  await expect(page.getByText("1 pronte")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Conferma 1 righe" })).toBeEnabled();
+  await page.getByRole("button", { name: "Conferma 1 righe" }).click();
+  const history = page
+    .getByRole("heading", { name: "Importazioni recenti" })
+    .locator("xpath=ancestor::section");
+  await expect(history).toContainText("movimenti-generici.csv");
   await expect(history).toContainText("1 importate");
 });
