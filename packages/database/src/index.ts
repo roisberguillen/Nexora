@@ -99,6 +99,10 @@ export {
   IMPORT_MAPPING_PROFILES_SCHEMA_VERSION,
   importMappingProfilesMigration,
 } from "./migrations/0014-import-mapping-profiles";
+export {
+  GENERIC_CSV_IMPORTER_SCHEMA_VERSION,
+  genericCsvImporterMigration,
+} from "./migrations/0015-generic-csv-importer";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

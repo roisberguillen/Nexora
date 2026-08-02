@@ -13,7 +13,7 @@ export interface ImportTransferBundle {
 
 export type ImportBatchStatus = "previewed" | "committed" | "undone" | "failed";
 export type ImportRowStatus = "imported" | "skipped_duplicate" | "needs_review" | "failed";
-export type ImporterType = "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf";
+export type ImporterType = "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf" | "generic_csv";
 
 export interface CreateImportBatchProps {
   readonly id: string;

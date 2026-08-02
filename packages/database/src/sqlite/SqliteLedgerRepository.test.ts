@@ -617,8 +617,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 14,
-        toVersion: 14,
+        fromVersion: 15,
+        toVersion: 15,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -652,12 +652,12 @@ describe("SqliteLedgerRepository", () => {
     await expect(repository.listImportRows(batch.id)).resolves.toEqual([row]);
   });
 
-  it("persiste il tipo importer v2 senza violare il vincolo legacy", async () => {
+  it("persiste generic_csv v3 senza violare i vincoli importer legacy", async () => {
     const batch = ImportBatch.create({
       id: "batch-bank-type",
-      importerType: "n26_pdf",
+      importerType: "generic_csv",
       rowsTotal: 1,
-      sourceFilename: "estratto.pdf",
+      sourceFilename: "estratto.csv",
       sourceSha256: "e".repeat(64),
     });
     const row = ImportRow.create({

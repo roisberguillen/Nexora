@@ -296,7 +296,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 14 });
+    expect(metadata).toEqual({ key: "schema_version", value: 15 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -612,7 +612,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(14);
+    expect(ledger.schemaVersion).toBe(15);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -644,9 +644,9 @@ describe("IndexedDbLedgerRepository", () => {
   it("persiste batch e righe auditabili", async () => {
     const batch = ImportBatch.create({
       id: "batch-idb",
-      importerType: "money_manager_xlsx",
+      importerType: "generic_csv",
       rowsTotal: 1,
-      sourceFilename: "movimenti.xlsx",
+      sourceFilename: "movimenti.csv",
       sourceSha256: "a".repeat(64),
       mappingProfileId: "mapping-profile-idb",
     });

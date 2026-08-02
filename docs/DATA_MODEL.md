@@ -145,11 +145,13 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
 - v13: `import_rows.deleted_transaction_id` preserva l'audit dopo l'eliminazione definitiva.
 - v14: `import_batches.mapping_profile_id` associa in modo opzionale il profilo di mapping scelto;
   l'upgrade è nullable, additivo e conserva integralmente i batch v13.
+- v15: `import_batches.importer_type_v3` aggiunge `generic_csv` mantenendo i discriminatori v1/v2
+  per la compatibilità con tutti i batch precedenti.
 
 IndexedDB usa gli object store equivalenti,
 con indici per scadenza, conto e trigger. Lo store `monthly_journals` ha un indice
-univoco sul periodo; l'upgrade è alla versione 14, conserva store e record esistenti e aggiunge
-il campo opzionale ai record `import_batches` nuovi.
+univoco sul periodo; l'upgrade è alla versione 15, conserva store e record esistenti e supporta i
+nuovi campi dei record `import_batches`.
 
 Ricorrenze, budget, prestiti, investimenti, obiettivi e backup saranno introdotti tramite
 migrazioni versionate insieme alle rispettive milestone. La decisione completa è descritta in
