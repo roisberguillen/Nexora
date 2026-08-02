@@ -9,6 +9,9 @@
 
 ### Changed
 
+- L'anteprima Money Manager conserva i valori numerici grezzi dei workbook e normalizza le date
+  seriali Excel in ISO-8601; il giorno fittizio 60 viene inviato alla revisione manuale.
+
 - I batch di importazione composti soltanto da trasferimenti tra conti propri possono ora essere
   confermati dopo la selezione esplicita delle righe, mantenendo il commit atomico esistente.
 

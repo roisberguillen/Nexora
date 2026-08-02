@@ -23,3 +23,13 @@ Keep only the latest relevant evidence per completed phase.
 - Baseline import/export: 6 files and 15 tests passed.
 - Transfer confirmation: 3 files and 9 targeted tests passed; web typecheck passed.
 - `test/e2e/imports.spec.ts`: 6/6 passed at 320 and 1440 px after rebuilding `dist`.
+
+## Phase 8 Excel serial dates — 2026-08-02
+
+- Money Manager preview and dry-run: 2 files and 7 targeted tests passed.
+- `@nexora/importers` strict TypeScript check passed.
+- Covered a real XLSX numeric date cell, localized amount preservation and the invalid Excel
+  serial day 60 review path.
+- `pnpm codex:validate`: passed with 17 routes.
+- `pnpm verify`: passed; 99 test files passed, 349 tests passed, 4 documented skips, production
+  PWA build completed.

@@ -1,15 +1,16 @@
 # Current task
 
-- Task: allow confirmation of transfer-only import batches
+- Task: normalize Excel serial dates in Money Manager preview
 - Roadmap phase: Phase 8
-- Category: ui_component
-- Profile: STANDARD
-- Data risk: low; existing atomic repository command remains unchanged
+- Category: repository_refactor
+- Profile: ADVANCED
+- Data risk: low; preview remains read-only and ambiguous serial 60 is rejected
 - Status: ready for commit and push
-- Initial files: `ImportsPage.tsx`, import review helper/test and import E2E
+- Initial files: Money Manager preview parser and tests
 - Extra reads: none
-- Attempts: 1; E2E initially used a stale production build and passed after rebuilding
-- Checkpoint: not required; no data or application behavior is modified
-- Targeted tests: import review unit test, import command regression and transfer-only E2E
-- Completed gates: 9 targeted unit tests, web typecheck, web build and 6 responsive E2E
-- Next task: normalize and test Excel serial dates in Money Manager preview
+- Attempts: 1; the first full gate found only Prettier drift in the new test
+- Checkpoint: not required; preview parsing changes are read-only and do not mutate stored data
+- Targeted tests: importer preview, workbook round-trip and regression import suite
+- Completed gates: 7 targeted tests, importer package typecheck, orchestrator validation and full
+  repository verification
+- Next task: preserve raw import source values and reusable mapping profiles

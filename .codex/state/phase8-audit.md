@@ -13,7 +13,8 @@ Sources: PRD 4.9–4.11, repository map, importers, import/export UI and pertine
 ## Missing or incomplete slices
 
 1. Transfer-only batches remain disabled after explicit confirmation — current atomic fix.
-2. Excel serial dates are not explicitly normalized and tested.
+2. [Resolved] Excel serial dates are normalized from raw workbook values and tested; serial 60 is
+   conservatively rejected because it represents Excel's fictitious 1900-02-29.
 3. Original raw cells and mapping profiles are not preserved as required by the PRD.
 4. Generic CSV import is absent.
 5. “Complete” JSON omits several ledger aggregates and applies transaction filters implicitly.

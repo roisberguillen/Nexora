@@ -121,7 +121,8 @@ Commit e push su `origin/main`.
 - [x] Audit iniziale di importazione, esportazione e qualità dati registrato nello stato Codex.
 - [x] Conferma esplicita e commit di batch composti soltanto da trasferimenti, verificati a 320 e
   1440 px senza modificare le invarianti del repository.
-- [ ] Supporto e test espliciti per date seriali Excel.
+- [x] Supporto e test espliciti per date seriali Excel, incluso il rifiuto conservativo del
+  giorno fittizio 60 del calendario Excel 1900.
 - [ ] Conservazione dei valori sorgente e profili di mapping.
 - [ ] Importazione CSV generica con anteprima e conferma.
 - [ ] Export JSON realmente completo e report finale di qualità import.

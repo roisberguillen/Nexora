@@ -70,7 +70,7 @@ export function readMoneyManagerWorkbook(bytes: ArrayBuffer): MoneyManagerWorkbo
               .sheet_to_json<unknown[]>(workbook.Sheets[name]!, {
                 header: 1,
                 defval: "",
-                raw: false,
+                raw: true,
               })
               .map((row) => Object.freeze(row.map((cell) => String(cell ?? "").trim()))),
           ),
@@ -159,6 +159,8 @@ function normalizeHeader(value: string): string {
 }
 
 function normalizeDate(value: string): string | undefined {
+  const excelSerial = normalizeExcelSerialDate(value);
+  if (excelSerial !== undefined) return excelSerial;
   const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (iso !== null) return isCalendarDate(value) ? value : undefined;
   const italian = /^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})$/.exec(value);
@@ -166,6 +168,21 @@ function normalizeDate(value: string): string | undefined {
   const day = italian[1]!.padStart(2, "0");
   const month = italian[2]!.padStart(2, "0");
   const result = `${italian[3]}-${month}-${day}`;
+  return isCalendarDate(result) ? result : undefined;
+}
+
+function normalizeExcelSerialDate(value: string): string | undefined {
+  if (!/^\d+(?:\.\d+)?$/.test(value.trim())) return undefined;
+  const serial = Math.floor(Number(value));
+  if (!Number.isSafeInteger(serial) || serial < 1 || serial > 2_958_465 || serial === 60) {
+    return undefined;
+  }
+  const adjustedDays = serial > 60 ? serial - 1 : serial;
+  const date = new Date(Date.UTC(1899, 11, 31) + adjustedDays * 86_400_000);
+  const year = String(date.getUTCFullYear()).padStart(4, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const result = `${year}-${month}-${day}`;
   return isCalendarDate(result) ? result : undefined;
 }
 
