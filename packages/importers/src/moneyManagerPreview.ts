@@ -33,6 +33,8 @@ export interface MoneyManagerPreviewRow {
   readonly date: string | undefined;
   readonly message: string;
   readonly payee: string | undefined;
+  /** Immutable source cells, retained verbatim for the import audit trail. */
+  readonly rawValues?: readonly string[];
   readonly sourceRowNumber: number;
   readonly status: ImportPreviewStatus;
 }
@@ -104,6 +106,7 @@ function previewRow(
   mapping: MoneyManagerMapping,
   sourceRowNumber: number,
 ): MoneyManagerPreviewRow {
+  const rawValues = Object.freeze([...row]);
   const dateText = field(row, mapping.date);
   const amountText = field(row, mapping.amount);
   const date = dateText === undefined ? undefined : normalizeDate(dateText);
@@ -119,6 +122,7 @@ function previewRow(
       date,
       message: "Data o importo non interpretabile: richiede revisione.",
       payee: field(row, mapping.payee),
+      rawValues,
       sourceRowNumber,
       status: "needs_review",
     });
@@ -132,6 +136,7 @@ function previewRow(
       date,
       message: "Conto assente: richiede risoluzione prima dell'importazione.",
       payee: field(row, mapping.payee),
+      rawValues,
       sourceRowNumber,
       status: "needs_review",
     });
@@ -144,6 +149,7 @@ function previewRow(
     date,
     message: "Riga pronta per il dry-run.",
     payee: field(row, mapping.payee),
+    rawValues,
     sourceRowNumber,
     status: "ready",
   });

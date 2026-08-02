@@ -9,6 +9,9 @@
 
 ### Changed
 
+- Ogni riga letta dagli importer conserva ora le celle sorgente immutabili nel payload di audit,
+  separandole dai valori normalizzati usati per il dry-run e la contabilizzazione.
+
 - L'anteprima Money Manager conserva i valori numerici grezzi dei workbook e normalizza le date
   seriali Excel in ISO-8601; il giorno fittizio 60 viene inviato alla revisione manuale.
 

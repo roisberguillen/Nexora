@@ -69,8 +69,10 @@ describe("Money Manager preview", () => {
     expect(preview).toMatchObject({
       amountMinor: -1250n,
       date: "2026-08-02",
+      rawValues: [String(serial), "N26", "-12.5"],
       status: "ready",
     });
+    expect(Object.isFrozen(preview?.rawValues)).toBe(true);
   });
 
   it("rifiuta il giorno seriale fittizio 60 di Excel", () => {

@@ -33,3 +33,13 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm codex:validate`: passed with 17 routes.
 - `pnpm verify`: passed; 99 test files passed, 349 tests passed, 4 documented skips, production
   PWA build completed.
+
+## Phase 8 raw source audit — 2026-08-02
+
+- Importer preview, import command regressions and isolated audit round-trip: 3 files and 10 tests
+  passed.
+- `@nexora/importers` and `@nexora/web` strict TypeScript checks passed.
+- Verified immutable original cells and simultaneous normalized values in persisted `rawJson`.
+- `pnpm codex:validate`: passed with 17 routes.
+- `pnpm verify`: passed; 100 test files passed, 350 tests passed, 4 documented skips and the
+  production PWA build completed.
