@@ -17,6 +17,7 @@ import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
 import { confirmedTransferRowNumbers, countCommittableImportRows } from "./importReview";
+import { loadImportMappingProfiles, saveImportMappingProfile } from "./mappingProfiles";
 
 const mappingFields: readonly { readonly field: MoneyManagerField; readonly label: string }[] = [
   { field: "date", label: "Data" },
@@ -45,6 +46,7 @@ export function ImportsPage({
     readonly importerType: ImporterType;
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
+    readonly mappingProfileId?: string;
     readonly confirmedTransferRowNumbers?: readonly number[];
   }) => Promise<void>;
   readonly onUndo: (batchId: string) => Promise<void>;
@@ -53,6 +55,9 @@ export function ImportsPage({
   const [sheets, setSheets] = useState<readonly MoneyManagerSheet[]>([]);
   const [selectedSheetName, setSelectedSheetName] = useState<string>("");
   const [mapping, setMapping] = useState<MoneyManagerMapping>({});
+  const [mappingProfiles, setMappingProfiles] = useState(loadImportMappingProfiles);
+  const [selectedMappingProfileId, setSelectedMappingProfileId] = useState("");
+  const [mappingProfileName, setMappingProfileName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState<{
     readonly filename: string;
@@ -104,6 +109,7 @@ export function ImportsPage({
       setSheets(workbook.sheets);
       setSelectedSheetName(initialSheet.name);
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
+      setSelectedMappingProfileId("");
       setFallbackAccountName("");
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
@@ -113,6 +119,7 @@ export function ImportsPage({
       setSheets([]);
       setSelectedSheetName("");
       setMapping({});
+      setSelectedMappingProfileId("");
       setSource(null);
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
@@ -127,6 +134,7 @@ export function ImportsPage({
     if (sheet === undefined) return;
     setSelectedSheetName(name);
     setMapping(detectMoneyManagerMapping(sheet.rows[0] ?? []));
+    setSelectedMappingProfileId("");
   };
 
   return (
@@ -265,6 +273,7 @@ export function ImportsPage({
                         setMapping(
                           updateMapping(mapping, field, value === "" ? undefined : Number(value)),
                         );
+                        setSelectedMappingProfileId("");
                       }}
                       value={mapping[field] ?? ""}
                     >
@@ -277,6 +286,58 @@ export function ImportsPage({
                     </select>
                   </label>
                 ))}
+              </div>
+              <div className="mapping-grid">
+                <label className="account-form-label">
+                  Profilo mapping
+                  <select
+                    onChange={(event) => {
+                      const id = event.target.value;
+                      setSelectedMappingProfileId(id);
+                      const profile = mappingProfiles.find((candidate) => candidate.id === id);
+                      if (profile !== undefined) setMapping(profile.mapping);
+                    }}
+                    value={selectedMappingProfileId}
+                  >
+                    <option value="">Mapping rilevato o personalizzato</option>
+                    {mappingProfiles
+                      .filter((profile) => profile.importerType === source?.importerType)
+                      .map((profile) => (
+                        <option key={profile.id} value={profile.id}>
+                          {profile.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+                <label className="account-form-label">
+                  Nome nuovo profilo
+                  <input
+                    maxLength={80}
+                    onChange={(event) => setMappingProfileName(event.target.value)}
+                    value={mappingProfileName}
+                  />
+                </label>
+              </div>
+              <div className="form-actions">
+                <button
+                  className="secondary-action"
+                  disabled={source === null || mappingProfileName.trim() === ""}
+                  onClick={() => {
+                    if (source === null) return;
+                    const profile = {
+                      id: `mapping-${crypto.randomUUID()}`,
+                      name: mappingProfileName,
+                      importerType: source.importerType,
+                      mapping,
+                    } as const;
+                    setMappingProfiles(saveImportMappingProfile(profile));
+                    setSelectedMappingProfileId(profile.id);
+                    setMappingProfileName("");
+                  }}
+                  type="button"
+                >
+                  Salva profilo mapping
+                </button>
               </div>
             </div>
           </section>
@@ -390,6 +451,9 @@ export function ImportsPage({
                     rows: dryRun,
                     confirmedTransferRowNumbers: confirmedTransferRowsList,
                     sourceSha256: source.sha256,
+                    ...(selectedMappingProfileId === ""
+                      ? {}
+                      : { mappingProfileId: selectedMappingProfileId }),
                   })
                     .catch(() =>
                       setError(

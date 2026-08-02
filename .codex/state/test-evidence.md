@@ -43,3 +43,14 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm codex:validate`: passed with 17 routes.
 - `pnpm verify`: passed; 100 test files passed, 350 tests passed, 4 documented skips and the
   production PWA build completed.
+
+## Phase 8 mapping profiles and schema v14 — 2026-08-02
+
+- Migration v13→v14 and rollback: existing batch preserved, nullable profile association verified.
+- Migration catalog, domain, SQLite/IndexedDB adapter parity, portable backup and mapping profile
+  validation: targeted suites passed; full workspace typecheck passed.
+- Responsive import E2E saves and selects a reusable profile before atomic commit: 15/15 passed
+  at 320, 375, 768, 1024 and 1440 px.
+- `pnpm codex:validate`: passed with 17 routes.
+- `pnpm verify`: passed; 102 test files passed, 354 tests passed, 4 documented skips and the
+  production PWA build completed.

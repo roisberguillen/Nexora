@@ -34,6 +34,12 @@ test("importa e annulla un batch Money Manager senza uscire dalla PWA", async ({
   });
 
   await expect(page.getByText("1 pronte")).toBeVisible();
+  await page.getByLabel("Nome nuovo profilo").fill("Money Manager E2E");
+  await page.getByRole("button", { name: "Salva profilo mapping" }).click();
+  await expect(page.getByLabel("Profilo mapping")).toHaveValue(/^mapping-/);
+  await expect(
+    page.getByLabel("Profilo mapping").getByRole("option", { name: "Money Manager E2E" }),
+  ).toBeAttached();
   await page.getByRole("button", { name: "Conferma 1 righe" }).click();
   const history = page
     .getByRole("heading", { name: "Importazioni recenti" })

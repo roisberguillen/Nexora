@@ -18,6 +18,7 @@ export async function commitMoneyManagerImport(
     readonly importerType?: ImporterType;
     readonly rows: readonly MoneyManagerDryRunRow[];
     readonly sourceSha256: string;
+    readonly mappingProfileId?: string;
     readonly confirmedTransferRowNumbers?: readonly number[];
   },
   idFactory: () => string = () => crypto.randomUUID(),
@@ -28,6 +29,7 @@ export async function commitMoneyManagerImport(
     rowsTotal: input.rows.length,
     sourceFilename: input.filename,
     sourceSha256: input.sourceSha256,
+    ...(input.mappingProfileId === undefined ? {} : { mappingProfileId: input.mappingProfileId }),
   });
   const [activeTransactions, trashedTransactions] = await Promise.all([
     repository.listTransactions(),

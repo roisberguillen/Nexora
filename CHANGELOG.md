@@ -9,6 +9,9 @@
 
 ### Changed
 
+- Aggiunti profili di mapping import riutilizzabili e validati, con selezione esplicita nella UI
+  e associazione persistente al batch tramite migrazione additiva SQLite/IndexedDB v14.
+
 - Ogni riga letta dagli importer conserva ora le celle sorgente immutabili nel payload di audit,
   separandole dai valori normalizzati usati per il dry-run e la contabilizzazione.
 

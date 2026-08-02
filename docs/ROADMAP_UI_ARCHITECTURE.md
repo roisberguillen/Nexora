@@ -123,8 +123,8 @@ Commit e push su `origin/main`.
   1440 px senza modificare le invarianti del repository.
 - [x] Supporto e test espliciti per date seriali Excel, incluso il rifiuto conservativo del
   giorno fittizio 60 del calendario Excel 1900.
-- [ ] Conservazione dei valori sorgente e profili di mapping.
+- [x] Conservazione dei valori sorgente e profili di mapping.
   - [x] Celle sorgente immutabili conservate nel record audit insieme ai valori normalizzati.
-  - [ ] Profili di mapping persistenti, riutilizzabili e associati al batch.
+- [x] Profili di mapping persistenti, riutilizzabili e associati al batch tramite schema v14.
 - [ ] Importazione CSV generica con anteprima e conferma.
 - [ ] Export JSON realmente completo e report finale di qualità import.

@@ -15,8 +15,8 @@ Sources: PRD 4.9–4.11, repository map, importers, import/export UI and pertine
 1. Transfer-only batches remain disabled after explicit confirmation — current atomic fix.
 2. [Resolved] Excel serial dates are normalized from raw workbook values and tested; serial 60 is
    conservatively rejected because it represents Excel's fictitious 1900-02-29.
-3. [Partial] Original raw cells are preserved in the audit payload; reusable mapping profiles and
-   their batch association remain open.
+3. [Resolved] Original raw cells are preserved in the audit payload; validated reusable mapping
+   profiles persist locally and their selected identifier survives in SQLite/IndexedDB batch data.
 4. Generic CSV import is absent.
 5. “Complete” JSON omits several ledger aggregates and applies transaction filters implicitly.
 6. Final import report is limited to batch history and lacks a dedicated quality report.

@@ -28,11 +28,13 @@ describe("import raw source audit", () => {
       {
         filename: "movimenti.xlsx",
         sourceSha256: "d".repeat(64),
+        mappingProfileId: "mapping-profile-audit",
         rows,
       },
       () => crypto.randomUUID(),
     );
     const [auditRow] = await repository.listImportRows(batch.id);
+    expect(batch.mappingProfileId).toBe("mapping-profile-audit");
     const rawAudit = JSON.parse(auditRow!.rawJson) as {
       readonly amountMinor: string;
       readonly date: string;
