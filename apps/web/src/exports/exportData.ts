@@ -109,8 +109,13 @@ export function downloadText(filename: string, content: string, type: string): v
   URL.revokeObjectURL(url);
 }
 
-export function downloadBytes(filename: string, content: ArrayBuffer, type: string): void {
-  const url = URL.createObjectURL(new Blob([content], { type }));
+export function downloadBytes(
+  filename: string,
+  content: ArrayBuffer | Uint8Array,
+  type: string,
+): void {
+  const bytes = content instanceof Uint8Array ? Uint8Array.from(content).buffer : content;
+  const url = URL.createObjectURL(new Blob([bytes], { type }));
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;

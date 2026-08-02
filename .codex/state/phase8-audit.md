@@ -19,7 +19,9 @@ Sources: PRD 4.9–4.11, repository map, importers, import/export UI and pertine
    profiles persist locally and their selected identifier survives in SQLite/IndexedDB batch data.
 4. [Resolved] Generic UTF-8 CSV import supports safe delimiter detection, quoted records, source
    audit, mapping preview and explicit atomic confirmation under schema v15.
-5. “Complete” JSON omits several ledger aggregates and applies transaction filters implicitly.
-6. Final import report is limited to batch history and lacks a dedicated quality report.
+5. [Resolved] “Complete” JSON uses the versioned portable ledger snapshot, includes all supported
+   entities and relations and does not apply the transaction filters used by CSV/XLSX exports.
+6. [Resolved] Import history exposes an accessible aggregate quality report accounting every row
+   as imported, skipped or failed/requiring review.
 
-Do not mark Phase 8 complete until each accepted slice has targeted tests and phase-level gates.
+Phase 8 completed after targeted tests, responsive E2E and the complete repository quality gate.

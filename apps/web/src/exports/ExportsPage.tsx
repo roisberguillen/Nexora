@@ -2,7 +2,6 @@ import type { Account, Category, Transaction } from "@nexora/domain";
 import { useState } from "react";
 import { buildLedgerWorkbook } from "@nexora/importers";
 import {
-  buildLedgerJson,
   buildTransactionsCsv,
   buildTransactionsRows,
   downloadBytes,
@@ -14,15 +13,19 @@ export function ExportsPage({
   accounts,
   categories,
   transactions,
+  onExportCompleteJson,
 }: {
   readonly accounts: readonly Account[];
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
+  readonly onExportCompleteJson: () => Promise<Uint8Array>;
 }) {
   const [accountId, setAccountId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [isExportingJson, setIsExportingJson] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const filteredTransactions = filterExportTransactions(transactions, {
     ...(accountId === "" ? {} : { accountId }),
     ...(categoryId === "" ? {} : { categoryId }),
@@ -101,17 +104,26 @@ export function ExportsPage({
         </button>
         <button
           className="secondary-action"
-          onClick={() =>
-            downloadText("nexora-export.json", buildLedgerJson(data), "application/json")
-          }
+          disabled={isExportingJson}
+          onClick={() => {
+            setIsExportingJson(true);
+            setExportError(null);
+            void onExportCompleteJson()
+              .then((bytes) =>
+                downloadBytes("nexora-ledger-completo.json", bytes, "application/json"),
+              )
+              .catch(() => setExportError("L’esportazione completa non è riuscita."))
+              .finally(() => setIsExportingJson(false));
+          }}
           type="button"
         >
-          Scarica JSON completo
+          {isExportingJson ? "Preparazione JSON…" : "Scarica JSON completo"}
         </button>
       </div>
+      {exportError === null ? null : <p role="alert">{exportError}</p>}
       <p className="import-help">
-        Il CSV usa importi in minor units per non perdere precisione; il JSON conserva dati
-        contabili, conti e categorie in formato Nexora v1.
+        CSV e XLSX rispettano i filtri. Il JSON completo include tutte le entità e relazioni del
+        ledger in formato portabile Nexora v1, senza applicare filtri impliciti.
       </p>
     </section>
   );

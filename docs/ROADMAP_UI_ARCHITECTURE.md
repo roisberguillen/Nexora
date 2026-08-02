@@ -14,7 +14,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 5 | Startup e stati trasversali | completata |
 | 6 | Modulo pilota conti/movimenti/dashboard | completata |
 | 7 | SQLite nativo multipiattaforma | completata |
-| 8 | Importazione, esportazione e qualità dati | pianificata |
+| 8 | Importazione, esportazione e qualità dati | completata |
 | 9 | Backup Engine indipendente | pianificata |
 | 10 | Backup manuale | pianificata |
 | 11 | Google Drive | pianificata |
@@ -127,4 +127,7 @@ Commit e push su `origin/main`.
   - [x] Celle sorgente immutabili conservate nel record audit insieme ai valori normalizzati.
 - [x] Profili di mapping persistenti, riutilizzabili e associati al batch tramite schema v14.
 - [x] Importazione CSV generica con anteprima, mapping, audit sorgente e conferma esplicita.
-- [ ] Export JSON realmente completo e report finale di qualità import.
+- [x] Export JSON realmente completo tramite snapshot portabile dell'intero ledger, indipendente
+  dai filtri CSV/XLSX, e report aggregato che contabilizza righe importate, ignorate e fallite.
+- [x] Verificati parser e migrazioni, adapter SQLite/IndexedDB, import responsive, download JSON
+  completo sui cinque viewport, lint, typecheck, unit/component test e build di produzione.

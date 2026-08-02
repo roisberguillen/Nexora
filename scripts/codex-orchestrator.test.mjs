@@ -7,6 +7,7 @@ import test from "node:test";
 import {
   classifyTask,
   createCheckpoint,
+  findNextRoadmapPhase,
   formatClassification,
   loadPolicy,
   parseYamlSubset,
@@ -71,6 +72,14 @@ test("creates a persistent checkpoint without touching application data", async 
 
 test("rejects non-JSON YAML input instead of accepting an ambiguous policy", () => {
   assert.throws(() => parseYamlSubset("version: 1"), /JSON-compatible YAML/);
+});
+
+test("derives the next phase from the first planned roadmap row", () => {
+  assert.equal(
+    findNextRoadmapPhase("| 8 | Importazione | completata |\n| 9 | Backup Engine | pianificata |"),
+    "9",
+  );
+  assert.equal(findNextRoadmapPhase("| 17 | Hardening | completata |"), undefined);
 });
 
 test("validates all required routes, profiles, skills and roadmap state", async () => {

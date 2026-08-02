@@ -18,6 +18,7 @@ import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
 import { confirmedTransferRowNumbers, countCommittableImportRows } from "./importReview";
+import { buildImportQualityReport } from "./importQualityReport";
 import { loadImportMappingProfiles, saveImportMappingProfile } from "./mappingProfiles";
 
 const mappingFields: readonly { readonly field: MoneyManagerField; readonly label: string }[] = [
@@ -87,6 +88,7 @@ export function ImportsPage({
   const duplicateCount = dryRun.filter((row) => row.status === "skipped_duplicate").length;
   const confirmedTransferRowsList = confirmedTransferRowNumbers(dryRun, confirmedTransferRows);
   const committableCount = countCommittableImportRows(dryRun, confirmedTransferRows);
+  const qualityReport = buildImportQualityReport(batches);
 
   const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
@@ -184,6 +186,12 @@ export function ImportsPage({
               <h2 id="import-history-title">Importazioni recenti</h2>
             </div>
             <span className="panel-meta">{batches.length}</span>
+          </div>
+          <div aria-label="Report qualità importazioni" className="import-summary" role="status">
+            <strong>{qualityReport.completionPercent}% contabilizzate</strong>
+            <span>{qualityReport.rowsImported} importate</span>
+            <span>{qualityReport.rowsSkipped} ignorate</span>
+            <span>{qualityReport.rowsFailed} in errore o revisione</span>
           </div>
           <ul className="account-list">
             {batches.map((batch) => (

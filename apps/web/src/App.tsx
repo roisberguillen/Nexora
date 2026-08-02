@@ -1,5 +1,10 @@
 import { classifyErrorName, createSafeLogger } from "@nexora/config";
-import { seedDemoLedger, type Ledger } from "@nexora/database";
+import {
+  capturePortableLedgerSnapshot,
+  encodePortableLedgerSnapshot,
+  seedDemoLedger,
+  type Ledger,
+} from "@nexora/database";
 import { executeConfirmedAllocationPlans, LocalDate } from "@nexora/domain";
 import { AppShell, ErrorBoundary, type GlobalSearchResult, type QuickAction } from "@nexora/ui";
 import { lazy, Suspense, useEffect, useState } from "react";
@@ -508,6 +513,12 @@ export function App({
     mutateLedger(async (ledger) => {
       await ledger.repository.undoImportBatch(batchId);
     });
+  const exportCompleteJson = async (): Promise<Uint8Array> => {
+    if (ledgerState.status !== "ready") throw new Error("Ledger non pronto");
+    return encodePortableLedgerSnapshot(
+      await capturePortableLedgerSnapshot(ledgerState.ledger.repository),
+    );
+  };
   const createRecurring = (input: RecurringRuleInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createRecurringRule(ledger.repository, input);
@@ -682,6 +693,7 @@ export function App({
               <ExportsPage
                 accounts={ledgerState.rawAccounts}
                 categories={ledgerState.categories}
+                onExportCompleteJson={exportCompleteJson}
                 transactions={ledgerState.rawTransactions}
               />
             ) : route === "backup" ? (

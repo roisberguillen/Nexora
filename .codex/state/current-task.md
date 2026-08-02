@@ -1,17 +1,16 @@
 # Current task
 
-- Task: generic CSV import with preview and explicit confirmation
+- Task: complete ledger JSON export and aggregate import quality report
 - Roadmap phase: Phase 8
 - Category: repository_refactor
 - Profile: ADVANCED
-- Data risk: medium; additive reversible SQLite v15 and metadata-only IndexedDB v15 upgrade
+- Data risk: low; read-only export and aggregate report
 - Status: ready for commit and push
-- Initial files: CSV parser, importer type domain, migration, adapter codecs, import UI and tests
+- Initial files: application shell, export/import UI, quality report and export E2E
 - Extra reads: none
-- Attempts: 1; updated the component test to the expanded accessible file-picker label
-- Checkpoint: migration is additive and reversible; no destructive backup checkpoint required
-- Targeted tests: CSV parsing, migration, rollback, adapter parity, backup and responsive import E2E
-- Completed gates: 76 targeted tests and full workspace typecheck
-- Completed gates: production build and 20 responsive E2E
+- Attempts: 1; normalized the Uint8Array boundary used by browser downloads
+- Checkpoint: no destructive or data-changing operation; no backup checkpoint required
+- Targeted tests: quality report, portable snapshot, App mount and responsive complete-export E2E
+- Completed gates: targeted tests, production build and 5 responsive export E2E
 - Completed gates: orchestrator validation and full repository verification
-- Next task: complete JSON export and final import quality report
+- Next task: Phase 9 backup engine audit

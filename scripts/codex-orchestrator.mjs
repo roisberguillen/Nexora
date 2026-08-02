@@ -74,6 +74,10 @@ export function parseYamlSubset(source, label = "configuration") {
   }
 }
 
+export function findNextRoadmapPhase(roadmap) {
+  return roadmap.match(/^\|\s*(\d+)\s*\|.*\|\s*pianificata\s*\|$/m)?.[1];
+}
+
 export async function loadPolicy(root = process.cwd()) {
   const policyPath = path.join(root, ".codex", "orchestration", "routing-policy.yaml");
   return parseYamlSubset(await readFile(policyPath, "utf8"), "routing-policy.yaml");
@@ -277,8 +281,10 @@ export async function validateRepository(root = process.cwd()) {
     if (!represented && Number(phase) > 6)
       errors.push(`Roadmap progress does not represent Phase ${phase}`);
   }
-  if (!/\| 8 \| next \|/.test(progress))
-    errors.push("Roadmap progress must identify Phase 8 as next");
+  const nextPhase = findNextRoadmapPhase(roadmap);
+  if (nextPhase !== undefined && !progress.includes(`| ${nextPhase} | next |`)) {
+    errors.push(`Roadmap progress must identify Phase ${nextPhase} as next`);
+  }
 
   const currentTask = await readIfPresent(path.join(root, ".codex", "state", "current-task.md"));
   if (/Profile:\s*CRITICAL/i.test(currentTask)) {

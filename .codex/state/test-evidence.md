@@ -65,3 +65,13 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm codex:validate`: passed with 17 routes.
 - `pnpm verify`: passed; 104 test files passed, 359 tests passed, 4 documented skips and the
   production PWA build completed.
+
+## Phase 8 complete export and quality report — 2026-08-02
+
+- Quality report, export helpers, portable snapshot and App integration targeted suites passed.
+- Complete JSON download E2E: 5/5 passed at 320, 375, 768, 1024 and 1440 px; the test applies an
+  account filter and verifies that the versioned snapshot still contains all ledger entities,
+  relations and all 8 demo transactions.
+- `pnpm codex:validate`: passed with 17 routes.
+- `pnpm verify`: passed; 105 test files passed, 362 tests passed, 4 documented skips and the
+  production PWA build completed.

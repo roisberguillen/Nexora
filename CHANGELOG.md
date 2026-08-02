@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Completata la Fase 8: l'export JSON usa lo snapshot portabile completo e versionato del ledger,
+  senza filtri impliciti, mentre la cronologia import espone un report qualità aggregato e
+  accessibile per righe importate, ignorate e fallite.
+
 - Aggiunto l'import CSV generico locale con rilevamento sicuro del delimitatore, campi quotati,
   anteprima/mapping, conferma esplicita e tipo batch dedicato tramite schema v15.
 
