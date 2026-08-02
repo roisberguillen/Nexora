@@ -16,6 +16,8 @@ import type { ImportBatch, ImporterType } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
+import { confirmedTransferRowNumbers, countCommittableImportRows } from "./importReview";
+
 const mappingFields: readonly { readonly field: MoneyManagerField; readonly label: string }[] = [
   { field: "date", label: "Data" },
   { field: "account", label: "Conto" },
@@ -77,6 +79,8 @@ export function ImportsPage({
   const readyCount = dryRun.filter((row) => row.status === "ready").length;
   const reviewCount = dryRun.filter((row) => row.status === "needs_review").length;
   const duplicateCount = dryRun.filter((row) => row.status === "skipped_duplicate").length;
+  const confirmedTransferRowsList = confirmedTransferRowNumbers(dryRun, confirmedTransferRows);
+  const committableCount = countCommittableImportRows(dryRun, confirmedTransferRows);
 
   const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
@@ -375,7 +379,7 @@ export function ImportsPage({
             <div className="form-actions">
               <button
                 className="primary-action"
-                disabled={source === null || readyCount === 0 || isCommitting}
+                disabled={source === null || committableCount === 0 || isCommitting}
                 onClick={() => {
                   if (source === null) return;
                   setIsCommitting(true);
@@ -384,9 +388,7 @@ export function ImportsPage({
                     filename: source.filename,
                     importerType: source.importerType,
                     rows: dryRun,
-                    confirmedTransferRowNumbers: Object.entries(confirmedTransferRows)
-                      .filter(([, confirmed]) => confirmed)
-                      .map(([rowNumber]) => Number(rowNumber)),
+                    confirmedTransferRowNumbers: confirmedTransferRowsList,
                     sourceSha256: source.sha256,
                   })
                     .catch(() =>
@@ -398,7 +400,7 @@ export function ImportsPage({
                 }}
                 type="button"
               >
-                {isCommitting ? "Importazione in corso…" : `Conferma ${readyCount} righe`}
+                {isCommitting ? "Importazione in corso…" : `Conferma ${committableCount} righe`}
               </button>
             </div>
           </section>

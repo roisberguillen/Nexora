@@ -9,6 +9,9 @@
 
 ### Changed
 
+- I batch di importazione composti soltanto da trasferimenti tra conti propri possono ora essere
+  confermati dopo la selezione esplicita delle righe, mantenendo il commit atomico esistente.
+
 - Aggiunto il Nexora Task Orchestrator repo-level con routing ECONOMY/STANDARD/ADVANCED/CRITICAL,
   limiti di contesto e tentativi, test progressivi, checkpoint ed escalation senza switch di
   modello impliciti.

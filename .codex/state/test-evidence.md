@@ -17,3 +17,9 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm verify`: passed; 98 test files passed, 344 tests passed, 4 documented skips.
 - System `quick_validate.py`: attempted but unavailable because its runtime lacks `PyYAML`; equivalent
   frontmatter, names, descriptions, placeholders and metadata are enforced by the offline validator.
+
+## Phase 8 transfer-only imports — 2026-08-02
+
+- Baseline import/export: 6 files and 15 tests passed.
+- Transfer confirmation: 3 files and 9 targeted tests passed; web typecheck passed.
+- `test/e2e/imports.spec.ts`: 6/6 passed at 320 and 1440 px after rebuilding `dist`.

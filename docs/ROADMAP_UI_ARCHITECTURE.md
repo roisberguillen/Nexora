@@ -115,3 +115,13 @@ Commit e push su `origin/main`.
   di integrità restituisce `ok` e la cronologia contiene tutte le 13 migrazioni.
 - [x] Verificati adapter, classificazione degli errori, backup, reset non distruttivo, typecheck,
   lint, unit/component test, build web e build release nativa.
+
+## Avanzamento Fase 8
+
+- [x] Audit iniziale di importazione, esportazione e qualità dati registrato nello stato Codex.
+- [x] Conferma esplicita e commit di batch composti soltanto da trasferimenti, verificati a 320 e
+  1440 px senza modificare le invarianti del repository.
+- [ ] Supporto e test espliciti per date seriali Excel.
+- [ ] Conservazione dei valori sorgente e profili di mapping.
+- [ ] Importazione CSV generica con anteprima e conferma.
+- [ ] Export JSON realmente completo e report finale di qualità import.

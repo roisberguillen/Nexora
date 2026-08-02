@@ -43,3 +43,38 @@ test("importa e annulla un batch Money Manager senza uscire dalla PWA", async ({
   await page.getByRole("button", { name: "Annulla batch" }).click();
   await expect(history).toContainText("undone");
 });
+
+test("conferma un batch contenente solo un trasferimento tra conti propri", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#imports");
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(
+    workbook,
+    XLSX.utils.aoa_to_sheet([
+      ["Data", "Conto", "Importo", "Valuta", "Controparte"],
+      ["02/08/2026", "Conto quotidiano demo", "-60,00", "EUR", "Riserva demo"],
+    ]),
+    "Movimenti",
+  );
+  const bytes = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  await page.getByLabel("Seleziona un estratto XLSX o PDF").setInputFiles({
+    name: "trasferimento-sintetico.xlsx",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    buffer: bytes,
+  });
+
+  const transferConfirmation = page.getByRole("checkbox", {
+    name: "Confermo trasferimento verso Riserva demo",
+  });
+  await expect(page.getByRole("button", { name: "Conferma 0 righe" })).toBeDisabled();
+  await transferConfirmation.check();
+  await page.getByRole("button", { name: "Conferma 1 righe" }).click();
+
+  const history = page
+    .getByRole("heading", { name: "Importazioni recenti" })
+    .locator("xpath=ancestor::section");
+  await expect(history).toContainText("trasferimento-sintetico.xlsx");
+  await expect(history).toContainText("1 importate");
+});
