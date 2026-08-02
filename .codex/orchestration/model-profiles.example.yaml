@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "profiles": {
+    "ECONOMY": { "model": null, "reasoning": "low", "manual_switch_hint": "Select an available economical model only when the current model is unnecessarily costly." },
+    "STANDARD": { "model": null, "reasoning": "medium", "manual_switch_hint": "Use the current general-purpose coding model when adequate." },
+    "ADVANCED": { "model": null, "reasoning": "high", "manual_switch_hint": "Select an available high-reasoning coding model when the runtime cannot raise reasoning automatically." },
+    "CRITICAL": { "model": null, "reasoning": "maximum_available", "manual_switch_hint": "Select the strongest available reviewed coding profile and resume from the saved checkpoint." }
+  },
+  "runtime_contract": {
+    "automatic_model_switch_assumed": false,
+    "continue_with_current_model_when_adequate": true,
+    "never_invent_model_names": true
+  }
+}

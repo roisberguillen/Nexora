@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Docs"
+  short_description: "Aggiorna fonti autorevoli senza duplicare"
+  default_prompt: "Use $nexora-docs to update Nexora documentation after a verified change."

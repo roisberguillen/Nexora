@@ -82,6 +82,23 @@ disponibile dove supportato dal browser.
 - `packages/importers`: importatori locali;
 - `docs`: architettura, ADR, sicurezza, roadmap e procedure operative.
 
+## Sviluppo con Codex
+
+Il Nexora Task Orchestrator classifica ogni task prima delle modifiche e applica limiti locali di
+contesto, tentativi, agenti e test. I profili `ECONOMY`, `STANDARD`, `ADVANCED` e `CRITICAL` sono
+capacità di lavoro configurabili, non nomi di modelli e non implicano uno switch automatico.
+
+```sh
+pnpm codex:route --task "correggi la spaziatura della card"
+pnpm codex:status
+pnpm codex:checkpoint --task "migrazione critica" --profile CRITICAL --risk high
+pnpm codex:test
+pnpm codex:validate
+```
+
+Policy, stato persistente e mappa sintetica si trovano in `.codex/`. Aggiornare la mappa soltanto
+quando cambia la struttura del repository; non copiarvi PRD o grandi porzioni di codice.
+
 ## Limiti noti
 
 - il ledger aperto nel browser non è cifrato a riposo dal solo browser; i backup cifrati usano una

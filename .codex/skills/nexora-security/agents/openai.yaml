@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Security"
+  short_description: "Esegue threat analysis e test negativi"
+  default_prompt: "Use $nexora-security to threat-model and verify a sensitive Nexora change."

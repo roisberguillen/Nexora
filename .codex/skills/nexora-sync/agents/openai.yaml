@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Sync"
+  short_description: "Protegge Local Hub e sincronizzazione"
+  default_prompt: "Use $nexora-sync to plan a safe Nexora Local Hub or synchronization task."

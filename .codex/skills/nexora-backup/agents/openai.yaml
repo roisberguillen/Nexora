@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Backup"
+  short_description: "Gestisce backup cifrati e ripristino"
+  default_prompt: "Use $nexora-backup to implement or review a Nexora backup and restore task."

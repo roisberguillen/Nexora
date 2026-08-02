@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Testing"
+  short_description: "Applica test progressivi basati sul rischio"
+  default_prompt: "Use $nexora-testing to choose and run the right Nexora quality gates."

@@ -3,18 +3,22 @@
 ## Missione
 Costruire Nexora come applicazione finanziaria personale affidabile, installabile, offline-first e manutenibile.
 
-## Ordine di lettura obbligatorio
-1. `docs/CONTEXT.md`
-2. `docs/PRD.md`
-3. `docs/ARCHITECTURE.md`
-4. `docs/DATA_MODEL.md`
-5. `docs/ux/MOCKUP_INTEGRATION.md` e `design/mockup/stitch/DESIGN.md` per attività UI
-6. `docs/ROADMAP.md`
-7. ADR pertinenti in `docs/adr/`
-8. skill pertinenti in `.codex/skills/`
+## Routing e ordine di lettura obbligatorio
+1. Prima di ogni fase o task usare `.codex/skills/nexora-router` e pubblicare l'intestazione di
+   classificazione prodotta da `pnpm codex:route`.
+2. Consultare prima `.codex/state/current-task.md`, `roadmap-progress.md` e `repository-map.md`.
+3. Usare `docs/CURRENT_SOURCES.md` per aprire soltanto le fonti autorevoli pertinenti; non rileggere
+   automaticamente l'intero PRD o repository.
+4. Per attività UI usare `docs/ux/MOCKUP_INTEGRATION.md` e il mockup Stitch ufficiale registrato
+   nell'ADR 0019. Il mockup legacy è escluso.
+5. Leggere soltanto ADR e skill pertinenti al task classificato.
 
 ## Regole operative
 - Lavorare per milestone e vertical slice.
+- Rispettare limiti di contesto, tentativi, agenti e test definiti in
+  `.codex/orchestration/routing-policy.yaml`.
+- Non usare sub-agent per attività meccaniche; usarli solo entro il limite del profilo e con un
+  vantaggio indipendente verificabile.
 - Prima di modificare il codice, indicare file coinvolti, rischio e test previsti.
 - Non inventare requisiti in conflitto con il PRD.
 - Se un requisito è ambiguo, scegliere l'opzione più conservativa e documentarla in `docs/DECISIONS_LOG.md`.
@@ -24,6 +28,12 @@ Costruire Nexora come applicazione finanziaria personale affidabile, installabil
 - Non classificare mai un trasferimento interno come entrata o spesa.
 - Non eseguire importazioni definitive senza anteprima e conferma.
 - Nessun dato reale dell'utente nei fixture o nei log.
+- Non cancellare, resettare o sostituire silenziosamente dati locali dell'utente.
+- Non dichiarare completata una fase parziale o priva delle evidenze richieste.
+- Non modificare colori e font approvati; i layout seguono il mockup ufficiale.
+- NAS, SMB e backup agent sono definitivamente fuori prodotto. I backup supportati sono file
+  `.nexora` e Google Drive con account e cartella selezionati dall'utente.
+- Nexora Local Hub è infrastruttura di sincronizzazione separata dal backup.
 - Aggiornare `CHANGELOG.md` dopo ogni milestone completata.
 
 ## Definition of Done globale
@@ -43,6 +53,7 @@ Costruire Nexora come applicazione finanziaria personale affidabile, installabil
 - Date ISO-8601; timezone predefinita `Europe/Rome`.
 - Valuta predefinita EUR, locale `it-IT`.
 - Commit piccoli e semanticamente coerenti.
+- Creare un commit separato per ogni fase o correzione critica; non unire scope indipendenti.
 - Dopo ogni implementazione completata e verificata, usare `.codex/skills/commit-and-push`:
   creare un commit Conventional Commit e pubblicarlo su `origin`. Non lasciare modifiche
   funzionali completate soltanto in locale.

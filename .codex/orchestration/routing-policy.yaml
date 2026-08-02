@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "default_profile": "STANDARD",
+  "profiles": {
+    "ECONOMY": { "reasoning_level": "low", "initial_file_limit": 8, "subagent_limit": 0, "max_attempts": 2 },
+    "STANDARD": { "reasoning_level": "medium", "initial_file_limit": 15, "subagent_limit": 1, "max_attempts": 3 },
+    "ADVANCED": { "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2, "max_attempts": 3 },
+    "CRITICAL": { "reasoning_level": "maximum_available", "initial_file_limit": 32, "subagent_limit": 2, "max_attempts": 2 }
+  },
+  "routes": {
+    "documentation": {
+      "profile": "ECONOMY", "reasoning_level": "low", "initial_file_limit": 8, "subagent_limit": 0,
+      "targeted_tests": ["pnpm codex:validate", "pnpm format:check"], "full_tests_required": false, "max_attempts": 2,
+      "escalation_conditions": ["documentation contradicts runtime behavior", "architecture decision changes"],
+      "forbidden_actions": ["change application behavior", "scan the complete repository"],
+      "keywords": ["documentation", "docs", "changelog", "readme", "rename", "formatting"]
+    },
+    "ui_layout": {
+      "profile": "ECONOMY", "reasoning_level": "low", "initial_file_limit": 8, "subagent_limit": 0,
+      "targeted_tests": ["component test for affected surface", "responsive check at affected viewport"], "full_tests_required": false, "max_attempts": 2,
+      "escalation_conditions": ["shared shell changes", "accessibility regression", "more than one feature surface"],
+      "forbidden_actions": ["change approved colors", "change approved fonts", "use legacy mockup"],
+      "keywords": ["css", "spacing", "padding", "margin", "alignment", "layout"]
+    },
+    "ui_component": {
+      "profile": "STANDARD", "reasoning_level": "medium", "initial_file_limit": 15, "subagent_limit": 1,
+      "targeted_tests": ["component test", "accessibility assertion", "responsive smoke"], "full_tests_required": false, "max_attempts": 3,
+      "escalation_conditions": ["cross-feature state", "persistence change", "shared App Shell contract"],
+      "forbidden_actions": ["replace real data with mocks", "change approved colors or fonts", "copy Stitch application code"],
+      "keywords": ["react", "component", "page", "form", "hook", "mockup", "dialog"]
+    },
+    "localized_bug": {
+      "profile": "STANDARD", "reasoning_level": "medium", "initial_file_limit": 12, "subagent_limit": 1,
+      "targeted_tests": ["regression test for reproduced bug", "package typecheck"], "full_tests_required": false, "max_attempts": 3,
+      "escalation_conditions": ["bug crosses packages", "bug is nondeterministic", "data integrity risk"],
+      "forbidden_actions": ["hide the error", "disable the affected feature", "reset user data"],
+      "keywords": ["bug", "fix", "regression", "error", "crash"]
+    },
+    "repository_refactor": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["affected package tests", "dependency boundary checks"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["approved architecture changes", "more packages than planned", "unrelated tests fail"],
+      "forbidden_actions": ["change domain behavior implicitly", "combine unrelated refactors"],
+      "keywords": ["refactor", "architecture", "orchestrator", "multiple packages", "repository map"]
+    },
+    "database_query": {
+      "profile": "STANDARD", "reasoning_level": "medium", "initial_file_limit": 15, "subagent_limit": 1,
+      "targeted_tests": ["repository test", "adapter parity test"], "full_tests_required": false, "max_attempts": 3,
+      "escalation_conditions": ["schema change", "query changes balances", "adapter behavior diverges"],
+      "forbidden_actions": ["use floating point amounts", "count transfers as income or expense"],
+      "keywords": ["query", "repository", "filter", "projection"]
+    },
+    "database_migration": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["migration test", "rollback test", "adapter parity test", "existing-data fixture"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["migration is destructive", "rollback is unavailable", "real user database involved"],
+      "forbidden_actions": ["delete existing data", "rewrite migration history", "store money as float"],
+      "keywords": ["migration", "migrazione", "schema", "sqlite version", "indexeddb upgrade"]
+    },
+    "native_sqlite": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["native adapter tests", "cargo check --locked", "schema integrity check"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["migration divergence", "database path changes", "real user database involved"],
+      "forbidden_actions": ["share an open database file", "delete native app data", "fork schema catalog"],
+      "keywords": ["native sqlite", "database-tauri", "sqlite native"]
+    },
+    "tauri_desktop": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["cargo check --locked", "Tauri build", "desktop startup smoke"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["new native permission", "platform-specific data access", "signing credential required"],
+      "forbidden_actions": ["grant broad capabilities", "embed credentials", "register browser service worker in Tauri"],
+      "keywords": ["tauri desktop", "windows", "macos", "native window"]
+    },
+    "tauri_android": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["Android compile", "native database smoke", "responsive mobile smoke"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["device credential required", "new Android permission", "Keystore design change"],
+      "forbidden_actions": ["request unnecessary permissions", "store secrets outside secure storage"],
+      "keywords": ["tauri android", "android", "apk", "mobile native"]
+    },
+    "manual_backup": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["backup round-trip", "checksum failure", "restore rollback", "cross-adapter restore"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["format compatibility changes", "restore can overwrite data", "encryption changes"],
+      "forbidden_actions": ["restore without verification", "overwrite without checkpoint", "log passphrases"],
+      "keywords": ["manual backup", ".nexora", "restore", "portable archive"]
+    },
+    "google_drive": {
+      "profile": "ADVANCED", "reasoning_level": "high", "initial_file_limit": 24, "subagent_limit": 2,
+      "targeted_tests": ["provider unit tests", "OAuth negative tests", "folder selection integration"], "full_tests_required": true, "max_attempts": 3,
+      "escalation_conditions": ["external credential required", "OAuth scope changes", "remote deletion"],
+      "forbidden_actions": ["commit credentials", "upload plaintext", "choose a folder without user consent"],
+      "keywords": ["google drive", "oauth", "drive folder", "cloud backup"]
+    },
+    "encryption": {
+      "profile": "CRITICAL", "reasoning_level": "maximum_available", "initial_file_limit": 32, "subagent_limit": 2,
+      "targeted_tests": ["cryptographic vectors", "tamper tests", "key lifecycle tests", "recovery tests"], "full_tests_required": true, "max_attempts": 2,
+      "escalation_conditions": ["primitive changes", "key migration", "independent review unavailable"],
+      "forbidden_actions": ["invent cryptography", "log keys or passphrases", "weaken authenticated encryption"],
+      "keywords": ["encryption", "cipher", "aes", "key", "passphrase", "cryptography"]
+    },
+    "local_hub": {
+      "profile": "CRITICAL", "reasoning_level": "maximum_available", "initial_file_limit": 32, "subagent_limit": 2,
+      "targeted_tests": ["threat-model tests", "pairing negative tests", "TLS tests", "LAN integration tests"], "full_tests_required": true, "max_attempts": 2,
+      "escalation_conditions": ["trust model changes", "network exposure changes", "independent review unavailable"],
+      "forbidden_actions": ["unauthenticated access", "treat Local Hub as backup", "share open database files"],
+      "keywords": ["local hub", "pairing", "lan", "mdns", "rustls"]
+    },
+    "synchronization": {
+      "profile": "CRITICAL", "reasoning_level": "maximum_available", "initial_file_limit": 32, "subagent_limit": 2,
+      "targeted_tests": ["operation-log replay", "conflict tests", "idempotency tests", "offline recovery tests"], "full_tests_required": true, "max_attempts": 2,
+      "escalation_conditions": ["conflict policy undefined", "data loss possible", "protocol compatibility changes"],
+      "forbidden_actions": ["last-write-wins without specification", "silent conflict deletion", "copy open databases"],
+      "keywords": ["synchronization", "sync", "operation log", "conflict", "replication"]
+    },
+    "security_review": {
+      "profile": "CRITICAL", "reasoning_level": "maximum_available", "initial_file_limit": 32, "subagent_limit": 2,
+      "targeted_tests": ["threat analysis", "negative tests", "secret scan", "recovery tests"], "full_tests_required": true, "max_attempts": 2,
+      "escalation_conditions": ["vulnerability confirmed", "credentials involved", "independent review unavailable"],
+      "forbidden_actions": ["publish exploit details with secrets", "silence security failures", "skip negative tests"],
+      "keywords": ["security", "vulnerability", "authentication", "authorization", "threat model"]
+    },
+    "final_release": {
+      "profile": "CRITICAL", "reasoning_level": "maximum_available", "initial_file_limit": 32, "subagent_limit": 2,
+      "targeted_tests": ["complete quality gate", "complete E2E", "performance", "recovery", "platform builds"], "full_tests_required": true, "max_attempts": 2,
+      "escalation_conditions": ["any release gate fails", "signing credential required", "known data risk remains"],
+      "forbidden_actions": ["release with unexplained skips", "bypass signing or security gates", "declare partial work complete"],
+      "keywords": ["final release", "release candidate", "production", "hardening final"]
+    }
+  },
+  "risk_rules": {
+    "data_loss_terms": ["delete data", "drop table", "reset database", "corruption", "real user database"],
+    "critical_terms": ["encryption", "key", "authentication", "pairing", "synchronization", "conflict", "local hub"],
+    "advanced_terms": ["migration", "sqlite", "tauri", "backup", "restore", "multiple packages", "startup", "recovery"]
+  },
+  "escalation_rules": {
+    "failed_attempts": 2,
+    "unexpected_package_growth": true,
+    "unrelated_test_failure": true,
+    "architecture_conflict": true,
+    "nondeterministic_reproduction": true,
+    "manual_switch_when_runtime_cannot_switch": true
+  },
+  "context_limits": {
+    "reuse_current_state": true,
+    "repository_map_first": true,
+    "additional_file_batch": 5,
+    "document_reason_for_extra_reads": true,
+    "never_repeat_full_prd": true
+  },
+  "test_strategy": {
+    "level_1": ["changed file or package tests", "scoped typecheck"],
+    "level_2": ["feature", "component", "pertinent integration"],
+    "level_3": ["lint", "full typecheck", "unit tests", "build"],
+    "level_4": ["full E2E", "performance", "recovery", "multiplatform"],
+    "phase_commit_minimum": 3,
+    "critical_immediate_level": 2
+  },
+  "commit_policy": {
+    "conventional_commits": true,
+    "separate_phase_or_critical_fix": true,
+    "push_after_required_gates": true,
+    "never_stage_unrelated_changes": true
+  },
+  "stop_conditions": [
+    "manual model switch is required and unavailable",
+    "external credential is required",
+    "product decision is undefined",
+    "safe checkpoint cannot be created",
+    "independent review required by a CRITICAL task is unavailable"
+  ]
+}

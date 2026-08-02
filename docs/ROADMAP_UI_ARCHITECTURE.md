@@ -28,6 +28,12 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 Ogni fase si chiude solo con test proporzionati, aggiornamento documentale, commit Conventional
 Commit e push su `origin/main`.
 
+## Gate permanente di orchestrazione
+
+- [x] Nexora Task Orchestrator integrato e validato prima di avviare la Fase 8.
+- [x] Ogni task successivo classificato con profilo, limiti, test ed escalation persistenti.
+- [x] Stato, decisioni, errori e test riusati senza scansioni complete ripetute.
+
 ## Evidenze Fase 0
 
 - [x] Archivio Stitch registrato tramite checksum e inventario 98 schermate/prototipi.

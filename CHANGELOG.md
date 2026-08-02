@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Aggiunto il Nexora Task Orchestrator repo-level con routing ECONOMY/STANDARD/ADVANCED/CRITICAL,
+  limiti di contesto e tentativi, test progressivi, checkpoint ed escalation senza switch di
+  modello impliciti.
+
 - Completata la Fase 7 multipiattaforma: Nexora dispone ora di una shell Tauri 2 e di un ledger
   SQLite nativo che riusa le 13 migrazioni, i repository e i backup portabili condivisi, mantenendo
   invariati OPFS e IndexedDB nella PWA.

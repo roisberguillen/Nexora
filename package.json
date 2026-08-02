@@ -20,7 +20,12 @@
     "doctor": "node scripts/doctor.mjs",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "manifest:update": "node scripts/project-manifest.mjs --write",
-    "manifest:check": "node scripts/project-manifest.mjs --check"
+    "manifest:check": "node scripts/project-manifest.mjs --check",
+    "codex:validate": "node scripts/codex-orchestrator.mjs validate",
+    "codex:route": "node scripts/codex-orchestrator.mjs route",
+    "codex:status": "node scripts/codex-orchestrator.mjs status",
+    "codex:checkpoint": "node scripts/codex-orchestrator.mjs checkpoint",
+    "codex:test": "node --test scripts/codex-orchestrator.test.mjs"
   },
   "volta": {
     "node": "24.15.0",

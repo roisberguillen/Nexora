@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora UI"
+  short_description: "Implementa UI dal mockup ufficiale"
+  default_prompt: "Use $nexora-ui to implement a responsive Nexora interface from the official mockup."

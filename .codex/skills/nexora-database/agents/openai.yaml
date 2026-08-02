@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Database"
+  short_description: "Protegge schema, migrazioni e ledger"
+  default_prompt: "Use $nexora-database to plan and validate a Nexora persistence change."

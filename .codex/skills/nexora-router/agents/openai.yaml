@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexora Router"
+  short_description: "Classifica task e applica limiti di esecuzione"
+  default_prompt: "Use $nexora-router to classify the next Nexora roadmap task before making changes."
