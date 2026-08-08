@@ -120,6 +120,9 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
   public replacePortableSnapshot(snapshot: ValidatedPortableLedgerSnapshot): Promise<void> {
     return this.runAtomically(async () => {
+      // A portable snapshot may contain account/category trees. Deferring foreign keys keeps the
+      // replacement atomic while the existing trees are removed and rebuilt as one set.
+      await this.database.execute("PRAGMA defer_foreign_keys = ON;");
       for (const table of [
         "transaction_trash",
         "transaction_tags",

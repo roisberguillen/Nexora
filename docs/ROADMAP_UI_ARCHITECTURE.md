@@ -17,7 +17,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 8 | Importazione, esportazione e qualità dati | completata |
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
-| 11 | Google Drive | implementata; collaudo OAuth live pendente |
+| 11 | Google Drive | completata |
 | 12 | Feature finanziarie con nuova UI | pianificata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
@@ -183,8 +183,9 @@ Commit e push su `origin/main`.
   non interrompe il ritorno del consenso.
 - [x] Lo script del ponte OAuth è una risorsa locale esterna, non inline: rispetta la CSP della
   PWA e fornisce un errore accessibile se GIS non è ancora disponibile.
-- [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
-  nessuna credenziale reale è disponibile o incorporata nel repository locale. Il caricatore GIS
-  gestisce inoltre script già presenti e segnala immediatamente chiusura/blocco del popup. Il
-  drill finale upload/rilettura/ripristino richiede ancora una selezione account e un popup non
-  controllato dal browser automation.
+- [x] Collaudo end-to-end con Client ID autorizzato e consenso esplicito: upload di archivio già
+  cifrato, rilettura da `appDataFolder`, verifica read-only di checksum/schema, ripristino con
+  checkpoint e riapertura del ledger completati con successo. Token OAuth e passphrase restano
+  volatili; nessuna credenziale è incorporata nel repository.
+- [x] Corretto il restore SQLite/OPFS per ledger con alberi di conti o categorie: i vincoli esterni
+  sono differiti nella sostituzione atomica e verificati al commit; il rollback resta operativo.

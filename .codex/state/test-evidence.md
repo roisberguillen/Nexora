@@ -2,6 +2,23 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 11 live Google Drive closure and SQLite restore fix — 2026-08-08
+
+- Root cause: the SQLite portable-snapshot replacement did not defer foreign keys, so a ledger
+  containing self-referential account/category trees could reject the atomic replacement before
+  the engine-level rollback.
+- Targeted regression: SQLite repository and PortableBackupEngine suites, 33/33 passed; the new
+  case replaces a ledger containing a virtual subaccount and confirms the replacement is atomic.
+- Live drill: explicit Google consent, encrypted Drive upload, remote list, read-only
+  checksum/schema verification, checkpointed restore and post-reload overview completed on the
+  OPFS ledger. The token and passphrase remained volatile.
+- `pnpm doctor`, `pnpm lint`, `pnpm typecheck`, full serial `pnpm test` and `pnpm build` passed.
+  Full tests: 109 files passed, 394 tests passed, 4 documented skips. `pnpm codex:validate`
+  passed with 17 routes.
+- `test/e2e/google-drive-onboarding.spec.ts`: 5 passed at configured viewports, 5 account-consent
+  cases skipped because the live-account E2E environment flag is intentionally absent; the live
+  browser drill above supplies the authorized-account evidence.
+
 ## Phase 7 baseline — 2026-08-01
 
 - `pnpm verify`: passed; 98 test files passed, 344 tests passed, documented skips only.

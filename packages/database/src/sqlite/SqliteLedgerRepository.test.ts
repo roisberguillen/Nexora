@@ -818,4 +818,33 @@ describe("SqliteLedgerRepository", () => {
       sourceTransaction,
     );
   });
+
+  it("sostituisce atomicamente un ledger che contiene sottoconti", async () => {
+    const parent = account("restore-parent");
+    const child = Account.create({
+      id: "restore-child",
+      name: "Spazio da sostituire",
+      type: "virtual_subaccount",
+      currency: "EUR",
+      parentAccountId: parent.id,
+    });
+    await repository.saveAccount(parent);
+    await repository.saveAccount(child);
+
+    const source = new InMemoryLedgerRepository();
+    const restoredAccount = account("restored-account");
+    await source.saveAccount(restoredAccount);
+
+    await expect(
+      repository.replacePortableSnapshot(
+        validatePortableLedgerSnapshot(
+          decodePortableLedgerSnapshot(
+            encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(source)),
+          ),
+        ),
+      ),
+    ).resolves.toBeUndefined();
+
+    await expect(repository.listAccounts()).resolves.toEqual([restoredAccount]);
+  });
 });

@@ -9,6 +9,14 @@
 
 ### Changed
 
+- Corretto il ripristino di backup portabili su SQLite/OPFS quando il ledger contiene sottoconti
+  o categorie gerarchiche: i vincoli esterni vengono differiti all'interno della sostituzione
+  atomica, con checkpoint e rollback invariati.
+
+- Completato il collaudo live di Google Drive: consenso esplicito, upload di archivio cifrato,
+  rilettura, verifica read-only e ripristino con riapertura del ledger sono stati confermati senza
+  persistere token OAuth o passphrase.
+
 - Corretto il pulsante **Continua con Google** del ponte OAuth: l'handler ora è un file locale
   autorizzato dalla Content Security Policy, quindi la finestra risponde al clic anche quando
   Google Identity Services non è ancora pronta.
