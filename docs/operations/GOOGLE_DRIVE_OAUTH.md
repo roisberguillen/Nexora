@@ -28,6 +28,10 @@ memoria tramite `BroadcastChannel` associato a un nonce casuale. Un hosting di p
 configurare questa eccezione di header per la route del bridge; non usare `restrict-properties` su
 tutta la PWA, perché non conserva l'isolamento necessario a OPFS.
 
+Il codice del bridge deve restare in una risorsa JavaScript same-origin separata: la CSP non
+abilita script inline. Se GIS non è ancora disponibile, il pulsante deve restare azionabile e
+mostrare un messaggio di riprova senza aprire una sessione OAuth parziale.
+
 ## Account, cartella e ciclo di vita
 
 L'account è selezionato esplicitamente nella schermata di consenso Google. Lo scope `drive.appdata`

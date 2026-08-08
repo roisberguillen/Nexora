@@ -8,7 +8,7 @@
 - Status: implementation and configured synthetic E2E verified locally; live OAuth gate pending
 - Initial files: shared cloud session, onboarding, App, BackupPage, tests and backup documentation
 - Extra reads: ADR 0015, ADR 0018, backup specification and OAuth operations guide
-- Attempts: 5; GIS is preloaded silently only while the Backup page is open, then the explicit
+- Attempts: 6; GIS is preloaded silently only while the Backup page is open, then the explicit
   connect click invokes the token client synchronously without an intervening promise. The actual
   callback failure was traced to `COOP: same-origin` severing cross-origin popup communication.
 - Checkpoint: Drive consent is available only from Backup; explicit consent and offline continuation preserved
@@ -21,4 +21,5 @@
 - Latest live evidence: the authorized account chooser opens after the explicit Backup action.
   The app shell retains `COOP: same-origin`; an isolated OAuth bridge has
   `same-origin-allow-popups` and returns only a nonce-bound volatile token. The local HTTP
-  verification confirms these distinct headers; no archive was uploaded.
+  verification confirms these distinct headers. The bridge handler is served from an external
+  same-origin script because the CSP correctly rejects inline scripts; no archive was uploaded.

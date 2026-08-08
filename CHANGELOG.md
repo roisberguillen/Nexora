@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Corretto il pulsante **Continua con Google** del ponte OAuth: l'handler ora è un file locale
+  autorizzato dalla Content Security Policy, quindi la finestra risponde al clic anche quando
+  Google Identity Services non è ancora pronta.
+
 - Corretto il ritorno dal consenso Google Drive in Chrome con una pagina ponte OAuth dedicata:
   la shell mantiene l'isolamento SQLite/OPFS, mentre il token volatile rientra solo tramite un
   canale vincolato a nonce dopo la conferma esplicita dell'utente.

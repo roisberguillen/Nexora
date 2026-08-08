@@ -181,3 +181,13 @@ Keep only the latest relevant evidence per completed phase.
   the same focused suite skips its mobile and tablet duplicates by design (2 passed, 8 skipped).
 - Pending external evidence remains the authorized live account's upload/reopen/restore drill;
   no token, account identity or archive was captured during this validation.
+
+## Phase 11 OAuth bridge CSP regression — 2026-08-08
+
+- Root cause: the static bridge used an inline handler, correctly rejected by the page CSP. The
+  visible button therefore had no listener.
+- The handler now loads from a same-origin static JavaScript file. Production bridge E2E verifies
+  that the control is enabled and reports a bounded “Google non è ancora pronto” state if GIS is
+  unavailable, without contacting Google or creating a session.
+- Web production build passed; bridge E2E passed at 320, 375, 768, 1024 and 1440 px (5 passed;
+  5 optional account-onboarding tests skipped because the synthetic consent flag was not set).

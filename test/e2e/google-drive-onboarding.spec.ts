@@ -1,6 +1,21 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+const bridgeUrl =
+  "/google-drive-oauth-bridge.html?client_id=client.apps.googleusercontent.com&nonce=00000000-0000-4000-8000-000000000000&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.appdata";
+
+test("il ponte Google Drive rende sempre azionabile il consenso", async ({ page }) => {
+  await page.route("https://accounts.google.com/gsi/client", (route) => route.abort());
+  await page.goto(bridgeUrl);
+
+  const continueWithGoogle = page.getByRole("button", { name: "Continua con Google" });
+  await expect(continueWithGoogle).toBeEnabled();
+  await continueWithGoogle.click();
+  await expect(
+    page.getByText("Google non è ancora pronto. Attendi un istante e riprova."),
+  ).toBeVisible();
+});
+
 test("Google Drive resta opzionale: non appare all'avvio e si collega solo da Backup", async ({
   page,
 }) => {

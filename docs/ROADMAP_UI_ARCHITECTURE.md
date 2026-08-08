@@ -181,6 +181,8 @@ Commit e push su `origin/main`.
   passa da una route OAuth statica separata con `COOP: same-origin-allow-popups`, token volatile e
   canale `BroadcastChannel` vincolato a nonce: OPFS resta isolato e la chiusura del popup Google
   non interrompe il ritorno del consenso.
+- [x] Lo script del ponte OAuth è una risorsa locale esterna, non inline: rispetta la CSP della
+  PWA e fornisce un errore accessibile se GIS non è ancora disponibile.
 - [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
   nessuna credenziale reale è disponibile o incorporata nel repository locale. Il caricatore GIS
   gestisce inoltre script già presenti e segnala immediatamente chiusura/blocco del popup. Il
