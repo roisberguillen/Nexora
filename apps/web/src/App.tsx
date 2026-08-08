@@ -74,7 +74,6 @@ import {
   writeFinancialResetReceipt,
 } from "./reset/financialReset";
 import { readTotalResetReport, runTotalReset, writeTotalResetReport } from "./reset/totalReset";
-import { GoogleDriveOnboarding } from "./cloud/GoogleDriveOnboarding";
 import { GoogleDriveSessionProvider } from "./cloud/GoogleDriveSession";
 import { useGoogleDriveSession } from "./cloud/GoogleDriveSessionContext";
 import { StartupLoadingScreen } from "./startup/StartupLoadingScreen";
@@ -758,7 +757,6 @@ function AppContent({
               />
             )}
           </AppShell>
-          {ledgerState.status === "ready" ? <GoogleDriveOnboarding /> : null}
         </>
       )}
     </ErrorBoundary>

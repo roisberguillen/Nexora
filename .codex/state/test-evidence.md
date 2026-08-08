@@ -126,3 +126,15 @@ Keep only the latest relevant evidence per completed phase.
   formatting, lint, workspace typechecks and production PWA build completed.
 - Full `pnpm test:e2e`: 152 passed and 68 documented skips. The first run reached the five-minute
   command limit without a test failure; the unchanged rerun completed in five minutes.
+
+## Phase 11 Google Drive opt-in entry point — 2026-08-08
+
+- Removed the startup onboarding: Google Identity Services is now reachable exclusively after the
+  explicit **Collega Google Drive** action in Backup; no OAuth prompt or account state is shown on
+  the dashboard.
+- App, BackupPage, OAuth provider and configuration suites: 5 files, 37 tests passed.
+- Configured Backup E2E passed at 320, 375, 768, 1024 and 1440 px; the initial parallel run had
+  one Chromium launch interruption at 768 px, and the isolated rerun passed.
+- Browser smoke verified a normal dashboard startup and the Backup-only Drive entry point without
+  reading or modifying financial data. The real authorized-account upload/reopen/restore drill
+  remains external evidence pending OAuth Console publishing and origin configuration.

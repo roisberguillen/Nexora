@@ -15,27 +15,6 @@ export interface GoogleDriveSessionValue {
 export const GoogleDriveSessionContext = createContext<GoogleDriveSessionValue | undefined>(
   undefined,
 );
-const onboardingDismissedKey = "nexora.google-drive-onboarding-dismissed.v1";
-
-export function wasGoogleDriveOnboardingDismissed(
-  storage: Pick<Storage, "getItem"> = sessionStorage,
-): boolean {
-  try {
-    return storage.getItem(onboardingDismissedKey) === "1";
-  } catch {
-    return false;
-  }
-}
-
-export function dismissGoogleDriveOnboarding(
-  storage: Pick<Storage, "setItem"> = sessionStorage,
-): void {
-  try {
-    storage.setItem(onboardingDismissedKey, "1");
-  } catch {
-    // A blocked storage API must never prevent local-first use or disconnection.
-  }
-}
 
 export function useGoogleDriveSession(): GoogleDriveSessionValue {
   const session = useContext(GoogleDriveSessionContext);

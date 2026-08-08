@@ -9,9 +9,9 @@
 
 ### Changed
 
-- Aggiunto l'onboarding opzionale Google Drive dopo l'apertura verificata del ledger: ogni utente
-  sceglie esplicitamente il proprio account Google, può continuare offline e condivide una sessione
-  OAuth solo in memoria tra shell e pagina backup.
+- Google Drive è ora richiesto esclusivamente dalla pagina Backup dopo un'azione esplicita. Nessun
+  dialogo OAuth o collegamento account viene mostrato all'avvio: l'app resta locale e utilizzabile
+  offline finché l'utente non sceglie di creare, ripristinare o sincronizzare un backup Drive.
 
 - Implementata la Fase 11 Google Drive con OAuth `drive.appdata`, token solo in memoria, provider
   validato, upload cifrato senza retry duplicanti e restore abilitato soltanto dopo verifica

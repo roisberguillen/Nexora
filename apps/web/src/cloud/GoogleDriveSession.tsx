@@ -5,7 +5,6 @@ import { GoogleIdentityAuth } from "./GoogleIdentityAuth";
 import { readGoogleCloudConfig, type GoogleCloudConfig } from "./cloudConfig";
 import type { CloudBackupStatus } from "./cloudTypes";
 import {
-  dismissGoogleDriveOnboarding,
   GoogleDriveSessionContext,
   type GoogleDriveSessionValue,
 } from "./GoogleDriveSessionContext";
@@ -37,7 +36,6 @@ export function GoogleDriveSessionProvider({
   }, [auth, config.enabled]);
 
   const disconnect = useCallback(async () => {
-    dismissGoogleDriveOnboarding();
     await auth.disconnect();
     setStatus(auth.getStatus());
   }, [auth]);

@@ -54,21 +54,19 @@ describe("Nexora app", () => {
     expect(screen.queryByLabelText("Riepilogo finanziario")).not.toBeInTheDocument();
   });
 
-  it("propone il collegamento Google dopo l'apertura del ledger senza bloccare l'uso offline", async () => {
-    const user = userEvent.setup();
+  it("non propone Google Drive all'avvio: il collegamento resta disponibile solo nel backup", async () => {
     vi.stubEnv("VITE_GOOGLE_CLIENT_ID", "123-client.apps.googleusercontent.com");
     vi.stubEnv("VITE_GOOGLE_DRIVE_ENABLED", "true");
 
     render(<App ledgerPromise={Promise.resolve(browserLedger("indexeddb"))} />);
 
     expect(
-      await screen.findByRole("dialog", { name: "Collega il tuo account Google" }),
+      await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Continua senza Drive" }));
     expect(
       screen.queryByRole("dialog", { name: "Collega il tuo account Google" }),
     ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Collega Google Drive" })).not.toBeInTheDocument();
   });
 
   it("apre la registrazione dal menu rapido", async () => {

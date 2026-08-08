@@ -170,9 +170,9 @@ Commit e push su `origin/main`.
   non elimina file remoti e la cancellazione opera soltanto sui backup Nexora enumerati.
 - [x] Verificati provider, OAuth negativo/timeout/concorrenza, configurazione, UI component,
   accessibilità e layout backup sui viewport 320, 375, 768, 1024 e 1440 px.
-- [x] L'onboarding account compare dopo l'apertura verificata del ledger, richiede un clic
-  esplicito per `select_account`, consente di continuare offline e condivide una sola sessione OAuth
-  volatile tra shell, backup e ripristino totale. Test component ed E2E configurato coprono focus,
-  consenso negato, reload e viewport 320, 375, 768, 1024 e 1440 px.
+- [x] Il collegamento account è disponibile solo nella pagina Backup e richiede un clic esplicito
+  per `select_account`; non è un login iniziale. L'app resta utilizzabile offline e condivide una
+  sola sessione OAuth volatile tra backup e ripristino totale. Test component ed E2E configurato
+  coprono consenso negato, reload e viewport 320, 375, 768, 1024 e 1440 px.
 - [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
   nessuna credenziale reale è disponibile o incorporata nel repository locale.

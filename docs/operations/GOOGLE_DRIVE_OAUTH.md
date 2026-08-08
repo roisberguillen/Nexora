@@ -9,12 +9,11 @@ and production origins as Authorized JavaScript Origins, then set `VITE_GOOGLE_C
 local `.env` file and `VITE_GOOGLE_DRIVE_ENABLED=true`. Do not create or expose a client secret.
 
 Il Client ID configura Nexora una sola volta per il deployment: non identifica l'utente e non deve
-essere chiesto a ogni persona. Dopo l'apertura verificata del ledger locale, Nexora presenta invece
-un onboarding opzionale. Solo il pulsante **Collega Google Drive** avvia Google Identity Services
-con `prompt=select_account`, così ogni utente sceglie e autorizza il proprio account Google. La
-dashboard resta utilizzabile con **Continua senza Drive** e il rifiuto del consenso non blocca i
-dati locali. La scelta di non collegarsi evita nuove richieste soltanto per la sessione corrente
-del browser; in una nuova sessione l'onboarding può essere riproposto.
+essere chiesto a ogni persona. Nexora non mostra alcun onboarding o consenso Google all'avvio.
+Solo dalla pagina **Backup**, dopo il clic su **Collega Google Drive**, Google Identity Services
+avvia `prompt=select_account`: ogni utente sceglie e autorizza il proprio account. Il ledger e il
+backup manuale restano utilizzabili offline; il rifiuto del consenso non blocca né modifica dati
+locali.
 
 Tokens are kept in memory only and are discarded on disconnect or page close. A missing client ID
 leaves cloud backup disabled while local encrypted backups remain available.
