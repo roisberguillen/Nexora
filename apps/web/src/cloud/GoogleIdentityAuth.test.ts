@@ -104,4 +104,25 @@ describe("GoogleIdentityAuth", () => {
     expect(auth.getStatus()).toBe("error");
     vi.useRealTimers();
   });
+
+  it("termina subito se Google segnala la chiusura del popup", async () => {
+    let errorCallback: ((error: { type?: string }) => void) | undefined;
+    const auth = new GoogleIdentityAuth("client", {
+      google: {
+        accounts: {
+          oauth2: {
+            initTokenClient: (input: { error_callback?: (error: { type?: string }) => void }) => {
+              errorCallback = input.error_callback;
+              return { requestAccessToken: () => errorCallback?.({ type: "popup_closed" }) };
+            },
+            revoke: (_token: string, done: () => void) => done(),
+          },
+        },
+      },
+    } as unknown as Window);
+
+    await expect(auth.connect()).rejects.toThrow("google_identity_popup_closed");
+    expect(auth.getAccessToken()).toBeUndefined();
+    expect(auth.getStatus()).toBe("error");
+  });
 });

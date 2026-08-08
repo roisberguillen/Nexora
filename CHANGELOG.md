@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Rafforzato il collegamento Google Drive: il caricatore GIS gestisce tentativi successivi con
+  script già presenti e gli errori del popup sono annunciati subito con indicazioni di recupero,
+  senza conservare token o modificare dati locali.
+
 - Google Drive è ora richiesto esclusivamente dalla pagina Backup dopo un'azione esplicita. Nessun
   dialogo OAuth o collegamento account viene mostrato all'avvio: l'app resta locale e utilizzabile
   offline finché l'utente non sceglie di creare, ripristinare o sincronizzare un backup Drive.

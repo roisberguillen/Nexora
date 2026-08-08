@@ -13,6 +13,7 @@ interface GoogleAccountsOauth2 {
       readonly access_token?: string;
       readonly error?: string;
     }) => void;
+    readonly error_callback?: (error: { readonly type?: string }) => void;
   }): GoogleTokenClient;
   revoke(token: string, callback: () => void): void;
 }
@@ -87,6 +88,18 @@ export class GoogleIdentityAuth implements CloudAuthProvider {
           this.token = response.access_token;
           this.status = "connected";
           finish();
+        },
+        error_callback: (error) => {
+          if (settled || attempt !== this.authorizationAttempt) return;
+          this.status = "error";
+          const type = error.type;
+          finish(
+            new Error(
+              type === "popup_closed" || type === "popup_failed_to_open"
+                ? `google_identity_${type}`
+                : "google_identity_failed",
+            ),
+          );
         },
       });
       try {

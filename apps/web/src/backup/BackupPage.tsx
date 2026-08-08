@@ -28,6 +28,12 @@ function describeCloudError(error: unknown): string {
       return "Il checksum del backup Drive non coincide con la ricevuta salvata.";
     case "google_identity_timeout":
       return "Google non ha completato il consenso entro il tempo previsto.";
+    case "google_identity_popup_closed":
+      return "Il consenso Google è stato chiuso prima del collegamento. Nessun dato locale è stato condiviso.";
+    case "google_identity_popup_failed_to_open":
+      return "Google non ha potuto aprire la finestra di consenso. Consenti i popup e riprova.";
+    case "google_identity_failed":
+      return "Google non ha completato il collegamento. Riprova dalla schermata Backup.";
     default:
       return "La connessione a Google Drive non è disponibile: riprova quando torni online.";
   }

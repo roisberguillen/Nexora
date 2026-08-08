@@ -138,3 +138,18 @@ Keep only the latest relevant evidence per completed phase.
 - Browser smoke verified a normal dashboard startup and the Backup-only Drive entry point without
   reading or modifying financial data. The real authorized-account upload/reopen/restore drill
   remains external evidence pending OAuth Console publishing and origin configuration.
+
+## Phase 11 GIS callback resilience — 2026-08-08
+
+- The identity loader now waits for the OAuth API after an already-present GIS script and fails
+  boundedly if the API never becomes ready; retries do not silently wait on an already-fired load
+  event.
+- Google token-client popup failures are reported immediately without tokens or account data. The
+  Backup UI exposes distinct accessible recovery messages for a closed popup, a blocked popup and
+  an unknown GIS failure.
+- OAuth, loader, provider and BackupPage suites: 4 files and 29 tests passed. Lint, workspace
+  typecheck and production build passed. Configured Google Drive entry-point E2E passed at 320,
+  375, 768, 1024 and 1440 px (5/5).
+- The live account reaches consent after the test-user configuration. An automated Chrome popup
+  cannot complete the opener callback after takeover, therefore no upload/reopen/restore evidence
+  is claimed and no archive was created.

@@ -39,6 +39,32 @@ describe("BackupPage", () => {
     expect(screen.queryByText(/My Cloud/i)).not.toBeInTheDocument();
   });
 
+  it("rende accessibile l'errore se il popup Google viene chiuso", async () => {
+    const user = userEvent.setup();
+    vi.stubEnv("VITE_GOOGLE_CLIENT_ID", "123-client.apps.googleusercontent.com");
+    vi.stubEnv("VITE_GOOGLE_DRIVE_ENABLED", "true");
+    vi.stubGlobal("google", {
+      accounts: {
+        oauth2: {
+          initTokenClient: ({
+            error_callback,
+          }: {
+            error_callback?: (error: { type?: string }) => void;
+          }) => ({ requestAccessToken: () => error_callback?.({ type: "popup_closed" }) }),
+          revoke: (_token: string, done: () => void) => done(),
+        },
+      },
+    });
+    render(<BackupPage ledger={createLedger()} />);
+
+    await user.click(screen.getByRole("button", { name: "Collega Google Drive" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Il consenso Google è stato chiuso prima del collegamento",
+    );
+    expect(screen.getByRole("button", { name: "Collega Google Drive" })).toBeEnabled();
+  });
+
   it("verifica il file in sola lettura e mostra una ricevuta tecnica", async () => {
     const user = userEvent.setup();
     const verifyEncryptedBackupArchive = vi.fn(async () => verifiedReceipt);

@@ -175,4 +175,6 @@ Commit e push su `origin/main`.
   sola sessione OAuth volatile tra backup e ripristino totale. Test component ed E2E configurato
   coprono consenso negato, reload e viewport 320, 375, 768, 1024 e 1440 px.
 - [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
-  nessuna credenziale reale è disponibile o incorporata nel repository locale.
+  nessuna credenziale reale è disponibile o incorporata nel repository locale. Il caricatore GIS
+  gestisce inoltre script già presenti e segnala immediatamente chiusura/blocco del popup, ma il
+  drill finale upload/rilettura/ripristino richiede un popup non controllato dal browser automation.
