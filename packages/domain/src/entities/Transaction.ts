@@ -6,6 +6,8 @@ import { Money } from "../value-objects/Money";
 export type TransactionKind = "income" | "expense" | "transfer" | "adjustment";
 export type TransactionStatus = "expected" | "booked" | "reconciled" | "cancelled";
 export type TransactionSource = "manual" | "import" | "recurring" | "system";
+export type ExpenseVariability = "fixed" | "variable";
+export type ExpenseExceptionality = "ordinary" | "extraordinary";
 
 const transactionKinds = new Set<TransactionKind>(["income", "expense", "transfer", "adjustment"]);
 const transactionStatuses = new Set<TransactionStatus>([
@@ -15,6 +17,8 @@ const transactionStatuses = new Set<TransactionStatus>([
   "cancelled",
 ]);
 const transactionSources = new Set<TransactionSource>(["manual", "import", "recurring", "system"]);
+const expenseVariabilities = new Set<ExpenseVariability>(["fixed", "variable"]);
+const expenseExceptionalities = new Set<ExpenseExceptionality>(["ordinary", "extraordinary"]);
 
 export interface CreateTransactionProps {
   readonly id: string;
@@ -31,6 +35,8 @@ export interface CreateTransactionProps {
   readonly source?: TransactionSource;
   readonly importBatchId?: string;
   readonly sourceFingerprint?: string;
+  readonly expenseVariability?: ExpenseVariability;
+  readonly expenseExceptionality?: ExpenseExceptionality;
 }
 
 export class Transaction {
@@ -48,6 +54,8 @@ export class Transaction {
   public readonly source: TransactionSource;
   public readonly importBatchId: string | undefined;
   public readonly sourceFingerprint: string | undefined;
+  public readonly expenseVariability: ExpenseVariability | undefined;
+  public readonly expenseExceptionality: ExpenseExceptionality | undefined;
 
   private constructor(props: CreateTransactionProps) {
     this.id = requireIdentifier(props.id, "Transaction id");
@@ -77,6 +85,8 @@ export class Transaction {
         ? undefined
         : requireIdentifier(props.importBatchId, "Import batch id");
     this.sourceFingerprint = props.sourceFingerprint?.trim().toLowerCase();
+    this.expenseVariability = props.expenseVariability;
+    this.expenseExceptionality = props.expenseExceptionality;
     if (
       this.source === "import" &&
       (this.importBatchId === undefined || !/^[a-f0-9]{64}$/.test(this.sourceFingerprint ?? ""))
@@ -100,6 +110,7 @@ export class Transaction {
     if (this.kind === "transfer" && this.categoryId !== undefined) {
       throw new DomainError("invalid_transaction", "Transfer legs cannot have a category.");
     }
+    this.assertExpenseBehavior();
 
     Object.freeze(this);
   }
@@ -144,7 +155,33 @@ export class Transaction {
       ...(this.sourceFingerprint === undefined
         ? {}
         : { sourceFingerprint: this.sourceFingerprint }),
+      ...(this.expenseVariability === undefined
+        ? {}
+        : { expenseVariability: this.expenseVariability }),
+      ...(this.expenseExceptionality === undefined
+        ? {}
+        : { expenseExceptionality: this.expenseExceptionality }),
     });
+  }
+
+  private assertExpenseBehavior(): void {
+    if (this.kind !== "expense") {
+      if (this.expenseVariability !== undefined || this.expenseExceptionality !== undefined) {
+        throw new DomainError(
+          "invalid_transaction",
+          "Expense behavior can only be assigned to expense transactions.",
+        );
+      }
+      return;
+    }
+    if (
+      (this.expenseVariability !== undefined &&
+        !expenseVariabilities.has(this.expenseVariability)) ||
+      (this.expenseExceptionality !== undefined &&
+        !expenseExceptionalities.has(this.expenseExceptionality))
+    ) {
+      throw new DomainError("invalid_transaction", "Expense behavior is not supported.");
+    }
   }
 
   private assertAmountSign(): void {

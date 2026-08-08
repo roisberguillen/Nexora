@@ -245,3 +245,17 @@ Keep only the latest relevant evidence per completed phase.
   a `section`; it was corrected to a valid `div` before the passing rerun.
 - `pnpm codex:validate` passed. Repository-wide `format:check` is blocked only by the pre-existing,
   out-of-scope `apps/web/src/reset/financialReset.test.ts`; no category-slice file is unformatted.
+
+## Phase 12.2 — Expense behavior classification and recurring-model alignment — 2026-08-08
+
+- Domain tests cover classified expenses, valid legacy unclassified movements, unsupported values,
+  rejected income/transfer/adjustment attributes and preservation after cancellation. The pure
+  behavior summary excludes cancelled entries, transfers and adjustments.
+- SQLite/OPFS migration v16, IndexedDB v16, Tauri opening, in-memory category merge and portable
+  backup tests cover new-value round trips plus snapshots produced before the new optional fields.
+- Targeted domain, migration, persistence, portable-backup, export and recurring component suites:
+  10 files, 90 tests passed. Workspace typecheck, lint and production web build passed.
+- Transaction E2E passed at 320, 375, 768, 1024 and 1440 px (35 tests): optional expense details,
+  transfer exclusion, transaction flow, responsive split controls, reset paths and axe scans.
+- Repository-wide `format:check` remains blocked only by the pre-existing, out-of-scope
+  `apps/web/src/reset/financialReset.test.ts`; no Phase 12.2 file is unformatted.

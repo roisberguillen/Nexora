@@ -52,6 +52,26 @@ test("il modulo movimenti espone righe split responsive", async ({ page }) => {
   await expect(page.getByLabel("Categoria split 1")).toHaveCount(0);
 });
 
+test("una spesa può avere dettagli finanziari facoltativi senza classificare i trasferimenti", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await expect(page.getByText("Dettagli finanziari (facoltativi)")).toBeVisible();
+  await page.getByText("Dettagli finanziari (facoltativi)").click();
+  await page.getByLabel("Fissa").check();
+  await page.getByRole("radio", { name: "Ordinario", exact: true }).check();
+  await page.getByLabel("Importo").fill("12,50");
+  await page.getByRole("button", { name: "Salva movimento" }).click();
+  await expect(page.getByRole("status")).toContainText("Movimento salvato");
+
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByLabel("Tipo").selectOption("transfer");
+  await expect(page.getByText("Dettagli finanziari (facoltativi)")).toHaveCount(0);
+});
+
 test("un movimento nel cestino può essere ripristinato e purgato dalla gestione dati", async ({
   page,
 }) => {

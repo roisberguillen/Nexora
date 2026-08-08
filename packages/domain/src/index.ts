@@ -22,6 +22,8 @@ export {
   type TransactionKind,
   type TransactionSource,
   type TransactionStatus,
+  type ExpenseVariability,
+  type ExpenseExceptionality,
 } from "./entities/Transaction";
 export { Transfer, type CreateTransferProps } from "./entities/Transfer";
 export { Tag, type CreateTagProps } from "./entities/Tag";
@@ -74,6 +76,7 @@ export {
   validateCategoryHierarchy,
 } from "./services/categoryHierarchy";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
+export { summarizeExpenseBehavior, type ExpenseBehaviorSummary } from "./services/expenseBehavior";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
 export {
   SyncOperationLog,

@@ -96,6 +96,29 @@ describe("IndexedDbLedgerRepository", () => {
     ).rejects.toThrow();
   });
 
+  it("round-trips optional expense behavior after a reopen", async () => {
+    const main = account("account-behavior");
+    await ledger.repository.saveAccount(main);
+    await ledger.repository.saveTransaction(
+      Transaction.create({
+        id: "expense-behavior",
+        kind: "expense",
+        status: "booked",
+        accountId: main.id,
+        amount: Money.fromMinor(-1_200n, "EUR"),
+        bookedDate,
+        expenseVariability: "variable",
+        expenseExceptionality: "extraordinary",
+      }),
+    );
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    expect(await ledger.repository.findTransactionById("expense-behavior")).toMatchObject({
+      expenseVariability: "variable",
+      expenseExceptionality: "extraordinary",
+    });
+  });
+
   it("persiste tag e associazioni atomiche dopo la riapertura", async () => {
     const main = account("account-tags");
     const transaction = Transaction.create({
@@ -325,7 +348,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 15 });
+    expect(metadata).toEqual({ key: "schema_version", value: 16 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -641,7 +664,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(15);
+    expect(ledger.schemaVersion).toBe(16);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );

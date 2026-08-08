@@ -120,6 +120,33 @@ describe("SqliteLedgerRepository", () => {
     ).rejects.toThrow();
   });
 
+  it("round-trips optional expense behavior and keeps legacy fields nullable", async () => {
+    const main = account("account-behavior");
+    await repository.saveAccount(main);
+    const classified = Transaction.create({
+      id: "expense-behavior",
+      kind: "expense",
+      status: "booked",
+      accountId: main.id,
+      amount: Money.fromMinor(-1_200n, "EUR"),
+      bookedDate,
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+    });
+    await repository.saveTransaction(classified);
+    expect(await repository.findTransactionById(classified.id)).toMatchObject({
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+    });
+    expect(
+      sqlite
+        .prepare(
+          "SELECT expense_variability, expense_exceptionality FROM transactions WHERE id = ?",
+        )
+        .get(classified.id),
+    ).toEqual({ expense_variability: "fixed", expense_exceptionality: "ordinary" });
+  });
+
   it("persiste tag e associazioni transazionali", async () => {
     const main = account("account-tags");
     const transaction = Transaction.create({
@@ -646,8 +673,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 15,
-        toVersion: 15,
+        fromVersion: 16,
+        toVersion: 16,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(

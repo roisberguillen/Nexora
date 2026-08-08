@@ -947,6 +947,12 @@ function copyTransactionWithCategory(transaction: Transaction, categoryId: strin
     ...(transaction.sourceFingerprint === undefined
       ? {}
       : { sourceFingerprint: transaction.sourceFingerprint }),
+    ...(transaction.expenseVariability === undefined
+      ? {}
+      : { expenseVariability: transaction.expenseVariability }),
+    ...(transaction.expenseExceptionality === undefined
+      ? {}
+      : { expenseExceptionality: transaction.expenseExceptionality }),
   });
 }
 

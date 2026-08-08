@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 15,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      toVersion: 16,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -142,14 +142,15 @@ describe("MigrationRunner", () => {
       { version: 13, name: "import-row-deletion-audit" },
       { version: 14, name: "import-mapping-profiles" },
       { version: 15, name: "generic-csv-importer" },
+      { version: 16, name: "expense-behavior" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 15,
-      toVersion: 15,
+      fromVersion: 16,
+      toVersion: 16,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(15);
+    expect(migrationRows(sqlite)).toHaveLength(16);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -171,8 +172,8 @@ describe("MigrationRunner", () => {
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 15,
-      appliedMigrations: [11, 12, 13, 14, 15],
+      toVersion: 16,
+      appliedMigrations: [11, 12, 13, 14, 15, 16],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
@@ -211,8 +212,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 13,
-      toVersion: 15,
-      appliedMigrations: [14, 15],
+      toVersion: 16,
+      appliedMigrations: [14, 15, 16],
     });
     expect(
       sqlite

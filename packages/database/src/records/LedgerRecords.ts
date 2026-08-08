@@ -70,6 +70,8 @@ export interface TransactionRecord {
   readonly source: unknown;
   readonly import_batch_id?: unknown;
   readonly source_fingerprint?: unknown;
+  readonly expense_variability?: unknown;
+  readonly expense_exceptionality?: unknown;
 }
 
 export interface StoredTransactionRecord extends TransactionRecord {
@@ -88,6 +90,8 @@ export interface StoredTransactionRecord extends TransactionRecord {
   readonly source: TransactionSource;
   readonly import_batch_id: string | null;
   readonly source_fingerprint: string | null;
+  readonly expense_variability: "fixed" | "variable" | null;
+  readonly expense_exceptionality: "ordinary" | "extraordinary" | null;
 }
 
 export interface TransferRecord {
@@ -254,6 +258,8 @@ export function transactionToRecord(transaction: Transaction): StoredTransaction
     source: transaction.source,
     import_batch_id: transaction.importBatchId ?? null,
     source_fingerprint: transaction.sourceFingerprint ?? null,
+    expense_variability: transaction.expenseVariability ?? null,
+    expense_exceptionality: transaction.expenseExceptionality ?? null,
   };
 }
 
@@ -269,6 +275,16 @@ export function transactionFromRecord(row: TransactionRecord): Transaction {
     const sourceFingerprint = optionalText(
       row.source_fingerprint ?? null,
       "transaction.source_fingerprint",
+    );
+    const expenseVariability = optionalEnum(
+      row.expense_variability ?? null,
+      ["fixed", "variable"] as const,
+      "transaction.expense_variability",
+    );
+    const expenseExceptionality = optionalEnum(
+      row.expense_exceptionality ?? null,
+      ["ordinary", "extraordinary"] as const,
+      "transaction.expense_exceptionality",
     );
 
     return Transaction.create({
@@ -289,6 +305,8 @@ export function transactionFromRecord(row: TransactionRecord): Transaction {
       ...(note === undefined ? {} : { note }),
       ...(importBatchId === undefined ? {} : { importBatchId }),
       ...(sourceFingerprint === undefined ? {} : { sourceFingerprint }),
+      ...(expenseVariability === undefined ? {} : { expenseVariability }),
+      ...(expenseExceptionality === undefined ? {} : { expenseExceptionality }),
     });
   } catch (cause) {
     throw corruptRecord("transaction", cause);
@@ -424,6 +442,14 @@ function enumValue<Value extends string>(
     throw new Error(`${field} contains an unsupported value.`);
   }
   return text as Value;
+}
+
+function optionalEnum<Value extends string>(
+  value: unknown,
+  allowed: readonly Value[],
+  field: string,
+): Value | undefined {
+  return value === null || value === undefined ? undefined : enumValue(value, allowed, field);
 }
 
 function corruptRecord(entity: string, cause: unknown): PersistenceError {

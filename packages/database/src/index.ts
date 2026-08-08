@@ -137,6 +137,10 @@ export {
 } from "./sqlite/initializeSqliteLedger";
 export { DemoSeedError, type DemoSeedErrorCode } from "./seed/DemoSeedError";
 export {
+  expenseBehaviorMigration,
+  EXPENSE_BEHAVIOR_SCHEMA_VERSION,
+} from "./migrations/0016-expense-behavior";
+export {
   createDemoLedgerSeed,
   DEMO_LEDGER_SEED_VERSION,
   seedDemoLedger,

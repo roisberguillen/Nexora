@@ -5,6 +5,7 @@ import type {
   RecurringRule,
   WeekendPolicy,
 } from "@nexora/domain";
+import { categoryLabel } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
@@ -21,6 +22,7 @@ export function RecurringPage({
   onCreateAllocation,
   onExecuteAllocations,
   onUpdate,
+  onDelete,
 }: {
   readonly accounts: readonly Account[];
   readonly allocationPlans: readonly AllocationPlan[];
@@ -30,9 +32,30 @@ export function RecurringPage({
   readonly onCreateAllocation: (input: AllocationPlanInput) => Promise<void>;
   readonly onExecuteAllocations: (planIds: readonly string[]) => Promise<void>;
   readonly onUpdate: (id: string, input: RecurringRuleInput) => Promise<void>;
+  readonly onDelete: (id: string) => Promise<void>;
 }) {
   const [editing, setEditing] = useState<RecurringRule | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deleteCandidate, setDeleteCandidate] = useState<RecurringRule | null>(null);
+  const updateEnabled = async (rule: RecurringRule, enabled: boolean) => {
+    try {
+      await onUpdate(rule.id, ruleInput(rule, enabled));
+    } catch {
+      setError("Impossibile aggiornare lo stato della ricorrenza.");
+    }
+  };
+  const remove = async () => {
+    if (deleteCandidate === null) return;
+    try {
+      await onDelete(deleteCandidate.id);
+      setDeleteCandidate(null);
+      if (editing?.id === deleteCandidate.id) setEditing(null);
+    } catch {
+      setError(
+        "Impossibile eliminare la ricorrenza. I movimenti già confermati restano invariati.",
+      );
+    }
+  };
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -101,7 +124,10 @@ export function RecurringPage({
                   <tr key={rule.id}>
                     <td data-label="Regola">
                       <strong>{rule.name}</strong>
-                      <small>{rule.payee ?? "Senza controparte"}</small>
+                      <small>
+                        {rule.kind === "income" ? "Entrata" : "Uscita"} ·{" "}
+                        {rule.payee ?? "Senza controparte"}
+                      </small>
                     </td>
                     <td data-label="Data attesa">{rule.nextExpectedDate.toString()}</td>
                     <td data-label="Importo">
@@ -116,12 +142,49 @@ export function RecurringPage({
                       >
                         Modifica
                       </button>
+                      <button
+                        className="text-action"
+                        onClick={() => void updateEnabled(rule, !rule.enabled)}
+                        type="button"
+                      >
+                        {rule.enabled ? "Metti in pausa" : "Riattiva"}
+                      </button>
+                      <button
+                        className="text-action"
+                        onClick={() => setDeleteCandidate(rule)}
+                        type="button"
+                      >
+                        Elimina…
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {deleteCandidate === null ? null : (
+            <div
+              aria-labelledby="delete-recurring-title"
+              aria-modal="true"
+              className="account-error"
+              role="dialog"
+            >
+              <h3 id="delete-recurring-title">Eliminare la ricorrenza?</h3>
+              <p>I movimenti già confermati non verranno eliminati.</p>
+              <div className="form-actions">
+                <button
+                  className="secondary-action"
+                  onClick={() => setDeleteCandidate(null)}
+                  type="button"
+                >
+                  Annulla
+                </button>
+                <button className="primary-action" onClick={() => void remove()} type="button">
+                  Elimina ricorrenza
+                </button>
+              </div>
+            </div>
+          )}
         </section>
         <aside className="account-editor-panel">
           <h2>{editing === null ? "Nuova ricorrenza" : "Modifica ricorrenza"}</h2>
@@ -207,10 +270,15 @@ export function RecurringPage({
               <select defaultValue={editing?.categoryId ?? ""} name="categoryId">
                 <option value="">Nessuna</option>
                 {categories
-                  .filter((category) => !category.isArchived)
+                  .filter(
+                    (category) =>
+                      !category.isArchived &&
+                      (category.kindScope === "both" ||
+                        category.kindScope === (editing?.kind ?? "income")),
+                  )
                   .map((category) => (
                     <option key={category.id} value={category.id}>
-                      {category.name}
+                      {categoryLabel(category, categories)}
                     </option>
                   ))}
               </select>
@@ -425,4 +493,19 @@ function abs(value: bigint): bigint {
 function optional(value: string): string | undefined {
   const normalized = value.trim();
   return normalized === "" ? undefined : normalized;
+}
+
+function ruleInput(rule: RecurringRule, enabled: boolean): RecurringRuleInput {
+  return {
+    name: rule.name,
+    kind: rule.kind,
+    accountId: rule.accountId,
+    amountMinor: rule.amount.amountMinor,
+    nominalDay: rule.nominalDay,
+    nextExpectedDate: rule.nextExpectedDate.toString(),
+    weekendPolicy: rule.weekendPolicy,
+    enabled,
+    ...(rule.categoryId === undefined ? {} : { categoryId: rule.categoryId }),
+    ...(rule.payee === undefined ? {} : { payee: rule.payee }),
+  };
 }

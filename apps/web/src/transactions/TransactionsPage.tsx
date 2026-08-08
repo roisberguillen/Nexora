@@ -118,6 +118,17 @@ export function TransactionsPage({
           status,
           ...(tagIds.length > 0 ? { tagIds } : {}),
           ...(splits.length > 0 ? { splits } : categoryId === undefined ? {} : { categoryId }),
+          ...(kind !== "expense" || String(form.get("expenseVariability")) === "unclassified"
+            ? {}
+            : {
+                expenseVariability: String(form.get("expenseVariability")) as "fixed" | "variable",
+              }),
+          ...(kind !== "expense" || String(form.get("expenseExceptionality")) === "unclassified"
+            ? {}
+            : {
+                expenseExceptionality: String(form.get("expenseExceptionality")) as
+                  "ordinary" | "extraordinary",
+              }),
         });
         setSalaryAllocationPlanIds(planIds);
       }
@@ -690,6 +701,51 @@ function TransactionForm({
               Aggiungi ripartizione
             </button>
           </fieldset>
+        ) : null}
+        {kind === "expense" ? (
+          <details className="expense-behavior-details">
+            <summary>Dettagli finanziari (facoltativi)</summary>
+            <p className="import-help">
+              La categoria descrive la destinazione della spesa. Queste informazioni non modificano
+              le categorie esistenti.
+            </p>
+            <fieldset>
+              <legend>Natura della spesa</legend>
+              <label>
+                <input defaultChecked name="expenseVariability" type="radio" value="unclassified" />
+                Non specificata
+              </label>
+              <label>
+                <input name="expenseVariability" type="radio" value="fixed" /> Fissa
+              </label>
+              <label>
+                <input name="expenseVariability" type="radio" value="variable" /> Variabile
+              </label>
+            </fieldset>
+            <fieldset>
+              <legend>Evento</legend>
+              <label>
+                <input
+                  defaultChecked
+                  name="expenseExceptionality"
+                  type="radio"
+                  value="unclassified"
+                />
+                Non specificato
+              </label>
+              <label>
+                <input name="expenseExceptionality" type="radio" value="ordinary" /> Ordinario
+              </label>
+              <label>
+                <input name="expenseExceptionality" type="radio" value="extraordinary" />
+                Straordinario
+              </label>
+            </fieldset>
+            <p className="import-help">
+              Per una spesa ricorrente usa una vera <a href="#recurring">regola di ricorrenza</a>:
+              frequenza e prossima data restano gestite in un solo punto.
+            </p>
+          </details>
         ) : null}
         {!isTransfer ? (
           <fieldset className="tag-selector">

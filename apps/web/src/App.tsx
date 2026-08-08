@@ -536,6 +536,10 @@ function AppContent({
     mutateLedger(async (ledger) => {
       await updateRecurringRule(ledger.repository, id, input);
     });
+  const deleteRecurring = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await ledger.repository.deleteRecurringRule(id);
+    });
   const createAllocation = (input: AllocationPlanInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createAllocationPlan(ledger.repository, input);
@@ -709,6 +713,7 @@ function AppContent({
                   rules={ledgerState.recurringRules}
                   onCreate={createRecurring}
                   onUpdate={updateRecurring}
+                  onDelete={deleteRecurring}
                 />
               ) : route === "exports" ? (
                 <ExportsPage

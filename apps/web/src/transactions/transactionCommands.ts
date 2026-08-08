@@ -8,6 +8,8 @@ import {
   type LedgerRepository,
   type TransactionKind,
   type TransactionStatus,
+  type ExpenseExceptionality,
+  type ExpenseVariability,
 } from "@nexora/domain";
 
 export interface CreateManualTransactionInput {
@@ -20,6 +22,8 @@ export interface CreateManualTransactionInput {
   readonly payee: string;
   readonly status: Exclude<TransactionStatus, "cancelled" | "reconciled">;
   readonly tagIds?: readonly string[];
+  readonly expenseVariability?: ExpenseVariability;
+  readonly expenseExceptionality?: ExpenseExceptionality;
   readonly splits?: readonly {
     readonly categoryId: string;
     readonly amountMinor: bigint;
@@ -61,6 +65,12 @@ export async function createManualTransaction(
     ...(categoryId === undefined ? {} : { categoryId }),
     ...(description === undefined ? {} : { description }),
     ...(payee === undefined ? {} : { payee }),
+    ...(input.expenseVariability === undefined
+      ? {}
+      : { expenseVariability: input.expenseVariability }),
+    ...(input.expenseExceptionality === undefined
+      ? {}
+      : { expenseExceptionality: input.expenseExceptionality }),
   });
   const splits =
     input.splits?.map((split) =>

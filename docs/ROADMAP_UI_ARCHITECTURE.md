@@ -18,7 +18,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
-| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1 categorie gerarchiche completata |
+| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1 categorie gerarchiche e slice 12.2 natura spese/ricorrenze completate |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
 | 15 | Nexora Local Hub | pianificata |
@@ -27,6 +27,22 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 
 Ogni fase si chiude solo con test proporzionati, aggiornamento documentale, commit Conventional
 Commit e push su `origin/main`.
+
+### Evidenze slice 12.2 — natura delle spese e ricorrenze
+
+- [x] Una spesa può avere opzionalmente natura `fissa`/`variabile` e evento
+  `ordinario`/`straordinario`; categorie e pianificazione restano modelli distinti.
+- [x] Il dominio rifiuta questi attributi per entrate, trasferimenti e rettifiche; i movimenti
+  storici privi di classificazione restano validi e invariati.
+- [x] Migrazione additiva SQLite/OPFS v16, record IndexedDB e snapshot portabile mantengono i
+  valori nei round-trip e preservano backup precedenti alla slice.
+- [x] Il modulo movimenti espone dettagli finanziari facoltativi e accessibili solo per una
+  spesa; per una pianificazione invita a configurare una vera regola, senza flag ricorrente
+  duplicato sulla transazione.
+- [x] Ricorrenze conserva il modello mensile corrente, filtra le categorie per ambito e rende
+  esplicite azioni di pausa, riattivazione ed eliminazione confermata.
+- [x] Export CSV/XLSX include le due colonne comportamentali; JSON conserva gli attributi del
+  movimento. L'import non deduce mai classificazioni da nomi o categorie legacy.
 
 ## Gate permanente di orchestrazione
 

@@ -9,6 +9,16 @@
 
 ### Changed
 
+- Le spese possono ora conservare facoltativamente natura `fissa`/`variabile` ed evento
+  `ordinario`/`straordinario`, senza modificare le categorie esistenti, le entrate, i
+  trasferimenti o le rettifiche. La migrazione additiva v16, IndexedDB, SQLite/OPFS, backup
+  portabili ed export mantengono i valori; le importazioni non deducono mai questa classificazione
+  da categorie legacy.
+
+- Il modulo movimenti offre dettagli finanziari accessibili e richiudibili solo per le spese. Le
+  ricorrenze restano regole mensili indipendenti con pausa, riattivazione ed eliminazione
+  confermata, senza un flag ricorrente duplicato sui movimenti già contabilizzati.
+
 - Le categorie finanziarie ora supportano Macro categoria → Sottocategoria con vincoli condivisi
   per SQLite, IndexedDB e memoria. La tassonomia iniziale di entrate e uscite è installabile solo
   con un'azione esplicita su un archivio senza categorie personali; le categorie e i movimenti

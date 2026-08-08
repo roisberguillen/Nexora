@@ -22,7 +22,7 @@ describe("openTauriLedger", () => {
     const loadDatabase = vi.fn().mockResolvedValue(nativeClient());
     const initializeLedger = vi.fn().mockResolvedValue({
       repository,
-      migration: { fromVersion: 0, toVersion: 13, appliedMigrations: [1, 2, 3] },
+      migration: { fromVersion: 0, toVersion: 16, appliedMigrations: [1, 2, 3, 16] },
     } satisfies InitializedSqliteLedger);
 
     const ledger = await openTauriLedger({ loadDatabase, initializeLedger });
@@ -30,7 +30,7 @@ describe("openTauriLedger", () => {
     expect(loadDatabase).toHaveBeenCalledWith("sqlite:nexora.db");
     expect(initializeLedger).toHaveBeenCalledWith({ database: ledger.database });
     expect(ledger.repository).toBe(repository);
-    expect(ledger.schemaVersion).toBe(13);
+    expect(ledger.schemaVersion).toBe(16);
     expect(ledger.storageKind).toBe("native-sqlite");
   });
 

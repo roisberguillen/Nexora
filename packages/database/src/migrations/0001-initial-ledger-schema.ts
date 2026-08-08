@@ -13,6 +13,7 @@ import { transactionTrashMigration } from "./0012-transaction-trash";
 import { importRowDeletionAuditMigration } from "./0013-import-row-deletion-audit";
 import { importMappingProfilesMigration } from "./0014-import-mapping-profiles";
 import { genericCsvImporterMigration } from "./0015-generic-csv-importer";
+import { expenseBehaviorMigration } from "./0016-expense-behavior";
 
 export const INITIAL_LEDGER_SCHEMA_VERSION = 1;
 const INITIAL_LEDGER_SCHEMA_NAME = "initial-ledger-schema";
@@ -284,4 +285,5 @@ export const databaseMigrations: readonly DatabaseMigration[] = [
   importRowDeletionAuditMigration,
   importMappingProfilesMigration,
   genericCsvImporterMigration,
+  expenseBehaviorMigration,
 ];

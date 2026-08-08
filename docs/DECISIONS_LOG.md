@@ -313,6 +313,18 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   scelte; gli attributi temporali o di natura della spesa restano un modello separato della Fase
   12.2.
 
+## 2026-08-08 — Natura della spesa e ricorrenze non si sovrappongono
+
+- **Contesto:** una categoria economica non indica automaticamente se una spesa sia fissa,
+  variabile, ordinaria o straordinaria; una ricorrenza definisce invece una pianificazione.
+- **Scelta:** salvare su `Transaction` solo due attributi facoltativi e solo per `expense`:
+  variabilità ed eccezionalità. La pianificazione rimane la sola responsabilità di
+  `RecurringRule`; la transazione non riceve un flag ricorrente né un riferimento fragile a una
+  regola eliminabile. I dati legacy restano non classificati.
+- **Conseguenze:** la migrazione v16 è additiva e i backup portabili preservano i valori. Import,
+  categorie e movimenti storici non sono reinterpretati automaticamente. L'estensione a frequenze
+  oltre il mensile o a una linea storica regola→movimento richiede una slice e ADR dedicati.
+
 ## 2026-07-31 — Ripristino dell'avvio dopo la Fase 6
 
 - **Contesto:** in sviluppo l'app mostrava una pagina bianca con l'errore di Vite React

@@ -1,4 +1,4 @@
-import { Account, Money } from "@nexora/domain";
+import { Account, LocalDate, Money, Transaction } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 import {
   capturePortableLedgerSnapshot,
@@ -40,5 +40,38 @@ describe("portable ledger snapshot", () => {
       relations: { splits: [], transactionTags: [] },
     };
     expect(() => validatePortableLedgerSnapshot(incomplete)).toThrow("importRows");
+  });
+
+  it("round-trips optional expense behavior while accepting a legacy snapshot without it", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({ id: "expense-account", name: "Conto", type: "checking", currency: "EUR" }),
+    );
+    await repository.saveTransaction(
+      Transaction.create({
+        id: "classified-expense",
+        kind: "expense",
+        status: "booked",
+        accountId: "expense-account",
+        amount: Money.fromMinor(-1_000n, "EUR"),
+        bookedDate: LocalDate.parse("2026-08-08"),
+        expenseVariability: "variable",
+        expenseExceptionality: "extraordinary",
+      }),
+    );
+    const snapshot = decodePortableLedgerSnapshot(
+      encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+    );
+    expect(validatePortableLedgerSnapshot(snapshot).transactions[0]).toMatchObject({
+      expenseVariability: "variable",
+      expenseExceptionality: "extraordinary",
+    });
+    const legacy = structuredClone(snapshot);
+    const legacyTransaction = legacy.entities.transactions?.[0] as Record<string, unknown>;
+    delete legacyTransaction.expenseVariability;
+    delete legacyTransaction.expenseExceptionality;
+    expect(
+      validatePortableLedgerSnapshot(legacy).transactions[0]?.expenseVariability,
+    ).toBeUndefined();
   });
 });

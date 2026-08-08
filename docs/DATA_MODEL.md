@@ -40,6 +40,11 @@ currency, note?)`. Sono ammessi solo per income/expense non annullate, senza cat
 diretta sulla madre; tutte le righe hanno stessa valuta e segno e sommano esattamente
 all'importo della transazione.
 
+Per una `expense`, `expenseVariability?` è `fixed|variable` e `expenseExceptionality?` è
+`ordinary|extraordinary`. Entrambi sono opzionali per mantenere i movimenti legacy non classificati
+e sono vietati per income, transfer e adjustment. La ricorrenza non è un campo del movimento:
+frequenza, intervallo e calendario rimangono in `RecurringRule`.
+
 ### Transfer
 `id, debitTransactionId, creditTransactionId, exchangeRate?, feeTransactionId?`
 

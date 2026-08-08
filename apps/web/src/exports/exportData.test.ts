@@ -19,12 +19,16 @@ describe("ledger exports", () => {
     amount: Money.fromMinor(-12345n, "EUR"),
     bookedDate: LocalDate.parse("2026-07-28"),
     payee: "=unsafe",
+    expenseVariability: "fixed",
+    expenseExceptionality: "ordinary",
   });
   const data = { accounts: [account], categories: [category], transactions: [transaction] };
 
   it("preserva minor units e neutralizza formule CSV", () => {
     expect(buildTransactionsCsv(data)).toContain('"-12345"');
     expect(buildTransactionsCsv(data)).toContain('"\'=unsafe"');
+    expect(buildTransactionsCsv(data)).toContain('"fixed"');
+    expect(buildTransactionsCsv(data)).toContain('"ordinary"');
   });
   it("serializza il JSON senza bigint", () => {
     expect(JSON.parse(buildLedgerJson(data))).toMatchObject({

@@ -396,6 +396,8 @@ function createTransaction(value: Record<string, unknown>): Transaction {
   const note = optionalText(value, "note");
   const importBatchId = optionalText(value, "importBatchId");
   const sourceFingerprint = optionalText(value, "sourceFingerprint");
+  const expenseVariability = optionalText(value, "expenseVariability");
+  const expenseExceptionality = optionalText(value, "expenseExceptionality");
   return Transaction.create({
     id: text(value, "id"),
     kind: text(value, "kind") as Transaction["kind"],
@@ -411,6 +413,12 @@ function createTransaction(value: Record<string, unknown>): Transaction {
     ...(note === undefined ? {} : { note }),
     ...(importBatchId === undefined ? {} : { importBatchId }),
     ...(sourceFingerprint === undefined ? {} : { sourceFingerprint }),
+    ...(expenseVariability === undefined
+      ? {}
+      : { expenseVariability: expenseVariability as "fixed" | "variable" }),
+    ...(expenseExceptionality === undefined
+      ? {}
+      : { expenseExceptionality: expenseExceptionality as "ordinary" | "extraordinary" }),
   });
 }
 function createSplit(value: Record<string, unknown>): TransactionSplit {

@@ -59,6 +59,8 @@ export function buildTransactionsRows(data: LedgerExportData): readonly (readonl
       transaction.payee ?? "",
       transaction.description ?? "",
       transaction.source,
+      transaction.expenseVariability ?? "",
+      transaction.expenseExceptionality ?? "",
     ]);
   return [
     [
@@ -73,6 +75,8 @@ export function buildTransactionsRows(data: LedgerExportData): readonly (readonl
       "controparte",
       "descrizione",
       "origine",
+      "variabilita_spesa",
+      "eccezionalita_spesa",
     ],
     ...rows,
   ];

@@ -1,7 +1,7 @@
 import { PersistenceError } from "../sqlite/PersistenceError";
 import { IndexedDbLedgerRepository } from "./IndexedDbLedgerRepository";
 
-export const INDEXED_DB_SCHEMA_VERSION = 15;
+export const INDEXED_DB_SCHEMA_VERSION = 16;
 
 const defaultDatabaseName = "nexora-ledger";
 const databaseNamePattern = /^[A-Za-z0-9._-]+$/;
@@ -227,6 +227,12 @@ function openDatabase(factory: IDBFactory, databaseName: string): Promise<IDBDat
         });
       }
       if (event.oldVersion < 15 && event.oldVersion > 0) {
+        transaction.objectStore("metadata").put({
+          key: "schema_version",
+          value: INDEXED_DB_SCHEMA_VERSION,
+        });
+      }
+      if (event.oldVersion < 16 && event.oldVersion > 0) {
         transaction.objectStore("metadata").put({
           key: "schema_version",
           value: INDEXED_DB_SCHEMA_VERSION,

@@ -13,6 +13,7 @@ describe("RecurringPage", () => {
         onCreate={async () => undefined}
         onCreateAllocation={async () => undefined}
         onExecuteAllocations={async () => undefined}
+        onDelete={async () => undefined}
         onUpdate={async () => undefined}
         rules={[]}
       />,

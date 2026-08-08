@@ -126,4 +126,43 @@ describe("Transaction", () => {
       }),
     ).toThrow("batch");
   });
+
+  it("classifica solo le spese, preservando lo stato legacy e l'annullamento", () => {
+    const classified = Transaction.create({
+      id: "expense-behavior",
+      kind: "expense",
+      status: "booked",
+      accountId: "account-main",
+      amount: Money.fromMinor(-5_000n, "EUR"),
+      bookedDate,
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+    });
+    expect(classified.cancel()).toMatchObject({
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+      status: "cancelled",
+    });
+    expect(
+      Transaction.create({
+        id: "legacy-expense",
+        kind: "expense",
+        status: "booked",
+        accountId: "account-main",
+        amount: Money.fromMinor(-1n, "EUR"),
+        bookedDate,
+      }).expenseVariability,
+    ).toBeUndefined();
+    expect(() =>
+      Transaction.create({
+        id: "invalid-transfer-behavior",
+        kind: "transfer",
+        status: "booked",
+        accountId: "account-main",
+        amount: Money.fromMinor(-1n, "EUR"),
+        bookedDate,
+        expenseVariability: "fixed",
+      }),
+    ).toThrowError(DomainError);
+  });
 });
