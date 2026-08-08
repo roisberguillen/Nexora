@@ -2,6 +2,18 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-08 — Ponte OAuth isolato per il consenso Google Drive
+
+- **Contesto:** `COOP: same-origin` protegge l'isolamento richiesto da SQLite/OPFS, ma Chrome può
+  interrompere la comunicazione diretta del popup Google dopo il consenso. Allentare il COOP della
+  shell ha reso `crossOriginIsolated` falso e non è quindi compatibile con il ledger.
+- **Scelta:** mantenere `same-origin` sulla PWA e usare soltanto una pagina OAuth statica separata
+  con `same-origin-allow-popups`. La pagina richiede un secondo clic esplicito, comunica il token
+  volatile su un `BroadcastChannel` vincolato a nonce e non accede mai al ledger.
+- **Conseguenze:** il ritorno OAuth non dipende dall'opener cross-origin, OPFS resta disponibile e
+  token, account e dati finanziari non vengono persistiti o registrati. Il deployment deve servire
+  l'eccezione di header della route del bridge.
+
 ## 2026-08-02 — Onboarding Google opzionale dopo l'apertura del ledger
 
 - **Contesto:** ogni utente deve poter collegare il proprio account Google all'accesso, senza

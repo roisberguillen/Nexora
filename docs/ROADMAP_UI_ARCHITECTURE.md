@@ -177,6 +177,10 @@ Commit e push su `origin/main`.
 - [x] GIS viene precaricato senza consenso solo dopo l'apertura di Backup; il clic esplicito che
   apre il selettore account non attraversa attese asincrone, preservando l'attivazione utente del
   browser. Il controllo resta disabilitato finché il client non è pronto.
+- [x] La shell del ledger conserva `COOP: same-origin` e `COEP: require-corp`. Il consenso GIS
+  passa da una route OAuth statica separata con `COOP: same-origin-allow-popups`, token volatile e
+  canale `BroadcastChannel` vincolato a nonce: OPFS resta isolato e la chiusura del popup Google
+  non interrompe il ritorno del consenso.
 - [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
   nessuna credenziale reale è disponibile o incorporata nel repository locale. Il caricatore GIS
   gestisce inoltre script già presenti e segnala immediatamente chiusura/blocco del popup. Il

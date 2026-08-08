@@ -166,3 +166,18 @@ Keep only the latest relevant evidence per completed phase.
   across the five configured viewports; the live chooser stayed open awaiting account selection.
 - No token, account identity, archive content or financial data was inspected, logged or persisted.
   Upload, reopen and restore remain the separate external live gate.
+
+## Phase 11 OAuth isolated bridge — 2026-08-08
+
+- Reproduced the post-consent failure: `COOP: same-origin` on the ledger shell severs the direct
+  Google popup callback. A global `restrict-properties` alternative made
+  `crossOriginIsolated` false and was rejected because it breaks OPFS.
+- The application and bridge header unit tests, nonce/channel negative tests, provider and Backup
+  UI tests: 5 files, 23 tests passed. Workspace typecheck, lint and production build passed.
+- HTTP smoke on the fresh production preview: shell `COOP=same-origin`, bridge
+  `COOP=same-origin-allow-popups`, both with `COEP=require-corp`.
+- Configured Drive entry-point E2E passed at 320, 375, 768, 1024 and 1440 px. It opens the static
+  bridge rather than the PWA fallback. OPFS and IndexedDB offline persistence passed at 1440 px;
+  the same focused suite skips its mobile and tablet duplicates by design (2 passed, 8 skipped).
+- Pending external evidence remains the authorized live account's upload/reopen/restore drill;
+  no token, account identity or archive was captured during this validation.

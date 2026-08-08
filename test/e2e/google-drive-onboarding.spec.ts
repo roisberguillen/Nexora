@@ -16,7 +16,8 @@ test("Google Drive resta opzionale: non appare all'avvio e si collega solo da Ba
 
   await page.goto("/#backup");
   await expect(page.getByRole("heading", { name: "Proteggi l’archivio locale" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Collega Google Drive" })).toBeVisible();
+  const connectDrive = page.getByRole("button", { name: "Collega Google Drive" });
+  await expect(connectDrive).toBeVisible();
 
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -30,4 +31,16 @@ test("Google Drive resta opzionale: non appare all'avvio e si collega solo da Ba
   await page.reload();
   await expect(page.getByRole("heading", { name: "Proteggi l’archivio locale" })).toBeVisible();
   await expect(page.getByRole("dialog", { name: "Collega il tuo account Google" })).toHaveCount(0);
+
+  const bridgeResponse = await page.request.get("/google-drive-oauth-bridge.html");
+  expect(bridgeResponse.headers()["cross-origin-opener-policy"]).toBe("same-origin-allow-popups");
+  expect(bridgeResponse.headers()["cross-origin-embedder-policy"]).toBe("require-corp");
+
+  const bridgePage = page.waitForEvent("popup");
+  await connectDrive.click();
+  const popup = await bridgePage;
+  await popup.waitForURL("**/google-drive-oauth-bridge.html?**");
+  await expect(popup.getByRole("heading", { name: "Collega Google Drive" })).toBeVisible();
+  await expect(popup.getByRole("button", { name: "Continua con Google" })).toBeVisible();
+  await popup.close();
 });

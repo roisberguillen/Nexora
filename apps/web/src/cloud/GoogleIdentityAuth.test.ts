@@ -35,6 +35,23 @@ describe("GoogleIdentityAuth", () => {
     await expect(auth.connect()).rejects.toThrow("google_identity_unavailable");
     expect(auth.getStatus()).toBe("error");
   });
+  it("uses the isolated popup bridge without persisting the returned token", async () => {
+    const requestToken = vi.fn(async () => "token-sintetico");
+    const auth = new GoogleIdentityAuth("client", {} as Window, {
+      usePopupBridge: true,
+      popupBridge: { requestToken },
+    });
+
+    await auth.connect();
+
+    expect(requestToken).toHaveBeenCalledWith({
+      clientId: "client",
+      scope: "https://www.googleapis.com/auth/drive.appdata",
+    });
+    expect(auth.getStatus()).toBe("connected");
+    await auth.disconnect();
+    expect(auth.getAccessToken()).toBeUndefined();
+  });
   it("non conserva token quando l'utente nega il consenso", async () => {
     const auth = new GoogleIdentityAuth("client", {
       google: {

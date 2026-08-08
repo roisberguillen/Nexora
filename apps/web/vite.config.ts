@@ -3,26 +3,43 @@ import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+import { crossOriginIsolationHeaders, googleOAuthBridgeHeaders } from "./securityHeaders";
+
+const googleOAuthBridgePath = "/google-drive-oauth-bridge.html";
+
+function googleOAuthBridgePlugin() {
+  const applyHeaders = (server: {
+    readonly middlewares: {
+      use(
+        handler: (
+          request: { readonly url?: string },
+          response: { setHeader(name: string, value: string): void },
+          next: () => void,
+        ) => void,
+      ): void;
+    };
+  }) => {
+    server.middlewares.use((request, response, next) => {
+      const headers =
+        request.url?.split("?", 1)[0] === googleOAuthBridgePath
+          ? googleOAuthBridgeHeaders
+          : crossOriginIsolationHeaders;
+      for (const [name, value] of Object.entries(headers)) {
+        response.setHeader(name, value);
+      }
+      next();
+    });
+  };
+  return {
+    name: "nexora-google-oauth-bridge-headers",
+    configureServer: applyHeaders,
+    configurePreviewServer: applyHeaders,
+  };
+}
+
 const packageVersion = JSON.parse(
   readFileSync(new URL("../../package.json", import.meta.url), "utf-8"),
 ) as { readonly version: string };
-
-const crossOriginIsolationHeaders = {
-  "Content-Security-Policy": [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "object-src 'none'",
-    "frame-ancestors 'self'",
-    "script-src 'self' 'wasm-unsafe-eval' https://accounts.google.com",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
-    "font-src 'self' data:",
-    "connect-src 'self' ws://127.0.0.1:5173 https://accounts.google.com https://oauth2.googleapis.com https://www.googleapis.com",
-    "worker-src 'self' blob:",
-  ].join("; "),
-  "Cross-Origin-Embedder-Policy": "require-corp",
-  "Cross-Origin-Opener-Policy": "same-origin",
-};
 
 export default defineConfig({
   define: {
@@ -30,6 +47,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    googleOAuthBridgePlugin(),
     VitePWA({
       registerType: "prompt",
       injectRegister: null,
@@ -63,6 +81,7 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: false,
         globPatterns: ["**/*.{css,html,ico,js,png,svg,wasm,woff2}"],
+        navigateFallbackDenylist: [/^\/google-drive-oauth-bridge\.html(?:\?.*)?$/],
         navigateFallback: "index.html",
         skipWaiting: false,
       },
@@ -72,7 +91,6 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 5173,
     strictPort: true,
-    headers: crossOriginIsolationHeaders,
     watch: {
       ignored: ["**/src-tauri/**"],
     },
@@ -80,7 +98,6 @@ export default defineConfig({
   preview: {
     host: "127.0.0.1",
     port: 4173,
-    headers: crossOriginIsolationHeaders,
   },
   optimizeDeps: {
     exclude: ["@sqlite.org/sqlite-wasm"],

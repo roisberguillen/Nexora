@@ -18,6 +18,16 @@ locali.
 Tokens are kept in memory only and are discarded on disconnect or page close. A missing client ID
 leaves cloud backup disabled while local encrypted backups remain available.
 
+## Header del ponte OAuth
+
+La shell Nexora deve continuare a usare `Cross-Origin-Opener-Policy: same-origin` e
+`Cross-Origin-Embedder-Policy: require-corp`, necessari al ledger SQLite/OPFS. La sola risorsa
+`/google-drive-oauth-bridge.html` deve invece ricevere `Cross-Origin-Opener-Policy:
+same-origin-allow-popups` (con lo stesso COEP). Il bridge non monta l'app e invia il token solo in
+memoria tramite `BroadcastChannel` associato a un nonce casuale. Un hosting di produzione deve
+configurare questa eccezione di header per la route del bridge; non usare `restrict-properties` su
+tutta la PWA, perché non conserva l'isolamento necessario a OPFS.
+
 ## Account, cartella e ciclo di vita
 
 L'account è selezionato esplicitamente nella schermata di consenso Google. Lo scope `drive.appdata`

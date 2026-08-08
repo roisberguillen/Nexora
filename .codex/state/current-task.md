@@ -8,8 +8,9 @@
 - Status: implementation and configured synthetic E2E verified locally; live OAuth gate pending
 - Initial files: shared cloud session, onboarding, App, BackupPage, tests and backup documentation
 - Extra reads: ADR 0015, ADR 0018, backup specification and OAuth operations guide
-- Attempts: 3; GIS is preloaded silently only while the Backup page is open, then the explicit
-  connect click invokes the token client synchronously without an intervening promise
+- Attempts: 5; GIS is preloaded silently only while the Backup page is open, then the explicit
+  connect click invokes the token client synchronously without an intervening promise. The actual
+  callback failure was traced to `COOP: same-origin` severing cross-origin popup communication.
 - Checkpoint: Drive consent is available only from Backup; explicit consent and offline continuation preserved
 - Completed gates: Backup-only consent regression tests, shared-session tests and strict web typecheck
 - Completed gates: configured production build and Backup entry-point E2E at five viewports
@@ -17,6 +18,7 @@
 - Pending gate: OAuth account consent/upload/reopen/restore with an authorized deployment Client ID
 - Pending gate: configure the production OAuth consent screen and exact authorized origins, then
   complete the live consent/upload/reopen/restore drill before starting Phase 12
-- Latest live evidence: the authorized account chooser opens and remains open after the explicit
-  Backup action. The root cause of the premature close was losing browser user activation while
-  awaiting the GIS loader before `requestAccessToken`; no archive was uploaded.
+- Latest live evidence: the authorized account chooser opens after the explicit Backup action.
+  The app shell retains `COOP: same-origin`; an isolated OAuth bridge has
+  `same-origin-allow-popups` and returns only a nonce-bound volatile token. The local HTTP
+  verification confirms these distinct headers; no archive was uploaded.

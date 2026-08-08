@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Corretto il ritorno dal consenso Google Drive in Chrome con una pagina ponte OAuth dedicata:
+  la shell mantiene l'isolamento SQLite/OPFS, mentre il token volatile rientra solo tramite un
+  canale vincolato a nonce dopo la conferma esplicita dell'utente.
+
 - Il selettore account Google Drive ora preserva il clic esplicito dell'utente: il client GIS si
   prepara soltanto nella pagina Backup e il pulsante di collegamento resta disponibile quando il
   popup può essere aperto correttamente, senza token persistenti o modifiche ai dati locali.

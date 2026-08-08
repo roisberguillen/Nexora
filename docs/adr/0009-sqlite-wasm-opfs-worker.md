@@ -17,8 +17,11 @@ browser e dettagli del protocollo del worker.
 - Inizializzare l'API OO1 direttamente in un worker applicativo dedicato.
 - Aprire il database con `OpfsDb` e un percorso assoluto confinato in OPFS.
 - Configurare development e preview con:
-  - `Cross-Origin-Opener-Policy: same-origin`;
+  - `Cross-Origin-Opener-Policy: same-origin` sulla shell che apre il ledger;
   - `Cross-Origin-Embedder-Policy: require-corp`.
+- Servire esclusivamente il ponte OAuth Google su una route separata con
+  `Cross-Origin-Opener-Policy: same-origin-allow-popups`; la route non monta React, SQLite,
+  repository o dati finanziari.
 - Usare una porta asincrona `SqliteDatabase` tra repository, migrazioni e runtime.
 - Serializzare tutte le operazioni del repository sulla singola connessione; ogni
   scrittura usa `BEGIN IMMEDIATE`.

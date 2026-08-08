@@ -1,4 +1,8 @@
 import type { CloudAuthProvider, CloudBackupStatus } from "./cloudTypes";
+import {
+  BrowserGoogleOAuthPopupBridge,
+  type GoogleOAuthPopupBridge,
+} from "./GoogleOAuthPopupBridge";
 
 const DRIVE_APPDATA_SCOPE = "https://www.googleapis.com/auth/drive.appdata";
 
@@ -23,6 +27,8 @@ interface GoogleIdentityWindow extends Window {
 
 export interface GoogleIdentityAuthOptions {
   readonly authorizationTimeoutMs?: number;
+  readonly popupBridge?: GoogleOAuthPopupBridge;
+  readonly usePopupBridge?: boolean;
 }
 
 export class GoogleIdentityAuth implements CloudAuthProvider {
@@ -54,6 +60,9 @@ export class GoogleIdentityAuth implements CloudAuthProvider {
     return connection;
   }
   private async authorize(): Promise<void> {
+    if (this.options.usePopupBridge ?? globalThis.crossOriginIsolated === true) {
+      return this.authorizeWithBridge();
+    }
     const oauth = this.windowRef.google?.accounts?.oauth2;
     if (oauth === undefined || this.clientId === "") {
       this.status = "error";
@@ -109,6 +118,25 @@ export class GoogleIdentityAuth implements CloudAuthProvider {
         finish(error instanceof Error ? error : new Error("google_identity_unavailable"));
       }
     });
+  }
+
+  private async authorizeWithBridge(): Promise<void> {
+    if (this.clientId === "") {
+      this.status = "error";
+      throw new Error("google_identity_unavailable");
+    }
+    this.status = "authorizing";
+    const bridge = this.options.popupBridge ?? new BrowserGoogleOAuthPopupBridge();
+    try {
+      this.token = await bridge.requestToken({
+        clientId: this.clientId,
+        scope: DRIVE_APPDATA_SCOPE,
+      });
+      this.status = "connected";
+    } catch (error) {
+      this.status = "error";
+      throw error;
+    }
   }
   public async disconnect(): Promise<void> {
     this.authorizationAttempt += 1;
