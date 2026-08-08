@@ -26,7 +26,7 @@ deve interrogare direttamente gli adapter SQLite, OPFS o IndexedDB.
 | `investimenti_*`, `nuovo_investimento_desktop` | `#investments` | accounts, investment positions | create/update/delete position | portfolio cards, editor, empty state | 12 |
 | `analisi_*` | `#analytics` | transazioni non annullate e proiezioni | nessuna | trend chart, confronto periodi, empty state | 12 |
 | `diario_finanziario_*` | `#journal` | monthly journals e proiezioni | save/update/delete journal | sintesi, riflessione, controllo 1–5 | 12 |
-| `categorie_*`, `stato_vuoto_categorie`, `nuovo_elemento_categoria_tag`, `conferma_unione_categoria_tag` | `#categories` | categorie e riferimenti | create/update/delete/merge category | category tree, editor, merge dialog | 12 |
+| `categorie_*`, `stato_vuoto_categorie`, `nuovo_elemento_categoria_tag`, `conferma_unione_categoria_tag` | `#categories` | categorie e riferimenti | create/update/archive/reactivate/delete/merge/move category | Macro categoria → Sottocategoria tree, editor, merge dialog | 12 |
 | `tag_*`, `nuovo_elemento_categoria_tag`, `conferma_unione_categoria_tag` | `#tags` | tag e riferimenti | create/update/delete/merge/remove tag | tag list, editor, merge dialog | 12 |
 | `importazione_*` | `#imports` | conti, categorie, batch, import rows, transazioni | preview, commit atomico, undo batch | import wizard, mapping table, validation summary, report | 8 |
 | `esportazione_dati_*` | `#exports` | conti, categorie, transazioni | download locale, nessuna mutazione ledger | filter form, export choices, receipt | 8 |

@@ -9,15 +9,20 @@ test("la gestione categorie crea, modifica e archivia senza overflow", async ({ 
   await page.getByLabel("Ambito").selectOption("expense");
   await page.getByRole("button", { name: "Salva categoria" }).click();
 
-  const table = page.getByRole("table");
-  await expect(table).toContainText("Casa sintetica");
-  await table.getByRole("button", { name: "Modifica" }).click();
+  const tree = page.getByRole("tree", { name: "Categorie finanziarie" });
+  const category = tree.locator(".category-tree-group").filter({ hasText: "Casa sintetica" });
+  await expect(category).toContainText("Casa sintetica");
+  await category.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Nome").fill("Abitazione sintetica");
   await page.getByRole("button", { name: "Salva categoria" }).click();
-  await expect(table).toContainText("Abitazione sintetica");
-  await table.getByRole("button", { name: "Modifica" }).click();
-  await page.getByRole("button", { name: "Archivia" }).click();
-  await expect(table).toContainText("Archiviata");
+  const renamed = tree.locator(".category-tree-group").filter({ hasText: "Abitazione sintetica" });
+  await expect(renamed).toContainText("Abitazione sintetica");
+  await renamed.getByRole("button", { name: "Modifica" }).click();
+  await page
+    .locator(".account-editor-panel form")
+    .getByRole("button", { name: "Archivia" })
+    .click();
+  await expect(renamed).toContainText("Archiviata");
 
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -31,13 +36,14 @@ test("unisce una categoria e riassegna i riferimenti", async ({ page }) => {
   await page.goto("/#categories");
   await page.getByLabel("Nome").fill("Origine merge");
   await page.getByRole("button", { name: "Salva categoria" }).click();
-  await expect(page.getByRole("table")).toContainText("Origine merge");
+  const tree = page.getByRole("tree", { name: "Categorie finanziarie" });
+  await expect(tree).toContainText("Origine merge");
   await page.getByLabel("Nome").fill("Destinazione merge");
   await page.getByRole("button", { name: "Salva categoria" }).click();
-  await expect(page.getByRole("table")).toContainText("Destinazione merge");
-  const sourceRow = page.getByRole("row").filter({ hasText: "Origine merge" });
-  await sourceRow.getByRole("button", { name: "Modifica" }).click();
+  await expect(tree).toContainText("Destinazione merge");
+  const sourceCategory = tree.locator(".category-tree-group").filter({ hasText: "Origine merge" });
+  await sourceCategory.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Unisci in").selectOption({ label: "Destinazione merge" });
   await page.getByRole("button", { name: "Unisci e riassegna" }).click();
-  await expect(page.getByRole("table")).not.toContainText("Origine merge");
+  await expect(tree).not.toContainText("Origine merge");
 });

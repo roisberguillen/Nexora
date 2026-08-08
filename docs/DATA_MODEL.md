@@ -50,6 +50,14 @@ Decimal, cambio e arrotondamento.
 ### Category
 `id, name, parentId?, kindScope, isArchived`
 
+La classificazione finanziaria usa esclusivamente due livelli: **Macro categoria → Sottocategoria**.
+Una macro non ha `parentId`; una sottocategoria ha una sola macro attiva come padre e non può a sua
+volta avere figli. Il padre deve esistere e il suo `kindScope` deve contenere quello del figlio:
+`income → income`, `expense → expense`, `both → income|expense|both`. Le categorie archiviate
+restano leggibili nelle registrazioni storiche ma non vengono offerte per nuove registrazioni,
+budget o ricorrenze. Le proprietà fisso, variabile, periodico e straordinario non appartengono a
+questa entità e saranno modellate separatamente.
+
 ### Tag / TransactionTag
 Relazione molti-a-molti.
 

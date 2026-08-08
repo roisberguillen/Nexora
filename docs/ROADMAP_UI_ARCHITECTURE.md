@@ -18,7 +18,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
-| 12 | Feature finanziarie con nuova UI | pianificata |
+| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1 categorie gerarchiche completata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
 | 15 | Nexora Local Hub | pianificata |

@@ -1,4 +1,11 @@
-import type { Account, Category, Money, Transaction, Transfer } from "@nexora/domain";
+import {
+  categoryLabel,
+  type Account,
+  type Category,
+  type Money,
+  type Transaction,
+  type Transfer,
+} from "@nexora/domain";
 
 export interface TransactionsViewModel {
   readonly accounts: readonly {
@@ -10,6 +17,7 @@ export interface TransactionsViewModel {
     readonly id: string;
     readonly name: string;
     readonly kindScope: Category["kindScope"];
+    readonly parentId: string | undefined;
   }[];
   readonly items: readonly TransactionListItem[];
 }
@@ -80,7 +88,12 @@ export function buildTransactionsViewModel(data: {
       data.categories
         .filter((category) => !category.isArchived)
         .map((category) =>
-          Object.freeze({ id: category.id, name: category.name, kindScope: category.kindScope }),
+          Object.freeze({
+            id: category.id,
+            name: category.name,
+            kindScope: category.kindScope,
+            parentId: category.parentId,
+          }),
         )
         .sort((left, right) => left.name.localeCompare(right.name, "it-IT")),
     ),
@@ -106,7 +119,9 @@ function itemForTransaction(
     categoryLabel:
       transaction.categoryId === undefined
         ? "Senza categoria"
-        : (categoryById.get(transaction.categoryId)?.name ?? "Categoria non disponibile"),
+        : categoryById.get(transaction.categoryId) === undefined
+          ? "Categoria non disponibile"
+          : categoryLabel(categoryById.get(transaction.categoryId)!, [...categoryById.values()]),
     id: transaction.id,
     isTransfer: false,
     kindLabel: kindLabel(transaction.kind),

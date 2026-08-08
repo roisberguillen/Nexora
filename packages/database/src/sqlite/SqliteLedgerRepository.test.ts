@@ -91,6 +91,35 @@ describe("SqliteLedgerRepository", () => {
     sqlite.close();
   });
 
+  it("persists the two-level category hierarchy and rejects invalid parents", async () => {
+    const macro = Category.create({ id: "macro", name: "Casa", kindScope: "expense" });
+    const child = Category.create({
+      id: "child",
+      name: "Affitto",
+      kindScope: "expense",
+      parentId: macro.id,
+    });
+    await repository.saveCategory(macro);
+    await repository.saveCategory(child);
+    expect((await repository.findCategoryById(child.id))?.parentId).toBe(macro.id);
+
+    await expect(
+      repository.saveCategory(
+        Category.create({
+          id: "third",
+          name: "Dettaglio",
+          kindScope: "expense",
+          parentId: child.id,
+        }),
+      ),
+    ).rejects.toThrow();
+    await expect(
+      repository.updateCategory(
+        macro.update({ name: macro.name, kindScope: macro.kindScope, isArchived: true }),
+      ),
+    ).rejects.toThrow();
+  });
+
   it("persiste tag e associazioni transazionali", async () => {
     const main = account("account-tags");
     const transaction = Transaction.create({

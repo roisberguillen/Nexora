@@ -228,3 +228,20 @@ Keep only the latest relevant evidence per completed phase.
   passed after the production build: 157 passed, 68 documented skips.
 - Browser smoke opened both reset dialogs and confirmed their wording and disabled destructive
   controls without entering a confirmation phrase or altering any local or cloud data.
+
+## Phase 12.1 — Hierarchical financial categories — 2026-08-08
+
+- Domain hierarchy tests cover a valid macro/subcategory pair, missing and archived parents,
+  self-reference, third level, scope compatibility and `both` parents. SQLite and IndexedDB tests
+  persist `parentId`, reject a third level and reject archiving a macro with children.
+- Category command and component tests cover explicit and idempotent default-taxonomy installation
+  on a fresh ledger, creating/moving a subcategory and rendering the accessible category tree. Transaction
+  view-model coverage keeps archived categories readable in historical movements while excluding
+  them from new choices.
+- Targeted suites: 71 tests passed across domain, commands, UI, SQLite, IndexedDB and transaction
+  view model. `pnpm lint`, full typecheck and production PWA build passed.
+- Category E2E passed at 320, 375, 768, 1024 and 1440 px: creation, rename, archive, merge,
+  horizontal-overflow check and axe scan. The first E2E run revealed an invalid `treeitem` role on
+  a `section`; it was corrected to a valid `div` before the passing rerun.
+- `pnpm codex:validate` passed. Repository-wide `format:check` is blocked only by the pre-existing,
+  out-of-scope `apps/web/src/reset/financialReset.test.ts`; no category-slice file is unformatted.

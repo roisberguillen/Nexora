@@ -23,6 +23,7 @@ import {
   type TransferBundle,
   validateAccountUpdate,
   validateCategoryMerge,
+  validateCategoryHierarchy,
   isSystemCategory,
   createSystemCategories,
 } from "@nexora/domain";
@@ -296,12 +297,10 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         this.withTransaction(["categories"], "readwrite", async (transaction) => {
           const categories = transaction.objectStore("categories");
           await this.assertNew(categories, category.id, "Category");
-          if (
-            category.parentId !== undefined &&
-            (await this.findCategoryInStore(categories, category.parentId)) === undefined
-          ) {
-            throw new DomainError("missing_reference", "Parent category does not exist.");
-          }
+          const current = (await requestResult<unknown[]>(categories.getAll())).map((row) =>
+            categoryFromRecord(row as CategoryRecord),
+          );
+          validateCategoryHierarchy([...current, category]);
 
           await requestResult(categories.add(categoryToRecord(category)));
         }),
@@ -369,6 +368,12 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           const categories = transaction.objectStore("categories");
           if ((await this.findCategoryInStore(categories, category.id)) === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
+          const current = (await requestResult<unknown[]>(categories.getAll())).map((row) =>
+            categoryFromRecord(row as CategoryRecord),
+          );
+          validateCategoryHierarchy(
+            current.map((existing) => (existing.id === category.id ? category : existing)),
+          );
           await requestResult(categories.put(categoryToRecord(category)));
         }),
       ),
@@ -450,7 +455,10 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
               throw new DomainError("missing_reference", "Category does not exist.");
             const source = categoryFromRecord(sourceRaw as CategoryRecord);
             const target = categoryFromRecord(targetRaw as CategoryRecord);
-            validateCategoryMerge(source, target);
+            const allCategories = (await requestResult<unknown[]>(categories.getAll())).map((row) =>
+              categoryFromRecord(row as CategoryRecord),
+            );
+            validateCategoryMerge(source, target, allCategories);
             const transactions = transactionRows as readonly TransactionRecord[];
             const direct = transactions.filter((row) => row.category_id === sourceId);
             const splits = (splitRows as readonly TransactionSplitRecord[]).filter(

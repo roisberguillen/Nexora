@@ -4,7 +4,12 @@ export {
   type CreateAccountProps,
   type UpdateAccountProps,
 } from "./entities/Account";
-export { Category, type CategoryKindScope, type CreateCategoryProps } from "./entities/Category";
+export {
+  Category,
+  type CategoryKindScope,
+  type CreateCategoryProps,
+  type UpdateCategoryProps,
+} from "./entities/Category";
 export { Budget, type CreateBudgetProps } from "./entities/Budget";
 export { Loan, type CreateLoanProps } from "./entities/Loan";
 export {
@@ -61,7 +66,13 @@ export {
 export { validateAccountUpdate, type AccountUpdateFacts } from "./services/accountUpdates";
 export { executeConfirmedAllocationPlans } from "./services/executeAllocationPlans";
 export { createSystemCategories } from "./services/systemCategories";
+export { createDefaultFinancialTaxonomy } from "./services/defaultCategoryTaxonomy";
 export { isSystemCategory, validateCategoryMerge } from "./services/dataManagement";
+export {
+  categoryLabel,
+  parentAcceptsChildScope,
+  validateCategoryHierarchy,
+} from "./services/categoryHierarchy";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
 export {

@@ -23,6 +23,7 @@ import {
   createSystemCategories,
   isSystemCategory,
   validateCategoryMerge,
+  validateCategoryHierarchy,
 } from "@nexora/domain";
 
 export class InMemoryLedgerRepository implements LedgerRepository {
@@ -148,9 +149,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
 
   public async saveCategory(category: Category): Promise<void> {
     this.assertNew(this.categories, category.id, "Category");
-    if (category.parentId !== undefined && !this.categories.has(category.parentId)) {
-      throw new DomainError("missing_reference", "Parent category does not exist.");
-    }
+    validateCategoryHierarchy([...this.categories.values(), category]);
     this.categories.set(category.id, category);
   }
 
@@ -159,6 +158,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Category does not exist.");
     if (isSystemCategory(category.id))
       throw new DomainError("invalid_category", "System categories are protected.");
+    validateCategoryHierarchy(
+      [...this.categories.values()].map((current) =>
+        current.id === category.id ? category : current,
+      ),
+    );
     this.categories.set(category.id, category);
   }
 
@@ -187,7 +191,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       const target = this.categories.get(targetId);
       if (source === undefined || target === undefined)
         throw new DomainError("missing_reference", "Category does not exist.");
-      validateCategoryMerge(source, target);
+      validateCategoryMerge(source, target, [...this.categories.values()]);
       const directTransactions = [...this.transactions.values()].filter(
         (transaction) => transaction.categoryId === sourceId,
       );
@@ -216,19 +220,6 @@ export class InMemoryLedgerRepository implements LedgerRepository {
         this.budgets.set(budget.id, copyBudgetWithCategory(budget, targetId));
       for (const rule of rules)
         this.recurringRules.set(rule.id, copyRuleWithCategory(rule, targetId));
-      for (const category of [...this.categories.values()]) {
-        if (category.parentId === sourceId)
-          this.categories.set(
-            category.id,
-            Category.create({
-              id: category.id,
-              name: category.name,
-              kindScope: category.kindScope,
-              isArchived: category.isArchived,
-              parentId: targetId,
-            }),
-          );
-      }
       this.categories.delete(sourceId);
     });
   }

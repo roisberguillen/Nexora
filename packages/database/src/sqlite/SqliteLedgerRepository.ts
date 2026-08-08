@@ -25,6 +25,7 @@ import {
   createSystemCategories,
   isSystemCategory,
   validateCategoryMerge,
+  validateCategoryHierarchy,
 } from "@nexora/domain";
 
 import {
@@ -376,12 +377,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
         this.withWriteTransaction(async () => {
           const record = categoryToRecord(category);
           await this.assertNew("categories", category.id, "Category");
-          if (
-            category.parentId !== undefined &&
-            (await this.findCategoryByIdInternal(category.parentId)) === undefined
-          ) {
-            throw new DomainError("missing_reference", "Parent category does not exist.");
-          }
+          validateCategoryHierarchy([...(await this.listCategoriesInternal()), category]);
 
           await this.database.run(
             `
@@ -438,10 +434,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
             throw new DomainError("invalid_category", "System categories are protected.");
           if ((await this.findCategoryByIdInternal(category.id)) === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
+          validateCategoryHierarchy(
+            (await this.listCategoriesInternal()).map((current) =>
+              current.id === category.id ? category : current,
+            ),
+          );
           const record = categoryToRecord(category);
           await this.database.run(
-            "UPDATE categories SET name = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
-            [record.name, record.is_archived, record.id],
+            "UPDATE categories SET name = ?, kind_scope = ?, parent_id = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+            [record.name, record.kind_scope, record.parent_id, record.is_archived, record.id],
           );
         }),
       ),
@@ -505,7 +506,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           const target = await this.findCategoryByIdInternal(targetId);
           if (source === undefined || target === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
-          validateCategoryMerge(source, target);
+          validateCategoryMerge(source, target, await this.listCategoriesInternal());
           const incompatible = await this.database.query<{ readonly found: number }>(
             `SELECT 1 AS found FROM transactions WHERE category_id = ? AND kind NOT IN ('income', 'expense')
              UNION ALL SELECT 1 FROM transactions JOIN transaction_splits ON transaction_splits.transaction_id = transactions.id
@@ -1548,10 +1549,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public listCategories(): Promise<readonly Category[]> {
     return this.enqueue(() =>
       this.performDatabaseOperation(async () => {
-        const rows = await this.database.query<CategoryRecord>(
-          `SELECT ${categoryColumns} FROM categories ORDER BY created_at ASC, id ASC`,
-        );
-        return rows.map(categoryFromRecord);
+        return this.listCategoriesInternal();
       }),
     );
   }
@@ -2057,6 +2055,13 @@ export class SqliteLedgerRepository implements LedgerRepository {
       [id],
     );
     return rows[0] === undefined ? undefined : categoryFromRecord(rows[0]);
+  }
+
+  private async listCategoriesInternal(): Promise<readonly Category[]> {
+    const rows = await this.database.query<CategoryRecord>(
+      `SELECT ${categoryColumns} FROM categories ORDER BY created_at ASC, id ASC`,
+    );
+    return rows.map(categoryFromRecord);
   }
 
   private async findTransactionByIdInternal(id: string): Promise<Transaction | undefined> {

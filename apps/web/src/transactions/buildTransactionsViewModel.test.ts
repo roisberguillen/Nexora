@@ -1,4 +1,4 @@
-import { Account, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
+import { Account, Category, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import { buildTransactionsViewModel } from "./buildTransactionsViewModel";
@@ -39,6 +39,38 @@ describe("buildTransactionsViewModel", () => {
       kindLabel: "Trasferimento",
     });
     expect(model.items[1]).toMatchObject({ canCancel: false, statusLabel: "Annullato" });
+  });
+
+  it("keeps archived categories readable in history but excludes them from new selections", () => {
+    const source = account("source", "Conto principale");
+    const macro = Category.create({ id: "macro", name: "Trasporti", kindScope: "expense" });
+    const archived = Category.create({
+      id: "archived",
+      name: "Carburante",
+      kindScope: "expense",
+      parentId: macro.id,
+      isArchived: true,
+    });
+    const transaction = Transaction.create({
+      id: "expense",
+      kind: "expense",
+      status: "booked",
+      accountId: source.id,
+      amount: Money.fromMinor(-1_000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-07-27"),
+      categoryId: archived.id,
+    });
+
+    const model = buildTransactionsViewModel({
+      accounts: [source],
+      categories: [macro, archived],
+      transactions: [transaction],
+      transfers: [],
+    });
+
+    expect(model.items[0]?.categoryLabel).toBe("Trasporti → Carburante");
+    expect(model.categories.map((category) => category.id)).not.toContain(archived.id);
+    expect(model.categories[0]?.parentId).toBeUndefined();
   });
 });
 

@@ -21,6 +21,7 @@ import { CategoriesPage } from "./categories/CategoriesPage";
 import { TagsPage } from "./tags/TagsPage";
 import {
   createLedgerCategory,
+  installDefaultCategoryTaxonomy,
   updateLedgerCategory,
   type CategoryInput,
 } from "./categories/categoryCommands";
@@ -328,6 +329,10 @@ function AppContent({
   const createCategory = (input: CategoryInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createLedgerCategory(ledger.repository, input);
+    });
+  const installCategoryDefaults = (): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await installDefaultCategoryTaxonomy(ledger.repository);
     });
   const updateCategory = (
     id: string,
@@ -641,6 +646,7 @@ function AppContent({
                   categories={ledgerState.categories}
                   onCreate={createCategory}
                   onDeleteUnused={deleteUnusedCategory}
+                  onInstallDefaults={installCategoryDefaults}
                   onMerge={mergeCategory}
                   onUpdate={updateCategory}
                 />

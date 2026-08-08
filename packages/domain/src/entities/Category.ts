@@ -14,6 +14,13 @@ export interface CreateCategoryProps {
   readonly isArchived?: boolean;
 }
 
+export interface UpdateCategoryProps {
+  readonly name: string;
+  readonly kindScope: CategoryKindScope;
+  readonly parentId?: string;
+  readonly isArchived: boolean;
+}
+
 export class Category {
   public readonly id: string;
   public readonly name: string;
@@ -55,13 +62,13 @@ export class Category {
     return false;
   }
 
-  public update(input: { readonly name: string; readonly isArchived: boolean }): Category {
+  public update(input: UpdateCategoryProps): Category {
     return Category.create({
       id: this.id,
       name: input.name,
-      kindScope: this.kindScope,
+      kindScope: input.kindScope,
       isArchived: input.isArchived,
-      ...(this.parentId === undefined ? {} : { parentId: this.parentId }),
+      ...(input.parentId === undefined ? {} : { parentId: input.parentId }),
     });
   }
 }

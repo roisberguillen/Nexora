@@ -1,5 +1,5 @@
-import type { Category, CategoryKindScope } from "@nexora/domain";
-import { useState, type FormEvent } from "react";
+import { categoryLabel, type Category, type CategoryKindScope } from "@nexora/domain";
+import { useMemo, useState, type FormEvent } from "react";
 
 import type { CategoryInput } from "./categoryCommands";
 
@@ -7,12 +7,14 @@ export function CategoriesPage({
   categories,
   onCreate,
   onDeleteUnused,
+  onInstallDefaults,
   onMerge,
   onUpdate,
 }: {
   readonly categories: readonly Category[];
   readonly onCreate: (input: CategoryInput) => Promise<void>;
   readonly onDeleteUnused: (id: string) => Promise<void>;
+  readonly onInstallDefaults: () => Promise<void>;
   readonly onMerge: (sourceId: string, targetId: string) => Promise<void>;
   readonly onUpdate: (
     id: string,
@@ -21,44 +23,98 @@ export function CategoriesPage({
 }) {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Category | null>(null);
+  const [parentId, setParentId] = useState("");
+  const [kindScope, setKindScope] = useState<CategoryKindScope>("expense");
   const [mergeTargetId, setMergeTargetId] = useState("");
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(
+    () =>
+      new Set(
+        categories
+          .filter((category) => category.parentId === undefined)
+          .map((category) => category.id),
+      ),
+  );
+  const roots = useMemo(
+    () => categories.filter((category) => category.parentId === undefined),
+    [categories],
+  );
+  const isFreshLedger = categories.every(isSystemCategory);
+  const editingHasChildren =
+    editing !== null && categories.some((category) => category.parentId === editing.id);
+  const openEditor = (category: Category | null, childOf?: string) => {
+    setEditing(category);
+    setParentId(category?.parentId ?? childOf ?? "");
+    setKindScope(category?.kindScope ?? "expense");
+    setMergeTargetId("");
+    setError(null);
+  };
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const input = {
       name: String(form.get("name") ?? ""),
-      kindScope: String(form.get("kindScope") ?? "expense") as CategoryKindScope,
+      kindScope,
+      ...(parentId === "" ? {} : { parentId }),
     };
     try {
-      setError(null);
       if (editing === null) await onCreate(input);
       else await onUpdate(editing.id, { ...input, isArchived: editing.isArchived });
-      setEditing(null);
-      event.currentTarget.reset();
+      openEditor(null);
     } catch {
-      setError("Impossibile salvare la categoria.");
+      setError("Impossibile salvare: verifica macro categoria, ambito e stato.");
+    }
+  };
+  const archive = async (category: Category) => {
+    try {
+      await onUpdate(category.id, {
+        name: category.name,
+        kindScope: category.kindScope,
+        ...(category.parentId === undefined ? {} : { parentId: category.parentId }),
+        isArchived: !category.isArchived,
+      });
+      openEditor(null);
+    } catch {
+      setError(
+        "La macro con sottocategorie non può essere archiviata. Sposta o archivia prima le sottocategorie.",
+      );
     }
   };
   const remove = async (id: string) => {
     try {
-      setError(null);
       await onDeleteUnused(id);
-      if (editing?.id === id) setEditing(null);
+      if (editing?.id === id) openEditor(null);
     } catch {
-      setError("La categoria è usata: archiviala o riassegna prima i riferimenti.");
+      setError(
+        "La categoria è usata o contiene sottocategorie: archiviala o riassegna prima i riferimenti.",
+      );
     }
   };
   const merge = async () => {
     if (editing === null || mergeTargetId === "") return;
     try {
-      setError(null);
       await onMerge(editing.id, mergeTargetId);
-      setEditing(null);
-      setMergeTargetId("");
+      openEditor(null);
     } catch {
-      setError("Impossibile unire: scegli una categoria attiva e compatibile.");
+      setError("L’unione richiede una categoria attiva, compatibile e allo stesso livello.");
     }
   };
+  const installDefaults = async () => {
+    try {
+      await onInstallDefaults();
+    } catch {
+      setError(
+        "La tassonomia predefinita può essere aggiunta solo a un archivio senza categorie personali.",
+      );
+    }
+  };
+  const toggle = (id: string) =>
+    setExpanded((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
   return (
     <div id="categories">
       <header className="accounts-heading">
@@ -66,8 +122,8 @@ export function CategoriesPage({
           <p className="eyebrow">Classificazione</p>
           <h1>Gestisci le categorie</h1>
           <p>
-            Le categorie archiviate restano nello storico e non sono più proposte nei nuovi
-            movimenti.
+            Organizza Macro categoria → Sottocategoria. Le categorie archiviate restano nello
+            storico.
           </p>
         </div>
       </header>
@@ -76,54 +132,102 @@ export function CategoriesPage({
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Archivio</p>
-              <h2 id="categories-title">Categorie</h2>
+              <h2 id="categories-title">Albero categorie</h2>
             </div>
             <span className="panel-meta">{categories.length}</span>
           </div>
-          <div className="account-table-wrap">
-            <table className="account-table">
-              <thead>
-                <tr>
-                  <th>Categoria</th>
-                  <th>Ambito</th>
-                  <th>Stato</th>
-                  <th>Azioni</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categories.map((category) => (
-                  <tr key={category.id}>
-                    <td data-label="Categoria">
-                      <strong>{category.name}</strong>
-                    </td>
-                    <td data-label="Ambito">{scopeLabel(category.kindScope)}</td>
-                    <td data-label="Stato">{category.isArchived ? "Archiviata" : "Attiva"}</td>
-                    <td data-label="Azioni">
+          {isFreshLedger ? (
+            <div className="empty-state">
+              <p>
+                Puoi aggiungere la tassonomia iniziale di entrate e uscite senza modificare i dati
+                esistenti.
+              </p>
+              <button
+                className="secondary-action"
+                onClick={() => void installDefaults()}
+                type="button"
+              >
+                Aggiungi tassonomia predefinita
+              </button>
+            </div>
+          ) : null}
+          <div className="category-tree" role="tree" aria-label="Categorie finanziarie">
+            {roots.map((root) => {
+              const children = categories.filter((category) => category.parentId === root.id);
+              const isOpen = expanded.has(root.id);
+              return (
+                <div
+                  className="category-tree-group"
+                  key={root.id}
+                  role="treeitem"
+                  aria-expanded={children.length === 0 ? undefined : isOpen}
+                >
+                  <div className="category-tree-root">
+                    <button
+                      aria-label={`${isOpen ? "Chiudi" : "Apri"} ${root.name}`}
+                      className="text-action"
+                      disabled={children.length === 0}
+                      onClick={() => toggle(root.id)}
+                      type="button"
+                    >
+                      {children.length === 0 ? "•" : isOpen ? "−" : "+"}
+                    </button>
+                    <div>
+                      <strong>{root.name}</strong>
+                      <small>
+                        {scopeLabel(root.kindScope)} · {children.length} sottocategorie ·{" "}
+                        {root.isArchived ? "Archiviata" : "Attiva"}
+                      </small>
+                    </div>
+                    <CategoryActions
+                      category={root}
+                      hasChildren={children.length > 0}
+                      onArchive={archive}
+                      onEdit={openEditor}
+                      onRemove={remove}
+                    />
+                    {!root.isArchived && !isSystemCategory(root.id) ? (
                       <button
                         className="text-action"
-                        disabled={isSystemCategory(category.id)}
-                        onClick={() => setEditing(category)}
+                        onClick={() => openEditor(null, root.id)}
                         type="button"
                       >
-                        Modifica
+                        Aggiungi sottocategoria
                       </button>
-                      <button
-                        className="text-action"
-                        disabled={isSystemCategory(category.id)}
-                        onClick={() => void remove(category.id)}
-                        type="button"
-                      >
-                        Elimina
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ) : null}
+                  </div>
+                  {isOpen ? (
+                    <ul className="category-tree-children" role="group">
+                      {children.map((child) => (
+                        <li key={child.id} role="treeitem">
+                          <div>
+                            <strong>{child.name}</strong>
+                            <small>
+                              {scopeLabel(child.kindScope)} ·{" "}
+                              {child.isArchived ? "Archiviata" : "Attiva"}
+                            </small>
+                          </div>
+                          <CategoryActions
+                            category={child}
+                            onArchive={archive}
+                            onEdit={openEditor}
+                            onRemove={remove}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         </section>
         <aside className="account-editor-panel">
           <h2>{editing === null ? "Nuova categoria" : "Modifica categoria"}</h2>
+          <p className="import-help">
+            Scegli nessuna macro per creare una Macro categoria; scegli una macro attiva per creare
+            o spostare una Sottocategoria.
+          </p>
           {error === null ? null : (
             <p className="account-error" role="alert">
               {error}
@@ -134,7 +238,7 @@ export function CategoriesPage({
               Nome
               <input
                 defaultValue={editing?.name ?? ""}
-                key={editing?.id ?? "new"}
+                key={editing?.id ?? `new-${parentId}`}
                 name="name"
                 required
               />
@@ -142,64 +246,81 @@ export function CategoriesPage({
             <label>
               Ambito
               <select
-                defaultValue={editing?.kindScope ?? "expense"}
-                disabled={editing !== null}
+                onChange={(event) => setKindScope(event.currentTarget.value as CategoryKindScope)}
                 name="kindScope"
+                value={kindScope}
               >
                 <option value="expense">Spese</option>
                 <option value="income">Entrate</option>
                 <option value="both">Entrate e spese</option>
               </select>
             </label>
-            {editing === null ? null : (
+            <label>
+              Macro categoria
+              <select onChange={(event) => setParentId(event.currentTarget.value)} value={parentId}>
+                <option value="">Nessuna (Macro categoria)</option>
+                {roots
+                  .filter(
+                    (root) =>
+                      !root.isArchived && !isSystemCategory(root.id) && root.id !== editing?.id,
+                  )
+                  .filter((root) => root.kindScope === "both" || root.kindScope === kindScope)
+                  .map((root) => (
+                    <option key={root.id} value={root.id}>
+                      {root.name} · {scopeLabel(root.kindScope)}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            {editing === null || isSystemCategory(editing.id) ? null : (
               <>
                 <button
                   className="text-action"
-                  onClick={() =>
-                    void onUpdate(editing.id, {
-                      name: editing.name,
-                      kindScope: editing.kindScope,
-                      isArchived: !editing.isArchived,
-                    })
-                  }
+                  disabled={editingHasChildren}
+                  onClick={() => void archive(editing)}
                   type="button"
                 >
                   {editing.isArchived ? "Riattiva" : "Archivia"}
                 </button>
-                <label>
-                  Unisci in
-                  <select
-                    onChange={(event) => setMergeTargetId(event.currentTarget.value)}
-                    value={mergeTargetId}
-                  >
-                    <option value="">Scegli categoria</option>
-                    {categories
-                      .filter(
-                        (category) =>
-                          category.id !== editing.id &&
-                          !category.isArchived &&
-                          (category.kindScope === "both" ||
-                            category.kindScope === editing.kindScope),
-                      )
-                      .map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                  </select>
-                </label>
-                <button
-                  className="text-action"
-                  disabled={mergeTargetId === ""}
-                  onClick={() => void merge()}
-                  type="button"
-                >
-                  Unisci e riassegna
-                </button>
+                {editingHasChildren ? null : (
+                  <>
+                    <label>
+                      Unisci in
+                      <select
+                        onChange={(event) => setMergeTargetId(event.currentTarget.value)}
+                        value={mergeTargetId}
+                      >
+                        <option value="">Scegli categoria</option>
+                        {categories
+                          .filter(
+                            (category) =>
+                              category.id !== editing.id &&
+                              !category.isArchived &&
+                              category.parentId === editing.parentId &&
+                              (category.kindScope === "both" ||
+                                category.kindScope === editing.kindScope),
+                          )
+                          .map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {categoryLabel(category, categories)}
+                            </option>
+                          ))}
+                      </select>
+                    </label>
+                    <button
+                      className="text-action"
+                      disabled={mergeTargetId === ""}
+                      onClick={() => void merge()}
+                      type="button"
+                    >
+                      Unisci e riassegna
+                    </button>
+                  </>
+                )}
               </>
             )}
             <div className="form-actions">
-              <button className="secondary-action" onClick={() => setEditing(null)} type="button">
+              <button className="secondary-action" onClick={() => openEditor(null)} type="button">
                 Annulla
               </button>
               <button className="primary-action" type="submit">
@@ -213,10 +334,54 @@ export function CategoriesPage({
   );
 }
 
+function CategoryActions({
+  category,
+  hasChildren = false,
+  onArchive,
+  onEdit,
+  onRemove,
+}: {
+  readonly category: Category;
+  readonly hasChildren?: boolean;
+  readonly onArchive: (category: Category) => Promise<void>;
+  readonly onEdit: (category: Category) => void;
+  readonly onRemove: (id: string) => Promise<void>;
+}) {
+  const protectedCategory = isSystemCategory(category.id);
+  return (
+    <div className="category-tree-actions">
+      <button
+        className="text-action"
+        disabled={protectedCategory || hasChildren}
+        onClick={() => onEdit(category)}
+        type="button"
+      >
+        Modifica
+      </button>
+      <button
+        className="text-action"
+        disabled={protectedCategory}
+        onClick={() => void onArchive(category)}
+        type="button"
+      >
+        {category.isArchived ? "Riattiva" : "Archivia"}
+      </button>
+      <button
+        className="text-action"
+        disabled={protectedCategory}
+        onClick={() => void onRemove(category.id)}
+        type="button"
+      >
+        Elimina
+      </button>
+    </div>
+  );
+}
+
 function scopeLabel(scope: CategoryKindScope): string {
   return scope === "income" ? "Entrate" : scope === "expense" ? "Spese" : "Entrate e spese";
 }
-
-function isSystemCategory(id: string): boolean {
+function isSystemCategory(category: Pick<Category, "id"> | string): boolean {
+  const id = typeof category === "string" ? category : category.id;
   return id === "system-income" || id === "system-expense";
 }

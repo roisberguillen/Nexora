@@ -2,6 +2,19 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-08 — Tassonomia finanziaria a due livelli
+
+- **Contesto:** `Category.parentId` esisteva già nel ledger, ma UI e repository non limitavano in
+  modo uniforme la profondità o la compatibilità padre/figlio.
+- **Scelta:** Nexora espone Macro categoria → Sottocategoria e rifiuta alberi più profondi,
+  genitori archiviati e scope incompatibili. `income` può contenere solo `income`, `expense` solo
+  `expense`, mentre `both` può contenere entrambi. La tassonomia iniziale è installabile con
+  azione esplicita soltanto in un archivio privo di categorie personali; non migra né rinomina
+  categorie già usate.
+- **Conseguenze:** import, movimenti, budget, ricorrenze, split, export e backup continuano a
+  usare lo stesso `categoryId` e lo stesso `parentId`. Fisso/variabile/periodico/straordinario
+  restano fuori dal modello categoria; un trasferimento non riceve una categoria investimento.
+
 ## 2026-08-08 — Recupero sicuro del blocco app e reset locale
 
 - **Contesto:** il PIN/passphrase del blocco app è verificabile ma non recuperabile per scelta di
@@ -285,6 +298,20 @@ Le 98 schermate Stitch sono trattate come stati e superfici di una stessa applic
 ai componenti e alla fase responsabile in `docs/ux/STITCH_SCREEN_MATRIX.md`. In particolare le
 allocazioni restano nella superficie ricorrenze finché una route distinta non sia giustificata dal
 flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
+
+## 2026-08-08 — Tassonomia finanziaria a due livelli
+
+- **Contesto:** le categorie precedenti erano piatte, mentre la Fase 12.1 richiede una
+  classificazione leggibile senza alterare movimenti o categorie già salvati.
+- **Scelta:** rendere esplicito il solo livello `Macro categoria → Sottocategoria`, con
+  compatibilità di ambito (`income`, `expense`, `both`) verificata dai repository SQLite,
+  IndexedDB e in memoria. La tassonomia iniziale è installata solo su azione dell'utente e
+  riprende in modo idempotente un'installazione eventualmente interrotta; non viene applicata
+  automaticamente ai dati esistenti.
+- **Conseguenze:** non serve una migrazione perché `categories.parent_id` e il relativo indice
+  esistono già nello schema. Le categorie archiviate rimangono nello storico e non nelle nuove
+  scelte; gli attributi temporali o di natura della spesa restano un modello separato della Fase
+  12.2.
 
 ## 2026-07-31 — Ripristino dell'avvio dopo la Fase 6
 

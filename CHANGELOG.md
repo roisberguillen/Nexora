@@ -9,6 +9,12 @@
 
 ### Changed
 
+- Le categorie finanziarie ora supportano Macro categoria → Sottocategoria con vincoli condivisi
+  per SQLite, IndexedDB e memoria. La tassonomia iniziale di entrate e uscite è installabile solo
+  con un'azione esplicita su un archivio senza categorie personali; le categorie e i movimenti
+  esistenti non vengono riassegnati. Il selettore dei nuovi movimenti mostra il percorso gerarchico
+  e non propone categorie archiviate.
+
 - Resi chiari e recuperabili i reset locali: la passphrase serve solo per un nuovo backup cifrato
   facoltativo, mentre il ripristino totale non richiede PIN o passphrase, elimina esplicitamente il
   blocco app e non tocca i backup Google Drive. La schermata bloccata offre ora il recupero totale

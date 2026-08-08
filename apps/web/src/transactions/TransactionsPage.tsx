@@ -1,5 +1,5 @@
 import { FinancialAmount } from "@nexora/ui";
-import type { Tag } from "@nexora/domain";
+import { categoryLabel, type Tag } from "@nexora/domain";
 import { useEffect, useState, type FormEvent } from "react";
 
 import "./transactions.css";
@@ -620,7 +620,7 @@ function TransactionForm({
               <option value="">Senza categoria</option>
               {categoriesForKind.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.name}
+                  {categoryLabel(category, categories)}
                 </option>
               ))}
             </select>
@@ -635,7 +635,7 @@ function TransactionForm({
                   <option value="">Categoria</option>
                   {categoriesForKind.map((category) => (
                     <option key={category.id} value={category.id}>
-                      {category.name}
+                      {categoryLabel(category, categories)}
                     </option>
                   ))}
                 </select>
