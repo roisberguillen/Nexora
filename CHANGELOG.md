@@ -9,6 +9,11 @@
 
 ### Changed
 
+- Resi chiari e recuperabili i reset locali: la passphrase serve solo per un nuovo backup cifrato
+  facoltativo, mentre il ripristino totale non richiede PIN o passphrase, elimina esplicitamente il
+  blocco app e non tocca i backup Google Drive. La schermata bloccata offre ora il recupero totale
+  dopo l'apertura sicura del ledger.
+
 - Corretto il ripristino di backup portabili su SQLite/OPFS quando il ledger contiene sottoconti
   o categorie gerarchiche: i vincoli esterni vengono differiti all'interno della sostituzione
   atomica, con checkpoint e rollback invariati.

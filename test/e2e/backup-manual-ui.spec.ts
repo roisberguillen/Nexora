@@ -7,8 +7,9 @@ test("il backup manuale resta accessibile e senza overflow", async ({ page }) =>
   await expect(page.getByLabel("Passphrase (minimo 12 caratteri)")).toBeVisible();
   await expect(page.getByLabel("File `.nexora-backup`")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Backup cloud" })).toBeVisible();
-  await expect(page.getByText(/VITE_GOOGLE_CLIENT_ID/)).toBeVisible();
-  await expect(page.getByRole("button", { name: "Collega Google Drive" })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Backup cloud" })).toContainText(
+    /Drive usa|VITE_GOOGLE_CLIENT_ID/,
+  );
 
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,

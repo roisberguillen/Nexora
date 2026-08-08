@@ -576,7 +576,17 @@ function AppContent({
       }}
     >
       {appLockConfig && isAppLocked ? (
-        <AppLockScreen config={appLockConfig} onUnlock={() => setIsAppLocked(false)} />
+        <AppLockScreen
+          config={appLockConfig}
+          onUnlock={() => setIsAppLocked(false)}
+          {...(ledgerState.status === "ready"
+            ? {
+                onRecoveryReset: async () => {
+                  await resetApplication({ deleteCloud: false });
+                },
+              }
+            : {})}
+        />
       ) : (
         <>
           <AppShell
@@ -721,7 +731,6 @@ function AppContent({
                 <SettingsPage
                   onResetFinancialData={resetFinancialData}
                   onCreateResetBackup={createResetBackup}
-                  cloudResetAvailable={googleDriveSession.config.enabled}
                   requiresResetPin={appLockConfig !== undefined}
                   onPreviewFinancialReset={previewResetFinancialData}
                   onResetApplication={resetApplication}

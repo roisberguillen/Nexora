@@ -1,17 +1,15 @@
 # Current task
 
-- Task: complete Phase 11 Google Drive live drill and SQLite/OPFS restore correction
-- Roadmap phase: Phase 11 complete
-- Category: google_drive
-- Profile: ADVANCED with security checkpoint
-- Data risk: medium; OAuth token, encrypted remote archive and explicit destructive restore
-- Status: live consent, encrypted upload, reread, read-only verification, checkpointed restore and
-  ledger reopen completed; Phase 12 is now unblocked
-- Root cause corrected: SQLite snapshot replacement did not defer foreign keys, so ledgers with
-  self-referential account/category trees could fail before their transaction-level rollback.
-- Checkpoint: restore retains the PortableBackupEngine rollback snapshot and the active ledger
-  reopened successfully after the explicit live restore.
-- Completed gates: Backup-only consent regression tests, shared-session tests, configured build,
-  Backup E2E at five viewports, full verify (388 tests), E2E (152 passed, 68 documented skips),
-  targeted SQLite hierarchical-restore regression and authorized live Drive drill.
-- Next task: Phase 12 financial features with the approved UI; begin with its routed vertical slice.
+- Task: clarify and secure financial reset, total reset and forgotten app-lock recovery
+- Roadmap phase: Phase 12 remains next; this is a critical corrective slice before new features
+- Category: encryption
+- Profile: CRITICAL
+- Data risk: low for this implementation; the user-visible action remains destructive only after
+  explicit confirmation
+- Status: verified; ready for the dedicated corrective commit and publication
+- Decision: a backup passphrase is only for a newly created optional encrypted archive. A forgotten
+  app-lock PIN cannot be recovered; total local reset is available after ledger readiness and keeps
+  Google Drive backups untouched.
+- Checkpoint: `.codex/state/checkpoints/2026-08-08-reset-recovery-ux-safe.md`
+- Next task: publish this verified corrective slice, then resume Phase 12 from its routed vertical
+  slice.

@@ -68,4 +68,42 @@ describe("financial reset preview", () => {
     expect(verifyEncryptedBackupArchive).toHaveBeenCalledOnce();
     expect(saveArchive).toHaveBeenCalledWith(expect.any(Uint8Array), "reset.nexora-backup");
   });
+
+  it("does not create or export a backup with a weak passphrase", async () => {
+    const createEncryptedBackupArchive = vi.fn();
+    const saveArchive = vi.fn();
+
+    await expect(
+      createVerifiedResetBackup(
+        { createEncryptedBackupArchive } as never,
+        "corta",
+        saveArchive,
+      ),
+    ).rejects.toThrow("almeno 12 caratteri");
+
+    expect(createEncryptedBackupArchive).not.toHaveBeenCalled();
+    expect(saveArchive).not.toHaveBeenCalled();
+  });
+
+  it("does not export an archive when its verification fails", async () => {
+    const saveArchive = vi.fn();
+    await expect(
+      createVerifiedResetBackup(
+        {
+          createEncryptedBackupArchive: async () => ({
+            id: "reset.nexora-backup",
+            archive: new Uint8Array([1, 2, 3]),
+            checksumSha256: "a".repeat(64),
+          }),
+          verifyEncryptedBackupArchive: async () => {
+            throw new Error("tampered");
+          },
+        } as never,
+        "una-passphrase-lunga",
+        saveArchive,
+      ),
+    ).rejects.toThrow("tampered");
+
+    expect(saveArchive).not.toHaveBeenCalled();
+  });
 });

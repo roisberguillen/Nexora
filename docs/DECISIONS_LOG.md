@@ -2,6 +2,21 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-08 — Recupero sicuro del blocco app e reset locale
+
+- **Contesto:** il PIN/passphrase del blocco app è verificabile ma non recuperabile per scelta di
+  sicurezza. Il precedente flusso non offriva un recupero dalla schermata bloccata e presentava
+  nello stesso dialogo la passphrase di backup, il PIN e la frase di conferma, rendendo ambiguo
+  quale valore fosse richiesto.
+- **Scelta:** il backup prima del reset finanziario resta facoltativo, cifrato e verificato, con
+  una nuova passphrase scelta dall'utente soltanto se desidera creare il file. Il reset dei soli
+  dati finanziari richiede ancora il PIN quando il blocco app è attivo. Chi non lo ricorda può
+  raggiungere il ripristino totale dalla schermata bloccata o dalle Impostazioni, protetto dalla
+  frase `RIPRISTINA NEXORA` e disponibile solo dopo l'apertura del ledger.
+- **Conseguenze:** nessuna passphrase viene recuperata, salvata o aggirata. Il ripristino totale
+  elimina in modo esplicito tutti i dati locali e il blocco app; non elimina né autorizza la
+  cancellazione dei backup Google Drive.
+
 ## 2026-08-08 — Ponte OAuth isolato per il consenso Google Drive
 
 - **Contesto:** `COOP: same-origin` protegge l'isolamento richiesto da SQLite/OPFS, ma Chrome può

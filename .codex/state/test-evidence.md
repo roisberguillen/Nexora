@@ -208,3 +208,23 @@ Keep only the latest relevant evidence per completed phase.
   unavailable, without contacting Google or creating a session.
 - Web production build passed; bridge E2E passed at 320, 375, 768, 1024 and 1440 px (5 passed;
   5 optional account-onboarding tests skipped because the synthetic consent flag was not set).
+
+## Critical reset and app-lock recovery — 2026-08-08
+
+- Financial reset now makes encrypted backup creation explicitly optional: a new, user-chosen
+  passphrase is required only when creating that backup. The full local reset clearly requires
+  only the visible confirmation phrase and preserves Google Drive backups.
+- A forgotten app-lock PIN has no bypass or recovery secret. Once the ledger is ready, the lock
+  screen exposes the same explicit total-local-reset route; it removes the local lock together
+  with the other local data only after confirmation.
+- Targeted settings, reset and app-lock suites: 6 files and 25 tests passed, including optional
+  backup skip, short/tampered backup rejection, lock removal, confirmation gating and unavailable
+  recovery before ledger readiness.
+- `pnpm doctor`, lint, typecheck and production PWA build passed. Full unit suite passed:
+  110 files passed, 1 skipped; 399 tests passed, 4 documented skips.
+- The backup manual UI E2E now accepts both deliberately supported runtime configurations
+  (Drive enabled and Drive not configured); focused suite passed at 320, 375, 768, 1024 and
+  1440 px with the single desktop round-trip (6 passed, 4 intentional skips). Full E2E rerun
+  passed after the production build: 157 passed, 68 documented skips.
+- Browser smoke opened both reset dialogs and confirmed their wording and disabled destructive
+  controls without entering a confirmation phrase or altering any local or cloud data.

@@ -51,6 +51,24 @@ describe("SettingsPage destructive flows", () => {
     expect(reset).toHaveBeenCalledTimes(1);
   });
 
+  it("consente il reset finanziario senza passphrase dopo la rinuncia esplicita al backup", async () => {
+    const user = userEvent.setup();
+    const reset = vi.fn(async () => undefined);
+    render(
+      <SettingsPage onCreateResetBackup={async () => "unused"} onResetFinancialData={reset} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Reset dati finanziari" }));
+    expect(screen.getByText(/Il backup è consigliato ma non obbligatorio/i)).toBeVisible();
+    await user.type(screen.getByLabelText("Frase di conferma reset"), "RESETTA DATI FINANZIARI");
+    expect(screen.getByRole("button", { name: "Conferma reset" })).toBeDisabled();
+
+    await user.click(screen.getByLabelText("Procedi senza backup"));
+    await user.click(screen.getByRole("button", { name: "Conferma reset" }));
+
+    await waitFor(() => expect(reset).toHaveBeenCalledWith({}));
+  });
+
   it("richiede una conferma distinta prima della purge e previene il doppio click", async () => {
     const user = userEvent.setup();
     let resolvePurge: (() => void) | undefined;
@@ -117,6 +135,8 @@ describe("SettingsPage destructive flows", () => {
 
     await user.click(screen.getByRole("button", { name: "Ripristino totale dell’app" }));
     const dialog = screen.getByRole("dialog", { name: "Conferma ripristino totale" });
+    expect(within(dialog).getByText(/Digita RIPRISTINA NEXORA per confermare/i)).toBeVisible();
+    expect(within(dialog).queryByLabelText(/passphrase/i)).toBeNull();
     const confirm = within(dialog).getByRole("button", { name: "Ripristina app" });
     expect(confirm).toBeDisabled();
     await user.type(
@@ -152,6 +172,7 @@ describe("SettingsPage destructive flows", () => {
       />,
     );
     await user.click(screen.getByRole("button", { name: "Reset dati finanziari" }));
+    expect(screen.getByText(/Se non li ricordi, usa il ripristino totale/i)).toBeVisible();
     await user.type(screen.getByLabelText("Passphrase backup reset"), "passphrase-sicura");
     await user.click(screen.getByRole("button", { name: "Crea backup verificato" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Backup verificato pronto");
@@ -161,6 +182,7 @@ describe("SettingsPage destructive flows", () => {
     await waitFor(() =>
       expect(reset).toHaveBeenCalledWith({ backupChecksumPrefix: "cafebabecafe", pin: "4937" }),
     );
+    expect(screen.queryByLabelText("Elimina backup Google Drive")).toBeNull();
   });
 
   it("intrappola il focus nel dialog, chiude con Escape e lo restituisce al controllo invocante", async () => {

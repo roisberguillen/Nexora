@@ -25,7 +25,6 @@ export function SettingsPage({
   onResetFinancialData,
   onCreateResetBackup,
   requiresResetPin = false,
-  cloudResetAvailable = false,
   onPreviewFinancialReset,
   onRestoreTransaction,
   onPurgeTransaction,
@@ -40,7 +39,6 @@ export function SettingsPage({
   }) => Promise<void>;
   readonly onCreateResetBackup?: (passphrase: string) => Promise<string>;
   readonly requiresResetPin?: boolean;
-  readonly cloudResetAvailable?: boolean;
   readonly onPreviewFinancialReset?: () => Promise<FinancialResetPreview>;
   readonly onRestoreTransaction?: (id: string) => Promise<void>;
   readonly onPurgeTransaction?: (id: string) => Promise<void>;
@@ -108,7 +106,6 @@ export function SettingsPage({
   const [purgeMessage, setPurgeMessage] = useState<string | null>(null);
   const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
   const [applicationResetPhrase, setApplicationResetPhrase] = useState("");
-  const [deleteCloudBackups, setDeleteCloudBackups] = useState(false);
   const [applicationResetReport, setApplicationResetReport] = useState<TotalResetReport | null>(
     null,
   );
@@ -449,7 +446,8 @@ export function SettingsPage({
               >
                 <h2 id="reset-financial-title">Conferma reset dati finanziari</h2>
                 <p>
-                  Backup e preferenze restano disponibili. Scrivi la frase richiesta per continuare.
+                  Questo rimuove soltanto i dati finanziari locali. Preferenze, blocco app e backup
+                  esistenti restano disponibili.
                 </p>
                 {resetPreview === null ? null : (
                   <p>
@@ -462,7 +460,7 @@ export function SettingsPage({
                 {backupChecksumPrefix === null ? (
                   <>
                     <label>
-                      Passphrase del backup cifrato
+                      Passphrase per un nuovo backup (facoltativo)
                       <input
                         aria-label="Passphrase backup reset"
                         type="password"
@@ -470,6 +468,11 @@ export function SettingsPage({
                         onChange={(event) => setBackupPassphrase(event.currentTarget.value)}
                       />
                     </label>
+                    <p className="import-help">
+                      Il backup è consigliato ma non obbligatorio. Se lo crei, scegli ora una nuova
+                      passphrase di almeno 12 caratteri: non è il PIN dell&apos;app e Nexora non può
+                      recuperarla per te.
+                    </p>
                     <button
                       className="secondary-action"
                       disabled={
@@ -495,41 +498,37 @@ export function SettingsPage({
                         checked={skipBackup}
                         onChange={(event) => setSkipBackup(event.currentTarget.checked)}
                       />{" "}
-                      Prosegui senza backup (scelta esplicita)
+                      Prosegui senza backup (scelta esplicita e irreversibile)
                     </label>
                   </>
                 ) : (
                   <p role="status">Backup verificato pronto (checksum {backupChecksumPrefix}…).</p>
                 )}
                 {requiresResetPin ? (
-                  <label>
-                    PIN o passphrase app
-                    <input
-                      aria-label="PIN reset finanziario"
-                      type="password"
-                      value={resetPin}
-                      onChange={(event) => setResetPin(event.currentTarget.value)}
-                    />
-                  </label>
+                  <>
+                    <p className="import-help">
+                      Il blocco app è attivo. Inserisci il PIN o la passphrase configurati in
+                      Privacy e sicurezza. Se non li ricordi, usa il ripristino totale qui sotto:
+                      rimuove anche il blocco, ma cancella tutti i dati locali.
+                    </p>
+                    <label>
+                      PIN o passphrase del blocco app
+                      <input
+                        aria-label="PIN reset finanziario"
+                        type="password"
+                        value={resetPin}
+                        onChange={(event) => setResetPin(event.currentTarget.value)}
+                      />
+                    </label>
+                  </>
                 ) : null}
                 <label>
-                  Frase di conferma
+                  Digita RESETTA DATI FINANZIARI per confermare
                   <input
                     aria-label="Frase di conferma reset"
                     onChange={(event) => setResetPhrase(event.currentTarget.value)}
                     value={resetPhrase}
                   />
-                </label>
-                <label>
-                  <input
-                    aria-label="Elimina backup Google Drive"
-                    checked={deleteCloudBackups}
-                    disabled={!cloudResetAvailable}
-                    onChange={(event) => setDeleteCloudBackups(event.currentTarget.checked)}
-                    type="checkbox"
-                  />{" "}
-                  Elimina anche i backup Nexora da Google Drive
-                  {cloudResetAvailable ? "" : " (non configurato)"}
                 </label>
                 <div className="form-actions">
                   <button
@@ -569,7 +568,8 @@ export function SettingsPage({
           <SettingsGroup title="Ripristino totale">
             <p>
               Rimuove tutti i dati locali Nexora, inclusi preferenze, blocco app e cache. I backup
-              Google Drive non vengono eliminati.
+              Google Drive non vengono eliminati. Non richiede il PIN del blocco app né la
+              passphrase di un backup.
             </p>
             <button
               className="secondary-action"
@@ -585,11 +585,12 @@ export function SettingsPage({
               >
                 <h2 id="reset-application-title">Conferma ripristino totale</h2>
                 <p>
-                  Crea un backup dalla sezione Backup prima di continuare. Scrivi la frase richiesta
-                  per confermare.
+                  Cancellerai tutti i dati locali, incluso l&apos;eventuale blocco app. I backup già
+                  presenti su Google Drive restano invariati. Se desideri conservarne uno nuovo,
+                  annulla e crealo prima dalla sezione Backup.
                 </p>
                 <label>
-                  Frase di conferma
+                  Digita RIPRISTINA NEXORA per confermare
                   <input
                     aria-label="Frase di conferma ripristino totale"
                     onChange={(event) => setApplicationResetPhrase(event.currentTarget.value)}
@@ -602,7 +603,6 @@ export function SettingsPage({
                     disabled={isResetting}
                     onClick={() => {
                       setApplicationResetPhrase("");
-                      setDeleteCloudBackups(false);
                       setIsApplicationResetOpen(false);
                     }}
                     type="button"
@@ -615,7 +615,7 @@ export function SettingsPage({
                     onClick={() => {
                       setIsResetting(true);
                       setApplicationResetMessage(null);
-                      void onResetApplication({ deleteCloud: deleteCloudBackups })
+                      void onResetApplication({ deleteCloud: false })
                         .then(setApplicationResetReport)
                         .catch(() =>
                           setApplicationResetMessage(
