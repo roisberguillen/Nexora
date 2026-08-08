@@ -6,10 +6,12 @@ import type { CloudBackupStatus } from "./cloudTypes";
 
 export interface GoogleDriveSessionValue {
   readonly config: GoogleCloudConfig;
+  readonly identityStatus: "idle" | "loading" | "ready" | "error";
   readonly provider: GoogleDriveBackupProvider;
   readonly status: CloudBackupStatus;
   connect(): Promise<void>;
   disconnect(): Promise<void>;
+  prepare(): Promise<void>;
 }
 
 export const GoogleDriveSessionContext = createContext<GoogleDriveSessionValue | undefined>(

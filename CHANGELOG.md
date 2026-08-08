@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Il selettore account Google Drive ora preserva il clic esplicito dell'utente: il client GIS si
+  prepara soltanto nella pagina Backup e il pulsante di collegamento resta disponibile quando il
+  popup può essere aperto correttamente, senza token persistenti o modifiche ai dati locali.
+
 - Rafforzato il collegamento Google Drive: il caricatore GIS gestisce tentativi successivi con
   script già presenti e gli errori del popup sono annunciati subito con indicazioni di recupero,
   senza conservare token o modificare dati locali.

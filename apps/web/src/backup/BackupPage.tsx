@@ -67,6 +67,17 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   const canCreate = ledger.createEncryptedBackupArchive !== undefined;
 
   useEffect(() => {
+    if (!cloudConfig.enabled) return;
+    let isActive = true;
+    void googleDriveSession.prepare().catch((error: unknown) => {
+      if (isActive) setCloudError(describeCloudError(error));
+    });
+    return () => {
+      isActive = false;
+    };
+  }, [cloudConfig.enabled, googleDriveSession]);
+
+  useEffect(() => {
     setCloudStatus(googleDriveSession.status);
     if (googleDriveSession.status !== "connected") return;
     let isActive = true;
@@ -421,11 +432,16 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
             {cloudConfig.enabled ? (
               <button
                 className="secondary-action"
-                disabled={isCloudBusy}
+                disabled={isCloudBusy || googleDriveSession.identityStatus !== "ready"}
                 onClick={() => void connectCloud()}
                 type="button"
               >
-                {isCloudBusy ? "Connessione…" : "Collega Google Drive"}
+                {isCloudBusy
+                  ? "Connessione…"
+                  : googleDriveSession.identityStatus === "loading" ||
+                      googleDriveSession.identityStatus === "idle"
+                    ? "Preparazione Google Drive…"
+                    : "Collega Google Drive"}
               </button>
             ) : null}
             {cloudStatus === "connected" ? (

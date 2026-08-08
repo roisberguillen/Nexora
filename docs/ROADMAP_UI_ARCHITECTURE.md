@@ -174,7 +174,11 @@ Commit e push su `origin/main`.
   per `select_account`; non è un login iniziale. L'app resta utilizzabile offline e condivide una
   sola sessione OAuth volatile tra backup e ripristino totale. Test component ed E2E configurato
   coprono consenso negato, reload e viewport 320, 375, 768, 1024 e 1440 px.
+- [x] GIS viene precaricato senza consenso solo dopo l'apertura di Backup; il clic esplicito che
+  apre il selettore account non attraversa attese asincrone, preservando l'attivazione utente del
+  browser. Il controllo resta disabilitato finché il client non è pronto.
 - [ ] Collaudo end-to-end con un Client ID Google autorizzato e un account di test del deployment;
   nessuna credenziale reale è disponibile o incorporata nel repository locale. Il caricatore GIS
-  gestisce inoltre script già presenti e segnala immediatamente chiusura/blocco del popup, ma il
-  drill finale upload/rilettura/ripristino richiede un popup non controllato dal browser automation.
+  gestisce inoltre script già presenti e segnala immediatamente chiusura/blocco del popup. Il
+  drill finale upload/rilettura/ripristino richiede ancora una selezione account e un popup non
+  controllato dal browser automation.

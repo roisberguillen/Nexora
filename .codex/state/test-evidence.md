@@ -153,3 +153,16 @@ Keep only the latest relevant evidence per completed phase.
 - The live account reaches consent after the test-user configuration. An automated Chrome popup
   cannot complete the opener callback after takeover, therefore no upload/reopen/restore evidence
   is claimed and no archive was created.
+
+## Phase 11 OAuth user-activation fix — 2026-08-08
+
+- Root cause: `connect()` awaited GIS script loading before it invoked `requestAccessToken`, so a
+  first-time script load could lose the explicit click's browser user activation and close the
+  account chooser without a token callback.
+- GIS now preloads silently after the user opens Backup. The connection control remains disabled
+  until it is ready, and its explicit click calls the token client without an intervening await.
+- Targeted OAuth, loader and BackupPage suites: 3 files, 17 tests passed. Lint, workspace
+  typecheck and production build passed. The configured Google Drive entry-point E2E was rerun
+  across the five configured viewports; the live chooser stayed open awaiting account selection.
+- No token, account identity, archive content or financial data was inspected, logged or persisted.
+  Upload, reopen and restore remain the separate external live gate.

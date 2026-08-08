@@ -1,5 +1,5 @@
 import type { BrowserLedger, Ledger, VerifiedPortableBackup } from "@nexora/database";
-import { render as renderUi, screen } from "@testing-library/react";
+import { render as renderUi, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -57,7 +57,7 @@ describe("BackupPage", () => {
     });
     render(<BackupPage ledger={createLedger()} />);
 
-    await user.click(screen.getByRole("button", { name: "Collega Google Drive" }));
+    await user.click(await getReadyGoogleDriveButton());
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Il consenso Google è stato chiuso prima del collegamento",
@@ -208,7 +208,7 @@ describe("BackupPage", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Collega Google Drive" }));
+    await user.click(await getReadyGoogleDriveButton());
     expect(await screen.findByText("backup-drive.nexora-backup")).toBeInTheDocument();
     await user.type(screen.getByLabelText("Passphrase (minimo 12 caratteri)"), "passphrase-sicura");
     await user.click(screen.getByRole("button", { name: "Verifica per il ripristino" }));
@@ -274,7 +274,7 @@ describe("BackupPage", () => {
     );
     render(<BackupPage ledger={createLedger()} />);
 
-    await user.click(screen.getByRole("button", { name: "Collega Google Drive" }));
+    await user.click(await getReadyGoogleDriveButton());
     await user.type(screen.getByLabelText("Passphrase (minimo 12 caratteri)"), "passphrase-sicura");
     await user.click(await screen.findByRole("button", { name: "Verifica per il ripristino" }));
 
@@ -307,6 +307,12 @@ function createLedger(overrides: Partial<Ledger> = {}): Ledger {
     close: vi.fn(async () => undefined),
     ...overrides,
   };
+}
+
+async function getReadyGoogleDriveButton() {
+  const button = await screen.findByRole("button", { name: "Collega Google Drive" });
+  await waitFor(() => expect(button).toBeEnabled());
+  return button;
 }
 
 async function selectArchiveAndEnterPassphrase(user: ReturnType<typeof userEvent.setup>) {

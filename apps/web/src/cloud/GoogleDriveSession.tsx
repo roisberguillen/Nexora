@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useCallback, useMemo, useState } from "react";
+import { type PropsWithChildren, useCallback, useMemo, useRef, useState } from "react";
 
 import { GoogleDriveBackupProvider } from "./GoogleDriveBackupProvider";
 import { GoogleIdentityAuth } from "./GoogleIdentityAuth";
@@ -21,19 +21,39 @@ export function GoogleDriveSessionProvider({
     [auth],
   );
   const [status, setStatus] = useState<CloudBackupStatus>(() => auth.getStatus());
+  const [identityStatus, setIdentityStatus] = useState<"idle" | "loading" | "ready" | "error">(
+    "idle",
+  );
+  const preparation = useRef<Promise<void> | undefined>(undefined);
 
-  const connect = useCallback(async () => {
-    if (!config.enabled) throw new Error("google_identity_unavailable");
+  const prepare = useCallback(() => {
+    if (!config.enabled) return Promise.reject(new Error("google_identity_unavailable"));
+    if (identityStatus === "ready") return Promise.resolve();
+    if (preparation.current !== undefined) return preparation.current;
+    setIdentityStatus("loading");
+    const loading = loadGoogleIdentity().then(
+      () => setIdentityStatus("ready"),
+      (error: unknown) => {
+        setIdentityStatus("error");
+        throw error;
+      },
+    );
+    preparation.current = loading;
+    return loading;
+  }, [config.enabled, identityStatus]);
+
+  const connect = useCallback(() => {
+    if (!config.enabled || identityStatus !== "ready")
+      return Promise.reject(new Error("google_identity_unavailable"));
     setStatus("authorizing");
-    try {
-      await loadGoogleIdentity();
-      await auth.connect();
-      setStatus(auth.getStatus());
-    } catch (error) {
-      setStatus(auth.getStatus() === "idle" ? "error" : auth.getStatus());
-      throw error;
-    }
-  }, [auth, config.enabled]);
+    return auth.connect().then(
+      () => setStatus(auth.getStatus()),
+      (error: unknown) => {
+        setStatus(auth.getStatus() === "idle" ? "error" : auth.getStatus());
+        throw error;
+      },
+    );
+  }, [auth, config.enabled, identityStatus]);
 
   const disconnect = useCallback(async () => {
     await auth.disconnect();
@@ -41,8 +61,8 @@ export function GoogleDriveSessionProvider({
   }, [auth]);
 
   const value = useMemo<GoogleDriveSessionValue>(
-    () => ({ config, connect, disconnect, provider, status }),
-    [config, connect, disconnect, provider, status],
+    () => ({ config, connect, disconnect, identityStatus, prepare, provider, status }),
+    [config, connect, disconnect, identityStatus, prepare, provider, status],
   );
 
   return (
