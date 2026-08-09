@@ -74,11 +74,7 @@ describe("financial reset preview", () => {
     const saveArchive = vi.fn();
 
     await expect(
-      createVerifiedResetBackup(
-        { createEncryptedBackupArchive } as never,
-        "corta",
-        saveArchive,
-      ),
+      createVerifiedResetBackup({ createEncryptedBackupArchive } as never, "corta", saveArchive),
     ).rejects.toThrow("almeno 12 caratteri");
 
     expect(createEncryptedBackupArchive).not.toHaveBeenCalled();
