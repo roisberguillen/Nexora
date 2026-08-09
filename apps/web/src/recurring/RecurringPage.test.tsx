@@ -64,6 +64,24 @@ describe("RecurringPage", () => {
     expect(screen.getByLabelText("Tipo")).toHaveValue("income");
     expect(screen.getByLabelText("Categoria")).toHaveValue("");
   });
+
+  it("offers advanced schedule controls and previews dates through the domain rule", async () => {
+    const user = userEvent.setup();
+    renderPage({ rules: [incomeRule] });
+
+    await user.click(screen.getByRole("button", { name: "Modifica" }));
+    expect(screen.getByLabelText("Frequenza")).toHaveValue("month");
+    expect(screen.getByLabelText("Intervallo")).toHaveValue(1);
+
+    await user.click(screen.getByText("Anteprima prossime date"));
+    expect(screen.getAllByText("2026-08-28")).toHaveLength(2);
+    expect(screen.getByText("2026-09-28")).toBeVisible();
+
+    await user.selectOptions(screen.getByLabelText("Frequenza"), "week");
+    await user.clear(screen.getByLabelText("Intervallo"));
+    await user.type(screen.getByLabelText("Intervallo"), "2");
+    expect(screen.getByLabelText("Frequenza")).toHaveValue("week");
+  });
 });
 
 const account = Account.create({ id: "account", name: "Conto", type: "checking", currency: "EUR" });

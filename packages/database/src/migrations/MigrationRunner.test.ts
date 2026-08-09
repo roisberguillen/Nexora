@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 16,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      toVersion: 17,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -143,14 +143,15 @@ describe("MigrationRunner", () => {
       { version: 14, name: "import-mapping-profiles" },
       { version: 15, name: "generic-csv-importer" },
       { version: 16, name: "expense-behavior" },
+      { version: 17, name: "advanced-recurring-rules" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 16,
-      toVersion: 16,
+      fromVersion: 17,
+      toVersion: 17,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(16);
+    expect(migrationRows(sqlite)).toHaveLength(17);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -172,12 +173,71 @@ describe("MigrationRunner", () => {
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 16,
-      appliedMigrations: [11, 12, 13, 14, 15, 16],
+      toVersion: 17,
+      appliedMigrations: [11, 12, 13, 14, 15, 16, 17],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
       name: "Conto v10",
+    });
+  });
+
+  it("aggiorna le ricorrenze v16 senza reinterpretare il calendario legacy", async () => {
+    const legacyRunner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations.filter((migration) => migration.version <= 16),
+      now: () => fixedNow,
+    });
+    await legacyRunner.migrateToLatest();
+    await database.run(
+      "INSERT INTO accounts (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      ["legacy-account", "Conto legacy", "checking", null, "EUR", null, "0", 0],
+    );
+    await database.run(
+      "INSERT INTO recurring_rules (id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        "legacy-monthly",
+        "Canone legacy",
+        "expense",
+        "legacy-account",
+        "-9900",
+        "EUR",
+        null,
+        null,
+        "monthly",
+        3,
+        31,
+        "salary_italy",
+        "2026-08-31",
+        1,
+      ],
+    );
+
+    const runner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations,
+      now: () => fixedNow,
+    });
+    await expect(runner.migrateToLatest()).resolves.toEqual({
+      fromVersion: 16,
+      toVersion: 17,
+      appliedMigrations: [17],
+    });
+    expect(
+      sqlite
+        .prepare(
+          "SELECT frequency_unit, interval_value, nominal_month, next_nominal_date, weekend_policy_v2, retired_at, expense_variability, expense_exceptionality FROM recurring_rules WHERE id = ?",
+        )
+        .get("legacy-monthly"),
+    ).toEqual({
+      frequency_unit: "month",
+      interval_value: 3,
+      nominal_month: null,
+      next_nominal_date: null,
+      weekend_policy_v2: "salary_italy",
+      retired_at: null,
+      expense_variability: null,
+      expense_exceptionality: null,
     });
   });
 
@@ -212,8 +272,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 13,
-      toVersion: 16,
-      appliedMigrations: [14, 15, 16],
+      toVersion: 17,
+      appliedMigrations: [14, 15, 16, 17],
     });
     expect(
       sqlite

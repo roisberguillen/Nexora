@@ -348,7 +348,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 16 });
+    expect(metadata).toEqual({ key: "schema_version", value: 17 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -664,7 +664,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(16);
+    expect(ledger.schemaVersion).toBe(17);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -783,6 +783,71 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.close();
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
+  });
+
+  it("persists advanced recurring fields and opens a legacy-shaped record after reopening", async () => {
+    const savedAccount = account("account-recurring-advanced");
+    await ledger.repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-idb-advanced",
+      name: "Assicurazione annuale",
+      kind: "expense",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-120_000n, "EUR"),
+      frequencyUnit: "year",
+      interval: 1,
+      nominalDay: 29,
+      nominalMonth: 2,
+      nextNominalDate: LocalDate.parse("2028-02-29"),
+      weekendPolicy: "previous_business_day",
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+      retiredAt: "2026-08-08T10:00:00.000Z",
+      enabled: false,
+    });
+    await ledger.repository.saveRecurringRule(rule);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
+
+    const legacyRule = RecurringRule.create({
+      id: "rule-idb-legacy",
+      name: "Canone legacy",
+      kind: "expense",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-9900n, "EUR"),
+      nominalDay: 31,
+      nextExpectedDate: LocalDate.parse("2026-07-31"),
+    });
+    await ledger.repository.saveRecurringRule(legacyRule);
+    const transaction = ledger.database.transaction("recurring_rules", "readwrite");
+    const store = transaction.objectStore("recurring_rules");
+    const request = store.get(legacyRule.id);
+    await new Promise<void>((resolve, reject) => {
+      request.onsuccess = () => {
+        const record = request.result as Record<string, unknown>;
+        delete record.frequency_unit;
+        delete record.interval_value;
+        delete record.nominal_month;
+        delete record.next_nominal_date;
+        delete record.weekend_policy_v2;
+        delete record.retired_at;
+        delete record.expense_variability;
+        delete record.expense_exceptionality;
+        const put = store.put(record);
+        put.onsuccess = () => resolve();
+        put.onerror = () => reject(put.error);
+      };
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error);
+    });
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listRecurringRules()).resolves.toContainEqual(legacyRule);
   });
   it("ripristina uno snapshot portabile e lo conserva alla riapertura", async () => {
     const source = new InMemoryLedgerRepository();

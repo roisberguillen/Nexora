@@ -1973,6 +1973,15 @@ interface RecurringRuleRecord {
   readonly weekend_policy: "none" | "salary_italy";
   readonly next_expected_date: string;
   readonly enabled: boolean;
+  /** v17 fields are optional so v16 records continue to open without a rewrite. */
+  readonly frequency_unit?: "week" | "month" | "year";
+  readonly interval_value?: number;
+  readonly nominal_month?: number;
+  readonly next_nominal_date?: string;
+  readonly weekend_policy_v2?: import("@nexora/domain").WeekendPolicy;
+  readonly retired_at?: string;
+  readonly expense_variability?: import("@nexora/domain").ExpenseVariability;
+  readonly expense_exceptionality?: import("@nexora/domain").ExpenseExceptionality;
 }
 
 interface AllocationPlanRecord {
@@ -2173,11 +2182,23 @@ function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
     ...(rule.categoryId === undefined ? {} : { category_id: rule.categoryId }),
     ...(rule.payee === undefined ? {} : { payee: rule.payee }),
     frequency: rule.frequency,
-    interval_months: rule.interval,
+    interval_months: rule.frequencyUnit === "month" ? rule.interval : 1,
     nominal_day: rule.nominalDay,
-    weekend_policy: rule.weekendPolicy,
+    weekend_policy: legacyWeekendPolicy(rule.weekendPolicy),
     next_expected_date: rule.nextExpectedDate.toString(),
     enabled: rule.enabled,
+    frequency_unit: rule.frequencyUnit,
+    interval_value: rule.interval,
+    ...(rule.nominalMonth === undefined ? {} : { nominal_month: rule.nominalMonth }),
+    next_nominal_date: rule.nextNominalDate.toString(),
+    weekend_policy_v2: rule.weekendPolicy,
+    ...(rule.retiredAt === undefined ? {} : { retired_at: rule.retiredAt }),
+    ...(rule.expenseVariability === undefined
+      ? {}
+      : { expense_variability: rule.expenseVariability }),
+    ...(rule.expenseExceptionality === undefined
+      ? {}
+      : { expense_exceptionality: rule.expenseExceptionality }),
   };
 }
 function recurringRuleFromRecord(row: RecurringRuleRecord): RecurringRule {
@@ -2190,12 +2211,30 @@ function recurringRuleFromRecord(row: RecurringRuleRecord): RecurringRule {
     ...(row.category_id === undefined ? {} : { categoryId: row.category_id }),
     ...(row.payee === undefined ? {} : { payee: row.payee }),
     frequency: row.frequency,
-    interval: row.interval_months,
+    frequencyUnit: row.frequency_unit ?? "month",
+    interval: row.interval_value ?? row.interval_months,
     nominalDay: row.nominal_day,
-    weekendPolicy: row.weekend_policy,
+    ...(row.nominal_month === undefined ? {} : { nominalMonth: row.nominal_month }),
+    weekendPolicy: row.weekend_policy_v2 ?? row.weekend_policy,
     nextExpectedDate: LocalDate.parse(row.next_expected_date),
+    ...(row.next_nominal_date === undefined
+      ? {}
+      : { nextNominalDate: LocalDate.parse(row.next_nominal_date) }),
     enabled: row.enabled,
+    ...(row.retired_at === undefined ? {} : { retiredAt: row.retired_at }),
+    ...(row.expense_variability === undefined
+      ? {}
+      : { expenseVariability: row.expense_variability }),
+    ...(row.expense_exceptionality === undefined
+      ? {}
+      : { expenseExceptionality: row.expense_exceptionality }),
   });
+}
+
+function legacyWeekendPolicy(
+  policy: import("@nexora/domain").WeekendPolicy,
+): "none" | "salary_italy" {
+  return policy === "salary_italy" ? "salary_italy" : "none";
 }
 interface ImportRowRecord {
   readonly id: string;

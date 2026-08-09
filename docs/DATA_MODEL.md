@@ -67,7 +67,13 @@ questa entità e saranno modellate separatamente.
 Relazione molti-a-molti.
 
 ### RecurringRule
-`id, templateTransactionId, frequency, interval, nominalDay?, weekendPolicy, nextExpectedDate, enabled`
+`id, name, kind, accountId, amount, categoryId?, payee?, frequencyUnit, interval, nominalDay,
+nominalMonth?, weekendPolicy, nextNominalDate, nextExpectedDate, enabled, retiredAt?`
+
+`frequencyUnit` è `week|month|year` e `interval` è un intero positivo: è l'unica fonte della
+frequenza. `nextNominalDate` è il cursore civile; `nextExpectedDate` è derivata dalla policy
+weekend e non sposta la serie nominale. Le regole legacy mensili restano leggibili. Una regola non
+crea movimenti automaticamente e non aggiunge alcun flag di ricorrenza alla `Transaction`.
 
 ### AllocationPlan
 `id, name, trigger, sourceAccountId, targetAccountId, amountMinor, currency, enabled`

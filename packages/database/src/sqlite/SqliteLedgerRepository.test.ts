@@ -31,6 +31,8 @@ import {
   validatePortableLedgerSnapshot,
 } from "../backup/PortableLedgerSnapshot";
 import { InMemoryLedgerRepository } from "../in-memory/InMemoryLedgerRepository";
+import { databaseMigrations } from "../migrations/0001-initial-ledger-schema";
+import { MigrationRunner } from "../migrations/MigrationRunner";
 import type { SqliteDatabase, SqliteValue } from "./SqliteDatabase";
 import { seedDemoLedger } from "../seed/demoLedgerSeed";
 import { initializeSqliteLedger } from "./initializeSqliteLedger";
@@ -673,8 +675,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 16,
-        toVersion: 16,
+        fromVersion: 17,
+        toVersion: 17,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -800,6 +802,77 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.updateRecurringRule(disabled);
     await expect(repository.listRecurringRules()).resolves.toEqual([disabled]);
+  });
+
+  it("round-trips the advanced recurring schedule fields", async () => {
+    const savedAccount = account("account-recurring-advanced");
+    await repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-sqlite-advanced",
+      name: "Assicurazione annuale",
+      kind: "expense",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-120_000n, "EUR"),
+      frequencyUnit: "year",
+      interval: 1,
+      nominalDay: 29,
+      nominalMonth: 2,
+      nextNominalDate: LocalDate.parse("2028-02-29"),
+      weekendPolicy: "previous_business_day",
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+      retiredAt: "2026-08-08T10:00:00.000Z",
+      enabled: false,
+    });
+
+    await repository.saveRecurringRule(rule);
+    await expect(repository.listRecurringRules()).resolves.toEqual([rule]);
+  });
+
+  it("opens a v16 monthly rule with an advanced-calendar legacy fallback", async () => {
+    const legacySqlite = new DatabaseSync(":memory:");
+    try {
+      const database = nodeSqliteDatabase(legacySqlite);
+      await new MigrationRunner({
+        database,
+        migrations: databaseMigrations.filter((migration) => migration.version <= 16),
+      }).migrateToLatest();
+      await database.run(
+        "INSERT INTO accounts (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        ["legacy-rule-account", "Conto legacy", "checking", null, "EUR", null, "0", 0],
+      );
+      await database.run(
+        "INSERT INTO recurring_rules (id, name, kind, account_id, amount_minor, currency, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          "legacy-rule",
+          "Canone legacy",
+          "expense",
+          "legacy-rule-account",
+          "-9900",
+          "EUR",
+          "monthly",
+          2,
+          31,
+          "none",
+          "2026-07-31",
+          1,
+        ],
+      );
+
+      const upgraded = await initializeSqliteLedger({ database });
+      await expect(upgraded.repository.listRecurringRules()).resolves.toMatchObject([
+        {
+          id: "legacy-rule",
+          frequencyUnit: "month",
+          interval: 2,
+          nominalDay: 31,
+          nextNominalDate: LocalDate.parse("2026-07-31"),
+          nextExpectedDate: LocalDate.parse("2026-07-31"),
+        },
+      ]);
+    } finally {
+      legacySqlite.close();
+    }
   });
 
   it("persiste un piano di allocazione", async () => {

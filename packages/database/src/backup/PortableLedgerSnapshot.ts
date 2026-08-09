@@ -210,11 +210,31 @@ export function validatePortableLedgerSnapshot(
       accountId: text(value, "accountId"),
       amount: money(value, "amount"),
       nominalDay: number(value, "nominalDay"),
-      nextExpectedDate: LocalDate.parse(text(value, "nextExpectedDate")),
-      frequency: text(value, "frequency") as "monthly",
+      ...(optionalText(value, "nextNominalDate") === undefined
+        ? { nextExpectedDate: LocalDate.parse(text(value, "nextExpectedDate")) }
+        : { nextNominalDate: LocalDate.parse(optionalText(value, "nextNominalDate")!) }),
+      frequencyUnit: (optionalText(value, "frequencyUnit") ?? "month") as "week" | "month" | "year",
       interval: number(value, "interval"),
-      weekendPolicy: text(value, "weekendPolicy") as "none" | "salary_italy",
+      weekendPolicy: text(value, "weekendPolicy") as
+        "none" | "salary_italy" | "previous_business_day" | "next_business_day",
       enabled: boolean(value, "enabled"),
+      ...(optionalNumber(value, "nominalMonth") === undefined
+        ? {}
+        : { nominalMonth: optionalNumber(value, "nominalMonth")! }),
+      ...(optionalText(value, "retiredAt") === undefined
+        ? {}
+        : { retiredAt: optionalText(value, "retiredAt")! }),
+      ...(optionalText(value, "expenseVariability") === undefined
+        ? {}
+        : {
+            expenseVariability: optionalText(value, "expenseVariability") as "fixed" | "variable",
+          }),
+      ...(optionalText(value, "expenseExceptionality") === undefined
+        ? {}
+        : {
+            expenseExceptionality: optionalText(value, "expenseExceptionality") as
+              "ordinary" | "extraordinary",
+          }),
       ...(optionalText(value, "categoryId") === undefined
         ? {}
         : { categoryId: optionalText(value, "categoryId")! }),

@@ -979,18 +979,7 @@ function copyBudgetWithCategory(budget: Budget, categoryId: string): Budget {
 
 function copyRuleWithCategory(rule: RecurringRule, categoryId: string): RecurringRule {
   return RecurringRule.create({
-    id: rule.id,
-    name: rule.name,
-    kind: rule.kind,
-    accountId: rule.accountId,
-    amount: rule.amount,
+    ...rule.toProps(),
     categoryId,
-    frequency: rule.frequency,
-    interval: rule.interval,
-    nominalDay: rule.nominalDay,
-    weekendPolicy: rule.weekendPolicy,
-    nextExpectedDate: rule.nextExpectedDate,
-    enabled: rule.enabled,
-    ...(rule.payee === undefined ? {} : { payee: rule.payee }),
   });
 }
