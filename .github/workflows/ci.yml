@@ -32,4 +32,15 @@ jobs:
       - run: pnpm build
       - run: pnpm manifest:check
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec playwright test
+      - run: >-
+          pnpm exec playwright test test/e2e/accounts.spec.ts test/e2e/dashboard.spec.ts
+          --project=chromium-1440
+          --grep "resta coerente con la baseline visuale"
+          --update-snapshots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-visual-baselines
+          if-no-files-found: error
+          path: |
+            test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-linux.png
+            test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-linux.png
