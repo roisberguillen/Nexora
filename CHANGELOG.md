@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Finalizzata la Fase 12.2: l'editor Ricorrenze aggiorna subito le categorie compatibili con il
+  tipo selezionato, non conserva valori della regola precedente e mantiene l'importo nel formato
+  decimale corretto durante la modifica.
+
 - Le spese possono ora conservare facoltativamente natura `fissa`/`variabile` ed evento
   `ordinario`/`straordinario`, senza modificare le categorie esistenti, le entrate, i
   trasferimenti o le rettifiche. La migrazione additiva v16, IndexedDB, SQLite/OPFS, backup

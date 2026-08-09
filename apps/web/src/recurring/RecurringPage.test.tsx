@@ -1,5 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { Account, Category, LocalDate, Money, RecurringRule } from "@nexora/domain";
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
 import { RecurringPage } from "./RecurringPage";
 
@@ -25,4 +27,86 @@ describe("RecurringPage", () => {
     );
     expect(screen.getByLabelText("Nome piano").closest("form")).toHaveClass("allocation-plan-form");
   });
+
+  it("updates category choices when the selected rule kind changes", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    const category = screen.getByLabelText("Categoria");
+
+    expect(within(category).getByRole("option", { name: "Stipendio" })).toBeVisible();
+    expect(within(category).queryByRole("option", { name: "Alimentari" })).toBeNull();
+
+    await user.selectOptions(screen.getByLabelText("Tipo"), "expense");
+
+    expect(
+      within(screen.getByLabelText("Categoria")).getByRole("option", { name: "Alimentari" }),
+    ).toBeVisible();
+    expect(
+      within(screen.getByLabelText("Categoria")).queryByRole("option", { name: "Stipendio" }),
+    ).toBeNull();
+  });
+
+  it("remounts the complete form when switching between rules and a new rule", async () => {
+    const user = userEvent.setup();
+    renderPage({ rules: [incomeRule, expenseRule] });
+
+    await user.click(screen.getAllByRole("button", { name: "Modifica" })[0]!);
+    expect(screen.getByLabelText("Nome")).toHaveValue("Stipendio");
+    expect(screen.getByLabelText("Tipo")).toHaveValue("income");
+    expect(screen.getAllByLabelText("Importo")[0]).toHaveValue("1200,00");
+
+    await user.click(screen.getAllByRole("button", { name: "Modifica" })[1]!);
+    expect(screen.getByLabelText("Nome")).toHaveValue("Spesa casa");
+    expect(screen.getByLabelText("Tipo")).toHaveValue("expense");
+
+    await user.click(screen.getByRole("button", { name: "Annulla" }));
+    expect(screen.getByLabelText("Nome")).toHaveValue("");
+    expect(screen.getByLabelText("Tipo")).toHaveValue("income");
+    expect(screen.getByLabelText("Categoria")).toHaveValue("");
+  });
 });
+
+const account = Account.create({ id: "account", name: "Conto", type: "checking", currency: "EUR" });
+const incomeCategory = Category.create({ id: "income", name: "Stipendio", kindScope: "income" });
+const expenseCategory = Category.create({
+  id: "expense",
+  name: "Alimentari",
+  kindScope: "expense",
+});
+const incomeRule = RecurringRule.create({
+  id: "income-rule",
+  name: "Stipendio",
+  kind: "income",
+  accountId: account.id,
+  amount: Money.fromMinor(120_000n, "EUR"),
+  nominalDay: 28,
+  nextExpectedDate: LocalDate.parse("2026-08-28"),
+});
+const expenseRule = RecurringRule.create({
+  id: "expense-rule",
+  name: "Spesa casa",
+  kind: "expense",
+  accountId: account.id,
+  amount: Money.fromMinor(-85_000n, "EUR"),
+  nominalDay: 28,
+  nextExpectedDate: LocalDate.parse("2026-08-28"),
+  categoryId: expenseCategory.id,
+});
+
+function renderPage({
+  rules = [] as readonly RecurringRule[],
+}: { rules?: readonly RecurringRule[] } = {}) {
+  return render(
+    <RecurringPage
+      accounts={[account]}
+      allocationPlans={[]}
+      categories={[incomeCategory, expenseCategory]}
+      onCreate={vi.fn(async () => undefined)}
+      onCreateAllocation={vi.fn(async () => undefined)}
+      onExecuteAllocations={vi.fn(async () => undefined)}
+      onDelete={vi.fn(async () => undefined)}
+      onUpdate={vi.fn(async () => undefined)}
+      rules={rules}
+    />,
+  );
+}

@@ -259,3 +259,23 @@ Keep only the latest relevant evidence per completed phase.
   transfer exclusion, transaction flow, responsive split controls, reset paths and axe scans.
 - Repository-wide `format:check` remains blocked only by the pre-existing, out-of-scope
   `apps/web/src/reset/financialReset.test.ts`; no Phase 12.2 file is unformatted.
+
+## Phase 12.2 final closure — 2026-08-09
+
+- The previous baseline-format blocker was isolated in `b8d3de1` and is now green under
+  `pnpm format:check`; the commit changes only Prettier formatting in
+  `apps/web/src/reset/financialReset.test.ts`.
+- The recurring editor now filters categories from the currently selected kind, remounts every
+  uncontrolled field when switching rule/new editor, and formats an existing monetary amount for
+  the decimal input. The last correction prevents an edited €2,500.00 rule from becoming
+  €250,000.00 and breaking its confirmed-salary allocation match.
+- Focused verification passed: recurring component and domain/persistence suites (66 tests), then
+  the recurring and transaction browser flows at 320, 375, 390, 768, 1024 and 1440 px. The flows
+  cover type/category switching, edit A → edit B → new, salary allocation after editing, split and
+  expense-details responsive controls, reset dialogs, keyboard Escape/focus return, axe checks and
+  horizontal-overflow assertions.
+- `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test` and production `pnpm build`
+  completed without failures. The `pnpm verify` aggregate re-ran the same formatting, lint,
+  typecheck, unit and production-build gates.
+- Final independent product/domain, import/backup and UX/UI reviews reported no unresolved P0 or
+  P1; no Phase 12.3 file or migration v17 is included.

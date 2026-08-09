@@ -6,6 +6,30 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
   await page.goto("/#recurring");
   await expect(page.getByRole("heading", { name: "Ricorrenze" })).toBeVisible();
+  const category = page.locator('select[name="categoryId"]');
+  const incomeCategoryIds = await category
+    .locator("option")
+    .evaluateAll((options) =>
+      options.map((option) => option.getAttribute("value")).filter(Boolean),
+    );
+  expect(incomeCategoryIds.length).toBeGreaterThan(0);
+  await page.getByLabel("Tipo").selectOption("expense");
+  const expenseCategoryIds = await category
+    .locator("option")
+    .evaluateAll((options) =>
+      options.map((option) => option.getAttribute("value")).filter(Boolean),
+    );
+  expect(expenseCategoryIds).not.toEqual(incomeCategoryIds);
+  await page.getByLabel("Tipo").selectOption("income");
+  await expect
+    .poll(() =>
+      category
+        .locator("option")
+        .evaluateAll((options) =>
+          options.map((option) => option.getAttribute("value")).filter(Boolean),
+        ),
+    )
+    .toEqual(incomeCategoryIds);
   await page.getByLabel("Nome", { exact: true }).fill("Stipendio sintetico");
   await page.locator('select[name="accountId"]').selectOption({ label: "Conto quotidiano demo" });
   await page.locator('input[name="amount"]').fill("2500,00");
@@ -51,6 +75,28 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await confirmation.getByRole("button", { name: "Esegui allocazioni" }).click();
   await expect(confirmation).not.toBeVisible();
   await expect(page.getByRole("status")).toContainText("Allocazioni stipendio registrate");
+  await page.goto("/#recurring");
+  await page.getByLabel("Nome", { exact: true }).fill("Affitto sintetico");
+  await page.getByLabel("Tipo").selectOption("expense");
+  await page.locator('select[name="accountId"]').selectOption({ label: "Conto quotidiano demo" });
+  await page.locator('input[name="amount"]').fill("850,00");
+  await page.getByLabel("Prossima data prevista").fill("2026-08-28");
+  await page.getByRole("button", { name: "Salva ricorrenza" }).click();
+  await expect(page.getByText("Affitto sintetico")).toBeVisible();
+  await page
+    .getByRole("row")
+    .filter({ hasText: "Stipendio confermabile" })
+    .getByRole("button", { name: "Modifica" })
+    .click();
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue("Stipendio confermabile");
+  await page
+    .getByRole("row")
+    .filter({ hasText: "Affitto sintetico" })
+    .getByRole("button", { name: "Modifica" })
+    .click();
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue("Affitto sintetico");
+  await page.getByRole("button", { name: "Annulla" }).click();
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue("");
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,

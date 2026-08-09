@@ -9,7 +9,7 @@ import { categoryLabel } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
-import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import type { RecurringRuleInput } from "./recurringCommands";
 import type { AllocationPlanInput } from "./allocationCommands";
 
@@ -35,8 +35,13 @@ export function RecurringPage({
   readonly onDelete: (id: string) => Promise<void>;
 }) {
   const [editing, setEditing] = useState<RecurringRule | null>(null);
+  const [formKind, setFormKind] = useState<"income" | "expense">("income");
   const [error, setError] = useState<string | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<RecurringRule | null>(null);
+  const openEditor = (rule: RecurringRule | null) => {
+    setFormKind(rule?.kind ?? "income");
+    setEditing(rule);
+  };
   const updateEnabled = async (rule: RecurringRule, enabled: boolean) => {
     try {
       await onUpdate(rule.id, ruleInput(rule, enabled));
@@ -82,7 +87,7 @@ export function RecurringPage({
       setError(null);
       if (editing === null) await onCreate(input);
       else await onUpdate(editing.id, input);
-      setEditing(null);
+      openEditor(null);
       event.currentTarget.reset();
     } catch {
       setError("Impossibile salvare la ricorrenza. Verifica conto, categoria, importo e data.");
@@ -137,7 +142,7 @@ export function RecurringPage({
                     <td data-label="Azioni">
                       <button
                         className="text-action"
-                        onClick={() => setEditing(rule)}
+                        onClick={() => openEditor(rule)}
                         type="button"
                       >
                         Modifica
@@ -193,19 +198,18 @@ export function RecurringPage({
               {error}
             </p>
           )}
-          <form className="account-form" onSubmit={save}>
+          <form className="account-form" key={editing?.id ?? "new"} onSubmit={save}>
             <label>
               Nome
-              <input
-                defaultValue={editing?.name ?? ""}
-                key={editing?.id ?? "new"}
-                name="name"
-                required
-              />
+              <input defaultValue={editing?.name ?? ""} name="name" required />
             </label>
             <label>
               Tipo
-              <select defaultValue={editing?.kind ?? "income"} name="kind">
+              <select
+                defaultValue={editing?.kind ?? "income"}
+                name="kind"
+                onChange={(event) => setFormKind(event.currentTarget.value as "income" | "expense")}
+              >
                 <option value="income">Entrata</option>
                 <option value="expense">Spesa</option>
               </select>
@@ -228,10 +232,12 @@ export function RecurringPage({
                 defaultValue={
                   editing === null
                     ? ""
-                    : (editing.amount.amountMinor < 0n
-                        ? -editing.amount.amountMinor
-                        : editing.amount.amountMinor
-                      ).toString()
+                    : formatEditableAmountMinor(
+                        editing.amount.amountMinor < 0n
+                          ? -editing.amount.amountMinor
+                          : editing.amount.amountMinor,
+                        editing.amount.currency,
+                      )
                 }
                 inputMode="decimal"
                 name="amount"
@@ -267,14 +273,17 @@ export function RecurringPage({
             </label>
             <label>
               Categoria
-              <select defaultValue={editing?.categoryId ?? ""} name="categoryId">
+              <select
+                defaultValue={editing?.categoryId ?? ""}
+                key={`category-${formKind}`}
+                name="categoryId"
+              >
                 <option value="">Nessuna</option>
                 {categories
                   .filter(
                     (category) =>
                       !category.isArchived &&
-                      (category.kindScope === "both" ||
-                        category.kindScope === (editing?.kind ?? "income")),
+                      (category.kindScope === "both" || category.kindScope === formKind),
                   )
                   .map((category) => (
                     <option key={category.id} value={category.id}>
@@ -292,7 +301,7 @@ export function RecurringPage({
               Attiva
             </label>
             <div className="form-actions">
-              <button className="secondary-action" onClick={() => setEditing(null)} type="button">
+              <button className="secondary-action" onClick={() => openEditor(null)} type="button">
                 Annulla
               </button>
               <button className="primary-action" type="submit">
