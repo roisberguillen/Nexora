@@ -2713,6 +2713,11 @@
       "sha256": "f88c35d7cac6cf065be7625e28785759c345c3eb3361eb3094bcbbbd411b3578"
     },
     {
+      "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-linux.png",
+      "size": 106327,
+      "sha256": "1f4f85b7b4ed6ea68f28f584d1472e11945d9173ed6bb883225ce3606e8c781e"
+    },
+    {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-win32.png",
       "size": 118568,
       "sha256": "913f9f93335fb653768ae8d2bb1438c2fa3ab45dce8f410e3e6d06930b6874ca"
@@ -2751,6 +2756,11 @@
       "path": "test/e2e/dashboard.spec.ts",
       "size": 1533,
       "sha256": "1f88558133a7387fbd7d65454dbd44e814cb58662aab75b8c48ab7a0d9c844a0"
+    },
+    {
+      "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-linux.png",
+      "size": 193637,
+      "sha256": "06d8c54c981b4d14bcadc9c8e500cce97b20381527716e4253133807aed3d34e"
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
