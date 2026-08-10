@@ -353,11 +353,6 @@
       "sha256": "71283cc3c8caea1b7750a4bbd315951a4794833a2ff08489244a49c1680d06f3"
     },
     {
-      "path": "apps/web/.env",
-      "size": 127,
-      "sha256": "806de6f22e5bca851cdb5653ad429c4995e766e6bd55821786cdbf59153575e9"
-    },
-    {
       "path": "apps/web/index.html",
       "size": 639,
       "sha256": "7a47c3cdcde4645219d8b585dbb7134cf0c74d97d1fc1e779eff8fe0c458c41b"
@@ -416,26 +411,6 @@
       "path": "apps/web/src-tauri/Cargo.toml",
       "size": 456,
       "sha256": "12b507e3a13386dbddbc20137e55b02aee4631182a353c8aba1d5cc888062760"
-    },
-    {
-      "path": "apps/web/src-tauri/gen/schemas/acl-manifests.json",
-      "size": 67659,
-      "sha256": "97e0156fed8ddd50f7459ecd170758b15516a02bfe2acb212def17cef7c035ad"
-    },
-    {
-      "path": "apps/web/src-tauri/gen/schemas/capabilities.json",
-      "size": 206,
-      "sha256": "b19652f584e1a80ab6b9537ad3e69a2da99f6428c525a0d7554c8370abed59bf"
-    },
-    {
-      "path": "apps/web/src-tauri/gen/schemas/desktop-schema.json",
-      "size": 119047,
-      "sha256": "ebf7fba573ec7689d9bd1b6c6ab6a9ceb147b62cf83b4e0adbc0452fca115528"
-    },
-    {
-      "path": "apps/web/src-tauri/gen/schemas/windows-schema.json",
-      "size": 119047,
-      "sha256": "ebf7fba573ec7689d9bd1b6c6ab6a9ceb147b62cf83b4e0adbc0452fca115528"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2729,8 +2704,8 @@
     },
     {
       "path": "scripts/project-manifest.mjs",
-      "size": 2823,
-      "sha256": "881edbf30686acf19a2ec8cf542737c38610143bb1acb7416f92e4e9a7950a3d"
+      "size": 2973,
+      "sha256": "bd4959b3bd1dc99cc6628314425e6fb12527e52a614ebbbf20113196af217978"
     },
     {
       "path": "scripts/verify-project.sh",
