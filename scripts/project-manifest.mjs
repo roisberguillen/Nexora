@@ -7,6 +7,7 @@ const root = process.cwd();
 const manifestPath = path.join(root, "PROJECT_MANIFEST.json");
 const ignoredDirectories = new Set([
   ".git",
+  ".tmp-stitch-instructions",
   "backups",
   "coverage",
   "dist",
