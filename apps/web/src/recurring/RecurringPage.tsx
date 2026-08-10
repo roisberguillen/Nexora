@@ -39,6 +39,9 @@ export function RecurringPage({
   const [frequencyUnit, setFrequencyUnit] = useState<RecurrenceUnit>("month");
   const [interval, setInterval] = useState(1);
   const [nominalDate, setNominalDate] = useState("");
+  const [nominalDay, setNominalDay] = useState(28);
+  const [nominalMonth, setNominalMonth] = useState(1);
+  const [weekendPolicy, setWeekendPolicy] = useState<WeekendPolicy>("none");
   const [error, setError] = useState<string | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<RecurringRule | null>(null);
   const openEditor = (rule: RecurringRule | null) => {
@@ -46,6 +49,9 @@ export function RecurringPage({
     setFrequencyUnit(rule?.frequencyUnit ?? "month");
     setInterval(rule?.interval ?? 1);
     setNominalDate(rule?.nextNominalDate.toString() ?? "");
+    setNominalDay(rule?.nominalDay ?? 28);
+    setNominalMonth(rule?.nominalMonth ?? 1);
+    setWeekendPolicy(rule?.weekendPolicy ?? "none");
     setEditing(rule);
   };
   const updateEnabled = async (rule: RecurringRule, enabled: boolean) => {
@@ -80,11 +86,21 @@ export function RecurringPage({
       amountMinor: kind === "expense" ? -abs(rawAmount) : abs(rawAmount),
       frequencyUnit,
       interval,
-      nominalDay: Number(form.get("nominalDay")),
-      ...(frequencyUnit === "year" ? { nominalMonth: Number(form.get("nominalMonth")) } : {}),
-      weekendPolicy: String(form.get("weekendPolicy")) as WeekendPolicy,
+      nominalDay,
+      ...(frequencyUnit === "year" ? { nominalMonth } : {}),
+      weekendPolicy,
       nextNominalDate: nominalDate,
       enabled: Boolean(form.get("enabled")),
+      ...(kind === "expense" && editing?.kind === "expense"
+        ? {
+            ...(editing.expenseVariability === undefined
+              ? {}
+              : { expenseVariability: editing.expenseVariability }),
+            ...(editing.expenseExceptionality === undefined
+              ? {}
+              : { expenseExceptionality: editing.expenseExceptionality }),
+          }
+        : {}),
       ...(optional(String(form.get("categoryId") ?? "")) === undefined
         ? {}
         : { categoryId: optional(String(form.get("categoryId") ?? ""))! }),
@@ -282,18 +298,23 @@ export function RecurringPage({
             <label>
               Giorno nominale
               <input
-                defaultValue={editing?.nominalDay ?? 28}
                 max="31"
                 min="1"
                 name="nominalDay"
+                onChange={(event) => setNominalDay(Number(event.currentTarget.value))}
                 type="number"
                 required
+                value={nominalDay}
               />
             </label>
             {frequencyUnit !== "year" ? null : (
               <label>
                 Mese nominale
-                <select defaultValue={editing?.nominalMonth ?? 1} name="nominalMonth">
+                <select
+                  name="nominalMonth"
+                  onChange={(event) => setNominalMonth(Number(event.currentTarget.value))}
+                  value={nominalMonth}
+                >
                   {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => (
                     <option key={month} value={month}>
                       {month}
@@ -315,8 +336,14 @@ export function RecurringPage({
             </label>
             <label>
               Policy weekend
-              <select defaultValue={editing?.weekendPolicy ?? "none"} name="weekendPolicy">
+              <select
+                name="weekendPolicy"
+                onChange={(event) => setWeekendPolicy(event.currentTarget.value as WeekendPolicy)}
+                value={weekendPolicy}
+              >
                 <option value="none">Nessuna</option>
+                <option value="previous_business_day">Giorno lavorativo precedente</option>
+                <option value="next_business_day">Giorno lavorativo successivo</option>
                 <option value="salary_italy">Stipendio italiano</option>
               </select>
             </label>
@@ -357,9 +384,9 @@ export function RecurringPage({
               frequencyUnit={frequencyUnit}
               interval={interval}
               nominalDate={nominalDate}
-              nominalDay={editing?.nominalDay ?? 28}
-              nominalMonth={editing?.nominalMonth}
-              weekendPolicy={editing?.weekendPolicy ?? "none"}
+              nominalDay={nominalDay}
+              nominalMonth={frequencyUnit === "year" ? nominalMonth : undefined}
+              weekendPolicy={weekendPolicy}
             />
             <div className="form-actions">
               <button className="secondary-action" onClick={() => openEditor(null)} type="button">
@@ -578,6 +605,12 @@ function ruleInput(rule: RecurringRule, enabled: boolean): RecurringRuleInput {
     weekendPolicy: rule.weekendPolicy,
     enabled,
     ...(rule.nominalMonth === undefined ? {} : { nominalMonth: rule.nominalMonth }),
+    ...(rule.expenseVariability === undefined
+      ? {}
+      : { expenseVariability: rule.expenseVariability }),
+    ...(rule.expenseExceptionality === undefined
+      ? {}
+      : { expenseExceptionality: rule.expenseExceptionality }),
     ...(rule.categoryId === undefined ? {} : { categoryId: rule.categoryId }),
     ...(rule.payee === undefined ? {} : { payee: rule.payee }),
   };

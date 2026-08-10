@@ -82,6 +82,44 @@ describe("RecurringPage", () => {
     await user.type(screen.getByLabelText("Intervallo"), "2");
     expect(screen.getByLabelText("Frequenza")).toHaveValue("week");
   });
+
+  it("preserves every supported weekend policy and expense behavior when pausing a rule", async () => {
+    const user = userEvent.setup();
+    const onUpdate = vi.fn(async () => undefined);
+    const classifiedRule = RecurringRule.create({
+      ...expenseRule.toProps(),
+      weekendPolicy: "next_business_day",
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+    });
+    render(
+      <RecurringPage
+        accounts={[account]}
+        allocationPlans={[]}
+        categories={[incomeCategory, expenseCategory]}
+        onCreate={vi.fn(async () => undefined)}
+        onCreateAllocation={vi.fn(async () => undefined)}
+        onExecuteAllocations={vi.fn(async () => undefined)}
+        onDelete={vi.fn(async () => undefined)}
+        onUpdate={onUpdate}
+        rules={[classifiedRule]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Modifica" }));
+    expect(screen.getByLabelText("Policy weekend")).toHaveValue("next_business_day");
+    await user.click(screen.getByRole("button", { name: "Metti in pausa" }));
+
+    expect(onUpdate).toHaveBeenCalledWith(
+      classifiedRule.id,
+      expect.objectContaining({
+        enabled: false,
+        weekendPolicy: "next_business_day",
+        expenseVariability: "fixed",
+        expenseExceptionality: "ordinary",
+      }),
+    );
+  });
 });
 
 const account = Account.create({ id: "account", name: "Conto", type: "checking", currency: "EUR" });

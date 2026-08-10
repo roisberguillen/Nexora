@@ -849,6 +849,33 @@ describe("IndexedDbLedgerRepository", () => {
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listRecurringRules()).resolves.toContainEqual(legacyRule);
   });
+
+  it("indexes active advanced recurring rules by their effective due date", async () => {
+    const savedAccount = account("account-recurring-index");
+    await ledger.repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-idb-index",
+      name: "Settimanale",
+      kind: "income",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(100n, "EUR"),
+      frequencyUnit: "week",
+      interval: 2,
+      nominalDay: 1,
+      nextNominalDate: LocalDate.parse("2026-06-01"),
+      weekendPolicy: "none",
+    });
+    await ledger.repository.saveRecurringRule(rule);
+
+    const transaction = ledger.database.transaction("recurring_rules", "readonly");
+    const index = transaction.objectStore("recurring_rules").index("by_active_due_date");
+    const rows = await new Promise<readonly { readonly id: string }[]>((resolve, reject) => {
+      const request = index.getAll(["active", "2026-06-01"]);
+      request.onsuccess = () => resolve(request.result as readonly { readonly id: string }[]);
+      request.onerror = () => reject(request.error);
+    });
+    expect(rows.map((row) => row.id)).toContain(rule.id);
+  });
   it("ripristina uno snapshot portabile e lo conserva alla riapertura", async () => {
     const source = new InMemoryLedgerRepository();
     const sourceAccount = account("portable-account");

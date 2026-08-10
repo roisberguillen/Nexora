@@ -2084,13 +2084,13 @@
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.test.tsx",
-      "size": 4970,
-      "sha256": "23142b942d75c26bcd92343fb6f0aa80bf13246228e3253cb05f90caf2c360af"
+      "size": 6317,
+      "sha256": "ecf7ed34dbca47e3e8e3b1bd83980449e197d40ce0b62053480994f2736caee5"
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 24210,
-      "sha256": "2e3e87ec7394f5567089bbf3919980a96b4b060b2f0bd665b0fde731a6a9e9e5"
+      "size": 25539,
+      "sha256": "554ed72c0782965395fc44f00fdd6c3006c4b64244e1e3e9122c2f4930b4a88a"
     },
     {
       "path": "apps/web/src/reset/financialReset.test.ts",
@@ -2954,18 +2954,18 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 33957,
-      "sha256": "3014a090f1fd29aaa23f379dc46bc00cc757f4633f42f1ae55639a4085ccfcc4"
+      "size": 35123,
+      "sha256": "2292e97f845bcc461fe2451ca362503707497a8ad9dacbf47ec93a7771c8e69a"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 93603,
-      "sha256": "ca2f79cc99e6093dbba433d03a6ffa246261024dcb39b97391ed56b35ed8c117"
+      "size": 93842,
+      "sha256": "e7339cf945f7d1aa11c382bbc84a8f6ff47143591997a2f68024200a6aeaf4ee"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 12049,
-      "sha256": "5f0ce550e99d7fb9b71bf94565e3123d7452a8c85d5cc7cd5526cff098f27d92"
+      "size": 12071,
+      "sha256": "e5af7761dc8487d0913aa1f8d6b210fb8dae0423e345795af6d6c0bea7d33bd9"
     },
     {
       "path": "packages/database/src/Ledger.ts",

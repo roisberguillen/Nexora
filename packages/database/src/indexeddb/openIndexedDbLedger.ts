@@ -243,8 +243,10 @@ function openDatabase(factory: IDBFactory, databaseName: string): Promise<IDBDat
         if (!recurringRules.indexNames.contains("by_active_due_date")) {
           recurringRules.createIndex(
             "by_active_due_date",
-            ["retired_at", "enabled", "next_expected_date"],
-            { unique: false },
+            ["active_due_state", "next_expected_date"],
+            {
+              unique: false,
+            },
           );
         }
         if (event.oldVersion > 0) {

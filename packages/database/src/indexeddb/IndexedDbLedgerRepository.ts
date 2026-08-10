@@ -1973,6 +1973,8 @@ interface RecurringRuleRecord {
   readonly weekend_policy: "none" | "salary_italy";
   readonly next_expected_date: string;
   readonly enabled: boolean;
+  /** IndexedDB keys do not support booleans; this mirrors SQLite's active-rule predicate. */
+  readonly active_due_state?: "active" | "inactive";
   /** v17 fields are optional so v16 records continue to open without a rewrite. */
   readonly frequency_unit?: "week" | "month" | "year";
   readonly interval_value?: number;
@@ -2187,6 +2189,7 @@ function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
     weekend_policy: legacyWeekendPolicy(rule.weekendPolicy),
     next_expected_date: rule.nextExpectedDate.toString(),
     enabled: rule.enabled,
+    active_due_state: rule.enabled && rule.retiredAt === undefined ? "active" : "inactive",
     frequency_unit: rule.frequencyUnit,
     interval_value: rule.interval,
     ...(rule.nominalMonth === undefined ? {} : { nominal_month: rule.nominalMonth }),
