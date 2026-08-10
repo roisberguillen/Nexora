@@ -2954,8 +2954,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 35123,
-      "sha256": "2292e97f845bcc461fe2451ca362503707497a8ad9dacbf47ec93a7771c8e69a"
+      "size": 38850,
+      "sha256": "2b64a47e0cb2b591943459d01cfdf3a1484511af19dfcd46623450be358bfe6c"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
@@ -2964,8 +2964,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 12071,
-      "sha256": "e5af7761dc8487d0913aa1f8d6b210fb8dae0423e345795af6d6c0bea7d33bd9"
+      "size": 13496,
+      "sha256": "fa3f04a44f339b0efd829d167f88cd55acf59af0487082b054d4c4185ff4ce64"
     },
     {
       "path": "packages/database/src/Ledger.ts",
