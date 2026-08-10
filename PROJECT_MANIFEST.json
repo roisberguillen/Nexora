@@ -2834,8 +2834,8 @@
     },
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
-      "size": 2003,
-      "sha256": "6b27d1537d1eef095a16e936db84f088fe30b50143c0e0be90689c1bef953f29"
+      "size": 1984,
+      "sha256": "d705d0fe4d64596f36566fbaa2a8d44d080bbfc73437aa5db434c77fd8840d34"
     },
     {
       "path": "test/e2e/investments.spec.ts",
