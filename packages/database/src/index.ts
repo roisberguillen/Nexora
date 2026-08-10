@@ -50,6 +50,7 @@ export {
 export { IndexedDbLedgerRepository } from "./indexeddb/IndexedDbLedgerRepository";
 export {
   INDEXED_DB_SCHEMA_VERSION,
+  PORTABLE_LEDGER_SCHEMA_VERSION,
   isIndexedDbSupported,
   openIndexedDbLedger,
   type IndexedDbLedger,

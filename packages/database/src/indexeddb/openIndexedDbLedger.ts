@@ -1,7 +1,9 @@
 import { PersistenceError } from "../sqlite/PersistenceError";
+import { databaseMigrations } from "../migrations/0001-initial-ledger-schema";
 import { IndexedDbLedgerRepository } from "./IndexedDbLedgerRepository";
 
 export const INDEXED_DB_SCHEMA_VERSION = 18;
+export const PORTABLE_LEDGER_SCHEMA_VERSION = databaseMigrations.at(-1)?.version ?? 0;
 
 const defaultDatabaseName = "nexora-ledger";
 const databaseNamePattern = /^[A-Za-z0-9._-]+$/;
@@ -15,6 +17,7 @@ export interface IndexedDbLedger {
   readonly database: IDBDatabase;
   readonly repository: IndexedDbLedgerRepository;
   readonly schemaVersion: number;
+  readonly portableSchemaVersion: number;
   readonly storageKind: "indexeddb";
   close(): Promise<void>;
 }
@@ -49,6 +52,7 @@ export async function openIndexedDbLedger(
     database,
     repository,
     schemaVersion: database.version,
+    portableSchemaVersion: PORTABLE_LEDGER_SCHEMA_VERSION,
     storageKind: "indexeddb",
     async close(): Promise<void> {
       repository.close();

@@ -6,7 +6,10 @@ import { Account, Money } from "@nexora/domain";
 import { IDBFactory } from "fake-indexeddb";
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { INDEXED_DB_SCHEMA_VERSION, openIndexedDbLedger } from "../indexeddb/openIndexedDbLedger";
+import {
+  PORTABLE_LEDGER_SCHEMA_VERSION,
+  openIndexedDbLedger,
+} from "../indexeddb/openIndexedDbLedger";
 import { initializeSqliteLedger } from "../sqlite/initializeSqliteLedger";
 import type { SqliteDatabase, SqliteValue } from "../sqlite/SqliteDatabase";
 import {
@@ -60,7 +63,7 @@ beforeAll(async () => {
     await source.repository.saveAccount(sourceAccount);
     const engine = new PortableBackupEngine({
       repository: source.repository,
-      schemaVersion: source.schemaVersion,
+      schemaVersion: source.portableSchemaVersion,
       appVersion: "0.5.0",
       now: () => new Date(createdAt),
       idFactory: () => "test-backup",
@@ -72,7 +75,7 @@ beforeAll(async () => {
       createdAt,
       checksumSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
       manifest: {
-        schemaVersion: INDEXED_DB_SCHEMA_VERSION,
+        schemaVersion: PORTABLE_LEDGER_SCHEMA_VERSION,
         appVersion: "0.5.0",
       },
     });
@@ -82,7 +85,7 @@ beforeAll(async () => {
     futureArchive = await createEncryptedPayloadBackup({
       payloadBytes: payload,
       path: "ledger.json",
-      schemaVersion: INDEXED_DB_SCHEMA_VERSION + 1,
+      schemaVersion: PORTABLE_LEDGER_SCHEMA_VERSION + 1,
       createdAt,
       passphrase,
     });
@@ -106,7 +109,7 @@ describe("PortableBackupEngine", () => {
 
       await expect(engine.verifyBackup(archive, passphrase)).resolves.toMatchObject({
         checksumSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
-        manifest: { schemaVersion: INDEXED_DB_SCHEMA_VERSION },
+        manifest: { schemaVersion: PORTABLE_LEDGER_SCHEMA_VERSION },
       });
       await engine.restoreBackup(archive, passphrase);
 
@@ -125,7 +128,7 @@ describe("PortableBackupEngine", () => {
       await destination.repository.saveAccount(previousAccount);
       const engine = new PortableBackupEngine({
         repository: destination.repository,
-        schemaVersion: destination.schemaVersion,
+        schemaVersion: destination.portableSchemaVersion,
       });
 
       await engine.restoreBackup(archive, passphrase);
@@ -145,7 +148,7 @@ describe("PortableBackupEngine", () => {
       await destination.repository.saveAccount(previousAccount);
       const engine = new PortableBackupEngine({
         repository: destination.repository,
-        schemaVersion: destination.schemaVersion,
+        schemaVersion: destination.portableSchemaVersion,
       });
       const tampered = archive.slice();
       tampered[tampered.length - 1] = (tampered.at(-1) ?? 0) ^ 1;
@@ -188,7 +191,7 @@ describe("PortableBackupEngine", () => {
       }) as PortableBackupRepository;
       const engine = new PortableBackupEngine({
         repository,
-        schemaVersion: destination.schemaVersion,
+        schemaVersion: destination.portableSchemaVersion,
       });
 
       await expect(engine.restoreBackup(archive, passphrase)).rejects.toMatchObject({

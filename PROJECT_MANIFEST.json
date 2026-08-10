@@ -2909,8 +2909,8 @@
     },
     {
       "path": "packages/database/src/backup/PortableBackupEngine.test.ts",
-      "size": 7239,
-      "sha256": "2f52574406243b1fa55dadd7770024f54c7318885b645c3884d5677b4be68afa"
+      "size": 7296,
+      "sha256": "7ee918d3118e5aeda0a9ca0157a0a9961fedc0962936ef04ff29c3ae82475db1"
     },
     {
       "path": "packages/database/src/backup/PortableBackupEngine.ts",
@@ -2929,13 +2929,13 @@
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
-      "size": 4502,
-      "sha256": "936acc28d59c06576180f6e56194cee2091eab4141d31eef477726c2b22d1884"
+      "size": 4532,
+      "sha256": "957b1fda017e664730bfeaf1960c2043e47fd3b91dea5423e1a35644c5d43cb4"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 5001,
-      "sha256": "d7657da6f500ba794b3eab1e17087192b2f9630ef8afab20ef04ae96c476213f"
+      "size": 5009,
+      "sha256": "50122e92b7c8a23ac8f5219890d471032da3208714f86ff6a0db38a7bbc20358"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
@@ -2949,8 +2949,8 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 5161,
-      "sha256": "3025658cbee6c2fe972f26d9c11a88e19d909eafb0568b5284d0533bdee91252"
+      "size": 5195,
+      "sha256": "7b768fbeb7c521c00a2b106d32517702e771da8c5d5979215f9d1aee80cc2c96"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
@@ -2964,8 +2964,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 13496,
-      "sha256": "fa3f04a44f339b0efd829d167f88cd55acf59af0487082b054d4c4185ff4ce64"
+      "size": 13763,
+      "sha256": "a748e1216b62bbffccfe2d5e7a84ff2f4a46cc5d27b8903a494b2bf01c42983a"
     },
     {
       "path": "packages/database/src/Ledger.ts",
