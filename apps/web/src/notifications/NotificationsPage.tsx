@@ -1,4 +1,12 @@
-import type { Account, Budget, Loan, RecurringRule, Transaction } from "@nexora/domain";
+import type {
+  Account,
+  Budget,
+  Category,
+  Loan,
+  RecurringRule,
+  Transaction,
+  TransactionSplit,
+} from "@nexora/domain";
 import { useMemo, useState } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
@@ -16,15 +24,19 @@ import {
 export function NotificationsPage({
   accounts,
   budgets,
+  categories,
   loans,
   recurringRules,
   transactions,
+  transactionSplits,
 }: {
   readonly accounts: readonly Account[];
   readonly budgets: readonly Budget[];
+  readonly categories: readonly Category[];
   readonly loans: readonly Loan[];
   readonly recurringRules: readonly RecurringRule[];
   readonly transactions: readonly Transaction[];
+  readonly transactionSplits: readonly TransactionSplit[];
 }) {
   const [preferences, setPreferences] = useState<LocalNotificationPreferences>(() =>
     readLocalNotificationPreferences(),
@@ -41,12 +53,23 @@ export function NotificationsPage({
       deriveLocalNotifications({
         accounts,
         budgets,
+        categories,
         loans,
         lowBalanceThresholdMinor: preferences.lowBalanceThresholdMinor,
         recurringRules,
         transactions,
+        transactionSplits,
       }),
-    [accounts, budgets, loans, preferences.lowBalanceThresholdMinor, recurringRules, transactions],
+    [
+      accounts,
+      budgets,
+      categories,
+      loans,
+      preferences.lowBalanceThresholdMinor,
+      recurringRules,
+      transactions,
+      transactionSplits,
+    ],
   );
   const [states, setStates] = useState<LocalNotificationStates>(() =>
     readLocalNotificationStates(),

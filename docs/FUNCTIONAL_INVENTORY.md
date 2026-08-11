@@ -13,7 +13,7 @@ repository, basata sulle 98 schermate Stitch, è in
 | Movimenti | `#transactions` | esistente da rifattorizzare | Fase 6 |
 | Import/export | `#imports`, `#exports` | esistente incompleto | Fase 8 |
 | Backup | `#backup` | file portabile manuale e Drive; engine da rifattorizzare | Fasi 9–11 |
-| Pianificazione | budget, ricorrenze, allocazioni | ricorrenze mensili con pausa/riattivazione/eliminazione confermata; frequenze avanzate pianificate | Fase 12 |
+| Pianificazione | budget, ricorrenze, allocazioni | budget mensili CRUD con perimetro macro/sottocategoria, split e soglie; ricorrenze avanzate con pausa/riattivazione/eliminazione confermata | Fase 12 |
 | Patrimonio | prestiti, investimenti | esistente da rifattorizzare | Fase 12 |
 | Analisi e diario | analytics, journal | riepilogo puro della natura delle spese disponibile al dominio; visualizzazione avanzata pianificata | Fase 12 |
 | Organizzazione | categorie, tag, cestino | esistente da rifattorizzare | Fase 12 |

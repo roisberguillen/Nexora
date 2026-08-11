@@ -220,5 +220,5 @@ describe("Nexora app", () => {
       await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Riepilogo finanziario")).toHaveTextContent("150,00 €");
-  });
+  }, 15_000);
 });

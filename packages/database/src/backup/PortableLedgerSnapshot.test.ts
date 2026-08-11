@@ -1,4 +1,12 @@
-import { Account, LocalDate, Money, RecurringRule, Transaction } from "@nexora/domain";
+import {
+  Account,
+  Budget,
+  Category,
+  LocalDate,
+  Money,
+  RecurringRule,
+  Transaction,
+} from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 import {
   capturePortableLedgerSnapshot,
@@ -73,6 +81,36 @@ describe("portable ledger snapshot", () => {
     expect(
       validatePortableLedgerSnapshot(legacy).transactions[0]?.expenseVariability,
     ).toBeUndefined();
+  });
+
+  it("preserves a hierarchical budget scope and alerts in a portable snapshot", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveCategory(
+      Category.create({ id: "living", name: "Casa", kindScope: "expense" }),
+    );
+    await repository.saveBudget(
+      Budget.create({
+        id: "living-august",
+        period: "2026-08",
+        categoryId: "living",
+        amount: Money.fromMinor(120_000n, "EUR"),
+        alertAt80: false,
+        alertAt100: true,
+      }),
+    );
+
+    const snapshot = decodePortableLedgerSnapshot(
+      encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+    );
+    expect(validatePortableLedgerSnapshot(snapshot).budgets).toMatchObject([
+      {
+        id: "living-august",
+        period: "2026-08",
+        categoryId: "living",
+        alertAt80: false,
+        alertAt100: true,
+      },
+    ]);
   });
 
   it("round-trips advanced recurring schedules while accepting a legacy monthly rule", async () => {

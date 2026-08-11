@@ -1705,6 +1705,21 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public listAllTransactionSplits(): Promise<readonly TransactionSplit[]> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["transaction_splits"], "readonly", async (transaction) =>
+          (await requestResult<unknown[]>(transaction.objectStore("transaction_splits").getAll()))
+            .map((row) => transactionSplitFromRecord(row as TransactionSplitRecord))
+            .sort((left, right) =>
+              left.transactionId === right.transactionId
+                ? left.id.localeCompare(right.id)
+                : left.transactionId.localeCompare(right.transactionId),
+            ),
+        ),
+      ),
+    );
+  }
   public async listImportRows(batchId: string): Promise<readonly ImportRow[]> {
     return this.performDatabaseOperation(() =>
       this.withTransaction(["import_rows"], "readonly", async (transaction) =>
@@ -1917,15 +1932,32 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     transaction: IDBTransaction,
     budget: Budget,
   ): Promise<void> {
-    if (budget.categoryId === undefined) return;
-    const record = await requestResult<unknown>(
-      transaction.objectStore("categories").get(budget.categoryId),
-    );
-    if (record === undefined)
-      throw new DomainError("missing_reference", "Budget category is not available.");
-    const category = categoryFromRecord(record as CategoryRecord);
-    if (category.isArchived || !category.accepts("expense"))
-      throw new DomainError("invalid_category", "Budget category must accept expenses.");
+    if (budget.categoryId !== undefined) {
+      const record = await requestResult<unknown>(
+        transaction.objectStore("categories").get(budget.categoryId),
+      );
+      if (record === undefined)
+        throw new DomainError("missing_reference", "Budget category is not available.");
+      const category = categoryFromRecord(record as CategoryRecord);
+      if (category.isArchived || !category.accepts("expense"))
+        throw new DomainError("invalid_category", "Budget category must accept expenses.");
+    }
+    const budgets = await requestResult<unknown[]>(transaction.objectStore("budgets").getAll());
+    if (
+      budgets.some((value) => {
+        const other = value as BudgetRecord;
+        return (
+          other.id !== budget.id &&
+          other.period === budget.period &&
+          other.category_id === budget.categoryId
+        );
+      })
+    ) {
+      throw new DomainError(
+        "duplicate_entity",
+        "A budget already exists for this category and period.",
+      );
+    }
   }
 
   private async findAccountInStore(

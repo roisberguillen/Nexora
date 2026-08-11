@@ -11,6 +11,7 @@ import type {
   RecurringRule,
   Tag,
   Transaction,
+  TransactionSplit,
   TrashedTransaction,
 } from "@nexora/domain";
 import type { Ledger } from "@nexora/database";
@@ -35,6 +36,7 @@ export interface AppModels {
   readonly allocationPlans: readonly AllocationPlan[];
   readonly rawAccounts: readonly Account[];
   readonly rawTransactions: readonly Transaction[];
+  readonly transactionSplits: readonly TransactionSplit[];
   readonly accounts: AccountsViewModel;
   readonly categories: readonly Category[];
   readonly tags: readonly Tag[];
@@ -68,6 +70,7 @@ export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
     recurringRules,
     tags,
     transactions,
+    transactionSplits,
     transfers,
     trashedTransactions,
   } = snapshot;
@@ -111,6 +114,7 @@ export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
     recurringRules,
     rawAccounts: accounts,
     rawTransactions: transactions,
+    transactionSplits,
     categories,
     tags,
     trashedTransactions,

@@ -1013,6 +1013,24 @@ describe("IndexedDbLedgerRepository", () => {
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listBudgets()).resolves.toEqual([budget]);
   });
+  it("rifiuta budget globali duplicati nello stesso periodo", async () => {
+    await ledger.repository.saveBudget(
+      Budget.create({
+        id: "budget-global-one",
+        period: "2026-08",
+        amount: Money.fromMinor(50_000n, "EUR"),
+      }),
+    );
+    await expect(
+      ledger.repository.saveBudget(
+        Budget.create({
+          id: "budget-global-two",
+          period: "2026-08",
+          amount: Money.fromMinor(60_000n, "EUR"),
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+  });
   it("persiste un prestito dopo la riapertura", async () => {
     const loan = Loan.create({
       id: "loan-idb",

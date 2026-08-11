@@ -12,6 +12,7 @@ import type {
   Tag,
   TrashedTransaction,
   Transaction,
+  TransactionSplit,
   Transfer,
 } from "@nexora/domain";
 
@@ -31,6 +32,7 @@ export interface LedgerSnapshot {
   readonly recurringRules: readonly RecurringRule[];
   readonly tags: readonly Tag[];
   readonly transactions: readonly Transaction[];
+  readonly transactionSplits: readonly TransactionSplit[];
   readonly transfers: readonly Transfer[];
   readonly trashedTransactions: readonly TrashedTransaction[];
 }
@@ -48,6 +50,7 @@ export type LedgerSnapshotRepository = Pick<
   | "listRecurringRules"
   | "listTags"
   | "listTransactions"
+  | "listAllTransactionSplits"
   | "listTransfers"
   | "listTrashedTransactions"
 >;
@@ -64,6 +67,7 @@ export type LedgerReadCode =
   | "NX-READ-RECURRING"
   | "NX-READ-TAGS"
   | "NX-READ-TRANSACTIONS"
+  | "NX-READ-TRANSACTION-SPLITS"
   | "NX-READ-TRANSFERS"
   | "NX-READ-TRASH";
 
@@ -96,6 +100,7 @@ export async function readLedgerSnapshot(
     recurringRules,
     tags,
     transactions,
+    transactionSplits,
     transfers,
     trashedTransactions,
   ] = await Promise.all([
@@ -119,6 +124,9 @@ export async function readLedgerSnapshot(
     readLedgerCollection("NX-READ-TRANSACTIONS", "transactions", () =>
       repository.listTransactions(),
     ),
+    readLedgerCollection("NX-READ-TRANSACTION-SPLITS", "transaction splits", () =>
+      repository.listAllTransactionSplits(),
+    ),
     readLedgerCollection("NX-READ-TRANSFERS", "transfers", () => repository.listTransfers()),
     readLedgerCollection("NX-READ-TRASH", "trashed transactions", () =>
       repository.listTrashedTransactions(),
@@ -137,6 +145,7 @@ export async function readLedgerSnapshot(
     recurringRules,
     tags,
     transactions,
+    transactionSplits,
     transfers,
     trashedTransactions,
   });

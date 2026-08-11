@@ -9,6 +9,11 @@
 
 ### Changed
 
+- Finalizzata la Fase 12.4: i budget mensili supportano creazione, modifica ed eliminazione
+  confermata, perimetri globali, macro-categorie e sottocategorie. Il consumo usa solo spese
+  contabilizzate, attribuisce correttamente gli split senza doppio conteggio e mantiene il vincolo
+  di un solo budget per periodo e perimetro su SQLite/OPFS, IndexedDB e memoria.
+
 - Finalizzata la Fase 12.3: le ricorrenze supportano calendario settimanale, mensile e annuale con
   intervallo, data nominale distinta dalla data effettiva e migrazione additiva v17. Le anteprime
   restano non distruttive e non creano movimenti automaticamente.

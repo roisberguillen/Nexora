@@ -2,6 +2,19 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-11 — Budget gerarchici e attribuzione degli split
+
+- **Contesto:** i budget devono restare leggibili con la tassonomia Macro → Sottocategoria e
+  attribuire correttamente un movimento ripartito senza alterare il ledger.
+- **Scelta:** un budget su una macro include la macro e tutti i discendenti, anche archiviati nello
+  storico; un budget su una sottocategoria resta diretto. Macro e sottocategoria possono coesistere
+  nello stesso periodo, mentre è vietato duplicare il medesimo perimetro, incluso quello globale.
+  Una transazione split contribuisce esclusivamente con le righe split compatibili e non con la
+  madre priva di categoria.
+- **Conseguenze:** speso, residuo, percentuale e stato sono calcoli puri in minor units condivisi
+  da pagine Budget e notifiche locali. Nessun nuovo campo o migrazione è necessario: schema,
+  snapshot portabile, reset e import mantengono i budget già salvati.
+
 ## 2026-08-08 — Tassonomia finanziaria a due livelli
 
 - **Contesto:** `Category.parentId` esisteva già nel ledger, ma UI e repository non limitavano in

@@ -18,7 +18,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
-| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1 categorie gerarchiche e slice 12.2 natura spese/ricorrenze completate |
+| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1–12.4 completate; Fase 13 non avviata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
 | 15 | Nexora Local Hub | pianificata |
@@ -43,6 +43,20 @@ Commit e push su `origin/main`.
   esplicite azioni di pausa, riattivazione ed eliminazione confermata.
 - [x] Export CSV/XLSX include le due colonne comportamentali; JSON conserva gli attributi del
   movimento. L'import non deduce mai classificazioni da nomi o categorie legacy.
+
+### Evidenze slice 12.4 — budget gerarchici
+
+- [x] Ogni budget ha creazione, modifica ed eliminazione confermata senza cancellare movimenti;
+  il mese corrente è precompilato nella timezone `Europe/Rome`.
+- [x] Il perimetro di una macro include tutte le sottocategorie, incluse quelle archiviate per lo
+  storico; una sottocategoria resta circoscritta e può convivere con il budget della macro.
+- [x] Il calcolo puro usa solo spese `booked` o `reconciled`, attribuisce gli split alla sola riga
+  categoria e impedisce il doppio conteggio della transazione madre.
+- [x] SQLite/OPFS, IndexedDB e memoria applicano lo stesso vincolo di unicità su periodo e
+  perimetro, compreso il budget globale; snapshot, backup, reset e import conservano i contratti
+  esistenti.
+- [x] La UI espone stato, progresso accessibile, residuo, soglie e messaggi operativi su mobile e
+  desktop; il percorso è verificato sui viewport 320, 375, 390, 768, 1024 e 1440 px.
 
 ## Gate permanente di orchestrazione
 

@@ -82,6 +82,11 @@ test("derives the next phase from the first planned roadmap row", () => {
   assert.equal(findNextRoadmapPhase("| 17 | Hardening | completata |"), undefined);
 });
 
+test("permits a current active phase before the next planned roadmap phase", async () => {
+  const result = await validateRepository(root);
+  assert.deepEqual(result.errors, []);
+});
+
 test("validates all required routes, profiles, skills and roadmap state", async () => {
   const result = await validateRepository(root);
   assert.deepEqual(result.errors, []);

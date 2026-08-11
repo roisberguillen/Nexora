@@ -102,6 +102,8 @@ export interface LedgerRepository {
   listTransactionTags(transactionId: string): Promise<readonly Tag[]>;
   listTransactions(): Promise<readonly Transaction[]>;
   listTransfers(): Promise<readonly Transfer[]>;
+  /** Reads all split rows once for read models that aggregate several transactions. */
+  listAllTransactionSplits(): Promise<readonly TransactionSplit[]>;
   listTransactionSplits(transactionId: string): Promise<readonly TransactionSplit[]>;
   listImportRows(batchId: string): Promise<readonly ImportRow[]>;
   listImportBatches(): Promise<readonly ImportBatch[]>;

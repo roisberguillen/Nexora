@@ -17,6 +17,7 @@ describe("readLedgerSnapshot", () => {
         "listRecurringRules",
         "listTags",
         "listTransactions",
+        "listAllTransactionSplits",
         "listTransfers",
         "listTrashedTransactions",
       ].map((name) => [name, vi.fn(async () => [])]),
@@ -36,6 +37,7 @@ describe("readLedgerSnapshot", () => {
       recurringRules: [],
       tags: [],
       transactions: [],
+      transactionSplits: [],
       transfers: [],
       trashedTransactions: [],
     });
@@ -61,6 +63,7 @@ describe("readLedgerSnapshot", () => {
         "listRecurringRules",
         "listTags",
         "listTransactions",
+        "listAllTransactionSplits",
         "listTransfers",
         "listTrashedTransactions",
       ].map((name) => [
