@@ -224,8 +224,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 918,
-      "sha256": "7a90178aa1920f9657b5dc069640439a18af2c76d5ae8ab2db514a582a9b18ab"
+      "size": 937,
+      "sha256": "5666a3ba1759c96adda6304acacb5d451e3dbe0baa6626f79efb2fe893d92651"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -249,8 +249,8 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 1806,
-      "sha256": "96e6631f97d670b405a0ec6b9c7188a5421092522e430ce73d9ee011f8e9e5ee"
+      "size": 1856,
+      "sha256": "ea3155a30830570d8c6c099489bb1f078dc5fd235fe855bd1747963eccc4eb60"
     },
     {
       "path": ".codex/state/test-evidence.md",
@@ -1679,8 +1679,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 15660,
-      "sha256": "164d8d26b6dc2b19c129077425d2dbcfd1467f19ebec0f7afcef4a67d788fab5"
+      "size": 15639,
+      "sha256": "c76175213f08937a402e425db0453e72f9438d98d61e88fbaa148ed88696af40"
     },
     {
       "path": "docs/ROADMAP.md",
