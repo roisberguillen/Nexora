@@ -1,6 +1,7 @@
 import {
   calculateAccountBalance,
   calculateBudgetProgress,
+  resolveActiveBudgetsForPeriod,
   type Account,
   type Budget,
   type Category,
@@ -64,7 +65,11 @@ export function deriveLocalNotifications(input: {
     transactionSplits = [],
     today = new Date(),
   } = input;
-  const currentPeriod = today.toISOString().slice(0, 7);
+  const currentPeriod = new Intl.DateTimeFormat("sv-SE", {
+    month: "2-digit",
+    timeZone: "Europe/Rome",
+    year: "numeric",
+  }).format(today);
   const notifications: LocalNotification[] = [];
   const history = input.backupHistory ?? readBackupHistory();
   const lastBackup = history.find(
@@ -106,10 +111,10 @@ export function deriveLocalNotifications(input: {
       title: `Saldo basso: ${account.name}`,
     });
   }
-  for (const budget of budgets) {
-    if (budget.period !== currentPeriod) continue;
+  for (const budget of resolveActiveBudgetsForPeriod(budgets, currentPeriod)) {
     const usage = calculateBudgetProgress({
       budget,
+      targetPeriod: currentPeriod,
       categories,
       splits: transactionSplits,
       transactions,
@@ -118,7 +123,7 @@ export function deriveLocalNotifications(input: {
       notifications.push({
         description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,
         href: "./#budgets",
-        id: `budget-threshold:${budget.id}:${budget.period}:${budget.firstAlertPercentage}`,
+        id: `budget-threshold:${budget.id}:${currentPeriod}:${budget.firstAlertPercentage}`,
         kind: "budget",
         priority: "medium",
         title: `Prima soglia budget raggiunta (${budget.firstAlertPercentage}%)`,
@@ -128,7 +133,7 @@ export function deriveLocalNotifications(input: {
       notifications.push({
         description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,
         href: "./#budgets",
-        id: `budget-threshold:${budget.id}:${budget.period}:${budget.secondAlertPercentage}`,
+        id: `budget-threshold:${budget.id}:${currentPeriod}:${budget.secondAlertPercentage}`,
         kind: "budget",
         priority: "high",
         title: `Seconda soglia budget raggiunta (${budget.secondAlertPercentage}%)`,

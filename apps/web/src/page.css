@@ -256,8 +256,24 @@
   background: var(--color-warning, #9b6b00);
 }
 
-.budget-card.is-exceeded .budget-progress > span {
+.budget-card.is-critical .budget-progress > span {
+  background: var(--color-warning, #9b6b00);
+}
+
+.budget-card.is-over_budget .budget-progress > span {
   background: var(--color-danger);
+}
+
+.budget-period-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.budget-period-navigation output {
+  min-width: 5.5rem;
+  text-align: center;
+  font-weight: 800;
 }
 
 .budget-card-actions {
@@ -990,6 +1006,12 @@
 
   .budget-card-actions {
     justify-content: flex-start;
+  }
+
+  .accounts-heading:has(.budget-period-navigation) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .split-row {

@@ -9,6 +9,11 @@
 
 ### Changed
 
+- I budget mensili sono ora configurazioni ricorrenti con revisioni effettive nel tempo: una
+  modifica futura conserva lo storico, la disattivazione è non distruttiva e la pagina consente
+  di consultare i mesi precedenti. La migrazione additiva v19 e IndexedDB v19 preservano budget,
+  backup portabili, notifiche e dati legacy.
+
 - Corretto il modulo Budget: il form assegna automaticamente il mese corrente e richiede
   Categoria, Sotto-categoria, importo e due soglie percentuali configurabili. Le soglie sono
   validate fra 1 e 100 e in ordine crescente; notifiche e snapshot portabili le usano senza

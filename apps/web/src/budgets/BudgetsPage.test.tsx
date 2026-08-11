@@ -89,12 +89,19 @@ describe("BudgetsPage", () => {
       />,
     );
 
+    for (let index = 0; index < 6; index += 1) {
+      await user.click(screen.getByRole("button", { name: "Mese precedente" }));
+    }
+
     expect(screen.getAllByText("Trasporti")).not.toHaveLength(0);
     expect(screen.getByText("Include 1 sottocategorie")).toBeInTheDocument();
     expect(screen.getByRole("progressbar", { name: /Consumo budget Trasporti/i })).toHaveAttribute(
       "aria-valuenow",
       "36",
     );
+    for (let index = 0; index < 6; index += 1) {
+      await user.click(screen.getByRole("button", { name: "Mese successivo" }));
+    }
     await user.click(screen.getByRole("button", { name: "Modifica" }));
     expect(screen.getByRole("heading", { name: "Modifica budget" })).toBeVisible();
     expect(screen.getByRole("option", { name: "Carburante" })).toBeInTheDocument();
@@ -108,11 +115,9 @@ describe("BudgetsPage", () => {
         secondAlertPercentage: 90,
       }),
     );
-    await user.click(screen.getByRole("button", { name: "Elimina" }));
-    expect(screen.getByRole("dialog")).toHaveTextContent(
-      "I movimenti associati non verranno cancellati.",
-    );
-    await user.click(screen.getByRole("button", { name: "Elimina budget" }));
+    await user.click(screen.getByRole("button", { name: "Disattiva" }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("I movimenti non verranno cancellati.");
+    await user.click(screen.getByRole("button", { name: "Disattiva budget" }));
     expect(onDelete).toHaveBeenCalledWith("transport-february");
   });
 });

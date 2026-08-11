@@ -254,30 +254,38 @@ export function validatePortableLedgerSnapshot(
       enabled: boolean(value, "enabled"),
     }),
   );
-  const budgets = entityList(entities, "budgets").map((value) => {
-    const firstAlertPercentage = optionalNumber(value, "firstAlertPercentage");
-    const secondAlertPercentage = optionalNumber(value, "secondAlertPercentage");
-    const legacyFirstAlertEnabled = optionalBoolean(value, "alertAt80");
-    const legacySecondAlertEnabled = optionalBoolean(value, "alertAt100");
-    return Budget.restore({
-      id: text(value, "id"),
-      period: text(value, "period"),
-      amount: money(value, "amount"),
-      ...(firstAlertPercentage === undefined
-        ? legacyFirstAlertEnabled === true
-          ? { firstAlertPercentage: 80 }
-          : {}
-        : { firstAlertPercentage }),
-      ...(secondAlertPercentage === undefined
-        ? legacySecondAlertEnabled === true
-          ? { secondAlertPercentage: 100 }
-          : {}
-        : { secondAlertPercentage }),
-      ...(optionalText(value, "categoryId") === undefined
-        ? {}
-        : { categoryId: optionalText(value, "categoryId")! }),
-    });
-  });
+  const budgets = normalizePortableBudgetRevisions(
+    entityList(entities, "budgets").map((value) => {
+      const firstAlertPercentage = optionalNumber(value, "firstAlertPercentage");
+      const secondAlertPercentage = optionalNumber(value, "secondAlertPercentage");
+      const legacyFirstAlertEnabled = optionalBoolean(value, "alertAt80");
+      const legacySecondAlertEnabled = optionalBoolean(value, "alertAt100");
+      return Budget.restore({
+        id: text(value, "id"),
+        ...(optionalText(value, "seriesId") === undefined
+          ? {}
+          : { seriesId: optionalText(value, "seriesId")! }),
+        period: text(value, "period"),
+        ...(optionalText(value, "effectiveToPeriod") === undefined
+          ? {}
+          : { effectiveToPeriod: optionalText(value, "effectiveToPeriod")! }),
+        amount: money(value, "amount"),
+        ...(firstAlertPercentage === undefined
+          ? legacyFirstAlertEnabled === true
+            ? { firstAlertPercentage: 80 }
+            : {}
+          : { firstAlertPercentage }),
+        ...(secondAlertPercentage === undefined
+          ? legacySecondAlertEnabled === true
+            ? { secondAlertPercentage: 100 }
+            : {}
+          : { secondAlertPercentage }),
+        ...(optionalText(value, "categoryId") === undefined
+          ? {}
+          : { categoryId: optionalText(value, "categoryId")! }),
+      });
+    }),
+  );
   const loans = entityList(entities, "loans").map((value) =>
     Loan.create({
       id: text(value, "id"),
@@ -393,6 +401,46 @@ export function validatePortableLedgerSnapshot(
     importBatches,
     importRows,
     transactionTagIds,
+  });
+}
+
+/** Snapshot v1 did not have effective periods. Convert old month rows into revisions before
+ * repository replacement so canonical verification sees the same non-overlapping model. */
+function normalizePortableBudgetRevisions(budgets: readonly Budget[]): readonly Budget[] {
+  const byScope = new Map<string, Budget[]>();
+  for (const budget of budgets) {
+    const key = budget.categoryId ?? "__legacy_global__";
+    const group = byScope.get(key) ?? [];
+    group.push(budget);
+    byScope.set(key, group);
+  }
+  return [...byScope.values()].flatMap((group) => {
+    const sorted = [...group].sort(
+      (left, right) => left.period.localeCompare(right.period) || left.id.localeCompare(right.id),
+    );
+    const hasModernShape = sorted.some(
+      (budget) => budget.seriesId !== budget.id || budget.effectiveToPeriod !== undefined,
+    );
+    if (hasModernShape || sorted.length <= 1) return sorted;
+    const seriesId = sorted[0]!.id;
+    return sorted.map((budget, index) =>
+      Budget.restore({
+        id: budget.id,
+        seriesId,
+        period: budget.period,
+        ...(sorted[index + 1] === undefined
+          ? {}
+          : { effectiveToPeriod: sorted[index + 1]!.period }),
+        amount: budget.amount,
+        ...(budget.categoryId === undefined ? {} : { categoryId: budget.categoryId }),
+        ...(budget.firstAlertPercentage === undefined
+          ? {}
+          : { firstAlertPercentage: budget.firstAlertPercentage }),
+        ...(budget.secondAlertPercentage === undefined
+          ? {}
+          : { secondAlertPercentage: budget.secondAlertPercentage }),
+      }),
+    );
   });
 }
 

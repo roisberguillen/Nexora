@@ -745,9 +745,11 @@ export class SqliteLedgerRepository implements LedgerRepository {
           await this.validateBudgetReferences(budget);
           const record = budgetToRecord(budget);
           await this.database.run(
-            "UPDATE budgets SET period = ?, category_id = ?, amount_minor = ?, currency = ?, alert_at_80 = ?, alert_at_100 = ?, first_alert_percentage = ?, second_alert_percentage = ? WHERE id = ?",
+            "UPDATE budgets SET series_id = ?, period = ?, effective_to_period = ?, category_id = ?, amount_minor = ?, currency = ?, alert_at_80 = ?, alert_at_100 = ?, first_alert_percentage = ?, second_alert_percentage = ? WHERE id = ?",
             [
+              record.series_id,
               record.period,
+              record.effective_to_period,
               record.category_id,
               record.amount_minor,
               record.currency,
@@ -758,6 +760,29 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.id,
             ],
           );
+        }),
+      ),
+    );
+  }
+  public reviseBudget(previous: Budget, next: Budget): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const found = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM budgets WHERE id = ?",
+            [previous.id],
+          );
+          if (found.length === 0)
+            throw new DomainError("missing_reference", "Budget does not exist.");
+          await this.validateBudgetReferences(previous);
+          const current = budgetToRecord(previous);
+          await this.database.run("UPDATE budgets SET effective_to_period = ? WHERE id = ?", [
+            current.effective_to_period,
+            previous.id,
+          ]);
+          await this.validateBudgetReferences(next);
+          await this.assertNew("budgets", next.id, "Budget");
+          await this.insertBudget(next);
         }),
       ),
     );
@@ -1691,7 +1716,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.performDatabaseOperation(async () =>
       (
         await this.database.query<BudgetRecord>(
-          "SELECT id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage FROM budgets ORDER BY period, id",
+          "SELECT id, series_id, period, effective_to_period, category_id, amount_minor, currency, alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage FROM budgets ORDER BY period, id",
         )
       ).map(budgetFromRecord),
     );
@@ -1918,23 +1943,31 @@ export class SqliteLedgerRepository implements LedgerRepository {
         throw new DomainError("invalid_category", "Budget category must accept expenses.");
     }
     const duplicate = await this.database.query<{ readonly id: string }>(
-      "SELECT id FROM budgets WHERE period = ? AND category_id IS ? AND id <> ? LIMIT 1",
-      [budget.period, budget.categoryId ?? null, budget.id],
+      "SELECT id FROM budgets WHERE category_id IS ? AND id <> ? AND (period = ? OR NOT (COALESCE(effective_to_period, '9999-12') <= ? OR COALESCE(?, '9999-12') <= period)) LIMIT 1",
+      [
+        budget.categoryId ?? null,
+        budget.id,
+        budget.period,
+        budget.period,
+        budget.effectiveToPeriod ?? null,
+      ],
     );
     if (duplicate[0] !== undefined) {
       throw new DomainError(
         "duplicate_entity",
-        "A budget already exists for this category and period.",
+        "A budget revision already overlaps this category period.",
       );
     }
   }
   private async insertBudget(budget: Budget): Promise<void> {
     const record = budgetToRecord(budget);
     await this.database.run(
-      "INSERT INTO budgets (id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO budgets (id, series_id, period, effective_to_period, category_id, amount_minor, currency, alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         record.id,
+        record.series_id,
         record.period,
+        record.effective_to_period,
         record.category_id,
         record.amount_minor,
         record.currency,
@@ -2177,7 +2210,9 @@ interface AllocationPlanRecord {
 }
 interface BudgetRecord {
   readonly id: string;
+  readonly series_id: string | null;
   readonly period: string;
+  readonly effective_to_period: string | null;
   readonly category_id: string | null;
   readonly amount_minor: string;
   readonly currency: string;
@@ -2303,7 +2338,9 @@ function loanFromRecord(row: LoanRecord): Loan {
 function budgetToRecord(budget: Budget): BudgetRecord {
   return {
     id: budget.id,
+    series_id: budget.seriesId,
     period: budget.period,
+    effective_to_period: budget.effectiveToPeriod ?? null,
     category_id: budget.categoryId ?? null,
     amount_minor: budget.amount.amountMinor.toString(),
     currency: budget.amount.currency,
@@ -2317,7 +2354,9 @@ function budgetToRecord(budget: Budget): BudgetRecord {
 function budgetFromRecord(row: BudgetRecord): Budget {
   return Budget.restore({
     id: row.id,
+    ...(row.series_id === null ? {} : { seriesId: row.series_id }),
     period: row.period,
+    ...(row.effective_to_period === null ? {} : { effectiveToPeriod: row.effective_to_period }),
     ...(row.category_id === null ? {} : { categoryId: row.category_id }),
     amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
     ...(row.first_alert_percentage === null

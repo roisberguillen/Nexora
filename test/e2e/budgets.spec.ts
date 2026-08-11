@@ -29,14 +29,13 @@ test("la pagina Budget crea, modifica ed elimina un limite mensile senza overflo
   await page.getByLabel("Seconda soglia di notifica (%)").fill("95");
   await page.getByRole("button", { name: "Aggiorna budget" }).click();
   await expect(budgetList.getByText("90,00 €", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Elimina" }).click();
-  await expect(page.getByRole("dialog")).toContainText(
-    "I movimenti associati non verranno cancellati.",
-  );
+  await page.getByRole("button", { name: "Disattiva" }).click();
+  await expect(page.getByRole("dialog")).toContainText("I movimenti non verranno cancellati.");
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
-  await page.getByRole("button", { name: "Elimina" }).click();
-  await page.getByRole("button", { name: "Elimina budget" }).click();
+  await page.getByRole("button", { name: "Disattiva" }).click();
+  await page.getByRole("button", { name: "Disattiva budget" }).click();
+  await page.getByRole("button", { name: "Mese successivo" }).click();
   await expect(page.getByRole("heading", { name: "Nessun budget" })).toBeVisible();
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,

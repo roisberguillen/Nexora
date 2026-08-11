@@ -46,6 +46,8 @@ export interface LedgerRepository {
   deleteAllocationPlan(id: string): Promise<void>;
   saveBudget(budget: Budget): Promise<void>;
   updateBudget(budget: Budget): Promise<void>;
+  /** Atomically closes the previous revision and opens its successor. */
+  reviseBudget(previous: Budget, next: Budget): Promise<void>;
   deleteBudget(id: string): Promise<void>;
   saveLoan(loan: Loan): Promise<void>;
   updateLoan(loan: Loan): Promise<void>;

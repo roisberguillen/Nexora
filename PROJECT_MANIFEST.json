@@ -218,9 +218,14 @@
       "sha256": "e265c0522bcec55a5272d2c20b7247f129b2d69dc5b333cd10a5420d0212f68b"
     },
     {
+      "path": ".codex/state/checkpoints/2026-08-11-fase-12-4-1-budget-mensili-persistenti-ricorrenti-effective-date.md",
+      "size": 580,
+      "sha256": "8022b544082324986cf8047f855c64563338fdebee375c045b88045218cc95b5"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 917,
-      "sha256": "84f2e8749bbd690993b666873bbb9a3cb059f8e5cc9fbe34d6a8bbbb5d439020"
+      "size": 918,
+      "sha256": "7a90178aa1920f9657b5dc069640439a18af2c76d5ae8ab2db514a582a9b18ab"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -244,8 +249,8 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 1681,
-      "sha256": "1c0cc3b22b42ecec4f38d0f1e59c00ac8e381b4718c4074c5213c761fcafd14f"
+      "size": 1806,
+      "sha256": "96e6631f97d670b405a0ec6b9c7188a5421092522e430ce73d9ee011f8e9e5ee"
     },
     {
       "path": ".codex/state/test-evidence.md",
@@ -724,8 +729,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 38079,
-      "sha256": "46407257acdb78916e388a97b5a217eecebcc400fdad16c961fe314110c13ff2"
+      "size": 38087,
+      "sha256": "e960eead946023f4c81da640609bf81efd270e4e8f6826ecdb3e8928e2c22a08"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -769,23 +774,23 @@
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.test.ts",
-      "size": 1606,
-      "sha256": "553d9e12bd845c733145436c265765e8649b20fef129ba98fb4eef97c8dd92a6"
+      "size": 2853,
+      "sha256": "c5f86ec5b875c3a687affc68d93c1912581e99e002b6f5c16bfba16769472329"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
-      "size": 1777,
-      "sha256": "c4eecb3060c8bc19d63f76e8138f7720f543c76cfa69d89614acd2f3aa7024c4"
+      "size": 4510,
+      "sha256": "7511fc384a620e14ff7dfc68974b6d9e5eb37a0ed97e333d52fd287c7d22078d"
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.test.tsx",
-      "size": 4438,
-      "sha256": "e6d86241f80323f96f9cb4949c84d96d98c235a486ee088d5aef2b55effc43d9"
+      "size": 4692,
+      "sha256": "29d222473e8d285d91cc6ee0fee693c8186f39acc5d26e4d37d53b8f4fc3302f"
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.tsx",
-      "size": 14328,
-      "sha256": "756b4e3f49d9d1ab66124df205f7c874bf47eed5425a040b196fd992f223c9bd"
+      "size": 15946,
+      "sha256": "1b9c5af515d1460c6236ad4bb8c1bf3c0792491c24e5648a641ce4446c93bc5f"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
@@ -1009,8 +1014,8 @@
     },
     {
       "path": "apps/web/src/notifications/localNotifications.ts",
-      "size": 8587,
-      "sha256": "7220de87ee47ec7de8e3a5fc661789d0032e6c9f699b83f3c20b3d006bd04473"
+      "size": 8744,
+      "sha256": "389323de1882aae74577f2e70a7b6e10d0407f123f4e9820deac0f066f8f9ef9"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
@@ -1019,8 +1024,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 29717,
-      "sha256": "fb004085e5d4ea54dba2cbf667b3a6fd2ce7cf9360c3b2f4ce774cc8c6a8df68"
+      "size": 30136,
+      "sha256": "372e45eb5b16b59f5187c1902645d6fc0d99e6bf3032c07967ce059a2a0c1bfb"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1389,8 +1394,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 25302,
-      "sha256": "e580e121c1b2fdd5af24e1fa6868a2cee2173250ea000597be2def32d48d0ba3"
+      "size": 25635,
+      "sha256": "17f24b32c98d35be6cb9a40a1afef8b68fb51750edd122f04ca698a873321c85"
     },
     {
       "path": "design/mockup/README.md",
@@ -1523,6 +1528,11 @@
       "sha256": "127e0460efb3ad85e74882dcae996e09e3ffd39c992b6b0ca8b078b44a5176ce"
     },
     {
+      "path": "docs/adr/0022-recurring-effective-dated-budgets.md",
+      "size": 1575,
+      "sha256": "4a42b028c5847de413905e79f30aabdd2056eb2490aa830430e0a90561053f97"
+    },
+    {
       "path": "docs/APPLICATION_LAYER.md",
       "size": 1192,
       "sha256": "50d19ef69e1895e91d29d8b5240aa8473bbd403d356043f92df8eaeb385edeb2"
@@ -1559,18 +1569,18 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 10726,
-      "sha256": "77939800cd4df6e69255e3a478873776b4c06e06ae2ff86a28d6882b7767eb94"
+      "size": 11425,
+      "sha256": "362021613b1d6f279c36ee6939d96f2c947d332b06ae3fbcf3f6f286888e1d10"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 24672,
-      "sha256": "6954f84083684359890f796cee2348020c7a1c159c2594f1db0beaa5e1de34aa"
+      "size": 25152,
+      "sha256": "542d21b83bb23fcdf3b6a6e0625459029e75e60bdc9d6c29b984a64e7b3bb276"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
-      "size": 2333,
-      "sha256": "d5ef7c57d954ef95252d62c102aced8dd923cb30db1a309dde0c261be28674db"
+      "size": 2332,
+      "sha256": "ca4c5b9153b9f0773ac59a783fe96a4be7d935b6ea25e200a4d324121e3f5e1d"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -1669,8 +1679,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 14962,
-      "sha256": "db50f0594f9a3cd5272661b9823db7b4e8b9ee972a428bc718808566165bf03c"
+      "size": 15660,
+      "sha256": "164d8d26b6dc2b19c129077425d2dbcfd1467f19ebec0f7afcef4a67d788fab5"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1880,7 +1890,7 @@
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
       "size": 7946,
-      "sha256": "e3db347541d69135bd3ee3a9a30cfdc071f0ee2708274bd954dc7d4b5491c8dc"
+      "sha256": "43f82300ab0177e2c61d3dfc794ca11b8a3ae6ca97d9fd01aa8f106d065b3aaa"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
@@ -1909,8 +1919,8 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 21137,
-      "sha256": "ecc7a147549fbc13bd4520ca11a196707fe640104c23f5c0b6ca81e75a414b60"
+      "size": 23143,
+      "sha256": "9f9676c086deeca17515985ed7b391022fcfa06f871269579658ff4063894d37"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -1929,8 +1939,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 41921,
-      "sha256": "9a11fef4c4378b1df0b4124af9fa8d99824c14179c6dd36ae88e0a707bd537eb"
+      "size": 42671,
+      "sha256": "d98c545fd743df848af3ab49671dbbccd6dbf482658a69ba84069c39c64a2349"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -1940,17 +1950,17 @@
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
       "size": 40397,
-      "sha256": "6da9b6b7fd0c6543dd956840e19b2544e42c4f8d29fde34da07d81acda6ecaa1"
+      "sha256": "02faea14c45c89659a0eb6ef96232fc4170122a217cfd1ca9ae969456112aad4"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 95767,
-      "sha256": "7fa7f02cee881fc76f06970a581a66efa9fa147d1ff5c89f9861ec293aeb7ef0"
+      "size": 97104,
+      "sha256": "3e6483cd7010756a061733006c2a39965e44c148f8c5f69f79203526d90e2f87"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 13763,
-      "sha256": "a748e1216b62bbffccfe2d5e7a84ff2f4a46cc5d27b8903a494b2bf01c42983a"
+      "size": 14156,
+      "sha256": "49884bedb58879ba0fc7ba008c89bf4d0d278f9d22c0be7bb8826d7eebc4ed76"
     },
     {
       "path": "packages/database/src/Ledger.ts",
@@ -1964,8 +1974,8 @@
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
-      "size": 10653,
-      "sha256": "a0f75009bb315ddd4f880ba8e94ac7ee6b7e17bee8bf2c76cecb11e3aac6c31b"
+      "size": 10774,
+      "sha256": "33be1dcf6830c9caf04e67ec0264d1b40d4f74ddccab9498929da8809ada56c1"
     },
     {
       "path": "packages/database/src/migrations/0002-transaction-splits.ts",
@@ -2073,6 +2083,16 @@
       "sha256": "6a686801f08e3e0d4b5b001cbb9c40608c98bd5818f77c16b5412b4bce27b021"
     },
     {
+      "path": "packages/database/src/migrations/0019-recurring-monthly-budgets.test.ts",
+      "size": 2145,
+      "sha256": "ef37a9c47336d606f8a390e61d0705e3b58abc7f20c52b37a28e3e2df53940b5"
+    },
+    {
+      "path": "packages/database/src/migrations/0019-recurring-monthly-budgets.ts",
+      "size": 1647,
+      "sha256": "bb4d824322aa830ca940751c63f7fc29e1e5c7efdbd2a552da7041806298cd38"
+    },
+    {
       "path": "packages/database/src/migrations/DatabaseMigration.ts",
       "size": 511,
       "sha256": "896936db5631a26ff008b1e080b8a60ab858c2ca182b12eeda54c7a38dc788c0"
@@ -2089,8 +2109,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 15089,
-      "sha256": "d2e41c0b756c64d579bc47db233ef5eefa9d263d7d9ad0deef7df862c37455f3"
+      "size": 15728,
+      "sha256": "fb91491a9dadd77ad9c39c4ab22363b9ea0e53f87e1152c12fc5a81587c2f5f1"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -2159,13 +2179,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 35478,
-      "sha256": "79e924338e14b21dc1cf9cae59bb9aacf3752b7b72a422c847e9d921f32b801f"
+      "size": 35769,
+      "sha256": "94037cba8a41ab167db517d5b39f2680707163b295a6a9c883609f22b0f68dd1"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 96278,
-      "sha256": "eef03336c0618c46c0247cb9189dcd6374318674c6246cc5a1859b66c5b3f4c2"
+      "size": 98004,
+      "sha256": "47936d586ca75ae286209e0f88ca953c90d92d95bfed94306078418f3e9cf281"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -2209,8 +2229,8 @@
     },
     {
       "path": "packages/domain/src/entities/Budget.ts",
-      "size": 3822,
-      "sha256": "5863077c4ff11ac77b30314c38d9afd76c38a6d613da7a6603bbaf95781ec1da"
+      "size": 6580,
+      "sha256": "9591949609fbf00787f91817211ffe512c3d450b60f1b5ac95f3d807b80b330c"
     },
     {
       "path": "packages/domain/src/entities/Category.test.ts",
@@ -2324,13 +2344,13 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 3581,
-      "sha256": "f73f3e742742c845f29717cb6b56c1d563a168d5e95446cb0a250f31c92db5cb"
+      "size": 3770,
+      "sha256": "577e8ae98cf82af3093e6321ab25fadb66c5fe419c3f59758c3b8f0d613e7855"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 5847,
-      "sha256": "1a957177e882d9991d2b606327e3fae9340c5fb6fe094fbaca7f1aba0a29adc0"
+      "size": 5984,
+      "sha256": "77de7908ea7fc22cc51fa8f24fa99395a1cc00bac64ce275b1e78e597fde2179"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",
@@ -2344,13 +2364,13 @@
     },
     {
       "path": "packages/domain/src/services/budgetProgress.test.ts",
-      "size": 5415,
-      "sha256": "854b56fba44e969faa905a835a8207f6823e9c571bfe9d411735be295e9e910b"
+      "size": 5610,
+      "sha256": "754bb4493d699983c30d3cf0b9a074a5970c54052d1ffed3c09c4b694b98a576"
     },
     {
       "path": "packages/domain/src/services/budgetProgress.ts",
-      "size": 5166,
-      "sha256": "d50b9c44102d5b6437b3ade29cdf74948ff455b78fc34b323f52cb7b305490c8"
+      "size": 5473,
+      "sha256": "b9d0d725a3543d94da45ed7ac195dcf6b83e2d7a0c4450cec855fb5403702d85"
     },
     {
       "path": "packages/domain/src/services/categoryHierarchy.test.ts",
@@ -2779,8 +2799,8 @@
     },
     {
       "path": "test/e2e/budgets.spec.ts",
-      "size": 3236,
-      "sha256": "ce05d807b41cbf88c6160fb68d9c6afe393d0455a33be1cd85a0506d7dbfb8a6"
+      "size": 3294,
+      "sha256": "a80a455e78ce677c074de19c703a8299143db49203294c5f30f7ca81e5ee6fea"
     },
     {
       "path": "test/e2e/categories.spec.ts",

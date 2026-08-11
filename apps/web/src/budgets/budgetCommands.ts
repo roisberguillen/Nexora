@@ -1,4 +1,10 @@
-import { Budget, DomainError, Money, type LedgerRepository } from "@nexora/domain";
+import {
+  Budget,
+  DomainError,
+  Money,
+  nextBudgetPeriod,
+  type LedgerRepository,
+} from "@nexora/domain";
 
 export interface BudgetInput {
   readonly amountMinor: bigint;
@@ -7,51 +13,128 @@ export interface BudgetInput {
   readonly secondAlertPercentage: number;
 }
 
-const currentPeriod = () =>
-  new Intl.DateTimeFormat("sv-SE", {
+export function currentBudgetPeriod(today: Date = new Date()): string {
+  return new Intl.DateTimeFormat("sv-SE", {
     month: "2-digit",
     timeZone: "Europe/Rome",
     year: "numeric",
-  }).format(new Date());
+  }).format(today);
+}
 
-export async function createBudget(
-  repository: LedgerRepository,
+const defaultId = () => `budget-${crypto.randomUUID()}`;
+
+function makeBudget(
   input: BudgetInput,
-  idFactory: () => string = () => `budget-${crypto.randomUUID()}`,
-): Promise<Budget> {
-  const budget = Budget.create({
-    id: idFactory(),
-    period: currentPeriod(),
-    amount: Money.fromMinor(input.amountMinor, "EUR"),
+  props: {
+    readonly id: string;
+    readonly seriesId: string;
+    readonly period: string;
+    readonly currency?: string;
+  },
+): Budget {
+  return Budget.create({
+    id: props.id,
+    seriesId: props.seriesId,
+    period: props.period,
+    amount: Money.fromMinor(input.amountMinor, props.currency ?? "EUR"),
     categoryId: input.categoryId,
     firstAlertPercentage: input.firstAlertPercentage,
     secondAlertPercentage: input.secondAlertPercentage,
   });
+}
+
+export async function createBudget(
+  repository: LedgerRepository,
+  input: BudgetInput,
+  idFactory: () => string = defaultId,
+  period = currentBudgetPeriod(),
+): Promise<Budget> {
+  const id = idFactory();
+  const budget = makeBudget(input, { id, seriesId: id, period });
   await repository.saveBudget(budget);
   return budget;
 }
 
+/**
+ * Same-month changes amend the revision. Changes in a later month close the old revision and
+ * atomically open its successor, so earlier reporting remains immutable.
+ */
 export async function updateBudget(
   repository: LedgerRepository,
   id: string,
   input: BudgetInput,
+  idFactory: () => string = defaultId,
+  period = currentBudgetPeriod(),
 ): Promise<Budget> {
   const existing = (await repository.listBudgets()).find((budget) => budget.id === id);
   if (existing === undefined) {
     throw new DomainError("missing_reference", "Budget does not exist.");
   }
-  const budget = Budget.create({
+  if (period < existing.period) {
+    throw new DomainError("invalid_date", "Historical budget revisions cannot be edited.");
+  }
+  if (period === existing.period) {
+    const budget = makeBudget(input, {
+      id: existing.id,
+      seriesId: existing.seriesId,
+      period: existing.period,
+      currency: existing.amount.currency,
+    });
+    await repository.updateBudget(budget);
+    return budget;
+  }
+  const closed = Budget.restore({
     id: existing.id,
+    seriesId: existing.seriesId,
     period: existing.period,
-    amount: Money.fromMinor(input.amountMinor, existing.amount.currency),
-    categoryId: input.categoryId,
-    firstAlertPercentage: input.firstAlertPercentage,
-    secondAlertPercentage: input.secondAlertPercentage,
+    effectiveToPeriod: period,
+    amount: existing.amount,
+    ...(existing.categoryId === undefined ? {} : { categoryId: existing.categoryId }),
+    ...(existing.firstAlertPercentage === undefined
+      ? {}
+      : { firstAlertPercentage: existing.firstAlertPercentage }),
+    ...(existing.secondAlertPercentage === undefined
+      ? {}
+      : { secondAlertPercentage: existing.secondAlertPercentage }),
   });
-  await repository.updateBudget(budget);
+  const budget = makeBudget(input, {
+    id: idFactory(),
+    seriesId: existing.seriesId,
+    period,
+    currency: existing.amount.currency,
+  });
+  await repository.reviseBudget(closed, budget);
   return budget;
 }
 
+/** Deactivation is non-destructive: current month stays visible, next month resolves no budget. */
+export async function deactivateBudget(
+  repository: LedgerRepository,
+  id: string,
+  period = currentBudgetPeriod(),
+): Promise<void> {
+  const existing = (await repository.listBudgets()).find((budget) => budget.id === id);
+  if (existing === undefined) throw new DomainError("missing_reference", "Budget does not exist.");
+  if (period < existing.period) throw new DomainError("invalid_date", "Budget is not active yet.");
+  const effectiveToPeriod = nextBudgetPeriod(period);
+  const closed = Budget.restore({
+    id: existing.id,
+    seriesId: existing.seriesId,
+    period: existing.period,
+    effectiveToPeriod,
+    amount: existing.amount,
+    ...(existing.categoryId === undefined ? {} : { categoryId: existing.categoryId }),
+    ...(existing.firstAlertPercentage === undefined
+      ? {}
+      : { firstAlertPercentage: existing.firstAlertPercentage }),
+    ...(existing.secondAlertPercentage === undefined
+      ? {}
+      : { secondAlertPercentage: existing.secondAlertPercentage }),
+  });
+  await repository.updateBudget(closed);
+}
+
+/** Retained only for administrative/test cleanup; normal UI uses deactivateBudget. */
 export async function deleteBudget(repository: LedgerRepository, id: string): Promise<void> {
   await repository.deleteBudget(id);
 }

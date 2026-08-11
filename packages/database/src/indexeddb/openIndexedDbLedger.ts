@@ -2,7 +2,7 @@ import { PersistenceError } from "../sqlite/PersistenceError";
 import { databaseMigrations } from "../migrations/0001-initial-ledger-schema";
 import { IndexedDbLedgerRepository } from "./IndexedDbLedgerRepository";
 
-export const INDEXED_DB_SCHEMA_VERSION = 18;
+export const INDEXED_DB_SCHEMA_VERSION = 19;
 export const PORTABLE_LEDGER_SCHEMA_VERSION = databaseMigrations.at(-1)?.version ?? 0;
 
 const defaultDatabaseName = "nexora-ledger";
@@ -277,6 +277,14 @@ function openDatabase(factory: IDBFactory, databaseName: string): Promise<IDBDat
             value: INDEXED_DB_SCHEMA_VERSION,
           });
         }
+      }
+      if (event.oldVersion < 19 && event.oldVersion > 0) {
+        // Record properties are additive, but opening a new physical version guarantees that
+        // persisted v18 ledgers are validated by the same release as SQLite migration 0019.
+        transaction.objectStore("metadata").put({
+          key: "schema_version",
+          value: INDEXED_DB_SCHEMA_VERSION,
+        });
       }
     };
     request.onblocked = () => {

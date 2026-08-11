@@ -1,6 +1,9 @@
 import {
   calculateBudgetProgress,
   categoryLabel,
+  nextBudgetPeriod,
+  previousBudgetPeriod,
+  resolveActiveBudgetsForPeriod,
   type Budget,
   type Category,
   type Transaction,
@@ -11,7 +14,7 @@ import { useState, type CSSProperties, type FormEvent } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
-import type { BudgetInput } from "./budgetCommands";
+import { currentBudgetPeriod, type BudgetInput } from "./budgetCommands";
 
 export function BudgetsPage({
   budgets,
@@ -36,6 +39,9 @@ export function BudgetsPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedMacroCategoryId, setSelectedMacroCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+  const [selectedPeriod, setSelectedPeriod] = useState(() => currentBudgetPeriod());
+  const isCurrentPeriod = selectedPeriod === currentBudgetPeriod();
+  const visibleBudgets = resolveActiveBudgetsForPeriod(budgets, selectedPeriod);
   const activeMacroCategories = categories.filter(
     (category) =>
       !category.isArchived && category.parentId === undefined && category.accepts("expense"),
@@ -125,6 +131,25 @@ export function BudgetsPage({
             rettifiche e movimenti annullati restano esclusi.
           </p>
         </div>
+        <nav aria-label="Navigazione periodo budget" className="budget-period-navigation">
+          <button
+            aria-label="Mese precedente"
+            className="secondary-action"
+            onClick={() => setSelectedPeriod((period) => previousBudgetPeriod(period))}
+            type="button"
+          >
+            ←
+          </button>
+          <output aria-live="polite">{selectedPeriod}</output>
+          <button
+            aria-label="Mese successivo"
+            className="secondary-action"
+            onClick={() => setSelectedPeriod((period) => nextBudgetPeriod(period))}
+            type="button"
+          >
+            →
+          </button>
+        </nav>
       </header>
       <div className="accounts-layout has-editor">
         <section
@@ -136,13 +161,14 @@ export function BudgetsPage({
               <p className="eyebrow">Piani attivi</p>
               <h2 id="budget-list-title">Budget mensili</h2>
             </div>
-            <span className="panel-meta">{budgets.length}</span>
+            <span className="panel-meta">{visibleBudgets.length}</span>
           </div>
-          {budgets.length === 0 ? (
+          {visibleBudgets.length === 0 ? (
             <div className="account-list-empty">
               <h3>Nessun budget</h3>
               <p>
-                Crea un limite mensile per una macro categoria, una sottocategoria o tutte le spese.
+                Imposta un limite mensile per una specifica sotto-categoria. Nexora lo applicherà
+                automaticamente ogni mese finché non lo modifichi o disattivi.
               </p>
               <button
                 className="secondary-action"
@@ -154,9 +180,10 @@ export function BudgetsPage({
             </div>
           ) : (
             <ul className="account-list budget-list">
-              {budgets.map((budget) => {
+              {visibleBudgets.map((budget) => {
                 const progress = calculateBudgetProgress({
                   budget,
+                  targetPeriod: selectedPeriod,
                   categories,
                   transactions,
                   splits: transactionSplits,
@@ -169,18 +196,20 @@ export function BudgetsPage({
                       : "Categoria archiviata o non disponibile"
                     : categoryLabel(selectedCategory, categories);
                 const status =
-                  progress.status === "exceeded"
+                  progress.status === "over_budget"
                     ? "Superato"
-                    : progress.status === "warning"
-                      ? "Attenzione"
-                      : "Nei limiti";
+                    : progress.status === "critical"
+                      ? "Critico"
+                      : progress.status === "warning"
+                        ? "Attenzione"
+                        : "Nei limiti";
                 const visiblePercentage = Math.max(0, Math.min(progress.percentage, 100));
                 return (
                   <li key={budget.id} className={`budget-card is-${progress.status}`}>
                     <div className="account-copy">
                       <strong>{category}</strong>
                       <small>
-                        {budget.period} · {status} · {progress.percentage.toFixed(0)}% utilizzato
+                        {selectedPeriod} · {status} · {progress.percentage.toFixed(0)}% utilizzato
                       </small>
                       {progress.scope.includesDescendants ? (
                         <small>
@@ -221,22 +250,26 @@ export function BudgetsPage({
                       amountMinor={budget.amount.amountMinor}
                       currency={budget.amount.currency}
                     />
-                    <div className="budget-card-actions" aria-label={`Azioni per ${category}`}>
-                      <button
-                        className="text-action"
-                        onClick={() => openEditor(budget)}
-                        type="button"
-                      >
-                        Modifica
-                      </button>
-                      <button
-                        className="text-action"
-                        onClick={() => setDeleteCandidate(budget)}
-                        type="button"
-                      >
-                        Elimina
-                      </button>
-                    </div>
+                    {isCurrentPeriod ? (
+                      <div className="budget-card-actions" aria-label={`Azioni per ${category}`}>
+                        <button
+                          className="text-action"
+                          onClick={() => openEditor(budget)}
+                          type="button"
+                        >
+                          Modifica
+                        </button>
+                        <button
+                          className="text-action"
+                          onClick={() => setDeleteCandidate(budget)}
+                          type="button"
+                        >
+                          Disattiva
+                        </button>
+                      </div>
+                    ) : (
+                      <small>Configurazione storica</small>
+                    )}
                   </li>
                 );
               })}
@@ -253,6 +286,7 @@ export function BudgetsPage({
             </p>
           )}
           <form
+            aria-disabled={!isCurrentPeriod}
             className="account-form"
             key={editing?.id ?? "new"}
             onSubmit={(event) => void save(event)}
@@ -353,8 +387,11 @@ export function BudgetsPage({
           labelledBy="delete-budget-title"
           onClose={() => setDeleteCandidate(undefined)}
         >
-          <h2 id="delete-budget-title">Eliminare questo budget?</h2>
-          <p>I movimenti associati non verranno cancellati.</p>
+          <h2 id="delete-budget-title">Disattivare questo budget?</h2>
+          <p>
+            Il mese corrente resta visibile; dal mese successivo Nexora non applicherà più il
+            limite. I movimenti non verranno cancellati.
+          </p>
           <div className="form-actions">
             <button
               disabled={isDeleting}
@@ -369,7 +406,7 @@ export function BudgetsPage({
               onClick={() => void confirmDelete()}
               type="button"
             >
-              {isDeleting ? "Eliminazione…" : "Elimina budget"}
+              {isDeleting ? "Disattivazione…" : "Disattiva budget"}
             </button>
           </div>
         </AccessibleDialog>
