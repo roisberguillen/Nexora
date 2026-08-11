@@ -219,8 +219,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 971,
-      "sha256": "aac7e655e56f537ee24c58afc2ea9ce2a2ce624a9d942206d876dff8530e4ab8"
+      "size": 809,
+      "sha256": "e76dd53f7a393cb91ab1cceab4124e97a447de088310870d3272e902552a18de"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -244,13 +244,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 1259,
-      "sha256": "67fb8aea5681319623d3e0ed427979a403bc565c71ae626fbdc5a9260dadcd0d"
+      "size": 1378,
+      "sha256": "4a645d8e9adb28a9cff170b3b49e73402f8c1c9e149e0dce2f53949f43d6df81"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 18597,
-      "sha256": "0cbc8bbde09a0b6df506733bbb71bd3ab87c96d30d878ca32aecee9c087b1305"
+      "size": 19883,
+      "sha256": "c1952281c7a46dbe700fe3b88dc28373bf019c54a6d650c27ee1a4e0cbd4b05a"
     },
     {
       "path": ".codex/templates/escalation-request.md",

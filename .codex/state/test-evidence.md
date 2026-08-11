@@ -279,3 +279,20 @@ Keep only the latest relevant evidence per completed phase.
   typecheck, unit and production-build gates.
 - Final independent product/domain, import/backup and UX/UI reviews reported no unresolved P0 or
   P1; no Phase 12.3 file or migration v17 is included.
+
+## Phase 12.3 final closure — 2026-08-11
+
+- PR #3 (`feature/phase-12.3` → `main`) was reviewed by product/domain, import/backup and UX/UI
+  reviewers. No unresolved P0 or P1 remained. The scope explicitly excludes automatic transaction
+  creation, recurring occurrences, skip and transaction-to-rule lineage.
+- The additive SQLite migration v17 and the physical IndexedDB v18 upgrade were exercised through
+  legacy upgrade and reopen coverage. The IndexedDB active-due index is recreated and backfilled
+  during the v18 upgrade, including databases previously opened at v17.
+- Targeted regressions passed for recurring calendar rules, SQLite and IndexedDB repositories,
+  portable snapshot/backup compatibility and the 1440px IndexedDB persistence E2E. They cover
+  weekly/monthly/annual schedules, nominal-versus-effective weekend handling, paused rules,
+  legacy v16 rules, backup schema compatibility and IndexedDB reopen behavior.
+- GitHub Actions `verify` passed on the PR commit `f7f94d2` and again after merge to `main` at
+  `0ea79e8`: install, doctor, formatting, lint, typecheck, unit tests, production build,
+  manifest check and Playwright E2E all completed successfully. The frozen recovery checkpoint
+  `backup/pre-phase-12.3-worktree-20260809` remains at `862c2a7`.
