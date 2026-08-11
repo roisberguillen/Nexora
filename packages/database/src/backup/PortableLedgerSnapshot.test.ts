@@ -1,5 +1,6 @@
 import {
   Account,
+  AllocationPlan,
   Budget,
   Category,
   LocalDate,
@@ -81,6 +82,124 @@ describe("portable ledger snapshot", () => {
     expect(
       validatePortableLedgerSnapshot(legacy).transactions[0]?.expenseVariability,
     ).toBeUndefined();
+  });
+
+  it("preserves allocation plans in a portable snapshot", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const source = Account.create({
+      id: "allocation-source",
+      name: "Origine",
+      type: "checking",
+      currency: "EUR",
+    });
+    const target = Account.create({
+      id: "allocation-target",
+      name: "Destinazione",
+      type: "savings",
+      currency: "EUR",
+    });
+    await repository.saveAccount(source);
+    await repository.saveAccount(target);
+    const plan = AllocationPlan.create({
+      id: "allocation-plan",
+      name: "Risparmio",
+      trigger: "salary",
+      sourceAccountId: source.id,
+      targetAccountId: target.id,
+      amount: Money.fromMinor(10_000n, "EUR"),
+      enabled: false,
+    });
+    await repository.saveAllocationPlan(plan);
+
+    const snapshot = validatePortableLedgerSnapshot(
+      decodePortableLedgerSnapshot(
+        encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+      ),
+    );
+
+    expect(snapshot.allocationPlans).toEqual([plan]);
+  });
+
+  it("rejects an allocation plan that refers to an archived account before restore", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({
+        id: "allocation-source",
+        name: "Origine",
+        type: "checking",
+        currency: "EUR",
+      }),
+    );
+    await repository.saveAccount(
+      Account.create({
+        id: "allocation-target",
+        name: "Destinazione",
+        type: "savings",
+        currency: "EUR",
+      }),
+    );
+    await repository.saveAllocationPlan(
+      AllocationPlan.create({
+        id: "allocation-plan",
+        name: "Risparmio",
+        trigger: "salary",
+        sourceAccountId: "allocation-source",
+        targetAccountId: "allocation-target",
+        amount: Money.fromMinor(10_000n, "EUR"),
+      }),
+    );
+    const snapshot = decodePortableLedgerSnapshot(
+      encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+    );
+    const archivedAccount = snapshot.entities.accounts?.find(
+      (value) => (value as { id: string }).id === "allocation-source",
+    ) as { isArchived: boolean };
+    archivedAccount.isArchived = true;
+
+    expect(() => validatePortableLedgerSnapshot(snapshot)).toThrow(/allocation plan account/i);
+  });
+
+  it("keeps a disabled allocation plan when its account was archived", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({
+        id: "allocation-source",
+        name: "Origine",
+        type: "checking",
+        currency: "EUR",
+      }),
+    );
+    await repository.saveAccount(
+      Account.create({
+        id: "allocation-target",
+        name: "Destinazione",
+        type: "savings",
+        currency: "EUR",
+      }),
+    );
+    await repository.saveAllocationPlan(
+      AllocationPlan.create({
+        id: "allocation-plan",
+        name: "Risparmio",
+        trigger: "salary",
+        sourceAccountId: "allocation-source",
+        targetAccountId: "allocation-target",
+        amount: Money.fromMinor(10_000n, "EUR"),
+        enabled: false,
+      }),
+    );
+    const snapshot = decodePortableLedgerSnapshot(
+      encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+    );
+    const archivedAccount = snapshot.entities.accounts?.find(
+      (value) => (value as { id: string }).id === "allocation-source",
+    ) as { isArchived: boolean };
+    archivedAccount.isArchived = true;
+
+    expect(validatePortableLedgerSnapshot(snapshot).allocationPlans[0]).toMatchObject({
+      enabled: false,
+      sourceAccountId: "allocation-source",
+    });
   });
 
   it("preserves a hierarchical budget scope and alerts in a portable snapshot", async () => {

@@ -3,6 +3,7 @@ import { DomainError } from "../errors/DomainError";
 
 export interface AccountUpdateFacts {
   readonly hasActiveChildren: boolean;
+  readonly hasEnabledAllocationPlans?: boolean;
   readonly hasTransactions: boolean;
   readonly parentIsArchived: boolean;
 }
@@ -35,6 +36,13 @@ export function validateAccountUpdate(
     throw new DomainError(
       "invalid_account",
       "An account with active subaccounts cannot be archived.",
+    );
+  }
+
+  if (!existing.isArchived && updated.isArchived && facts.hasEnabledAllocationPlans) {
+    throw new DomainError(
+      "invalid_account",
+      "An account used by an active allocation plan cannot be archived.",
     );
   }
 

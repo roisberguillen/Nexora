@@ -254,6 +254,19 @@ export function validatePortableLedgerSnapshot(
       enabled: boolean(value, "enabled"),
     }),
   );
+  const accountById = new Map(accounts.map((account) => [account.id, account]));
+  for (const plan of allocationPlans) {
+    const source = accountById.get(plan.sourceAccountId);
+    const target = accountById.get(plan.targetAccountId);
+    if (
+      source === undefined ||
+      target === undefined ||
+      (plan.enabled && (source.isArchived || target.isArchived))
+    )
+      throw new Error("Portable snapshot allocation plan account is unavailable.");
+    if (source.currency !== target.currency || source.currency !== plan.amount.currency)
+      throw new Error("Portable snapshot allocation plan currency is incompatible.");
+  }
   const budgets = normalizePortableBudgetRevisions(
     entityList(entities, "budgets").map((value) => {
       const firstAlertPercentage = optionalNumber(value, "firstAlertPercentage");

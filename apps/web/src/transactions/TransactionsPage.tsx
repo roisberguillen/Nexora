@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import "./transactions.css";
 import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { AccessibleDialog } from "../settings/AccessibleDialog";
 import {
   signedAmountForKind,
   type CreateManualTransactionInput,
@@ -23,7 +24,10 @@ interface TransactionsPageProps {
   readonly onTrashMany: (ids: readonly string[]) => Promise<void>;
   readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<readonly string[]>;
   readonly onCreateTransfer: (input: CreateTransferInput) => Promise<void>;
-  readonly onExecuteSalaryAllocations: (planIds: readonly string[]) => Promise<void>;
+  readonly onExecuteSalaryAllocations: (
+    planIds: readonly string[],
+    executionId: string,
+  ) => Promise<unknown>;
 }
 
 type FormKind = "income" | "expense" | "adjustment" | "transfer";
@@ -46,6 +50,10 @@ export function TransactionsPage({
   const [error, setError] = useState<string | null>(null);
   const [kind, setKind] = useState<FormKind>("expense");
   const [salaryAllocationPlanIds, setSalaryAllocationPlanIds] = useState<readonly string[]>([]);
+  const [salaryAllocationExecutionId, setSalaryAllocationExecutionId] = useState<string | null>(
+    null,
+  );
+  const [salaryAllocationNeedsRecovery, setSalaryAllocationNeedsRecovery] = useState(false);
   const [selectedForTrash, setSelectedForTrash] = useState<ReadonlySet<string>>(new Set());
   const [isTrashConfirmOpen, setIsTrashConfirmOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -131,6 +139,8 @@ export function TransactionsPage({
               }),
         });
         setSalaryAllocationPlanIds(planIds);
+        setSalaryAllocationExecutionId(planIds.length === 0 ? null : crypto.randomUUID());
+        setSalaryAllocationNeedsRecovery(false);
       }
       setIsEditorOpen(false);
       setMessage(
@@ -149,11 +159,17 @@ export function TransactionsPage({
     setIsSaving(true);
     setError(null);
     try {
-      await onExecuteSalaryAllocations(salaryAllocationPlanIds);
+      if (salaryAllocationExecutionId === null) return;
+      await onExecuteSalaryAllocations(salaryAllocationPlanIds, salaryAllocationExecutionId);
       setSalaryAllocationPlanIds([]);
+      setSalaryAllocationExecutionId(null);
+      setSalaryAllocationNeedsRecovery(false);
       setMessage("Allocazioni stipendio registrate come trasferimenti collegati.");
-    } catch (cause) {
-      setError(transactionErrorMessage(cause));
+    } catch {
+      setSalaryAllocationNeedsRecovery(true);
+      setError(
+        "L'esecuzione delle allocazioni potrebbe essere parziale. Riprova: i trasferimenti già registrati non verranno duplicati.",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -247,17 +263,27 @@ export function TransactionsPage({
           </p>
         )}
         {salaryAllocationPlanIds.length === 0 ? null : (
-          <div
-            aria-label="Conferma allocazioni stipendio"
-            className="account-feedback"
-            role="alertdialog"
+          <AccessibleDialog
+            labelledBy="salary-allocation-confirm-title"
+            onClose={() => {
+              if (!salaryAllocationNeedsRecovery) {
+                setSalaryAllocationPlanIds([]);
+                setSalaryAllocationExecutionId(null);
+              }
+            }}
           >
+            <h2 id="salary-allocation-confirm-title">Conferma allocazioni stipendio</h2>
             <p>Stipendio ricevuto. Eseguire le allocazioni pianificate?</p>
             <div className="form-actions">
               <button
                 className="secondary-action"
                 disabled={isSaving}
-                onClick={() => setSalaryAllocationPlanIds([])}
+                onClick={() => {
+                  if (!salaryAllocationNeedsRecovery) {
+                    setSalaryAllocationPlanIds([]);
+                    setSalaryAllocationExecutionId(null);
+                  }
+                }}
                 type="button"
               >
                 Non ora
@@ -268,10 +294,14 @@ export function TransactionsPage({
                 onClick={() => void executeSalaryAllocations()}
                 type="button"
               >
-                {isSaving ? "Esecuzione…" : "Esegui allocazioni"}
+                {isSaving
+                  ? "Esecuzione…"
+                  : salaryAllocationNeedsRecovery
+                    ? "Riprova allocazioni"
+                    : "Esegui allocazioni"}
               </button>
             </div>
-          </div>
+          </AccessibleDialog>
         )}
       </div>
 

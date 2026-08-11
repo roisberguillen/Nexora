@@ -337,6 +337,10 @@ export class SqliteLedgerRepository implements LedgerRepository {
             `,
             [account.id],
           );
+          const allocationRows = await this.database.query<{ readonly found: unknown }>(
+            "SELECT 1 AS found FROM allocation_plans WHERE enabled = 1 AND (source_account_id = ? OR target_account_id = ?) LIMIT 1",
+            [account.id, account.id],
+          );
           const parent =
             account.parentAccountId === undefined
               ? undefined
@@ -344,6 +348,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
 
           validateAccountUpdate(existing, account, {
             hasActiveChildren: childRows.length > 0,
+            hasEnabledAllocationPlans: allocationRows.length > 0,
             hasTransactions: transactionRows.length > 0,
             parentIsArchived: parent?.isArchived ?? false,
           });

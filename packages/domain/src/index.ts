@@ -77,7 +77,11 @@ export {
   type CashFlowSummary,
 } from "./services/ledgerReports";
 export { validateAccountUpdate, type AccountUpdateFacts } from "./services/accountUpdates";
-export { executeConfirmedAllocationPlans } from "./services/executeAllocationPlans";
+export {
+  allocationExecutionMarker,
+  executeConfirmedAllocationPlans,
+  type AllocationExecutionReceipt,
+} from "./services/executeAllocationPlans";
 export { createSystemCategories } from "./services/systemCategories";
 export { createDefaultFinancialTaxonomy } from "./services/defaultCategoryTaxonomy";
 export { isSystemCategory, validateCategoryMerge } from "./services/dataManagement";

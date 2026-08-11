@@ -69,5 +69,12 @@ describe("validateAccountUpdate", () => {
         parentIsArchived: true,
       }),
     ).toThrowError(/parent is archived/);
+
+    expect(() =>
+      validateAccountUpdate(existing, existing.update({ isArchived: true }), {
+        ...noBlockingFacts,
+        hasEnabledAllocationPlans: true,
+      }),
+    ).toThrowError(/active allocation plan/);
   });
 });

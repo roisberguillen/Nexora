@@ -10,6 +10,7 @@ import { formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { AccessibleDialog } from "../settings/AccessibleDialog";
 import type { RecurringRuleInput } from "./recurringCommands";
 import type { AllocationPlanInput } from "./allocationCommands";
 
@@ -20,7 +21,9 @@ export function RecurringPage({
   rules,
   onCreate,
   onCreateAllocation,
+  onDeleteAllocation,
   onExecuteAllocations,
+  onUpdateAllocation,
   onUpdate,
   onDelete,
 }: {
@@ -30,7 +33,15 @@ export function RecurringPage({
   readonly rules: readonly RecurringRule[];
   readonly onCreate: (input: RecurringRuleInput) => Promise<void>;
   readonly onCreateAllocation: (input: AllocationPlanInput) => Promise<void>;
-  readonly onExecuteAllocations: (planIds: readonly string[]) => Promise<void>;
+  readonly onDeleteAllocation: (id: string) => Promise<void>;
+  readonly onExecuteAllocations: (
+    planIds: readonly string[],
+    executionId: string,
+  ) => Promise<{
+    readonly alreadyExecutedPlanIds: readonly string[];
+    readonly executedPlanIds: readonly string[];
+  }>;
+  readonly onUpdateAllocation: (id: string, input: AllocationPlanInput) => Promise<void>;
   readonly onUpdate: (id: string, input: RecurringRuleInput) => Promise<void>;
   readonly onDelete: (id: string) => Promise<void>;
 }) {
@@ -402,7 +413,9 @@ export function RecurringPage({
       <AllocationPlans
         accounts={accounts}
         onCreate={onCreateAllocation}
+        onDelete={onDeleteAllocation}
         onExecute={onExecuteAllocations}
+        onUpdate={onUpdateAllocation}
         plans={allocationPlans}
       />
     </div>
@@ -412,38 +425,64 @@ function AllocationPlans({
   accounts,
   plans,
   onCreate,
+  onDelete,
   onExecute,
+  onUpdate,
 }: {
   readonly accounts: readonly Account[];
   readonly plans: readonly AllocationPlan[];
   readonly onCreate: (input: AllocationPlanInput) => Promise<void>;
-  readonly onExecute: (planIds: readonly string[]) => Promise<void>;
+  readonly onDelete: (id: string) => Promise<void>;
+  readonly onExecute: (
+    planIds: readonly string[],
+    executionId: string,
+  ) => Promise<{
+    readonly alreadyExecutedPlanIds: readonly string[];
+    readonly executedPlanIds: readonly string[];
+  }>;
+  readonly onUpdate: (id: string, input: AllocationPlanInput) => Promise<void>;
 }) {
   const [error, setError] = useState<string | null>(null);
   const [confirmingTrigger, setConfirmingTrigger] = useState<"salary" | "photo_income" | null>(
     null,
   );
+  const [executionId, setExecutionId] = useState<string | null>(null);
+  const [editing, setEditing] = useState<AllocationPlan | null>(null);
+  const [deleteCandidate, setDeleteCandidate] = useState<AllocationPlan | null>(null);
+  const [receipt, setReceipt] = useState<string | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [needsExecutionRecovery, setNeedsExecutionRecovery] = useState(false);
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const source = accounts.find((account) => account.id === String(form.get("allocationSource")));
+    const targetId = String(form.get("allocationTarget"));
     if (source === undefined) return;
+    if (source.id === targetId) {
+      setError("Il conto di origine e quello di destinazione devono essere diversi.");
+      return;
+    }
     try {
-      await onCreate({
+      const input: AllocationPlanInput = {
         name: String(form.get("allocationName") ?? ""),
         trigger: String(form.get("allocationTrigger")) as "salary" | "photo_income",
         sourceAccountId: source.id,
-        targetAccountId: String(form.get("allocationTarget")),
+        targetAccountId: targetId,
         amountMinor: abs(
           parseLocalizedAmountMinor(String(form.get("allocationAmount") ?? ""), source.currency),
         ),
-        enabled: true,
-      });
+        enabled: Boolean(form.get("allocationEnabled")),
+      };
+      if (editing === null) await onCreate(input);
+      else await onUpdate(editing.id, input);
       setError(null);
+      setReceipt(
+        editing === null ? "Piano di allocazione salvato." : "Piano di allocazione aggiornato.",
+      );
+      setEditing(null);
       event.currentTarget.reset();
     } catch {
-      setError("Impossibile salvare il piano di allocazione.");
+      setError("Impossibile salvare il piano. Verifica conti, valuta e importo.");
     }
   };
   const active = accounts.filter((account) => !account.isArchived);
@@ -454,10 +493,23 @@ function AllocationPlans({
     setIsExecuting(true);
     setError(null);
     try {
-      await onExecute(planIdsFor(confirmingTrigger));
+      const result = await onExecute(
+        planIdsFor(confirmingTrigger),
+        executionId ?? crypto.randomUUID(),
+      );
       setConfirmingTrigger(null);
+      setExecutionId(null);
+      setNeedsExecutionRecovery(false);
+      setReceipt(
+        result.alreadyExecutedPlanIds.length === 0
+          ? `${result.executedPlanIds.length} allocazioni registrate come trasferimenti.`
+          : `${result.executedPlanIds.length} registrate; ${result.alreadyExecutedPlanIds.length} già presenti.`,
+      );
     } catch {
-      setError("Impossibile eseguire le allocazioni. Nessun trasferimento è stato salvato.");
+      setNeedsExecutionRecovery(true);
+      setError(
+        "L'esecuzione potrebbe essere parziale. Riprova: i trasferimenti già registrati non verranno duplicati.",
+      );
     } finally {
       setIsExecuting(false);
     }
@@ -479,6 +531,11 @@ function AllocationPlans({
           {error}
         </p>
       )}
+      {receipt === null ? null : (
+        <p className="account-feedback" role="status">
+          {receipt}
+        </p>
+      )}
       <ul className="account-list">
         {plans.map((plan) => (
           <li key={plan.id}>
@@ -488,8 +545,43 @@ function AllocationPlans({
                 {plan.trigger === "salary" ? "Stipendio" : "Reddito fotografico"} ·{" "}
                 {formatMinorUnits(plan.amount.amountMinor, plan.amount.currency)}
               </small>
+              <small>
+                {accounts.find((account) => account.id === plan.sourceAccountId)?.name ??
+                  "Conto rimosso"}
+                {" → "}
+                {accounts.find((account) => account.id === plan.targetAccountId)?.name ??
+                  "Conto rimosso"}
+              </small>
             </div>
             <span>{plan.enabled ? "Attivo" : "Pausa"}</span>
+            <div className="allocation-plan-actions">
+              <button className="text-action" onClick={() => setEditing(plan)} type="button">
+                Modifica
+              </button>
+              <button
+                className="text-action"
+                onClick={() =>
+                  void onUpdate(plan.id, {
+                    name: plan.name,
+                    trigger: plan.trigger,
+                    sourceAccountId: plan.sourceAccountId,
+                    targetAccountId: plan.targetAccountId,
+                    amountMinor: plan.amount.amountMinor,
+                    enabled: !plan.enabled,
+                  }).catch(() => setError("Impossibile aggiornare lo stato del piano."))
+                }
+                type="button"
+              >
+                {plan.enabled ? "Metti in pausa" : "Riattiva"}
+              </button>
+              <button
+                className="text-action"
+                onClick={() => setDeleteCandidate(plan)}
+                type="button"
+              >
+                Elimina…
+              </button>
+            </div>
           </li>
         ))}
       </ul>
@@ -497,63 +589,43 @@ function AllocationPlans({
         const planIds = planIdsFor(trigger);
         if (planIds.length === 0) return null;
         const label = trigger === "salary" ? "stipendio" : "reddito fotografico";
-        const question =
-          trigger === "salary"
-            ? "Stipendio ricevuto. Eseguire le allocazioni pianificate?"
-            : "Reddito fotografico ricevuto. Eseguire le allocazioni pianificate?";
-        return confirmingTrigger === trigger ? (
-          <div
-            aria-label={`Conferma allocazioni ${label}`}
-            className="account-error"
-            key={trigger}
-            role="alertdialog"
-          >
-            <p>{question}</p>
-            <div className="form-actions">
-              <button
-                className="secondary-action"
-                disabled={isExecuting}
-                onClick={() => setConfirmingTrigger(null)}
-                type="button"
-              >
-                Annulla
-              </button>
-              <button
-                className="primary-action"
-                disabled={isExecuting}
-                onClick={() => void executeAllocations()}
-                type="button"
-              >
-                {isExecuting ? "Esecuzione…" : "Esegui allocazioni"}
-              </button>
-            </div>
-          </div>
-        ) : (
+        return confirmingTrigger === trigger ? null : (
           <button
             className="secondary-action"
             key={trigger}
-            onClick={() => setConfirmingTrigger(trigger)}
+            onClick={() => {
+              setConfirmingTrigger(trigger);
+              setExecutionId(crypto.randomUUID());
+            }}
             type="button"
           >
             Conferma allocazioni {label}
           </button>
         );
       })}
-      <form className="account-form allocation-plan-form" onSubmit={(event) => void save(event)}>
+      <form
+        className="account-form allocation-plan-form"
+        key={editing?.id ?? "new"}
+        onSubmit={(event) => void save(event)}
+      >
+        <h3>{editing === null ? "Nuovo piano" : "Modifica piano"}</h3>
         <label>
           Nome piano
-          <input name="allocationName" required />
+          <input defaultValue={editing?.name} name="allocationName" required />
         </label>
         <label>
           Evento
-          <select name="allocationTrigger">
+          <select defaultValue={editing?.trigger} name="allocationTrigger">
             <option value="salary">Stipendio</option>
             <option value="photo_income">Reddito fotografico</option>
           </select>
         </label>
         <label>
           Conto origine
-          <select name="allocationSource">
+          <select
+            defaultValue={editing?.sourceAccountId ?? active[0]?.id ?? ""}
+            name="allocationSource"
+          >
             {active.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
@@ -563,7 +635,15 @@ function AllocationPlans({
         </label>
         <label>
           Conto destinazione
-          <select name="allocationTarget">
+          <select
+            defaultValue={
+              editing?.targetAccountId ??
+              active.find((account) => account.id !== (editing?.sourceAccountId ?? active[0]?.id))
+                ?.id ??
+              ""
+            }
+            name="allocationTarget"
+          >
             {active.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
@@ -573,14 +653,121 @@ function AllocationPlans({
         </label>
         <label>
           Importo
-          <input inputMode="decimal" name="allocationAmount" required />
+          <input
+            defaultValue={
+              editing === null
+                ? ""
+                : formatEditableAmountMinor(editing.amount.amountMinor, editing.amount.currency)
+            }
+            inputMode="decimal"
+            name="allocationAmount"
+            required
+          />
+        </label>
+        <label className="form-toggle">
+          <input
+            defaultChecked={editing?.enabled ?? true}
+            name="allocationEnabled"
+            type="checkbox"
+          />
+          <span>Attiva</span>
         </label>
         <div className="form-actions">
+          {editing === null ? null : (
+            <button className="secondary-action" onClick={() => setEditing(null)} type="button">
+              Annulla
+            </button>
+          )}
           <button className="primary-action" type="submit">
-            Salva piano
+            {editing === null ? "Salva piano" : "Aggiorna piano"}
           </button>
         </div>
       </form>
+      {confirmingTrigger === null ? null : (
+        <AccessibleDialog
+          labelledBy="allocation-confirm-title"
+          onClose={() => {
+            if (!needsExecutionRecovery) {
+              setConfirmingTrigger(null);
+              setExecutionId(null);
+            }
+          }}
+        >
+          <h2 id="allocation-confirm-title">
+            Conferma allocazioni{" "}
+            {confirmingTrigger === "salary" ? "stipendio" : "reddito fotografico"}
+          </h2>
+          <p>
+            {confirmingTrigger === "salary"
+              ? "Stipendio ricevuto."
+              : "Reddito fotografico ricevuto."}{" "}
+            Verranno creati {planIdsFor(confirmingTrigger).length} trasferimenti reali.
+          </p>
+          <ul>
+            {plans
+              .filter((plan) => plan.enabled && plan.trigger === confirmingTrigger)
+              .map((plan) => (
+                <li key={plan.id}>
+                  {plan.name}: {formatMinorUnits(plan.amount.amountMinor, plan.amount.currency)}
+                </li>
+              ))}
+          </ul>
+          <div className="form-actions">
+            <button
+              disabled={isExecuting}
+              onClick={() => {
+                if (!needsExecutionRecovery) {
+                  setConfirmingTrigger(null);
+                  setExecutionId(null);
+                }
+              }}
+              type="button"
+            >
+              Annulla
+            </button>
+            <button
+              className="primary-action"
+              disabled={isExecuting}
+              onClick={() => void executeAllocations()}
+              type="button"
+            >
+              {isExecuting
+                ? "Esecuzione…"
+                : needsExecutionRecovery
+                  ? "Riprova allocazioni"
+                  : "Esegui allocazioni"}
+            </button>
+          </div>
+        </AccessibleDialog>
+      )}
+      {deleteCandidate === null ? null : (
+        <AccessibleDialog
+          labelledBy="allocation-delete-title"
+          onClose={() => setDeleteCandidate(null)}
+        >
+          <h2 id="allocation-delete-title">Eliminare questo piano?</h2>
+          <p>I trasferimenti già eseguiti restano nel ledger.</p>
+          <div className="form-actions">
+            <button onClick={() => setDeleteCandidate(null)} type="button">
+              Annulla
+            </button>
+            <button
+              className="danger-action"
+              onClick={() =>
+                void onDelete(deleteCandidate.id)
+                  .then(() => {
+                    setDeleteCandidate(null);
+                    setReceipt("Piano eliminato. I trasferimenti già eseguiti restano invariati.");
+                  })
+                  .catch(() => setError("Impossibile eliminare il piano."))
+              }
+              type="button"
+            >
+              Elimina piano
+            </button>
+          </div>
+        </AccessibleDialog>
+      )}
     </section>
   );
 }

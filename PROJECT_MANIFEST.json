@@ -223,9 +223,14 @@
       "sha256": "8022b544082324986cf8047f855c64563338fdebee375c045b88045218cc95b5"
     },
     {
+      "path": ".codex/state/checkpoints/2026-08-11-phase-12-5-allocation-plans.md",
+      "size": 1018,
+      "sha256": "5c744a9ac61867a9921e9c4b3e3acc54c4c2db94adc8a13b90466accbcfcd850"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 937,
-      "sha256": "5666a3ba1759c96adda6304acacb5d451e3dbe0baa6626f79efb2fe893d92651"
+      "size": 778,
+      "sha256": "af365ef7c6c8c72d37be7d81ab719305805af99f7ab000da20ca7a35c41e3bd0"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -729,8 +734,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 38087,
-      "sha256": "e960eead946023f4c81da640609bf81efd270e4e8f6826ecdb3e8928e2c22a08"
+      "size": 38874,
+      "sha256": "baf03ebf53a16f929686d18433012f5b988da938fa51bbaa2de58058d0072c84"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -1024,8 +1029,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 30136,
-      "sha256": "372e45eb5b16b59f5187c1902645d6fc0d99e6bf3032c07967ce059a2a0c1bfb"
+      "size": 30470,
+      "sha256": "043ac51fec233ad8d606db3bf0b02c25af9bbce6616abda709040511da046c8c"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1063,9 +1068,14 @@
       "sha256": "2794af11587e96faae48359efd57ed3e805a705c9a53243f4ee323e9e4b397bb"
     },
     {
+      "path": "apps/web/src/recurring/allocationCommands.test.ts",
+      "size": 2281,
+      "sha256": "7e43777509be831d09e3dbe4b9641a7ebd28beb95a8692ea06e5762bfefd1663"
+    },
+    {
       "path": "apps/web/src/recurring/allocationCommands.ts",
-      "size": 884,
-      "sha256": "f32179b2c2b71e46a9b618b6c457b08646dfe8b17932523f35a4ccd7611ef882"
+      "size": 1532,
+      "sha256": "2c1bfdf62bc1433d367e463631f53a924f5689a64ee5a31f05977e68ca7c0c9f"
     },
     {
       "path": "apps/web/src/recurring/recurringCommands.ts",
@@ -1074,13 +1084,13 @@
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.test.tsx",
-      "size": 6317,
-      "sha256": "ecf7ed34dbca47e3e8e3b1bd83980449e197d40ce0b62053480994f2736caee5"
+      "size": 10970,
+      "sha256": "b99a963859a85f1f6b28282a3b3298cbe39e82c64fe5eb20ab64001ce3ce72f8"
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 25539,
-      "sha256": "554ed72c0782965395fc44f00fdd6c3006c4b64244e1e3e9122c2f4930b4a88a"
+      "size": 32468,
+      "sha256": "f99fe58257280898800e5cd7216667c4e17b6a580beab9455578b8dca05e7c41"
     },
     {
       "path": "apps/web/src/reset/financialReset.test.ts",
@@ -1354,8 +1364,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 32204,
-      "sha256": "2abb2e9cb6f82629b16e27cf29c56163755315796bb1b51a001a33ef041682c5"
+      "size": 33540,
+      "sha256": "4369e9dfa49127525f6472bed4fa52fcf55445f786b804778729200be5a29ce3"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -1489,8 +1499,8 @@
     },
     {
       "path": "docs/adr/0014-confirmed-allocation-plans.md",
-      "size": 826,
-      "sha256": "a39437707d3f77b476589ca1fcb51bacff07955efec011bcc0d954afa181ae10"
+      "size": 1578,
+      "sha256": "9240df7b8638df14837ed1efc9f375b9f943b7a5b257c0f667c75a6b5ff52ef2"
     },
     {
       "path": "docs/adr/0015-google-drive-appdata-oauth.md",
@@ -1914,13 +1924,13 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
-      "size": 6396,
-      "sha256": "0691c8b26ff1d42b5abd3f145f8dbdd3708af3e037d736d282b46ebc61ba14c6"
+      "size": 10144,
+      "sha256": "cb0da1b0e65abf329fd68dd0275b23708348d82e16eb87d9682d472716f86ed5"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 23143,
-      "sha256": "9f9676c086deeca17515985ed7b391022fcfa06f871269579658ff4063894d37"
+      "size": 23783,
+      "sha256": "5756cceebeef4ca2c00ce19417b8a01ff0ec53ebe8f40c6789197ff1a6efff38"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -1939,8 +1949,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 42671,
-      "sha256": "d98c545fd743df848af3ab49671dbbccd6dbf482658a69ba84069c39c64a2349"
+      "size": 42886,
+      "sha256": "bc291dc52bda9fe6caf4318bdce18b99b4ce2ae83eda9e7d4248a51e6cc4d8f6"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -1949,13 +1959,13 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 40397,
-      "sha256": "02faea14c45c89659a0eb6ef96232fc4170122a217cfd1ca9ae969456112aad4"
+      "size": 40869,
+      "sha256": "52eea3a446eeb813051e723a5cde1d5e94868449006a4981057ab59543a9340c"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 97104,
-      "sha256": "3e6483cd7010756a061733006c2a39965e44c148f8c5f69f79203526d90e2f87"
+      "size": 97674,
+      "sha256": "76f4e3a9c45137d5326b1424b7929f3c42ee58d792d6dedad0c4c4e8b4a04aae"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -2179,13 +2189,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 35769,
-      "sha256": "94037cba8a41ab167db517d5b39f2680707163b295a6a9c883609f22b0f68dd1"
+      "size": 36122,
+      "sha256": "93851149b41bdc8578d0a781b42cf44a922628f19319b1283202d4cd278d201d"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 98004,
-      "sha256": "47936d586ca75ae286209e0f88ca953c90d92d95bfed94306078418f3e9cf281"
+      "size": 98344,
+      "sha256": "42016fde7c021047cd40f73cd9c68c83beed0b2834854df4df6afd05ca6b21db"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -2344,8 +2354,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 3770,
-      "sha256": "577e8ae98cf82af3093e6321ab25fadb66c5fe419c3f59758c3b8f0d613e7855"
+      "size": 3837,
+      "sha256": "50f3223c8d16397bd54de2459dd80a00b4f95d7b2808224dcbd5d92b0e5af9d7"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -2354,13 +2364,13 @@
     },
     {
       "path": "packages/domain/src/services/accountUpdates.test.ts",
-      "size": 2052,
-      "sha256": "ad8288f1eae93a3898129e1fd762b638a65cfcebf816756e56c02f2c6900cc4a"
+      "size": 2274,
+      "sha256": "06646fe43e0804f6bcead343ef4e7d98116032487bc16c4f9be2dbc37b577ce9"
     },
     {
       "path": "packages/domain/src/services/accountUpdates.ts",
-      "size": 1355,
-      "sha256": "6ca7153fb8f628db49af6d7a2d723619b3cbf2c40782dceceac2e606da302eb5"
+      "size": 1628,
+      "sha256": "2c8a0970841315c7f430fdd506c7ccc331c803c9ff67b2237f52e70f3f5f8da3"
     },
     {
       "path": "packages/domain/src/services/budgetProgress.test.ts",
@@ -2399,13 +2409,13 @@
     },
     {
       "path": "packages/domain/src/services/executeAllocationPlans.test.ts",
-      "size": 1713,
-      "sha256": "7bdaca707cbe76f522ca403d223f6b990420aa257d6c1a235b85213ba998f167"
+      "size": 6561,
+      "sha256": "fe3260c78414d7846f7b7bfc01b14219c4ce93205b37d16ff668e0e7394d2654"
     },
     {
       "path": "packages/domain/src/services/executeAllocationPlans.ts",
-      "size": 2127,
-      "sha256": "6ffb3e9198a7c97cb9dda1dd189d80fc75e3994d3de0fca3e9bb3c69006812b0"
+      "size": 3249,
+      "sha256": "b638da888b2d9b7d9bae7335a5ea4a4abc9a5f401f441e699bc3c087ffac7d0d"
     },
     {
       "path": "packages/domain/src/services/expenseBehavior.test.ts",
@@ -2914,8 +2924,8 @@
     },
     {
       "path": "test/e2e/recurring.spec.ts",
-      "size": 5800,
-      "sha256": "7e17da8b083e72241cc83ce465fe50a242a8b0289a9d09f758b6b1e3ccdacc06"
+      "size": 6879,
+      "sha256": "cb703a0a35885f6761b0170bf4fd6f7621cc24a9bb3e6a3d668ee6eb596ef0b8"
     },
     {
       "path": "test/e2e/startup-multitab.spec.ts",
