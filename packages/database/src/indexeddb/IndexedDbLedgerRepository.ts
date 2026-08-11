@@ -258,35 +258,47 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public updateAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["accounts", "transactions"], "readwrite", async (transaction) => {
-          const accounts = transaction.objectStore("accounts");
-          const transactions = transaction.objectStore("transactions");
-          const existing = await this.findAccountInStore(accounts, account.id);
-          if (existing === undefined) {
-            throw new DomainError("missing_reference", "Account does not exist.");
-          }
+        this.withTransaction(
+          ["accounts", "transactions", "allocation_plans"],
+          "readwrite",
+          async (transaction) => {
+            const accounts = transaction.objectStore("accounts");
+            const transactions = transaction.objectStore("transactions");
+            const existing = await this.findAccountInStore(accounts, account.id);
+            if (existing === undefined) {
+              throw new DomainError("missing_reference", "Account does not exist.");
+            }
 
-          const [storedAccounts, transactionCount, parent] = await Promise.all([
-            requestResult<unknown[]>(accounts.getAll()),
-            requestResult(transactions.index("by_account_id").count(account.id)),
-            account.parentAccountId === undefined
-              ? Promise.resolve(undefined)
-              : this.findAccountInStore(accounts, account.parentAccountId),
-          ]);
-          const accountRecords = storedAccounts.map((row) =>
-            accountFromRecord(row as AccountRecord),
-          );
+            const [storedAccounts, transactionCount, allocationPlans, parent] = await Promise.all([
+              requestResult<unknown[]>(accounts.getAll()),
+              requestResult(transactions.index("by_account_id").count(account.id)),
+              requestResult<unknown[]>(transaction.objectStore("allocation_plans").getAll()),
+              account.parentAccountId === undefined
+                ? Promise.resolve(undefined)
+                : this.findAccountInStore(accounts, account.parentAccountId),
+            ]);
+            const accountRecords = storedAccounts.map((row) =>
+              accountFromRecord(row as AccountRecord),
+            );
 
-          validateAccountUpdate(existing, account, {
-            hasActiveChildren: accountRecords.some(
-              (candidate) => candidate.parentAccountId === account.id && !candidate.isArchived,
-            ),
-            hasTransactions: transactionCount > 0,
-            parentIsArchived: parent?.isArchived ?? false,
-          });
+            validateAccountUpdate(existing, account, {
+              hasActiveChildren: accountRecords.some(
+                (candidate) => candidate.parentAccountId === account.id && !candidate.isArchived,
+              ),
+              hasEnabledAllocationPlans: allocationPlans.some((row) => {
+                const plan = allocationPlanFromRecord(row as AllocationPlanRecord);
+                return (
+                  plan.enabled &&
+                  (plan.sourceAccountId === account.id || plan.targetAccountId === account.id)
+                );
+              }),
+              hasTransactions: transactionCount > 0,
+              parentIsArchived: parent?.isArchived ?? false,
+            });
 
-          await requestResult(accounts.put(accountToRecord(account)));
-        }),
+            await requestResult(accounts.put(accountToRecord(account)));
+          },
+        ),
       ),
     );
   }

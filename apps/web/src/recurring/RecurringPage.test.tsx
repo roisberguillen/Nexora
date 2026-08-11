@@ -1,4 +1,4 @@
-import { Account, Category, LocalDate, Money, RecurringRule } from "@nexora/domain";
+import { Account, AllocationPlan, Category, LocalDate, Money, RecurringRule } from "@nexora/domain";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -14,14 +14,17 @@ describe("RecurringPage", () => {
         categories={[]}
         onCreate={async () => undefined}
         onCreateAllocation={async () => undefined}
-        onExecuteAllocations={async () => undefined}
+        onDeleteAllocation={async () => undefined}
+        onExecuteAllocations={async () => ({ alreadyExecutedPlanIds: [], executedPlanIds: [] })}
         onDelete={async () => undefined}
         onUpdate={async () => undefined}
+        onUpdateAllocation={async () => undefined}
         rules={[]}
       />,
     );
 
-    expect(screen.getByLabelText("Attiva").parentElement).toHaveClass("form-toggle");
+    expect(screen.getAllByLabelText("Attiva")[0]!.parentElement).toHaveClass("form-toggle");
+    expect(screen.getAllByLabelText("Attiva")[1]!.parentElement).toHaveClass("form-toggle");
     expect(screen.getByRole("region", { name: "Piani di allocazione" })).toHaveClass(
       "recurring-allocation-panel",
     );
@@ -99,9 +102,14 @@ describe("RecurringPage", () => {
         categories={[incomeCategory, expenseCategory]}
         onCreate={vi.fn(async () => undefined)}
         onCreateAllocation={vi.fn(async () => undefined)}
-        onExecuteAllocations={vi.fn(async () => undefined)}
+        onDeleteAllocation={vi.fn(async () => undefined)}
+        onExecuteAllocations={vi.fn(async () => ({
+          alreadyExecutedPlanIds: [],
+          executedPlanIds: [],
+        }))}
         onDelete={vi.fn(async () => undefined)}
         onUpdate={onUpdate}
+        onUpdateAllocation={vi.fn(async () => undefined)}
         rules={[classifiedRule]}
       />,
     );
@@ -120,9 +128,109 @@ describe("RecurringPage", () => {
       }),
     );
   });
+
+  it("edits, pauses and asks before deleting an allocation plan", async () => {
+    const user = userEvent.setup();
+    const onUpdateAllocation = vi.fn(async () => undefined);
+    const onDeleteAllocation = vi.fn(async () => undefined);
+    const plan = AllocationPlan.create({
+      id: "allocation",
+      name: "Risparmio",
+      trigger: "salary",
+      sourceAccountId: account.id,
+      targetAccountId: secondAccount.id,
+      amount: Money.fromMinor(10_000n, "EUR"),
+    });
+    render(
+      <RecurringPage
+        accounts={[account, secondAccount]}
+        allocationPlans={[plan]}
+        categories={[incomeCategory, expenseCategory]}
+        onCreate={vi.fn(async () => undefined)}
+        onCreateAllocation={vi.fn(async () => undefined)}
+        onDelete={vi.fn(async () => undefined)}
+        onDeleteAllocation={onDeleteAllocation}
+        onExecuteAllocations={vi.fn(async () => ({
+          alreadyExecutedPlanIds: [],
+          executedPlanIds: [],
+        }))}
+        onUpdate={vi.fn(async () => undefined)}
+        onUpdateAllocation={onUpdateAllocation}
+        rules={[]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Modifica" }));
+    expect(screen.getByRole("heading", { name: "Modifica piano" })).toBeVisible();
+    expect(screen.getByLabelText("Nome piano")).toHaveValue("Risparmio");
+    await user.click(screen.getByRole("button", { name: "Metti in pausa" }));
+    expect(onUpdateAllocation).toHaveBeenCalledWith(
+      plan.id,
+      expect.objectContaining({ enabled: false }),
+    );
+    await user.click(screen.getByRole("button", { name: "Elimina…" }));
+    expect(screen.getByRole("dialog", { name: "Eliminare questo piano?" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Elimina piano" }));
+    expect(onDeleteAllocation).toHaveBeenCalledWith(plan.id);
+  });
+
+  it("keeps the execution id available for a safe retry after a partial allocation failure", async () => {
+    const user = userEvent.setup();
+    const onExecuteAllocations = vi
+      .fn<
+        (
+          planIds: readonly string[],
+          executionId: string,
+        ) => Promise<{
+          readonly alreadyExecutedPlanIds: readonly string[];
+          readonly executedPlanIds: readonly string[];
+        }>
+      >()
+      .mockRejectedValueOnce(new Error("partial failure"))
+      .mockResolvedValueOnce({ alreadyExecutedPlanIds: ["allocation"], executedPlanIds: [] });
+    const plan = AllocationPlan.create({
+      id: "allocation",
+      name: "Risparmio",
+      trigger: "salary",
+      sourceAccountId: account.id,
+      targetAccountId: secondAccount.id,
+      amount: Money.fromMinor(10_000n, "EUR"),
+    });
+    render(
+      <RecurringPage
+        accounts={[account, secondAccount]}
+        allocationPlans={[plan]}
+        categories={[incomeCategory, expenseCategory]}
+        onCreate={vi.fn(async () => undefined)}
+        onCreateAllocation={vi.fn(async () => undefined)}
+        onDelete={vi.fn(async () => undefined)}
+        onDeleteAllocation={vi.fn(async () => undefined)}
+        onExecuteAllocations={onExecuteAllocations}
+        onUpdate={vi.fn(async () => undefined)}
+        onUpdateAllocation={vi.fn(async () => undefined)}
+        rules={[]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Conferma allocazioni stipendio" }));
+    await user.click(screen.getByRole("button", { name: "Esegui allocazioni" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(/potrebbe essere parziale/i);
+    expect(screen.getByRole("button", { name: "Riprova allocazioni" })).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Riprova allocazioni" }));
+    await screen.findByRole("status");
+    expect(onExecuteAllocations).toHaveBeenCalledTimes(2);
+    expect(onExecuteAllocations.mock.calls[1]?.[1]).toBe(onExecuteAllocations.mock.calls[0]?.[1]);
+  });
 });
 
 const account = Account.create({ id: "account", name: "Conto", type: "checking", currency: "EUR" });
+const secondAccount = Account.create({
+  id: "second",
+  name: "Riserva",
+  type: "savings",
+  currency: "EUR",
+});
 const incomeCategory = Category.create({ id: "income", name: "Stipendio", kindScope: "income" });
 const expenseCategory = Category.create({
   id: "expense",
@@ -159,9 +267,14 @@ function renderPage({
       categories={[incomeCategory, expenseCategory]}
       onCreate={vi.fn(async () => undefined)}
       onCreateAllocation={vi.fn(async () => undefined)}
-      onExecuteAllocations={vi.fn(async () => undefined)}
+      onDeleteAllocation={vi.fn(async () => undefined)}
+      onExecuteAllocations={vi.fn(async () => ({
+        alreadyExecutedPlanIds: [],
+        executedPlanIds: [],
+      }))}
       onDelete={vi.fn(async () => undefined)}
       onUpdate={vi.fn(async () => undefined)}
+      onUpdateAllocation={vi.fn(async () => undefined)}
       rules={rules}
     />,
   );

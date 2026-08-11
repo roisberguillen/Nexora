@@ -755,6 +755,22 @@
   padding-inline: 1.5rem;
 }
 
+.recurring-allocation-panel .allocation-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.recurring-allocation-panel .account-list li {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.recurring-allocation-panel .account-copy small {
+  display: block;
+  margin-top: 0.25rem;
+}
+
 #budgets > .accounts-heading {
   margin-bottom: 1rem;
 }

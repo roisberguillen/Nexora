@@ -48,7 +48,19 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByLabel("Conto destinazione").selectOption({ label: "Riserva demo" });
   await page.getByLabel("Importo").last().fill("170,00");
   await page.getByRole("button", { name: "Salva piano" }).click();
-  await expect(page.getByText("Risparmio sintetico")).toBeVisible();
+  const allocations = page.getByRole("region", { name: "Piani di allocazione" });
+  await expect(allocations.getByText("Risparmio sintetico")).toHaveCount(1);
+  await allocations
+    .getByRole("listitem")
+    .filter({ hasText: "Risparmio sintetico" })
+    .getByRole("button", { name: "Modifica" })
+    .click();
+  await page.getByLabel("Nome piano").fill("Risparmio aggiornato");
+  await page.getByRole("button", { name: "Aggiorna piano" }).click();
+  await expect(allocations.getByText("Risparmio aggiornato")).toHaveCount(1);
+  await allocations.getByRole("button", { name: "Metti in pausa" }).click();
+  await expect(allocations.getByRole("button", { name: "Riattiva" })).toBeVisible();
+  await allocations.getByRole("button", { name: "Riattiva" }).click();
   await page.getByLabel("Nome piano").fill("Fondo attrezzatura");
   await page.getByLabel("Evento").selectOption("photo_income");
   await page.getByLabel("Conto origine").selectOption({ label: "Conto quotidiano demo" });
@@ -56,11 +68,19 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByLabel("Importo").last().fill("60,00");
   await page.getByRole("button", { name: "Salva piano" }).click();
   await page.getByRole("button", { name: "Conferma allocazioni reddito fotografico" }).click();
-  const photoConfirmation = page.getByRole("alertdialog", {
+  const photoConfirmation = page.getByRole("dialog", {
     name: "Conferma allocazioni reddito fotografico",
   });
   await expect(photoConfirmation).toContainText("Reddito fotografico ricevuto");
   await photoConfirmation.getByRole("button", { name: "Annulla" }).click();
+  await allocations
+    .getByRole("listitem")
+    .filter({ hasText: "Fondo attrezzatura" })
+    .getByRole("button", { name: "Elimina…" })
+    .click();
+  const deleteAllocation = page.getByRole("dialog", { name: "Eliminare questo piano?" });
+  await deleteAllocation.getByRole("button", { name: "Elimina piano" }).click();
+  await expect(page.getByText("Piano eliminato.")).toBeVisible();
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
   await page.getByLabel("Tipo").selectOption("income");
@@ -70,7 +90,7 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByLabel("Importo").fill("2500,00");
   await page.getByLabel("Data operazione").fill("2026-08-28");
   await page.getByRole("button", { name: "Salva movimento" }).click();
-  const confirmation = page.getByRole("alertdialog", { name: "Conferma allocazioni stipendio" });
+  const confirmation = page.getByRole("dialog", { name: "Conferma allocazioni stipendio" });
   await expect(confirmation).toContainText("Stipendio ricevuto");
   await confirmation.getByRole("button", { name: "Esegui allocazioni" }).click();
   await expect(confirmation).not.toBeVisible();

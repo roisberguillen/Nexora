@@ -1025,6 +1025,13 @@ describe("IndexedDbLedgerRepository", () => {
     });
     await ledger.repository.saveAllocationPlan(plan);
     await expect(ledger.repository.listAllocationPlans()).resolves.toEqual([plan]);
+    const paused = AllocationPlan.create({ ...plan, enabled: false, name: "Directa pausa" });
+    await ledger.repository.updateAllocationPlan(paused);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listAllocationPlans()).resolves.toEqual([paused]);
+    await ledger.repository.deleteAllocationPlan(paused.id);
+    await expect(ledger.repository.listAllocationPlans()).resolves.toEqual([]);
   });
   it("persiste un budget dopo la riapertura", async () => {
     const budget = Budget.create({

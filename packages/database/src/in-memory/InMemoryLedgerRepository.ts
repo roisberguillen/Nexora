@@ -118,6 +118,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       hasActiveChildren: [...this.accounts.values()].some(
         (candidate) => candidate.parentAccountId === account.id && !candidate.isArchived,
       ),
+      hasEnabledAllocationPlans: [...this.allocationPlans.values()].some(
+        (plan) =>
+          plan.enabled &&
+          (plan.sourceAccountId === account.id || plan.targetAccountId === account.id),
+      ),
       hasTransactions: [...this.transactions.values()].some(
         (transaction) => transaction.accountId === account.id,
       ),

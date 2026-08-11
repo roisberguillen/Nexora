@@ -899,6 +899,11 @@ describe("SqliteLedgerRepository", () => {
     });
     await repository.saveAllocationPlan(plan);
     await expect(repository.listAllocationPlans()).resolves.toEqual([plan]);
+    const paused = AllocationPlan.create({ ...plan, enabled: false, name: "Risparmio pausa" });
+    await repository.updateAllocationPlan(paused);
+    await expect(repository.listAllocationPlans()).resolves.toEqual([paused]);
+    await repository.deleteAllocationPlan(paused.id);
+    await expect(repository.listAllocationPlans()).resolves.toEqual([]);
   });
 
   it("persiste e aggiorna un budget mensile", async () => {

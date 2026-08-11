@@ -42,7 +42,12 @@ import {
   updateRecurringRule,
   type RecurringRuleInput,
 } from "./recurring/recurringCommands";
-import { createAllocationPlan, type AllocationPlanInput } from "./recurring/allocationCommands";
+import {
+  createAllocationPlan,
+  deleteAllocationPlan,
+  updateAllocationPlan,
+  type AllocationPlanInput,
+} from "./recurring/allocationCommands";
 import { BudgetsPage } from "./budgets/BudgetsPage";
 import {
   createBudget,
@@ -551,6 +556,14 @@ function AppContent({
     mutateLedger(async (ledger) => {
       await createAllocationPlan(ledger.repository, input);
     });
+  const updateAllocation = (id: string, input: AllocationPlanInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateAllocationPlan(ledger.repository, id, input);
+    });
+  const deleteAllocation = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await deleteAllocationPlan(ledger.repository, id);
+    });
   const createMonthlyBudget = (input: BudgetInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createBudget(ledger.repository, input);
@@ -575,8 +588,9 @@ function AppContent({
     mutateLedger(async (ledger) => {
       await saveMonthlyJournal(ledger.repository, input, existingId);
     });
-  const executeAllocations = (planIds: readonly string[]): Promise<void> =>
-    mutateLedger(async (ledger) => {
+  const executeAllocations = async (planIds: readonly string[], executionId: string) => {
+    let receipt: Awaited<ReturnType<typeof executeConfirmedAllocationPlans>> | undefined;
+    await mutateLedger(async (ledger) => {
       const plans = (await ledger.repository.listAllocationPlans()).filter((plan) =>
         planIds.includes(plan.id),
       );
@@ -586,8 +600,16 @@ function AppContent({
         timeZone: "Europe/Rome",
         year: "numeric",
       }).format(new Date());
-      await executeConfirmedAllocationPlans(ledger.repository, plans, LocalDate.parse(bookedDate));
+      receipt = await executeConfirmedAllocationPlans(
+        ledger.repository,
+        plans,
+        LocalDate.parse(bookedDate),
+        executionId,
+      );
     });
+    if (receipt === undefined) throw new Error("ledger_not_ready");
+    return receipt;
+  };
 
   return (
     <ErrorBoundary
@@ -727,7 +749,9 @@ function AppContent({
                   allocationPlans={ledgerState.allocationPlans}
                   categories={ledgerState.categories}
                   onCreateAllocation={createAllocation}
+                  onDeleteAllocation={deleteAllocation}
                   onExecuteAllocations={executeAllocations}
+                  onUpdateAllocation={updateAllocation}
                   rules={ledgerState.recurringRules}
                   onCreate={createRecurring}
                   onUpdate={updateRecurring}
