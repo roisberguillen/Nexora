@@ -114,23 +114,24 @@ export function deriveLocalNotifications(input: {
       splits: transactionSplits,
       transactions,
     }).percentage;
-    if (budget.alertAt100 && usage >= 100) {
+    if (budget.firstAlertPercentage !== undefined && usage >= budget.firstAlertPercentage) {
       notifications.push({
         description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,
         href: "./#budgets",
-        id: `budget-exceeded:${budget.id}:${budget.period}`,
-        kind: "budget",
-        priority: "high",
-        title: "Budget superato",
-      });
-    } else if (budget.alertAt80 && usage >= 80) {
-      notifications.push({
-        description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,
-        href: "./#budgets",
-        id: `budget-warning:${budget.id}:${budget.period}`,
+        id: `budget-threshold:${budget.id}:${budget.period}:${budget.firstAlertPercentage}`,
         kind: "budget",
         priority: "medium",
-        title: "Budget vicino al limite",
+        title: `Prima soglia budget raggiunta (${budget.firstAlertPercentage}%)`,
+      });
+    }
+    if (budget.secondAlertPercentage !== undefined && usage >= budget.secondAlertPercentage) {
+      notifications.push({
+        description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,
+        href: "./#budgets",
+        id: `budget-threshold:${budget.id}:${budget.period}:${budget.secondAlertPercentage}`,
+        kind: "budget",
+        priority: "high",
+        title: `Seconda soglia budget raggiunta (${budget.secondAlertPercentage}%)`,
       });
     }
   }

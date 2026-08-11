@@ -47,7 +47,8 @@ Commit e push su `origin/main`.
 ### Evidenze slice 12.4 — budget gerarchici
 
 - [x] Ogni budget ha creazione, modifica ed eliminazione confermata senza cancellare movimenti;
-  il mese corrente è precompilato nella timezone `Europe/Rome`.
+  il mese corrente è assegnato automaticamente nella timezone `Europe/Rome` e non è richiesto
+  nel form.
 - [x] Il perimetro di una macro include tutte le sottocategorie, incluse quelle archiviate per lo
   storico; una sottocategoria resta circoscritta e può convivere con il budget della macro.
 - [x] Il calcolo puro usa solo spese `booked` o `reconciled`, attribuisce gli split alla sola riga
@@ -55,6 +56,9 @@ Commit e push su `origin/main`.
 - [x] SQLite/OPFS, IndexedDB e memoria applicano lo stesso vincolo di unicità su periodo e
   perimetro, compreso il budget globale; snapshot, backup, reset e import conservano i contratti
   esistenti.
+- [x] Le due soglie di notifica sono percentuali configurabili e ordinate dall'utente; non esistono
+  default per un nuovo budget. La migrazione additiva v18 converte soltanto gli avvisi legacy
+  attivi nei valori storici 80/100 e mantiene backup/ripristino compatibili.
 - [x] La UI espone stato, progresso accessibile, residuo, soglie e messaggi operativi su mobile e
   desktop; il percorso è verificato sui viewport 320, 375, 390, 768, 1024 e 1440 px.
 

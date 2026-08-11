@@ -9,6 +9,12 @@
 
 ### Changed
 
+- Corretto il modulo Budget: il form assegna automaticamente il mese corrente e richiede
+  Categoria, Sotto-categoria, importo e due soglie percentuali configurabili. Le soglie sono
+  validate fra 1 e 100 e in ordine crescente; notifiche e snapshot portabili le usano senza
+  duplicare il centro notifiche. La migrazione additiva v18 conserva i budget legacy con avvisi
+  attivi come soglie storiche 80/100.
+
 - Finalizzata la Fase 12.4: i budget mensili supportano creazione, modifica ed eliminazione
   confermata, perimetri globali, macro-categorie e sottocategorie. Il consumo usa solo spese
   contabilizzate, attribuisce correttamente gli split senza doppio conteggio e mantiene il vincolo

@@ -986,13 +986,17 @@ function copySplitWithCategory(split: TransactionSplit, categoryId: string): Tra
 }
 
 function copyBudgetWithCategory(budget: Budget, categoryId: string): Budget {
-  return Budget.create({
+  return Budget.restore({
     id: budget.id,
     period: budget.period,
     amount: budget.amount,
     categoryId,
-    alertAt80: budget.alertAt80,
-    alertAt100: budget.alertAt100,
+    ...(budget.firstAlertPercentage === undefined
+      ? {}
+      : { firstAlertPercentage: budget.firstAlertPercentage }),
+    ...(budget.secondAlertPercentage === undefined
+      ? {}
+      : { secondAlertPercentage: budget.secondAlertPercentage }),
   });
 }
 

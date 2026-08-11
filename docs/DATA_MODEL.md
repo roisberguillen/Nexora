@@ -82,7 +82,7 @@ Un piano è una proposta di trasferimento per stipendio o reddito fotografico; n
 in saldi, report o storico finché l'utente non ne conferma l'esecuzione.
 
 ### Budget
-`id, period, categoryId?, amountMinor, alert80, alert100`
+`id, period, categoryId?, amountMinor, firstAlertPercentage?, secondAlertPercentage?`
 
 `categoryId` può indicare una macro-categoria, una sottocategoria oppure restare assente per un
 limite globale su tutte le spese. Il perimetro di una macro include la macro e tutte le sue
@@ -95,6 +95,14 @@ rettifiche, movimenti attesi o annullati non incidono. Se una transazione ha spl
 solo le righe split compatibili con il perimetro: la transazione madre, priva di categoria diretta,
 non viene mai conteggiata due volte. Importo speso, residuo, percentuale e stato sono viste pure in
 minor units, non valori persistiti.
+
+I nuovi budget sono creati dall'application layer nel mese corrente `Europe/Rome`, su una
+sottocategoria attiva, con due soglie percentuali esplicite: `firstAlertPercentage` e
+`secondAlertPercentage`. Entrambe sono interi da 1 a 100 e la prima è strettamente minore della
+seconda. Non esistono valori predefiniti per i nuovi budget. La migrazione v18 conserva invece i
+budget legacy convertendo i vecchi avvisi attivi nelle soglie storiche 80 e 100; un avviso legacy
+disattivato resta assente. Il Centro notifiche usa queste soglie senza introdurre un secondo
+sistema di notifiche.
 
 ### Loan
 `id, accountId, lender, originalPrincipalMinor?, remainingPrincipalMinor, installmentMinor, installmentsPaid?, installmentsRemaining?, nextDueDate?`

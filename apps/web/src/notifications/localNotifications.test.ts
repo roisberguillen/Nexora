@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Account, LocalDate, Money, RecurringRule } from "@nexora/domain";
+import { Account, Budget, LocalDate, Money, RecurringRule, Transaction } from "@nexora/domain";
 
 import {
   deriveLocalNotifications,
@@ -29,6 +29,61 @@ describe("local notification state", () => {
 });
 
 describe("local notification derivation", () => {
+  it("emits each configured budget threshold once with deterministic identifiers", () => {
+    const budget = Budget.create({
+      id: "food",
+      period: "2026-07",
+      categoryId: "food",
+      amount: Money.fromMinor(10_000n, "EUR"),
+      firstAlertPercentage: 50,
+      secondAlertPercentage: 80,
+    });
+    const expense = (amountMinor: bigint) =>
+      Transaction.create({
+        id: `expense-${amountMinor}`,
+        kind: "expense",
+        status: "booked",
+        accountId: "main",
+        amount: Money.fromMinor(amountMinor, "EUR"),
+        bookedDate: LocalDate.parse("2026-07-15"),
+        categoryId: "food",
+      });
+    const input = {
+      backupHistory: [
+        {
+          id: "backup",
+          occurredAt: "2026-07-28T12:00:00.000Z",
+          operation: "local_backup" as const,
+          outcome: "succeeded" as const,
+          storageKind: "indexeddb" as const,
+        },
+        {
+          id: "recovery",
+          occurredAt: "2026-07-28T12:00:00.000Z",
+          operation: "restore_test" as const,
+          outcome: "succeeded" as const,
+          storageKind: "indexeddb" as const,
+        },
+      ],
+      budgets: [budget],
+      loans: [],
+      recurringRules: [],
+      today: new Date("2026-07-29T12:00:00.000Z"),
+    };
+
+    expect(deriveLocalNotifications({ ...input, transactions: [expense(-4_900n)] })).toEqual([]);
+    expect(
+      deriveLocalNotifications({ ...input, transactions: [expense(-5_000n)] }).map(
+        (item) => item.id,
+      ),
+    ).toEqual(["budget-threshold:food:2026-07:50"]);
+    expect(
+      deriveLocalNotifications({ ...input, transactions: [expense(-9_000n)] }).map(
+        (item) => item.id,
+      ),
+    ).toEqual(["budget-threshold:food:2026-07:50", "budget-threshold:food:2026-07:80"]);
+  });
+
   it("segnala backup e recovery drill scaduti con identificativi deterministici", () => {
     const notifications = deriveLocalNotifications({
       backupHistory: [],

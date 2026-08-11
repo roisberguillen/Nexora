@@ -37,6 +37,8 @@ describe("InMemoryLedgerRepository atomic operations", () => {
         id: "budget-one",
         period: "2026-08",
         amount: Money.fromMinor(50_000n, "EUR"),
+        firstAlertPercentage: 80,
+        secondAlertPercentage: 100,
       }),
     );
     await expect(
@@ -45,6 +47,8 @@ describe("InMemoryLedgerRepository atomic operations", () => {
           id: "budget-two",
           period: "2026-08",
           amount: Money.fromMinor(60_000n, "EUR"),
+          firstAlertPercentage: 80,
+          secondAlertPercentage: 100,
         }),
       ),
     ).rejects.toMatchObject({ code: "duplicate_entity" });

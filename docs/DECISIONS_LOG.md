@@ -12,8 +12,21 @@ Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e
   Una transazione split contribuisce esclusivamente con le righe split compatibili e non con la
   madre priva di categoria.
 - **Conseguenze:** speso, residuo, percentuale e stato sono calcoli puri in minor units condivisi
-  da pagine Budget e notifiche locali. Nessun nuovo campo o migrazione è necessario: schema,
-  snapshot portabile, reset e import mantengono i budget già salvati.
+  da pagine Budget e notifiche locali. La correzione delle soglie configurabili introduce poi la
+  migrazione additiva v18: i nuovi budget non ricevono percentuali implicite, mentre gli avvisi
+  legacy attivi sono conservati come 80/100 in SQLite, IndexedDB e snapshot portabili.
+
+## 2026-08-11 — Soglie Budget configurabili
+
+- **Contesto:** i booleani `alertAt80` e `alertAt100` descrivevano soglie fisse e non potevano
+  rappresentare la scelta dell'utente.
+- **Scelta:** il dominio usa `firstAlertPercentage` e `secondAlertPercentage`; per i nuovi budget
+  entrambi sono obbligatori nell'application layer, interi 1–100 e ordinati strettamente. Il mese
+  è assegnato dal layer applicativo, non richiesto nel form. La lettura legacy resta tollerante per
+  conservare anche vecchi avvisi disattivati.
+- **Conseguenze:** una migrazione SQLite additiva v18 materializza le percentuali, IndexedDB legge
+  sia record vecchi sia nuovi, e il Centro notifiche produce identificativi deterministici per
+  ciascuna soglia senza duplicare il sistema o rieseguire avvisi già riconosciuti.
 
 ## 2026-08-08 — Tassonomia finanziaria a due livelli
 

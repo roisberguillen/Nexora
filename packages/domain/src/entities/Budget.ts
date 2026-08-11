@@ -10,8 +10,21 @@ export interface CreateBudgetProps {
   readonly period: string;
   readonly amount: Money;
   readonly categoryId?: string;
-  readonly alertAt80?: boolean;
-  readonly alertAt100?: boolean;
+  readonly firstAlertPercentage: number;
+  readonly secondAlertPercentage: number;
+}
+
+/**
+ * Compatibility input used only when reading a budget written before configurable
+ * thresholds existed. New budgets must use `create`.
+ */
+export interface RestoreBudgetProps {
+  readonly id: string;
+  readonly period: string;
+  readonly amount: Money;
+  readonly categoryId?: string;
+  readonly firstAlertPercentage?: number;
+  readonly secondAlertPercentage?: number;
 }
 
 export class Budget {
@@ -19,10 +32,10 @@ export class Budget {
   public readonly period: string;
   public readonly amount: Money;
   public readonly categoryId: string | undefined;
-  public readonly alertAt80: boolean;
-  public readonly alertAt100: boolean;
+  public readonly firstAlertPercentage: number | undefined;
+  public readonly secondAlertPercentage: number | undefined;
 
-  private constructor(props: CreateBudgetProps) {
+  private constructor(props: RestoreBudgetProps) {
     this.id = requireIdentifier(props.id, "Budget id");
     this.period = requirePeriod(props.period);
     this.amount = props.amount;
@@ -30,14 +43,19 @@ export class Budget {
       props.categoryId === undefined
         ? undefined
         : requireIdentifier(props.categoryId, "Budget category id");
-    this.alertAt80 = props.alertAt80 ?? true;
-    this.alertAt100 = props.alertAt100 ?? true;
+    this.firstAlertPercentage = props.firstAlertPercentage;
+    this.secondAlertPercentage = props.secondAlertPercentage;
     if (!this.amount.isPositive())
       throw new DomainError("invalid_money", "Budget amount must be positive.");
+    assertAlertThresholds(this.firstAlertPercentage, this.secondAlertPercentage);
     Object.freeze(this);
   }
 
   public static create(props: CreateBudgetProps): Budget {
+    return new Budget(props);
+  }
+
+  public static restore(props: RestoreBudgetProps): Budget {
     return new Budget(props);
   }
 
@@ -63,6 +81,23 @@ export class Budget {
         "Budget transactions must share the budget currency.",
       );
     return Number((spent.amountMinor * 10_000n) / this.amount.amountMinor) / 100;
+  }
+}
+
+function assertAlertThresholds(first: number | undefined, second: number | undefined): void {
+  for (const [name, value] of [
+    ["Budget first alert percentage", first],
+    ["Budget second alert percentage", second],
+  ] as const) {
+    if (value !== undefined && (!Number.isInteger(value) || value <= 0 || value > 100)) {
+      throw new DomainError("invalid_percentage", `${name} must be an integer between 1 and 100.`);
+    }
+  }
+  if (first !== undefined && second !== undefined && first >= second) {
+    throw new DomainError(
+      "invalid_percentage",
+      "Budget first alert percentage must be lower than the second alert percentage.",
+    );
   }
 }
 

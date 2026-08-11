@@ -8,6 +8,7 @@ export type DomainErrorCode =
   | "invalid_identifier"
   | "invalid_import"
   | "invalid_money"
+  | "invalid_percentage"
   | "invalid_transaction"
   | "invalid_transfer"
   | "missing_reference";

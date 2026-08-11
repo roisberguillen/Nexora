@@ -14,23 +14,21 @@ describe("budget commands", () => {
       repository,
       {
         amountMinor: 80_000n,
-        alertAt80: true,
-        alertAt100: true,
         categoryId: "transport",
-        period: "2026-08",
+        firstAlertPercentage: 65,
+        secondAlertPercentage: 90,
       },
       () => "transport-august",
     );
     const updated = await updateBudget(repository, created.id, {
       amountMinor: 95_000n,
-      alertAt80: false,
-      alertAt100: true,
       categoryId: "transport",
-      period: "2026-08",
+      firstAlertPercentage: 70,
+      secondAlertPercentage: 95,
     });
 
     expect(updated.amount.amountMinor).toBe(95_000n);
-    expect(updated.alertAt80).toBe(false);
+    expect(updated.firstAlertPercentage).toBe(70);
     await deleteBudget(repository, updated.id);
     expect(await repository.listBudgets()).toEqual([]);
   });
@@ -40,9 +38,9 @@ describe("budget commands", () => {
     await expect(
       updateBudget(repository, "missing", {
         amountMinor: 10_000n,
-        alertAt80: true,
-        alertAt100: true,
-        period: "2026-08",
+        categoryId: "transport",
+        firstAlertPercentage: 60,
+        secondAlertPercentage: 90,
       }),
     ).rejects.toMatchObject({ code: "missing_reference" });
   });
