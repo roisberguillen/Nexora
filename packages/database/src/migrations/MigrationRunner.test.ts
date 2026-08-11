@@ -108,8 +108,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 17,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+      toVersion: 18,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -144,14 +144,15 @@ describe("MigrationRunner", () => {
       { version: 15, name: "generic-csv-importer" },
       { version: 16, name: "expense-behavior" },
       { version: 17, name: "advanced-recurring-rules" },
+      { version: 18, name: "budget-alert-thresholds" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 17,
-      toVersion: 17,
+      fromVersion: 18,
+      toVersion: 18,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(17);
+    expect(migrationRows(sqlite)).toHaveLength(18);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -173,8 +174,8 @@ describe("MigrationRunner", () => {
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 17,
-      appliedMigrations: [11, 12, 13, 14, 15, 16, 17],
+      toVersion: 18,
+      appliedMigrations: [11, 12, 13, 14, 15, 16, 17, 18],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
@@ -220,8 +221,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 16,
-      toVersion: 17,
-      appliedMigrations: [17],
+      toVersion: 18,
+      appliedMigrations: [17, 18],
     });
     expect(
       sqlite
@@ -238,6 +239,42 @@ describe("MigrationRunner", () => {
       retired_at: null,
       expense_variability: null,
       expense_exceptionality: null,
+    });
+  });
+
+  it("migra i flag budget legacy nelle soglie storiche senza perdere il budget", async () => {
+    const legacyRunner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations.filter((migration) => migration.version <= 17),
+      now: () => fixedNow,
+    });
+    await legacyRunner.migrateToLatest();
+    await database.run(
+      "INSERT INTO budgets (id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      ["legacy-budget", "2026-08", null, "50000", "EUR", 1, 1],
+    );
+
+    const runner = new MigrationRunner({
+      database,
+      migrations: databaseMigrations,
+      now: () => fixedNow,
+    });
+    await expect(runner.migrateToLatest()).resolves.toMatchObject({
+      fromVersion: 17,
+      toVersion: 18,
+      appliedMigrations: [18],
+    });
+    expect(
+      sqlite
+        .prepare(
+          "SELECT id, amount_minor, first_alert_percentage, second_alert_percentage FROM budgets WHERE id = ?",
+        )
+        .get("legacy-budget"),
+    ).toEqual({
+      id: "legacy-budget",
+      amount_minor: "50000",
+      first_alert_percentage: 80,
+      second_alert_percentage: 100,
     });
   });
 
@@ -272,8 +309,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 13,
-      toVersion: 17,
-      appliedMigrations: [14, 15, 16, 17],
+      toVersion: 18,
+      appliedMigrations: [14, 15, 16, 17, 18],
     });
     expect(
       sqlite

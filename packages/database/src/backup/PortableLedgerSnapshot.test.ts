@@ -94,8 +94,8 @@ describe("portable ledger snapshot", () => {
         period: "2026-08",
         categoryId: "living",
         amount: Money.fromMinor(120_000n, "EUR"),
-        alertAt80: false,
-        alertAt100: true,
+        firstAlertPercentage: 55,
+        secondAlertPercentage: 95,
       }),
     );
 
@@ -107,10 +107,21 @@ describe("portable ledger snapshot", () => {
         id: "living-august",
         period: "2026-08",
         categoryId: "living",
-        alertAt80: false,
-        alertAt100: true,
+        firstAlertPercentage: 55,
+        secondAlertPercentage: 95,
       },
     ]);
+
+    const legacy = structuredClone(snapshot);
+    const legacyBudget = legacy.entities.budgets?.[0] as Record<string, unknown>;
+    delete legacyBudget.firstAlertPercentage;
+    delete legacyBudget.secondAlertPercentage;
+    legacyBudget.alertAt80 = true;
+    legacyBudget.alertAt100 = true;
+    expect(validatePortableLedgerSnapshot(legacy).budgets[0]).toMatchObject({
+      firstAlertPercentage: 80,
+      secondAlertPercentage: 100,
+    });
   });
 
   it("round-trips advanced recurring schedules while accepting a legacy monthly rule", async () => {

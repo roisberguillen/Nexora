@@ -2034,8 +2034,10 @@ interface BudgetRecord {
   readonly category_id?: string;
   readonly amount_minor: string;
   readonly currency: string;
-  readonly alert_at_80: boolean;
-  readonly alert_at_100: boolean;
+  readonly alert_at_80?: boolean;
+  readonly alert_at_100?: boolean;
+  readonly first_alert_percentage?: number;
+  readonly second_alert_percentage?: number;
 }
 interface LoanRecord {
   readonly id: string;
@@ -2168,18 +2170,32 @@ function budgetToRecord(budget: Budget): BudgetRecord {
     ...(budget.categoryId === undefined ? {} : { category_id: budget.categoryId }),
     amount_minor: budget.amount.amountMinor.toString(),
     currency: budget.amount.currency,
-    alert_at_80: budget.alertAt80,
-    alert_at_100: budget.alertAt100,
+    alert_at_80: budget.firstAlertPercentage !== undefined,
+    alert_at_100: budget.secondAlertPercentage !== undefined,
+    ...(budget.firstAlertPercentage === undefined
+      ? {}
+      : { first_alert_percentage: budget.firstAlertPercentage }),
+    ...(budget.secondAlertPercentage === undefined
+      ? {}
+      : { second_alert_percentage: budget.secondAlertPercentage }),
   };
 }
 function budgetFromRecord(row: BudgetRecord): Budget {
-  return Budget.create({
+  return Budget.restore({
     id: row.id,
     period: row.period,
     ...(row.category_id === undefined ? {} : { categoryId: row.category_id }),
     amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
-    alertAt80: row.alert_at_80,
-    alertAt100: row.alert_at_100,
+    ...(row.first_alert_percentage === undefined
+      ? row.alert_at_80 === true
+        ? { firstAlertPercentage: 80 }
+        : {}
+      : { firstAlertPercentage: row.first_alert_percentage }),
+    ...(row.second_alert_percentage === undefined
+      ? row.alert_at_100 === true
+        ? { secondAlertPercentage: 100 }
+        : {}
+      : { secondAlertPercentage: row.second_alert_percentage }),
   });
 }
 function allocationPlanToRecord(plan: AllocationPlan): AllocationPlanRecord {

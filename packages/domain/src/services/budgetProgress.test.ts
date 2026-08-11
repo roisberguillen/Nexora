@@ -37,6 +37,8 @@ const budget = (categoryId?: string, period = "2026-02", amountMinor = 50_000n) 
     id: `budget-${categoryId ?? "all"}-${period}`,
     period,
     amount: Money.fromMinor(amountMinor, "EUR"),
+    firstAlertPercentage: 80,
+    secondAlertPercentage: 100,
     ...(categoryId === undefined ? {} : { categoryId }),
   });
 

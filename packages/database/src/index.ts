@@ -111,6 +111,10 @@ export {
   GENERIC_CSV_IMPORTER_SCHEMA_VERSION,
   genericCsvImporterMigration,
 } from "./migrations/0015-generic-csv-importer";
+export {
+  BUDGET_ALERT_THRESHOLDS_SCHEMA_VERSION,
+  budgetAlertThresholdsMigration,
+} from "./migrations/0018-budget-alert-thresholds";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

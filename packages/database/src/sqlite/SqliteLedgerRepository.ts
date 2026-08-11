@@ -745,7 +745,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           await this.validateBudgetReferences(budget);
           const record = budgetToRecord(budget);
           await this.database.run(
-            "UPDATE budgets SET period = ?, category_id = ?, amount_minor = ?, currency = ?, alert_at_80 = ?, alert_at_100 = ? WHERE id = ?",
+            "UPDATE budgets SET period = ?, category_id = ?, amount_minor = ?, currency = ?, alert_at_80 = ?, alert_at_100 = ?, first_alert_percentage = ?, second_alert_percentage = ? WHERE id = ?",
             [
               record.period,
               record.category_id,
@@ -753,6 +753,8 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.currency,
               record.alert_at_80,
               record.alert_at_100,
+              record.first_alert_percentage,
+              record.second_alert_percentage,
               record.id,
             ],
           );
@@ -1689,7 +1691,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.performDatabaseOperation(async () =>
       (
         await this.database.query<BudgetRecord>(
-          "SELECT id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100 FROM budgets ORDER BY period, id",
+          "SELECT id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage FROM budgets ORDER BY period, id",
         )
       ).map(budgetFromRecord),
     );
@@ -1929,7 +1931,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   private async insertBudget(budget: Budget): Promise<void> {
     const record = budgetToRecord(budget);
     await this.database.run(
-      "INSERT INTO budgets (id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO budgets (id, period, category_id, amount_minor, currency, alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         record.id,
         record.period,
@@ -1938,6 +1940,8 @@ export class SqliteLedgerRepository implements LedgerRepository {
         record.currency,
         record.alert_at_80,
         record.alert_at_100,
+        record.first_alert_percentage,
+        record.second_alert_percentage,
       ],
     );
   }
@@ -2179,6 +2183,8 @@ interface BudgetRecord {
   readonly currency: string;
   readonly alert_at_80: number;
   readonly alert_at_100: number;
+  readonly first_alert_percentage: number | null;
+  readonly second_alert_percentage: number | null;
 }
 interface LoanRecord {
   readonly id: string;
@@ -2301,18 +2307,29 @@ function budgetToRecord(budget: Budget): BudgetRecord {
     category_id: budget.categoryId ?? null,
     amount_minor: budget.amount.amountMinor.toString(),
     currency: budget.amount.currency,
-    alert_at_80: budget.alertAt80 ? 1 : 0,
-    alert_at_100: budget.alertAt100 ? 1 : 0,
+    // Legacy flags stay populated for old archive compatibility; the percentages are canonical.
+    alert_at_80: budget.firstAlertPercentage === undefined ? 0 : 1,
+    alert_at_100: budget.secondAlertPercentage === undefined ? 0 : 1,
+    first_alert_percentage: budget.firstAlertPercentage ?? null,
+    second_alert_percentage: budget.secondAlertPercentage ?? null,
   };
 }
 function budgetFromRecord(row: BudgetRecord): Budget {
-  return Budget.create({
+  return Budget.restore({
     id: row.id,
     period: row.period,
     ...(row.category_id === null ? {} : { categoryId: row.category_id }),
     amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
-    alertAt80: row.alert_at_80 === 1,
-    alertAt100: row.alert_at_100 === 1,
+    ...(row.first_alert_percentage === null
+      ? row.alert_at_80 === 1
+        ? { firstAlertPercentage: 80 }
+        : {}
+      : { firstAlertPercentage: row.first_alert_percentage }),
+    ...(row.second_alert_percentage === null
+      ? row.alert_at_100 === 1
+        ? { secondAlertPercentage: 100 }
+        : {}
+      : { secondAlertPercentage: row.second_alert_percentage }),
   });
 }
 function allocationPlanToRecord(plan: AllocationPlan): AllocationPlanRecord {

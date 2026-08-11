@@ -79,7 +79,15 @@ async function createLegacyRecurringRulesDatabase(
         enabled: true,
       });
       database.createObjectStore("allocation_plans", { keyPath: "id" });
-      database.createObjectStore("budgets", { keyPath: "id" });
+      const budgets = database.createObjectStore("budgets", { keyPath: "id" });
+      budgets.add({
+        id: "legacy-budget",
+        period: "2026-08",
+        amount_minor: "50000",
+        currency: "EUR",
+        alert_at_80: true,
+        alert_at_100: true,
+      });
       database.createObjectStore("loans", { keyPath: "id" });
       database.createObjectStore("investment_positions", { keyPath: "id" });
       database.createObjectStore("monthly_journals", { keyPath: "id" });
@@ -958,6 +966,22 @@ describe("IndexedDbLedgerRepository", () => {
       expect(rows.map((row) => row.id)).toEqual([`legacy-rule-v${legacyVersion}`]);
     },
   );
+
+  it("reads a legacy IndexedDB budget with its historical threshold semantics", async () => {
+    await ledger.close();
+    const legacyDatabaseName = `${databaseName}-legacy-budget`;
+    await createLegacyRecurringRulesDatabase(factory, legacyDatabaseName, 16);
+    ledger = await openIndexedDbLedger({ databaseName: legacyDatabaseName, factory });
+
+    await expect(ledger.repository.listBudgets()).resolves.toContainEqual(
+      expect.objectContaining({
+        id: "legacy-budget",
+        firstAlertPercentage: 80,
+        secondAlertPercentage: 100,
+      }),
+    );
+  });
+
   it("ripristina uno snapshot portabile e lo conserva alla riapertura", async () => {
     const source = new InMemoryLedgerRepository();
     const sourceAccount = account("portable-account");
@@ -1007,6 +1031,8 @@ describe("IndexedDbLedgerRepository", () => {
       id: "budget-idb",
       period: "2026-08",
       amount: Money.fromMinor(50_000n, "EUR"),
+      firstAlertPercentage: 60,
+      secondAlertPercentage: 90,
     });
     await ledger.repository.saveBudget(budget);
     await ledger.close();
@@ -1019,6 +1045,8 @@ describe("IndexedDbLedgerRepository", () => {
         id: "budget-global-one",
         period: "2026-08",
         amount: Money.fromMinor(50_000n, "EUR"),
+        firstAlertPercentage: 80,
+        secondAlertPercentage: 100,
       }),
     );
     await expect(
@@ -1027,6 +1055,8 @@ describe("IndexedDbLedgerRepository", () => {
           id: "budget-global-two",
           period: "2026-08",
           amount: Money.fromMinor(60_000n, "EUR"),
+          firstAlertPercentage: 80,
+          secondAlertPercentage: 100,
         }),
       ),
     ).rejects.toMatchObject({ code: "duplicate_entity" });

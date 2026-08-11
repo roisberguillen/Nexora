@@ -2,11 +2,17 @@ import { Budget, DomainError, Money, type LedgerRepository } from "@nexora/domai
 
 export interface BudgetInput {
   readonly amountMinor: bigint;
-  readonly alertAt80: boolean;
-  readonly alertAt100: boolean;
-  readonly categoryId?: string;
-  readonly period: string;
+  readonly categoryId: string;
+  readonly firstAlertPercentage: number;
+  readonly secondAlertPercentage: number;
 }
+
+const currentPeriod = () =>
+  new Intl.DateTimeFormat("sv-SE", {
+    month: "2-digit",
+    timeZone: "Europe/Rome",
+    year: "numeric",
+  }).format(new Date());
 
 export async function createBudget(
   repository: LedgerRepository,
@@ -15,11 +21,11 @@ export async function createBudget(
 ): Promise<Budget> {
   const budget = Budget.create({
     id: idFactory(),
-    period: input.period,
+    period: currentPeriod(),
     amount: Money.fromMinor(input.amountMinor, "EUR"),
-    alertAt80: input.alertAt80,
-    alertAt100: input.alertAt100,
-    ...(input.categoryId === undefined ? {} : { categoryId: input.categoryId }),
+    categoryId: input.categoryId,
+    firstAlertPercentage: input.firstAlertPercentage,
+    secondAlertPercentage: input.secondAlertPercentage,
   });
   await repository.saveBudget(budget);
   return budget;
@@ -36,11 +42,11 @@ export async function updateBudget(
   }
   const budget = Budget.create({
     id: existing.id,
-    period: input.period,
+    period: existing.period,
     amount: Money.fromMinor(input.amountMinor, existing.amount.currency),
-    alertAt80: input.alertAt80,
-    alertAt100: input.alertAt100,
-    ...(input.categoryId === undefined ? {} : { categoryId: input.categoryId }),
+    categoryId: input.categoryId,
+    firstAlertPercentage: input.firstAlertPercentage,
+    secondAlertPercentage: input.secondAlertPercentage,
   });
   await repository.updateBudget(budget);
   return budget;

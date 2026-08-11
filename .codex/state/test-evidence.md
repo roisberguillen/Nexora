@@ -18,6 +18,20 @@ Keep only the latest relevant evidence per completed phase.
 - PR #4 and the post-merge `main` pipeline run 31495233481 both passed the complete GitHub Actions
   workflow, including Linux Playwright.
 
+## Phase 12.4 configurable budget thresholds correction — 2026-08-11
+
+- Domain validation covers integer thresholds 1–100, strictly ordered pairs, update, and legacy
+  budgets without configured alerts. SQLite migration v18 maps active legacy flags to 80/100,
+  retains disabled alerts as absent thresholds, validates database writes, and rolls back without
+  removing a budget.
+- SQLite/OPFS, IndexedDB reopen (including a v16 record), InMemory, shared Tauri initialization,
+  portable snapshot and local SQLite backup fixtures preserve configurable thresholds. The local
+  Notifications Center emits deterministic first/second threshold records through its existing
+  acknowledgement state.
+- Targeted domain/component/persistence/backup/notification suites: 105/105 passed. `pnpm verify`,
+  `pnpm doctor`, `pnpm manifest:check` and `pnpm codex:validate` passed. Budget E2E: 7 passed,
+  5 expected skips on non-desktop zoom projects, across 320, 375, 390, 768, 1024 and 1440 px.
+
 ## Phase 11 live Google Drive closure and SQLite restore fix — 2026-08-08
 
 - Root cause: the SQLite portable-snapshot replacement did not defer foreign keys, so a ledger

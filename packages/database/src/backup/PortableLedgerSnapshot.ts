@@ -254,18 +254,30 @@ export function validatePortableLedgerSnapshot(
       enabled: boolean(value, "enabled"),
     }),
   );
-  const budgets = entityList(entities, "budgets").map((value) =>
-    Budget.create({
+  const budgets = entityList(entities, "budgets").map((value) => {
+    const firstAlertPercentage = optionalNumber(value, "firstAlertPercentage");
+    const secondAlertPercentage = optionalNumber(value, "secondAlertPercentage");
+    const legacyFirstAlertEnabled = optionalBoolean(value, "alertAt80");
+    const legacySecondAlertEnabled = optionalBoolean(value, "alertAt100");
+    return Budget.restore({
       id: text(value, "id"),
       period: text(value, "period"),
       amount: money(value, "amount"),
-      alertAt80: boolean(value, "alertAt80"),
-      alertAt100: boolean(value, "alertAt100"),
+      ...(firstAlertPercentage === undefined
+        ? legacyFirstAlertEnabled === true
+          ? { firstAlertPercentage: 80 }
+          : {}
+        : { firstAlertPercentage }),
+      ...(secondAlertPercentage === undefined
+        ? legacySecondAlertEnabled === true
+          ? { secondAlertPercentage: 100 }
+          : {}
+        : { secondAlertPercentage }),
       ...(optionalText(value, "categoryId") === undefined
         ? {}
         : { categoryId: optionalText(value, "categoryId")! }),
-    }),
-  );
+    });
+  });
   const loans = entityList(entities, "loans").map((value) =>
     Loan.create({
       id: text(value, "id"),
@@ -497,6 +509,12 @@ function optionalText(value: Record<string, unknown>, name: string): string | un
 }
 function boolean(value: Record<string, unknown>, name: string): boolean {
   const candidate = value[name];
+  if (typeof candidate !== "boolean") throw new Error(`Portable snapshot ${name} is invalid.`);
+  return candidate;
+}
+function optionalBoolean(value: Record<string, unknown>, name: string): boolean | undefined {
+  const candidate = value[name];
+  if (candidate === undefined || candidate === null) return undefined;
   if (typeof candidate !== "boolean") throw new Error(`Portable snapshot ${name} is invalid.`);
   return candidate;
 }

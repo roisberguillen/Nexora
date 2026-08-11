@@ -13,13 +13,6 @@ import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../account
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import type { BudgetInput } from "./budgetCommands";
 
-const currentPeriod = () =>
-  new Intl.DateTimeFormat("sv-SE", {
-    month: "2-digit",
-    timeZone: "Europe/Rome",
-    year: "numeric",
-  }).format(new Date());
-
 export function BudgetsPage({
   budgets,
   categories,
@@ -41,37 +34,67 @@ export function BudgetsPage({
   const [deleteCandidate, setDeleteCandidate] = useState<Budget>();
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const activeCategories = categories.filter(
-    (category) => !category.isArchived && category.accepts("expense"),
+  const [selectedMacroCategoryId, setSelectedMacroCategoryId] = useState("");
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+  const activeMacroCategories = categories.filter(
+    (category) =>
+      !category.isArchived && category.parentId === undefined && category.accepts("expense"),
   );
+  const activeSubcategories = categories.filter(
+    (category) =>
+      !category.isArchived &&
+      category.parentId === selectedMacroCategoryId &&
+      category.accepts("expense"),
+  );
+
+  const openEditor = (budget: Budget | undefined) => {
+    const category = categories.find((item) => item.id === budget?.categoryId);
+    setEditing(budget);
+    setSelectedMacroCategoryId(category?.parentId ?? category?.id ?? "");
+    setSelectedSubcategoryId(category?.parentId === undefined ? "" : (category?.id ?? ""));
+    setError(null);
+  };
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formElement = event.currentTarget;
     const form = new FormData(formElement);
     try {
-      const categoryId = String(form.get("categoryId") ?? "");
+      const categoryId = selectedSubcategoryId;
+      if (categoryId === "") throw new Error("A subcategory is required.");
       const editingArchivedCategory = categories.find(
         (category) => category.id === editing?.categoryId && category.isArchived,
       );
       if (editingArchivedCategory !== undefined && categoryId === editingArchivedCategory.id) {
         throw new Error("Select an active category before updating an archived budget.");
       }
+      const firstAlertPercentage = Number(form.get("firstAlertPercentage"));
+      const secondAlertPercentage = Number(form.get("secondAlertPercentage"));
+      if (
+        !Number.isInteger(firstAlertPercentage) ||
+        !Number.isInteger(secondAlertPercentage) ||
+        firstAlertPercentage <= 0 ||
+        secondAlertPercentage <= 0 ||
+        firstAlertPercentage > 100 ||
+        secondAlertPercentage > 100 ||
+        firstAlertPercentage >= secondAlertPercentage
+      ) {
+        throw new Error("Invalid alert threshold pair.");
+      }
       const input: BudgetInput = {
-        period: String(form.get("period")),
         amountMinor: parseLocalizedAmountMinor(String(form.get("amount")), "EUR"),
-        alertAt80: Boolean(form.get("alertAt80")),
-        alertAt100: Boolean(form.get("alertAt100")),
-        ...(categoryId === "" ? {} : { categoryId }),
+        categoryId,
+        firstAlertPercentage,
+        secondAlertPercentage,
       };
       if (editing === undefined) await onCreate(input);
       else await onUpdate(editing.id, input);
       setError(null);
-      setEditing(undefined);
+      openEditor(undefined);
       formElement.reset();
     } catch {
       setError(
-        "Impossibile salvare il budget. Verifica periodo, categoria, importo e che non esista già un limite identico.",
+        "Impossibile salvare il budget. Scegli una categoria e una sottocategoria, inserisci importo e due soglie tra 1 e 100 con la prima minore della seconda.",
       );
     }
   };
@@ -123,7 +146,7 @@ export function BudgetsPage({
               </p>
               <button
                 className="secondary-action"
-                onClick={() => setEditing(undefined)}
+                onClick={() => openEditor(undefined)}
                 type="button"
               >
                 Crea budget
@@ -187,6 +210,12 @@ export function BudgetsPage({
                           progress.remaining.currency,
                         )}
                       </small>
+                      {budget.firstAlertPercentage !== undefined &&
+                      budget.secondAlertPercentage !== undefined ? (
+                        <small>
+                          Soglie: {budget.firstAlertPercentage}% · {budget.secondAlertPercentage}%
+                        </small>
+                      ) : null}
                     </div>
                     <FinancialAmount
                       amountMinor={budget.amount.amountMinor}
@@ -195,7 +224,7 @@ export function BudgetsPage({
                     <div className="budget-card-actions" aria-label={`Azioni per ${category}`}>
                       <button
                         className="text-action"
-                        onClick={() => setEditing(budget)}
+                        onClick={() => openEditor(budget)}
                         type="button"
                       >
                         Modifica
@@ -229,27 +258,35 @@ export function BudgetsPage({
             onSubmit={(event) => void save(event)}
           >
             <label>
-              Periodo
-              <input
-                defaultValue={editing?.period ?? currentPeriod()}
-                name="period"
-                pattern="[0-9]{4}-[0-9]{2}"
+              Categoria
+              <select
+                onChange={(event) => {
+                  setSelectedMacroCategoryId(event.target.value);
+                  setSelectedSubcategoryId("");
+                }}
                 required
-              />
+                value={selectedMacroCategoryId}
+              >
+                <option value="">Seleziona categoria</option>
+                {activeMacroCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
             </label>
             <label>
-              Categoria
-              <select defaultValue={editing?.categoryId ?? ""} name="categoryId">
-                <option value="">Tutte le spese</option>
-                {editing?.categoryId !== undefined &&
-                categories.find((category) => category.id === editing.categoryId)?.isArchived ? (
-                  <option disabled value={editing.categoryId}>
-                    Categoria archiviata — scegli una categoria attiva
-                  </option>
-                ) : null}
-                {activeCategories.map((category) => (
+              Sotto-categoria
+              <select
+                disabled={selectedMacroCategoryId === ""}
+                onChange={(event) => setSelectedSubcategoryId(event.target.value)}
+                required
+                value={selectedSubcategoryId}
+              >
+                <option value="">Seleziona sotto-categoria</option>
+                {activeSubcategories.map((category) => (
                   <option key={category.id} value={category.id}>
-                    {categoryLabel(category, categories)}
+                    {category.name}
                   </option>
                 ))}
               </select>
@@ -268,23 +305,37 @@ export function BudgetsPage({
                 required
               />
             </label>
-            <label className="budget-alert-toggle">
-              <input defaultChecked={editing?.alertAt80 ?? true} name="alertAt80" type="checkbox" />{" "}
-              Avvisa all’80%
-            </label>
-            <label className="budget-alert-toggle">
+            <label>
+              Prima soglia di notifica (%)
               <input
-                defaultChecked={editing?.alertAt100 ?? true}
-                name="alertAt100"
-                type="checkbox"
-              />{" "}
-              Avvisa al 100%
+                defaultValue={editing?.firstAlertPercentage}
+                inputMode="numeric"
+                max="100"
+                min="1"
+                name="firstAlertPercentage"
+                required
+                step="1"
+                type="number"
+              />
+            </label>
+            <label>
+              Seconda soglia di notifica (%)
+              <input
+                defaultValue={editing?.secondAlertPercentage}
+                inputMode="numeric"
+                max="100"
+                min="1"
+                name="secondAlertPercentage"
+                required
+                step="1"
+                type="number"
+              />
             </label>
             <div className="form-actions">
               {editing === undefined ? null : (
                 <button
                   className="secondary-action"
-                  onClick={() => setEditing(undefined)}
+                  onClick={() => openEditor(undefined)}
                   type="button"
                 >
                   Annulla modifica

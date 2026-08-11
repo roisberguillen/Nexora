@@ -675,8 +675,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 17,
-        toVersion: 17,
+        fromVersion: 18,
+        toVersion: 18,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -895,6 +895,8 @@ describe("SqliteLedgerRepository", () => {
       id: "budget-sqlite",
       period: "2026-08",
       amount: Money.fromMinor(50_000n, "EUR"),
+      firstAlertPercentage: 60,
+      secondAlertPercentage: 90,
     });
     await repository.saveBudget(budget);
     await expect(repository.listBudgets()).resolves.toEqual([budget]);
@@ -902,8 +904,8 @@ describe("SqliteLedgerRepository", () => {
       id: budget.id,
       period: budget.period,
       amount: Money.fromMinor(60_000n, "EUR"),
-      alertAt80: budget.alertAt80,
-      alertAt100: budget.alertAt100,
+      firstAlertPercentage: budget.firstAlertPercentage!,
+      secondAlertPercentage: budget.secondAlertPercentage!,
     });
     await repository.updateBudget(updated);
     await expect(repository.listBudgets()).resolves.toEqual([updated]);
@@ -914,6 +916,8 @@ describe("SqliteLedgerRepository", () => {
         id: "budget-global-one",
         period: "2026-08",
         amount: Money.fromMinor(50_000n, "EUR"),
+        firstAlertPercentage: 80,
+        secondAlertPercentage: 100,
       }),
     );
     await expect(
@@ -922,6 +926,8 @@ describe("SqliteLedgerRepository", () => {
           id: "budget-global-two",
           period: "2026-08",
           amount: Money.fromMinor(60_000n, "EUR"),
+          firstAlertPercentage: 80,
+          secondAlertPercentage: 100,
         }),
       ),
     ).rejects.toMatchObject({ code: "duplicate_entity" });
