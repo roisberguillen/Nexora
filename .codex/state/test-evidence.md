@@ -15,6 +15,8 @@ Keep only the latest relevant evidence per completed phase.
   passed, 454 tests passed, 4 documented skips. Budget E2E passed on 320, 375, 390, 768, 1024 and
   1440 px; desktop 200% zoom passed with no horizontal overflow. `doctor`, format, lint,
   typecheck, production build, manifest check and orchestrator validation passed locally.
+- PR #4 and the post-merge `main` pipeline run 31495233481 both passed the complete GitHub Actions
+  workflow, including Linux Playwright.
 
 ## Phase 11 live Google Drive closure and SQLite restore fix — 2026-08-08
 
