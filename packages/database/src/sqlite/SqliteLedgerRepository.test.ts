@@ -908,6 +908,24 @@ describe("SqliteLedgerRepository", () => {
     await repository.updateBudget(updated);
     await expect(repository.listBudgets()).resolves.toEqual([updated]);
   });
+  it("rifiuta budget globali duplicati nello stesso periodo", async () => {
+    await repository.saveBudget(
+      Budget.create({
+        id: "budget-global-one",
+        period: "2026-08",
+        amount: Money.fromMinor(50_000n, "EUR"),
+      }),
+    );
+    await expect(
+      repository.saveBudget(
+        Budget.create({
+          id: "budget-global-two",
+          period: "2026-08",
+          amount: Money.fromMinor(60_000n, "EUR"),
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+  });
   it("persiste un prestito", async () => {
     await repository.saveAccount(account("loan-account", "loan"));
     const loan = Loan.create({

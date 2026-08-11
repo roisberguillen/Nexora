@@ -1,10 +1,13 @@
 import {
   calculateAccountBalance,
+  calculateBudgetProgress,
   type Account,
   type Budget,
+  type Category,
   type Loan,
   type RecurringRule,
   type Transaction,
+  type TransactionSplit,
 } from "@nexora/domain";
 import { readBackupHistory, type BackupHistoryEntry } from "../backup/backupHistory";
 
@@ -41,20 +44,24 @@ export const defaultLocalNotificationPreferences: LocalNotificationPreferences =
 export function deriveLocalNotifications(input: {
   readonly accounts?: readonly Account[];
   readonly budgets: readonly Budget[];
+  readonly categories?: readonly Category[];
   readonly loans: readonly Loan[];
   readonly recurringRules: readonly RecurringRule[];
   readonly today?: Date;
   readonly transactions: readonly Transaction[];
+  readonly transactionSplits?: readonly TransactionSplit[];
   readonly backupHistory?: readonly BackupHistoryEntry[];
   readonly lowBalanceThresholdMinor?: bigint;
 }): readonly LocalNotification[] {
   const {
     accounts = [],
     budgets,
+    categories = [],
     loans,
     lowBalanceThresholdMinor = 0n,
     recurringRules,
     transactions,
+    transactionSplits = [],
     today = new Date(),
   } = input;
   const currentPeriod = today.toISOString().slice(0, 7);
@@ -101,7 +108,12 @@ export function deriveLocalNotifications(input: {
   }
   for (const budget of budgets) {
     if (budget.period !== currentPeriod) continue;
-    const usage = budget.usagePercent(transactions);
+    const usage = calculateBudgetProgress({
+      budget,
+      categories,
+      splits: transactionSplits,
+      transactions,
+    }).percentage;
     if (budget.alertAt100 && usage >= 100) {
       notifications.push({
         description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,

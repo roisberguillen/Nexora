@@ -78,6 +78,14 @@ export {
 } from "./services/categoryHierarchy";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { summarizeExpenseBehavior, type ExpenseBehaviorSummary } from "./services/expenseBehavior";
+export {
+  calculateBudgetProgress,
+  resolveBudgetCategoryScope,
+  type BudgetCategoryBreakdown,
+  type BudgetCategoryScope,
+  type BudgetProgress,
+  type BudgetProgressStatus,
+} from "./services/budgetProgress";
 export { calculatePrudentExpenseForecast, type PrudentForecast } from "./services/prudentForecast";
 export {
   SyncOperationLog,

@@ -45,7 +45,7 @@ export class Budget {
     return transactions.reduce((spent, transaction) => {
       if (
         transaction.kind !== "expense" ||
-        transaction.status === "cancelled" ||
+        (transaction.status !== "booked" && transaction.status !== "reconciled") ||
         transaction.bookedDate.toString().slice(0, 7) !== this.period ||
         (this.categoryId !== undefined && transaction.categoryId !== this.categoryId)
       ) {

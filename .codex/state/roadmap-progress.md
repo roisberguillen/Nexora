@@ -10,10 +10,12 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 9 | complete | roadmap Phase 9 evidence and shared engine tests |
 | 10 | complete | roadmap Phase 10 evidence; manual file workflow and browser tests |
 | 11 | complete | configured tests plus authorized live consent, upload, reread, read-only verification, restore and ledger reopen |
+| 12 | in progress | financial feature phase remains open after slice 12.4; Phase 13 is not started |
 | 12.1 | complete | hierarchical financial categories, published and verified |
 | 12.2 | complete | expense behavior classification and recurring-model alignment, including final form corrections |
 | 12.3 | complete | advanced calendar, additive migration v17, SQLite/IndexedDB parity, portable backup compatibility and responsive UI; merged via PR #3 with GitHub Actions green on `main` (`0ea79e8`) |
-| 13 | next | platform delivery after Phase 12 closes |
+| 12.4 | complete | hierarchical budget CRUD, macro/subcategory scope, split-safe progress, responsive UI and adapter parity; awaiting PR/main CI publication |
+| 13 | planned | platform delivery only after Phase 12 closes |
 | 14–17 | planned | no completion claim |
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not

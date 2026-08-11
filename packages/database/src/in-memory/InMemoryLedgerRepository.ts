@@ -743,6 +743,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       (split) => split.transactionId === transactionId,
     );
   }
+  public async listAllTransactionSplits(): Promise<readonly TransactionSplit[]> {
+    return [...this.transactionSplits.values()].sort((left, right) =>
+      left.id.localeCompare(right.id),
+    );
+  }
   public async listImportRows(batchId: string): Promise<readonly ImportRow[]> {
     return [...this.importRows.values()]
       .filter((row) => row.batchId === batchId)
@@ -859,12 +864,26 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       );
   }
   private validateBudgetReferences(budget: Budget): void {
-    if (budget.categoryId === undefined) return;
-    const category = this.categories.get(budget.categoryId);
-    if (category === undefined || category.isArchived)
-      throw new DomainError("missing_reference", "Budget category is not available.");
-    if (!category.accepts("expense"))
-      throw new DomainError("invalid_category", "Budget category must accept expenses.");
+    if (budget.categoryId !== undefined) {
+      const category = this.categories.get(budget.categoryId);
+      if (category === undefined || category.isArchived)
+        throw new DomainError("missing_reference", "Budget category is not available.");
+      if (!category.accepts("expense"))
+        throw new DomainError("invalid_category", "Budget category must accept expenses.");
+    }
+    if (
+      [...this.budgets.values()].some(
+        (other) =>
+          other.id !== budget.id &&
+          other.period === budget.period &&
+          other.categoryId === budget.categoryId,
+      )
+    ) {
+      throw new DomainError(
+        "duplicate_entity",
+        "A budget already exists for this category and period.",
+      );
+    }
   }
   private validateLoanReferences(loan: Loan): void {
     const account = this.accounts.get(loan.accountId);

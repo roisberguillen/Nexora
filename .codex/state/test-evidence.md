@@ -2,6 +2,20 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 12.4 hierarchical budgets — 2026-08-11
+
+- Domain selector covers macro descendants (including archived history), direct subcategories,
+  exact split attribution without parent double count, excluded transaction kinds/statuses, Money
+  residual and over-budget state. SQLite, IndexedDB and in-memory repositories reject duplicate
+  period/scope budgets and provide a flat split read for the shared snapshot.
+- Portable snapshot preserves budget scope and alert flags; reset and import retain their existing
+  non-destructive contracts. The Notifications Center now uses the same selector, avoiding a
+  divergent direct-transaction calculation.
+- Targeted component/domain/backup/notification suites: 16/16 passed. Full unit suite: 117 files
+  passed, 454 tests passed, 4 documented skips. Budget E2E passed on 320, 375, 390, 768, 1024 and
+  1440 px; desktop 200% zoom passed with no horizontal overflow. `doctor`, format, lint,
+  typecheck, production build, manifest check and orchestrator validation passed locally.
+
 ## Phase 11 live Google Drive closure and SQLite restore fix — 2026-08-08
 
 - Root cause: the SQLite portable-snapshot replacement did not defer foreign keys, so a ledger

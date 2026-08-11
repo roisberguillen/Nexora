@@ -84,8 +84,17 @@ in saldi, report o storico finché l'utente non ne conferma l'esecuzione.
 ### Budget
 `id, period, categoryId?, amountMinor, alert80, alert100`
 
-I budget considerano soltanto `expense` contabilizzate per il periodo e la categoria;
-entrate, trasferimenti, rettifiche e annullamenti non incidono sul consumo.
+`categoryId` può indicare una macro-categoria, una sottocategoria oppure restare assente per un
+limite globale su tutte le spese. Il perimetro di una macro include la macro e tutte le sue
+sottocategorie, comprese quelle archiviate utili allo storico; una sottocategoria non include le
+sorelle. Macro e sottocategorie possono avere budget distinti nello stesso periodo, ma non può
+esistere più di un budget per la medesima coppia `period` + perimetro (incluso il perimetro globale).
+
+Il consumo considera solo `expense` `booked` o `reconciled` nel periodo. Entrate, trasferimenti,
+rettifiche, movimenti attesi o annullati non incidono. Se una transazione ha split, contribuiscono
+solo le righe split compatibili con il perimetro: la transazione madre, priva di categoria diretta,
+non viene mai conteggiata due volte. Importo speso, residuo, percentuale e stato sono viste pure in
+minor units, non valori persistiti.
 
 ### Loan
 `id, accountId, lender, originalPrincipalMinor?, remainingPrincipalMinor, installmentMinor, installmentsPaid?, installmentsRemaining?, nextDueDate?`

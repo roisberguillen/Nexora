@@ -44,7 +44,12 @@ import {
 } from "./recurring/recurringCommands";
 import { createAllocationPlan, type AllocationPlanInput } from "./recurring/allocationCommands";
 import { BudgetsPage } from "./budgets/BudgetsPage";
-import { createBudget, type BudgetInput } from "./budgets/budgetCommands";
+import {
+  createBudget,
+  deleteBudget,
+  updateBudget,
+  type BudgetInput,
+} from "./budgets/budgetCommands";
 import { LoansPage } from "./loans/LoansPage";
 import { createLoan, type LoanInput } from "./loans/loanCommands";
 import { InvestmentsPage } from "./investments/InvestmentsPage";
@@ -197,6 +202,7 @@ function AppContent({
           recurringRules,
           rawAccounts,
           rawTransactions,
+          transactionSplits,
           tags,
           trashedTransactions,
           transactions,
@@ -224,6 +230,7 @@ function AppContent({
             ledger,
             rawAccounts,
             rawTransactions,
+            transactionSplits,
             status: "ready",
             tags,
             trashedTransactions,
@@ -548,6 +555,14 @@ function AppContent({
     mutateLedger(async (ledger) => {
       await createBudget(ledger.repository, input);
     });
+  const updateMonthlyBudget = (id: string, input: BudgetInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateBudget(ledger.repository, id, input);
+    });
+  const removeMonthlyBudget = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await deleteBudget(ledger.repository, id);
+    });
   const createLoanPosition = (input: LoanInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createLoan(ledger.repository, input);
@@ -689,7 +704,10 @@ function AppContent({
                   budgets={ledgerState.budgets}
                   categories={ledgerState.categories}
                   onCreate={createMonthlyBudget}
+                  onDelete={removeMonthlyBudget}
+                  onUpdate={updateMonthlyBudget}
                   transactions={ledgerState.rawTransactions}
+                  transactionSplits={ledgerState.transactionSplits}
                 />
               ) : route === "loans" ? (
                 <LoansPage
@@ -732,9 +750,11 @@ function AppContent({
                 <NotificationsPage
                   accounts={ledgerState.rawAccounts}
                   budgets={ledgerState.budgets}
+                  categories={ledgerState.categories}
                   loans={ledgerState.loans}
                   recurringRules={ledgerState.recurringRules}
                   transactions={ledgerState.rawTransactions}
+                  transactionSplits={ledgerState.transactionSplits}
                 />
               ) : route === "profile" ? (
                 <ProfilePage />

@@ -1639,6 +1639,15 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ).map(transactionSplitFromRecord),
     );
   }
+  public async listAllTransactionSplits(): Promise<readonly TransactionSplit[]> {
+    return this.performDatabaseOperation(async () =>
+      (
+        await this.database.query<TransactionSplitRecord>(
+          "SELECT id, transaction_id, category_id, amount_minor, currency, note FROM transaction_splits ORDER BY transaction_id, id",
+        )
+      ).map(transactionSplitFromRecord),
+    );
+  }
   public async listImportRows(batchId: string): Promise<readonly ImportRow[]> {
     return this.performDatabaseOperation(async () =>
       (
@@ -1895,16 +1904,27 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
   private async validateBudgetReferences(budget: Budget): Promise<void> {
-    if (budget.categoryId === undefined) return;
-    const rows = await this.database.query<{
-      readonly kind_scope: string;
-      readonly is_archived: number;
-    }>("SELECT kind_scope, is_archived FROM categories WHERE id = ?", [budget.categoryId]);
-    const category = rows[0];
-    if (category === undefined || category.is_archived === 1)
-      throw new DomainError("missing_reference", "Budget category is not available.");
-    if (category.kind_scope === "income")
-      throw new DomainError("invalid_category", "Budget category must accept expenses.");
+    if (budget.categoryId !== undefined) {
+      const rows = await this.database.query<{
+        readonly kind_scope: string;
+        readonly is_archived: number;
+      }>("SELECT kind_scope, is_archived FROM categories WHERE id = ?", [budget.categoryId]);
+      const category = rows[0];
+      if (category === undefined || category.is_archived === 1)
+        throw new DomainError("missing_reference", "Budget category is not available.");
+      if (category.kind_scope === "income")
+        throw new DomainError("invalid_category", "Budget category must accept expenses.");
+    }
+    const duplicate = await this.database.query<{ readonly id: string }>(
+      "SELECT id FROM budgets WHERE period = ? AND category_id IS ? AND id <> ? LIMIT 1",
+      [budget.period, budget.categoryId ?? null, budget.id],
+    );
+    if (duplicate[0] !== undefined) {
+      throw new DomainError(
+        "duplicate_entity",
+        "A budget already exists for this category and period.",
+      );
+    }
   }
   private async insertBudget(budget: Budget): Promise<void> {
     const record = budgetToRecord(budget);

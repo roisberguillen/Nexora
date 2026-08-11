@@ -282,7 +282,19 @@ export async function validateRepository(root = process.cwd()) {
       errors.push(`Roadmap progress does not represent Phase ${phase}`);
   }
   const nextPhase = findNextRoadmapPhase(roadmap);
-  if (nextPhase !== undefined && !progress.includes(`| ${nextPhase} | next |`)) {
+  const activePhase = roadmap.match(/^\|\s*(\d+)\s*\|.*\|\s*in corso\b.*\|$/m)?.[1];
+  const activePhaseIsRepresented =
+    activePhase !== undefined &&
+    new RegExp(`^\\| ${activePhase}(?:\\.\\d+)? \\| (?:current|in progress) \\|`, "m").test(
+      progress,
+    );
+  if (activePhase !== undefined && !activePhaseIsRepresented) {
+    errors.push(`Roadmap progress must identify active Phase ${activePhase} as current`);
+  } else if (
+    activePhase === undefined &&
+    nextPhase !== undefined &&
+    !progress.includes(`| ${nextPhase} | next |`)
+  ) {
     errors.push(`Roadmap progress must identify Phase ${nextPhase} as next`);
   }
 
