@@ -132,7 +132,7 @@ class MemoryBackupStore implements PhysicalBackupStore {
 function fromIndexedDbLedger(ledger: IndexedDbLedger): BrowserLedger {
   const backupEngine = new PortableBackupEngine({
     repository: ledger.repository,
-    schemaVersion: ledger.schemaVersion,
+    schemaVersion: ledger.portableSchemaVersion,
   });
   return {
     repository: ledger.repository,

@@ -244,8 +244,8 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 1283,
-      "sha256": "3bcd083e49a23a7d1e8839d915209556ec678e19a87aa57a4b157bfc40eb7154"
+      "size": 1259,
+      "sha256": "67fb8aea5681319623d3e0ed427979a403bc565c71ae626fbdc5a9260dadcd0d"
     },
     {
       "path": ".codex/state/test-evidence.md",
@@ -1059,18 +1059,18 @@
     },
     {
       "path": "apps/web/src/recurring/recurringCommands.ts",
-      "size": 1629,
-      "sha256": "946523d47b22742384544a5368473cacebf952ba15c2a2fb67e977a08b04d773"
+      "size": 2577,
+      "sha256": "da72b31ac0e526743052b706828d2f5f9cbb9b715ebb5de08673cedf19d94ea1"
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.test.tsx",
-      "size": 4127,
-      "sha256": "92667ae7e5ddfd705f2fdaaa90e5cfa0475059a4cbbfe690d26417a22289598b"
+      "size": 6317,
+      "sha256": "ecf7ed34dbca47e3e8e3b1bd83980449e197d40ce0b62053480994f2736caee5"
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 18775,
-      "sha256": "a91eb80b79c622711ff93cc1a6c8a6c4460b88e22def1d0eed8f676feeebfc97"
+      "size": 25539,
+      "sha256": "554ed72c0782965395fc44f00fdd6c3006c4b64244e1e3e9122c2f4930b4a88a"
     },
     {
       "path": "apps/web/src/reset/financialReset.test.ts",
@@ -1384,8 +1384,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 24263,
-      "sha256": "bd7255c9642d2bac09ba4e26a57596e0fb886422f6bbfa0545f718a06a4b19ae"
+      "size": 24527,
+      "sha256": "e5404f4be1f8dab692fe21efa7f12cf8d212dfda2d2ee02634b637e25e1bf109"
     },
     {
       "path": "design/mockup/README.md",
@@ -1513,6 +1513,11 @@
       "sha256": "1aa37e8e703328923feba0b55a2d4689e1badf5ae974bf66c63921ecc82c3b28"
     },
     {
+      "path": "docs/adr/0021-advanced-recurring-schedules.md",
+      "size": 1901,
+      "sha256": "127e0460efb3ad85e74882dcae996e09e3ffd39c992b6b0ca8b078b44a5176ce"
+    },
+    {
       "path": "docs/APPLICATION_LAYER.md",
       "size": 1192,
       "sha256": "50d19ef69e1895e91d29d8b5240aa8473bbd403d356043f92df8eaeb385edeb2"
@@ -1549,8 +1554,8 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 8900,
-      "sha256": "02dadf70d02e9b71e3b67219e7e0ff3519d4664babe4bbba52c116210becdcaa"
+      "size": 9358,
+      "sha256": "92c1ae59cde79e7857cd67720de1d4380979b156d005f6f2431690f92beb1868"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
@@ -1870,7 +1875,7 @@
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.test.ts",
       "size": 7946,
-      "sha256": "4e6d30b41d7ab81eba43670dd916f3143d4b983c36a97d6519b6f01da1b1ff22"
+      "sha256": "f1127bc9d4dfbac31f9acadacea7b1568d40eedccfb24db6923a531e768d50a2"
     },
     {
       "path": "packages/database/src/backup/LocalSqliteBackupService.ts",
@@ -1884,8 +1889,8 @@
     },
     {
       "path": "packages/database/src/backup/PortableBackupEngine.test.ts",
-      "size": 7239,
-      "sha256": "2f52574406243b1fa55dadd7770024f54c7318885b645c3884d5677b4be68afa"
+      "size": 7296,
+      "sha256": "7ee918d3118e5aeda0a9ca0157a0a9961fedc0962936ef04ff29c3ae82475db1"
     },
     {
       "path": "packages/database/src/backup/PortableBackupEngine.ts",
@@ -1894,23 +1899,23 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
-      "size": 3162,
-      "sha256": "52b49095df2ebbffc1b8075a941a07b9e851978418824fad1b4b7f0ede157347"
+      "size": 4965,
+      "sha256": "93f52a4c1a90b86d6c9c56fb87d20132e11667e263be1bcb90d9208028d36885"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 19252,
-      "sha256": "2c2560bc6f02f343920c876a81af153492ac8dd64e88f98a756aa2047c73b978"
+      "size": 20227,
+      "sha256": "01d374a12ed1b3280dd148c4bb385c7a80b63ec8e06ebcd67ab7a137ab9468b1"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
-      "size": 4502,
-      "sha256": "936acc28d59c06576180f6e56194cee2091eab4141d31eef477726c2b22d1884"
+      "size": 4532,
+      "sha256": "957b1fda017e664730bfeaf1960c2043e47fd3b91dea5423e1a35644c5d43cb4"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.ts",
-      "size": 5001,
-      "sha256": "d7657da6f500ba794b3eab1e17087192b2f9630ef8afab20ef04ae96c476213f"
+      "size": 5009,
+      "sha256": "50122e92b7c8a23ac8f5219890d471032da3208714f86ff6a0db38a7bbc20358"
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.test.ts",
@@ -1919,28 +1924,28 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 41533,
-      "sha256": "5832ef4addfabf35c1af28e3870401f7bdbf6b582367d4cfdf26f686e4442fd5"
+      "size": 41173,
+      "sha256": "99310387294290299825556712463b23788139b858f8be2de2ad61a250b0a2f9"
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 5021,
-      "sha256": "f856d5a4b84c25214e6a3e07f1b15cf3606b7378c18c2d2ec1bc4b827dd84345"
+      "size": 5195,
+      "sha256": "7b768fbeb7c521c00a2b106d32517702e771da8c5d5979215f9d1aee80cc2c96"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 31311,
-      "sha256": "560f349e6de94aa3e6539055473ce38af5923368457ccb111b06b68037f9a261"
+      "size": 38850,
+      "sha256": "2b64a47e0cb2b591943459d01cfdf3a1484511af19dfcd46623450be358bfe6c"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 91657,
-      "sha256": "9e5c29e4fa2b1245e31754d852d1edf5f6fe000744e8675f38113b8074215150"
+      "size": 93842,
+      "sha256": "e7339cf945f7d1aa11c382bbc84a8f6ff47143591997a2f68024200a6aeaf4ee"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
-      "size": 11478,
-      "sha256": "192990d39e47c73bc214a15d2eb9195b3902ba58418616846891cf73ad0e7770"
+      "size": 13763,
+      "sha256": "a748e1216b62bbffccfe2d5e7a84ff2f4a46cc5d27b8903a494b2bf01c42983a"
     },
     {
       "path": "packages/database/src/Ledger.ts",
@@ -1954,8 +1959,8 @@
     },
     {
       "path": "packages/database/src/migrations/0001-initial-ledger-schema.ts",
-      "size": 10420,
-      "sha256": "425fbec38d8104440b3a94d8e7124da8eab10df5e1b25c6bac9d156d58115721"
+      "size": 10538,
+      "sha256": "4899da78a08f9d42a2d0f674e31047b20709df86f07cbea69cba7cbafc0631a0"
     },
     {
       "path": "packages/database/src/migrations/0002-transaction-splits.ts",
@@ -2048,6 +2053,11 @@
       "sha256": "e7ed1b402a3f44c070ce0274bd14818d6b74065c3049fd536639e0cc41ccbbcc"
     },
     {
+      "path": "packages/database/src/migrations/0017-advanced-recurring-rules.ts",
+      "size": 2606,
+      "sha256": "df8091ca5c2425b4f72b5ca97da24bb33250d2447a2957499aec414932984e7b"
+    },
+    {
       "path": "packages/database/src/migrations/DatabaseMigration.ts",
       "size": 511,
       "sha256": "896936db5631a26ff008b1e080b8a60ab858c2ca182b12eeda54c7a38dc788c0"
@@ -2064,8 +2074,8 @@
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.test.ts",
-      "size": 11794,
-      "sha256": "e5832a7ecd76e0a60ec5795e906323e26a74943974bb64c65cd12401905b744d"
+      "size": 13832,
+      "sha256": "4176497ece2d17b48e0b29b7155518ff4c6b4bf094ae2b55af1b9f40ae6ab4ff"
     },
     {
       "path": "packages/database/src/migrations/MigrationRunner.ts",
@@ -2134,13 +2144,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 32020,
-      "sha256": "9afeeefeb50e284079625f14b7577eeb5adff180f22ae7ee9432fbc017bcc3d6"
+      "size": 34694,
+      "sha256": "61e0b37eae3c8be920b256d16796338195de23fe21371475c0397620f4169b6d"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 91754,
-      "sha256": "1bf7319d7ed59efa23391daa02adad4827c9f303e1977f3dbbcc40d41dcc3bee"
+      "size": 94437,
+      "sha256": "9f30cb90c59e809e706f1db1a36df05b9b9f1625bceeb33d71d5b6c0d009d905"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -2249,13 +2259,13 @@
     },
     {
       "path": "packages/domain/src/entities/RecurringRule.test.ts",
-      "size": 1846,
-      "sha256": "e52946a8fe77909be3f71234cdc31e9f995102866774b1fc40c46c9638a38ce1"
+      "size": 4896,
+      "sha256": "c78fff1e84b6ca75411a9453be00830d844147a2d1c40ee3328959360d1e4db2"
     },
     {
       "path": "packages/domain/src/entities/RecurringRule.ts",
-      "size": 4905,
-      "sha256": "e5d5cec406c0a512bf65158bf6b3bc2f50063c94e95e8f39607809a757199581"
+      "size": 13885,
+      "sha256": "a1abe32f51ee97c185c86f611e9b74e50c9af6c3565fa2740b7eb252cd29bdc5"
     },
     {
       "path": "packages/domain/src/entities/Tag.ts",
@@ -2299,8 +2309,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 3344,
-      "sha256": "359cbc9a0a9e6250b1da9877b782c4e0b8ecc8b3315832f6afe33bf2f4d32d38"
+      "size": 3367,
+      "sha256": "cbd95894c390293665ecb6e1267fc08cf61ed70735262213271cd52b47a3101a"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -2694,8 +2704,8 @@
     },
     {
       "path": "scripts/project-manifest.mjs",
-      "size": 2793,
-      "sha256": "8ead6483721510d2537ded9a492755e36a8ed23d069cb3ade059edd66b048713"
+      "size": 2973,
+      "sha256": "bd4959b3bd1dc99cc6628314425e6fb12527e52a614ebbbf20113196af217978"
     },
     {
       "path": "scripts/verify-project.sh",
@@ -2824,8 +2834,8 @@
     },
     {
       "path": "test/e2e/indexeddb-persistence.spec.ts",
-      "size": 2003,
-      "sha256": "6b27d1537d1eef095a16e936db84f088fe30b50143c0e0be90689c1bef953f29"
+      "size": 1984,
+      "sha256": "d705d0fe4d64596f36566fbaa2a8d44d080bbfc73437aa5db434c77fd8840d34"
     },
     {
       "path": "test/e2e/investments.spec.ts",

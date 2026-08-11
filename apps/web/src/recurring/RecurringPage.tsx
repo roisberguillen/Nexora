@@ -1,11 +1,11 @@
+import { LocalDate, Money, RecurringRule, categoryLabel } from "@nexora/domain";
 import type {
   Account,
   AllocationPlan,
   Category,
-  RecurringRule,
+  RecurrenceUnit,
   WeekendPolicy,
 } from "@nexora/domain";
-import { categoryLabel } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
@@ -36,10 +36,22 @@ export function RecurringPage({
 }) {
   const [editing, setEditing] = useState<RecurringRule | null>(null);
   const [formKind, setFormKind] = useState<"income" | "expense">("income");
+  const [frequencyUnit, setFrequencyUnit] = useState<RecurrenceUnit>("month");
+  const [interval, setInterval] = useState(1);
+  const [nominalDate, setNominalDate] = useState("");
+  const [nominalDay, setNominalDay] = useState(28);
+  const [nominalMonth, setNominalMonth] = useState(1);
+  const [weekendPolicy, setWeekendPolicy] = useState<WeekendPolicy>("none");
   const [error, setError] = useState<string | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<RecurringRule | null>(null);
   const openEditor = (rule: RecurringRule | null) => {
     setFormKind(rule?.kind ?? "income");
+    setFrequencyUnit(rule?.frequencyUnit ?? "month");
+    setInterval(rule?.interval ?? 1);
+    setNominalDate(rule?.nextNominalDate.toString() ?? "");
+    setNominalDay(rule?.nominalDay ?? 28);
+    setNominalMonth(rule?.nominalMonth ?? 1);
+    setWeekendPolicy(rule?.weekendPolicy ?? "none");
     setEditing(rule);
   };
   const updateEnabled = async (rule: RecurringRule, enabled: boolean) => {
@@ -72,10 +84,23 @@ export function RecurringPage({
       accountId: account.id,
       kind,
       amountMinor: kind === "expense" ? -abs(rawAmount) : abs(rawAmount),
-      nominalDay: Number(form.get("nominalDay")),
-      weekendPolicy: String(form.get("weekendPolicy")) as WeekendPolicy,
-      nextExpectedDate: String(form.get("nextExpectedDate")),
+      frequencyUnit,
+      interval,
+      nominalDay,
+      ...(frequencyUnit === "year" ? { nominalMonth } : {}),
+      weekendPolicy,
+      nextNominalDate: nominalDate,
       enabled: Boolean(form.get("enabled")),
+      ...(kind === "expense" && editing?.kind === "expense"
+        ? {
+            ...(editing.expenseVariability === undefined
+              ? {}
+              : { expenseVariability: editing.expenseVariability }),
+            ...(editing.expenseExceptionality === undefined
+              ? {}
+              : { expenseExceptionality: editing.expenseExceptionality }),
+          }
+        : {}),
       ...(optional(String(form.get("categoryId") ?? "")) === undefined
         ? {}
         : { categoryId: optional(String(form.get("categoryId") ?? ""))! }),
@@ -109,7 +134,7 @@ export function RecurringPage({
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Prossime scadenze</p>
-              <h2 id="recurring-title">Regole attive</h2>
+              <h2 id="recurring-title">Regole</h2>
             </div>
             <span className="panel-meta">{rules.length}</span>
           </div>
@@ -134,7 +159,10 @@ export function RecurringPage({
                         {rule.payee ?? "Senza controparte"}
                       </small>
                     </td>
-                    <td data-label="Data attesa">{rule.nextExpectedDate.toString()}</td>
+                    <td data-label="Data attesa">
+                      {rule.nextExpectedDate.toString()}
+                      <small>{frequencyLabel(rule)}</small>
+                    </td>
                     <td data-label="Importo">
                       {formatMinorUnits(rule.amount.amountMinor, rule.amount.currency)}
                     </td>
@@ -245,29 +273,77 @@ export function RecurringPage({
               />
             </label>
             <label>
+              Frequenza
+              <select
+                name="frequencyUnit"
+                onChange={(event) => setFrequencyUnit(event.currentTarget.value as RecurrenceUnit)}
+                value={frequencyUnit}
+              >
+                <option value="week">Settimana</option>
+                <option value="month">Mese</option>
+                <option value="year">Anno</option>
+              </select>
+            </label>
+            <label>
+              Intervallo
+              <input
+                max="120"
+                min="1"
+                name="interval"
+                onChange={(event) => setInterval(Number(event.currentTarget.value))}
+                type="number"
+                value={interval}
+              />
+            </label>
+            <label>
               Giorno nominale
               <input
-                defaultValue={editing?.nominalDay ?? 28}
                 max="31"
                 min="1"
                 name="nominalDay"
+                onChange={(event) => setNominalDay(Number(event.currentTarget.value))}
                 type="number"
                 required
+                value={nominalDay}
               />
             </label>
+            {frequencyUnit !== "year" ? null : (
+              <label>
+                Mese nominale
+                <select
+                  name="nominalMonth"
+                  onChange={(event) => setNominalMonth(Number(event.currentTarget.value))}
+                  value={nominalMonth}
+                >
+                  {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <label>
               Prossima data prevista
               <input
-                defaultValue={editing?.nextExpectedDate.toString() ?? ""}
-                name="nextExpectedDate"
+                onChange={(event) => setNominalDate(event.currentTarget.value)}
+                name="nextNominalDate"
                 type="date"
                 required
+                value={nominalDate}
               />
+              <small>La serie resta ancorata alla data nominale.</small>
             </label>
             <label>
               Policy weekend
-              <select defaultValue={editing?.weekendPolicy ?? "none"} name="weekendPolicy">
+              <select
+                name="weekendPolicy"
+                onChange={(event) => setWeekendPolicy(event.currentTarget.value as WeekendPolicy)}
+                value={weekendPolicy}
+              >
                 <option value="none">Nessuna</option>
+                <option value="previous_business_day">Giorno lavorativo precedente</option>
+                <option value="next_business_day">Giorno lavorativo successivo</option>
                 <option value="salary_italy">Stipendio italiano</option>
               </select>
             </label>
@@ -300,6 +376,18 @@ export function RecurringPage({
               <input defaultChecked={editing?.enabled ?? true} name="enabled" type="checkbox" />{" "}
               Attiva
             </label>
+            <SchedulePreview
+              account={accounts.find(
+                (account) => account.id === (editing?.accountId ?? accounts[0]?.id),
+              )}
+              amountMinor={editing?.amount.amountMinor ?? (formKind === "expense" ? -1n : 1n)}
+              frequencyUnit={frequencyUnit}
+              interval={interval}
+              nominalDate={nominalDate}
+              nominalDay={nominalDay}
+              nominalMonth={frequencyUnit === "year" ? nominalMonth : undefined}
+              weekendPolicy={weekendPolicy}
+            />
             <div className="form-actions">
               <button className="secondary-action" onClick={() => openEditor(null)} type="button">
                 Annulla
@@ -510,11 +598,126 @@ function ruleInput(rule: RecurringRule, enabled: boolean): RecurringRuleInput {
     kind: rule.kind,
     accountId: rule.accountId,
     amountMinor: rule.amount.amountMinor,
+    frequencyUnit: rule.frequencyUnit,
+    interval: rule.interval,
     nominalDay: rule.nominalDay,
-    nextExpectedDate: rule.nextExpectedDate.toString(),
+    nextNominalDate: rule.nextNominalDate.toString(),
     weekendPolicy: rule.weekendPolicy,
     enabled,
+    ...(rule.nominalMonth === undefined ? {} : { nominalMonth: rule.nominalMonth }),
+    ...(rule.expenseVariability === undefined
+      ? {}
+      : { expenseVariability: rule.expenseVariability }),
+    ...(rule.expenseExceptionality === undefined
+      ? {}
+      : { expenseExceptionality: rule.expenseExceptionality }),
     ...(rule.categoryId === undefined ? {} : { categoryId: rule.categoryId }),
     ...(rule.payee === undefined ? {} : { payee: rule.payee }),
   };
+}
+
+function SchedulePreview({
+  account,
+  amountMinor,
+  frequencyUnit,
+  interval,
+  nominalDate,
+  nominalDay,
+  nominalMonth,
+  weekendPolicy,
+}: {
+  readonly account: Account | undefined;
+  readonly amountMinor: bigint;
+  readonly frequencyUnit: RecurrenceUnit;
+  readonly interval: number;
+  readonly nominalDate: string;
+  readonly nominalDay: number;
+  readonly nominalMonth: number | undefined;
+  readonly weekendPolicy: WeekendPolicy;
+}) {
+  const dates = previewDates({
+    account,
+    amountMinor,
+    frequencyUnit,
+    interval,
+    nominalDate,
+    nominalDay,
+    nominalMonth,
+    weekendPolicy,
+  });
+  return (
+    <details className="recurring-preview">
+      <summary>Anteprima prossime date</summary>
+      <p>Solo previsione: nessun movimento viene creato o registrato.</p>
+      {dates.length === 0 ? (
+        <p>Inserisci una prossima data valida per visualizzare le scadenze.</p>
+      ) : (
+        <ol>
+          {dates.map(({ nominalDate: nominal, effectiveDate }) => (
+            <li key={nominal.toString()}>
+              {effectiveDate.toString()}
+              {nominal.equals(effectiveDate) ? "" : ` (nominale ${nominal.toString()})`}
+            </li>
+          ))}
+        </ol>
+      )}
+    </details>
+  );
+}
+
+function previewDates({
+  account,
+  amountMinor,
+  frequencyUnit,
+  interval,
+  nominalDate,
+  nominalDay,
+  nominalMonth,
+  weekendPolicy,
+}: {
+  readonly account: Account | undefined;
+  readonly amountMinor: bigint;
+  readonly frequencyUnit: RecurrenceUnit;
+  readonly interval: number;
+  readonly nominalDate: string;
+  readonly nominalDay: number;
+  readonly nominalMonth: number | undefined;
+  readonly weekendPolicy: WeekendPolicy;
+}) {
+  if (account === undefined || nominalDate === "" || !Number.isInteger(interval) || interval < 1)
+    return [];
+  try {
+    return RecurringRule.create({
+      id: "preview",
+      name: "Anteprima",
+      kind: amountMinor < 0n ? "expense" : "income",
+      accountId: account.id,
+      amount: Money.fromMinor(amountMinor, account.currency),
+      frequencyUnit,
+      interval,
+      nominalDay,
+      ...(frequencyUnit === "year" && nominalMonth !== undefined ? { nominalMonth } : {}),
+      weekendPolicy,
+      nextNominalDate: LocalDate.parse(nominalDate),
+    }).preview();
+  } catch {
+    return [];
+  }
+}
+
+function frequencyLabel(rule: RecurringRule): string {
+  const every = rule.interval === 1 ? "Ogni" : `Ogni ${rule.interval}`;
+  const unit =
+    rule.frequencyUnit === "week"
+      ? rule.interval === 1
+        ? "settimana"
+        : "settimane"
+      : rule.frequencyUnit === "month"
+        ? rule.interval === 1
+          ? "mese"
+          : "mesi"
+        : rule.interval === 1
+          ? "anno"
+          : "anni";
+  return `${every} ${unit}`;
 }

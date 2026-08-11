@@ -1,4 +1,4 @@
-import { Account, LocalDate, Money, Transaction } from "@nexora/domain";
+import { Account, LocalDate, Money, RecurringRule, Transaction } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 import {
   capturePortableLedgerSnapshot,
@@ -73,5 +73,52 @@ describe("portable ledger snapshot", () => {
     expect(
       validatePortableLedgerSnapshot(legacy).transactions[0]?.expenseVariability,
     ).toBeUndefined();
+  });
+
+  it("round-trips advanced recurring schedules while accepting a legacy monthly rule", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({ id: "recurring-account", name: "Conto", type: "checking", currency: "EUR" }),
+    );
+    await repository.saveRecurringRule(
+      RecurringRule.create({
+        id: "annual-rule",
+        name: "Assicurazione",
+        kind: "expense",
+        accountId: "recurring-account",
+        amount: Money.fromMinor(-12_000n, "EUR"),
+        frequencyUnit: "year",
+        interval: 2,
+        nominalDay: 29,
+        nominalMonth: 2,
+        nextNominalDate: LocalDate.parse("2028-02-29"),
+        weekendPolicy: "next_business_day",
+        retiredAt: "2026-08-09T10:00:00.000Z",
+        expenseVariability: "fixed",
+        expenseExceptionality: "ordinary",
+      }),
+    );
+
+    const snapshot = decodePortableLedgerSnapshot(
+      encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+    );
+    const [rule] = validatePortableLedgerSnapshot(snapshot).recurringRules;
+    expect(rule).toMatchObject({
+      frequencyUnit: "year",
+      interval: 2,
+      nominalMonth: 2,
+      nextNominalDate: LocalDate.parse("2028-02-29"),
+      retiredAt: "2026-08-09T10:00:00.000Z",
+    });
+
+    const legacy = structuredClone(snapshot);
+    const legacyRule = legacy.entities.recurringRules?.[0] as Record<string, unknown>;
+    delete legacyRule.frequencyUnit;
+    delete legacyRule.nominalMonth;
+    delete legacyRule.nextNominalDate;
+    delete legacyRule.retiredAt;
+    delete legacyRule.expenseVariability;
+    delete legacyRule.expenseExceptionality;
+    expect(validatePortableLedgerSnapshot(legacy).recurringRules[0]?.frequencyUnit).toBe("month");
   });
 });

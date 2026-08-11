@@ -651,7 +651,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           await this.validateRecurringRuleReferences(rule);
           const record = recurringRuleToRecord(rule);
           await this.database.run(
-            "UPDATE recurring_rules SET name = ?, kind = ?, account_id = ?, amount_minor = ?, currency = ?, category_id = ?, payee = ?, frequency = ?, interval_months = ?, nominal_day = ?, weekend_policy = ?, next_expected_date = ?, enabled = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+            "UPDATE recurring_rules SET name = ?, kind = ?, account_id = ?, amount_minor = ?, currency = ?, category_id = ?, payee = ?, frequency = ?, interval_months = ?, nominal_day = ?, weekend_policy = ?, next_expected_date = ?, enabled = ?, frequency_unit = ?, interval_value = ?, nominal_month = ?, next_nominal_date = ?, weekend_policy_v2 = ?, retired_at = ?, expense_variability = ?, expense_exceptionality = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
             [
               record.name,
               record.kind,
@@ -666,6 +666,14 @@ export class SqliteLedgerRepository implements LedgerRepository {
               record.weekend_policy,
               record.next_expected_date,
               record.enabled,
+              record.frequency_unit,
+              record.interval_value,
+              record.nominal_month,
+              record.next_nominal_date,
+              record.weekend_policy_v2,
+              record.retired_at,
+              record.expense_variability,
+              record.expense_exceptionality,
               record.id,
             ],
           );
@@ -1654,7 +1662,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.performDatabaseOperation(async () =>
       (
         await this.database.query<RecurringRuleRecord>(
-          "SELECT id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled FROM recurring_rules ORDER BY next_expected_date, id",
+          "SELECT id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled, frequency_unit, interval_value, nominal_month, next_nominal_date, weekend_policy_v2, retired_at, expense_variability, expense_exceptionality FROM recurring_rules ORDER BY next_expected_date, id",
         )
       ).map(recurringRuleFromRecord),
     );
@@ -1969,7 +1977,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   private async insertRecurringRule(rule: RecurringRule): Promise<void> {
     const record = recurringRuleToRecord(rule);
     await this.database.run(
-      "INSERT INTO recurring_rules (id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO recurring_rules (id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, interval_months, nominal_day, weekend_policy, next_expected_date, enabled, frequency_unit, interval_value, nominal_month, next_nominal_date, weekend_policy_v2, retired_at, expense_variability, expense_exceptionality) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         record.id,
         record.name,
@@ -1985,6 +1993,14 @@ export class SqliteLedgerRepository implements LedgerRepository {
         record.weekend_policy,
         record.next_expected_date,
         record.enabled,
+        record.frequency_unit,
+        record.interval_value,
+        record.nominal_month,
+        record.next_nominal_date,
+        record.weekend_policy_v2,
+        record.retired_at,
+        record.expense_variability,
+        record.expense_exceptionality,
       ],
     );
   }
@@ -2115,6 +2131,14 @@ interface RecurringRuleRecord {
   readonly weekend_policy: "none" | "salary_italy";
   readonly next_expected_date: string;
   readonly enabled: number;
+  readonly frequency_unit: "week" | "month" | "year";
+  readonly interval_value: number;
+  readonly nominal_month: number | null;
+  readonly next_nominal_date: string | null;
+  readonly weekend_policy_v2: import("@nexora/domain").WeekendPolicy | null;
+  readonly retired_at: string | null;
+  readonly expense_variability: import("@nexora/domain").ExpenseVariability | null;
+  readonly expense_exceptionality: import("@nexora/domain").ExpenseExceptionality | null;
 }
 
 interface AllocationPlanRecord {
@@ -2305,11 +2329,19 @@ function recurringRuleToRecord(rule: RecurringRule): RecurringRuleRecord {
     category_id: rule.categoryId ?? null,
     payee: rule.payee ?? null,
     frequency: rule.frequency,
-    interval_months: rule.interval,
+    interval_months: rule.frequencyUnit === "month" ? rule.interval : 1,
     nominal_day: rule.nominalDay,
-    weekend_policy: rule.weekendPolicy,
+    weekend_policy: legacyWeekendPolicy(rule.weekendPolicy),
     next_expected_date: rule.nextExpectedDate.toString(),
     enabled: rule.enabled ? 1 : 0,
+    frequency_unit: rule.frequencyUnit,
+    interval_value: rule.interval,
+    nominal_month: rule.nominalMonth ?? null,
+    next_nominal_date: rule.nextNominalDate.toString(),
+    weekend_policy_v2: rule.weekendPolicy,
+    retired_at: rule.retiredAt ?? null,
+    expense_variability: rule.expenseVariability ?? null,
+    expense_exceptionality: rule.expenseExceptionality ?? null,
   };
 }
 function recurringRuleFromRecord(row: RecurringRuleRecord): RecurringRule {
@@ -2322,12 +2354,28 @@ function recurringRuleFromRecord(row: RecurringRuleRecord): RecurringRule {
     ...(row.category_id === null ? {} : { categoryId: row.category_id }),
     ...(row.payee === null ? {} : { payee: row.payee }),
     frequency: row.frequency,
-    interval: row.interval_months,
+    frequencyUnit: row.frequency_unit,
+    interval: row.interval_value,
     nominalDay: row.nominal_day,
-    weekendPolicy: row.weekend_policy,
+    ...(row.nominal_month === null ? {} : { nominalMonth: row.nominal_month }),
+    weekendPolicy: row.weekend_policy_v2 ?? row.weekend_policy,
     nextExpectedDate: LocalDate.parse(row.next_expected_date),
+    ...(row.next_nominal_date === null
+      ? {}
+      : { nextNominalDate: LocalDate.parse(row.next_nominal_date) }),
     enabled: row.enabled === 1,
+    ...(row.retired_at === null ? {} : { retiredAt: row.retired_at }),
+    ...(row.expense_variability === null ? {} : { expenseVariability: row.expense_variability }),
+    ...(row.expense_exceptionality === null
+      ? {}
+      : { expenseExceptionality: row.expense_exceptionality }),
   });
+}
+
+function legacyWeekendPolicy(
+  policy: import("@nexora/domain").WeekendPolicy,
+): "none" | "salary_italy" {
+  return policy === "salary_italy" ? "salary_italy" : "none";
 }
 interface ImportRowRecord {
   readonly id: string;

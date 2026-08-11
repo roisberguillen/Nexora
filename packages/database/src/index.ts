@@ -50,6 +50,7 @@ export {
 export { IndexedDbLedgerRepository } from "./indexeddb/IndexedDbLedgerRepository";
 export {
   INDEXED_DB_SCHEMA_VERSION,
+  PORTABLE_LEDGER_SCHEMA_VERSION,
   isIndexedDbSupported,
   openIndexedDbLedger,
   type IndexedDbLedger,
@@ -140,6 +141,10 @@ export {
   expenseBehaviorMigration,
   EXPENSE_BEHAVIOR_SCHEMA_VERSION,
 } from "./migrations/0016-expense-behavior";
+export {
+  advancedRecurringRulesMigration,
+  ADVANCED_RECURRING_RULES_SCHEMA_VERSION,
+} from "./migrations/0017-advanced-recurring-rules";
 export {
   createDemoLedgerSeed,
   DEMO_LEDGER_SEED_VERSION,

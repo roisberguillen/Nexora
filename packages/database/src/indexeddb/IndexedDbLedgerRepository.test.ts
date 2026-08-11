@@ -32,6 +32,67 @@ import { INDEXED_DB_SCHEMA_VERSION, openIndexedDbLedger } from "./openIndexedDbL
 
 const bookedDate = LocalDate.parse("2026-07-27");
 
+async function createLegacyRecurringRulesDatabase(
+  factory: IDBFactory,
+  databaseName: string,
+  version: 16 | 17,
+): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const request = factory.open(databaseName, version);
+    request.onupgradeneeded = () => {
+      const database = request.result;
+      const metadata = database.createObjectStore("metadata", { keyPath: "key" });
+      metadata.put({ key: "schema_version", value: version });
+      database.createObjectStore("accounts", { keyPath: "id" });
+      database.createObjectStore("categories", { keyPath: "id" });
+      database.createObjectStore("transactions", { keyPath: "id" });
+      database.createObjectStore("transfers", { keyPath: "id" });
+      database.createObjectStore("transaction_splits", { keyPath: "id" });
+      database.createObjectStore("tags", { keyPath: "id" });
+      database.createObjectStore("transaction_tags", { keyPath: ["transaction_id", "tag_id"] });
+      database.createObjectStore("import_batches", { keyPath: "id" });
+      database.createObjectStore("import_rows", { keyPath: "id" });
+      const recurringRules = database.createObjectStore("recurring_rules", { keyPath: "id" });
+      recurringRules.createIndex("by_due_date", ["enabled", "next_expected_date"], {
+        unique: false,
+      });
+      recurringRules.createIndex("by_account_id", "account_id", { unique: false });
+      if (version === 17) {
+        recurringRules.createIndex(
+          "by_active_due_date",
+          ["retired_at", "enabled", "next_expected_date"],
+          { unique: false },
+        );
+      }
+      recurringRules.add({
+        id: `legacy-rule-v${version}`,
+        name: "Regola esistente",
+        kind: "income",
+        account_id: "legacy-account",
+        amount_minor: "100",
+        currency: "EUR",
+        frequency: "monthly",
+        interval_months: 1,
+        nominal_day: 1,
+        weekend_policy: "none",
+        next_expected_date: "2026-06-01",
+        enabled: true,
+      });
+      database.createObjectStore("allocation_plans", { keyPath: "id" });
+      database.createObjectStore("budgets", { keyPath: "id" });
+      database.createObjectStore("loans", { keyPath: "id" });
+      database.createObjectStore("investment_positions", { keyPath: "id" });
+      database.createObjectStore("monthly_journals", { keyPath: "id" });
+      database.createObjectStore("transaction_trash", { keyPath: "transaction_id" });
+    };
+    request.onsuccess = () => {
+      request.result.close();
+      resolve();
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
 function account(id: string, type: "checking" | "savings" = "checking"): Account {
   return Account.create({
     id,
@@ -348,7 +409,7 @@ describe("IndexedDbLedgerRepository", () => {
       },
     );
 
-    expect(metadata).toEqual({ key: "schema_version", value: 16 });
+    expect(metadata).toEqual({ key: "schema_version", value: 18 });
     expect(indexes).toEqual(["by_account_id", "by_category_id"]);
   });
 
@@ -664,7 +725,7 @@ describe("IndexedDbLedgerRepository", () => {
 
     ledger = await openIndexedDbLedger({ databaseName, factory });
 
-    expect(ledger.schemaVersion).toBe(16);
+    expect(ledger.schemaVersion).toBe(INDEXED_DB_SCHEMA_VERSION);
     await expect(ledger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
       persistedAccount,
     );
@@ -784,6 +845,119 @@ describe("IndexedDbLedgerRepository", () => {
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
   });
+
+  it("persists advanced recurring fields and opens a legacy-shaped record after reopening", async () => {
+    const savedAccount = account("account-recurring-advanced");
+    await ledger.repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-idb-advanced",
+      name: "Assicurazione annuale",
+      kind: "expense",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-120_000n, "EUR"),
+      frequencyUnit: "year",
+      interval: 1,
+      nominalDay: 29,
+      nominalMonth: 2,
+      nextNominalDate: LocalDate.parse("2028-02-29"),
+      weekendPolicy: "previous_business_day",
+      expenseVariability: "fixed",
+      expenseExceptionality: "ordinary",
+      retiredAt: "2026-08-08T10:00:00.000Z",
+      enabled: false,
+    });
+    await ledger.repository.saveRecurringRule(rule);
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listRecurringRules()).resolves.toEqual([rule]);
+
+    const legacyRule = RecurringRule.create({
+      id: "rule-idb-legacy",
+      name: "Canone legacy",
+      kind: "expense",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(-9900n, "EUR"),
+      nominalDay: 31,
+      nextExpectedDate: LocalDate.parse("2026-07-31"),
+    });
+    await ledger.repository.saveRecurringRule(legacyRule);
+    const transaction = ledger.database.transaction("recurring_rules", "readwrite");
+    const store = transaction.objectStore("recurring_rules");
+    const request = store.get(legacyRule.id);
+    await new Promise<void>((resolve, reject) => {
+      request.onsuccess = () => {
+        const record = request.result as Record<string, unknown>;
+        delete record.frequency_unit;
+        delete record.interval_value;
+        delete record.nominal_month;
+        delete record.next_nominal_date;
+        delete record.weekend_policy_v2;
+        delete record.retired_at;
+        delete record.expense_variability;
+        delete record.expense_exceptionality;
+        const put = store.put(record);
+        put.onsuccess = () => resolve();
+        put.onerror = () => reject(put.error);
+      };
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error);
+    });
+    await ledger.close();
+    ledger = await openIndexedDbLedger({ databaseName, factory });
+    await expect(ledger.repository.listRecurringRules()).resolves.toContainEqual(legacyRule);
+  });
+
+  it("indexes active advanced recurring rules by their effective due date", async () => {
+    const savedAccount = account("account-recurring-index");
+    await ledger.repository.saveAccount(savedAccount);
+    const rule = RecurringRule.create({
+      id: "rule-idb-index",
+      name: "Settimanale",
+      kind: "income",
+      accountId: savedAccount.id,
+      amount: Money.fromMinor(100n, "EUR"),
+      frequencyUnit: "week",
+      interval: 2,
+      nominalDay: 1,
+      nextNominalDate: LocalDate.parse("2026-06-01"),
+      weekendPolicy: "none",
+    });
+    await ledger.repository.saveRecurringRule(rule);
+
+    const transaction = ledger.database.transaction("recurring_rules", "readonly");
+    const index = transaction.objectStore("recurring_rules").index("by_active_due_date");
+    const rows = await new Promise<readonly { readonly id: string }[]>((resolve, reject) => {
+      const request = index.getAll(["active", "2026-06-01"]);
+      request.onsuccess = () => resolve(request.result as readonly { readonly id: string }[]);
+      request.onerror = () => reject(request.error);
+    });
+    expect(rows.map((row) => row.id)).toContain(rule.id);
+  });
+
+  it.each([16, 17] as const)(
+    "rebuilds and backfills the active due index when upgrading a v%s ledger",
+    async (legacyVersion) => {
+      await ledger.close();
+      const legacyDatabaseName = `${databaseName}-legacy-v${legacyVersion}`;
+      await createLegacyRecurringRulesDatabase(factory, legacyDatabaseName, legacyVersion);
+      ledger = await openIndexedDbLedger({ databaseName: legacyDatabaseName, factory });
+
+      const transaction = ledger.database.transaction("recurring_rules", "readonly");
+      const index = transaction.objectStore("recurring_rules").index("by_active_due_date");
+      expect(index.keyPath).toEqual(["active_due_state", "next_expected_date"]);
+      const rows = await new Promise<readonly { readonly id: string }[]>((resolve, reject) => {
+        const request = index.getAll(["active", "2026-06-01"]);
+        request.onsuccess = () => resolve(request.result as readonly { readonly id: string }[]);
+        request.onerror = () => reject(request.error);
+      });
+
+      expect(rows.map((row) => row.id)).toEqual([`legacy-rule-v${legacyVersion}`]);
+    },
+  );
   it("ripristina uno snapshot portabile e lo conserva alla riapertura", async () => {
     const source = new InMemoryLedgerRepository();
     const sourceAccount = account("portable-account");

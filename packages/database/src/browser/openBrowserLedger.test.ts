@@ -25,6 +25,7 @@ function ledger(storageKind: "opfs" | "indexeddb"): OpfsLedger | IndexedDbLedger
     close,
     database: {},
     schemaVersion: 1,
+    portableSchemaVersion: 1,
     storageKind: "indexeddb",
   } as unknown as IndexedDbLedger;
 }

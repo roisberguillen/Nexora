@@ -1,7 +1,9 @@
 import { PersistenceError } from "../sqlite/PersistenceError";
+import { databaseMigrations } from "../migrations/0001-initial-ledger-schema";
 import { IndexedDbLedgerRepository } from "./IndexedDbLedgerRepository";
 
-export const INDEXED_DB_SCHEMA_VERSION = 16;
+export const INDEXED_DB_SCHEMA_VERSION = 18;
+export const PORTABLE_LEDGER_SCHEMA_VERSION = databaseMigrations.at(-1)?.version ?? 0;
 
 const defaultDatabaseName = "nexora-ledger";
 const databaseNamePattern = /^[A-Za-z0-9._-]+$/;
@@ -15,6 +17,7 @@ export interface IndexedDbLedger {
   readonly database: IDBDatabase;
   readonly repository: IndexedDbLedgerRepository;
   readonly schemaVersion: number;
+  readonly portableSchemaVersion: number;
   readonly storageKind: "indexeddb";
   close(): Promise<void>;
 }
@@ -49,6 +52,7 @@ export async function openIndexedDbLedger(
     database,
     repository,
     schemaVersion: database.version,
+    portableSchemaVersion: PORTABLE_LEDGER_SCHEMA_VERSION,
     storageKind: "indexeddb",
     async close(): Promise<void> {
       repository.close();
@@ -238,6 +242,42 @@ function openDatabase(factory: IDBFactory, databaseName: string): Promise<IDBDat
           value: INDEXED_DB_SCHEMA_VERSION,
         });
       }
+      if (event.oldVersion < 17) {
+        const recurringRules = transaction.objectStore("recurring_rules");
+        if (!recurringRules.indexNames.contains("by_active_due_date")) {
+          recurringRules.createIndex(
+            "by_active_due_date",
+            ["active_due_state", "next_expected_date"],
+            {
+              unique: false,
+            },
+          );
+        }
+        if (event.oldVersion > 0) {
+          transaction.objectStore("metadata").put({
+            key: "schema_version",
+            value: INDEXED_DB_SCHEMA_VERSION,
+          });
+        }
+      }
+      if (event.oldVersion < 18) {
+        const recurringRules = transaction.objectStore("recurring_rules");
+        if (recurringRules.indexNames.contains("by_active_due_date")) {
+          recurringRules.deleteIndex("by_active_due_date");
+        }
+        recurringRules.createIndex(
+          "by_active_due_date",
+          ["active_due_state", "next_expected_date"],
+          { unique: false },
+        );
+        backfillRecurringRuleActiveDueState(recurringRules, transaction);
+        if (event.oldVersion > 0) {
+          transaction.objectStore("metadata").put({
+            key: "schema_version",
+            value: INDEXED_DB_SCHEMA_VERSION,
+          });
+        }
+      }
     };
     request.onblocked = () => {
       rejectOnce(
@@ -265,6 +305,26 @@ function openDatabase(factory: IDBFactory, databaseName: string): Promise<IDBDat
       resolve(request.result);
     };
   });
+}
+
+function backfillRecurringRuleActiveDueState(
+  recurringRules: IDBObjectStore,
+  transaction: IDBTransaction,
+): void {
+  const cursorRequest = recurringRules.openCursor();
+  cursorRequest.onerror = () => transaction.abort();
+  cursorRequest.onsuccess = () => {
+    const cursor = cursorRequest.result;
+    if (cursor === null) {
+      return;
+    }
+    const record = cursor.value as Record<string, unknown>;
+    const activeDueState =
+      record.enabled === true && record.retired_at === undefined ? "active" : "inactive";
+    const updateRequest = cursor.update({ ...record, active_due_state: activeDueState });
+    updateRequest.onerror = () => transaction.abort();
+    updateRequest.onsuccess = () => cursor.continue();
+  };
 }
 
 async function validateSchema(database: IDBDatabase): Promise<void> {

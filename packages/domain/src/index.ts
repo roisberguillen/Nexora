@@ -41,6 +41,7 @@ export {
   RecurringRule,
   type CreateRecurringRuleProps,
   type RecurringFrequency,
+  type RecurrenceUnit,
   type WeekendPolicy,
 } from "./entities/RecurringRule";
 export {

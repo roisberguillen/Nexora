@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Finalizzata la Fase 12.3: le ricorrenze supportano calendario settimanale, mensile e annuale con
+  intervallo, data nominale distinta dalla data effettiva e migrazione additiva v17. Le anteprime
+  restano non distruttive e non creano movimenti automaticamente.
+
 - Finalizzata la Fase 12.2: l'editor Ricorrenze aggiorna subito le categorie compatibili con il
   tipo selezionato, non conserva valori della regola precedente e mantiene l'importo nel formato
   decimale corretto durante la modifica.

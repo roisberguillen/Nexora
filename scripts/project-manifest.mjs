@@ -7,6 +7,7 @@ const root = process.cwd();
 const manifestPath = path.join(root, "PROJECT_MANIFEST.json");
 const ignoredDirectories = new Set([
   ".git",
+  ".tmp-stitch-instructions",
   "backups",
   "coverage",
   "dist",
@@ -16,6 +17,7 @@ const ignoredDirectories = new Set([
   "test-results",
 ]);
 const ignoredFiles = new Set(["PROJECT_MANIFEST.json"]);
+const ignoredLocalPaths = new Set(["apps/web/.env", "apps/web/src-tauri/gen"]);
 
 function normalizeLineEndings(contents) {
   return contents.replaceAll("\r\n", "\n");
@@ -39,13 +41,17 @@ async function collectFiles(directory) {
     }
 
     const absolutePath = path.join(directory, entry.name);
+    const relativePath = path.relative(root, absolutePath).replaceAll(path.sep, "/");
+
+    if (ignoredLocalPaths.has(relativePath)) {
+      continue;
+    }
 
     if (entry.isDirectory()) {
       files.push(...(await collectFiles(absolutePath)));
       continue;
     }
 
-    const relativePath = path.relative(root, absolutePath).replaceAll(path.sep, "/");
     if (!ignoredFiles.has(relativePath)) {
       files.push(relativePath);
     }
