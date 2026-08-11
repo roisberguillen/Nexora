@@ -681,6 +681,22 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
+  public reviseBudget(previous: Budget, next: Budget): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(["budgets", "categories"], "readwrite", async (transaction) => {
+          const budgets = transaction.objectStore("budgets");
+          if ((await requestResult<unknown>(budgets.get(previous.id))) === undefined)
+            throw new DomainError("missing_reference", "Budget does not exist.");
+          await this.validateBudgetReferences(transaction, previous);
+          await requestResult(budgets.put(budgetToRecord(previous)));
+          await this.validateBudgetReferences(transaction, next);
+          await this.assertNew(budgets, next.id, "Budget");
+          await requestResult(budgets.add(budgetToRecord(next)));
+        }),
+      ),
+    );
+  }
   public saveLoan(loan: Loan): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
@@ -1948,14 +1964,15 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         const other = value as BudgetRecord;
         return (
           other.id !== budget.id &&
-          other.period === budget.period &&
-          other.category_id === budget.categoryId
+          other.category_id === budget.categoryId &&
+          other.period < (budget.effectiveToPeriod ?? "9999-12") &&
+          budget.period < (other.effective_to_period ?? "9999-12")
         );
       })
     ) {
       throw new DomainError(
         "duplicate_entity",
-        "A budget already exists for this category and period.",
+        "A budget revision already overlaps this category period.",
       );
     }
   }
@@ -2030,7 +2047,9 @@ interface AllocationPlanRecord {
 }
 interface BudgetRecord {
   readonly id: string;
+  readonly series_id?: string;
   readonly period: string;
+  readonly effective_to_period?: string;
   readonly category_id?: string;
   readonly amount_minor: string;
   readonly currency: string;
@@ -2166,7 +2185,11 @@ function loanFromRecord(row: LoanRecord): Loan {
 function budgetToRecord(budget: Budget): BudgetRecord {
   return {
     id: budget.id,
+    series_id: budget.seriesId,
     period: budget.period,
+    ...(budget.effectiveToPeriod === undefined
+      ? {}
+      : { effective_to_period: budget.effectiveToPeriod }),
     ...(budget.categoryId === undefined ? {} : { category_id: budget.categoryId }),
     amount_minor: budget.amount.amountMinor.toString(),
     currency: budget.amount.currency,
@@ -2183,7 +2206,11 @@ function budgetToRecord(budget: Budget): BudgetRecord {
 function budgetFromRecord(row: BudgetRecord): Budget {
   return Budget.restore({
     id: row.id,
+    ...(row.series_id === undefined ? {} : { seriesId: row.series_id }),
     period: row.period,
+    ...(row.effective_to_period === undefined
+      ? {}
+      : { effectiveToPeriod: row.effective_to_period }),
     ...(row.category_id === undefined ? {} : { categoryId: row.category_id }),
     amount: Money.fromMinor(BigInt(row.amount_minor), row.currency),
     ...(row.first_alert_percentage === undefined

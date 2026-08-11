@@ -22,6 +22,15 @@ interface MigrationRow {
 
 const fixedNow = new Date("2026-07-27T10:00:00.000Z");
 const verifiedChecksum = "a".repeat(64);
+const verifiedBudgetMigrationBackupProvider: MigrationBackupProvider = {
+  async createVerifiedBackup() {
+    return {
+      id: "budget-migration-checkpoint",
+      createdAt: fixedNow.toISOString(),
+      checksumSha256: verifiedChecksum,
+    };
+  },
+};
 
 function nodeMigrationDatabase(database: DatabaseSync): SqliteDatabase {
   return {
@@ -103,13 +112,14 @@ describe("MigrationRunner", () => {
     const runner = new MigrationRunner({
       database,
       migrations: databaseMigrations,
+      backupProvider: verifiedBudgetMigrationBackupProvider,
       now: () => fixedNow,
     });
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 18,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+      toVersion: 19,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -145,14 +155,15 @@ describe("MigrationRunner", () => {
       { version: 16, name: "expense-behavior" },
       { version: 17, name: "advanced-recurring-rules" },
       { version: 18, name: "budget-alert-thresholds" },
+      { version: 19, name: "recurring-monthly-budgets" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 18,
-      toVersion: 18,
+      fromVersion: 19,
+      toVersion: 19,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(18);
+    expect(migrationRows(sqlite)).toHaveLength(19);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -170,12 +181,13 @@ describe("MigrationRunner", () => {
     const v11Runner = new MigrationRunner({
       database,
       migrations: databaseMigrations,
+      backupProvider: verifiedBudgetMigrationBackupProvider,
       now: () => fixedNow,
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 18,
-      appliedMigrations: [11, 12, 13, 14, 15, 16, 17, 18],
+      toVersion: 19,
+      appliedMigrations: [11, 12, 13, 14, 15, 16, 17, 18, 19],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
@@ -217,12 +229,13 @@ describe("MigrationRunner", () => {
     const runner = new MigrationRunner({
       database,
       migrations: databaseMigrations,
+      backupProvider: verifiedBudgetMigrationBackupProvider,
       now: () => fixedNow,
     });
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 16,
-      toVersion: 18,
-      appliedMigrations: [17, 18],
+      toVersion: 19,
+      appliedMigrations: [17, 18, 19],
     });
     expect(
       sqlite
@@ -257,12 +270,13 @@ describe("MigrationRunner", () => {
     const runner = new MigrationRunner({
       database,
       migrations: databaseMigrations,
+      backupProvider: verifiedBudgetMigrationBackupProvider,
       now: () => fixedNow,
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 17,
-      toVersion: 18,
-      appliedMigrations: [18],
+      toVersion: 19,
+      appliedMigrations: [18, 19],
     });
     expect(
       sqlite
@@ -305,12 +319,13 @@ describe("MigrationRunner", () => {
     const runner = new MigrationRunner({
       database,
       migrations: databaseMigrations,
+      backupProvider: verifiedBudgetMigrationBackupProvider,
       now: () => fixedNow,
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 13,
-      toVersion: 18,
-      appliedMigrations: [14, 15, 16, 17, 18],
+      toVersion: 19,
+      appliedMigrations: [14, 15, 16, 17, 18, 19],
     });
     expect(
       sqlite

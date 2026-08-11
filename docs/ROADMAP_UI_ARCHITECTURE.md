@@ -18,7 +18,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
-| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1–12.4 completate; Fase 13 non avviata |
+| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1–12.4 completate; 12.4.1 in validazione; Fase 13 non avviata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
 | 15 | Nexora Local Hub | pianificata |
@@ -61,6 +61,17 @@ Commit e push su `origin/main`.
   attivi nei valori storici 80/100 e mantiene backup/ripristino compatibili.
 - [x] La UI espone stato, progresso accessibile, residuo, soglie e messaggi operativi su mobile e
   desktop; il percorso è verificato sui viewport 320, 375, 390, 768, 1024 e 1440 px.
+
+### Evidenze slice 12.4.1 — budget ricorrenti effective-dated
+
+- [x] Una configurazione budget resta applicabile nei mesi futuri senza creare copie o job;
+  modifiche future aprono una revisione e preservano lo storico.
+- [x] Disattivazione non distruttiva: il mese corrente resta consultabile e dal seguente non
+  viene risolto alcun limite per la serie.
+- [x] SQLite v19, IndexedDB v19 e snapshot portabili mantengono `seriesId` e fine validità,
+  normalizzando backup legacy prima del confronto di integrità.
+- [x] La UI permette navigazione mensile accessibile, distingue configurazioni storiche e non
+  propone controlli tecnici temporali nel form di cinque campi.
 
 ## Gate permanente di orchestrazione
 

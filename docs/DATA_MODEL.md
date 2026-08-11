@@ -120,6 +120,14 @@ Un solo diario per mese `YYYY-MM`. Testo e obiettivi sono opzionali e limitati a
 caratteri; la percezione di controllo è un valore discreto da 1 a 5. Il diario non
 modifica saldi, budget o report finanziari.
 
+### Budget
+`id, seriesId, period, effectiveToPeriod?, categoryId?, amount, firstAlertPercentage?, secondAlertPercentage?`
+
+`period` è l'inizio di validità della revisione mensile e `effectiveToPeriod` ne è il limite
+esclusivo. Una configurazione resta attiva nei mesi successivi senza generare copie fisiche. Le
+revisioni di una stessa `seriesId` non possono sovrapporsi. Nuove configurazioni richiedono una
+sottocategoria di spesa attiva; budget globali o macro preesistenti sono mantenuti come storico.
+
 ### SavingsGoal
 `id, accountId?, name, targetMinor, currentMinor, targetDate?`
 
@@ -183,6 +191,8 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
   l'upgrade è nullable, additivo e conserva integralmente i batch v13.
 - v15: `import_batches.importer_type_v3` aggiunge `generic_csv` mantenendo i discriminatori v1/v2
   per la compatibilità con tutti i batch precedenti.
+- v19: `budgets.series_id` e `budgets.effective_to_period` rendono ricorrenti i limiti mensili
+  senza copie; le righe legacy sono trasformate in revisioni ordinate, senza eliminare record.
 
 IndexedDB usa gli object store equivalenti,
 con indici per scadenza, conto e trigger. Lo store `monthly_journals` ha un indice

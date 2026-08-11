@@ -2,10 +2,10 @@ import { Category } from "@nexora/domain";
 import { InMemoryLedgerRepository } from "@nexora/database";
 import { describe, expect, it } from "vitest";
 
-import { createBudget, deleteBudget, updateBudget } from "./budgetCommands";
+import { createBudget, deactivateBudget, updateBudget } from "./budgetCommands";
 
 describe("budget commands", () => {
-  it("creates, updates and deletes a budget through the real repository contract", async () => {
+  it("keeps same-month edits in place and deactivates without deleting history", async () => {
     const repository = new InMemoryLedgerRepository();
     await repository.saveCategory(
       Category.create({ id: "transport", name: "Trasporti", kindScope: "expense" }),
@@ -19,18 +19,62 @@ describe("budget commands", () => {
         secondAlertPercentage: 90,
       },
       () => "transport-august",
+      "2026-08",
     );
-    const updated = await updateBudget(repository, created.id, {
-      amountMinor: 95_000n,
-      categoryId: "transport",
-      firstAlertPercentage: 70,
-      secondAlertPercentage: 95,
-    });
+    const updated = await updateBudget(
+      repository,
+      created.id,
+      {
+        amountMinor: 95_000n,
+        categoryId: "transport",
+        firstAlertPercentage: 70,
+        secondAlertPercentage: 95,
+      },
+      () => "unused",
+      "2026-08",
+    );
 
     expect(updated.amount.amountMinor).toBe(95_000n);
     expect(updated.firstAlertPercentage).toBe(70);
-    await deleteBudget(repository, updated.id);
-    expect(await repository.listBudgets()).toEqual([]);
+    await deactivateBudget(repository, updated.id, "2026-08");
+    expect(await repository.listBudgets()).toMatchObject([
+      { id: updated.id, effectiveToPeriod: "2026-09" },
+    ]);
+  });
+
+  it("opens a new future revision while preserving the historical revision", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveCategory(
+      Category.create({ id: "transport", name: "Trasporti", kindScope: "expense" }),
+    );
+    const created = await createBudget(
+      repository,
+      {
+        amountMinor: 80_000n,
+        categoryId: "transport",
+        firstAlertPercentage: 65,
+        secondAlertPercentage: 90,
+      },
+      () => "august",
+      "2026-08",
+    );
+    const september = await updateBudget(
+      repository,
+      created.id,
+      {
+        amountMinor: 95_000n,
+        categoryId: "transport",
+        firstAlertPercentage: 70,
+        secondAlertPercentage: 95,
+      },
+      () => "september",
+      "2026-09",
+    );
+    expect(await repository.listBudgets()).toMatchObject([
+      { id: "august", effectiveToPeriod: "2026-09", seriesId: "august" },
+      { id: "september", period: "2026-09", seriesId: "august" },
+    ]);
+    expect(september.amount.amountMinor).toBe(95_000n);
   });
 
   it("does not fabricate an update for a missing budget", async () => {

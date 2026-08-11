@@ -5,7 +5,7 @@ import type { Transaction } from "../entities/Transaction";
 import type { TransactionSplit } from "../entities/TransactionSplit";
 import { Money } from "../value-objects/Money";
 
-export type BudgetProgressStatus = "normal" | "warning" | "exceeded";
+export type BudgetProgressStatus = "normal" | "warning" | "critical" | "over_budget";
 
 export interface BudgetCategoryScope {
   readonly categoryIds: ReadonlySet<string> | undefined;
@@ -59,11 +59,13 @@ export function resolveBudgetCategoryScope(
  */
 export function calculateBudgetProgress({
   budget,
+  targetPeriod,
   categories,
   transactions,
   splits,
 }: {
   readonly budget: Budget;
+  readonly targetPeriod: string;
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
   readonly splits: readonly TransactionSplit[];
@@ -82,7 +84,7 @@ export function calculateBudgetProgress({
       transaction.kind !== "expense" ||
       !transaction.affectsIncomeExpense() ||
       (transaction.status !== "booked" && transaction.status !== "reconciled") ||
-      transaction.bookedDate.toString().slice(0, 7) !== budget.period
+      transaction.bookedDate.toString().slice(0, 7) !== targetPeriod
     ) {
       continue;
     }
@@ -128,7 +130,14 @@ export function calculateBudgetProgress({
     spent,
     remaining: budget.amount.subtract(spent),
     percentage,
-    status: percentage >= 100 ? "exceeded" : percentage >= 80 ? "warning" : "normal",
+    status:
+      percentage >= 100
+        ? "over_budget"
+        : budget.secondAlertPercentage !== undefined && percentage >= budget.secondAlertPercentage
+          ? "critical"
+          : budget.firstAlertPercentage !== undefined && percentage >= budget.firstAlertPercentage
+            ? "warning"
+            : "normal",
     scope,
     breakdown: [...breakdown.entries()]
       .map(([categoryId, categorySpent]) => ({ categoryId, spent: categorySpent }))

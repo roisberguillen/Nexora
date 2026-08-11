@@ -54,6 +54,7 @@ describe("calculateBudgetProgress", () => {
   it("aggregates a macro category, including archived children, without siblings", () => {
     const progress = calculateBudgetProgress({
       budget: budget("transport"),
+      targetPeriod: "2026-02",
       categories,
       transactions: [
         expense("fuel", -18_000n, "2026-02-01", "fuel"),
@@ -88,6 +89,7 @@ describe("calculateBudgetProgress", () => {
     expect(
       calculateBudgetProgress({
         budget: budget("fuel"),
+        targetPeriod: "2026-02",
         categories,
         transactions: [splitParent],
         splits,
@@ -96,6 +98,7 @@ describe("calculateBudgetProgress", () => {
     expect(
       calculateBudgetProgress({
         budget: budget("food"),
+        targetPeriod: "2026-02",
         categories,
         transactions: [splitParent],
         splits,
@@ -104,6 +107,7 @@ describe("calculateBudgetProgress", () => {
     expect(
       calculateBudgetProgress({
         budget: budget("transport"),
+        targetPeriod: "2026-02",
         categories,
         transactions: [splitParent],
         splits,
@@ -140,6 +144,7 @@ describe("calculateBudgetProgress", () => {
     });
     const progress = calculateBudgetProgress({
       budget: budget("food"),
+      targetPeriod: "2026-02",
       categories,
       transactions: [
         income,
@@ -160,12 +165,13 @@ describe("calculateBudgetProgress", () => {
   it("keeps negative remaining money when the budget is exceeded", () => {
     const progress = calculateBudgetProgress({
       budget: budget("food", "2026-12", 50_000n),
+      targetPeriod: "2026-12",
       categories,
       transactions: [expense("year-end", -55_000n, "2026-12-31", "food")],
       splits: [],
     });
     expect(progress.remaining.amountMinor).toBe(-5_000n);
     expect(progress.percentage).toBe(110);
-    expect(progress.status).toBe("exceeded");
+    expect(progress.status).toBe("over_budget");
   });
 });

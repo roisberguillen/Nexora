@@ -10,7 +10,17 @@ export {
   type CreateCategoryProps,
   type UpdateCategoryProps,
 } from "./entities/Category";
-export { Budget, type CreateBudgetProps } from "./entities/Budget";
+export {
+  Budget,
+  compareBudgetPeriods,
+  isBudgetEffectiveForPeriod,
+  nextBudgetPeriod,
+  previousBudgetPeriod,
+  resolveActiveBudgetsForPeriod,
+  resolveBudgetForPeriod,
+  type CreateBudgetProps,
+  type RestoreBudgetProps,
+} from "./entities/Budget";
 export { Loan, type CreateLoanProps } from "./entities/Loan";
 export {
   InvestmentPosition,

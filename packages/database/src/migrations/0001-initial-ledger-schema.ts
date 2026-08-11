@@ -16,6 +16,7 @@ import { genericCsvImporterMigration } from "./0015-generic-csv-importer";
 import { expenseBehaviorMigration } from "./0016-expense-behavior";
 import { advancedRecurringRulesMigration } from "./0017-advanced-recurring-rules";
 import { budgetAlertThresholdsMigration } from "./0018-budget-alert-thresholds";
+import { recurringMonthlyBudgetsMigration } from "./0019-recurring-monthly-budgets";
 
 export const INITIAL_LEDGER_SCHEMA_VERSION = 1;
 const INITIAL_LEDGER_SCHEMA_NAME = "initial-ledger-schema";
@@ -290,4 +291,5 @@ export const databaseMigrations: readonly DatabaseMigration[] = [
   expenseBehaviorMigration,
   advancedRecurringRulesMigration,
   budgetAlertThresholdsMigration,
+  recurringMonthlyBudgetsMigration,
 ];

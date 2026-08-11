@@ -267,6 +267,20 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.validateBudgetReferences(budget);
     this.budgets.set(budget.id, budget);
   }
+  public async reviseBudget(previous: Budget, next: Budget): Promise<void> {
+    const snapshot = this.captureState();
+    try {
+      if (!this.budgets.has(previous.id))
+        throw new DomainError("missing_reference", "Budget does not exist.");
+      this.validateBudgetReferences(previous);
+      this.budgets.set(previous.id, previous);
+      this.validateBudgetReferences(next);
+      this.budgets.set(next.id, next);
+    } catch (cause) {
+      this.restoreState(snapshot);
+      throw cause;
+    }
+  }
   public async deleteBudget(id: string): Promise<void> {
     this.deleteExisting(this.budgets, id, "Budget");
   }
@@ -875,8 +889,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       [...this.budgets.values()].some(
         (other) =>
           other.id !== budget.id &&
-          other.period === budget.period &&
-          other.categoryId === budget.categoryId,
+          other.categoryId === budget.categoryId &&
+          other.period < (budget.effectiveToPeriod ?? "9999-12") &&
+          budget.period < (other.effectiveToPeriod ?? "9999-12"),
       )
     ) {
       throw new DomainError(
@@ -988,7 +1003,11 @@ function copySplitWithCategory(split: TransactionSplit, categoryId: string): Tra
 function copyBudgetWithCategory(budget: Budget, categoryId: string): Budget {
   return Budget.restore({
     id: budget.id,
+    seriesId: budget.seriesId,
     period: budget.period,
+    ...(budget.effectiveToPeriod === undefined
+      ? {}
+      : { effectiveToPeriod: budget.effectiveToPeriod }),
     amount: budget.amount,
     categoryId,
     ...(budget.firstAlertPercentage === undefined

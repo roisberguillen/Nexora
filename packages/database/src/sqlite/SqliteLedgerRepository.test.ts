@@ -675,8 +675,8 @@ describe("SqliteLedgerRepository", () => {
       });
 
       expect(secondLedger.migration).toEqual({
-        fromVersion: 18,
-        toVersion: 18,
+        fromVersion: 19,
+        toVersion: 19,
         appliedMigrations: [],
       });
       await expect(secondLedger.repository.findAccountById(persistedAccount.id)).resolves.toEqual(
@@ -859,7 +859,18 @@ describe("SqliteLedgerRepository", () => {
         ],
       );
 
-      const upgraded = await initializeSqliteLedger({ database });
+      const upgraded = await initializeSqliteLedger({
+        database,
+        backupProvider: {
+          async createVerifiedBackup() {
+            return {
+              id: "test-budget-migration-backup",
+              createdAt: "2026-08-11T00:00:00.000Z",
+              checksumSha256: "0".repeat(64),
+            };
+          },
+        },
+      });
       await expect(upgraded.repository.listRecurringRules()).resolves.toMatchObject([
         {
           id: "legacy-rule",

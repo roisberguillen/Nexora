@@ -46,7 +46,7 @@ import { createAllocationPlan, type AllocationPlanInput } from "./recurring/allo
 import { BudgetsPage } from "./budgets/BudgetsPage";
 import {
   createBudget,
-  deleteBudget,
+  deactivateBudget,
   updateBudget,
   type BudgetInput,
 } from "./budgets/budgetCommands";
@@ -561,7 +561,7 @@ function AppContent({
     });
   const removeMonthlyBudget = (id: string): Promise<void> =>
     mutateLedger(async (ledger) => {
-      await deleteBudget(ledger.repository, id);
+      await deactivateBudget(ledger.repository, id);
     });
   const createLoanPosition = (input: LoanInput): Promise<void> =>
     mutateLedger(async (ledger) => {

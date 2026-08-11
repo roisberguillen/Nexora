@@ -385,3 +385,11 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   UI riportano ora codici per entità e fase, senza serializzare dati finanziari nella diagnostica.
 - **Conseguenze:** nessun reset di OPFS/IndexedDB/localStorage; i database con cronologia diversa
   restano in recovery non distruttivo e richiedono intervento esplicito.
+
+## 2026-08-11 — Budget ricorrenti senza copie mensili
+
+- **Scelta:** il periodo salvato è l'inizio di validità e le revisioni hanno una fine esclusiva;
+  la lettura risolve il budget del mese richiesto in un servizio di dominio condiviso.
+- **Conseguenze:** una modifica futura conserva gli importi e le soglie precedenti, mentre la
+  disattivazione mantiene il mese corrente e termina dal successivo. Nessun job o record budget
+  viene creato automaticamente a inizio mese.

@@ -15,6 +15,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.2 | complete | expense behavior classification and recurring-model alignment, including final form corrections |
 | 12.3 | complete | advanced calendar, additive migration v17, SQLite/IndexedDB parity, portable backup compatibility and responsive UI; merged via PR #3 with GitHub Actions green on `main` (`0ea79e8`) |
 | 12.4 | complete | hierarchical budget CRUD, macro/subcategory scope, split-safe progress, responsive UI and adapter parity; merged via PR #4 with GitHub Actions green on `main` (`e9b4d3f`) |
+| 12.4.1 | in progress | recurring effective-dated monthly budget revisions, migration v19 and historical month navigation |
 | 13 | planned | platform delivery only after Phase 12 closes |
 | 14–17 | planned | no completion claim |
 
