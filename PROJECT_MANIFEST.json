@@ -994,8 +994,8 @@
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
-      "size": 2231,
-      "sha256": "4092347590178bf570b483a68c69a4068e24b486654798a36a260240789eea90"
+      "size": 2254,
+      "sha256": "d027b3fcb812331a9036bc0d0b1603156cd3470fcf95e13cc2d9fcf8a81561e1"
     },
     {
       "path": "apps/web/src/loans/loanCommands.ts",
@@ -1004,8 +1004,8 @@
     },
     {
       "path": "apps/web/src/loans/LoansPage.test.tsx",
-      "size": 2682,
-      "sha256": "bb09c5ee6f3f36d28a53b671d105633f00f3927e8926df191c973bb8a126b880"
+      "size": 2736,
+      "sha256": "375c8f9f1a2290d3bccab7f30d6f9aad216edc8c9fd1fa57d900256b7bc9fae6"
     },
     {
       "path": "apps/web/src/loans/LoansPage.tsx",
