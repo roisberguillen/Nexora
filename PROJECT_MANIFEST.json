@@ -2914,8 +2914,8 @@
     },
     {
       "path": "test/e2e/loans.spec.ts",
-      "size": 2360,
-      "sha256": "ee81fef7c29ea0e26cfcb1f4026adc9b3ef0ed986e52e9a25a34d57c0e61510e"
+      "size": 2283,
+      "sha256": "3383a66dd554845c82aeceb412c2a6cd20375ae61af936121d98ec225ed8ea15"
     },
     {
       "path": "test/e2e/opfs-performance.spec.ts",
