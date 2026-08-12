@@ -797,6 +797,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
           await this.assertNew("loans", loan.id, "Loan");
+          await this.validateLoanReferences(loan);
           await this.insertLoan(loan);
         }),
       ),
@@ -812,6 +813,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           );
           if (found.length === 0)
             throw new DomainError("missing_reference", "Loan does not exist.");
+          await this.validateLoanReferences(loan);
           const record = loanToRecord(loan);
           await this.database.run(
             "UPDATE loans SET account_id = ?, lender = ?, installment_minor = ?, remaining_principal_minor = ?, original_principal_minor = ?, currency = ?, annual_nominal_rate_bps = ?, annual_effective_rate_bps = ?, installments_paid = ?, installments_remaining = ?, next_due_date = ? WHERE id = ?",
@@ -1882,6 +1884,19 @@ export class SqliteLedgerRepository implements LedgerRepository {
         "currency_mismatch",
         "Allocation plan accounts and amount must share a currency.",
       );
+  }
+  private async validateLoanReferences(loan: Loan): Promise<void> {
+    const account = await this.findAccountByIdInternal(loan.accountId);
+    if (account === undefined || account.isArchived || account.type !== "loan")
+      throw new DomainError("missing_reference", "Loan requires an active loan account.");
+    if (account.currency !== loan.remainingPrincipal.currency)
+      throw new DomainError("currency_mismatch", "Loan currency does not match the account.");
+    const existing = await this.database.query<{ readonly id: string }>(
+      "SELECT id FROM loans WHERE account_id = ? AND id <> ? LIMIT 1",
+      [loan.accountId, loan.id],
+    );
+    if (existing.length > 0)
+      throw new DomainError("duplicate_entity", "A loan already exists for this account.");
   }
   private async insertAllocationPlan(plan: AllocationPlan): Promise<void> {
     const record = allocationPlanToRecord(plan);

@@ -960,6 +960,52 @@ describe("SqliteLedgerRepository", () => {
     await repository.saveLoan(loan);
     await expect(repository.listLoans()).resolves.toEqual([loan]);
   });
+  it("convalida il conto prestito anche quando aggiorna una posizione", async () => {
+    await repository.saveAccount(account("loan-account", "loan"));
+    const loan = Loan.create({
+      id: "loan-validation",
+      accountId: "loan-account",
+      lender: "Findomestic",
+      installment: Money.fromMinor(17_200n, "EUR"),
+      remainingPrincipal: Money.fromMinor(500_000n, "EUR"),
+    });
+    await repository.saveLoan(loan);
+    await expect(
+      repository.updateLoan(
+        Loan.create({
+          id: loan.id,
+          accountId: "missing",
+          lender: loan.lender,
+          installment: loan.installment,
+          remainingPrincipal: loan.remainingPrincipal,
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "missing_reference" });
+    await expect(repository.listLoans()).resolves.toEqual([loan]);
+  });
+  it("rifiuta due prestiti per lo stesso conto", async () => {
+    await repository.saveAccount(account("loan-account", "loan"));
+    await repository.saveLoan(
+      Loan.create({
+        id: "loan-one",
+        accountId: "loan-account",
+        lender: "Istituto uno",
+        installment: Money.fromMinor(7_200n, "EUR"),
+        remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
+      }),
+    );
+    await expect(
+      repository.saveLoan(
+        Loan.create({
+          id: "loan-two",
+          accountId: "loan-account",
+          lender: "Istituto due",
+          installment: Money.fromMinor(8_200n, "EUR"),
+          remainingPrincipal: Money.fromMinor(150_000n, "EUR"),
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+  });
   it("ripristina uno snapshot portabile senza perdere precisione monetaria", async () => {
     const source = new InMemoryLedgerRepository();
     const sourceAccount = account("portable-account");

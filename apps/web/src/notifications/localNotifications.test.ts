@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { Account, Budget, LocalDate, Money, RecurringRule, Transaction } from "@nexora/domain";
+import {
+  Account,
+  Budget,
+  Loan,
+  LocalDate,
+  Money,
+  RecurringRule,
+  Transaction,
+} from "@nexora/domain";
 
 import {
   deriveLocalNotifications,
@@ -188,5 +196,29 @@ describe("local notification derivation", () => {
     writeLocalNotificationPreferences({ lowBalanceThresholdMinor: 12_345n }, storage);
 
     expect(readLocalNotificationPreferences(storage).lowBalanceThresholdMinor).toBe(12_345n);
+  });
+
+  it("deriva un avviso per una rata imminente senza creare movimenti", () => {
+    const loan = Loan.create({
+      id: "loan",
+      accountId: "loan-account",
+      lender: "Banca",
+      installment: Money.fromMinor(10_000n, "EUR"),
+      remainingPrincipal: Money.fromMinor(100_000n, "EUR"),
+      nextDueDate: LocalDate.parse("2026-08-04"),
+    });
+    const notifications = deriveLocalNotifications({
+      backupHistory: [],
+      budgets: [],
+      loans: [loan],
+      recurringRules: [],
+      today: new Date("2026-08-01T12:00:00.000Z"),
+      transactions: [],
+    });
+    expect(notifications).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "loan:loan:2026-08-04", href: "./#loans", kind: "loan" }),
+      ]),
+    );
   });
 });

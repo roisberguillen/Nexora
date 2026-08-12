@@ -292,12 +292,14 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   public async saveLoan(loan: Loan): Promise<void> {
     this.assertNew(this.loans, loan.id, "Loan");
     this.validateLoanReferences(loan);
+    this.assertLoanAccountAvailable(loan);
     this.loans.set(loan.id, loan);
   }
   public async updateLoan(loan: Loan): Promise<void> {
     if (!this.loans.has(loan.id))
       throw new DomainError("missing_reference", "Loan does not exist.");
     this.validateLoanReferences(loan);
+    this.assertLoanAccountAvailable(loan);
     this.loans.set(loan.id, loan);
   }
   public async deleteLoan(id: string): Promise<void> {
@@ -911,6 +913,14 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Loan requires an active loan account.");
     if (account.currency !== loan.remainingPrincipal.currency)
       throw new DomainError("currency_mismatch", "Loan currency must match the account.");
+  }
+  private assertLoanAccountAvailable(loan: Loan): void {
+    if (
+      [...this.loans.values()].some(
+        (existing) => existing.id !== loan.id && existing.accountId === loan.accountId,
+      )
+    )
+      throw new DomainError("duplicate_entity", "A loan already exists for this account.");
   }
 
   private isTransferLeg(transactionId: string): boolean {

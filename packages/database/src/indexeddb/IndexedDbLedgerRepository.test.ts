@@ -101,7 +101,7 @@ async function createLegacyRecurringRulesDatabase(
   });
 }
 
-function account(id: string, type: "checking" | "savings" = "checking"): Account {
+function account(id: string, type: "checking" | "savings" | "loan" = "checking"): Account {
   return Account.create({
     id,
     name: `Conto ${id}`,
@@ -1069,6 +1069,7 @@ describe("IndexedDbLedgerRepository", () => {
     ).rejects.toMatchObject({ code: "duplicate_entity" });
   });
   it("persiste un prestito dopo la riapertura", async () => {
+    await ledger.repository.saveAccount(account("loan-account", "loan"));
     const loan = Loan.create({
       id: "loan-idb",
       accountId: "loan-account",
@@ -1080,5 +1081,41 @@ describe("IndexedDbLedgerRepository", () => {
     await ledger.close();
     ledger = await openIndexedDbLedger({ databaseName, factory });
     await expect(ledger.repository.listLoans()).resolves.toEqual([loan]);
+  });
+  it("rifiuta un prestito senza conto prestito valido", async () => {
+    await expect(
+      ledger.repository.saveLoan(
+        Loan.create({
+          id: "loan-missing",
+          accountId: "missing",
+          lender: "Agos",
+          installment: Money.fromMinor(7_200n, "EUR"),
+          remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "missing_reference" });
+  });
+  it("rifiuta due prestiti per lo stesso conto", async () => {
+    await ledger.repository.saveAccount(account("loan-account", "loan"));
+    await ledger.repository.saveLoan(
+      Loan.create({
+        id: "loan-one",
+        accountId: "loan-account",
+        lender: "Istituto uno",
+        installment: Money.fromMinor(7_200n, "EUR"),
+        remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
+      }),
+    );
+    await expect(
+      ledger.repository.saveLoan(
+        Loan.create({
+          id: "loan-two",
+          accountId: "loan-account",
+          lender: "Istituto due",
+          installment: Money.fromMinor(8_200n, "EUR"),
+          remainingPrincipal: Money.fromMinor(150_000n, "EUR"),
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
   });
 });

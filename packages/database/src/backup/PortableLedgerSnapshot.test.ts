@@ -3,6 +3,7 @@ import {
   AllocationPlan,
   Budget,
   Category,
+  Loan,
   LocalDate,
   Money,
   RecurringRule,
@@ -118,6 +119,39 @@ describe("portable ledger snapshot", () => {
     );
 
     expect(snapshot.allocationPlans).toEqual([plan]);
+  });
+
+  it("round-trips a loan only with a compatible active loan account", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({ id: "loan-account", name: "Prestito", type: "loan", currency: "EUR" }),
+    );
+    await repository.saveLoan(
+      Loan.create({
+        id: "loan",
+        accountId: "loan-account",
+        lender: "Banca",
+        installment: Money.fromMinor(10_000n, "EUR"),
+        remainingPrincipal: Money.fromMinor(100_000n, "EUR"),
+      }),
+    );
+    const snapshot = decodePortableLedgerSnapshot(
+      encodePortableLedgerSnapshot(await capturePortableLedgerSnapshot(repository)),
+    );
+    expect(validatePortableLedgerSnapshot(snapshot).loans).toHaveLength(1);
+    const invalid = structuredClone(snapshot);
+    (invalid.entities.accounts?.[0] as Record<string, unknown>).type = "checking";
+    expect(() => validatePortableLedgerSnapshot(invalid)).toThrow("loan account");
+    const duplicateLoan = structuredClone(snapshot.entities.loans?.[0]);
+    (duplicateLoan as Record<string, unknown>).id = "loan-duplicate";
+    const duplicate = {
+      ...snapshot,
+      entities: {
+        ...snapshot.entities,
+        loans: [...(snapshot.entities.loans ?? []), duplicateLoan],
+      },
+    };
+    expect(() => validatePortableLedgerSnapshot(duplicate)).toThrow("duplicate loans");
   });
 
   it("rejects an allocation plan that refers to an archived account before restore", async () => {
