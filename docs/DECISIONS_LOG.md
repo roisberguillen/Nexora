@@ -393,3 +393,15 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
 - **Conseguenze:** una modifica futura conserva gli importi e le soglie precedenti, mentre la
   disattivazione mantiene il mese corrente e termina dal successivo. Nessun job o record budget
   viene creato automaticamente a inizio mese.
+
+## 2026-08-12 — Allocazioni confermate idempotenti
+
+- **Contesto:** una conferma può contenere più piani e ogni piano genera un transfer atomico; un
+  errore dopo il primo transfer non deve farlo duplicare al retry.
+- **Scelta:** usare un identificatore di esecuzione tecnico, salvato nella nota delle due gambe e
+  incluso nelle identità deterministiche di transfer e transazioni per ciascun piano. La UI
+  conserva lo stesso identificatore dopo un errore potenzialmente parziale e propone un retry
+  esplicito; non esiste alcuna allocazione automatica.
+- **Conseguenze:** lo storico resta auditabile e backup/restore mantengono i marker. I piani
+  disattivati possono continuare a riferire un conto archiviato per leggere la configurazione
+  storica; i piani attivi bloccano invece l'archiviazione.

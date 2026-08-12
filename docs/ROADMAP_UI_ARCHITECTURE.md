@@ -18,7 +18,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
-| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1–12.4.1 completate; Fase 13 non avviata |
+| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1–12.5 completate; Fase 13 non avviata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
 | 15 | Nexora Local Hub | pianificata |
@@ -72,6 +72,18 @@ Commit e push su `origin/main`.
   normalizzando backup legacy prima del confronto di integrità.
 - [x] La UI permette navigazione mensile accessibile, distingue configurazioni storiche e non
   propone controlli tecnici temporali nel form di cinque campi.
+
+### Evidenze slice 12.5 — allocazioni finanziarie
+
+- [x] I piani restano nella superficie `#recurring` e supportano creazione, modifica, pausa,
+  riattivazione ed eliminazione confermata senza alterare i trasferimenti già contabilizzati.
+- [x] La conferma crea trasferimenti reali e atomici per piano; identità deterministiche per
+  esecuzione e piano impediscono duplicazioni in retry concorrenti o dopo un errore parziale.
+- [x] SQLite/OPFS, IndexedDB, memoria e snapshot portabili mantengono i piani; account archiviati
+  sono ammessi nello storico solo per piani disattivati, mentre un piano attivo blocca
+  l'archiviazione del conto referenziato.
+- [x] Dialog accessibili, ricevute operative e retry sicuro sono verificati a 320, 375, 390, 768,
+  1024 e 1440 px.
 
 ## Gate permanente di orchestrazione
 

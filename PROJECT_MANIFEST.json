@@ -229,8 +229,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 778,
-      "sha256": "af365ef7c6c8c72d37be7d81ab719305805af99f7ab000da20ca7a35c41e3bd0"
+      "size": 461,
+      "sha256": "63eabac0c0acd4d944ce24ad4b8bd31f980720a21644b0ef407335081bb4fed9"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -254,13 +254,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 1856,
-      "sha256": "ea3155a30830570d8c6c099489bb1f078dc5fd235fe855bd1747963eccc4eb60"
+      "size": 2044,
+      "sha256": "35da88a64c9bc71de9ca02e2ae767459f7241a434514f3969e323f8c28d32021"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 22037,
-      "sha256": "eaad21ceee78731fba07e45c675dfc2bd28ff417f2412a3e090ffd4c2e61c0b2"
+      "size": 22978,
+      "sha256": "1446f7cb6ae9ff5b884f16a2ae4004f60a5dcce4bbb83560b1d6f63536e5711f"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -1404,8 +1404,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 25635,
-      "sha256": "17f24b32c98d35be6cb9a40a1afef8b68fb51750edd122f04ca698a873321c85"
+      "size": 25913,
+      "sha256": "b42ade811ef6d88e5185d03383552d3bf28368632075c41c66acba7680948dc9"
     },
     {
       "path": "design/mockup/README.md",
@@ -1579,18 +1579,18 @@
     },
     {
       "path": "docs/DATA_MODEL.md",
-      "size": 11425,
-      "sha256": "362021613b1d6f279c36ee6939d96f2c947d332b06ae3fbcf3f6f286888e1d10"
+      "size": 11777,
+      "sha256": "b4a41c1e7e6c34b79c375c4d493023f59b1c50458dc788a8f4c3c51997d2912b"
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 25152,
-      "sha256": "542d21b83bb23fcdf3b6a6e0625459029e75e60bdc9d6c29b984a64e7b3bb276"
+      "size": 25959,
+      "sha256": "879d6d4303ff3c8e8bcf14597387c20349cb15fe3bb439b36c4d032a4e92eb58"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
-      "size": 2332,
-      "sha256": "ca4c5b9153b9f0773ac59a783fe96a4be7d935b6ea25e200a4d324121e3f5e1d"
+      "size": 2345,
+      "sha256": "e0314eab7a5d03a880247d661ad73689b77d1029a7ff3b2504bcaba095bc841f"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -1689,8 +1689,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 15639,
-      "sha256": "c76175213f08937a402e425db0453e72f9438d98d61e88fbaa148ed88696af40"
+      "size": 16410,
+      "sha256": "e7200e09efda8f919adda014d4db2ce546b8b2d8d2f36b78942422d973bdcbc3"
     },
     {
       "path": "docs/ROADMAP.md",

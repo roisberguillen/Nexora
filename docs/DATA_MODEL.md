@@ -79,7 +79,11 @@ crea movimenti automaticamente e non aggiunge alcun flag di ricorrenza alla `Tra
 `id, name, trigger, sourceAccountId, targetAccountId, amountMinor, currency, enabled`
 
 Un piano è una proposta di trasferimento per stipendio o reddito fotografico; non entra
-in saldi, report o storico finché l'utente non ne conferma l'esecuzione.
+in saldi, report o storico finché l'utente non ne conferma l'esecuzione. Una conferma usa un
+`executionId` tecnico: transfer e due gambe hanno identità deterministiche per `executionId` e
+piano, così retry e richieste concorrenti non duplicano il bundle. Un piano attivo richiede conti
+esistenti, non archiviati e nella stessa valuta; un piano disattivato può restare nello storico
+anche dopo l'archiviazione di un conto.
 
 ### Budget
 `id, period, categoryId?, amountMinor, firstAlertPercentage?, secondAlertPercentage?`

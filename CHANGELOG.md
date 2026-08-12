@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Finalizzata la Fase 12.5: i piani di allocazione in Ricorrenze ora supportano modifica,
+  pausa/riattivazione ed eliminazione confermata. Le conferme creano trasferimenti reali e
+  idempotenti anche in caso di retry dopo errore parziale, senza alterare lo storico esistente.
+
 - I budget mensili sono ora configurazioni ricorrenti con revisioni effettive nel tempo: una
   modifica futura conserva lo storico, la disattivazione è non distruttiva e la pagina consente
   di consultare i mesi precedenti. La migrazione additiva v19 e IndexedDB v19 preservano budget,

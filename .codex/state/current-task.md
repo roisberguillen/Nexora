@@ -1,14 +1,9 @@
 # Current task
 
-- Task: Phase 12.5 allocation plans
-- Roadmap phase: Phase 12, fifth vertical slice
-- Category: domain / persistence / responsive UI / backup compatibility
-- Profile: CRITICAL
-- Data risk: medium; existing allocation plans and confirmed transfers must remain readable and
-  no confirmation may duplicate a transfer.
-- Checkpoint: `.codex/state/checkpoints/2026-08-11-phase-12-5-allocation-plans.md`
-- Status: implementation and verification in progress; Phase 12 remains in progress and Phase 13
-  is not started.
-- Decision: keep allocation plans in `#recurring`; each transfer remains atomic as defined by ADR
-  0014, while an execution identifier makes retried confirmations idempotent per plan.
-- Next task: close 12.5 only after PR and `main` CI are green.
+- Task: Phase 12.6 loan management
+- Roadmap phase: Phase 12, sixth vertical slice
+- Status: Phase 12.5 is complete after PR #7 and GitHub `verify` green on `main` (`3edeabb`).
+  Phase 12 remains in progress and Phase 13 is not started.
+- Baseline: updated `main` at `3edeabbaf0835b10c0d8ac108bc2eed97efee14a`.
+- Next task: audit LoansPage, Loan domain, commands, adapters, backup and local notifications
+  before any Phase 12.6 implementation.

@@ -2,6 +2,20 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 12.5 allocation plans — 2026-08-12
+
+- CRUD, pause/resume and deletion confirmation retain executed transfers. Confirmed execution uses
+  deterministic per-plan transfer identities and a persisted marker, covering retry after a
+  sequential failure and concurrent confirmation without duplicate bundles.
+- SQLite/OPFS, IndexedDB and InMemory adapter coverage verifies plan updates and removal; portable
+  snapshots retain active plans and historic disabled plans with archived accounts. Financial reset
+  clears plans without touching preferences.
+- Focused domain/component/adapter/backup suites: 94 tests passed. Full unit suite, formatting,
+  lint, typecheck, production build, manifest and orchestrator validation passed locally. The
+  allocation E2E passed at 320, 375, 390, 768, 1024 and 1440 px.
+- PR #7 and post-merge GitHub Actions `verify` on `main` (`3edeabb`) passed all official checks,
+  including Linux Playwright.
+
 ## Phase 12.4 hierarchical budgets — 2026-08-11
 
 - Domain selector covers macro descendants (including archived history), direct subcategories,
