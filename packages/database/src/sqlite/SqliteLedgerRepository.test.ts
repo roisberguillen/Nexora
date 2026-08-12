@@ -960,6 +960,29 @@ describe("SqliteLedgerRepository", () => {
     await repository.saveLoan(loan);
     await expect(repository.listLoans()).resolves.toEqual([loan]);
   });
+  it("convalida il conto prestito anche quando aggiorna una posizione", async () => {
+    await repository.saveAccount(account("loan-account", "loan"));
+    const loan = Loan.create({
+      id: "loan-validation",
+      accountId: "loan-account",
+      lender: "Findomestic",
+      installment: Money.fromMinor(17_200n, "EUR"),
+      remainingPrincipal: Money.fromMinor(500_000n, "EUR"),
+    });
+    await repository.saveLoan(loan);
+    await expect(
+      repository.updateLoan(
+        Loan.create({
+          id: loan.id,
+          accountId: "missing",
+          lender: loan.lender,
+          installment: loan.installment,
+          remainingPrincipal: loan.remainingPrincipal,
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "missing_reference" });
+    await expect(repository.listLoans()).resolves.toEqual([loan]);
+  });
   it("ripristina uno snapshot portabile senza perdere precisione monetaria", async () => {
     const source = new InMemoryLedgerRepository();
     const sourceAccount = account("portable-account");

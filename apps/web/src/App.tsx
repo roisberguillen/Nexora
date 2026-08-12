@@ -56,7 +56,7 @@ import {
   type BudgetInput,
 } from "./budgets/budgetCommands";
 import { LoansPage } from "./loans/LoansPage";
-import { createLoan, type LoanInput } from "./loans/loanCommands";
+import { createLoan, deleteLoan, updateLoan, type LoanInput } from "./loans/loanCommands";
 import { InvestmentsPage } from "./investments/InvestmentsPage";
 import {
   createInvestmentPosition,
@@ -580,6 +580,14 @@ function AppContent({
     mutateLedger(async (ledger) => {
       await createLoan(ledger.repository, input);
     });
+  const updateLoanPosition = (id: string, input: LoanInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateLoan(ledger.repository, id, input);
+    });
+  const removeLoanPosition = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await deleteLoan(ledger.repository, id);
+    });
   const createInvestment = (input: InvestmentPositionInput): Promise<void> =>
     mutateLedger(async (ledger) => {
       await createInvestmentPosition(ledger.repository, input);
@@ -736,6 +744,8 @@ function AppContent({
                   accounts={ledgerState.rawAccounts}
                   loans={ledgerState.loans}
                   onCreate={createLoanPosition}
+                  onDelete={removeLoanPosition}
+                  onUpdate={updateLoanPosition}
                 />
               ) : route === "investments" ? (
                 <InvestmentsPage

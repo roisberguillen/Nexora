@@ -326,6 +326,13 @@ export function validatePortableLedgerSnapshot(
         : { nextDueDate: LocalDate.parse(optionalText(value, "nextDueDate")!) }),
     }),
   );
+  for (const loan of loans) {
+    const account = accountById.get(loan.accountId);
+    if (account === undefined || account.isArchived || account.type !== "loan")
+      throw new Error("Portable snapshot loan account is unavailable.");
+    if (account.currency !== loan.remainingPrincipal.currency)
+      throw new Error("Portable snapshot loan currency is incompatible.");
+  }
   const investmentPositions = entityList(entities, "investmentPositions").map((value) =>
     InvestmentPosition.create({
       id: text(value, "id"),

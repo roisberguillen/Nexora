@@ -228,6 +228,11 @@
       "sha256": "5c744a9ac61867a9921e9c4b3e3acc54c4c2db94adc8a13b90466accbcfcd850"
     },
     {
+      "path": ".codex/state/checkpoints/2026-08-12-phase-12-6-loans.md",
+      "size": 428,
+      "sha256": "93e2342f048fcbfb7f4d5904d1ac7ad05adbcfa1916da2fb20e42e92d6ba91cb"
+    },
+    {
       "path": ".codex/state/current-task.md",
       "size": 461,
       "sha256": "63eabac0c0acd4d944ce24ad4b8bd31f980720a21644b0ef407335081bb4fed9"
@@ -734,8 +739,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 38874,
-      "sha256": "baf03ebf53a16f929686d18433012f5b988da938fa51bbaa2de58058d0072c84"
+      "size": 39323,
+      "sha256": "c89e7f1b6ce1a61ec97431c744b97ea2cef20d492258a211537a57135d775c28"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -988,14 +993,24 @@
       "sha256": "ddad0117f8096d5e4eba89f05967b6d6cfd95a162fc608644794aedcabc61784"
     },
     {
+      "path": "apps/web/src/loans/loanCommands.test.ts",
+      "size": 2231,
+      "sha256": "4092347590178bf570b483a68c69a4068e24b486654798a36a260240789eea90"
+    },
+    {
       "path": "apps/web/src/loans/loanCommands.ts",
-      "size": 1224,
-      "sha256": "cdf5ac95ff9551d9b38387c2d54cf447ce3427cda0b6788e080abbc3ce653c6b"
+      "size": 2653,
+      "sha256": "6fd75c660ad9e55490616f68243c42c19823395110d61fb4e7a37e7c41aa43bf"
+    },
+    {
+      "path": "apps/web/src/loans/LoansPage.test.tsx",
+      "size": 2682,
+      "sha256": "bb09c5ee6f3f36d28a53b671d105633f00f3927e8926df191c973bb8a126b880"
     },
     {
       "path": "apps/web/src/loans/LoansPage.tsx",
-      "size": 5889,
-      "sha256": "f1eb048fbac60568bdcc85e992ea6dadd6ab6bf1a0c046172ad41fc88d146cd6"
+      "size": 14878,
+      "sha256": "8460b19e258c48b24557a6ad0061a78e5a1dbe441b02639cfecec2e60b453f41"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -1014,8 +1029,8 @@
     },
     {
       "path": "apps/web/src/notifications/localNotifications.test.ts",
-      "size": 5956,
-      "sha256": "2e4ed0c8531f5eb40f481707e2382851058f33b832a9a65de33a464eeb691c98"
+      "size": 6745,
+      "sha256": "06a8414384a6feb71095425dcd91f3378f199d5989d85e7b04fc1a5f48cc4827"
     },
     {
       "path": "apps/web/src/notifications/localNotifications.ts",
@@ -1924,13 +1939,13 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
-      "size": 10144,
-      "sha256": "cb0da1b0e65abf329fd68dd0275b23708348d82e16eb87d9682d472716f86ed5"
+      "size": 11130,
+      "sha256": "15e7cf3e26a25225a40bd5f564bd4236c0b9dd15db9af02dd962b34d6c86bb21"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 23783,
-      "sha256": "5756cceebeef4ca2c00ce19417b8a01ff0ec53ebe8f40c6789197ff1a6efff38"
+      "size": 24161,
+      "sha256": "8782d0dee49de979f0d874c3adbc41fa398d4e449d115a661b651b89fb94110e"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -1959,13 +1974,13 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 40869,
-      "sha256": "52eea3a446eeb813051e723a5cde1d5e94868449006a4981057ab59543a9340c"
+      "size": 41390,
+      "sha256": "dcb82ff04c695ce156bf478c03f42c853ce19edec96b31d817cb3303b6ea86dd"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 97674,
-      "sha256": "76f4e3a9c45137d5326b1424b7929f3c42ee58d792d6dedad0c4c4e8b4a04aae"
+      "size": 98379,
+      "sha256": "b9deee0557ad51716746cc875e106a4d54a876e6140abf01bcfd500b0a7d0cd6"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -2189,13 +2204,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 36122,
-      "sha256": "93851149b41bdc8578d0a781b42cf44a922628f19319b1283202d4cd278d201d"
+      "size": 36959,
+      "sha256": "5c9ad51764a019855cb7f4534e5b9c2c12f98aac923b4a6f1185aecbd6488c58"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 98344,
-      "sha256": "42016fde7c021047cd40f73cd9c68c83beed0b2834854df4df6afd05ca6b21db"
+      "size": 98919,
+      "sha256": "43163b06085357531b89c604dc3f0a085fe6574e39d7d00a4ff09d2bb0e12d72"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -2899,8 +2914,8 @@
     },
     {
       "path": "test/e2e/loans.spec.ts",
-      "size": 1419,
-      "sha256": "0a349f428cd8b3ce899a87a3b4674e52d32371f244a37167f8cb6de00952f9a3"
+      "size": 2360,
+      "sha256": "ee81fef7c29ea0e26cfcb1f4026adc9b3ef0ed986e52e9a25a34d57c0e61510e"
     },
     {
       "path": "test/e2e/opfs-performance.spec.ts",

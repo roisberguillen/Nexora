@@ -712,9 +712,10 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public saveLoan(loan: Loan): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["loans"], "readwrite", async (transaction) => {
+        this.withTransaction(["accounts", "loans"], "readwrite", async (transaction) => {
           const loans = transaction.objectStore("loans");
           await this.assertNew(loans, loan.id, "Loan");
+          await this.validateLoanReferences(transaction, loan);
           await requestResult(loans.add(loanToRecord(loan)));
         }),
       ),
@@ -723,10 +724,11 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public updateLoan(loan: Loan): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["loans"], "readwrite", async (transaction) => {
+        this.withTransaction(["accounts", "loans"], "readwrite", async (transaction) => {
           const loans = transaction.objectStore("loans");
           if ((await requestResult<unknown>(loans.get(loan.id))) === undefined)
             throw new DomainError("missing_reference", "Loan does not exist.");
+          await this.validateLoanReferences(transaction, loan);
           await requestResult(loans.put(loanToRecord(loan)));
         }),
       ),
@@ -1955,6 +1957,16 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         "currency_mismatch",
         "Allocation plan accounts and amount must share a currency.",
       );
+  }
+  private async validateLoanReferences(transaction: IDBTransaction, loan: Loan): Promise<void> {
+    const account = await this.findAccountInStore(
+      transaction.objectStore("accounts"),
+      loan.accountId,
+    );
+    if (account === undefined || account.isArchived || account.type !== "loan")
+      throw new DomainError("missing_reference", "Loan requires an active loan account.");
+    if (account.currency !== loan.remainingPrincipal.currency)
+      throw new DomainError("currency_mismatch", "Loan currency does not match the account.");
   }
   private async validateBudgetReferences(
     transaction: IDBTransaction,
