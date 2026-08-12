@@ -1967,6 +1967,13 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Loan requires an active loan account.");
     if (account.currency !== loan.remainingPrincipal.currency)
       throw new DomainError("currency_mismatch", "Loan currency does not match the account.");
+    const loans = await requestResult<unknown[]>(transaction.objectStore("loans").getAll());
+    if (
+      loans
+        .map((record) => loanFromRecord(record as LoanRecord))
+        .some((existing) => existing.id !== loan.id && existing.accountId === loan.accountId)
+    )
+      throw new DomainError("duplicate_entity", "A loan already exists for this account.");
   }
   private async validateBudgetReferences(
     transaction: IDBTransaction,

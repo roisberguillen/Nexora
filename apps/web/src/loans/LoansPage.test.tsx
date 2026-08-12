@@ -74,4 +74,36 @@ describe("LoansPage", () => {
     await user.click(screen.getByRole("button", { name: "Elimina prestito" }));
     expect(onDelete).toHaveBeenCalledWith(loan.id);
   });
+
+  it("preserves bigint amounts exactly when opening and saving an edit", async () => {
+    const user = userEvent.setup();
+    const onUpdate = vi.fn(async () => undefined);
+    const large = Loan.create({
+      id: "large-loan",
+      accountId: account.id,
+      lender: "Finanziaria demo",
+      installment: Money.fromMinor(9_007_199_254_740_993n, "EUR"),
+      remainingPrincipal: Money.fromMinor(90_071_992_547_409_930n, "EUR"),
+      originalPrincipal: Money.fromMinor(100_000_000_000_000_000n, "EUR"),
+    });
+    render(
+      <LoansPage
+        accounts={[account]}
+        loans={[large]}
+        onCreate={async () => undefined}
+        onDelete={async () => undefined}
+        onUpdate={onUpdate}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Modifica" }));
+    expect(screen.getByLabelText("Rata mensile")).toHaveValue("90071992547409,93");
+    await user.click(screen.getByRole("button", { name: "Aggiorna prestito" }));
+    expect(onUpdate).toHaveBeenCalledWith(
+      large.id,
+      expect.objectContaining({
+        installmentMinor: large.installment.amountMinor,
+        remainingPrincipalMinor: large.remainingPrincipal.amountMinor,
+      }),
+    );
+  });
 });

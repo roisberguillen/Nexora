@@ -1891,6 +1891,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Loan requires an active loan account.");
     if (account.currency !== loan.remainingPrincipal.currency)
       throw new DomainError("currency_mismatch", "Loan currency does not match the account.");
+    const existing = await this.database.query<{ readonly id: string }>(
+      "SELECT id FROM loans WHERE account_id = ? AND id <> ? LIMIT 1",
+      [loan.accountId, loan.id],
+    );
+    if (existing.length > 0)
+      throw new DomainError("duplicate_entity", "A loan already exists for this account.");
   }
   private async insertAllocationPlan(plan: AllocationPlan): Promise<void> {
     const record = allocationPlanToRecord(plan);

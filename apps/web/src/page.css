@@ -308,6 +308,39 @@
   display: block;
 }
 
+.loan-detail-list {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.8fr) minmax(0, 1.2fr);
+  gap: 0.5rem 1rem;
+  margin: 1rem 0 0;
+}
+
+.loan-detail-list dt,
+.loan-detail-list dd {
+  margin: 0;
+}
+
+.loan-detail-list dt {
+  color: var(--color-on-surface-muted);
+  font-size: 0.8125rem;
+}
+
+.loan-detail-list dd {
+  min-width: 0;
+  font-weight: 600;
+}
+
+@media (max-width: 31rem) {
+  .loan-detail-list {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .loan-detail-list dd {
+    margin-bottom: 0.55rem;
+  }
+}
+
 .account-copy strong {
   overflow: hidden;
   font-size: 0.875rem;

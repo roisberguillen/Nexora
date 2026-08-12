@@ -142,6 +142,16 @@ describe("portable ledger snapshot", () => {
     const invalid = structuredClone(snapshot);
     (invalid.entities.accounts?.[0] as Record<string, unknown>).type = "checking";
     expect(() => validatePortableLedgerSnapshot(invalid)).toThrow("loan account");
+    const duplicateLoan = structuredClone(snapshot.entities.loans?.[0]);
+    (duplicateLoan as Record<string, unknown>).id = "loan-duplicate";
+    const duplicate = {
+      ...snapshot,
+      entities: {
+        ...snapshot.entities,
+        loans: [...(snapshot.entities.loans ?? []), duplicateLoan],
+      },
+    };
+    expect(() => validatePortableLedgerSnapshot(duplicate)).toThrow("duplicate loans");
   });
 
   it("rejects an allocation plan that refers to an archived account before restore", async () => {

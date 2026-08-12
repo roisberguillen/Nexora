@@ -994,8 +994,8 @@
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
-      "size": 2254,
-      "sha256": "d027b3fcb812331a9036bc0d0b1603156cd3470fcf95e13cc2d9fcf8a81561e1"
+      "size": 3057,
+      "sha256": "547ce2345246b70b9a5087be8a9656c3eacdf181c253d3cbf2b9be071faec1d6"
     },
     {
       "path": "apps/web/src/loans/loanCommands.ts",
@@ -1004,13 +1004,13 @@
     },
     {
       "path": "apps/web/src/loans/LoansPage.test.tsx",
-      "size": 2736,
-      "sha256": "375c8f9f1a2290d3bccab7f30d6f9aad216edc8c9fd1fa57d900256b7bc9fae6"
+      "size": 3943,
+      "sha256": "21d9964089958ca0dcb34e2ebf39d8a024e07b616fbe4450006d4e643d2fe0c4"
     },
     {
       "path": "apps/web/src/loans/LoansPage.tsx",
-      "size": 14878,
-      "sha256": "8460b19e258c48b24557a6ad0061a78e5a1dbe441b02639cfecec2e60b453f41"
+      "size": 15242,
+      "sha256": "f3e33dbce5db116a1e56bf2495037212fced96909474a841a1d7946da603ef03"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -1044,8 +1044,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 30470,
-      "sha256": "043ac51fec233ad8d606db3bf0b02c25af9bbce6616abda709040511da046c8c"
+      "size": 30990,
+      "sha256": "2d80b34d6da4c3b16189f2fc0371e8c2d3871fd6a801c1f9ac6221b1fecc8aee"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1939,13 +1939,13 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
-      "size": 11130,
-      "sha256": "15e7cf3e26a25225a40bd5f564bd4236c0b9dd15db9af02dd962b34d6c86bb21"
+      "size": 11536,
+      "sha256": "60369c1d74f22f600e2d88bf37e1a46ac50b58323121e5481ef4417ef1f5c5e5"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 24161,
-      "sha256": "8782d0dee49de979f0d874c3adbc41fa398d4e449d115a661b651b89fb94110e"
+      "size": 24313,
+      "sha256": "d48d7aff987e2caaae55f304b695b11e8d7d28832791bb0af40502fb8a3df75a"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -1964,8 +1964,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 42886,
-      "sha256": "bc291dc52bda9fe6caf4318bdce18b99b4ce2ae83eda9e7d4248a51e6cc4d8f6"
+      "size": 43273,
+      "sha256": "d3ba8fc44dbe73cc6064ca5300e230b71dc90a0a864181b394a5956d4f726ea3"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -1974,13 +1974,13 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
-      "size": 41390,
-      "sha256": "dcb82ff04c695ce156bf478c03f42c853ce19edec96b31d817cb3303b6ea86dd"
+      "size": 42184,
+      "sha256": "24565dfaa0fb43a5754fcb6ac7988cb320a85f6c8089a940d23448db52cefd60"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 98379,
-      "sha256": "b9deee0557ad51716746cc875e106a4d54a876e6140abf01bcfd500b0a7d0cd6"
+      "size": 98748,
+      "sha256": "4bfed1af4778607d2cb1dbdda0d6b5dd22d9cc36a756dc79a22f78fab2119bcc"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -2204,13 +2204,13 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 36959,
-      "sha256": "5c9ad51764a019855cb7f4534e5b9c2c12f98aac923b4a6f1185aecbd6488c58"
+      "size": 37732,
+      "sha256": "6136c9fe1caa83a49cf4637f091649d1d8befcef27f518dd22b99945716af045"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 98919,
-      "sha256": "43163b06085357531b89c604dc3f0a085fe6574e39d7d00a4ff09d2bb0e12d72"
+      "size": 99224,
+      "sha256": "dd19edc7ca3ae106333849a38c8411f875b55545010e34c697f38ee7044318fd"
     },
     {
       "path": "packages/database/tsconfig.json",

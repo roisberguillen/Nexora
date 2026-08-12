@@ -1,7 +1,7 @@
 import type { Account, Loan } from "@nexora/domain";
 import { FinancialAmount, formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
-import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import type { LoanInput } from "./loanCommands";
 
@@ -27,7 +27,8 @@ export function LoansPage({
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const element = event.currentTarget;
+    const form = new FormData(element);
     const account = loanAccounts.find((item) => item.id === String(form.get("accountId")));
     if (account === undefined) {
       setError("Crea prima un conto di tipo prestito attivo.");
@@ -40,6 +41,7 @@ export function LoansPage({
       setError(null);
       setEditing(null);
       setSelected(null);
+      if (editing === null) element.reset();
     } catch {
       setError("Impossibile salvare il prestito. Verifica campi, importi e capitale residuo.");
     }
@@ -181,7 +183,12 @@ export function LoansPage({
               Rata mensile
               <input
                 defaultValue={
-                  editing === null ? undefined : formatInputAmount(editing.installment.amountMinor)
+                  editing === null
+                    ? undefined
+                    : formatEditableAmountMinor(
+                        editing.installment.amountMinor,
+                        editing.installment.currency,
+                      )
                 }
                 inputMode="decimal"
                 name="installment"
@@ -195,7 +202,10 @@ export function LoansPage({
                 defaultValue={
                   editing === null
                     ? undefined
-                    : formatInputAmount(editing.remainingPrincipal.amountMinor)
+                    : formatEditableAmountMinor(
+                        editing.remainingPrincipal.amountMinor,
+                        editing.remainingPrincipal.currency,
+                      )
                 }
                 inputMode="decimal"
                 name="remaining"
@@ -208,7 +218,10 @@ export function LoansPage({
                 defaultValue={
                   editing?.originalPrincipal === undefined
                     ? undefined
-                    : formatInputAmount(editing.originalPrincipal.amountMinor)
+                    : formatEditableAmountMinor(
+                        editing.originalPrincipal.amountMinor,
+                        editing.originalPrincipal.currency,
+                      )
                 }
                 inputMode="decimal"
                 name="original"
@@ -319,7 +332,7 @@ function LoanDetail({
           Chiudi
         </button>
       </div>
-      <dl className="account-copy">
+      <dl className="loan-detail-list">
         <dt>Finanziaria</dt>
         <dd>{loan.lender}</dd>
         <dt>Conto collegato</dt>
@@ -406,9 +419,6 @@ function optionalCount(
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed < 0) throw new Error("invalid_count");
   return { [name]: parsed };
-}
-function formatInputAmount(amountMinor: bigint): string {
-  return (Number(amountMinor) / 100).toFixed(2).replace(".", ",");
 }
 function formatPercent(rate: number | undefined): string {
   return rate === undefined ? "" : (rate / 100).toFixed(2).replace(/\.00$/, "").replace(".", ",");

@@ -983,6 +983,29 @@ describe("SqliteLedgerRepository", () => {
     ).rejects.toMatchObject({ code: "missing_reference" });
     await expect(repository.listLoans()).resolves.toEqual([loan]);
   });
+  it("rifiuta due prestiti per lo stesso conto", async () => {
+    await repository.saveAccount(account("loan-account", "loan"));
+    await repository.saveLoan(
+      Loan.create({
+        id: "loan-one",
+        accountId: "loan-account",
+        lender: "Istituto uno",
+        installment: Money.fromMinor(7_200n, "EUR"),
+        remainingPrincipal: Money.fromMinor(200_000n, "EUR"),
+      }),
+    );
+    await expect(
+      repository.saveLoan(
+        Loan.create({
+          id: "loan-two",
+          accountId: "loan-account",
+          lender: "Istituto due",
+          installment: Money.fromMinor(8_200n, "EUR"),
+          remainingPrincipal: Money.fromMinor(150_000n, "EUR"),
+        }),
+      ),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+  });
   it("ripristina uno snapshot portabile senza perdere precisione monetaria", async () => {
     const source = new InMemoryLedgerRepository();
     const sourceAccount = account("portable-account");

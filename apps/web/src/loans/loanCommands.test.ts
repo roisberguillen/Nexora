@@ -69,4 +69,32 @@ describe("loan commands", () => {
     );
     expect(loan.installment.currency).toBe("EUR");
   });
+  it("keeps one loan position per loan account", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(
+      Account.create({ id: "loan-account", name: "Prestito", type: "loan", currency: "EUR" }),
+    );
+    await createLoan(
+      repository,
+      {
+        accountId: "loan-account",
+        lender: "Istituto uno",
+        installmentMinor: 100n,
+        remainingPrincipalMinor: 100n,
+      },
+      () => "loan-one",
+    );
+    await expect(
+      createLoan(
+        repository,
+        {
+          accountId: "loan-account",
+          lender: "Istituto due",
+          installmentMinor: 100n,
+          remainingPrincipalMinor: 100n,
+        },
+        () => "loan-two",
+      ),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+  });
 });
