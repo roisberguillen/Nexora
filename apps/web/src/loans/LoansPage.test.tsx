@@ -14,7 +14,7 @@ const account = Account.create({
 const loan = Loan.create({
   id: "loan",
   accountId: account.id,
-  lender: "Findomestic",
+  lender: "Finanziaria demo",
   installment: Money.fromMinor(17_200n, "EUR"),
   remainingPrincipal: Money.fromMinor(500_000n, "EUR"),
   originalPrincipal: Money.fromMinor(1_000_000n, "EUR"),
@@ -43,11 +43,15 @@ describe("LoansPage", () => {
     await user.click(screen.getByRole("button", { name: "Modifica" }));
     expect(screen.getByRole("heading", { name: "Modifica prestito" })).toBeVisible();
     await user.clear(screen.getByLabelText("Finanziaria"));
-    await user.type(screen.getByLabelText("Finanziaria"), "Agos");
+    await user.type(screen.getByLabelText("Finanziaria"), "Istituto demo");
     await user.click(screen.getByRole("button", { name: "Aggiorna prestito" }));
     expect(onUpdate).toHaveBeenCalledWith(
       loan.id,
-      expect.objectContaining({ lender: "Agos", annualNominalRateBps: 499, installmentsPaid: 5 }),
+      expect.objectContaining({
+        lender: "Istituto demo",
+        annualNominalRateBps: 499,
+        installmentsPaid: 5,
+      }),
     );
   });
 

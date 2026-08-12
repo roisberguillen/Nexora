@@ -18,7 +18,7 @@ describe("loan commands", () => {
       repository,
       {
         accountId: account.id,
-        lender: "Findomestic",
+        lender: "Finanziaria demo",
         installmentMinor: 17_200n,
         remainingPrincipalMinor: 500_000n,
         originalPrincipalMinor: 1_000_000n,
@@ -30,7 +30,7 @@ describe("loan commands", () => {
 
     await updateLoan(repository, loan.id, {
       accountId: account.id,
-      lender: "Agos",
+      lender: "Istituto demo",
       installmentMinor: 18_000n,
       remainingPrincipalMinor: 450_000n,
       originalPrincipalMinor: 1_000_000n,
@@ -39,7 +39,7 @@ describe("loan commands", () => {
       nextDueDate: "2026-09-01",
     });
     expect(await repository.listLoans()).toMatchObject([
-      { lender: "Agos", annualEffectiveRateBps: 610, installmentsRemaining: 12 },
+      { lender: "Istituto demo", annualEffectiveRateBps: 610, installmentsRemaining: 12 },
     ]);
     await deleteLoan(repository, loan.id);
     await expect(repository.listLoans()).resolves.toEqual([]);
