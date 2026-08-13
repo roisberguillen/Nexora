@@ -22,6 +22,20 @@ const position = InvestmentPosition.create({
 });
 
 describe("InvestmentsPage", () => {
+  it("does not expose a separate CSV importer", () => {
+    render(
+      <InvestmentsPage
+        accounts={[account]}
+        onCreate={async () => undefined}
+        onDelete={async () => undefined}
+        onUpdate={async () => undefined}
+        positions={[]}
+      />,
+    );
+    expect(screen.queryByLabelText(/file csv/i)).toBeNull();
+    expect(screen.queryByRole("button", { name: /conferma importazione/i })).toBeNull();
+  });
+
   it("edits a position without losing precise minor-unit values", async () => {
     const user = userEvent.setup();
     const onUpdate = vi.fn(async () => undefined);

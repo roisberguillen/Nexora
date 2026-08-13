@@ -2,6 +2,17 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-13 — Import CSV investimento rimosso finché non esiste un batch atomico
+
+- **Contesto:** la pagina Investimenti conteneva un parser CSV locale con split delimitatore,
+  assegnazione implicita al primo conto e scritture riga-per-riga. Il framework Import corrente
+  audita e annulla esclusivamente batch di movimenti.
+- **Scelta:** rimuovere il percorso CSV dalla pagina anziché duplicare parser, mapping, audit e
+  rollback. Un eventuale import di posizioni richiederà un'estensione esplicita e transazionale
+  del framework Import, con audit e undo cross-entity.
+- **Conseguenze:** le posizioni restano modificabili solo dal form manuale verificato; nessun file
+  non affidabile viene analizzato, associato a un conto o salvato parzialmente.
+
 ## 2026-08-11 — Budget gerarchici e attribuzione degli split
 
 - **Contesto:** i budget devono restare leggibili con la tassonomia Macro → Sottocategoria e

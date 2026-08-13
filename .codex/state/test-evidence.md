@@ -2,6 +2,14 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 12.C investment CSV safety — 2026-08-13
+
+- Rimosso il parser CSV locale non transazionale dalla superficie Investimenti: non esiste più
+  assegnazione implicita a un conto, parsing con `split`, commit riga-per-riga o import parziale.
+- L'analisi ha escluso il riuso diretto del framework Import: i batch correnti trattano solo
+  transazioni, righe audit e undo correlato; estenderli a posizioni richiede una slice dedicata.
+- Test UI mirati: 5 passati; typecheck web, lint e `pnpm manifest:check` passati.
+
 ## Phase 12.5 allocation plans — 2026-08-12
 
 - CRUD, pause/resume and deletion confirmation retain executed transfers. Confirmed execution uses

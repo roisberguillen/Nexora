@@ -23,8 +23,6 @@ export function InvestmentsPage({
   const [editing, setEditing] = useState<InvestmentPosition | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<InvestmentPosition | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [importRows, setImportRows] = useState<readonly InvestmentPositionInput[] | null>(null);
-  const [isImporting, setIsImporting] = useState(false);
   const investmentAccounts = accounts.filter(
     (account) => account.type === "investment" && !account.isArchived,
   );
@@ -73,65 +71,6 @@ export function InvestmentsPage({
       setIsDeleting(false);
     }
   };
-  const previewImport = async (file: File | undefined) => {
-    if (file === undefined) return;
-    try {
-      const account = investmentAccounts[0];
-      if (account === undefined) throw new Error("missing_account");
-      const lines = (await file.text()).split(/\r?\n/).filter(Boolean);
-      const headers =
-        lines
-          .shift()
-          ?.split(";")
-          .map((value) => value.trim()) ?? [];
-      const required = ["name", "costBasis", "currentValue", "valuationDate"];
-      if (!required.every((name) => headers.includes(name))) throw new Error("invalid_columns");
-      const rows = lines.map((line) => {
-        const values = line.split(";").map((value) => value.trim());
-        const row = Object.fromEntries(
-          headers.map((header, index) => [header, values[index] ?? ""]),
-        );
-        const name = row.name ?? "";
-        const costBasis = row.costBasis ?? "";
-        const currentValue = row.currentValue ?? "";
-        const valuationDate = row.valuationDate ?? "";
-        if (name === "" || costBasis === "" || currentValue === "" || valuationDate === "") {
-          throw new Error("invalid_row");
-        }
-        return {
-          accountId: account.id,
-          name,
-          costBasisMinor: parseLocalizedAmountMinor(costBasis, account.currency),
-          currentValueMinor: parseLocalizedAmountMinor(currentValue, account.currency),
-          valuationDate,
-          ...(row.symbol === "" ? {} : { symbol: row.symbol }),
-        };
-      });
-      if (rows.length === 0) throw new Error("empty_import");
-      setImportRows(rows);
-      setError(null);
-    } catch {
-      setImportRows(null);
-      setError(
-        "File non valido. Usa CSV UTF-8 con ; e colonne name, costBasis, currentValue, valuationDate; symbol è facoltativo.",
-      );
-    }
-  };
-  const confirmImport = async () => {
-    if (importRows === null) return;
-    setIsImporting(true);
-    try {
-      for (const row of importRows) await onCreate(row);
-      setImportRows(null);
-    } catch {
-      setError(
-        "Importazione interrotta: verifica le righe. Le posizioni già confermate restano disponibili.",
-      );
-    } finally {
-      setIsImporting(false);
-    }
-  };
-
   return (
     <div id="investments">
       <header className="accounts-heading">
@@ -141,34 +80,6 @@ export function InvestmentsPage({
           <p>Registra costo e valore corrente delle posizioni del tuo conto investimento.</p>
         </div>
       </header>
-      <section aria-labelledby="investment-import-title" className="data-panel">
-        <h2 id="investment-import-title">Importa valutazioni CSV</h2>
-        <p className="import-help">
-          Anteprima locale: nessuna posizione viene salvata finché non confermi. Formato:
-          name;symbol;costBasis;currentValue;valuationDate.
-        </p>
-        <label>
-          File CSV
-          <input
-            accept=".csv,text/csv"
-            onChange={(event) => void previewImport(event.currentTarget.files?.[0])}
-            type="file"
-          />
-        </label>
-        {importRows === null ? null : (
-          <div aria-live="polite">
-            <p>{importRows.length} posizioni pronte per la conferma.</p>
-            <button
-              className="primary-action"
-              disabled={isImporting}
-              onClick={() => void confirmImport()}
-              type="button"
-            >
-              {isImporting ? "Importazione…" : "Conferma importazione"}
-            </button>
-          </div>
-        )}
-      </section>
       <div className="accounts-layout has-editor">
         <section
           aria-labelledby="investment-list-title"

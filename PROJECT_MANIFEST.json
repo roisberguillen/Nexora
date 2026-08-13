@@ -264,8 +264,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 22978,
-      "sha256": "1446f7cb6ae9ff5b884f16a2ae4004f60a5dcce4bbb83560b1d6f63536e5711f"
+      "size": 23497,
+      "sha256": "a3fc7c376d12871f8d4eec5f18804136d36a4e1bfb478310fded6c77a11391e1"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -979,13 +979,13 @@
     },
     {
       "path": "apps/web/src/investments/InvestmentsPage.test.tsx",
-      "size": 2426,
-      "sha256": "1ba3aad85c643745e3b4e89019277aef51ecb02af44a729cd560494be44ec48e"
+      "size": 2866,
+      "sha256": "f76616b7a283856e7ba994a219c2fa75aab6bf54118e443db77b167e4cfbb7c1"
     },
     {
       "path": "apps/web/src/investments/InvestmentsPage.tsx",
-      "size": 13453,
-      "sha256": "ab106cf09e5638b996efe3f4057687f6a4682c7224c93aa184003ecd24720978"
+      "size": 10020,
+      "sha256": "c5110408f2f887bd14e4396b03663b0ba9e0b4001cce5ee4f303858697d24e5d"
     },
     {
       "path": "apps/web/src/journal/journalCommands.test.ts",
@@ -1609,8 +1609,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 25959,
-      "sha256": "879d6d4303ff3c8e8bcf14597387c20349cb15fe3bb439b36c4d032a4e92eb58"
+      "size": 26719,
+      "sha256": "135259e4455f6d9e35a5eb19bae371b9a32f22e3ad7adf1e42a0c27adc7b8f73"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
