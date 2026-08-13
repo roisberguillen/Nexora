@@ -14,6 +14,7 @@ import {
   Budget,
   Loan,
   InvestmentPosition,
+  assertInvestmentPositionAccount,
   MonthlyJournal,
   type TrashedTransaction,
   LocalDate,
@@ -841,6 +842,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
           await this.assertNew("investment_positions", position.id, "Investment position");
+          await this.validateInvestmentPositionReferences(position);
           await this.insertInvestmentPosition(position);
         }),
       ),
@@ -856,6 +858,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           );
           if (found.length === 0)
             throw new DomainError("missing_reference", "Investment position does not exist.");
+          await this.validateInvestmentPositionReferences(position);
           const record = investmentPositionToRecord(position);
           await this.database.run(
             "UPDATE investment_positions SET account_id = ?, name = ?, symbol = ?, units = ?, cost_basis_minor = ?, current_value_minor = ?, currency = ?, valuation_date = ? WHERE id = ?",
@@ -1897,6 +1900,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
     if (existing.length > 0)
       throw new DomainError("duplicate_entity", "A loan already exists for this account.");
+  }
+  private async validateInvestmentPositionReferences(position: InvestmentPosition): Promise<void> {
+    assertInvestmentPositionAccount(
+      position,
+      await this.findAccountByIdInternal(position.accountId),
+    );
   }
   private async insertAllocationPlan(plan: AllocationPlan): Promise<void> {
     const record = allocationPlanToRecord(plan);

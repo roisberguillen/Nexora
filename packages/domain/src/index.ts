@@ -24,6 +24,7 @@ export {
 export { Loan, type CreateLoanProps } from "./entities/Loan";
 export {
   InvestmentPosition,
+  assertInvestmentPositionAccount,
   type CreateInvestmentPositionProps,
 } from "./entities/InvestmentPosition";
 export {

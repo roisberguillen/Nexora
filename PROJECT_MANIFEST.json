@@ -969,8 +969,8 @@
     },
     {
       "path": "apps/web/src/investments/investmentCommands.test.ts",
-      "size": 1643,
-      "sha256": "e0ef33b1168a6da52f0dd77fc6a91bb8e8052cd71191fad154318103fee1ecb8"
+      "size": 2713,
+      "sha256": "189571b2737679e73d70dfad54036a0cd9858d8bc46a7baada1996e2059774f1"
     },
     {
       "path": "apps/web/src/investments/investmentCommands.ts",
@@ -1954,8 +1954,8 @@
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.ts",
-      "size": 24313,
-      "sha256": "d48d7aff987e2caaae55f304b695b11e8d7d28832791bb0af40502fb8a3df75a"
+      "size": 24484,
+      "sha256": "ce8cee82faf807f2674e054c212ac510e033ac11f2745af0991ac30d51834bc5"
     },
     {
       "path": "packages/database/src/browser/openBrowserLedger.test.ts",
@@ -1974,8 +1974,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 43273,
-      "sha256": "d3ba8fc44dbe73cc6064ca5300e230b71dc90a0a864181b394a5956d4f726ea3"
+      "size": 43480,
+      "sha256": "262dabeab8df7b4ab1b16843aa1b5194c26356575dab1769b7ea7fc637853195"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -1989,8 +1989,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 98748,
-      "sha256": "4bfed1af4778607d2cb1dbdda0d6b5dd22d9cc36a756dc79a22f78fab2119bcc"
+      "size": 99375,
+      "sha256": "1b026418020cdab8866de2301db5c1ea036f4e0f21e01eadf60e4919372ff361"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -2219,8 +2219,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 99224,
-      "sha256": "dd19edc7ca3ae106333849a38c8411f875b55545010e34c697f38ee7044318fd"
+      "size": 99623,
+      "sha256": "46cd11f9dc6940b819753566d429d6a14850579960430c687f8135f4f4ced15a"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -2299,13 +2299,13 @@
     },
     {
       "path": "packages/domain/src/entities/InvestmentPosition.test.ts",
-      "size": 724,
-      "sha256": "9508d40391ecba9a4d456c4ad1d59ce954575aa9aec1f9a511fc65035777ffe8"
+      "size": 2002,
+      "sha256": "a4f9ad3a13515f0ddad32469ad74c11ef700f9a0339e2540ec489f437791a69b"
     },
     {
       "path": "packages/domain/src/entities/InvestmentPosition.ts",
-      "size": 2268,
-      "sha256": "e5fc10d20cd974fa809baccb0dc10fefda0ad09cd1cb04a6323584917ea48a8e"
+      "size": 2894,
+      "sha256": "c119d51d22a8305ee35db947238898f8ffe5a62272c63717fa86e28adc440cf3"
     },
     {
       "path": "packages/domain/src/entities/Loan.test.ts",
@@ -2379,8 +2379,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 3837,
-      "sha256": "50f3223c8d16397bd54de2459dd80a00b4f95d7b2808224dcbd5d92b0e5af9d7"
+      "size": 3872,
+      "sha256": "e13660ca235d11cccaa5ba0b6e94c2b4cc189c91a50a26f47f76c7de3e715320"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",

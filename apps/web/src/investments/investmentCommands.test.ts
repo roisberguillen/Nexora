@@ -46,4 +46,42 @@ describe("investment commands", () => {
     expect(await repository.listInvestmentPositions()).toEqual([]);
     expect(await repository.findAccountById(account.id)).toEqual(account);
   });
+
+  it("cannot update a valid position to an incompatible account", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const investment = Account.create({
+      id: "investment",
+      name: "Broker demo",
+      type: "investment",
+      currency: "EUR",
+    });
+    const checking = Account.create({
+      id: "checking",
+      name: "Conto demo",
+      type: "checking",
+      currency: "EUR",
+    });
+    await repository.saveAccount(investment);
+    await repository.saveAccount(checking);
+    const position = await createInvestmentPosition(
+      repository,
+      {
+        accountId: investment.id,
+        name: "ETF",
+        costBasisMinor: 1n,
+        currentValueMinor: 1n,
+        valuationDate: "2026-08-13",
+      },
+      () => "position",
+    );
+    await expect(
+      updateInvestmentPosition(repository, position.id, {
+        accountId: checking.id,
+        name: "ETF",
+        costBasisMinor: 1n,
+        currentValueMinor: 1n,
+        valuationDate: "2026-08-13",
+      }),
+    ).rejects.toThrow("active investment");
+  });
 });

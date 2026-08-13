@@ -6,6 +6,7 @@ import {
   ImportBatch,
   ImportRow,
   InvestmentPosition,
+  assertInvestmentPositionAccount,
   LocalDate,
   Loan,
   MonthlyJournal,
@@ -351,6 +352,9 @@ export function validatePortableLedgerSnapshot(
         : { units: optionalText(value, "units")! }),
     }),
   );
+  for (const position of investmentPositions) {
+    assertInvestmentPositionAccount(position, accountById.get(position.accountId));
+  }
   const monthlyJournals = entityList(entities, "monthlyJournals").map((value) =>
     MonthlyJournal.create({
       id: text(value, "id"),

@@ -16,6 +16,7 @@ import {
   Budget,
   type Loan,
   type InvestmentPosition,
+  assertInvestmentPositionAccount,
   type MonthlyJournal,
   type TrashedTransaction,
   validateImportCommit,
@@ -307,11 +308,13 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
   public async saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
     this.assertNew(this.investmentPositions, position.id, "Investment position");
+    assertInvestmentPositionAccount(position, this.accounts.get(position.accountId));
     this.investmentPositions.set(position.id, position);
   }
   public async updateInvestmentPosition(position: InvestmentPosition): Promise<void> {
     if (!this.investmentPositions.has(position.id))
       throw new DomainError("missing_reference", "Investment position does not exist.");
+    assertInvestmentPositionAccount(position, this.accounts.get(position.accountId));
     this.investmentPositions.set(position.id, position);
   }
   public async deleteInvestmentPosition(id: string): Promise<void> {

@@ -1,4 +1,5 @@
 import { DomainError } from "../errors/DomainError";
+import type { Account } from "./Account";
 import { normalizeOptionalText, requireIdentifier } from "../validation";
 import { LocalDate } from "../value-objects/LocalDate";
 import { Money } from "../value-objects/Money";
@@ -50,5 +51,21 @@ export class InvestmentPosition {
   public gainLossPercent(): number | undefined {
     if (this.costBasis.isZero()) return undefined;
     return Number((this.gainLoss().amountMinor * 10_000n) / this.costBasis.amountMinor) / 100;
+  }
+}
+
+/** Shared persistence invariant for every repository and portable restore. */
+export function assertInvestmentPositionAccount(
+  position: InvestmentPosition,
+  account: Account | undefined,
+): void {
+  if (account === undefined || account.isArchived || account.type !== "investment") {
+    throw new DomainError(
+      "missing_reference",
+      "Investment position requires an active investment account.",
+    );
+  }
+  if (account.currency !== position.currentValue.currency) {
+    throw new DomainError("currency_mismatch", "Investment currency must match the account.");
   }
 }

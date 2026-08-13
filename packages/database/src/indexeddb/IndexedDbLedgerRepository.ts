@@ -14,6 +14,7 @@ import {
   Budget,
   Loan,
   InvestmentPosition,
+  assertInvestmentPositionAccount,
   MonthlyJournal,
   type TrashedTransaction,
   LocalDate,
@@ -737,23 +738,33 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   public saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["investment_positions"], "readwrite", async (transaction) => {
-          const store = transaction.objectStore("investment_positions");
-          await this.assertNew(store, position.id, "Investment position");
-          await requestResult(store.add(investmentPositionToRecord(position)));
-        }),
+        this.withTransaction(
+          ["accounts", "investment_positions"],
+          "readwrite",
+          async (transaction) => {
+            const store = transaction.objectStore("investment_positions");
+            await this.assertNew(store, position.id, "Investment position");
+            await this.validateInvestmentPositionReferences(transaction, position);
+            await requestResult(store.add(investmentPositionToRecord(position)));
+          },
+        ),
       ),
     );
   }
   public updateInvestmentPosition(position: InvestmentPosition): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withTransaction(["investment_positions"], "readwrite", async (transaction) => {
-          const store = transaction.objectStore("investment_positions");
-          if ((await requestResult<unknown>(store.get(position.id))) === undefined)
-            throw new DomainError("missing_reference", "Investment position does not exist.");
-          await requestResult(store.put(investmentPositionToRecord(position)));
-        }),
+        this.withTransaction(
+          ["accounts", "investment_positions"],
+          "readwrite",
+          async (transaction) => {
+            const store = transaction.objectStore("investment_positions");
+            if ((await requestResult<unknown>(store.get(position.id))) === undefined)
+              throw new DomainError("missing_reference", "Investment position does not exist.");
+            await this.validateInvestmentPositionReferences(transaction, position);
+            await requestResult(store.put(investmentPositionToRecord(position)));
+          },
+        ),
       ),
     );
   }
@@ -2014,6 +2025,15 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
   ): Promise<Account | undefined> {
     const value = await requestResult<unknown>(store.get(id));
     return value === undefined ? undefined : accountFromRecord(value as AccountRecord);
+  }
+  private async validateInvestmentPositionReferences(
+    transaction: IDBTransaction,
+    position: InvestmentPosition,
+  ): Promise<void> {
+    assertInvestmentPositionAccount(
+      position,
+      await this.findAccountInStore(transaction.objectStore("accounts"), position.accountId),
+    );
   }
 
   private async findCategoryInStore(
