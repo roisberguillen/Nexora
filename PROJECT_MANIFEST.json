@@ -264,8 +264,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 23989,
-      "sha256": "d56ab2febfd61fd875d5a30eea39f06d4fbfff4c8b05e47fe33aba162d5f5756"
+      "size": 25449,
+      "sha256": "94f2f2767f9b6cdb4171e9852895e590d8e7c26f986a1b39ae31b9ba1b754195"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -728,6 +728,11 @@
       "sha256": "caa7054c04b53d7af9dc502544430bfa19ed5305ee0cee220d42c0b2f6eec6a8"
     },
     {
+      "path": "apps/web/src/analytics/AnalyticsPage.test.tsx",
+      "size": 1384,
+      "sha256": "a3fbb6f1e3991eabf5c31a06e7a8a1e901d639b302210dfd99181d7e10534996"
+    },
+    {
       "path": "apps/web/src/analytics/AnalyticsPage.tsx",
       "size": 7176,
       "sha256": "4848ad49fedcd6dab6c77067973c0739a2d9b4752a940d6c0f105aaf42cdbffa"
@@ -1008,6 +1013,11 @@
       "sha256": "b0cbd18679ea31df1c2bdaa231de7db7429acda4deb391503f228e365d0c6870"
     },
     {
+      "path": "apps/web/src/journal/JournalPage.test.tsx",
+      "size": 2147,
+      "sha256": "2d0bb3cf5cd40afff53ca51bf7c76983e39aadfadeb2f2fc069a3670282e811f"
+    },
+    {
       "path": "apps/web/src/journal/JournalPage.tsx",
       "size": 9828,
       "sha256": "d585a68027c26bfc069bce007fdbb336d5f7ce33c0b333941f2b8ef4b5743167"
@@ -1056,6 +1066,11 @@
       "path": "apps/web/src/notifications/localNotifications.ts",
       "size": 8744,
       "sha256": "389323de1882aae74577f2e70a7b6e10d0407f123f4e9820deac0f066f8f9ef9"
+    },
+    {
+      "path": "apps/web/src/notifications/NotificationsPage.test.tsx",
+      "size": 1025,
+      "sha256": "ac268673dd16cb1ffa6a5cba4094e600e06a24ee77b1efb85b4d66a89c4bd120"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
@@ -2946,6 +2961,11 @@
       "path": "test/e2e/opfs-persistence.spec.ts",
       "size": 1988,
       "sha256": "3c9980e1a9e1d7824a22f28bf097eddec62c46c8f3f5a5dff99c713adfd6b232"
+    },
+    {
+      "path": "test/e2e/phase-12-surfaces.spec.ts",
+      "size": 1531,
+      "sha256": "15c3870c804322d90c3d7070091f0267a9594ff3b19308e671fe0646e2d76730"
     },
     {
       "path": "test/e2e/pilot-ledger-flow.spec.ts",

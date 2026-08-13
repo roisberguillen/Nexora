@@ -2,6 +2,25 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 12.E automated surface coverage — 2026-08-13
+
+- Coverage audit: Budget, recurring rules, allocations, loans, investments, categories and tags
+  already had command/domain and component coverage; existing browser flows cover the financial
+  mutation paths. Analytics lacked component and E2E coverage, Journal lacked component and E2E
+  coverage, and Notifications lacked component coverage.
+- Added component coverage for Analytics (projected booked EUR data, income, expense, savings,
+  forecast, comparison, accessible chart and empty fallback), Journal (empty state, financial
+  summary, accessible 1–5 control, edit and isolated confirmed deletion), and Notifications
+  (preference surface plus persisted local dismiss state and empty state).
+- Added an end-to-end flow that seeds only the built-in synthetic ledger, reads Analytics, saves a
+  Journal reflection, saves the notification threshold, and checks horizontal overflow. It passed
+  at 320, 375, 390, 768, 1024 and 1440 CSS px: 6 passed, 0 failed, 0 skipped, 12.4 s. The only
+  warnings were the runner's `NO_COLOR`/`FORCE_COLOR` environment warning.
+- Focused Vitest: 3 files, 5 passed, 0 failed, 0 skipped, 3.62 s. Full `pnpm test` and the
+  `pnpm verify` aggregate were started after format, lint and workspace typecheck had passed;
+  local terminal worker output did not retain their final summary, so their counts are not claimed
+  here pending a reproducible completed report.
+
 ## Phase 12.D local civil dates — 2026-08-13
 
 - Classificazione: UTC resta per timestamp di audit, backup, logging e notifiche; i default di
