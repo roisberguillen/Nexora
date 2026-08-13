@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import "./transactions.css";
 import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { localCivilDate } from "../date/localCivilDate";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import {
   signedAmountForKind,
@@ -818,12 +819,7 @@ function TransactionForm({
         </label>
         <label>
           Data operazione
-          <input
-            name="bookedDate"
-            required
-            type="date"
-            defaultValue={new Date().toISOString().slice(0, 10)}
-          />
+          <input name="bookedDate" required type="date" defaultValue={localCivilDate()} />
         </label>
         <label>
           Stato

@@ -9,6 +9,7 @@ import { useState, type FormEvent } from "react";
 
 import type { MonthlyJournalInput } from "./journalCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
+import { localCivilMonth } from "../date/localCivilDate";
 
 export function JournalPage({
   journals,
@@ -23,7 +24,7 @@ export function JournalPage({
   readonly transactions: readonly Transaction[];
   readonly investments: readonly InvestmentPosition[];
 }) {
-  const currentPeriod = new Date().toISOString().slice(0, 7);
+  const currentPeriod = localCivilMonth();
   const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
   const selected = journals.find((journal) => journal.period === selectedPeriod);
   const [error, setError] = useState<string | null>(null);

@@ -264,8 +264,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 23497,
-      "sha256": "a3fc7c376d12871f8d4eec5f18804136d36a4e1bfb478310fded6c77a11391e1"
+      "size": 23989,
+      "sha256": "d56ab2febfd61fd875d5a30eea39f06d4fbfff4c8b05e47fe33aba162d5f5756"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -903,6 +903,16 @@
       "sha256": "17bf2cd9f6ce8ca34c778abab5b3e5477b405e8afd2250b45ab7e89ef6baee8b"
     },
     {
+      "path": "apps/web/src/date/localCivilDate.test.ts",
+      "size": 726,
+      "sha256": "11e9f62dcb3f02ddfe24e3e0cd9f8b6fd5670704f870768f1f5d078273fd1aa3"
+    },
+    {
+      "path": "apps/web/src/date/localCivilDate.ts",
+      "size": 672,
+      "sha256": "8646e5eb12bd4e7c7786a176f847834f46ceeed7924aebe7023a5e249bacf0de"
+    },
+    {
       "path": "apps/web/src/exports/exportData.test.ts",
       "size": 1803,
       "sha256": "7f561e3719695d4453b85e8c35d988be2f10cb006e8158652197ad58d53802bc"
@@ -985,7 +995,7 @@
     {
       "path": "apps/web/src/investments/InvestmentsPage.tsx",
       "size": 10020,
-      "sha256": "c5110408f2f887bd14e4396b03663b0ba9e0b4001cce5ee4f303858697d24e5d"
+      "sha256": "21eab11bcfcd70b976e2c0cdd30806e24a009b335a45d6409beef9a8d5299d6d"
     },
     {
       "path": "apps/web/src/journal/journalCommands.test.ts",
@@ -999,8 +1009,8 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 9789,
-      "sha256": "1f37d629b54474fa6447dd9abe24bfaea49d241808483499be33bedcd8e77729"
+      "size": 9828,
+      "sha256": "d585a68027c26bfc069bce007fdbb336d5f7ce33c0b333941f2b8ef4b5743167"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -1389,8 +1399,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 33540,
-      "sha256": "4369e9dfa49127525f6472bed4fa52fcf55445f786b804778729200be5a29ce3"
+      "size": 33518,
+      "sha256": "5058db1d340171dac00f3913603d94270855d7098263f5583418738ba595f133"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",

@@ -2,6 +2,14 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 12.D local civil dates — 2026-08-13
+
+- Classificazione: UTC resta per timestamp di audit, backup, logging e notifiche; i default di
+  nuovi movimenti, valutazioni investimento e periodo Diario usano ora data civile `Europe/Rome`.
+- `localCivilDate` / `localCivilMonth` usa `Intl.DateTimeFormat` centralizzato; 5 test coprono
+  00:30, cambio mese/anno e transizioni di ora legale/solare senza dipendere dalla timezone CI.
+- Typecheck web, lint e manifest check passati localmente.
+
 ## Phase 12.C investment CSV safety — 2026-08-13
 
 - Rimosso il parser CSV locale non transazionale dalla superficie Investimenti: non esiste più

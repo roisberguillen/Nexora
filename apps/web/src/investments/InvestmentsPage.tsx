@@ -3,6 +3,7 @@ import { FinancialAmount, formatMinorUnits } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { localCivilDate } from "../date/localCivilDate";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import type { InvestmentPositionInput } from "./investmentCommands";
 
@@ -215,9 +216,7 @@ export function InvestmentsPage({
             <label>
               Data valutazione
               <input
-                defaultValue={
-                  editing?.valuationDate.toString() ?? new Date().toISOString().slice(0, 10)
-                }
+                defaultValue={editing?.valuationDate.toString() ?? localCivilDate()}
                 name="valuationDate"
                 type="date"
                 required
