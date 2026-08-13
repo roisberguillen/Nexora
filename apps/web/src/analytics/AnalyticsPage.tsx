@@ -9,6 +9,12 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
   const currency = "EUR";
   const trends = calculateMonthlyTrends(transactions, currency);
   const forecast = calculatePrudentExpenseForecast(transactions, currency);
+  const latest = trends.at(-1);
+  const previous = trends.at(-2);
+  const maximumExpense = trends.reduce(
+    (maximum, trend) => (trend.expense.amountMinor > maximum ? trend.expense.amountMinor : maximum),
+    0n,
+  );
 
   return (
     <div id="analytics">
@@ -57,6 +63,38 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
           consiglio finanziario.
         </p>
       </section>
+      <section aria-labelledby="comparison-title" className="data-panel">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Confronto</p>
+            <h2 id="comparison-title">Ultimo mese rispetto al precedente</h2>
+          </div>
+        </div>
+        {latest === undefined || previous === undefined ? (
+          <p className="import-help">Servono almeno due mesi contabilizzati per il confronto.</p>
+        ) : (
+          <div className="metrics-grid">
+            <Metric
+              label="Entrate"
+              current={latest.income.amountMinor}
+              previous={previous.income.amountMinor}
+              currency={currency}
+            />
+            <Metric
+              label="Spese"
+              current={latest.expense.amountMinor}
+              previous={previous.expense.amountMinor}
+              currency={currency}
+            />
+            <Metric
+              label="Risparmio"
+              current={latest.savings.amountMinor}
+              previous={previous.savings.amountMinor}
+              currency={currency}
+            />
+          </div>
+        )}
+      </section>
       <section aria-labelledby="trends-title" className="data-panel">
         <div className="panel-heading">
           <div>
@@ -72,6 +110,23 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
           </div>
         ) : (
           <div className="activity-table-wrap">
+            <div aria-label="Grafico delle spese mensili" className="analytics-bars" role="img">
+              {trends.map((trend) => (
+                <div key={trend.month}>
+                  <span>{trend.month}</span>
+                  <meter
+                    aria-label={`Spese ${trend.month}`}
+                    max={Number(maximumExpense || 1n)}
+                    value={Number(trend.expense.amountMinor)}
+                  />{" "}
+                  <FinancialAmount
+                    amountMinor={trend.expense.amountMinor}
+                    currency={currency}
+                    tone="negative"
+                  />
+                </div>
+              ))}
+            </div>
             <table className="activity-table">
               <caption className="sr-only">Trend mensili di entrate, spese e risparmio</caption>
               <thead>
@@ -116,6 +171,35 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
           </div>
         )}
       </section>
+    </div>
+  );
+}
+
+function Metric({
+  label,
+  current,
+  previous,
+  currency,
+}: {
+  label: string;
+  current: bigint;
+  previous: bigint;
+  currency: string;
+}) {
+  const delta = current - previous;
+  return (
+    <div className="metric-card">
+      <span>{label}</span>
+      <FinancialAmount amountMinor={current} currency={currency} />
+      <small>
+        Variazione:{" "}
+        <FinancialAmount
+          amountMinor={delta}
+          currency={currency}
+          showPositiveSign={delta > 0n}
+          tone={delta < 0n ? "negative" : "positive"}
+        />
+      </small>
     </div>
   );
 }

@@ -24,3 +24,10 @@ export async function saveMonthlyJournal(
   else await repository.updateMonthlyJournal(journal);
   return journal;
 }
+
+export async function deleteMonthlyJournal(
+  repository: LedgerRepository,
+  id: string,
+): Promise<void> {
+  await repository.deleteMonthlyJournal(id);
+}

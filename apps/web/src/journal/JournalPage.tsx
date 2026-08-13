@@ -1,20 +1,41 @@
-import type { MonthlyJournal } from "@nexora/domain";
+import {
+  calculateMonthlyTrends,
+  type InvestmentPosition,
+  type MonthlyJournal,
+  type Transaction,
+} from "@nexora/domain";
+import { FinancialAmount } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
 import type { MonthlyJournalInput } from "./journalCommands";
+import { AccessibleDialog } from "../settings/AccessibleDialog";
 
 export function JournalPage({
   journals,
   onSave,
+  onDelete,
+  transactions,
+  investments,
 }: {
   readonly journals: readonly MonthlyJournal[];
   readonly onSave: (input: MonthlyJournalInput, existingId: string | undefined) => Promise<void>;
+  readonly onDelete: (id: string) => Promise<void>;
+  readonly transactions: readonly Transaction[];
+  readonly investments: readonly InvestmentPosition[];
 }) {
   const currentPeriod = new Date().toISOString().slice(0, 7);
   const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
   const selected = journals.find((journal) => journal.period === selectedPeriod);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [deleteCandidate, setDeleteCandidate] = useState<MonthlyJournal | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const trend = calculateMonthlyTrends(transactions, "EUR").find(
+    (item) => item.month === selectedPeriod,
+  );
+  const invested = investments
+    .filter((item) => item.valuationDate.toString().startsWith(selectedPeriod))
+    .reduce((sum, item) => sum + item.currentValue.amountMinor, 0n);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,6 +61,22 @@ export function JournalPage({
     }
   };
 
+  const confirmDelete = async () => {
+    if (deleteCandidate === null) return;
+    setIsDeleting(true);
+    try {
+      await onDelete(deleteCandidate.id);
+      if (selectedPeriod === deleteCandidate.period) setSelectedPeriod(currentPeriod);
+      setDeleteCandidate(null);
+      setFeedback("Diario mensile eliminato dai dati locali.");
+      setError(null);
+    } catch {
+      setError("Impossibile eliminare il diario. I dati finanziari non sono stati modificati.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div id="journal">
       <header className="accounts-heading">
@@ -49,6 +86,43 @@ export function JournalPage({
           <p>Annota ciò che ha funzionato e definisci un obiettivo pratico per il mese prossimo.</p>
         </div>
       </header>
+      <section aria-labelledby="journal-summary-title" className="data-panel">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Sintesi automatica</p>
+            <h2 id="journal-summary-title">{selectedPeriod}</h2>
+          </div>
+        </div>
+        <p className="import-help">
+          Questa sintesi è derivata dai dati locali e non modifica il ledger.
+        </p>
+        <div className="metrics-grid">
+          <div className="metric-card">
+            <span>Entrate</span>
+            <FinancialAmount
+              amountMinor={trend?.income.amountMinor ?? 0n}
+              currency="EUR"
+              tone="positive"
+            />
+          </div>
+          <div className="metric-card">
+            <span>Spese</span>
+            <FinancialAmount
+              amountMinor={trend?.expense.amountMinor ?? 0n}
+              currency="EUR"
+              tone="negative"
+            />
+          </div>
+          <div className="metric-card">
+            <span>Risparmio</span>
+            <FinancialAmount amountMinor={trend?.savings.amountMinor ?? 0n} currency="EUR" />
+          </div>
+          <div className="metric-card">
+            <span>Valutazioni investimento</span>
+            <FinancialAmount amountMinor={invested} currency="EUR" />
+          </div>
+        </div>
+      </section>
       <div className="accounts-layout has-editor">
         <section
           className="data-panel account-management-panel"
@@ -90,6 +164,13 @@ export function JournalPage({
                     type="button"
                   >
                     Modifica
+                  </button>
+                  <button
+                    className="text-action"
+                    onClick={() => setDeleteCandidate(journal)}
+                    type="button"
+                  >
+                    Elimina…
                   </button>
                 </li>
               ))}
@@ -155,6 +236,33 @@ export function JournalPage({
           </form>
         </aside>
       </div>
+      {deleteCandidate === null ? null : (
+        <AccessibleDialog
+          labelledBy="delete-journal-title"
+          onClose={() => !isDeleting && setDeleteCandidate(null)}
+        >
+          <h2 id="delete-journal-title">Eliminare questo diario?</h2>
+          <p>Questa azione elimina solo la riflessione mensile, non movimenti, budget o saldi.</p>
+          <div className="form-actions">
+            <button
+              className="secondary-action"
+              disabled={isDeleting}
+              onClick={() => setDeleteCandidate(null)}
+              type="button"
+            >
+              Annulla
+            </button>
+            <button
+              className="primary-action"
+              disabled={isDeleting}
+              onClick={() => void confirmDelete()}
+              type="button"
+            >
+              {isDeleting ? "Eliminazione…" : "Elimina diario"}
+            </button>
+          </div>
+        </AccessibleDialog>
+      )}
     </div>
   );
 }

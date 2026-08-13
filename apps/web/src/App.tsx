@@ -60,12 +60,18 @@ import { createLoan, deleteLoan, updateLoan, type LoanInput } from "./loans/loan
 import { InvestmentsPage } from "./investments/InvestmentsPage";
 import {
   createInvestmentPosition,
+  deleteInvestmentPosition,
+  updateInvestmentPosition,
   type InvestmentPositionInput,
 } from "./investments/investmentCommands";
 import { ExportsPage } from "./exports/ExportsPage";
 import { BackupPage } from "./backup/BackupPage";
 import { JournalPage } from "./journal/JournalPage";
-import { saveMonthlyJournal, type MonthlyJournalInput } from "./journal/journalCommands";
+import {
+  deleteMonthlyJournal,
+  saveMonthlyJournal,
+  type MonthlyJournalInput,
+} from "./journal/journalCommands";
 import { AnalyticsPage } from "./analytics/AnalyticsPage";
 import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
@@ -592,9 +598,21 @@ function AppContent({
     mutateLedger(async (ledger) => {
       await createInvestmentPosition(ledger.repository, input);
     });
+  const updateInvestment = (id: string, input: InvestmentPositionInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateInvestmentPosition(ledger.repository, id, input);
+    });
+  const removeInvestment = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await deleteInvestmentPosition(ledger.repository, id);
+    });
   const saveJournal = (input: MonthlyJournalInput, existingId: string | undefined): Promise<void> =>
     mutateLedger(async (ledger) => {
       await saveMonthlyJournal(ledger.repository, input, existingId);
+    });
+  const removeJournal = (id: string): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await deleteMonthlyJournal(ledger.repository, id);
     });
   const executeAllocations = async (planIds: readonly string[], executionId: string) => {
     let receipt: Awaited<ReturnType<typeof executeConfirmedAllocationPlans>> | undefined;
@@ -751,6 +769,8 @@ function AppContent({
                 <InvestmentsPage
                   accounts={ledgerState.rawAccounts}
                   onCreate={createInvestment}
+                  onDelete={removeInvestment}
+                  onUpdate={updateInvestment}
                   positions={ledgerState.investmentPositions}
                 />
               ) : route === "recurring" ? (
@@ -777,7 +797,13 @@ function AppContent({
               ) : route === "backup" ? (
                 <BackupPage ledger={ledgerState.ledger} />
               ) : route === "journal" ? (
-                <JournalPage journals={ledgerState.monthlyJournals} onSave={saveJournal} />
+                <JournalPage
+                  investments={ledgerState.investmentPositions}
+                  journals={ledgerState.monthlyJournals}
+                  onDelete={removeJournal}
+                  onSave={saveJournal}
+                  transactions={ledgerState.rawTransactions}
+                />
               ) : route === "analytics" ? (
                 <AnalyticsPage transactions={ledgerState.rawTransactions} />
               ) : route === "notifications" ? (
@@ -1095,6 +1121,18 @@ function buildGlobalSearchResults(state: ReadyLedgerState): readonly GlobalSearc
       href: "./#transactions",
       label: transaction.title,
       detail: `${transaction.kindLabel} · ${transaction.accountLabel} · ${transaction.categoryLabel}`,
+    })),
+    ...state.loans.map((loan) => ({
+      id: `loan-${loan.id}`,
+      href: "./#loans",
+      label: loan.lender,
+      detail: "Prestito",
+    })),
+    ...state.investmentPositions.map((position) => ({
+      id: `investment-${position.id}`,
+      href: "./#investments",
+      label: position.name,
+      detail: position.symbol === undefined ? "Investimento" : `Investimento · ${position.symbol}`,
     })),
   ];
 }
