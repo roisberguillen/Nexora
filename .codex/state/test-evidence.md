@@ -2,6 +2,19 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## Phase 12 closure review — 2026-08-14
+
+- GitHub CI `31725944677` for `4ab136e` is green: frozen install, doctor, format, lint,
+  workspace typecheck, unit/component/integration tests, production build, manifest and Chromium
+  installation/E2E all completed successfully.
+- Vitest: 128 files passed, 1 conditionally skipped; 504 tests passed, 4 benchmark skips, in
+  135.05 s. Playwright: 198 passed, 90 documented skips, in 11.2 min. Skips avoid duplicate
+  viewport executions, optional live Google consent and opt-in heavy recovery/performance flows;
+  no Phase 12 critical flow is skipped everywhere.
+- Local closure audit also passed `pnpm doctor`, `pnpm format:check`, `pnpm lint`,
+  `pnpm typecheck`, `pnpm build`, `pnpm manifest:check` and `pnpm audit --prod` (no known
+  vulnerabilities). No unresolved Phase 12 P0/P1 was found.
+
 ## Phase 12.E automated surface coverage — 2026-08-13
 
 - Coverage audit: Budget, recurring rules, allocations, loans, investments, categories and tags

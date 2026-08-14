@@ -9,6 +9,16 @@
 
 ### Changed
 
+- Completata la Fase 12 della roadmap UI e finanziaria il 2026-08-14. La review finale ha
+  allineato codice, test e documentazione per budget, ricorrenze, allocazioni, prestiti,
+  investimenti, analisi, diario, categorie, tag, notifiche e impostazioni/privacy. La CI GitHub
+  ha verificato build, qualità, manifest e Playwright sul commit di chiusura.
+
+- Rafforzate le superfici finali di Fase 12: investimenti validati contro conto attivo di tipo e
+  valuta corretti in repository e snapshot; eliminato l'import CSV locale non atomico; default
+  civili `Europe/Rome` per movimenti, investimenti e Diario; copertura component/E2E per Analisi,
+  Diario e Notifiche.
+
 - Finalizzata la Fase 12.5: i piani di allocazione in Ricorrenze ora supportano modifica,
   pausa/riattivazione ed eliminazione confermata. Le conferme creano trasferimenti reali e
   idempotenti anche in caso di retry dopo errore parziale, senza alterare lo storico esistente.

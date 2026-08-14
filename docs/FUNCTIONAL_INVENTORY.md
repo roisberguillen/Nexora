@@ -13,11 +13,11 @@ repository, basata sulle 98 schermate Stitch, è in
 | Movimenti | `#transactions` | esistente da rifattorizzare | Fase 6 |
 | Import/export | `#imports`, `#exports` | esistente incompleto | Fase 8 |
 | Backup | `#backup` | file portabile manuale e Drive; engine da rifattorizzare | Fasi 9–11 |
-| Pianificazione | budget, ricorrenze, allocazioni | budget mensili ricorrenti con storico effective-dated, soglie e split; ricorrenze avanzate e piani di allocazione CRUD con conferma e retry idempotente | Fase 12 |
-| Patrimonio | prestiti, investimenti | esistente da rifattorizzare | Fase 12 |
-| Analisi e diario | analytics, journal | riepilogo puro della natura delle spese disponibile al dominio; visualizzazione avanzata pianificata | Fase 12 |
-| Organizzazione | categorie, tag, cestino | esistente da rifattorizzare | Fase 12 |
-| Profilo e impostazioni | profile, settings, privacy | esistente da rifattorizzare | Fase 12 |
+| Pianificazione | budget, ricorrenze, allocazioni | budget effective-dated, soglie, split e storico; ricorrenze avanzate; piani CRUD con conferma, trasferimenti reali e retry idempotente | Fase 12 completata |
+| Patrimonio | prestiti, investimenti | CRUD persistente con conferma eliminazione; posizioni investimento validate contro conto attivo di tipo corretto e valuta | Fase 12 completata |
+| Analisi e diario | analytics, journal | trend, forecast prudente, confronto, grafico accessibile; diario mensile persistente con sintesi, nota, obiettivo e controllo 1–5 | Fase 12 completata |
+| Organizzazione | categorie, tag, cestino | categorie gerarchiche e tag con CRUD/merge, più cestino e flussi distruttivi confermati | Fase 12 completata |
+| Profilo e impostazioni | profile, settings, privacy | collegamenti alle superfici finanziarie, preferenze locali, privacy/sicurezza e app lock; notifiche locali separate dal ledger | Fase 12 completata |
 | Piattaforme native | Tauri desktop/Android | nuova | Fasi 7, 13, 14 |
 | Sincronizzazione | Nexora Local Hub | nuova, sostituisce local-host Node | Fasi 15–16 |
 

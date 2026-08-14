@@ -234,8 +234,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 461,
-      "sha256": "63eabac0c0acd4d944ce24ad4b8bd31f980720a21644b0ef407335081bb4fed9"
+      "size": 404,
+      "sha256": "4410ebf531d04bc5f432678bcdd1ba8b175e205d968e49c4fb2bea7e01c7c40e"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -259,13 +259,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 2044,
-      "sha256": "35da88a64c9bc71de9ca02e2ae767459f7241a434514f3969e323f8c28d32021"
+      "size": 2333,
+      "sha256": "1c7a81171c520899b39ed004e7afeed31261f6c7c4e2f13f6da238b3605e4ffa"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 25449,
-      "sha256": "94f2f2767f9b6cdb4171e9852895e590d8e7c26f986a1b39ae31b9ba1b754195"
+      "size": 26291,
+      "sha256": "2422ef557fa5a8e6dbc40f2ef1b5bc63a330230b0dcec71346f8012b521dbfe0"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -1454,8 +1454,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 25913,
-      "sha256": "b42ade811ef6d88e5185d03383552d3bf28368632075c41c66acba7680948dc9"
+      "size": 26581,
+      "sha256": "8ef182abd91981a3c4d382e0c0488087d3e42325b18157d346bd4b3f23d56a6c"
     },
     {
       "path": "design/mockup/README.md",
@@ -1639,8 +1639,8 @@
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
-      "size": 2345,
-      "sha256": "e0314eab7a5d03a880247d661ad73689b77d1029a7ff3b2504bcaba095bc841f"
+      "size": 2668,
+      "sha256": "2006f54c0917152f5f22f51d1e6d87eaf74d07a20d8a28829c718fe29fc5fab9"
     },
     {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
@@ -1739,8 +1739,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 16410,
-      "sha256": "e7200e09efda8f919adda014d4db2ce546b8b2d8d2f36b78942422d973bdcbc3"
+      "size": 17646,
+      "sha256": "d5d0c6e41ea937f7d73e5f0689e582518467f4145d643cd409b066dcd33d1f6a"
     },
     {
       "path": "docs/ROADMAP.md",

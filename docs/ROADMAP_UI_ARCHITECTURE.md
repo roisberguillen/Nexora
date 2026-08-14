@@ -18,7 +18,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 9 | Backup Engine indipendente | completata |
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
-| 12 | Feature finanziarie con nuova UI | in corso — slice 12.1–12.5 completate; Fase 13 non avviata |
+| 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
 | 13 | Applicazione Windows e macOS | pianificata |
 | 14 | Applicazione Android | pianificata |
 | 15 | Nexora Local Hub | pianificata |
@@ -84,6 +84,23 @@ Commit e push su `origin/main`.
   l'archiviazione del conto referenziato.
 - [x] Dialog accessibili, ricevute operative e retry sicuro sono verificati a 320, 375, 390, 768,
   1024 e 1440 px.
+
+### Evidenze chiusura Fase 12
+
+- [x] Prestiti, investimenti, analisi, diario, categorie, tag, notifiche, privacy/impostazioni,
+  budget, ricorrenze e allocazioni risultano collegati alla shell tramite read model e command
+  layer; le pagine non importano adapter SQLite/OPFS/IndexedDB.
+- [x] Le posizioni investimento richiedono, in dominio, repository e snapshot portabile, un conto
+  esistente, attivo, di tipo `investment` e della stessa valuta. Il precedente import CSV locale
+  fragile è stato rimosso: resta soltanto il framework Import auditabile per i tipi supportati.
+- [x] I default per nuovi movimenti, valutazioni e mese del Diario usano data civile
+  `Europe/Rome`; timestamp tecnici restano UTC. Le notifiche conservano soltanto preferenze e
+  stato letto/ignorato nel local storage, senza scritture sul ledger.
+- [x] La review finale ha verificato import, export, backup, snapshot, CSP, log redatti, fixture
+  sintetiche e assenza di segreti. `pnpm audit --prod` non ha vulnerabilità note.
+- [x] GitHub CI sul commit `4ab136e` ha completato install frozen, doctor, format, lint,
+  typecheck, 504 test unitari/component/integration (4 skip condizionati), build, manifest e
+  Playwright (198 passati, 90 skip documentati) senza errori.
 
 ## Gate permanente di orchestrazione
 
