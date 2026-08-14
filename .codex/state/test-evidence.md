@@ -1,5 +1,19 @@
 # Test evidence
 
+## Phase 12.5.1 real-source mapping — blocked — 2026-08-15
+
+- Read-only analysis used three local user-provided files outside the repository. No ledger,
+  account, transaction, category, import batch, backup or test fixture was created or modified.
+- Mediobanca CSV: 48 data rows, semicolon delimiter, valid `Data valuta` on every row, EUR and
+  Italian-decimal monetary syntax. The source has no narrative/account/category/identifier field.
+- N26 PDF: 20 text-extractable pages, with Mastercard and six Space sections. The current N26
+  parser returned zero matching candidate rows because its English month/simple-layout regular
+  expression does not match the observed source layout.
+- Money Manager XLSX: one sheet with no usable headers or transaction rows. This blocks account,
+  category, transfer, N26-history and Directa SIM mapping; no assumptions were made.
+- No automated code test was changed or added. The report and state are documentation-only; final
+  formatting, manifest and repository validation remain required before publication.
+
 ## Phase 12.5.0 safe checkpoint — 2026-08-15
 
 - Baseline: Phase 12 closure is recorded on `main` commit

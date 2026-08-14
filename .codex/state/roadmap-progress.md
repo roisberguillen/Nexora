@@ -18,6 +18,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.4.1 | complete | recurring effective-dated monthly budget revisions, migration v19, historical month navigation and GitHub `verify` green; merged via PR #6 (`5efc529`) |
 | 12.5 | complete | allocation plan CRUD, confirmed idempotent execution, backup/reset compatibility and responsive UI; merged via PR #7 with GitHub `verify` green on `main` (`3edeabb`) |
 | 12.5.0 | complete — 2026-08-15 | non-functional safe checkpoint before user-operated real-data validation: isolated origin/profile runbook, ignored local artifacts, synthetic backup/restore drill and all local quality gates green |
+| 12.5.1 | blocked — 2026-08-15 | real-source mapping report documents Mediobanca CSV and N26 PDF; supplied Money Manager workbook is structurally empty, so historic/Directa mapping and subsequent import phases cannot proceed |
 | 12.A–E | complete | CI/manifest repair, investment repository integrity, removal of unsafe investment CSV import, Europe/Rome civil-date defaults and final automated coverage; GitHub CI green on `main` (`4ab136e`) |
 | 13 | next | platform delivery only after Phase 12 closes; not started |
 | 14–17 | planned | no completion claim |
