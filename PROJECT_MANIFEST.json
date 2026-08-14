@@ -239,8 +239,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 822,
-      "sha256": "e36d6f4091f099a8d93e1d326c152d4ed6a7b03d4a194d60db123a07874530f7"
+      "size": 845,
+      "sha256": "3f74772e052d85001797d84a050a3b07335b88b0508ad8b7c9c1603302a11ce6"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -264,13 +264,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 2866,
-      "sha256": "1eb1d4ac4c8083a9d1e825e71d8264c931bfce12499c206e534f2afea75f6688"
+      "size": 3142,
+      "sha256": "1c050e9b1e035501f0c27114f93efd2c1bd9048443aa54c89c84d3add6acf342"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 29432,
-      "sha256": "d7f23837bf5f9ce6a2a047a297497dbe07ac92f30b23c26025aa40e8dfcb2c39"
+      "size": 30743,
+      "sha256": "c23b9fa01677e4db6a868212fee05e6782567b341bb82844ac95ba0a54f02987"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -959,18 +959,18 @@
     },
     {
       "path": "apps/web/src/imports/importReview.test.ts",
-      "size": 1545,
-      "sha256": "71fc6764e284fe963ff3867d2f651a667ce7ec6488381aeaf6989b179729ea90"
+      "size": 2783,
+      "sha256": "5d5deca03e04934506f45a6a2181c22d939333f23e6f54c0eb808bf39efe092f"
     },
     {
       "path": "apps/web/src/imports/importReview.ts",
-      "size": 858,
-      "sha256": "1fdbd503b76d5cb54223db2dabfa5c476e8983c50159ea0dcb62e2eec53176a0"
+      "size": 1665,
+      "sha256": "16056a33d4c4c666896d9e273c7fd3234e3a60386aeb79d2dd78f1b8959e9031"
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
-      "size": 21818,
-      "sha256": "66c0ab4f370c79a85e471acd2357c88a646225e4872767c0d0baa7392a382590"
+      "size": 21799,
+      "sha256": "37fa6009d74533764cea2c02725400dc8e8b38406dca61fc880ac988b358f3f5"
     },
     {
       "path": "apps/web/src/imports/mappingProfiles.test.ts",
@@ -1459,8 +1459,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 26824,
-      "sha256": "e531d5322dadbd0057d8b19ddd2d058e00ec1ddecb8913eda483719ca6113738"
+      "size": 27078,
+      "sha256": "195e762fda2589136fa6ae4d4efa61ca38557689fc36d348ce5516c25e020274"
     },
     {
       "path": "design/mockup/README.md",
@@ -1726,6 +1726,11 @@
       "path": "docs/reports/phase-12.5.1-real-source-mapping.md",
       "size": 11954,
       "sha256": "c2e8b606d17aa5ce6964d6615c9f4dcd94985045e8ce4f7319d08ad520d0530c"
+    },
+    {
+      "path": "docs/reports/phase-12.5.2-isolated-mediobanca-validation.md",
+      "size": 3226,
+      "sha256": "42e5529d713a8883553a4b35f5a002fc5abf7a7e3b610f704bb36ee4b4607503"
     },
     {
       "path": "docs/reports/roadmap-completion-audit.md",

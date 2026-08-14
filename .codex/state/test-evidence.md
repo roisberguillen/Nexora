@@ -1,5 +1,22 @@
 # Test evidence
 
+## Phase 12.5.2 isolated Mediobanca sample validation — complete — 2026-08-15
+
+- Real source drill used only the user-authorized one-month CSV on 127.0.0.1:4174; the definitive
+  5173 origin was not opened or mutated. No real file, row, amount, identifier or source hash was
+  added to Git, fixtures, logs or this evidence.
+- Structural parser check: 48 source rows, six expected columns, semicolon CSV, EUR, one signed
+  outgoing amount cell per row and 48 valid Data valuta values. Data contabile was never used.
+- UI dry-run after explicit mapping/account selection: 48 ready, 0 duplicate, 0 review, 0 ignored,
+  0 invalid; the source-row invariant is exact. Commit: 48 imported. Undo: batch undone and all
+  imported transactions cancelled. Re-run: 48 duplicate, 0 ready and no second movement created.
+- Regression: apps/web/src/imports/importReview.test.ts passed 5/5. It covers an account-less valid
+  row resolved by an explicit local account and preserves review status for invalid data.
+- `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm build` and `pnpm verify`
+  passed after the fix. Full unit gate: 128 files passed, 1 skipped; 506 tests passed, 4
+  documented skips. The isolated browser proof supplied the real-data E2E evidence; no real
+  source was added to the automated suite.
+
 ## Phase 12.5.1 real-source mapping — complete — 2026-08-15
 
 - Read-only analysis used three local user-provided files outside the repository. No ledger,

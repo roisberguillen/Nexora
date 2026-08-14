@@ -1,4 +1,29 @@
-import type { MoneyManagerDryRunRow } from "@nexora/importers";
+import type { MoneyManagerDryRunRow, MoneyManagerPreviewRow } from "@nexora/importers";
+
+/**
+ * Applies an explicit local-account choice without making an otherwise invalid source row ready.
+ * The parser intentionally cannot know the account when the statement has no account column.
+ */
+export function resolvePreviewAccount(
+  preview: MoneyManagerPreviewRow,
+  account: string | undefined,
+): MoneyManagerPreviewRow {
+  if (account === undefined || account === "" || account === preview.account) return preview;
+  if (
+    preview.status === "needs_review" &&
+    preview.account === undefined &&
+    preview.date !== undefined &&
+    preview.amountMinor !== undefined
+  ) {
+    return Object.freeze({
+      ...preview,
+      account,
+      message: "Riga pronta per il dry-run.",
+      status: "ready",
+    });
+  }
+  return Object.freeze({ ...preview, account });
+}
 
 export function confirmedTransferRowNumbers(
   rows: readonly MoneyManagerDryRunRow[],

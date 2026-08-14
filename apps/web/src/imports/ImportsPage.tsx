@@ -17,7 +17,11 @@ import type { ImportBatch, ImporterType } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
 
-import { confirmedTransferRowNumbers, countCommittableImportRows } from "./importReview";
+import {
+  confirmedTransferRowNumbers,
+  countCommittableImportRows,
+  resolvePreviewAccount,
+} from "./importReview";
 import { buildImportQualityReport } from "./importQualityReport";
 import { loadImportMappingProfiles, saveImportMappingProfile } from "./mappingProfiles";
 
@@ -80,7 +84,7 @@ export function ImportsPage({
       : previewMoneyManagerRows(selectedSheet.rows.slice(1), mapping);
   const preview = rawPreview.map((row) => {
     const account = rowAccountOverrides[row.sourceRowNumber] ?? row.account ?? fallbackAccountName;
-    return account === "" || account === row.account ? row : Object.freeze({ ...row, account });
+    return resolvePreviewAccount(row, account);
   });
   const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions);
   const readyCount = dryRun.filter((row) => row.status === "ready").length;

@@ -13,6 +13,10 @@
 
 ### Changed
 
+- Fixed local-account resolution in the import preview: statements without an account column can
+  become committable only after an explicit account choice and only when their date and amount are
+  already valid. Invalid source rows remain review-only.
+
 - Completata la Fase 12 della roadmap UI e finanziaria il 2026-08-14. La review finale ha
   allineato codice, test e documentazione per budget, ricorrenze, allocazioni, prestiti,
   investimenti, analisi, diario, categorie, tag, notifiche e impostazioni/privacy. La CI GitHub

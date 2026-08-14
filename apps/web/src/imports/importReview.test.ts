@@ -1,7 +1,11 @@
-import type { MoneyManagerDryRunRow } from "@nexora/importers";
+import type { MoneyManagerDryRunRow, MoneyManagerPreviewRow } from "@nexora/importers";
 import { describe, expect, it } from "vitest";
 
-import { confirmedTransferRowNumbers, countCommittableImportRows } from "./importReview";
+import {
+  confirmedTransferRowNumbers,
+  countCommittableImportRows,
+  resolvePreviewAccount,
+} from "./importReview";
 
 function row(
   sourceRowNumber: number,
@@ -30,6 +34,44 @@ function row(
 }
 
 describe("import review confirmation", () => {
+  it("makes an account-less but otherwise valid row ready after explicit account resolution", () => {
+    const preview: MoneyManagerPreviewRow = {
+      account: undefined,
+      amountMinor: -100n,
+      category: undefined,
+      currency: "EUR",
+      date: "2026-08-02",
+      message: "Conto assente: richiede risoluzione prima dell'importazione.",
+      payee: undefined,
+      sourceRowNumber: 2,
+      status: "needs_review",
+    };
+
+    expect(resolvePreviewAccount(preview, "Conto validazione")).toMatchObject({
+      account: "Conto validazione",
+      status: "ready",
+    });
+  });
+
+  it("does not make an invalid date or amount ready when an account is resolved", () => {
+    const preview: MoneyManagerPreviewRow = {
+      account: undefined,
+      amountMinor: undefined,
+      category: undefined,
+      currency: "EUR",
+      date: undefined,
+      message: "Data o importo non interpretabile: richiede revisione.",
+      payee: undefined,
+      sourceRowNumber: 2,
+      status: "needs_review",
+    };
+
+    expect(resolvePreviewAccount(preview, "Conto validazione")).toMatchObject({
+      account: "Conto validazione",
+      status: "needs_review",
+    });
+  });
+
   it("keeps an unconfirmed transfer out of the committable count", () => {
     expect(countCommittableImportRows([row(2, "needs_review", "account-2")], {})).toBe(0);
   });

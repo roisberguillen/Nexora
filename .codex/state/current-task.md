@@ -1,12 +1,13 @@
 # Current task
 
-- Task: Phase 12.5.1 real-source mapping, read-only
-- Roadmap phase: Phase 12 is complete; this validation sub-phase does not modify the ledger.
-- Status: complete on 2026-08-15. Mediobanca CSV, N26 PDF and the usable 11-column/45-source-row
-  Money Manager workbook were structurally analysed. The sanitised report records explicit account,
-  date, currency, category and transfer rules without retaining real row data.
+- Task: Phase 12.5.2 isolated Mediobanca Premier sample validation
+- Roadmap phase: Phase 12 is complete; this validation sub-phase mutates only the disposable
+  127.0.0.1:4174 ledger.
+- Status: complete on 2026-08-15. The one-month Mediobanca CSV was parsed with Data valuta
+  exclusively, dry-run, atomically committed, undone and rechecked as duplicate in the isolated
+  ledger. No definitive-origin data, source row or financial value was committed to Git.
 - Baseline: checkpoint `fe7dc1aa963113f739ad3115f8d352cc930ed95e` on
-  `codex/phase-12-5-0-checkpoint`; no real account, import batch or financial record was created.
-- Next task: Phase 12.5.2 only after authorization. It must implement and verify the explicit
-  mapping/preview gates documented in the report; do not start 12.5.3, 12.5.4, 12.5.5, 12.5.6 or
+  `codex/phase-12-5-0-checkpoint`; it contained no real account, import batch or financial record.
+  The validation account and audit remain only in the disposable 4174 origin.
+- Next task: Phase 12.5.3 only after authorization. Do not start it, 12.5.4, 12.5.5, 12.5.6 or
   Phase 13 implementation.
