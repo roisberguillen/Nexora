@@ -17,3 +17,7 @@ apps/web/src-tauri/gen/
 *.sqlite-shm
 backups/
 imports/private/
+# Artifacts used only for the isolated, user-operated real-data validation drill.
+# This prevents statements, exports, browser profiles and encrypted test backups
+# from entering the repository while keeping synthetic fixtures reviewable.
+validation/real-data/

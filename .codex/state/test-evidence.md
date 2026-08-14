@@ -1,5 +1,29 @@
 # Test evidence
 
+## Phase 12.5.0 safe checkpoint — 2026-08-15
+
+- Baseline: Phase 12 closure is recorded on `main` commit
+  `9dc659cb995393b3fee30b03d8311b2b0b87d159`; the worktree was clean before
+  creating the checkpoint documentation.
+- `pnpm doctor`, `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm build`,
+  `pnpm manifest:check` and `pnpm verify` passed. `pnpm verify` repeated format,
+  lint, typecheck, the complete unit suite and the production build.
+- Full unit suite: 128 test files passed, 1 skipped; 504 tests passed, 4 documented
+  skips; 84.56 s. The verify rerun produced the same 504 passed / 4 skipped result.
+- Synthetic backup/recovery drill: 3 test files and 16 tests passed in 6.43 s. It
+  covers encrypted backup creation, passphrase/tamper/schema rejection, SQLite and
+  IndexedDB restore, rollback and removal of the temporary recovery ledger.
+- Full `pnpm test:e2e`: 198 passed, 90 documented skips, 0 failed, 6.2 min. It
+  includes browser backup/restore, OPFS and IndexedDB persistence and rollback; the
+  100,000-record performance cases use synthetic data only.
+- Repository privacy scan: tracked import examples and E2E fixtures are synthetic;
+  no tracked databases, bank statements, real IBANs or committed logs were found.
+  The only IBAN-shaped string is an explicit synthetic redaction test in
+  `packages/config/src/logging.test.ts`.
+- The local real-data drill is isolated by browser origin (`127.0.0.1:4174` source,
+  `127.0.0.1:4175` disposable restore) and dedicated ignored browser profiles. No
+  active user ledger was opened, mutated or used by this checkpoint.
+
 Keep only the latest relevant evidence per completed phase.
 
 ## Phase 12 closure review — 2026-08-14

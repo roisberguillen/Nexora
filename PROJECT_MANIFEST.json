@@ -233,9 +233,14 @@
       "sha256": "93e2342f048fcbfb7f4d5904d1ac7ad05adbcfa1916da2fb20e42e92d6ba91cb"
     },
     {
+      "path": ".codex/state/checkpoints/2026-08-14-phase-12-5-0-real-data-validation-checkpoint.md",
+      "size": 1304,
+      "sha256": "41d1b3462d6c3f4ac63009ecdb84b18755d816db461ac43b8a9c1bba61067d7e"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 404,
-      "sha256": "4410ebf531d04bc5f432678bcdd1ba8b175e205d968e49c4fb2bea7e01c7c40e"
+      "size": 568,
+      "sha256": "7565ab5721f39478225a25208de17224411326f943ce4a7e3eeb822a939d2b93"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -259,13 +264,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 2333,
-      "sha256": "1c7a81171c520899b39ed004e7afeed31261f6c7c4e2f13f6da238b3605e4ffa"
+      "size": 2569,
+      "sha256": "02df7990c972c237c125ced82bdd3a81a797d2dffa654b7c08b608fac5f893ce"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 26291,
-      "sha256": "2422ef557fa5a8e6dbc40f2ef1b5bc63a330230b0dcec71346f8012b521dbfe0"
+      "size": 27894,
+      "sha256": "06ee539f0a71ab776cb8453e49bc2791304c13029a42380d87f1fa83043d92bd"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -299,8 +304,8 @@
     },
     {
       "path": ".gitignore",
-      "size": 238,
-      "sha256": "8461d91662658433bf592e289e8659e20878fb01bcbf4ed67dc4e99ee290d627"
+      "size": 499,
+      "sha256": "6b9ed2dd8f54ece89dfb9b3bcb5cc7dbbbb04c81a5b6757439fa58981c4cc2d4"
     },
     {
       "path": ".node-version",
@@ -1661,6 +1666,11 @@
       "path": "docs/operations/GOOGLE_DRIVE_OAUTH.md",
       "size": 4038,
       "sha256": "ddc88174731899dd57763fd2ebf41e0e56bf716ab1b88eee9d4023816d1bd576"
+    },
+    {
+      "path": "docs/operations/REAL_DATA_VALIDATION_CHECKPOINT.md",
+      "size": 3274,
+      "sha256": "9606745427e36f3991ff30eab0aaf13ff1bb1394b63704174b061fff101448f2"
     },
     {
       "path": "docs/PLATFORM_MATRIX.md",
