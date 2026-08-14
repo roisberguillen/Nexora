@@ -4,6 +4,10 @@
 
 ### Documentation
 
+- Completed the read-only Phase 12.5.1 mapping checkpoint for the user-provided financial sources.
+  It documents explicit date, account, currency, category and transfer review rules without
+  persisting or committing any real financial row.
+
 - Completed UI architecture roadmap Phase 1 with the verified Stitch screen-to-feature matrix,
   component boundaries, data-contract mapping and implementation sequence.
 

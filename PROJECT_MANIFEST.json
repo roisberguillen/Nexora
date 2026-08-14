@@ -239,8 +239,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 705,
-      "sha256": "97cb0cc55facaa1ae5ddff4beafa8246954b8b64109ec71640bdc111d26f5f79"
+      "size": 822,
+      "sha256": "e36d6f4091f099a8d93e1d326c152d4ed6a7b03d4a194d60db123a07874530f7"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -264,13 +264,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 2799,
-      "sha256": "2fd15740d35c95309be23e686ebf4788c6c6e2585927aa4385833b9d3d19cc14"
+      "size": 2866,
+      "sha256": "1eb1d4ac4c8083a9d1e825e71d8264c931bfce12499c206e534f2afea75f6688"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 28951,
-      "sha256": "18aeac03eb68da273fd087d2a9d3a2a893f92fa37045ece9f4ea25776b713113"
+      "size": 29432,
+      "sha256": "d7f23837bf5f9ce6a2a047a297497dbe07ac92f30b23c26025aa40e8dfcb2c39"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -1459,8 +1459,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 26581,
-      "sha256": "8ef182abd91981a3c4d382e0c0488087d3e42325b18157d346bd4b3f23d56a6c"
+      "size": 26824,
+      "sha256": "e531d5322dadbd0057d8b19ddd2d058e00ec1ddecb8913eda483719ca6113738"
     },
     {
       "path": "design/mockup/README.md",
@@ -1724,8 +1724,8 @@
     },
     {
       "path": "docs/reports/phase-12.5.1-real-source-mapping.md",
-      "size": 8618,
-      "sha256": "49e3f00ba31b8471c1ea4679d35a442ef91e46b08bca4bc3ee801785f0aa4c17"
+      "size": 11954,
+      "sha256": "c2e8b606d17aa5ce6964d6615c9f4dcd94985045e8ce4f7319d08ad520d0530c"
     },
     {
       "path": "docs/reports/roadmap-completion-audit.md",

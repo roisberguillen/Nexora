@@ -1,6 +1,6 @@
 # Test evidence
 
-## Phase 12.5.1 real-source mapping — blocked — 2026-08-15
+## Phase 12.5.1 real-source mapping — complete — 2026-08-15
 
 - Read-only analysis used three local user-provided files outside the repository. No ledger,
   account, transaction, category, import batch, backup or test fixture was created or modified.
@@ -9,10 +9,15 @@
 - N26 PDF: 20 text-extractable pages, with Mastercard and six Space sections. The current N26
   parser returned zero matching candidate rows because its English month/simple-layout regular
   expression does not match the observed source layout.
-- Money Manager XLSX: one sheet with no usable headers or transaction rows. This blocks account,
-  category, transfer, N26-history and Directa SIM mapping; no assumptions were made.
-- No automated code test was changed or added. The report and state are documentation-only; final
-  formatting, manifest and repository validation remain required before publication.
+- Money Manager XLSX: one visible sheet with 11 columns, 46 physical rows and 45 post-header source
+  rows. Its Excel-serial civil date, first account, category/subcategory, note, kind, amount and EUR
+  fields were mapped structurally without retaining values. It has 40 Mediobanca-labelled, four
+  N26-labelled and one unresolved first-account row; no Directa-labelled row was found.
+- The duplicate numeric `Conto`, undocumented `EUR` field and two transfer-marked rows are explicitly
+  review-only. The current generic detector does not recognise `Giorno`/`Guadagni/Spese` or model a
+  distinct destination account, so no import was run or authorized.
+- No automated code test was changed or added. The report and state are documentation-only;
+  `pnpm format:check`, `pnpm manifest:check` and `pnpm codex:validate` passed before publication.
 
 ## Phase 12.5.0 safe checkpoint — 2026-08-15
 
