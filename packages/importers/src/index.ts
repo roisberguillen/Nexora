@@ -13,6 +13,8 @@ export {
   readMediobancaWorkbook as readBankWorkbook,
   readMediobancaCsv,
   detectMediobancaPremierCsv,
+  extractN26SpaceCandidates,
+  type N26SpaceCandidate,
   readN26Pdf as readBankPdf,
 } from "./bankStatementPreview";
 export {

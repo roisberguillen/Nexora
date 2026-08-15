@@ -139,13 +139,15 @@ export function ImportsPage({
           ? (accounts.find(
               (account) => !account.isArchived && account.name === "Mediobanca Premier",
             )?.name ?? "")
+          : importerType === "n26_pdf"
+            ? resolveN26AccountName(accounts)
           : "",
       );
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
       setSource({ filename: file.name, importerType, sha256: await sha256(bytes) });
       setError(null);
-    } catch {
+    } catch (cause) {
       setSheets([]);
       setSelectedSheetName("");
       setMapping({});
@@ -154,7 +156,9 @@ export function ImportsPage({
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
       setError(
-        "Il file non è un estratto CSV, XLSX o PDF leggibile. I dati locali non sono stati modificati.",
+        cause instanceof Error && cause.message === "unsupported_n26_pdf"
+          ? "PDF non riconosciuto come estratto conto N26 supportato. I dati locali non sono stati modificati."
+          : "Il file non è un estratto CSV, XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
     }
   };
@@ -511,6 +515,16 @@ export function ImportsPage({
       )}
     </div>
   );
+}
+
+function resolveN26AccountName(accounts: readonly Account[]): string {
+  const candidates = accounts.filter(
+    (account) =>
+      !account.isArchived &&
+      account.type !== "virtual_subaccount" &&
+      /\bn26\b/i.test(`${account.name} ${account.institution ?? ""}`),
+  );
+  return candidates.length === 1 ? candidates[0]!.name : "";
 }
 
 async function sha256(bytes: ArrayBuffer): Promise<string> {

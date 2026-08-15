@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   detectMediobancaPremierCsv,
+  extractN26SpaceCandidates,
   parseN26StatementText,
+  parseN26ItalianStatementText,
   readMediobancaCsv,
   readMediobancaWorkbook,
 } from "./bankStatementPreview";
@@ -87,7 +89,65 @@ describe("bank statement previews", () => {
     );
     expect(preview.sheets[0]!.rows).toEqual([
       ["Data", "Conto", "Importo", "Valuta", "Controparte", "Nota"],
-      ["2026-07-28", "N26", "-4,50", "EUR", "Coffee shop", "Estratto N26 PDF"],
+      ["2026-07-28", "", "-4,50", "EUR", "Coffee shop", "Estratto N26 PDF"],
+    ]);
+  });
+
+  it("normalizza il layout N26 italiano, importi in migliaia e descrizioni su più righe", () => {
+    const preview = parseN26ItalianStatementText(
+      [
+        "Pagamento carta",
+        "Mastercard • Bar e ristoranti",
+        "Valuta 11.06.2026",
+        "11.06.2026 -40,00€",
+        "Bonifico ricevuto",
+        "Valuta 12.06.2026",
+        "12.06.2026 +3.000,00€",
+        "Saldo precedente",
+        "100,00€",
+        "Il tuo nuovo saldo",
+      ].join("\n"),
+    );
+    expect(preview.sheets[0]!.rows).toEqual([
+      ["Data", "Conto", "Importo", "Valuta", "Controparte", "Nota"],
+      [
+        "2026-06-11",
+        "",
+        "-40,00",
+        "EUR",
+        "Pagamento carta",
+        "Mastercard • Bar e ristoranti",
+      ],
+      ["2026-06-12", "", "+3.000,00", "EUR", "Bonifico ricevuto", ""],
+    ]);
+    expect(preview.sheets[0]!.rawRows?.[1]).toEqual([
+      "Pagamento carta",
+      "Mastercard • Bar e ristoranti",
+      "Valuta 11.06.2026",
+      "11.06.2026 -40,00€",
+    ]);
+  });
+
+  it("rileva gli Spaces dichiarati anche senza movimenti e normalizza solo per il confronto", () => {
+    expect(
+      extractN26SpaceCandidates("Spazio: Riserva\nMovimenti dello Spazio\nSpazio:   Salute  \nSpazio: riserva"),
+    ).toEqual([
+      { name: "Riserva", movementCount: 0 },
+      { name: "Salute", movementCount: 0 },
+    ]);
+  });
+
+  it("associa i movimenti della sezione Space allo Space esplicito", () => {
+    const preview = parseN26ItalianStatementText(
+      "Spazio: Riserva\nDa Conto corrente principale\nValuta 11.06.2026\n11.06.2026 +40,00€",
+    );
+    expect(preview.sheets[0]!.rows[1]).toEqual([
+      "2026-06-11",
+      "Riserva",
+      "+40,00",
+      "EUR",
+      "Da Conto corrente principale",
+      "",
     ]);
   });
 });

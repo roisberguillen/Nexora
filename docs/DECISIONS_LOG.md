@@ -330,6 +330,16 @@ Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e
   attesa non entra in saldi o report finché l'utente non conferma un movimento.
 # 2026-07-31 — Fase 1: la mappa Stitch non crea route nuove
 
+## 2026-08-15 — Undo degli Spaces creati dall'import N26 conserva l'audit
+
+- **Contesto:** le transazioni importate, anche se annullate, restano nel ledger e nell'audit del
+  batch con riferimenti al conto. L'eliminazione fisica di uno Space dopo l'undo romperebbe le
+  foreign key oppure richiederebbe la cancellazione dell'audit.
+- **Scelta:** l'undo di un batch N26 archivia uno Space creato esclusivamente dal batch quando non
+  riceve altri utilizzi; non lo elimina fisicamente e non lo riattiva mai in modo implicito.
+- **Conseguenze:** transazioni e batch restano verificabili, mentre lo Space non viene più proposto
+  per nuove registrazioni. Un utilizzo successivo conserva lo Space attivo e viene riportato.
+
 Le 98 schermate Stitch sono trattate come stati e superfici di una stessa applicazione, non come
 98 route da implementare. Ogni schermata è mappata a una route, alle letture/scritture del ledger,
 ai componenti e alla fase responsabile in `docs/ux/STITCH_SCREEN_MATRIX.md`. In particolare le
