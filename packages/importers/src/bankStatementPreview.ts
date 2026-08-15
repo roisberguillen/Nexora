@@ -10,6 +10,21 @@ export interface N26SpaceCandidate {
   readonly movementCount: number;
 }
 
+/** A stable, visual text line reconstructed from PDF.js positioned text items. */
+export interface PdfTextLine {
+  readonly pageNumber: number;
+  readonly y: number;
+  readonly text: string;
+}
+
+export type N26PdfErrorCode = "not_n26_statement" | "n26_statement_parse_failed";
+
+export interface PositionedPdfTextItem {
+  readonly str: string;
+  readonly transform: readonly number[];
+  readonly width?: number;
+}
+
 /** Converts a Mediobanca workbook to the same local, reviewable row shape used by imports. */
 export function readMediobancaWorkbook(bytes: ArrayBuffer): MoneyManagerWorkbookPreview {
   const signature = new Uint8Array(bytes.slice(0, 4));
@@ -58,22 +73,92 @@ export function readMediobancaCsv(bytes: ArrayBuffer): MoneyManagerWorkbookPrevi
   });
 }
 
-/** Extracts text locally from an N26 PDF; unsupported layouts remain review-only. */
+/**
+ * Extracts an N26 PDF locally. PDF.js exposes positioned fragments, not textual lines, so the
+ * parser deliberately receives reconstructed visual rows rather than a newline per fragment.
+ */
 export async function readN26Pdf(bytes: ArrayBuffer): Promise<MoneyManagerWorkbookPreview> {
   const pdf = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  pdf.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/legacy/build/pdf.worker.mjs",
-    import.meta.url,
-  ).toString();
-  const document = await pdf.getDocument({ data: new Uint8Array(bytes) }).promise;
-  const pages: string[] = [];
+  const useWorker =
+    typeof window !== "undefined" && !window.navigator.userAgent.toLowerCase().includes("jsdom");
+  if (useWorker) {
+    pdf.GlobalWorkerOptions.workerSrc = new URL(
+      "pdfjs-dist/legacy/build/pdf.worker.mjs",
+      import.meta.url,
+    ).toString();
+  }
+  const document = await pdf.getDocument({
+    data: new Uint8Array(bytes),
+    ...(useWorker ? {} : { disableWorker: true }),
+  }).promise;
+  const lines: PdfTextLine[] = [];
   for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
     const content = await (await document.getPage(pageNumber)).getTextContent();
-    pages.push(content.items.map((item) => ("str" in item ? item.str : "")).join("\n"));
+    lines.push(
+      ...reconstructPdfTextLines(
+        pageNumber,
+        content.items
+          .filter((item) => "str" in item && item.str.trim() !== "")
+          .map((item) => item as PositionedPdfTextItem),
+      ),
+    );
   }
-  const preview = parseN26StatementText(pages.join("\n"));
-  if (preview.sheets[0]?.rows.length === 1) throw new Error("unsupported_n26_pdf");
+  if (!detectN26Statement(lines)) throw new Error("not_n26_statement" satisfies N26PdfErrorCode);
+  const preview = parseN26StatementLines(lines);
+  if (preview.sheets[0]?.rows.length === 1) {
+    throw new Error("n26_statement_parse_failed" satisfies N26PdfErrorCode);
+  }
   return preview;
+}
+
+/** Groups PDF fragments by visual baseline, then keeps their left-to-right reading order. */
+export function reconstructPdfTextLines(
+  pageNumber: number,
+  items: readonly PositionedPdfTextItem[],
+): readonly PdfTextLine[] {
+  const tolerance = 1;
+  const groups: { y: number; items: PositionedPdfTextItem[] }[] = [];
+  for (const item of items) {
+    const y = item.transform[5] ?? 0;
+    const group = groups.find((candidate) => Math.abs(candidate.y - y) <= tolerance);
+    if (group === undefined) groups.push({ y, items: [item] });
+    else group.items.push(item);
+  }
+  return Object.freeze(
+    groups
+      .sort((left, right) => right.y - left.y)
+      .map((group) => {
+        const sorted = [...group.items].sort(
+          (left, right) => (left.transform[4] ?? 0) - (right.transform[4] ?? 0),
+        );
+        let previousEnd: number | undefined;
+        const text = sorted
+          .map((item) => {
+            const x = item.transform[4] ?? 0;
+            const gap = previousEnd === undefined ? "" : x > previousEnd + 1 ? " " : "";
+            previousEnd = x + (item.width ?? item.str.length);
+            return `${gap}${item.str}`;
+          })
+          .join("")
+          .replaceAll(/\s+/g, " ")
+          .trim();
+        return Object.freeze({ pageNumber, y: group.y, text });
+      })
+      .filter((line) => line.text !== ""),
+  );
+}
+
+/** Detects the statement’s structure independently from whether a movement can be parsed. */
+export function detectN26Statement(lines: readonly PdfTextLine[] | readonly string[]): boolean {
+  const text = lines.map((line) => (typeof line === "string" ? line : line.text)).join("\n");
+  const signals = [
+    /Estratto conto N\.?/i,
+    /Descrizione\s+Data\s+Importo/i,
+    /Panoramica/i,
+    /Movimenti dello Spazio/i,
+    /Spazio:\s*\S/i,
+  ];
+  return signals.filter((signal) => signal.test(text)).length >= 2;
 }
 
 export function parseN26StatementText(text: string): MoneyManagerWorkbookPreview {
@@ -104,31 +189,35 @@ export function parseN26StatementText(text: string): MoneyManagerWorkbookPreview
  * as movements. The original source lines remain attached to the preview for the import audit.
  */
 export function parseN26ItalianStatementText(text: string): MoneyManagerWorkbookPreview {
-  const lines = text
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line !== "");
+  return parseN26StatementLines(
+    text
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line !== "")
+      .map((text, index) => Object.freeze({ pageNumber: 1, y: -index, text })),
+  );
+}
+
+/** Parses visual rows one page at a time so a Space label can occur after its movements. */
+export function parseN26StatementLines(lines: readonly PdfTextLine[]): MoneyManagerWorkbookPreview {
   const rows: string[][] = [Array.from(canonicalHeaders)];
   const rawRows: string[][] = [Array.from(canonicalHeaders)];
-  const amountLine = /^(\d{2}\.\d{2}\.\d{4})\s+([+-][\d.]+,\d{2})\s*€$/;
-  for (let index = 0; index < lines.length; index += 1) {
-    const match = amountLine.exec(lines[index]!);
-    if (match === null) continue;
-    const valueDateIndex = index - 1;
-    if (!/^Valuta\s+\d{2}\.\d{2}\.\d{4}$/i.test(lines[valueDateIndex] ?? "")) continue;
-    const description = n26Description(lines, valueDateIndex);
-    if (description === undefined) continue;
-    const date = normalizeN26Date(match[1]!);
-    if (date === undefined) continue;
-    rows.push([
-      date,
-      n26SpaceAt(lines, index) ?? "",
-      match[2]!,
-      "EUR",
-      description.payee,
-      description.note,
-    ]);
-    rawRows.push([...lines.slice(description.start, index + 1)]);
+  for (const page of groupN26Pages(lines)) {
+    const section = n26SectionForPage(page);
+    if (section.kind === "summary" || section.kind === "legal") continue;
+    for (let index = 0; index < page.length; index += 1) {
+      const movement = n26MovementAt(page, index);
+      if (movement === undefined) continue;
+      rows.push([
+        movement.date,
+        section.spaceName ?? "",
+        movement.amount,
+        "EUR",
+        movement.payee,
+        movement.note,
+      ]);
+      rawRows.push([...movement.raw]);
+    }
   }
   return Object.freeze({
     sheets: Object.freeze([
@@ -139,15 +228,6 @@ export function parseN26ItalianStatementText(text: string): MoneyManagerWorkbook
       }),
     ]),
   });
-}
-
-function n26SpaceAt(lines: readonly string[], index: number): string | undefined {
-  for (let cursor = index - 1; cursor >= 0; cursor -= 1) {
-    const match = /^\s*Spazio:\s*(.+?)\s*$/i.exec(lines[cursor]!);
-    if (match !== null) return match[1]!.trim();
-    if (/^Movimenti del conto|^Estratto conto/i.test(lines[cursor]!)) return undefined;
-  }
-  return undefined;
 }
 
 /** Finds declared Spaces independently of their movement count. */
@@ -164,28 +244,86 @@ export function extractN26SpaceCandidates(text: string): readonly N26SpaceCandid
   return Object.freeze([...unique.values()]);
 }
 
-function n26Description(
-  lines: readonly string[],
-  valueDateIndex: number,
-): { readonly payee: string; readonly note: string; readonly start: number } | undefined {
-  const source: string[] = [];
-  let start = valueDateIndex;
-  for (let index = valueDateIndex - 1; index >= 0 && source.length < 4; index -= 1) {
-    const line = lines[index]!;
-    if (
-      /^(Descrizione|Data|Importo|Saldo precedente|Operazioni in (?:uscita|entrata)|Il tuo nuovo saldo|Panoramica|Movimenti dello Spazio|Spazio:)/i.test(
-        line,
-      )
-    )
-      break;
-    if (/^\d{2}\.\d{2}\.\d{4}\s+[+-]/.test(line)) break;
-    source.unshift(line);
-    start = index;
+function groupN26Pages(lines: readonly PdfTextLine[]): readonly (readonly PdfTextLine[])[] {
+  const pages = new Map<number, PdfTextLine[]>();
+  for (const line of lines) {
+    const page = pages.get(line.pageNumber);
+    if (page === undefined) pages.set(line.pageNumber, [line]);
+    else page.push(line);
   }
-  const payee = source[0]?.trim();
-  return payee === undefined || payee === ""
-    ? undefined
-    : { payee, note: source.slice(1).join(" · "), start };
+  return [...pages.values()].map((page) => Object.freeze([...page]));
+}
+
+function n26SectionForPage(lines: readonly PdfTextLine[]): {
+  readonly kind: "main" | "space" | "summary" | "legal";
+  readonly spaceName?: string;
+} {
+  const text = lines.map((line) => line.text).join("\n");
+  const space = /(?:^|\n)Spazio:\s*(.+?)(?:\n|$)/i.exec(text)?.[1]?.trim();
+  if (space !== undefined && space !== "") return { kind: "space", spaceName: space };
+  if (/Condizioni|Informazioni legali|IBAN|BIC/i.test(text)) return { kind: "legal" };
+  return { kind: "main" };
+}
+
+function n26MovementAt(
+  page: readonly PdfTextLine[],
+  index: number,
+):
+  | {
+      readonly date: string;
+      readonly amount: string;
+      readonly payee: string;
+      readonly note: string;
+      readonly valueDate?: string;
+      readonly raw: readonly string[];
+    }
+  | undefined {
+  const line = page[index]?.text ?? "";
+  const next = page[index + 1]?.text ?? "";
+  if (/^(Descrizione|Data|Importo|Valuta|Saldo precedente|Operazioni in (?:uscita|entrata)|Il tuo nuovo saldo|Panoramica|Movimenti dello Spazio|Spazio:|Data di apertura)/i.test(line)) {
+    return undefined;
+  }
+  const pattern = /(?:^|\s)(\d{2}\.\d{2}\.\d{4})\s+([+-][\d.]+,\d{2})\s*€?\s*$/u;
+  const usesNext = !pattern.test(line);
+  const candidate = usesNext ? `${line} ${next}`.trim() : line;
+  const match = pattern.exec(candidate);
+  if (match === null) return undefined;
+  const date = normalizeN26Date(match[1]!);
+  const amount = match[2];
+  if (date === undefined || amount === undefined) return undefined;
+  const description = candidate.slice(0, match.index ?? 0).trim();
+  const preceding = page.slice(0, index).map((entry) => entry.text);
+  const descriptionLines = preceding
+    .slice(-4)
+    .filter(
+      (entry) =>
+        !isN26Metadata(entry) &&
+        !/^\d{2}\.\d{2}\.\d{4}$/.test(entry) &&
+        !pattern.test(entry),
+    );
+  const payee = description || (descriptionLines[0] ?? "");
+  if (payee === "") return undefined;
+  const valueDateLine = page[index - 1]?.text ?? page[index + 2]?.text ?? "";
+  const valueDateMatch = /^Valuta\s+(\d{2}\.\d{2}\.\d{4})$/i.exec(valueDateLine);
+  const raw = [...descriptionLines, valueDateLine, line, ...(usesNext && next !== "" ? [next] : [])].filter(
+    (entry, position, entries) => entry !== "" && entries.indexOf(entry) === position,
+  );
+  const valueDate =
+    valueDateMatch === null ? undefined : normalizeN26Date(valueDateMatch[1]!);
+  return {
+    date,
+    amount,
+    payee,
+    note: description ? "" : descriptionLines.slice(1).join(" · "),
+    ...(valueDate === undefined ? {} : { valueDate }),
+    raw,
+  };
+}
+
+function isN26Metadata(line: string): boolean {
+  return /^(Valuta|Descrizione|Data|Importo|Saldo precedente|Operazioni in (?:uscita|entrata)|Il tuo nuovo saldo|Panoramica|Movimenti dello Spazio|Spazio:|Data di apertura)/i.test(
+    line,
+  );
 }
 
 function normalizeMediobancaSheet(

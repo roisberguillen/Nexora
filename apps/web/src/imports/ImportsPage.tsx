@@ -156,8 +156,10 @@ export function ImportsPage({
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
       setError(
-        cause instanceof Error && cause.message === "unsupported_n26_pdf"
-          ? "PDF non riconosciuto come estratto conto N26 supportato. I dati locali non sono stati modificati."
+        cause instanceof Error && cause.message === "not_n26_statement"
+          ? "Il PDF non è stato riconosciuto come un estratto conto N26 supportato. I dati locali non sono stati modificati."
+          : cause instanceof Error && cause.message === "n26_statement_parse_failed"
+            ? "Estratto conto N26 riconosciuto, ma non è stato possibile interpretare correttamente i movimenti. Nessun dato locale è stato modificato."
           : "Il file non è un estratto CSV, XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
     }

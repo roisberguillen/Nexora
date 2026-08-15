@@ -6,8 +6,10 @@ import {
   extractN26SpaceCandidates,
   parseN26StatementText,
   parseN26ItalianStatementText,
+  parseN26StatementLines,
   readMediobancaCsv,
   readMediobancaWorkbook,
+  reconstructPdfTextLines,
 } from "./bankStatementPreview";
 import { detectMoneyManagerMapping, previewMoneyManagerRows } from "./moneyManagerPreview";
 
@@ -148,6 +150,44 @@ describe("bank statement previews", () => {
       "EUR",
       "Da Conto corrente principale",
       "",
+    ]);
+  });
+
+  it("ricostruisce una riga N26 da TextItem PDF separati per colonna", () => {
+    const lines = reconstructPdfTextLines(1, [
+      { str: "A Luce/gas", transform: [1, 0, 0, 1, 100, 500], width: 80 },
+      { str: "11.06.2026", transform: [1, 0, 0, 1, 400, 500], width: 60 },
+      { str: "-40,00€", transform: [1, 0, 0, 1, 500, 500], width: 45 },
+      { str: "Valuta", transform: [1, 0, 0, 1, 100, 480], width: 35 },
+      { str: "11.06.2026", transform: [1, 0, 0, 1, 145, 480], width: 60 },
+    ]);
+    expect(lines.map((line) => line.text)).toEqual([
+      "A Luce/gas 11.06.2026 -40,00€",
+      "Valuta 11.06.2026",
+    ]);
+    expect(parseN26StatementLines(lines).sheets[0]!.rows[1]).toEqual([
+      "2026-06-11",
+      "",
+      "-40,00",
+      "EUR",
+      "A Luce/gas",
+      "",
+    ]);
+  });
+
+  it("assegna lo Space della pagina anche quando la sua label segue i movimenti", () => {
+    const lines = [
+      { pageNumber: 1, y: 500, text: "Da Conto corrente principale 11.06.2026 +40,00€" },
+      { pageNumber: 1, y: 480, text: "Valuta 11.06.2026" },
+      { pageNumber: 1, y: 100, text: "Movimenti dello Spazio N. 06/2026" },
+      { pageNumber: 1, y: 80, text: "Spazio: Liquidità" },
+      { pageNumber: 2, y: 500, text: "Spazio: Riserva" },
+    ] as const;
+    const preview = parseN26StatementLines(lines);
+    expect(preview.sheets[0]!.rows[1]?.[1]).toBe("Liquidità");
+    expect(extractN26SpaceCandidates(lines.map((line) => line.text).join("\n"))).toEqual([
+      { name: "Liquidità", movementCount: 0 },
+      { name: "Riserva", movementCount: 0 },
     ]);
   });
 });
