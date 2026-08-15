@@ -108,3 +108,28 @@ test("importa un CSV generico solo dopo anteprima e conferma", async ({ page }) 
   await expect(history).toContainText("movimenti-generici.csv");
   await expect(history).toContainText("1 importate");
 });
+
+test("rileva il CSV Mediobanca Premier dalle intestazioni e usa Data valuta", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#imports");
+
+  await page.getByLabel("Seleziona un estratto CSV, XLSX o PDF").setInputFiles({
+    name: "estratto.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "Data contabile;Data valuta;Tipologia;Entrate;Uscite;Divisa\n13/08/2026;11/08/2026;Pagamento POS;;-7,40;EUR",
+      "utf8",
+    ),
+  });
+
+  await expect(page.getByText("Data movimento: Data valuta.")).toBeVisible();
+  await expect(page.getByText("2026-08-11")).toBeVisible();
+  await expect(page.getByText(/-7,40/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Conferma 0 righe" })).toBeDisabled();
+  await page
+    .getByLabel("Conto locale predefinito")
+    .selectOption({ label: "Conto quotidiano demo" });
+  await expect(page.getByText("1 pronte")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Conferma 1 righe" })).toBeEnabled();
+});

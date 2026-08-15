@@ -118,8 +118,8 @@ describe("MigrationRunner", () => {
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 0,
-      toVersion: 19,
-      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+      toVersion: 20,
+      appliedMigrations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
     });
     expect(migrationRows(sqlite)).toEqual([
       {
@@ -156,14 +156,15 @@ describe("MigrationRunner", () => {
       { version: 17, name: "advanced-recurring-rules" },
       { version: 18, name: "budget-alert-thresholds" },
       { version: 19, name: "recurring-monthly-budgets" },
+      { version: 20, name: "mediobanca-csv-importer" },
     ]);
 
     await expect(runner.migrateToLatest()).resolves.toEqual({
-      fromVersion: 19,
-      toVersion: 19,
+      fromVersion: 20,
+      toVersion: 20,
       appliedMigrations: [],
     });
-    expect(migrationRows(sqlite)).toHaveLength(19);
+    expect(migrationRows(sqlite)).toHaveLength(20);
   });
 
   it("aggiorna un database v10 senza perdere dati già presenti", async () => {
@@ -186,8 +187,8 @@ describe("MigrationRunner", () => {
     });
     await expect(v11Runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 10,
-      toVersion: 19,
-      appliedMigrations: [11, 12, 13, 14, 15, 16, 17, 18, 19],
+      toVersion: 20,
+      appliedMigrations: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
     });
     expect(tableCount(sqlite, "monthly_journals")).toBe(1);
     expect(sqlite.prepare("SELECT name FROM accounts WHERE id = ?").get("account-v10")).toEqual({
@@ -234,8 +235,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toEqual({
       fromVersion: 16,
-      toVersion: 19,
-      appliedMigrations: [17, 18, 19],
+      toVersion: 20,
+      appliedMigrations: [17, 18, 19, 20],
     });
     expect(
       sqlite
@@ -275,8 +276,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 17,
-      toVersion: 19,
-      appliedMigrations: [18, 19],
+      toVersion: 20,
+      appliedMigrations: [18, 19, 20],
     });
     expect(
       sqlite
@@ -324,8 +325,8 @@ describe("MigrationRunner", () => {
     });
     await expect(runner.migrateToLatest()).resolves.toMatchObject({
       fromVersion: 13,
-      toVersion: 19,
-      appliedMigrations: [14, 15, 16, 17, 18, 19],
+      toVersion: 20,
+      appliedMigrations: [14, 15, 16, 17, 18, 19, 20],
     });
     expect(
       sqlite

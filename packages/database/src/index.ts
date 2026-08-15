@@ -115,6 +115,10 @@ export {
   BUDGET_ALERT_THRESHOLDS_SCHEMA_VERSION,
   budgetAlertThresholdsMigration,
 } from "./migrations/0018-budget-alert-thresholds";
+export {
+  MEDIOBANCA_CSV_IMPORTER_SCHEMA_VERSION,
+  mediobancaCsvImporterMigration,
+} from "./migrations/0020-mediobanca-csv-importer";
 export type { DatabaseMigration } from "./migrations/DatabaseMigration";
 export type {
   MigrationBackupProvider,

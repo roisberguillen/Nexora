@@ -11,6 +11,8 @@ export {
 } from "./moneyManagerPreview";
 export {
   readMediobancaWorkbook as readBankWorkbook,
+  readMediobancaCsv,
+  detectMediobancaPremierCsv,
   readN26Pdf as readBankPdf,
 } from "./bankStatementPreview";
 export {

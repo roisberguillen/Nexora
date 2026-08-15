@@ -3,6 +3,8 @@ import {
   dryRunMoneyManagerRows,
   previewMoneyManagerRows,
   readBankWorkbook,
+  readMediobancaCsv,
+  detectMediobancaPremierCsv,
   readMoneyManagerWorkbook,
   readBankPdf,
   readGenericCsv,
@@ -81,7 +83,12 @@ export function ImportsPage({
   const rawPreview =
     selectedSheet === undefined
       ? []
-      : previewMoneyManagerRows(selectedSheet.rows.slice(1), mapping);
+      : previewMoneyManagerRows(
+          selectedSheet.rows.slice(1),
+          mapping,
+          1,
+          selectedSheet.rawRows?.slice(1),
+        );
   const preview = rawPreview.map((row) => {
     const account = rowAccountOverrides[row.sourceRowNumber] ?? row.account ?? fallbackAccountName;
     return resolvePreviewAccount(row, account);
@@ -100,28 +107,40 @@ export function ImportsPage({
     try {
       const bytes = await file.arrayBuffer();
       const filename = file.name.toLocaleLowerCase("it-IT");
+      const genericCsv = filename.endsWith(".csv") ? readGenericCsv(bytes) : undefined;
       const importerType: ImporterType = filename.endsWith(".pdf")
         ? "n26_pdf"
-        : filename.endsWith(".csv")
-          ? "generic_csv"
-          : filename.includes("mediobanca")
-            ? "mediobanca_xlsx"
-            : "money_manager_xlsx";
+        : genericCsv !== undefined &&
+            detectMediobancaPremierCsv(genericCsv.sheets[0]?.rows[0] ?? [])
+          ? "mediobanca_csv"
+          : genericCsv !== undefined
+            ? "generic_csv"
+            : filename.includes("mediobanca")
+              ? "mediobanca_xlsx"
+              : "money_manager_xlsx";
       const workbook =
-        importerType === "generic_csv"
-          ? readGenericCsv(bytes)
-          : importerType === "n26_pdf"
-            ? await readBankPdf(bytes)
-            : importerType === "mediobanca_xlsx"
-              ? readBankWorkbook(bytes)
-              : readMoneyManagerWorkbook(bytes);
+        importerType === "mediobanca_csv"
+          ? readMediobancaCsv(bytes)
+          : importerType === "generic_csv"
+            ? genericCsv!
+            : importerType === "n26_pdf"
+              ? await readBankPdf(bytes)
+              : importerType === "mediobanca_xlsx"
+                ? readBankWorkbook(bytes)
+                : readMoneyManagerWorkbook(bytes);
       const initialSheet = workbook.sheets[0];
       if (initialSheet === undefined) throw new Error("empty_workbook");
       setSheets(workbook.sheets);
       setSelectedSheetName(initialSheet.name);
       setMapping(detectMoneyManagerMapping(initialSheet.rows[0] ?? []));
       setSelectedMappingProfileId("");
-      setFallbackAccountName("");
+      setFallbackAccountName(
+        importerType === "mediobanca_csv"
+          ? (accounts.find(
+              (account) => !account.isArchived && account.name === "Mediobanca Premier",
+            )?.name ?? "")
+          : "",
+      );
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
       setSource({ filename: file.name, importerType, sha256: await sha256(bytes) });
@@ -264,6 +283,9 @@ export function ImportsPage({
                 Le colonne rilevate vengono proposte automaticamente. Lascia vuoti i campi non
                 disponibili. Per un estratto senza colonna conto, seleziona il conto locale sotto.
               </p>
+              {source?.importerType === "mediobanca_csv" ? (
+                <p className="import-help">Data movimento: Data valuta.</p>
+              ) : null}
               <label className="account-form-label">
                 Conto locale predefinito
                 <select

@@ -372,7 +372,7 @@ export function validatePortableLedgerSnapshot(
     ImportBatch.create({
       id: text(value, "id"),
       importerType: text(value, "importerType") as
-        "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf" | "generic_csv",
+        "money_manager_xlsx" | "mediobanca_xlsx" | "mediobanca_csv" | "n26_pdf" | "generic_csv",
       sourceFilename: text(value, "sourceFilename"),
       sourceSha256: text(value, "sourceSha256"),
       ...(optionalText(value, "mappingProfileId") === undefined

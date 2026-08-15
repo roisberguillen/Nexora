@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx";
 
+import { readGenericCsv } from "./genericCsvPreview";
 import type { MoneyManagerSheet, MoneyManagerWorkbookPreview } from "./moneyManagerPreview";
 
 const canonicalHeaders = ["Data", "Conto", "Importo", "Valuta", "Controparte", "Nota"] as const;
@@ -29,6 +30,26 @@ export function readMediobancaWorkbook(bytes: ArrayBuffer): MoneyManagerWorkbook
         ),
       ),
     ),
+  });
+}
+
+/** Identifies the documented Mediobanca Premier CSV layout by its complete header contract. */
+export function detectMediobancaPremierCsv(headers: readonly string[]): boolean {
+  const normalized = new Set(headers.map(normalize));
+  return ["data valuta", "tipologia", "entrate", "uscite", "divisa"].every((header) =>
+    normalized.has(header),
+  );
+}
+
+/** Converts the documented Mediobanca Premier CSV layout into the shared import preview shape. */
+export function readMediobancaCsv(bytes: ArrayBuffer): MoneyManagerWorkbookPreview {
+  const source = readGenericCsv(bytes);
+  const sheet = source.sheets[0];
+  if (sheet === undefined || !detectMediobancaPremierCsv(sheet.rows[0] ?? [])) {
+    throw new Error("invalid_mediobanca_csv");
+  }
+  return Object.freeze({
+    sheets: Object.freeze([normalizeMediobancaSheet("Mediobanca Premier CSV", sheet.rows)]),
   });
 }
 
@@ -69,26 +90,37 @@ export function parseN26StatementText(text: string): MoneyManagerWorkbookPreview
   });
 }
 
-function normalizeMediobancaSheet(name: string, rows: readonly unknown[][]): MoneyManagerSheet {
+function normalizeMediobancaSheet(
+  name: string,
+  rows: readonly (readonly unknown[])[],
+): MoneyManagerSheet {
   const source = rows.map((row) => row.map((value) => String(value ?? "").trim()));
   const header = source[0]?.map(normalize) ?? [];
   const index = (names: readonly string[]) => header.findIndex((value) => names.includes(value));
-  const dateIndex = index(["data", "data operazione", "data contabile"]);
+  // The accounting date is deliberately never a fallback: the financial date is Data valuta.
+  const dateIndex = index(["data valuta"]);
   const debitIndex = index(["addebiti", "addebito", "uscite"]);
   const creditIndex = index(["accrediti", "accredito", "entrate"]);
-  const payeeIndex = index(["descrizione", "causale", "beneficiario"]);
-  const currencyIndex = index(["valuta", "currency"]);
+  const payeeIndex = index(["tipologia", "descrizione", "causale", "beneficiario"]);
+  const currencyIndex = index(["divisa", "valuta", "currency"]);
   const normalizedRows = source.slice(1).map((row) => {
     const credit = valueAt(row, creditIndex);
     const debit = valueAt(row, debitIndex);
-    const amount = credit !== "" ? credit : debit === "" ? "" : `-${debit.replace(/^-/, "")}`;
+    const amount =
+      credit !== "" && debit !== ""
+        ? ""
+        : credit !== ""
+          ? positiveAmount(credit)
+          : debit === ""
+            ? ""
+            : negativeAmount(debit);
     return [
       valueAt(row, dateIndex),
-      "Mediobanca",
+      "",
       amount,
       valueAt(row, currencyIndex) || "EUR",
       valueAt(row, payeeIndex),
-      "Estratto Mediobanca XLSX",
+      "Estratto Mediobanca",
     ];
   });
   return Object.freeze({
@@ -97,7 +129,16 @@ function normalizeMediobancaSheet(name: string, rows: readonly unknown[][]): Mon
       Object.freeze(Array.from(canonicalHeaders)),
       ...normalizedRows.map((row) => Object.freeze(row)),
     ]),
+    rawRows: Object.freeze(source.map((row) => Object.freeze([...row]))),
   });
+}
+
+function positiveAmount(value: string): string {
+  return value.replace(/^\+/, "");
+}
+
+function negativeAmount(value: string): string {
+  return `-${value.replace(/^[+-]/, "")}`;
 }
 
 function valueAt(row: readonly string[], index: number): string {

@@ -1,5 +1,15 @@
 # Test evidence
 
+## Mediobanca Premier CSV detection fix — 2026-08-15
+
+- Header-detected Mediobanca CSV normalization now uses `Data valuta` exclusively, preserves raw
+  cells for audit, maps `Tipologia`, `Entrate`/`Uscite` and `Divisa`, and requires an existing
+  named account or explicit local-account selection.
+- Targeted Vitest: 25 passed across importer, ImportsPage, migration, SQLite/IndexedDB and local
+  backup compatibility suites. Workspace typecheck passed.
+- Import E2E: the Mediobanca path passed 6/6 configured viewports; the complete import flow passed
+  5/5 at 1440 px. The user separately confirmed their local real-file test; no real source entered Git.
+
 ## Phase 12.5.2 isolated Mediobanca sample validation — complete — 2026-08-15
 
 - Real source drill used only the user-authorized one-month CSV on 127.0.0.1:4174; the definitive

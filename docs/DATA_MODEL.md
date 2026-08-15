@@ -197,6 +197,8 @@ Le migrazioni additive successive mantengono invariati tutti i dati v1:
   per la compatibilità con tutti i batch precedenti.
 - v19: `budgets.series_id` e `budgets.effective_to_period` rendono ricorrenti i limiti mensili
   senza copie; le righe legacy sono trasformate in revisioni ordinate, senza eliminare record.
+- v20: `import_batches.importer_type_v4` aggiunge `mediobanca_csv`, preservando i discriminatori
+  precedenti e rendendo auditabile il riconoscimento strutturale dell'estratto Mediobanca Premier.
 
 IndexedDB usa gli object store equivalenti,
 con indici per scadenza, conto e trigger. Lo store `monthly_journals` ha un indice

@@ -6,6 +6,8 @@ export type MoneyManagerField =
 export interface MoneyManagerSheet {
   readonly name: string;
   readonly rows: readonly (readonly string[])[];
+  /** Original cells, when a source-specific normalizer produces canonical rows. */
+  readonly rawRows?: readonly (readonly string[])[];
 }
 
 export interface MoneyManagerWorkbookPreview {
@@ -97,16 +99,20 @@ export function previewMoneyManagerRows(
   rows: readonly (readonly string[])[],
   mapping: MoneyManagerMapping,
   headerRowNumber = 1,
+  rawRows?: readonly (readonly string[])[],
 ): readonly MoneyManagerPreviewRow[] {
-  return rows.map((row, index) => previewRow(row, mapping, headerRowNumber + index + 1));
+  return rows.map((row, index) =>
+    previewRow(row, mapping, headerRowNumber + index + 1, rawRows?.[index]),
+  );
 }
 
 function previewRow(
   row: readonly string[],
   mapping: MoneyManagerMapping,
   sourceRowNumber: number,
+  sourceRawValues: readonly string[] | undefined,
 ): MoneyManagerPreviewRow {
-  const rawValues = Object.freeze([...row]);
+  const rawValues = Object.freeze([...(sourceRawValues ?? row)]);
   const dateText = field(row, mapping.date);
   const amountText = field(row, mapping.amount);
   const date = dateText === undefined ? undefined : normalizeDate(dateText);

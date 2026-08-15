@@ -60,6 +60,7 @@ function parseProfile(value: unknown): ImportMappingProfile | undefined {
     record.name.trim().length > 80 ||
     (record.importerType !== "money_manager_xlsx" &&
       record.importerType !== "mediobanca_xlsx" &&
+      record.importerType !== "mediobanca_csv" &&
       record.importerType !== "n26_pdf" &&
       record.importerType !== "generic_csv") ||
     typeof record.mapping !== "object" ||

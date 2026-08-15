@@ -946,11 +946,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
           if (existing.length > 0)
             throw new DomainError("duplicate_entity", "Import batch id already exists.");
           await this.database.run(
-            "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, source_filename, source_sha256, mapping_profile_id, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
               batch.id,
               "money_manager_xlsx",
               importerTypeV2(batch.importerType),
+              importerTypeV3(batch.importerType),
               batch.importerType,
               batch.sourceFilename,
               batch.sourceSha256,
@@ -1016,11 +1017,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
               throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
           }
           await this.database.run(
-            "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, source_filename, source_sha256, mapping_profile_id, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
               committed.id,
               "money_manager_xlsx",
               importerTypeV2(committed.importerType),
+              importerTypeV3(committed.importerType),
               committed.importerType,
               committed.sourceFilename,
               committed.sourceSha256,
@@ -1575,7 +1577,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public async findImportBatchById(id: string): Promise<ImportBatch | undefined> {
     return this.performDatabaseOperation(async () => {
       const rows = await this.database.query<ImportBatchRecord>(
-        "SELECT id, importer_type_v3 AS importer_type, source_filename, source_sha256, mapping_profile_id, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches WHERE id = ?",
+        "SELECT id, importer_type_v4 AS importer_type, source_filename, source_sha256, mapping_profile_id, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches WHERE id = ?",
         [id],
       );
       return rows[0] === undefined ? undefined : importBatchFromRecord(rows[0]);
@@ -1699,7 +1701,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
     return this.performDatabaseOperation(async () =>
       (
         await this.database.query<ImportBatchRecord>(
-          "SELECT id, importer_type_v3 AS importer_type, source_filename, source_sha256, mapping_profile_id, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches ORDER BY started_at DESC, id DESC",
+          "SELECT id, importer_type_v4 AS importer_type, source_filename, source_sha256, mapping_profile_id, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches ORDER BY started_at DESC, id DESC",
         )
       ).map(importBatchFromRecord),
     );
@@ -1925,11 +1927,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
   }
   private async insertPortableImportBatch(batch: ImportBatch): Promise<void> {
     await this.database.run(
-      "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, source_filename, source_sha256, mapping_profile_id, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         batch.id,
         "money_manager_xlsx",
         importerTypeV2(batch.importerType),
+        importerTypeV3(batch.importerType),
         batch.importerType,
         batch.sourceFilename,
         batch.sourceSha256,
@@ -2511,7 +2514,14 @@ function importBatchFromRecord(row: ImportBatchRecord): ImportBatch {
 function importerTypeV2(
   importerType: ImportBatch["importerType"],
 ): "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf" {
-  return importerType === "generic_csv" ? "money_manager_xlsx" : importerType;
+  return importerType === "generic_csv" || importerType === "mediobanca_csv"
+    ? "money_manager_xlsx"
+    : importerType;
+}
+function importerTypeV3(
+  importerType: ImportBatch["importerType"],
+): "money_manager_xlsx" | "mediobanca_xlsx" | "n26_pdf" | "generic_csv" {
+  return importerType === "mediobanca_csv" ? "generic_csv" : importerType;
 }
 function importRowFromRecord(row: ImportRowRecord): ImportRow {
   return ImportRow.create({
