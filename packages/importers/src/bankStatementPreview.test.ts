@@ -190,4 +190,23 @@ describe("bank statement previews", () => {
       { name: "Riserva", movementCount: 0 },
     ]);
   });
+
+  it("does not classify a movement page as legal merely because its header contains IBAN and BIC", () => {
+    const preview = parseN26StatementLines([
+      { pageNumber: 1, y: 500, text: "IBAN BIC Estratto conto N. 06/2026" },
+      { pageNumber: 1, y: 480, text: "Descrizione Data Importo" },
+      { pageNumber: 1, y: 460, text: "Pagamento 11.06.2026 -40,00€" },
+    ]);
+    expect(preview.sheets[0]!.rows).toHaveLength(2);
+  });
+
+  it("consumes an amount line already used with its preceding date", () => {
+    const preview = parseN26StatementLines([
+      { pageNumber: 1, y: 500, text: "Pagamento" },
+      { pageNumber: 1, y: 480, text: "11.06.2026" },
+      { pageNumber: 1, y: 460, text: "-40,00€" },
+      { pageNumber: 1, y: 440, text: "Valuta 11.06.2026" },
+    ]);
+    expect(preview.sheets[0]!.rows).toHaveLength(2);
+  });
 });

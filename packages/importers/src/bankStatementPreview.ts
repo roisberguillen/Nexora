@@ -205,18 +205,20 @@ export function parseN26StatementLines(lines: readonly PdfTextLine[]): MoneyMana
   for (const page of groupN26Pages(lines)) {
     const section = n26SectionForPage(page);
     if (section.kind === "summary" || section.kind === "legal") continue;
-    for (let index = 0; index < page.length; index += 1) {
+    for (let index = 0; index < page.length; ) {
       const movement = n26MovementAt(page, index);
-      if (movement === undefined) continue;
-      rows.push([
-        movement.date,
-        section.spaceName ?? "",
-        movement.amount,
-        "EUR",
-        movement.payee,
-        movement.note,
-      ]);
-      rawRows.push([...movement.raw]);
+      if (movement !== undefined) {
+        rows.push([
+          movement.date,
+          section.spaceName ?? "",
+          movement.amount,
+          "EUR",
+          movement.payee,
+          movement.note,
+        ]);
+        rawRows.push([...movement.raw]);
+      }
+      index += movement?.consumedLines ?? 1;
     }
   }
   return Object.freeze({
@@ -260,8 +262,17 @@ function n26SectionForPage(lines: readonly PdfTextLine[]): {
 } {
   const text = lines.map((line) => line.text).join("\n");
   const space = /(?:^|\n)Spazio:\s*(.+?)(?:\n|$)/i.exec(text)?.[1]?.trim();
-  if (space !== undefined && space !== "") return { kind: "space", spaceName: space };
-  if (/Condizioni|Informazioni legali|IBAN|BIC/i.test(text)) return { kind: "legal" };
+  const hasMovements =
+    /Descrizione\s+Data\s+Importo|Movimenti del conto|Estratto conto N\.?|\d{2}\.\d{2}\.\d{4}\s+[+-][\d.]+,\d{2}/i.test(
+      text,
+    );
+  const hasSummary = /Saldo precedente|Operazioni in uscita|Operazioni in entrata|Il tuo nuovo saldo|Panoramica/i.test(text);
+  if (space !== undefined && space !== "") {
+    return hasMovements ? { kind: "space", spaceName: space } : { kind: "summary", spaceName: space };
+  }
+  if (hasMovements) return { kind: "main" };
+  if (hasSummary) return { kind: "summary" };
+  if (/Condizioni|Informazioni legali/i.test(text)) return { kind: "legal" };
   return { kind: "main" };
 }
 
@@ -274,6 +285,7 @@ function n26MovementAt(
       readonly amount: string;
       readonly payee: string;
       readonly note: string;
+      readonly consumedLines: number;
       readonly valueDate?: string;
       readonly raw: readonly string[];
     }
@@ -315,6 +327,7 @@ function n26MovementAt(
     amount,
     payee,
     note: description ? "" : descriptionLines.slice(1).join(" · "),
+    consumedLines: usesNext ? 2 : 1,
     ...(valueDate === undefined ? {} : { valueDate }),
     raw,
   };
