@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   detectMoneyManagerMapping,
+  detectMoneyManagerWorkbook,
+  normalizeMoneyManagerWorkbook,
   previewMoneyManagerRows,
   readMoneyManagerWorkbook,
 } from "./moneyManagerPreview";
@@ -63,6 +65,24 @@ describe("Money Manager preview", () => {
       [-2000n, "ready"],
       [300000n, "ready"],
       [-300000n, "ready"],
+    ]);
+  });
+
+  it("normalizza automaticamente il contratto Money Manager senza confondere le due colonne Conto", () => {
+    const source = [
+      ["Giorno", "Conto", "Categoria", "Sotto-categoria", "Nota", "EUR", "Guadagni/Spese", "Descrizione", "Importo", "Valuta", "Conto"],
+      ["46246.50976616898", "N26", "Alimentazione", "Spesa", "Supermercato Demo", "72,19", "Spesa", "", "72,19", "EUR", "99"],
+      ["46247", "N26", "", "", "Stipendio Demo", "86,49", "Guadagno", "", "86,49", "EUR", "100"],
+    ];
+    expect(detectMoneyManagerWorkbook(source[0]!)).toBe(true);
+    const workbook = normalizeMoneyManagerWorkbook("Money Manager", source);
+    expect(workbook.rows[1]).toEqual([
+      "46246.50976616898", "N26", "-72,19", "EUR", "Supermercato Demo", "Supermercato Demo", "Alimentazione / Spesa", "Spesa",
+    ]);
+    const rows = previewMoneyManagerRows(workbook.rows.slice(1), detectMoneyManagerMapping(workbook.rows[0]!));
+    expect(rows.map((row) => [row.date, row.amountMinor, row.payee, row.sourceType])).toEqual([
+      ["2026-08-12", -7219n, "Supermercato Demo", "Spesa"],
+      ["2026-08-13", 8649n, "Stipendio Demo", "Guadagno"],
     ]);
   });
 

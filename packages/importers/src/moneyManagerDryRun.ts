@@ -43,6 +43,26 @@ function dryRunRow(
       status: "needs_review",
     };
   }
+  if (/^trasferimento (?:uscita|entrata)$/i.test(preview.sourceType ?? "")) {
+    return {
+      accountId: undefined,
+      categoryId: undefined,
+      kind: undefined,
+      message: "Trasferimento Money Manager rilevato: richiede la risoluzione del conto destinazione.",
+      preview,
+      status: "needs_review",
+    };
+  }
+  if (/^modifica saldo$/i.test(preview.category ?? "")) {
+    return {
+      accountId: undefined,
+      categoryId: undefined,
+      kind: undefined,
+      message: "Modifica saldo rilevata: richiede una conferma esplicita come rettifica.",
+      preview,
+      status: "needs_review",
+    };
+  }
   const account = findByName(accounts, preview.account);
   if (account === undefined || account.isArchived) {
     return {

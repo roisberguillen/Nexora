@@ -1,5 +1,7 @@
 export {
   detectMoneyManagerMapping,
+  detectMoneyManagerWorkbook,
+  normalizeMoneyManagerWorkbook,
   previewMoneyManagerRows,
   readMoneyManagerWorkbook,
   type ImportPreviewStatus,

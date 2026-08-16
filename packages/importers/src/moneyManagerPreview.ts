@@ -39,6 +39,7 @@ export interface MoneyManagerPreviewRow {
   readonly rawValues?: readonly string[];
   readonly sourceRowNumber: number;
   readonly status: ImportPreviewStatus;
+  readonly sourceType?: string;
 }
 
 const aliases: Readonly<Record<MoneyManagerField, readonly string[]>> = {
@@ -46,11 +47,22 @@ const aliases: Readonly<Record<MoneyManagerField, readonly string[]>> = {
   amount: ["amount", "importo", "value"],
   category: ["category", "categoria"],
   currency: ["currency", "valuta"],
-  date: ["date", "data", "transaction date"],
+  date: ["date", "data", "giorno", "transaction date"],
   note: ["note", "nota", "description", "descrizione"],
   payee: ["payee", "controparte", "beneficiary"],
-  type: ["type", "tipo"],
+  type: ["type", "tipo", "guadagni/spese"],
 };
+
+const moneyManagerCanonicalHeaders = [
+  "Data",
+  "Conto",
+  "Importo",
+  "Valuta",
+  "Controparte",
+  "Nota",
+  "Categoria",
+  "Tipo",
+] as const;
 
 export function readMoneyManagerWorkbook(bytes: ArrayBuffer): MoneyManagerWorkbookPreview {
   const signature = new Uint8Array(bytes.slice(0, 4));
@@ -66,21 +78,68 @@ export function readMoneyManagerWorkbook(bytes: ArrayBuffer): MoneyManagerWorkbo
   const workbook = XLSX.read(bytes, { type: "array", raw: false, cellDates: false });
   return Object.freeze({
     sheets: Object.freeze(
-      workbook.SheetNames.map((name) =>
-        Object.freeze({
-          name,
-          rows: Object.freeze(
-            XLSX.utils
-              .sheet_to_json<unknown[]>(workbook.Sheets[name]!, {
-                header: 1,
-                defval: "",
-                raw: true,
-              })
-              .map((row) => Object.freeze(row.map((cell) => String(cell ?? "").trim()))),
-          ),
-        }),
-      ),
+      workbook.SheetNames.map((name) => {
+        const rows = XLSX.utils
+          .sheet_to_json<unknown[]>(workbook.Sheets[name]!, { header: 1, defval: "", raw: true })
+          .map((row) => row.map((cell) => String(cell ?? "").trim()));
+        return detectMoneyManagerWorkbook(rows[0] ?? [])
+          ? normalizeMoneyManagerWorkbook(name, rows)
+          : Object.freeze({ name, rows: Object.freeze(rows.map((row) => Object.freeze(row))) });
+      }),
     ),
+  });
+}
+
+/** Identifies Money Manager exports by their complete, non-ambiguous header contract. */
+export function detectMoneyManagerWorkbook(headers: readonly string[]): boolean {
+  const values = headers.map(normalizeHeader);
+  return ["giorno", "conto", "categoria", "nota", "guadagni/spese", "importo", "valuta"].every(
+    (header) => values.includes(header),
+  );
+}
+
+/** Normalizes Money Manager’s absolute amount plus source-type contract before the generic preview. */
+export function normalizeMoneyManagerWorkbook(
+  name: string,
+  source: readonly (readonly string[])[],
+): MoneyManagerSheet {
+  const header = source[0]?.map(normalizeHeader) ?? [];
+  const indexOf = (headerName: string) => header.indexOf(headerName);
+  const day = indexOf("giorno");
+  const account = indexOf("conto");
+  const category = indexOf("categoria");
+  const subcategory = indexOf("sotto-categoria");
+  const note = indexOf("nota");
+  const type = indexOf("guadagni/spese");
+  const amount = indexOf("importo");
+  const currency = indexOf("valuta");
+  const value = (row: readonly string[], index: number) => (index < 0 ? "" : (row[index] ?? "").trim());
+  const normalized = source.slice(1).map((row) => {
+    const sourceType = value(row, type);
+    const absoluteAmount = value(row, amount);
+    const signedAmount =
+      /^spesa$/i.test(sourceType) || /^trasferimento uscita$/i.test(sourceType)
+        ? `-${absoluteAmount.replace(/^[+-]/, "")}`
+        : absoluteAmount.replace(/^[+]/, "");
+    const sourceCategory = [value(row, category), value(row, subcategory)].filter(Boolean).join(" / ");
+    return [
+      value(row, day),
+      value(row, account),
+      signedAmount,
+      value(row, currency) || "EUR",
+      value(row, note),
+      value(row, note),
+      sourceCategory,
+      sourceType,
+    ];
+  });
+  return Object.freeze({
+    name,
+    rows: Object.freeze([
+      Object.freeze([...moneyManagerCanonicalHeaders]),
+      ...normalized.map((row) => Object.freeze(row)),
+    ]),
+    rawRows: Object.freeze(source.map((row) => Object.freeze([...row]))),
   });
 }
 
@@ -119,6 +178,7 @@ function previewRow(
   const amountMinor = amountText === undefined ? undefined : parseLocalizedMinor(amountText);
   const account = field(row, mapping.account);
   const currency = field(row, mapping.currency)?.toUpperCase() ?? "EUR";
+  const sourceType = field(row, mapping.type);
   if (date === undefined || amountMinor === undefined) {
     return Object.freeze({
       account,
@@ -131,6 +191,7 @@ function previewRow(
       rawValues,
       sourceRowNumber,
       status: "needs_review",
+      ...(sourceType === undefined ? {} : { sourceType }),
     });
   }
   if (account === undefined) {
@@ -145,6 +206,7 @@ function previewRow(
       rawValues,
       sourceRowNumber,
       status: "needs_review",
+      ...(sourceType === undefined ? {} : { sourceType }),
     });
   }
   return Object.freeze({
@@ -158,6 +220,7 @@ function previewRow(
     rawValues,
     sourceRowNumber,
     status: "ready",
+    ...(sourceType === undefined ? {} : { sourceType }),
   });
 }
 
