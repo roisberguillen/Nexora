@@ -4,6 +4,9 @@
 
 ### Documentation
 
+- Completed Phase 12.5.D: independent UI, responsive, accessibility and security review. No P0/P1
+  findings remain; the full Playwright matrix passed on the isolated local preview.
+
 - Completed the read-only Phase 12.5.1 mapping checkpoint for the user-provided financial sources.
   It documents explicit date, account, currency, category and transfer review rules without
   persisting or committing any real financial row.
@@ -12,6 +15,11 @@
   component boundaries, data-contract mapping and implementation sequence.
 
 ### Changed
+
+- Completata la Fase 12.5.C: navigazione desktop raggruppata e riducibile, filtri movimenti
+  combinabili e modifica sicura dei movimenti manuali. Le modifiche preservano atomicamente split
+  e tag su memoria, IndexedDB e SQLite; movimenti importati, riconciliati, annullati e transfer
+  restano protetti.
 
 - Corretto definitivamente l'import Money Manager: piani globali per conti e categorie, creazione
   differita e atomica delle entità mancanti, transfer reali, rettifiche saldo, profili semantici,

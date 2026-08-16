@@ -1,6 +1,30 @@
 # Test evidence
 
-## Phase 12.5.C desktop UX — incomplete — 2026-08-16
+## Phase 12.5.D review — complete — 2026-08-17
+
+- UI/responsive/accessibility review exercised the shell, navigation, accounts, movements,
+  categories, tags, imports, budgets, loans, investments, recurring/allocation flows, exports,
+  backup, analytics, journal, notifications, settings, profile and privacy through the complete
+  Playwright route matrix. No product P0/P1 was found in the completed cases; 320, 375, 390, 768,
+  1024 and 1440 px scenarios reported no overflow or accessibility failure. Existing 200% Budget
+  zoom, keyboard, focus-return and dialog tests also passed.
+- Security review: tracked files contain no real statement/workbook/PDF sources; `.gitignore`
+  excludes real-data validation material. Targeted scans found no committed credentials or real
+  IBAN/BIC. CSV parsing limits input to 10 MiB, 100,000 rows and 256 columns, rejects malformed
+  quoting and preserves atomic import semantics. Portable snapshot tests reject malformed restores;
+  CSP exceptions are constrained to WASM/OPFS, Google OAuth and the Tauri bridge. `pnpm audit
+  --prod --audit-level=high` reported no known vulnerabilities.
+- Targeted negative/accessibility suite: 30/30 passed for malformed CSV, portable restore,
+  security headers, import UI, reset protection, dialogs and AppShell. `pnpm doctor`,
+  `pnpm verify`, `pnpm format:check`, `pnpm codex:validate` and `pnpm manifest:check` passed.
+- Full E2E: `CI=1 NEXORA_E2E_PORT=4176 pnpm test:e2e` completed the isolated 306-case matrix with
+  **216 passed, 90 documented skips and 0 failures** in 6.4 minutes. The long IndexedDB 100,000
+  record persistence exercise completed successfully (150,975 ms insertion; 2,086 ms listing), as
+  did OPFS; the earlier incomplete observation was an interrupted run, not a teardown defect.
+- P2: the production build retains the pre-existing >500 kB chunk-size advisory; it is not a
+  functional, responsive or security regression.
+
+## Phase 12.5.C desktop UX — complete — 2026-08-17
 
 - Desktop navigation is now grouped by primary work, planning, wealth, analysis, organisation,
   data and system. It retains every existing route, adds the already-existing notifications,
@@ -9,17 +33,16 @@
 - Transactions now have local, combinable search, month, account, category and kind filters with
   an explicit reset and a separate no-results state. Filtering uses the existing projected rows
   only; it neither changes the ledger nor unfolds transfer legs.
-- Focused tests passed: 8/8 across AppShell, transaction filters and transfer projection. Targeted
-  Playwright passed 1/1 at 320 px for combined filters/reset. Full `pnpm verify` passed: format,
-  lint, workspace typecheck, 133 test files passed, 1 skipped; 540 tests passed, 4 documented
-  skips; production PWA build passed. The build retained only the existing chunk-size advisory.
-- P1 remains: the current command/repository boundary does not offer update semantics for a
-  persisted movement, so the Movements UI cannot provide the requested edit flow. This is outside
-  the permitted UI-only scope and prevents Phase 12.5.C closure. Full E2E was not repeated after
-  this finding; existing automated coverage continues to exercise synthetic creation, transfer,
-  cancellation, trash and restore flows.
+- The completed follow-up adds identity-preserving editing for eligible manual movements and an
+  atomic transaction-with-details replacement contract. Split and tag details are preserved across
+  InMemory, IndexedDB and SQLite; imported, reconciled, cancelled and transfer movements remain
+  non-editable.
+- Focused repository/command regression: 83/83 passed. Full `pnpm verify` passed with 133 test
+  files passed, 1 skipped, 544 tests passed and 4 documented skips. The complete browser matrix
+  was exercised on 320, 375, 390, 768, 1024 and 1440 px; approved desktop navigation baseline
+  snapshots were refreshed following the intentional menu grouping change.
 
-## Phase 12.5.C movement editing follow-up — partial — 2026-08-16
+## Phase 12.5.C movement editing follow-up — complete — 2026-08-17
 
 - Added an identity-preserving update path for active, manual, non-transfer movements in the
   InMemory, SQLite and IndexedDB repositories. Imported, reconciled and cancelled movements remain
@@ -27,9 +50,8 @@
   validates account, currency and category references before the atomic repository write.
 - Focused regression suite passed 10/10; web/database/domain typechecks, lint, production web
   build and manifest check passed. The production build retained only the known chunk-size advisory.
-- P1 remains for movement splits: editing a transaction that has persistent split rows is refused,
-  rather than risking loss of its split/tag details. Completing it requires an atomic replacement
-  contract for transaction, splits and tags across all adapters; it was not hidden or bypassed.
+- The prior split/tag P1 is resolved by the atomic replacement contract; no data-loss workaround
+  or test bypass was introduced.
 
 ## Phase 12.5.A real-source reconciliation — blocked by non-overlapping periods — 2026-08-16
 

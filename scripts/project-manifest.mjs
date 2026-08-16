@@ -17,7 +17,7 @@ const ignoredDirectories = new Set([
   "test-results",
 ]);
 const ignoredFiles = new Set(["PROJECT_MANIFEST.json"]);
-const ignoredLocalPaths = new Set(["apps/web/.env", "apps/web/src-tauri/gen"]);
+const ignoredLocalPaths = new Set([".codex/tmp", "apps/web/.env", "apps/web/src-tauri/gen"]);
 
 function normalizeLineEndings(contents) {
   return contents.replaceAll("\r\n", "\n");

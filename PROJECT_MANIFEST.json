@@ -244,8 +244,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 697,
-      "sha256": "1602ebb65122592e55db4d1cd958e4832ad4886a5b8010a61022cd87c8ac68b7"
+      "size": 699,
+      "sha256": "aa99cfc5941a1e7270fb15e3d86ecd0357012e9c8f3f79723deedcdfed3777e5"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -274,8 +274,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 36645,
-      "sha256": "b853f44d7b6f51990a1f6c3523cfbf7a85adcb114f46d035eb1d7873c9c8d696"
+      "size": 38272,
+      "sha256": "14e2388719d2c8d4879e46ff3b0be2602bcacc5c8ebbe7a142ffebaf33549c75"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -296,76 +296,6 @@
       "path": ".codex/templates/task-result.md",
       "size": 150,
       "sha256": "b4412857a13119e2f7b7e6f158eeb3331f4c3eba6b11b79812d557d983cd2b26"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-full.stderr.log",
-      "size": 4372,
-      "sha256": "92faa358dee64a28ad2662b12310ab1b82bd7427e632990dc2b2ead4d69a5926"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-full.stdout.log",
-      "size": 41166,
-      "sha256": "6b6c5b3d40778f0764c326a2f21e2f696dd3dd406f4fe53a5fd6f843a5c971c3"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-snapshots.stderr.log",
-      "size": 1096,
-      "sha256": "6822ab994761f32324a8f974eefb6cac1176445839ba895ee3ea846cb4026e0e"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-snapshots.stdout.log",
-      "size": 1001,
-      "sha256": "31a76d5e8c8e3e25bea64ae45014abe8790dec56324c92615e2c24d4ea56c0be"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-targeted-current.stderr.log",
-      "size": 6986,
-      "sha256": "7df77b2d00be2c9439cf56647ab1114ad8072c164116535ac7ba7f47dc80b1a2"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-targeted-current.stdout.log",
-      "size": 31620,
-      "sha256": "a1744243940be2cede1e9c7194c18430743aa0182f836b189a624039a9f8f3ba"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-targeted.stderr.log",
-      "size": 7320,
-      "sha256": "ad3a616d8a5933ef2cf3c3744fdd6a4270cec7a1809632551a631fa4e1506c5c"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-targeted.stdout.log",
-      "size": 44694,
-      "sha256": "5aa33be718af686cb4a99ed7a19d8c431fa941bb26787caa2f818acf904af125"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-transaction-320.stderr.log",
-      "size": 1093,
-      "sha256": "350ca9bdad6586c2eb0f5d3a9afb0b415847c0468b32c8a7e141869acd901f7b"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/e2e-transaction-320.stdout.log",
-      "size": 1323,
-      "sha256": "b0b5984298c370b071da898e28d3ba86c99a3bd2a31008821b45c8b5fdf4a9ba"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/unit.stderr.log",
-      "size": 145,
-      "sha256": "3d52c9c3860532929173aa434d99d660a033eff6334ef191718ceff268311ce3"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/unit.stdout.log",
-      "size": 270,
-      "sha256": "b1963d527e6a5ab940e3bccd05f660b742f5c36a0132e8af7ed3b9873d3845e0"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/verify.stderr.log",
-      "size": 316,
-      "sha256": "257bb815f76d210546123b3ebb81f8e61251bab6dc7e5ad2ebaf7108f8ccd70e"
-    },
-    {
-      "path": ".codex/tmp/phase-12-5-c/verify.stdout.log",
-      "size": 5876,
-      "sha256": "4ab3c047dfd01d4be30aa88787e5eaf6e9a453f6e1c0f6b0995d491a56df19e7"
     },
     {
       "path": ".env.example",
@@ -1549,8 +1479,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 27451,
-      "sha256": "73fc32c2fa11504405ac7550a5d88d19a07f836b239301864b1a9edf457f7015"
+      "size": 27941,
+      "sha256": "badc8b03017d9eff23091808961b201ea3f6e1feb441c4b19ec666dd0dd25258"
     },
     {
       "path": "design/mockup/README.md",
@@ -2949,8 +2879,8 @@
     },
     {
       "path": "scripts/project-manifest.mjs",
-      "size": 2973,
-      "sha256": "bd4959b3bd1dc99cc6628314425e6fb12527e52a614ebbbf20113196af217978"
+      "size": 2987,
+      "sha256": "e4bd9eda116846f378d3e02ea82d8b6d48d79feed2b80ea3b10c3432d2b589c0"
     },
     {
       "path": "scripts/verify-project.sh",
