@@ -6,6 +6,7 @@ const fields: readonly MoneyManagerField[] = [
   "account",
   "amount",
   "category",
+  "subcategory",
   "currency",
   "date",
   "note",

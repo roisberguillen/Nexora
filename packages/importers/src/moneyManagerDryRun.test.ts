@@ -78,4 +78,46 @@ describe("Money Manager dry-run", () => {
     expect(result).toMatchObject({ status: "needs_review", kind: undefined });
     expect(result?.message).toContain("Possibile trasferimento");
   });
+
+  it("risolve una sotto-categoria solo sotto la macro Money Manager corrispondente", () => {
+    const account = Account.create({
+      currency: "EUR",
+      id: "account-1",
+      name: "N26",
+      type: "checking",
+    });
+    const macro = Category.create({ id: "food", kindScope: "expense", name: "Alimentazione" });
+    const child = Category.create({
+      id: "food-groceries",
+      kindScope: "expense",
+      name: "Spesa alimentare",
+      parentId: "food",
+    });
+    const [result] = dryRunMoneyManagerRows(
+      [
+        {
+          account: "N26",
+          amountMinor: -7219n,
+          category: "Alimentazione",
+          sourceCategory: "Alimentazione",
+          sourceSubcategory: "Spesa alimentare",
+          currency: "EUR",
+          date: "2026-07-28",
+          message: "",
+          payee: "Demo",
+          sourceRowNumber: 2,
+          status: "ready",
+        },
+      ],
+      [account],
+      [macro, child],
+      [],
+    );
+    expect(result).toMatchObject({
+      accountId: "account-1",
+      categoryId: "food-groceries",
+      kind: "expense",
+      status: "ready",
+    });
+  });
 });

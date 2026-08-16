@@ -1,7 +1,15 @@
 import * as XLSX from "xlsx";
 
 export type MoneyManagerField =
-  "account" | "amount" | "category" | "currency" | "date" | "note" | "payee" | "type";
+  | "account"
+  | "amount"
+  | "category"
+  | "subcategory"
+  | "currency"
+  | "date"
+  | "note"
+  | "payee"
+  | "type";
 
 export interface MoneyManagerSheet {
   readonly name: string;
@@ -18,6 +26,7 @@ export interface MoneyManagerMapping {
   readonly account?: number;
   readonly amount?: number;
   readonly category?: number;
+  readonly subcategory?: number;
   readonly currency?: number;
   readonly date?: number;
   readonly note?: number;
@@ -38,6 +47,9 @@ export interface MoneyManagerPreviewRow {
   /** Immutable source cells, retained verbatim for the import audit trail. */
   readonly rawValues?: readonly string[];
   readonly sourceRowNumber: number;
+  readonly sourceCategory?: string;
+  readonly sourceSubcategory?: string;
+  readonly note?: string;
   readonly status: ImportPreviewStatus;
   readonly sourceType?: string;
 }
@@ -46,6 +58,7 @@ const aliases: Readonly<Record<MoneyManagerField, readonly string[]>> = {
   account: ["account", "conto"],
   amount: ["amount", "importo", "value"],
   category: ["category", "categoria"],
+  subcategory: ["subcategory", "sotto-categoria"],
   currency: ["currency", "valuta"],
   date: ["date", "data", "giorno", "transaction date"],
   note: ["note", "nota", "description", "descrizione"],
@@ -61,6 +74,7 @@ const moneyManagerCanonicalHeaders = [
   "Controparte",
   "Nota",
   "Categoria",
+  "Sotto-categoria",
   "Tipo",
 ] as const;
 
@@ -113,7 +127,8 @@ export function normalizeMoneyManagerWorkbook(
   const type = indexOf("guadagni/spese");
   const amount = indexOf("importo");
   const currency = indexOf("valuta");
-  const value = (row: readonly string[], index: number) => (index < 0 ? "" : (row[index] ?? "").trim());
+  const value = (row: readonly string[], index: number) =>
+    index < 0 ? "" : (row[index] ?? "").trim();
   const normalized = source.slice(1).map((row) => {
     const sourceType = value(row, type);
     const absoluteAmount = value(row, amount);
@@ -121,7 +136,9 @@ export function normalizeMoneyManagerWorkbook(
       /^spesa$/i.test(sourceType) || /^trasferimento uscita$/i.test(sourceType)
         ? `-${absoluteAmount.replace(/^[+-]/, "")}`
         : absoluteAmount.replace(/^[+]/, "");
-    const sourceCategory = [value(row, category), value(row, subcategory)].filter(Boolean).join(" / ");
+    const sourceCategory = [value(row, category), value(row, subcategory)]
+      .filter(Boolean)
+      .join(" / ");
     return [
       value(row, day),
       value(row, account),
@@ -129,7 +146,8 @@ export function normalizeMoneyManagerWorkbook(
       value(row, currency) || "EUR",
       value(row, note),
       value(row, note),
-      sourceCategory,
+      value(row, category),
+      value(row, subcategory),
       sourceType,
     ];
   });
@@ -179,6 +197,9 @@ function previewRow(
   const account = field(row, mapping.account);
   const currency = field(row, mapping.currency)?.toUpperCase() ?? "EUR";
   const sourceType = field(row, mapping.type);
+  const note = field(row, mapping.note);
+  const sourceCategory = field(row, mapping.category);
+  const sourceSubcategory = field(row, mapping.subcategory);
   if (date === undefined || amountMinor === undefined) {
     return Object.freeze({
       account,
@@ -192,6 +213,9 @@ function previewRow(
       sourceRowNumber,
       status: "needs_review",
       ...(sourceType === undefined ? {} : { sourceType }),
+      ...(note === undefined ? {} : { note }),
+      ...(sourceCategory === undefined ? {} : { sourceCategory }),
+      ...(sourceSubcategory === undefined ? {} : { sourceSubcategory }),
     });
   }
   if (account === undefined) {
@@ -207,6 +231,9 @@ function previewRow(
       sourceRowNumber,
       status: "needs_review",
       ...(sourceType === undefined ? {} : { sourceType }),
+      ...(note === undefined ? {} : { note }),
+      ...(sourceCategory === undefined ? {} : { sourceCategory }),
+      ...(sourceSubcategory === undefined ? {} : { sourceSubcategory }),
     });
   }
   return Object.freeze({
@@ -221,6 +248,9 @@ function previewRow(
     sourceRowNumber,
     status: "ready",
     ...(sourceType === undefined ? {} : { sourceType }),
+    ...(note === undefined ? {} : { note }),
+    ...(sourceCategory === undefined ? {} : { sourceCategory }),
+    ...(sourceSubcategory === undefined ? {} : { sourceSubcategory }),
   });
 }
 
@@ -265,9 +295,8 @@ function parseLocalizedMinor(value: string): bigint | undefined {
   const normalized = value.trim().replaceAll(" ", "").replaceAll("€", "");
   if (!/^[+-]?[\d.,]+$/.test(normalized)) return undefined;
   const negative = normalized.startsWith("-");
-  const unsigned = normalized.startsWith("-") || normalized.startsWith("+")
-    ? normalized.slice(1)
-    : normalized;
+  const unsigned =
+    normalized.startsWith("-") || normalized.startsWith("+") ? normalized.slice(1) : normalized;
   const decimalSeparator = findDecimalSeparator(unsigned);
   const separatorIndex =
     decimalSeparator === undefined ? -1 : unsigned.lastIndexOf(decimalSeparator);

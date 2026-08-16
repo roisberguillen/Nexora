@@ -48,7 +48,8 @@ function dryRunRow(
       accountId: undefined,
       categoryId: undefined,
       kind: undefined,
-      message: "Trasferimento Money Manager rilevato: richiede la risoluzione del conto destinazione.",
+      message:
+        "Trasferimento Money Manager rilevato: richiede la risoluzione del conto destinazione.",
       preview,
       status: "needs_review",
     };
@@ -102,8 +103,11 @@ function dryRunRow(
     };
   }
   const kind = preview.amountMinor > 0n ? "income" : "expense";
-  const category =
-    preview.category === undefined ? undefined : findByName(categories, preview.category);
+  const category = resolveCategory(
+    categories,
+    preview.sourceCategory ?? preview.category,
+    preview.sourceSubcategory,
+  );
   if (
     preview.category !== undefined &&
     (category === undefined || category.isArchived || !category.accepts(kind))
@@ -154,4 +158,17 @@ function findByName<T extends { readonly name: string }>(
 
 function normalize(value: string | undefined): string {
   return (value ?? "").trim().toLocaleLowerCase("it-IT").replaceAll(/\s+/g, " ");
+}
+
+function resolveCategory(
+  categories: readonly Category[],
+  sourceCategory: string | undefined,
+  sourceSubcategory: string | undefined,
+): Category | undefined {
+  const macro = findByName(categories, sourceCategory);
+  if (sourceSubcategory === undefined || sourceSubcategory === "") return macro;
+  return categories.find(
+    (category) =>
+      category.parentId === macro?.id && normalize(category.name) === normalize(sourceSubcategory),
+  );
 }
