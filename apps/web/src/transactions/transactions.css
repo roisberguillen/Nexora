@@ -7,6 +7,11 @@
   margin-top: 1rem;
 }
 
+.transactions-kpi-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 1.5rem;
+}
+
 .transaction-filters {
   display: grid;
   grid-template-columns: minmax(12rem, 2fr) repeat(4, minmax(8.5rem, 1fr)) auto;
@@ -97,6 +102,10 @@
 }
 
 @media (max-width: 480px) {
+  .transactions-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
   .transaction-filters {
     grid-template-columns: 1fr;
   }

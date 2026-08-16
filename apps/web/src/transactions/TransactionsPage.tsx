@@ -1,4 +1,4 @@
-import { FinancialAmount } from "@nexora/ui";
+import { FinancialAmount, MetricCard } from "@nexora/ui";
 import { categoryLabel, type Tag } from "@nexora/domain";
 import { useEffect, useState, type FormEvent } from "react";
 
@@ -70,6 +70,10 @@ export function TransactionsPage({
   const [filters, setFilters] = useState<TransactionFilters>(emptyTransactionFilters);
   const selectionPreview = previewTrashSelection(model.items, selectedForTrash);
   const filteredItems = filterTransactions(model.items, filters);
+  const cashFlow =
+    filters.month === ""
+      ? model.cashFlow
+      : (model.cashFlowByMonth[filters.month] ?? model.emptyCashFlow);
   const pagination = paginateTransactions(filteredItems, currentPage);
   const { currentPage: visiblePage, items: visibleItems, pageCount } = pagination;
 
@@ -245,29 +249,53 @@ export function TransactionsPage({
     >
       <header className="accounts-heading">
         <div>
-          <p className="eyebrow">{standaloneEditor ? "Nuova registrazione" : "Ledger locale"}</p>
-          <h1>{standaloneEditor ? "Nuova registrazione" : "Gestisci i movimenti"}</h1>
+          <p className="eyebrow">{standaloneEditor ? "Nuova registrazione" : "Operazioni"}</p>
+          <h1>{standaloneEditor ? "Nuova registrazione" : "Movimenti"}</h1>
           <p>
             {standaloneEditor
               ? "Aggiungi movimento"
-              : "Registra entrate, spese, rettifiche e trasferimenti. I trasferimenti non alterano entrate o spese."}
+              : "Riepilogo del periodo visualizzato. Trasferimenti esclusi da entrate e uscite."}
           </p>
         </div>
         {standaloneEditor ? null : (
           <button
             className="primary-action"
             onClick={() => {
-              setIsEditorOpen(true);
-              setEditingId(null);
-              setError(null);
-              setMessage(null);
+              window.location.hash = "#new-transaction";
             }}
             type="button"
           >
-            Nuovo movimento
+            + Nuovo movimento
           </button>
         )}
       </header>
+
+      {standaloneEditor ? null : (
+        <section aria-label="Riepilogo movimenti" className="metrics-grid transactions-kpi-grid">
+          <MetricCard
+            amountMinor={cashFlow.income.amountMinor}
+            currency={cashFlow.income.currency}
+            label="Entrate"
+            supportingText="Trasferimenti esclusi"
+            tone="positive"
+          />
+          <MetricCard
+            amountMinor={cashFlow.expense.amountMinor}
+            currency={cashFlow.expense.currency}
+            label="Uscite"
+            supportingText="Operazioni annullate escluse"
+            tone="negative"
+          />
+          <MetricCard
+            amountMinor={cashFlow.net.amountMinor}
+            currency={cashFlow.net.currency}
+            isFeatured
+            label="Saldo netto"
+            supportingText="Entrate meno uscite"
+            tone={cashFlow.net.amountMinor < 0n ? "negative" : "positive"}
+          />
+        </section>
+      )}
 
       <div aria-live="polite" className="account-message-region">
         {message === null ? null : (

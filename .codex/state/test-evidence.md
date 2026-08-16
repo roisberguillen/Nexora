@@ -1,5 +1,24 @@
 # Test evidence
 
+## Phase 12.5.C2.1 movements hierarchy and KPI — complete — 2026-08-17
+
+- The Transactions view model now delegates overall and month-scoped Income/Expense/Net totals to
+  the existing domain `summarizeCashFlow` report with the standard EUR display currency. This keeps
+  cancelled transactions and both transfer legs out of the three KPI without duplicating accounting
+  logic. A month with no matching movement displays the same zero-valued domain report.
+- Targeted component/view-model suite: **5/5 passed** (`TransactionsPage` plus
+  `buildTransactionsViewModel`), including title, accessible primary CTA route, KPI amounts,
+  selected-month update, cancelled income and transfer exclusion.
+- Responsive E2E: `CI=1 NEXORA_E2E_PORT=4177 pnpm exec playwright test
+  test/e2e/transactions.spec.ts test/e2e/global-search.spec.ts` passed on the configured matrix
+  (320, 375, 390, 768, 1024 and 1440 px): **50 passed, 4 documented responsive skips, 0 failed**.
+  The Movements transfer flow retained its no-horizontal-overflow and axe checks.
+- `pnpm lint`, `pnpm typecheck`, `pnpm test` (**547 passed, 4 documented skips**), `pnpm verify`,
+  `pnpm manifest:check` and `pnpm codex:validate` passed. Build retained only the known
+  non-blocking chunk-size advisory.
+- Deferred unchanged: banking search, quick filters/drawer, ordering, list and editor redesign,
+  detail panel, action menu and mobile navigation belong to 12.5.C2.2–12.5.C2.8.
+
 ## Phase 12.5.D review — complete — 2026-08-17
 
 - UI/responsive/accessibility review exercised the shell, navigation, accounts, movements,

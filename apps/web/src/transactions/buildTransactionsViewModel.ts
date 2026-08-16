@@ -1,6 +1,9 @@
+import { DEFAULT_CURRENCY } from "@nexora/config";
 import {
   categoryLabel,
+  summarizeCashFlow,
   type Account,
+  type CashFlowSummary,
   type Category,
   type Money,
   type Transaction,
@@ -20,6 +23,9 @@ export interface TransactionsViewModel {
     readonly parentId: string | undefined;
   }[];
   readonly items: readonly TransactionListItem[];
+  readonly cashFlow: CashFlowSummary;
+  readonly cashFlowByMonth: Readonly<Record<string, CashFlowSummary>>;
+  readonly emptyCashFlow: CashFlowSummary;
 }
 
 export interface TransactionListItem {
@@ -88,6 +94,17 @@ export function buildTransactionsViewModel(data: {
       title: debit.description ?? "Trasferimento interno",
     } as const;
   });
+  const cashFlowByMonth = Object.fromEntries(
+    [
+      ...new Set(data.transactions.map((transaction) => transaction.bookedDate.value.slice(0, 7))),
+    ].map((month) => [
+      month,
+      summarizeCashFlow(
+        data.transactions.filter((transaction) => transaction.bookedDate.value.startsWith(month)),
+        DEFAULT_CURRENCY,
+      ),
+    ]),
+  ) as Record<string, CashFlowSummary>;
 
   return Object.freeze({
     accounts: Object.freeze(
@@ -117,6 +134,9 @@ export function buildTransactionsViewModel(data: {
           right.bookedDate.localeCompare(left.bookedDate) || left.id.localeCompare(right.id),
       ),
     ),
+    cashFlow: summarizeCashFlow(data.transactions, DEFAULT_CURRENCY),
+    cashFlowByMonth: Object.freeze(cashFlowByMonth),
+    emptyCashFlow: summarizeCashFlow([], DEFAULT_CURRENCY),
   });
 }
 

@@ -39,6 +39,57 @@ describe("buildTransactionsViewModel", () => {
       kindLabel: "Trasferimento",
     });
     expect(model.items[1]).toMatchObject({ canCancel: false, statusLabel: "Annullato" });
+    expect(model.cashFlow).toMatchObject({
+      income: { amountMinor: 0n },
+      expense: { amountMinor: 0n },
+      net: { amountMinor: 0n },
+    });
+  });
+
+  it("reuses the cash-flow report for the overall and monthly KPI summaries", () => {
+    const source = account("source", "Conto principale");
+    const income = Transaction.create({
+      id: "income",
+      kind: "income",
+      status: "booked",
+      accountId: source.id,
+      amount: Money.fromMinor(120_000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-07-02"),
+    });
+    const expense = Transaction.create({
+      id: "expense",
+      kind: "expense",
+      status: "booked",
+      accountId: source.id,
+      amount: Money.fromMinor(-30_000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-08-03"),
+    });
+    const cancelled = Transaction.create({
+      id: "cancelled",
+      kind: "income",
+      status: "cancelled",
+      accountId: source.id,
+      amount: Money.fromMinor(99_000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-08-04"),
+    });
+
+    const model = buildTransactionsViewModel({
+      accounts: [source],
+      categories: [],
+      transactions: [income, expense, cancelled],
+      transfers: [],
+    });
+
+    expect(model.cashFlow).toMatchObject({
+      income: { amountMinor: 120_000n },
+      expense: { amountMinor: 30_000n },
+      net: { amountMinor: 90_000n },
+    });
+    expect(model.cashFlowByMonth["2026-08"]).toMatchObject({
+      income: { amountMinor: 0n },
+      expense: { amountMinor: 30_000n },
+      net: { amountMinor: -30_000n },
+    });
   });
 
   it("keeps archived categories readable in history but excludes them from new selections", () => {

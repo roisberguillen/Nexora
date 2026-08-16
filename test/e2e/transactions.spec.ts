@@ -23,7 +23,7 @@ test("la gestione movimenti registra e annulla un trasferimento senza overflow",
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
   await page.goto("/#transactions");
-  await expect(page.getByRole("heading", { name: "Gestisci i movimenti" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Movimenti" })).toBeVisible();
 
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
   await setTransactionKind(page, "transfer");

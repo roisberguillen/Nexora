@@ -12,5 +12,5 @@ test("la ricerca globale trova e apre dati locali", async ({ page }) => {
   await search.fill("Cinema campione");
   await expect(page.getByRole("link", { name: /Cinema campione/ })).toBeVisible();
   await page.getByRole("link", { name: /Cinema campione/ }).click();
-  await expect(page.getByRole("heading", { name: "Gestisci i movimenti" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Movimenti" })).toBeVisible();
 });

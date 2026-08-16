@@ -16,6 +16,10 @@
 
 ### Changed
 
+- La pagina Movimenti espone ora una gerarchia bancaria più immediata: titolo essenziale, accesso
+  esplicito al flusso esistente di nuova registrazione e KPI di entrate, uscite e saldo netto
+  calcolati dal report finanziario già verificato, senza includere trasferimenti o annullati.
+
 - Completata la Fase 12.5.C: navigazione desktop raggruppata e riducibile, filtri movimenti
   combinabili e modifica sicura dei movimenti manuali. Le modifiche preservano atomicamente split
   e tag su memoria, IndexedDB e SQLite; movimenti importati, riconciliati, annullati e transfer

@@ -244,8 +244,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 699,
-      "sha256": "aa99cfc5941a1e7270fb15e3d86ecd0357012e9c8f3f79723deedcdfed3777e5"
+      "size": 689,
+      "sha256": "426740bab3ea8c13349e4bf68ffcd1990f6e64514d7a2e5f2cd7439ea37ffb6f"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -274,8 +274,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 38272,
-      "sha256": "14e2388719d2c8d4879e46ff3b0be2602bcacc5c8ebbe7a142ffebaf33549c75"
+      "size": 39721,
+      "sha256": "29cffc9ad6ca45703d02b7b14f764e8b55b47992a345f0fcc76bcd0c31c623ea"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -1394,13 +1394,13 @@
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.test.ts",
-      "size": 3049,
-      "sha256": "7136e299901e301cd9ea69a23fecc716d7b4d2b2b0a41ef893545af28ae3b060"
+      "size": 4611,
+      "sha256": "fbc08f1cc4675e1e2d0daa8052386dea8980b36b6da86e73da7dddee4d15d412"
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.ts",
-      "size": 5825,
-      "sha256": "42544dabacea49d61fbe2702bc2f8b94c71cd476125d01fb2c63818b32324ae7"
+      "size": 6651,
+      "sha256": "6cb44fc74e021ee93628640d00135f5bc802f4a58afdf21d213f9f3133487b95"
     },
     {
       "path": "apps/web/src/transactions/pagination.test.ts",
@@ -1434,13 +1434,18 @@
     },
     {
       "path": "apps/web/src/transactions/transactions.css",
-      "size": 3321,
-      "sha256": "b571811defa2292ee02deb5f5484d4b35417ff9d0f92a85782d013f6a2b8cd38"
+      "size": 3487,
+      "sha256": "8270f0f72a12c91fa172eb3f0ffdb479fa31d9349cbc8d632f8558478cbea437"
+    },
+    {
+      "path": "apps/web/src/transactions/TransactionsPage.test.tsx",
+      "size": 3121,
+      "sha256": "dbce6c969da1a1e66b831e9ed92c999225db0b543752ac6a71e8497d1f0d66ff"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 39440,
-      "sha256": "250e68645aa33e1282320ce04b90a88fd8f4da68b54798e0ef843787b9a71284"
+      "size": 40450,
+      "sha256": "ac149ecad942cf42567590ff90142bbe9a9d15df10669ef1d73431c9265cc06b"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -1479,8 +1484,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 27941,
-      "sha256": "badc8b03017d9eff23091808961b201ea3f6e1feb441c4b19ec666dd0dd25258"
+      "size": 28230,
+      "sha256": "4851487608c709c255b7486140a2c0bced654932791c4ffdff1efdb5440d5632"
     },
     {
       "path": "design/mockup/README.md",
@@ -2989,8 +2994,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 720,
-      "sha256": "97e7ad0d0c067bf09bda34e46290661fc1ab64a6289d560e397496d65d12fb33"
+      "size": 719,
+      "sha256": "9761c22fc9354e68a3d6ac221591095f6517e33a2ad6241fd6a097cdd5cdedd6"
     },
     {
       "path": "test/e2e/google-drive-onboarding.spec.ts",
@@ -3079,8 +3084,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 9057,
-      "sha256": "624ad4fa630dde5306c3cfaf43cd989ae57579715d56041487acab956b4a4ee1"
+      "size": 9056,
+      "sha256": "129bba6b02b5dde78fce4906272212b8b7026e25f4bb3f0db6e30770e74b46b7"
     },
     {
       "path": "test/project-privacy.test.ts",
