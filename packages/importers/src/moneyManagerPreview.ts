@@ -200,9 +200,11 @@ function normalizeExcelSerialDate(value: string): string | undefined {
 
 function parseLocalizedMinor(value: string): bigint | undefined {
   const normalized = value.trim().replaceAll(" ", "").replaceAll("€", "");
-  if (!/^-?[\d.,]+$/.test(normalized)) return undefined;
+  if (!/^[+-]?[\d.,]+$/.test(normalized)) return undefined;
   const negative = normalized.startsWith("-");
-  const unsigned = negative ? normalized.slice(1) : normalized;
+  const unsigned = normalized.startsWith("-") || normalized.startsWith("+")
+    ? normalized.slice(1)
+    : normalized;
   const decimalSeparator = findDecimalSeparator(unsigned);
   const separatorIndex =
     decimalSeparator === undefined ? -1 : unsigned.lastIndexOf(decimalSeparator);

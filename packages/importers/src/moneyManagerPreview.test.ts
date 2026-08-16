@@ -46,6 +46,26 @@ describe("Money Manager preview", () => {
     ]);
   });
 
+  it("preserva esplicitamente il segno degli importi localizzati, inclusi gli accrediti N26", () => {
+    const rows = previewMoneyManagerRows(
+      [
+        ["N26", "20,00", "28/07/2026"],
+        ["N26", "+210,37", "28/07/2026"],
+        ["N26", "-20,00", "28/07/2026"],
+        ["N26", "+3.000,00", "28/07/2026"],
+        ["N26", "-3.000,00", "28/07/2026"],
+      ],
+      { account: 0, amount: 1, date: 2 },
+    );
+    expect(rows.map((row) => [row.amountMinor, row.status])).toEqual([
+      [2000n, "ready"],
+      [21037n, "ready"],
+      [-2000n, "ready"],
+      [300000n, "ready"],
+      [-300000n, "ready"],
+    ]);
+  });
+
   it("preserva e normalizza una data seriale Excel dal workbook", () => {
     const workbook = XLSX.utils.book_new();
     const serial = Math.floor(
