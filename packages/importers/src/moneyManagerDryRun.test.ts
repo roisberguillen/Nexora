@@ -2,6 +2,7 @@ import { Account, Category } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import { dryRunMoneyManagerRows } from "./moneyManagerDryRun";
+import { buildMoneyManagerSemanticPlan } from "./moneyManagerSemanticPlan";
 
 describe("Money Manager dry-run", () => {
   it("risolve riferimenti esatti e blocca categorie incompatibili", () => {
@@ -119,5 +120,80 @@ describe("Money Manager dry-run", () => {
       kind: "expense",
       status: "ready",
     });
+  });
+
+  it("prepara account, categorie, transfer e adjustment tramite il piano semantico", () => {
+    const n26 = Account.create({
+      currency: "EUR",
+      id: "n26-main",
+      name: "n26 - Principale",
+      type: "checking",
+    });
+    const previews = [
+      {
+        account: "N26",
+        amountMinor: -7219n,
+        category: "Alimentazione",
+        sourceCategory: "Alimentazione",
+        sourceSubcategory: "Spesa alimentare",
+        sourceType: "Spesa",
+        currency: "EUR",
+        date: "2026-07-28",
+        message: "",
+        payee: "Demo",
+        sourceRowNumber: 2,
+        status: "ready" as const,
+      },
+      {
+        account: "N26",
+        amountMinor: -6000n,
+        category: "Diretta sim",
+        sourceCategory: "Diretta sim",
+        sourceType: "Trasferimento uscita",
+        currency: "EUR",
+        date: "2026-07-29",
+        message: "",
+        payee: "Trasferimento",
+        sourceRowNumber: 3,
+        status: "ready" as const,
+      },
+      {
+        account: "N26",
+        amountMinor: 8649n,
+        category: "Modifica Saldo",
+        sourceCategory: "Modifica Saldo",
+        sourceType: "Guadagno",
+        currency: "EUR",
+        date: "2026-07-30",
+        message: "",
+        payee: "differenza",
+        sourceRowNumber: 4,
+        status: "ready" as const,
+      },
+    ];
+    const plan = buildMoneyManagerSemanticPlan(
+      previews,
+      [n26],
+      [],
+      (() => {
+        let id = 0;
+        return () => String(++id);
+      })(),
+    );
+    const result = dryRunMoneyManagerRows(previews, [n26], [], [], plan);
+    expect(result).toEqual([
+      expect.objectContaining({
+        kind: "expense",
+        status: "ready",
+        categoryId: plan.categories[0]!.targetCategoryId,
+      }),
+      expect.objectContaining({
+        kind: "transfer",
+        status: "ready",
+        transferCandidateAccountId: plan.accounts.find((item) => item.sourceName === "Diretta sim")!
+          .targetAccountId,
+      }),
+      expect.objectContaining({ kind: "adjustment", status: "ready", categoryId: undefined }),
+    ]);
   });
 });

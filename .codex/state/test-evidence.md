@@ -1,5 +1,30 @@
 # Test evidence
 
+## Money Manager semantic migration fix — 2026-08-16
+
+- The importer now builds one account decision per source account and one category decision per
+  source path. Missing deterministic entities are created only during the final atomic commit;
+  generic account types require one plan-level choice. Semantic profiles retain account aliases,
+  account configuration and category targets.
+- Explicit Money Manager transfers create balanced `Transfer` legs, while `Modifica Saldo` creates
+  `adjustment` transactions. InMemory, IndexedDB and SQLite commit planned accounts, categories,
+  movements, transfers and audit rows in one rollback-safe operation.
+- Privacy-safe local validation of the user-provided workbook used an isolated in-memory repository:
+  45 source rows, 3 account-plan entries, 7 macro categories, 14 category paths, 40 standard
+  movements, 2 transfers and 3 adjustments; 45 ready, 0 review. The commit imported 45 rows, the
+  repeated dry-run classified 45 duplicates, and undo cancelled all first-batch transactions.
+  The temporary test and workbook inspection script were removed; no source row or value entered Git.
+- Targeted suites: 96/96 for importer, command, UI and real adapter rollback; hierarchy/adapter
+  follow-up 84/84; privacy/UI/import regression 21/21. Money Manager import Playwright: 6/6 at
+  1440 px, including account/category creation, transfer, adjustment, deduplication and undo.
+- Global gates before manifest regeneration: format, lint and typecheck passed; Vitest reported
+  132 files passed, 1 skipped, 537 tests passed and 4 documented skips; production build passed
+  with only the existing chunk-size advisory.
+- Full `pnpm test:e2e`: 210 passed, 90 documented viewport/optional-flow skips, 0 failed in
+  6.0 minutes. The Money Manager semantic flow passed on every configured viewport; the suite also
+  completed the synthetic 100,000-record OPFS and IndexedDB checks. Runner output contained only
+  the known `NO_COLOR`/`FORCE_COLOR` warning.
+
 ## Mediobanca Premier CSV detection fix — 2026-08-15
 
 - Header-detected Mediobanca CSV normalization now uses `Data valuta` exclusively, preserves raw

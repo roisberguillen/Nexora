@@ -63,7 +63,7 @@ const aliases: Readonly<Record<MoneyManagerField, readonly string[]>> = {
   date: ["date", "data", "giorno", "transaction date"],
   note: ["note", "nota", "description", "descrizione"],
   payee: ["payee", "controparte", "beneficiary"],
-  type: ["type", "tipo", "guadagni/spese"],
+  type: ["type", "tipo", "tipologia", "guadagni/spese"],
 };
 
 const moneyManagerCanonicalHeaders = [
@@ -136,9 +136,6 @@ export function normalizeMoneyManagerWorkbook(
       /^spesa$/i.test(sourceType) || /^trasferimento uscita$/i.test(sourceType)
         ? `-${absoluteAmount.replace(/^[+-]/, "")}`
         : absoluteAmount.replace(/^[+]/, "");
-    const sourceCategory = [value(row, category), value(row, subcategory)]
-      .filter(Boolean)
-      .join(" / ");
     return [
       value(row, day),
       value(row, account),

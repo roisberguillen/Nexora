@@ -32,6 +32,15 @@ describe("Money Manager preview", () => {
     });
   });
 
+  it("riconosce Tipologia come tipo Money Manager", () => {
+    expect(detectMoneyManagerMapping(["Data", "Conto", "Importo", "Tipologia"])).toEqual({
+      account: 1,
+      amount: 2,
+      date: 0,
+      type: 3,
+    });
+  });
+
   it("normalizza importi localizzati in minor units e segnala righe da revisionare", () => {
     const mapping = { account: 0, amount: 1, date: 2 };
     expect(

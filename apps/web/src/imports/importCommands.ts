@@ -8,6 +8,8 @@ import {
   type ImportTransferBundle,
   type ImporterType,
   type LedgerRepository,
+  type Account,
+  type Category,
 } from "@nexora/domain";
 import type { MoneyManagerDryRunRow } from "@nexora/importers";
 
@@ -20,6 +22,8 @@ export async function commitMoneyManagerImport(
     readonly sourceSha256: string;
     readonly mappingProfileId?: string;
     readonly confirmedTransferRowNumbers?: readonly number[];
+    readonly accountsToCreate?: readonly Account[];
+    readonly categoriesToCreate?: readonly Category[];
   },
   idFactory: () => string = () => crypto.randomUUID(),
 ): Promise<ImportBatch> {
@@ -51,15 +55,17 @@ export async function commitMoneyManagerImport(
     const preview = result.preview;
     const isConfirmedTransfer =
       result.transferCandidateAccountId !== undefined &&
-      confirmedTransfers.has(preview.sourceRowNumber) &&
+      (result.kind === "transfer" || confirmedTransfers.has(preview.sourceRowNumber)) &&
       result.accountId !== undefined &&
       preview.amountMinor !== undefined &&
       preview.date !== undefined;
     if (isConfirmedTransfer) {
-      const sourceAccount = await repository.findAccountById(result.accountId!);
-      const counterpartyAccount = await repository.findAccountById(
-        result.transferCandidateAccountId!,
-      );
+      const sourceAccount =
+        (await repository.findAccountById(result.accountId!)) ??
+        input.accountsToCreate?.find((account) => account.id === result.accountId);
+      const counterpartyAccount =
+        (await repository.findAccountById(result.transferCandidateAccountId!)) ??
+        input.accountsToCreate?.find((account) => account.id === result.transferCandidateAccountId);
       if (
         sourceAccount === undefined ||
         counterpartyAccount === undefined ||
@@ -76,6 +82,21 @@ export async function commitMoneyManagerImport(
       const counterpartFingerprint = await fingerprint(
         `${input.sourceSha256}|${preview.sourceRowNumber}|${result.transferCandidateAccountId}|${amount.toString()}|transfer-counterpart`,
       );
+      if (
+        existingFingerprints.has(`${result.accountId}|${sourceFingerprint}`) ||
+        existingFingerprints.has(`${result.transferCandidateAccountId}|${counterpartFingerprint}`)
+      ) {
+        rows.push(
+          ImportRow.create({
+            id: `import-row-${idFactory()}`,
+            batchId: batch.id,
+            rowNumber: preview.sourceRowNumber,
+            rawJson: serializePreview(preview),
+            status: "skipped_duplicate",
+          }),
+        );
+        continue;
+      }
       const isDebit = amount < 0n;
       const debit = Transaction.create({
         id: `transaction-${idFactory()}`,
@@ -113,6 +134,8 @@ export async function commitMoneyManagerImport(
         debitTransaction: debit,
         creditTransaction: credit,
       });
+      existingFingerprints.add(`${debit.accountId}|${debit.sourceFingerprint}`);
+      existingFingerprints.add(`${credit.accountId}|${credit.sourceFingerprint}`);
       rows.push(
         ImportRow.create({
           id: `import-row-${idFactory()}`,
@@ -175,6 +198,7 @@ export async function commitMoneyManagerImport(
       sourceFingerprint,
       ...(result.categoryId === undefined ? {} : { categoryId: result.categoryId }),
       ...(preview.payee === undefined ? {} : { payee: preview.payee }),
+      ...(preview.note === undefined ? {} : { note: preview.note }),
     });
     transactions.push(transaction);
     existingFingerprints.add(`${result.accountId}|${sourceFingerprint}`);
@@ -194,7 +218,16 @@ export async function commitMoneyManagerImport(
       }),
     );
   }
-  return repository.commitImportBatch(batch, rows, transactions, transferBundles);
+  return repository.commitImportBatch({
+    batch,
+    rows,
+    ...(input.accountsToCreate === undefined ? {} : { accountsToCreate: input.accountsToCreate }),
+    ...(input.categoriesToCreate === undefined
+      ? {}
+      : { categoriesToCreate: input.categoriesToCreate }),
+    transactions,
+    transferBundles,
+  });
 }
 
 function abs(value: bigint): bigint {

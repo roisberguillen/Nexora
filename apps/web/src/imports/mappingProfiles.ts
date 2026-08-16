@@ -1,5 +1,9 @@
-import type { ImporterType } from "@nexora/domain";
-import type { MoneyManagerField, MoneyManagerMapping } from "@nexora/importers";
+import type { AccountType, ImporterType } from "@nexora/domain";
+import type {
+  MoneyManagerField,
+  MoneyManagerMapping,
+  MoneyManagerSemanticMapping,
+} from "@nexora/importers";
 
 const STORAGE_KEY = "nexora.import-mapping-profiles.v1";
 const fields: readonly MoneyManagerField[] = [
@@ -19,6 +23,7 @@ export interface ImportMappingProfile {
   readonly name: string;
   readonly importerType: ImporterType;
   readonly mapping: MoneyManagerMapping;
+  readonly semanticMapping?: MoneyManagerSemanticMapping;
 }
 
 type ProfileStorage = Pick<Storage, "getItem" | "setItem">;
@@ -86,7 +91,83 @@ function parseProfile(value: unknown): ImportMappingProfile | undefined {
     name: record.name.trim(),
     importerType: record.importerType,
     mapping: Object.freeze(Object.fromEntries(entries) as MoneyManagerMapping),
+    ...(record.semanticMapping === undefined
+      ? {}
+      : { semanticMapping: parseSemanticMapping(record.semanticMapping) }),
   });
+}
+
+const accountTypes = new Set<AccountType>([
+  "checking",
+  "savings",
+  "cash",
+  "investment",
+  "loan",
+  "virtual_subaccount",
+]);
+
+function parseSemanticMapping(value: unknown): MoneyManagerSemanticMapping {
+  if (typeof value !== "object" || value === null) throw new Error("invalid_mapping_profile");
+  const record = value as Record<string, unknown>;
+  return Object.freeze({
+    accountMappings: parseStringRecord(record.accountMappings),
+    categoryMappings: parseStringRecord(record.categoryMappings),
+    accountConfigurations: parseAccountConfigurations(record.accountConfigurations),
+  });
+}
+
+function parseStringRecord(value: unknown): Readonly<Record<string, string>> {
+  if (value === undefined) return Object.freeze({});
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    throw new Error("invalid_mapping_profile");
+  const entries = Object.entries(value);
+  if (
+    entries.length > 500 ||
+    entries.some(
+      ([key, target]) =>
+        key.length < 1 || key.length > 300 || typeof target !== "string" || target.length > 200,
+    )
+  )
+    throw new Error("invalid_mapping_profile");
+  return Object.freeze(Object.fromEntries(entries));
+}
+
+function parseAccountConfigurations(
+  value: unknown,
+): NonNullable<MoneyManagerSemanticMapping["accountConfigurations"]> {
+  if (value === undefined) return Object.freeze({});
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    throw new Error("invalid_mapping_profile");
+  const entries = Object.entries(value);
+  if (entries.length > 100) throw new Error("invalid_mapping_profile");
+  return Object.freeze(
+    Object.fromEntries(
+      entries.map(([key, candidate]) => {
+        if (
+          key.length < 1 ||
+          key.length > 300 ||
+          typeof candidate !== "object" ||
+          candidate === null
+        )
+          throw new Error("invalid_mapping_profile");
+        const config = candidate as Record<string, unknown>;
+        if (!accountTypes.has(config.type as AccountType))
+          throw new Error("invalid_mapping_profile");
+        if (
+          config.institution !== undefined &&
+          (typeof config.institution !== "string" || config.institution.length > 160)
+        )
+          throw new Error("invalid_mapping_profile");
+        return [
+          key,
+          Object.freeze({
+            type: config.type as AccountType,
+            ...(config.institution === undefined ? {} : { institution: config.institution }),
+          }),
+        ];
+      }),
+    ),
+  );
 }
 
 function safeStorage(): Storage | undefined {

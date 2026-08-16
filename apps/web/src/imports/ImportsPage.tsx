@@ -3,8 +3,10 @@ import {
   dryRunMoneyManagerRows,
   previewMoneyManagerRows,
   readBankWorkbook,
-  readMediobancaCsv,
-  detectMediobancaPremierCsv,
+  readPremierBankCsv,
+  detectPremierBankCsv,
+  resolvePremierBankDefaultAccount,
+  resolvePdfStatementDefaultAccount,
   readMoneyManagerWorkbook,
   readBankPdf,
   readGenericCsv,
@@ -13,8 +15,13 @@ import {
   type MoneyManagerDryRunRow,
   type MoneyManagerMapping,
   type MoneyManagerSheet,
+  buildMoneyManagerSemanticPlan,
+  moneyManagerCategoryPathKey,
+  moneyManagerSemanticKey,
+  type MoneyManagerSemanticMapping,
+  type MoneyManagerSemanticPlan,
 } from "@nexora/importers";
-import type { Account, Category, Transaction } from "@nexora/domain";
+import type { Account, AccountType, Category, Transaction } from "@nexora/domain";
 import type { ImportBatch, ImporterType } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
@@ -38,6 +45,14 @@ const mappingFields: readonly { readonly field: MoneyManagerField; readonly labe
   { field: "type", label: "Tipo" },
 ];
 
+const accountCreationTypes: readonly { readonly type: AccountType; readonly label: string }[] = [
+  { type: "checking", label: "Conto corrente" },
+  { type: "savings", label: "Risparmio" },
+  { type: "cash", label: "Contanti" },
+  { type: "investment", label: "Investimento" },
+  { type: "loan", label: "Prestito" },
+];
+
 export function ImportsPage({
   accounts,
   batches,
@@ -56,6 +71,8 @@ export function ImportsPage({
     readonly sourceSha256: string;
     readonly mappingProfileId?: string;
     readonly confirmedTransferRowNumbers?: readonly number[];
+    readonly accountsToCreate?: readonly Account[];
+    readonly categoriesToCreate?: readonly Category[];
   }) => Promise<void>;
   readonly onUndo: (batchId: string) => Promise<void>;
   readonly batches: readonly ImportBatch[];
@@ -77,6 +94,7 @@ export function ImportsPage({
   const [fallbackAccountName, setFallbackAccountName] = useState("");
   const [rowAccountOverrides, setRowAccountOverrides] = useState<Record<number, string>>({});
   const [confirmedTransferRows, setConfirmedTransferRows] = useState<Record<number, boolean>>({});
+  const [accountPlanDecisions, setAccountPlanDecisions] = useState<Record<string, string>>({});
 
   const selectedSheet = sheets.find((sheet) => sheet.name === selectedSheetName);
   const headers = selectedSheet?.rows[0] ?? [];
@@ -93,7 +111,27 @@ export function ImportsPage({
     const account = rowAccountOverrides[row.sourceRowNumber] ?? row.account ?? fallbackAccountName;
     return resolvePreviewAccount(row, account);
   });
-  const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions);
+  const selectedMappingProfile = mappingProfiles.find(
+    (candidate) => candidate.id === selectedMappingProfileId,
+  );
+  const semanticMapping = mergeSemanticMapping(
+    selectedMappingProfile?.semanticMapping,
+    accountPlanDecisions,
+  );
+  const semanticPlan =
+    source?.importerType === "money_manager_xlsx"
+      ? buildMoneyManagerSemanticPlan(
+          preview,
+          accounts,
+          categories,
+          (() => {
+            let index = 0;
+            return () => `${source.sha256.slice(0, 12)}-${++index}`;
+          })(),
+          semanticMapping,
+        )
+      : undefined;
+  const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions, semanticPlan);
   const readyCount = dryRun.filter((row) => row.status === "ready").length;
   const reviewCount = dryRun.filter((row) => row.status === "needs_review").length;
   const duplicateCount = dryRun.filter((row) => row.status === "skipped_duplicate").length;
@@ -110,8 +148,7 @@ export function ImportsPage({
       const genericCsv = filename.endsWith(".csv") ? readGenericCsv(bytes) : undefined;
       const importerType: ImporterType = filename.endsWith(".pdf")
         ? "n26_pdf"
-        : genericCsv !== undefined &&
-            detectMediobancaPremierCsv(genericCsv.sheets[0]?.rows[0] ?? [])
+        : genericCsv !== undefined && detectPremierBankCsv(genericCsv.sheets[0]?.rows[0] ?? [])
           ? "mediobanca_csv"
           : genericCsv !== undefined
             ? "generic_csv"
@@ -120,7 +157,7 @@ export function ImportsPage({
               : "money_manager_xlsx";
       const workbook =
         importerType === "mediobanca_csv"
-          ? readMediobancaCsv(bytes)
+          ? readPremierBankCsv(bytes)
           : importerType === "generic_csv"
             ? genericCsv!
             : importerType === "n26_pdf"
@@ -136,15 +173,14 @@ export function ImportsPage({
       setSelectedMappingProfileId("");
       setFallbackAccountName(
         importerType === "mediobanca_csv"
-          ? (accounts.find(
-              (account) => !account.isArchived && account.name === "Mediobanca Premier",
-            )?.name ?? "")
+          ? resolvePremierBankDefaultAccount(accounts)
           : importerType === "n26_pdf"
-            ? resolveN26AccountName(accounts)
-          : "",
+            ? resolvePdfStatementDefaultAccount(accounts)
+            : "",
       );
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
+      setAccountPlanDecisions({});
       setSource({ filename: file.name, importerType, sha256: await sha256(bytes) });
       setError(null);
     } catch (cause) {
@@ -155,12 +191,13 @@ export function ImportsPage({
       setSource(null);
       setRowAccountOverrides({});
       setConfirmedTransferRows({});
+      setAccountPlanDecisions({});
       setError(
         cause instanceof Error && cause.message === "not_n26_statement"
-          ? "Il PDF non è stato riconosciuto come un estratto conto N26 supportato. I dati locali non sono stati modificati."
+          ? "Il PDF non è stato riconosciuto come un estratto conto supportato. I dati locali non sono stati modificati."
           : cause instanceof Error && cause.message === "n26_statement_parse_failed"
-            ? "Estratto conto N26 riconosciuto, ma non è stato possibile interpretare correttamente i movimenti. Nessun dato locale è stato modificato."
-          : "Il file non è un estratto CSV, XLSX o PDF leggibile. I dati locali non sono stati modificati.",
+            ? "Estratto conto riconosciuto, ma non è stato possibile interpretare correttamente i movimenti. Nessun dato locale è stato modificato."
+            : "Il file non è un estratto CSV, XLSX o PDF leggibile. I dati locali non sono stati modificati.",
       );
     }
   };
@@ -263,6 +300,111 @@ export function ImportsPage({
       )}
       {selectedSheet === undefined ? null : (
         <div className="import-layout">
+          {semanticPlan === undefined ? null : (
+            <section
+              aria-labelledby="money-manager-plan-title"
+              className="data-panel import-preview-panel"
+            >
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">Money Manager riconosciuto</p>
+                  <h2 id="money-manager-plan-title">Piano di migrazione</h2>
+                </div>
+                <span className="panel-meta">{preview.length} movimenti</span>
+              </div>
+              <div className="import-mapping-content">
+                <h3>Conti rilevati</h3>
+                <ul className="account-list">
+                  {semanticPlan.accounts.map((item) => (
+                    <li key={item.sourceName}>
+                      <div className="account-copy">
+                        <strong>{item.sourceName}</strong>
+                        <small>
+                          {item.status === "existing"
+                            ? `Esistente · ${item.currency ?? "—"}`
+                            : item.status === "to_create"
+                              ? `${item.proposedAccount?.type ?? "account"} · ${item.currency ?? "—"} · verrà creato alla conferma`
+                              : "Richiede una decisione unica"}
+                        </small>
+                      </div>
+                      <span
+                        className={`import-status is-${item.status === "needs_review" ? "needs_review" : "ready"}`}
+                      >
+                        {item.status === "existing"
+                          ? "Esistente"
+                          : item.status === "to_create"
+                            ? "Da creare"
+                            : "Da revisionare"}
+                      </span>
+                      {item.status === "needs_review" ? (
+                        <label className="account-form-label">
+                          Risoluzione per {item.sourceName}
+                          <select
+                            onChange={(event) =>
+                              setAccountPlanDecisions((current) => ({
+                                ...current,
+                                [moneyManagerSemanticKey(item.sourceName)]: event.target.value,
+                              }))
+                            }
+                            value={
+                              accountPlanDecisions[moneyManagerSemanticKey(item.sourceName)] ?? ""
+                            }
+                          >
+                            <option value="">Scegli una sola volta</option>
+                            {accounts
+                              .filter(
+                                (account) =>
+                                  !account.isArchived && account.currency === item.currency,
+                              )
+                              .map((account) => (
+                                <option key={account.id} value={`account:${account.id}`}>
+                                  Usa {account.name}
+                                </option>
+                              ))}
+                            {accountCreationTypes.map(({ type, label }) => (
+                              <option key={type} value={`create:${type}`}>
+                                Crea come {label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+                <h3>Categorie Money Manager</h3>
+                <ul className="account-list">
+                  {semanticPlan.categories.map((item) => (
+                    <li key={`${item.sourceCategory}/${item.sourceSubcategory ?? ""}`}>
+                      <div className="account-copy">
+                        <strong>
+                          {item.sourceCategory}
+                          {item.sourceSubcategory === undefined
+                            ? ""
+                            : ` / ${item.sourceSubcategory}`}
+                        </strong>
+                        <small>
+                          {item.status === "existing"
+                            ? "Esistente"
+                            : item.status === "to_create"
+                              ? "Verrà creata alla conferma"
+                              : "Richiede mapping"}
+                        </small>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <div className="import-summary" role="status">
+                  <span>
+                    {dryRun.filter((row) => row.kind === "transfer").length} trasferimenti
+                  </span>
+                  <span>{dryRun.filter((row) => row.kind === "adjustment").length} rettifiche</span>
+                  <span>{semanticPlan.accountsToCreate.length} conti da creare</span>
+                  <span>{semanticPlan.categoriesToCreate.length} categorie da creare</span>
+                </div>
+              </div>
+            </section>
+          )}
           <section aria-labelledby="mapping-title" className="data-panel import-mapping-panel">
             <div className="panel-heading">
               <div>
@@ -340,7 +482,10 @@ export function ImportsPage({
                       const id = event.target.value;
                       setSelectedMappingProfileId(id);
                       const profile = mappingProfiles.find((candidate) => candidate.id === id);
-                      if (profile !== undefined) setMapping(profile.mapping);
+                      if (profile !== undefined) {
+                        setMapping(profile.mapping);
+                        setAccountPlanDecisions({});
+                      }
                     }}
                     value={selectedMappingProfileId}
                   >
@@ -374,6 +519,9 @@ export function ImportsPage({
                       name: mappingProfileName,
                       importerType: source.importerType,
                       mapping,
+                      ...(semanticPlan === undefined
+                        ? {}
+                        : { semanticMapping: semanticMappingFromPlan(semanticPlan) }),
                     } as const;
                     setMappingProfiles(saveImportMappingProfile(profile));
                     setSelectedMappingProfileId(profile.id);
@@ -418,31 +566,44 @@ export function ImportsPage({
                       <td data-label="Riga">{row.preview.sourceRowNumber}</td>
                       <td data-label="Data">{row.preview.date ?? "—"}</td>
                       <td data-label="Conto">
-                        <label
-                          className="sr-only"
-                          htmlFor={`import-account-${row.preview.sourceRowNumber}`}
-                        >
-                          Conto per riga {row.preview.sourceRowNumber}
-                        </label>
-                        <select
-                          id={`import-account-${row.preview.sourceRowNumber}`}
-                          onChange={(event) =>
-                            setRowAccountOverrides((current) => ({
-                              ...current,
-                              [row.preview.sourceRowNumber]: event.target.value,
-                            }))
-                          }
-                          value={row.preview.account ?? ""}
-                        >
-                          <option value="">Da risolvere</option>
-                          {accounts
-                            .filter((account) => !account.isArchived)
-                            .map((account) => (
-                              <option key={account.id} value={account.name}>
-                                {account.name}
-                              </option>
-                            ))}
-                        </select>
+                        {semanticPlan === undefined ? (
+                          <>
+                            <label
+                              className="sr-only"
+                              htmlFor={`import-account-${row.preview.sourceRowNumber}`}
+                            >
+                              Conto per riga {row.preview.sourceRowNumber}
+                            </label>
+                            <select
+                              id={`import-account-${row.preview.sourceRowNumber}`}
+                              onChange={(event) =>
+                                setRowAccountOverrides((current) => ({
+                                  ...current,
+                                  [row.preview.sourceRowNumber]: event.target.value,
+                                }))
+                              }
+                              value={row.preview.account ?? ""}
+                            >
+                              <option value="">Da risolvere</option>
+                              {accounts
+                                .filter((account) => !account.isArchived)
+                                .map((account) => (
+                                  <option key={account.id} value={account.name}>
+                                    {account.name}
+                                  </option>
+                                ))}
+                            </select>
+                          </>
+                        ) : (
+                          <span>
+                            {accounts.find((account) => account.id === row.accountId)?.name ??
+                              semanticPlan.accounts.find(
+                                (item) => item.targetAccountId === row.accountId,
+                              )?.proposedAccount?.name ??
+                              row.preview.account ??
+                              "Da risolvere"}
+                          </span>
+                        )}
                       </td>
                       <td data-label="Importo">
                         {row.preview.amountMinor === undefined
@@ -454,7 +615,8 @@ export function ImportsPage({
                           {dryRunLabel(row.status)}
                         </span>
                         <small>{row.message}</small>
-                        {row.transferCandidateAccountId === undefined ? null : (
+                        {row.transferCandidateAccountId === undefined ||
+                        row.kind === "transfer" ? null : (
                           <label className="import-transfer-confirmation">
                             <input
                               checked={confirmedTransferRows[row.preview.sourceRowNumber] ?? false}
@@ -496,6 +658,12 @@ export function ImportsPage({
                     rows: dryRun,
                     confirmedTransferRowNumbers: confirmedTransferRowsList,
                     sourceSha256: source.sha256,
+                    ...(semanticPlan === undefined
+                      ? {}
+                      : {
+                          accountsToCreate: semanticPlan.accountsToCreate,
+                          categoriesToCreate: semanticPlan.categoriesToCreate,
+                        }),
                     ...(selectedMappingProfileId === ""
                       ? {}
                       : { mappingProfileId: selectedMappingProfileId }),
@@ -519,14 +687,65 @@ export function ImportsPage({
   );
 }
 
-function resolveN26AccountName(accounts: readonly Account[]): string {
-  const candidates = accounts.filter(
-    (account) =>
-      !account.isArchived &&
-      account.type !== "virtual_subaccount" &&
-      /\bn26\b/i.test(`${account.name} ${account.institution ?? ""}`),
-  );
-  return candidates.length === 1 ? candidates[0]!.name : "";
+function mergeSemanticMapping(
+  saved: MoneyManagerSemanticMapping | undefined,
+  decisions: Readonly<Record<string, string>>,
+): MoneyManagerSemanticMapping {
+  const accountMappings = { ...(saved?.accountMappings ?? {}) };
+  const accountConfigurations = { ...(saved?.accountConfigurations ?? {}) };
+  for (const [sourceName, decision] of Object.entries(decisions)) {
+    if (decision.startsWith("account:")) {
+      accountMappings[sourceName] = decision.slice("account:".length);
+      delete accountConfigurations[sourceName];
+    } else if (decision.startsWith("create:")) {
+      accountConfigurations[sourceName] = {
+        type: decision.slice("create:".length) as AccountType,
+      };
+      delete accountMappings[sourceName];
+    }
+  }
+  return {
+    accountMappings: Object.freeze(accountMappings),
+    accountConfigurations: Object.freeze(accountConfigurations),
+    categoryMappings: saved?.categoryMappings ?? {},
+  };
+}
+
+function semanticMappingFromPlan(plan: MoneyManagerSemanticPlan): MoneyManagerSemanticMapping {
+  return {
+    accountMappings: Object.freeze(
+      Object.fromEntries(
+        plan.accounts
+          .filter((item) => item.targetAccountId !== undefined)
+          .map((item) => [moneyManagerSemanticKey(item.sourceName), item.targetAccountId!]),
+      ),
+    ),
+    accountConfigurations: Object.freeze(
+      Object.fromEntries(
+        plan.accounts
+          .filter((item) => item.proposedAccount !== undefined)
+          .map((item) => [
+            moneyManagerSemanticKey(item.sourceName),
+            {
+              type: item.proposedAccount!.type,
+              ...(item.proposedAccount!.institution === undefined
+                ? {}
+                : { institution: item.proposedAccount!.institution }),
+            },
+          ]),
+      ),
+    ),
+    categoryMappings: Object.freeze(
+      Object.fromEntries(
+        plan.categories
+          .filter((item) => item.targetCategoryId !== undefined)
+          .map((item) => [
+            moneyManagerCategoryPathKey(item.sourceCategory, item.sourceSubcategory),
+            item.targetCategoryId!,
+          ]),
+      ),
+    ),
+  };
 }
 
 async function sha256(bytes: ArrayBuffer): Promise<string> {

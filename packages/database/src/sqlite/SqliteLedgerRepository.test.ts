@@ -733,7 +733,6 @@ describe("SqliteLedgerRepository", () => {
 
   it("committa transazioni importate con il loro batch", async () => {
     const savedAccount = account("account-import");
-    await repository.saveAccount(savedAccount);
     const batch = ImportBatch.create({
       id: "batch-commit",
       importerType: "money_manager_xlsx",
@@ -760,9 +759,17 @@ describe("SqliteLedgerRepository", () => {
       status: "imported",
       createdTransactionId: transaction.id,
     });
-    await expect(repository.commitImportBatch(batch, [row], [transaction])).resolves.toMatchObject({
+    await expect(
+      repository.commitImportBatch({
+        batch,
+        rows: [row],
+        accountsToCreate: [savedAccount],
+        transactions: [transaction],
+      }),
+    ).resolves.toMatchObject({
       status: "committed",
     });
+    await expect(repository.findAccountById(savedAccount.id)).resolves.toEqual(savedAccount);
     await expect(repository.findTransactionById(transaction.id)).resolves.toEqual(transaction);
     await expect(repository.undoImportBatch(batch.id)).resolves.toMatchObject({ status: "undone" });
     await expect(repository.findTransactionById(transaction.id)).resolves.toMatchObject({
@@ -772,6 +779,48 @@ describe("SqliteLedgerRepository", () => {
     await expect(repository.findImportBatchById(batch.id)).resolves.toMatchObject({
       status: "undone",
     });
+  });
+
+  it("rolls back planned entities when an imported transaction is invalid", async () => {
+    const plannedAccount = account("account-import-rollback");
+    const batch = ImportBatch.create({
+      id: "batch-import-rollback",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "synthetic.xlsx",
+      sourceSha256: "e".repeat(64),
+    });
+    const transaction = Transaction.create({
+      id: "transaction-import-rollback",
+      kind: "expense",
+      status: "booked",
+      accountId: plannedAccount.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: "missing-category",
+      source: "import",
+      importBatchId: batch.id,
+      sourceFingerprint: "f".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-import-rollback",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "imported",
+      createdTransactionId: transaction.id,
+    });
+    await expect(
+      repository.commitImportBatch({
+        batch,
+        rows: [row],
+        accountsToCreate: [plannedAccount],
+        transactions: [transaction],
+      }),
+    ).rejects.toBeDefined();
+    await expect(repository.findAccountById(plannedAccount.id)).resolves.toBeUndefined();
+    await expect(repository.findImportBatchById(batch.id)).resolves.toBeUndefined();
+    await expect(repository.findTransactionById(transaction.id)).resolves.toBeUndefined();
   });
 
   it("persiste e aggiorna una ricorrenza mensile", async () => {

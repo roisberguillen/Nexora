@@ -785,7 +785,6 @@ describe("IndexedDbLedgerRepository", () => {
 
   it("committa transazioni importate con il loro batch", async () => {
     const savedAccount = account("account-import");
-    await ledger.repository.saveAccount(savedAccount);
     const batch = ImportBatch.create({
       id: "batch-commit",
       importerType: "money_manager_xlsx",
@@ -813,8 +812,14 @@ describe("IndexedDbLedgerRepository", () => {
       createdTransactionId: transaction.id,
     });
     await expect(
-      ledger.repository.commitImportBatch(batch, [row], [transaction]),
+      ledger.repository.commitImportBatch({
+        batch,
+        rows: [row],
+        accountsToCreate: [savedAccount],
+        transactions: [transaction],
+      }),
     ).resolves.toMatchObject({ status: "committed" });
+    await expect(ledger.repository.findAccountById(savedAccount.id)).resolves.toEqual(savedAccount);
     await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toEqual(
       transaction,
     );
@@ -833,6 +838,48 @@ describe("IndexedDbLedgerRepository", () => {
     await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toMatchObject({
       status: "cancelled",
     });
+  });
+
+  it("rolls back planned entities when an imported transaction is invalid", async () => {
+    const plannedAccount = account("account-import-rollback");
+    const batch = ImportBatch.create({
+      id: "batch-import-rollback",
+      importerType: "money_manager_xlsx",
+      rowsTotal: 1,
+      sourceFilename: "synthetic.xlsx",
+      sourceSha256: "e".repeat(64),
+    });
+    const transaction = Transaction.create({
+      id: "transaction-import-rollback",
+      kind: "expense",
+      status: "booked",
+      accountId: plannedAccount.id,
+      amount: Money.fromMinor(-100n, "EUR"),
+      bookedDate,
+      categoryId: "missing-category",
+      source: "import",
+      importBatchId: batch.id,
+      sourceFingerprint: "f".repeat(64),
+    });
+    const row = ImportRow.create({
+      id: "row-import-rollback",
+      batchId: batch.id,
+      rowNumber: 2,
+      rawJson: "{}",
+      status: "imported",
+      createdTransactionId: transaction.id,
+    });
+    await expect(
+      ledger.repository.commitImportBatch({
+        batch,
+        rows: [row],
+        accountsToCreate: [plannedAccount],
+        transactions: [transaction],
+      }),
+    ).rejects.toBeDefined();
+    await expect(ledger.repository.findAccountById(plannedAccount.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.findImportBatchById(batch.id)).resolves.toBeUndefined();
+    await expect(ledger.repository.findTransactionById(transaction.id)).resolves.toBeUndefined();
   });
 
   it("persiste una ricorrenza dopo la riapertura", async () => {

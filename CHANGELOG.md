@@ -13,6 +13,11 @@
 
 ### Changed
 
+- Corretto definitivamente l'import Money Manager: piani globali per conti e categorie, creazione
+  differita e atomica delle entità mancanti, transfer reali, rettifiche saldo, profili semantici,
+  deduplica e undo coerente su memoria, IndexedDB e SQLite. La validazione locale isolata ha
+  riconciliato 45/45 righe reali senza conservare dati finanziari nel repository.
+
 - Fixed local-account resolution in the import preview: statements without an account column can
   become committable only after an explicit account choice and only when their date and amount are
   already valid. Invalid source rows remain review-only.

@@ -50,6 +50,100 @@ test("importa e annulla un batch Money Manager senza uscire dalla PWA", async ({
   await expect(history).toContainText("undone");
 });
 
+test("esegue il piano Money Manager con account, categorie, transfer, adjustment e deduplica", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#imports");
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(
+    workbook,
+    XLSX.utils.aoa_to_sheet([
+      [
+        "Data",
+        "Conto",
+        "Importo",
+        "Categoria",
+        "Sotto-categoria",
+        "Valuta",
+        "Controparte",
+        "Tipologia",
+      ],
+      [
+        "10/08/2026",
+        "Conto quotidiano demo",
+        "-12,50",
+        "Alimentazione sintetica",
+        "Spesa sintetica",
+        "EUR",
+        "Esercente sintetico",
+        "Spesa",
+      ],
+      [
+        "11/08/2026",
+        "Riserva sintetica",
+        "-8,00",
+        "Servizi sintetici",
+        "Cloud sintetico",
+        "EUR",
+        "Fornitore sintetico",
+        "Spesa",
+      ],
+      [
+        "12/08/2026",
+        "Diretta sim",
+        "86,49",
+        "Modifica Saldo",
+        "",
+        "EUR",
+        "Rettifica sintetica",
+        "Guadagno",
+      ],
+      [
+        "13/08/2026",
+        "Conto quotidiano demo",
+        "-50,00",
+        "Diretta sim",
+        "",
+        "EUR",
+        "Giroconto sintetico",
+        "Trasferimento uscita",
+      ],
+    ]),
+    "Movimenti",
+  );
+  const bytes = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+  const upload = {
+    name: "money-manager-semantico-sintetico.xlsx",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    buffer: bytes,
+  };
+  await page.getByLabel("Seleziona un estratto CSV, XLSX o PDF").setInputFiles(upload);
+
+  await expect(page.getByRole("heading", { name: "Piano di migrazione" })).toBeVisible();
+  await expect(page.getByText("Directa SIM", { exact: true })).toBeVisible();
+  await expect(page.getByText("Categorie Money Manager")).toBeVisible();
+  await expect(page.getByLabel(/Conto per riga/)).toHaveCount(0);
+  await page.getByLabel("Risoluzione per Riserva sintetica").selectOption("create:savings");
+  await expect(page.getByText("4 pronte")).toBeVisible();
+  await page.getByRole("button", { name: "Conferma 4 righe" }).click();
+
+  const history = page
+    .getByRole("heading", { name: "Importazioni recenti" })
+    .locator("xpath=ancestor::section");
+  await expect(history).toContainText("money-manager-semantico-sintetico.xlsx");
+  await expect(history).toContainText("4 importate");
+
+  await page.getByLabel("Seleziona un estratto CSV, XLSX o PDF").setInputFiles(upload);
+  await expect(page.getByText("4 duplicate")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Conferma 0 righe" })).toBeDisabled();
+
+  await page.getByRole("button", { name: "Annulla batch" }).click();
+  await expect(history).toContainText("undone");
+});
+
 test("conferma un batch contenente solo un trasferimento tra conti propri", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();

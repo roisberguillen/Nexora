@@ -8,7 +8,7 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
-  type ImportTransferBundle,
+  type ImportCommitPlan,
   RecurringRule,
   AllocationPlan,
   Budget,
@@ -25,6 +25,8 @@ import {
   validateAccountUpdate,
   validateCategoryMerge,
   validateCategoryHierarchy,
+  validateAccountHierarchy,
+  sortAccountsParentFirst,
   isSystemCategory,
   createSystemCategories,
 } from "@nexora/domain";
@@ -844,23 +846,38 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
       ),
     );
   }
-  public commitImportBatch(
-    batch: ImportBatch,
-    rows: readonly ImportRow[],
-    transactions: readonly Transaction[],
-    transferBundles: readonly ImportTransferBundle[] = [],
-  ): Promise<ImportBatch> {
+  public commitImportBatch(plan: ImportCommitPlan): Promise<ImportBatch> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withTransaction(
           ["accounts", "categories", "transactions", "transfers", "import_batches", "import_rows"],
           "readwrite",
           async (transaction) => {
+            const { batch, rows, transactions } = plan;
+            const transferBundles = plan.transferBundles ?? [];
             const committed = validateImportCommit(batch, rows, transactions, transferBundles);
             const batches = transaction.objectStore("import_batches");
             const importRows = transaction.objectStore("import_rows");
             const storedTransactions = transaction.objectStore("transactions");
+            const storedAccounts = transaction.objectStore("accounts");
+            const storedCategories = transaction.objectStore("categories");
             await this.assertNew(batches, batch.id, "Import batch");
+            for (const account of plan.accountsToCreate ?? [])
+              await this.assertNew(storedAccounts, account.id, "Account");
+            for (const category of plan.categoriesToCreate ?? [])
+              await this.assertNew(storedCategories, category.id, "Category");
+            const existingAccounts = (await requestResult<unknown[]>(storedAccounts.getAll())).map(
+              (record) => accountFromRecord(record as AccountRecord),
+            );
+            validateAccountHierarchy([...existingAccounts, ...(plan.accountsToCreate ?? [])]);
+            const existingCategories = (
+              await requestResult<unknown[]>(storedCategories.getAll())
+            ).map((record) => categoryFromRecord(record as CategoryRecord));
+            validateCategoryHierarchy([...existingCategories, ...(plan.categoriesToCreate ?? [])]);
+            for (const account of sortAccountsParentFirst(plan.accountsToCreate ?? []))
+              await requestResult(storedAccounts.add(accountToRecord(account)));
+            for (const category of plan.categoriesToCreate ?? [])
+              await requestResult(storedCategories.add(categoryToRecord(category)));
             for (const row of rows) await this.assertNew(importRows, row.id, "Import row");
             const existing = await requestResult<unknown[]>(storedTransactions.getAll());
             const transferTransactions = transferBundles.flatMap((bundle) => [

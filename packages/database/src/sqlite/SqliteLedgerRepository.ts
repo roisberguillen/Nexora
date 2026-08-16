@@ -8,7 +8,7 @@ import {
   Tag,
   ImportBatch,
   ImportRow,
-  type ImportTransferBundle,
+  type ImportCommitPlan,
   RecurringRule,
   AllocationPlan,
   Budget,
@@ -27,6 +27,8 @@ import {
   isSystemCategory,
   validateCategoryMerge,
   validateCategoryHierarchy,
+  validateAccountHierarchy,
+  sortAccountsParentFirst,
 } from "@nexora/domain";
 
 import {
@@ -983,15 +985,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
       ),
     );
   }
-  public commitImportBatch(
-    batch: ImportBatch,
-    rows: readonly ImportRow[],
-    transactions: readonly Transaction[],
-    transferBundles: readonly ImportTransferBundle[] = [],
-  ): Promise<ImportBatch> {
+  public commitImportBatch(plan: ImportCommitPlan): Promise<ImportBatch> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
         this.withWriteTransaction(async () => {
+          const { batch, rows, transactions } = plan;
+          const transferBundles = plan.transferBundles ?? [];
           const committed = validateImportCommit(batch, rows, transactions, transferBundles);
           const existing = await this.database.query<{ readonly id: string }>(
             "SELECT id FROM import_batches WHERE id = ?",
@@ -999,6 +998,41 @@ export class SqliteLedgerRepository implements LedgerRepository {
           );
           if (existing.length > 0)
             throw new DomainError("duplicate_entity", "Import batch id already exists.");
+          for (const account of plan.accountsToCreate ?? [])
+            await this.assertNew("accounts", account.id, "Account");
+          for (const category of plan.categoriesToCreate ?? [])
+            await this.assertNew("categories", category.id, "Category");
+          validateAccountHierarchy([
+            ...(await this.listAccountsInternal()),
+            ...(plan.accountsToCreate ?? []),
+          ]);
+          validateCategoryHierarchy([
+            ...(await this.listCategoriesInternal()),
+            ...(plan.categoriesToCreate ?? []),
+          ]);
+          for (const account of sortAccountsParentFirst(plan.accountsToCreate ?? [])) {
+            const record = accountToRecord(account);
+            await this.database.run(
+              "INSERT INTO accounts (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+              [
+                record.id,
+                record.name,
+                record.type,
+                record.institution,
+                record.currency,
+                record.parent_account_id,
+                record.opening_balance_minor,
+                record.is_archived,
+              ],
+            );
+          }
+          for (const category of plan.categoriesToCreate ?? []) {
+            const record = categoryToRecord(category);
+            await this.database.run(
+              "INSERT INTO categories (id, name, kind_scope, parent_id, is_archived) VALUES (?, ?, ?, ?, ?)",
+              [record.id, record.name, record.kind_scope, record.parent_id, record.is_archived],
+            );
+          }
           const transferTransactions = transferBundles.flatMap((bundle) => [
             bundle.debitTransaction,
             bundle.creditTransaction,
@@ -1585,14 +1619,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   }
 
   public listAccounts(): Promise<readonly Account[]> {
-    return this.enqueue(() =>
-      this.performDatabaseOperation(async () => {
-        const rows = await this.database.query<AccountRecord>(
-          `SELECT ${accountColumns} FROM accounts ORDER BY created_at ASC, id ASC`,
-        );
-        return rows.map(accountFromRecord);
-      }),
-    );
+    return this.enqueue(() => this.performDatabaseOperation(() => this.listAccountsInternal()));
   }
 
   public listCategories(): Promise<readonly Category[]> {
@@ -2158,6 +2185,13 @@ export class SqliteLedgerRepository implements LedgerRepository {
       [id],
     );
     return rows[0] === undefined ? undefined : accountFromRecord(rows[0]);
+  }
+
+  private async listAccountsInternal(): Promise<readonly Account[]> {
+    const rows = await this.database.query<AccountRecord>(
+      `SELECT ${accountColumns} FROM accounts ORDER BY created_at ASC, id ASC`,
+    );
+    return rows.map(accountFromRecord);
   }
 
   private async findCategoryByIdInternal(id: string): Promise<Category | undefined> {

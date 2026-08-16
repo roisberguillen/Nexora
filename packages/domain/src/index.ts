@@ -42,6 +42,7 @@ export {
   ImportBatch,
   validateImportCommit,
   type ImportTransferBundle,
+  type ImportCommitPlan,
   type CreateImportBatchProps,
   type ImportBatchStatus,
   type ImporterType,
@@ -78,6 +79,7 @@ export {
   type CashFlowSummary,
 } from "./services/ledgerReports";
 export { validateAccountUpdate, type AccountUpdateFacts } from "./services/accountUpdates";
+export { sortAccountsParentFirst, validateAccountHierarchy } from "./services/accountHierarchy";
 export {
   allocationExecutionMarker,
   executeConfirmedAllocationPlans,

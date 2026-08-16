@@ -4,7 +4,7 @@ import type { Transaction } from "../entities/Transaction";
 import type { Transfer } from "../entities/Transfer";
 import type { TransactionSplit } from "../entities/TransactionSplit";
 import type { Tag } from "../entities/Tag";
-import type { ImportBatch, ImportTransferBundle } from "../entities/ImportBatch";
+import type { ImportBatch, ImportCommitPlan } from "../entities/ImportBatch";
 import type { ImportRow } from "../entities/ImportRow";
 import type { RecurringRule } from "../entities/RecurringRule";
 import type { AllocationPlan } from "../entities/AllocationPlan";
@@ -59,12 +59,7 @@ export interface LedgerRepository {
   updateMonthlyJournal(journal: MonthlyJournal): Promise<void>;
   deleteMonthlyJournal(id: string): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
-  commitImportBatch(
-    batch: ImportBatch,
-    rows: readonly ImportRow[],
-    transactions: readonly Transaction[],
-    transferBundles?: readonly ImportTransferBundle[],
-  ): Promise<ImportBatch>;
+  commitImportBatch(plan: ImportCommitPlan): Promise<ImportBatch>;
   undoImportBatch(batchId: string): Promise<ImportBatch>;
   updateTag(tag: Tag): Promise<void>;
   deleteUnusedTag(id: string): Promise<void>;

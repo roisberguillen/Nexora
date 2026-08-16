@@ -10,7 +10,7 @@ import {
   type Tag,
   type ImportBatch,
   ImportRow,
-  type ImportTransferBundle,
+  type ImportCommitPlan,
   RecurringRule,
   type AllocationPlan,
   Budget,
@@ -25,6 +25,8 @@ import {
   isSystemCategory,
   validateCategoryMerge,
   validateCategoryHierarchy,
+  validateAccountHierarchy,
+  sortAccountsParentFirst,
 } from "@nexora/domain";
 
 export class InMemoryLedgerRepository implements LedgerRepository {
@@ -346,39 +348,42 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.importBatches.set(batch.id, batch);
     for (const row of rows) this.importRows.set(row.id, row);
   }
-  public async commitImportBatch(
-    batch: ImportBatch,
-    rows: readonly ImportRow[],
-    transactions: readonly Transaction[],
-    transferBundles: readonly ImportTransferBundle[] = [],
-  ): Promise<ImportBatch> {
-    const committed = validateImportCommit(batch, rows, transactions, transferBundles);
-    this.assertNew(this.importBatches, batch.id, "Import batch");
-    for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
-    const transferTransactions = transferBundles.flatMap((bundle) => [
-      bundle.debitTransaction,
-      bundle.creditTransaction,
-    ]);
-    const allTransactions = [...transactions, ...transferTransactions];
-    for (const bundle of transferBundles)
-      this.assertNew(this.transfers, bundle.transfer.id, "Transfer");
-    for (const transaction of allTransactions) {
-      this.assertNew(this.transactions, transaction.id, "Transaction");
-      this.validateTransactionReferences(transaction);
-      if (
-        [...this.transactions.values()].some(
-          (candidate) =>
-            candidate.accountId === transaction.accountId &&
-            candidate.sourceFingerprint === transaction.sourceFingerprint,
+  public async commitImportBatch(plan: ImportCommitPlan): Promise<ImportBatch> {
+    return this.runAtomically(async () => {
+      const { batch, rows, transactions } = plan;
+      const transferBundles = plan.transferBundles ?? [];
+      const committed = validateImportCommit(batch, rows, transactions, transferBundles);
+      this.assertNew(this.importBatches, batch.id, "Import batch");
+      validateAccountHierarchy([...this.accounts.values(), ...(plan.accountsToCreate ?? [])]);
+      for (const account of sortAccountsParentFirst(plan.accountsToCreate ?? []))
+        await this.saveAccount(account);
+      for (const category of plan.categoriesToCreate ?? []) await this.saveCategory(category);
+      for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
+      const transferTransactions = transferBundles.flatMap((bundle) => [
+        bundle.debitTransaction,
+        bundle.creditTransaction,
+      ]);
+      const allTransactions = [...transactions, ...transferTransactions];
+      for (const bundle of transferBundles)
+        this.assertNew(this.transfers, bundle.transfer.id, "Transfer");
+      for (const transaction of allTransactions) {
+        this.assertNew(this.transactions, transaction.id, "Transaction");
+        this.validateTransactionReferences(transaction);
+        if (
+          [...this.transactions.values()].some(
+            (candidate) =>
+              candidate.accountId === transaction.accountId &&
+              candidate.sourceFingerprint === transaction.sourceFingerprint,
+          )
         )
-      )
-        throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
-    }
-    this.importBatches.set(committed.id, committed);
-    for (const row of rows) this.importRows.set(row.id, row);
-    for (const transaction of allTransactions) this.transactions.set(transaction.id, transaction);
-    for (const bundle of transferBundles) this.transfers.set(bundle.transfer.id, bundle.transfer);
-    return committed;
+          throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
+      }
+      this.importBatches.set(committed.id, committed);
+      for (const row of rows) this.importRows.set(row.id, row);
+      for (const transaction of allTransactions) this.transactions.set(transaction.id, transaction);
+      for (const bundle of transferBundles) this.transfers.set(bundle.transfer.id, bundle.transfer);
+      return committed;
+    });
   }
   public async undoImportBatch(batchId: string): Promise<ImportBatch> {
     const batch = this.importBatches.get(batchId);

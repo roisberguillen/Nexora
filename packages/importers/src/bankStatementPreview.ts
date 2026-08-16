@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx";
+import type { Account } from "@nexora/domain";
 
 import { readGenericCsv } from "./genericCsvPreview";
 import type { MoneyManagerSheet, MoneyManagerWorkbookPreview } from "./moneyManagerPreview";
@@ -18,6 +19,23 @@ export interface PdfTextLine {
 }
 
 export type N26PdfErrorCode = "not_n26_statement" | "n26_statement_parse_failed";
+
+export function resolvePremierBankDefaultAccount(accounts: readonly Account[]): string {
+  return (
+    accounts.find((account) => !account.isArchived && /mediobanca\s+premier/i.test(account.name))
+      ?.name ?? ""
+  );
+}
+
+export function resolvePdfStatementDefaultAccount(accounts: readonly Account[]): string {
+  const candidates = accounts.filter(
+    (account) =>
+      !account.isArchived &&
+      account.type !== "virtual_subaccount" &&
+      /\bn26\b/i.test(`${account.name} ${account.institution ?? ""}`),
+  );
+  return candidates.length === 1 ? candidates[0]!.name : "";
+}
 
 export interface PositionedPdfTextItem {
   readonly str: string;
@@ -205,7 +223,7 @@ export function parseN26StatementLines(lines: readonly PdfTextLine[]): MoneyMana
   for (const page of groupN26Pages(lines)) {
     const section = n26SectionForPage(page);
     if (section.kind === "summary" || section.kind === "legal") continue;
-    for (let index = 0; index < page.length; ) {
+    for (let index = 0; index < page.length;) {
       const movement = n26MovementAt(page, index);
       if (movement !== undefined) {
         rows.push([
@@ -266,9 +284,14 @@ function n26SectionForPage(lines: readonly PdfTextLine[]): {
     /Descrizione\s+Data\s+Importo|Movimenti del conto|Estratto conto N\.?|\d{2}\.\d{2}\.\d{4}\s+[+-][\d.]+,\d{2}/i.test(
       text,
     );
-  const hasSummary = /Saldo precedente|Operazioni in uscita|Operazioni in entrata|Il tuo nuovo saldo|Panoramica/i.test(text);
+  const hasSummary =
+    /Saldo precedente|Operazioni in uscita|Operazioni in entrata|Il tuo nuovo saldo|Panoramica/i.test(
+      text,
+    );
   if (space !== undefined && space !== "") {
-    return hasMovements ? { kind: "space", spaceName: space } : { kind: "summary", spaceName: space };
+    return hasMovements
+      ? { kind: "space", spaceName: space }
+      : { kind: "summary", spaceName: space };
   }
   if (hasMovements) return { kind: "main" };
   if (hasSummary) return { kind: "summary" };
@@ -292,7 +315,11 @@ function n26MovementAt(
   | undefined {
   const line = page[index]?.text ?? "";
   const next = page[index + 1]?.text ?? "";
-  if (/^(Descrizione|Data|Importo|Valuta|Saldo precedente|Operazioni in (?:uscita|entrata)|Il tuo nuovo saldo|Panoramica|Movimenti dello Spazio|Spazio:|Data di apertura)/i.test(line)) {
+  if (
+    /^(Descrizione|Data|Importo|Valuta|Saldo precedente|Operazioni in (?:uscita|entrata)|Il tuo nuovo saldo|Panoramica|Movimenti dello Spazio|Spazio:|Data di apertura)/i.test(
+      line,
+    )
+  ) {
     return undefined;
   }
   const pattern = /(?:^|\s)(\d{2}\.\d{2}\.\d{4})\s+([+-][\d.]+,\d{2})\s*€?\s*$/u;
@@ -309,19 +336,19 @@ function n26MovementAt(
     .slice(-4)
     .filter(
       (entry) =>
-        !isN26Metadata(entry) &&
-        !/^\d{2}\.\d{2}\.\d{4}$/.test(entry) &&
-        !pattern.test(entry),
+        !isN26Metadata(entry) && !/^\d{2}\.\d{2}\.\d{4}$/.test(entry) && !pattern.test(entry),
     );
   const payee = description || (descriptionLines[0] ?? "");
   if (payee === "") return undefined;
   const valueDateLine = page[index - 1]?.text ?? page[index + 2]?.text ?? "";
   const valueDateMatch = /^Valuta\s+(\d{2}\.\d{2}\.\d{4})$/i.exec(valueDateLine);
-  const raw = [...descriptionLines, valueDateLine, line, ...(usesNext && next !== "" ? [next] : [])].filter(
-    (entry, position, entries) => entry !== "" && entries.indexOf(entry) === position,
-  );
-  const valueDate =
-    valueDateMatch === null ? undefined : normalizeN26Date(valueDateMatch[1]!);
+  const raw = [
+    ...descriptionLines,
+    valueDateLine,
+    line,
+    ...(usesNext && next !== "" ? [next] : []),
+  ].filter((entry, position, entries) => entry !== "" && entries.indexOf(entry) === position);
+  const valueDate = valueDateMatch === null ? undefined : normalizeN26Date(valueDateMatch[1]!);
   return {
     date,
     amount,

@@ -112,14 +112,7 @@ describe("bank statement previews", () => {
     );
     expect(preview.sheets[0]!.rows).toEqual([
       ["Data", "Conto", "Importo", "Valuta", "Controparte", "Nota"],
-      [
-        "2026-06-11",
-        "",
-        "-40,00",
-        "EUR",
-        "Pagamento carta",
-        "Mastercard • Bar e ristoranti",
-      ],
+      ["2026-06-11", "", "-40,00", "EUR", "Pagamento carta", "Mastercard • Bar e ristoranti"],
       ["2026-06-12", "", "+3.000,00", "EUR", "Bonifico ricevuto", ""],
     ]);
     expect(preview.sheets[0]!.rawRows?.[1]).toEqual([
@@ -132,7 +125,9 @@ describe("bank statement previews", () => {
 
   it("rileva gli Spaces dichiarati anche senza movimenti e normalizza solo per il confronto", () => {
     expect(
-      extractN26SpaceCandidates("Spazio: Riserva\nMovimenti dello Spazio\nSpazio:   Salute  \nSpazio: riserva"),
+      extractN26SpaceCandidates(
+        "Spazio: Riserva\nMovimenti dello Spazio\nSpazio:   Salute  \nSpazio: riserva",
+      ),
     ).toEqual([
       { name: "Riserva", movementCount: 0 },
       { name: "Salute", movementCount: 0 },

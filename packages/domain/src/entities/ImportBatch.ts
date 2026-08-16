@@ -3,12 +3,23 @@ import { requireIdentifier } from "../validation";
 import type { Transaction } from "./Transaction";
 import type { ImportRow } from "./ImportRow";
 import type { Transfer } from "./Transfer";
+import type { Account } from "./Account";
+import type { Category } from "./Category";
 
 export interface ImportTransferBundle {
   readonly auditTransactionId: string;
   readonly transfer: Transfer;
   readonly debitTransaction: Transaction;
   readonly creditTransaction: Transaction;
+}
+
+export interface ImportCommitPlan {
+  readonly batch: ImportBatch;
+  readonly rows: readonly ImportRow[];
+  readonly accountsToCreate?: readonly Account[];
+  readonly categoriesToCreate?: readonly Category[];
+  readonly transactions: readonly Transaction[];
+  readonly transferBundles?: readonly ImportTransferBundle[];
 }
 
 export type ImportBatchStatus = "previewed" | "committed" | "undone" | "failed";

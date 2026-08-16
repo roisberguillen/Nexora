@@ -19,6 +19,13 @@ describe("import mapping profiles", () => {
         name: "Money Manager personale",
         importerType: "money_manager_xlsx",
         mapping: { date: 0, account: 1, amount: 2 },
+        semanticMapping: {
+          accountMappings: { n26: "account-n26" },
+          accountConfigurations: {
+            broker: { type: "investment", institution: "Broker demo" },
+          },
+          categoryMappings: { "alimentazione\u0000spesa": "category-groceries" },
+        },
       },
       storage,
     );
@@ -27,6 +34,10 @@ describe("import mapping profiles", () => {
       expect.objectContaining({
         id: "profile-money-manager",
         mapping: { date: 0, account: 1, amount: 2 },
+        semanticMapping: expect.objectContaining({
+          accountMappings: { n26: "account-n26" },
+          categoryMappings: { "alimentazione\u0000spesa": "category-groceries" },
+        }),
       }),
     ]);
   });
