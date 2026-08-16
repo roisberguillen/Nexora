@@ -1213,6 +1213,92 @@ export class SqliteLedgerRepository implements LedgerRepository {
     );
   }
 
+  public updateTransaction(transaction: Transaction): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if (transaction.kind === "transfer")
+            throw new DomainError(
+              "invalid_transfer",
+              "Transfer legs cannot be updated independently.",
+            );
+          if ((await this.findTransactionByIdInternal(transaction.id)) === undefined)
+            throw new DomainError("missing_reference", "Transaction does not exist.");
+          await this.validateTransactionReferences(transaction);
+          await this.replaceTransaction(transaction);
+        }),
+      ),
+    );
+  }
+
+  public updateTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          const { validateTransactionSplits } = await import("@nexora/domain");
+          if (transaction.kind === "transfer")
+            throw new DomainError(
+              "invalid_transfer",
+              "Transfer legs cannot be updated independently.",
+            );
+          validateTransactionSplits(transaction, splits);
+          if (new Set(tagIds).size !== tagIds.length)
+            throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+          if ((await this.findTransactionByIdInternal(transaction.id)) === undefined)
+            throw new DomainError("missing_reference", "Transaction does not exist.");
+          await this.validateTransactionReferences(transaction);
+          for (const split of splits) {
+            const category = await this.findCategoryByIdInternal(split.categoryId);
+            if (
+              category === undefined ||
+              category.isArchived ||
+              !category.accepts(transaction.kind)
+            )
+              throw new DomainError("invalid_category", "Split category is unavailable.");
+          }
+          for (const tagId of tagIds) {
+            const tags = await this.database.query<{ readonly is_archived: number }>(
+              "SELECT is_archived FROM tags WHERE id = ?",
+              [tagId],
+            );
+            if (tags[0]?.is_archived !== 0)
+              throw new DomainError("missing_reference", "Tag is unavailable.");
+          }
+          await this.replaceTransaction(transaction);
+          await this.database.run("DELETE FROM transaction_splits WHERE transaction_id = ?", [
+            transaction.id,
+          ]);
+          await this.database.run("DELETE FROM transaction_tags WHERE transaction_id = ?", [
+            transaction.id,
+          ]);
+          for (const split of splits) {
+            const record = transactionSplitToRecord(split);
+            await this.database.run(
+              "INSERT INTO transaction_splits (id, transaction_id, category_id, amount_minor, currency, note) VALUES (?, ?, ?, ?, ?, ?)",
+              [
+                record.id,
+                record.transaction_id,
+                record.category_id,
+                record.amount_minor,
+                record.currency,
+                record.note,
+              ],
+            );
+          }
+          for (const tagId of tagIds)
+            await this.database.run(
+              "INSERT INTO transaction_tags (transaction_id, tag_id) VALUES (?, ?)",
+              [transaction.id, tagId],
+            );
+        }),
+      ),
+    );
+  }
+
   public saveTransactionWithSplits(
     transaction: Transaction,
     splits: readonly TransactionSplit[],
@@ -2176,6 +2262,32 @@ export class SqliteLedgerRepository implements LedgerRepository {
         WHERE id = ?
       `,
       [transaction.status, transaction.id],
+    );
+  }
+
+  private async replaceTransaction(transaction: Transaction): Promise<void> {
+    const record = transactionToRecord(transaction);
+    await this.database.run(
+      `UPDATE transactions SET kind = ?, status = ?, account_id = ?, amount_minor = ?, currency = ?, booked_date = ?, value_date = ?, payee = ?, description = ?, category_id = ?, note = ?, source = ?, import_batch_id = ?, source_fingerprint = ?, expense_variability = ?, expense_exceptionality = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
+      [
+        record.kind,
+        record.status,
+        record.account_id,
+        record.amount_minor,
+        record.currency,
+        record.booked_date,
+        record.value_date,
+        record.payee,
+        record.description,
+        record.category_id,
+        record.note,
+        record.source,
+        record.import_batch_id,
+        record.source_fingerprint,
+        record.expense_variability,
+        record.expense_exceptionality,
+        record.id,
+      ],
     );
   }
 

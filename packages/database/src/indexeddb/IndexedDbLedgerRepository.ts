@@ -1044,6 +1044,101 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
     );
   }
 
+  public updateTransaction(transaction: Transaction): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["accounts", "categories", "transactions"],
+          "readwrite",
+          async (idbTransaction) => {
+            if (transaction.kind === "transfer")
+              throw new DomainError(
+                "invalid_transfer",
+                "Transfer legs cannot be updated independently.",
+              );
+            const transactions = idbTransaction.objectStore("transactions");
+            if ((await requestResult<unknown>(transactions.get(transaction.id))) === undefined)
+              throw new DomainError("missing_reference", "Transaction does not exist.");
+            await this.validateTransactionReferences(idbTransaction, transaction);
+            await requestResult(transactions.put(transactionToRecord(transaction)));
+          },
+        ),
+      ),
+    );
+  }
+
+  public updateTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          [
+            "accounts",
+            "categories",
+            "transactions",
+            "transaction_splits",
+            "tags",
+            "transaction_tags",
+          ],
+          "readwrite",
+          async (idbTransaction) => {
+            const { validateTransactionSplits } = await import("@nexora/domain");
+            if (transaction.kind === "transfer")
+              throw new DomainError(
+                "invalid_transfer",
+                "Transfer legs cannot be updated independently.",
+              );
+            validateTransactionSplits(transaction, splits);
+            if (new Set(tagIds).size !== tagIds.length)
+              throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+            const transactions = idbTransaction.objectStore("transactions");
+            if ((await requestResult<unknown>(transactions.get(transaction.id))) === undefined)
+              throw new DomainError("missing_reference", "Transaction does not exist.");
+            await this.validateTransactionReferences(idbTransaction, transaction);
+            const splitStore = idbTransaction.objectStore("transaction_splits");
+            for (const split of splits) {
+              const category = await this.findCategoryInStore(
+                idbTransaction.objectStore("categories"),
+                split.categoryId,
+              );
+              if (
+                category === undefined ||
+                category.isArchived ||
+                !category.accepts(transaction.kind)
+              )
+                throw new DomainError("invalid_category", "Split category is unavailable.");
+            }
+            const tags = idbTransaction.objectStore("tags");
+            for (const tagId of tagIds) {
+              const row = await requestResult<unknown>(tags.get(tagId));
+              if (row === undefined || tagFromRecord(row as TagRecord).isArchived)
+                throw new DomainError("missing_reference", "Tag is unavailable.");
+            }
+            await requestResult(transactions.put(transactionToRecord(transaction)));
+            for (const split of await requestResult<unknown[]>(
+              splitStore.index("by_transaction_id").getAll(transaction.id),
+            ))
+              await requestResult(splitStore.delete((split as { id: string }).id));
+            for (const split of splits)
+              await requestResult(splitStore.add(transactionSplitToRecord(split)));
+            const links = idbTransaction.objectStore("transaction_tags");
+            for (const link of await requestResult<unknown[]>(
+              links.index("by_transaction_id").getAll(transaction.id),
+            ))
+              await requestResult(
+                links.delete([transaction.id, (link as { tag_id: string }).tag_id]),
+              );
+            for (const tagId of tagIds)
+              await requestResult(links.add({ transaction_id: transaction.id, tag_id: tagId }));
+          },
+        ),
+      ),
+    );
+  }
+
   public saveTransactionWithSplits(
     transaction: Transaction,
     splits: readonly TransactionSplit[],

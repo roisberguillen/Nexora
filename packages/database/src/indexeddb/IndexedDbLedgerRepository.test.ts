@@ -14,6 +14,7 @@ import {
   RecurringRule,
   Tag,
   Transaction,
+  TransactionSplit,
   Transfer,
 } from "@nexora/domain";
 import { IDBFactory } from "fake-indexeddb";
@@ -134,6 +135,48 @@ describe("IndexedDbLedgerRepository", () => {
 
   afterEach(async () => {
     await ledger.close();
+  });
+
+  it("updates a transaction with split and tags atomically", async () => {
+    const repository = ledger.repository;
+    const owner = account("update-owner");
+    const category = Category.create({ id: "update-category", name: "Casa", kindScope: "expense" });
+    const tag = Tag.create({ id: "update-tag", name: "Mensile" });
+    const original = Transaction.create({
+      id: "update-transaction",
+      kind: "expense",
+      status: "booked",
+      accountId: owner.id,
+      amount: Money.fromMinor(-2500n, "EUR"),
+      bookedDate,
+    });
+    const split = TransactionSplit.create({
+      id: "update-split",
+      transactionId: original.id,
+      categoryId: category.id,
+      amount: Money.fromMinor(-2500n, "EUR"),
+    });
+    await repository.saveAccount(owner);
+    await repository.saveCategory(category);
+    await repository.saveTag(tag);
+    await repository.saveTransactionWithDetails(original, [split], [tag.id]);
+    const updated = Transaction.create({
+      id: original.id,
+      kind: "expense",
+      status: "booked",
+      accountId: owner.id,
+      amount: Money.fromMinor(-2500n, "EUR"),
+      bookedDate: LocalDate.parse("2026-07-28"),
+      description: "Aggiornata",
+    });
+    await repository.updateTransactionWithDetails(updated, [split], [tag.id]);
+    expect((await repository.findTransactionById(original.id))?.description).toBe("Aggiornata");
+    expect((await repository.listTransactionSplits(original.id)).map((item) => item.id)).toEqual([
+      split.id,
+    ]);
+    expect((await repository.listTransactionTags(original.id)).map((item) => item.id)).toEqual([
+      tag.id,
+    ]);
   });
 
   it("persists the two-level category hierarchy and rejects invalid parents", async () => {

@@ -43,6 +43,38 @@ describe("AppShell", () => {
     expect(screen.getByLabelText("Pannello di navigazione")).not.toHaveClass("is-open");
   });
 
+  it("raggruppa tutte le route desktop e può ridurre il menu senza perdere la route attiva", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppShell activeRoute="transactions">
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    const navigation = screen.getByRole("navigation", { name: "Navigazione principale" });
+    expect(within(navigation).getByRole("heading", { name: "Principale" })).toBeVisible();
+    expect(within(navigation).getByRole("heading", { name: "Dati" })).toBeVisible();
+    expect(within(navigation).getByRole("link", { name: "Movimenti" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(within(navigation).getByRole("link", { name: "Notifiche" })).toHaveAttribute(
+      "href",
+      "./#notifications",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Riduci menu" }));
+    expect(screen.getByLabelText("Pannello di navigazione")).toHaveClass("is-collapsed");
+    expect(screen.getByRole("button", { name: "Espandi menu" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(within(navigation).getByRole("link", { name: "Movimenti" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
   it("espone la barra mobile e restituisce l'azione rapida", async () => {
     const user = userEvent.setup();
     let quickActionCount = 0;

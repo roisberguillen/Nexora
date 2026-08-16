@@ -1,5 +1,47 @@
 # Test evidence
 
+## Phase 12.5.C desktop UX — incomplete — 2026-08-16
+
+- Desktop navigation is now grouped by primary work, planning, wealth, analysis, organisation,
+  data and system. It retains every existing route, adds the already-existing notifications,
+  profile and privacy routes to the desktop menu, keeps the active route exposed, and supports a
+  keyboard-operable collapsed desktop sidebar without changing mobile navigation.
+- Transactions now have local, combinable search, month, account, category and kind filters with
+  an explicit reset and a separate no-results state. Filtering uses the existing projected rows
+  only; it neither changes the ledger nor unfolds transfer legs.
+- Focused tests passed: 8/8 across AppShell, transaction filters and transfer projection. Targeted
+  Playwright passed 1/1 at 320 px for combined filters/reset. Full `pnpm verify` passed: format,
+  lint, workspace typecheck, 133 test files passed, 1 skipped; 540 tests passed, 4 documented
+  skips; production PWA build passed. The build retained only the existing chunk-size advisory.
+- P1 remains: the current command/repository boundary does not offer update semantics for a
+  persisted movement, so the Movements UI cannot provide the requested edit flow. This is outside
+  the permitted UI-only scope and prevents Phase 12.5.C closure. Full E2E was not repeated after
+  this finding; existing automated coverage continues to exercise synthetic creation, transfer,
+  cancellation, trash and restore flows.
+
+## Phase 12.5.C movement editing follow-up — partial — 2026-08-16
+
+- Added an identity-preserving update path for active, manual, non-transfer movements in the
+  InMemory, SQLite and IndexedDB repositories. Imported, reconciled and cancelled movements remain
+  non-editable; transfers remain linked operations. The command preserves signed bigint money and
+  validates account, currency and category references before the atomic repository write.
+- Focused regression suite passed 10/10; web/database/domain typechecks, lint, production web
+  build and manifest check passed. The production build retained only the known chunk-size advisory.
+- P1 remains for movement splits: editing a transaction that has persistent split rows is refused,
+  rather than risking loss of its split/tag details. Completing it requires an atomic replacement
+  contract for transaction, splits and tags across all adapters; it was not hidden or bypassed.
+
+## Phase 12.5.A real-source reconciliation — blocked by non-overlapping periods — 2026-08-16
+
+- Read-only, local parser inspection did not write to a ledger, import batch, account, category,
+  backup, fixture or log. The temporary inspection test was deleted after the check.
+- Period check: source A contains 48 rows from 2026-07-30 through 2026-08-14; source B contains
+  48 rows from 2026-06-02 through 2026-06-28; source C contains 45 rows from 2026-08-01 through
+  2026-08-15. The three sources do not cover the same full period, so no matching, dry-run commit,
+  undo or deduplication reconciliation was performed.
+- The period-only inspection passed (1/1). Parser output included non-fatal ZIP metadata warnings
+  while reading the local workbook; no source values or identifiers were emitted.
+
 ## Money Manager semantic migration fix — 2026-08-16
 
 - The importer now builds one account decision per source account and one category decision per

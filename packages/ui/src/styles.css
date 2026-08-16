@@ -215,6 +215,7 @@ a {
   overflow-y: auto;
   background: var(--color-sidebar);
   color: var(--color-on-sidebar);
+  transition: width 180ms ease;
 }
 
 .sidebar-brand-row {
@@ -269,7 +270,7 @@ a {
   display: grid;
   gap: 0.25rem;
   padding: 0;
-  margin: 2.25rem 0 0;
+  margin: 0;
   list-style: none;
 }
 
@@ -333,6 +334,7 @@ a {
 .app-workspace {
   min-height: 100vh;
   margin-left: var(--sidebar-width);
+  transition: margin-left 180ms ease;
 }
 
 .offline-banner {
@@ -385,6 +387,76 @@ a {
 .menu-trigger,
 .sidebar-backdrop {
   display: none;
+}
+
+.sidebar-collapse {
+  display: inline-grid;
+  color: inherit;
+}
+
+.sidebar-collapse span {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.navigation-group + .navigation-group {
+  margin-top: 1.1rem;
+}
+
+.navigation-group h2 {
+  padding-inline: 1rem;
+  margin: 0 0 0.4rem;
+  color: rgb(234 241 255 / 62%);
+  font-size: 0.6875rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-sidebar.is-collapsed {
+  width: var(--sidebar-width-collapsed);
+  overflow-x: visible;
+  padding-inline: 0.75rem;
+}
+
+.app-sidebar.is-collapsed .sidebar-brand-row {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.app-sidebar.is-collapsed .brand > span:last-child,
+.app-sidebar.is-collapsed .navigation-item > span,
+.app-sidebar.is-collapsed .sidebar-status > span:last-child,
+.app-sidebar.is-collapsed .navigation-group h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.app-sidebar.is-collapsed .sidebar-collapse {
+  position: absolute;
+  top: 0.75rem;
+  right: -1.1rem;
+  border-color: var(--color-outline);
+  background: var(--color-sidebar);
+}
+
+.app-sidebar.is-collapsed .navigation-group + .navigation-group {
+  margin-top: 0.5rem;
+}
+
+.app-sidebar.is-collapsed .navigation-item,
+.app-sidebar.is-collapsed .sidebar-status {
+  justify-content: center;
+  padding-inline: 0.5rem;
+}
+
+.app-workspace.is-sidebar-collapsed {
+  margin-left: var(--sidebar-width-collapsed);
 }
 
 .global-search {
@@ -603,6 +675,41 @@ a {
     transform: translateX(0);
   }
 
+  .app-sidebar.is-collapsed {
+    width: min(88vw, 20rem);
+    padding: 1.5rem 1rem;
+  }
+
+  .app-sidebar.is-collapsed .sidebar-brand-row {
+    justify-content: space-between;
+    padding-inline: 0.5rem;
+  }
+
+  .app-sidebar.is-collapsed .brand > span:last-child,
+  .app-sidebar.is-collapsed .navigation-item > span,
+  .app-sidebar.is-collapsed .sidebar-status > span:last-child,
+  .app-sidebar.is-collapsed .navigation-group h2 {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .app-sidebar.is-collapsed .sidebar-collapse {
+    position: static;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .app-sidebar.is-collapsed .navigation-item,
+  .app-sidebar.is-collapsed .sidebar-status {
+    justify-content: initial;
+    padding-inline: 1rem;
+  }
+
   .sidebar-close,
   .menu-trigger {
     display: inline-grid;
@@ -629,6 +736,10 @@ a {
   }
 
   .app-workspace {
+    margin-left: 0;
+  }
+
+  .app-workspace.is-sidebar-collapsed {
     margin-left: 0;
   }
 
@@ -668,6 +779,10 @@ a {
   .app-sidebar,
   .sidebar-backdrop,
   .top-header {
+    display: none;
+  }
+
+  .sidebar-collapse {
     display: none;
   }
 

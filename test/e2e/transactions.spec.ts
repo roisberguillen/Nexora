@@ -1,5 +1,20 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+const transactionKindLabels = {
+  income: "Entrata",
+  expense: "Uscita",
+  transfer: "Trasferimento",
+} as const;
+
+async function setTransactionKind(page: Page, kind: keyof typeof transactionKindLabels) {
+  const kindSelect = page.locator('select[name="kind"]');
+  if ((await kindSelect.count()) > 0) {
+    await kindSelect.selectOption(kind);
+    return;
+  }
+  await page.getByRole("radio", { name: transactionKindLabels[kind], exact: true }).check();
+}
 
 test("la gestione movimenti registra e annulla un trasferimento senza overflow", async ({
   page,
@@ -11,7 +26,7 @@ test("la gestione movimenti registra e annulla un trasferimento senza overflow",
   await expect(page.getByRole("heading", { name: "Gestisci i movimenti" })).toBeVisible();
 
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
-  await page.getByLabel("Tipo").selectOption("transfer");
+  await setTransactionKind(page, "transfer");
   const accounts = page.getByLabel("Conto origine");
   const source = await accounts.inputValue();
   await page.getByLabel("Conto destinazione").selectOption({ index: 1 });
@@ -38,6 +53,22 @@ test("la gestione movimenti registra e annulla un trasferimento senza overflow",
 
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
+});
+
+test("i filtri movimenti sono combinabili e si possono azzerare", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+
+  const table = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
+  await page.getByLabel("Cerca movimenti").fill("Esercente campione");
+  await expect(table).toContainText("Esercente campione");
+  await page.getByLabel("Tipo movimento").selectOption({ label: "Spesa" });
+  await expect(table.getByRole("row")).toHaveCount(2);
+
+  await page.getByRole("button", { name: "Azzera filtri" }).click();
+  await expect(page.getByLabel("Cerca movimenti")).toHaveValue("");
+  await expect(table.getByRole("row")).not.toHaveCount(2);
 });
 
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {
@@ -68,7 +99,7 @@ test("una spesa può avere dettagli finanziari facoltativi senza classificare i 
   await expect(page.getByRole("status")).toContainText("Movimento salvato");
 
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
-  await page.getByLabel("Tipo").selectOption("transfer");
+  await setTransactionKind(page, "transfer");
   await expect(page.getByText("Dettagli finanziari (facoltativi)")).toHaveCount(0);
 });
 

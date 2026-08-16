@@ -21,6 +21,17 @@ test("la shell è accessibile e non produce overflow", async ({ page }) => {
     await expect(quickAction).toBeFocused();
   }
 
+  if (viewport && viewport.width >= 900) {
+    const desktopNavigation = page.getByRole("navigation", { name: "Navigazione principale" });
+    await expect(desktopNavigation.getByRole("heading", { name: "Principale" })).toBeVisible();
+    await expect(desktopNavigation.getByRole("link", { name: "Notifiche" })).toBeVisible();
+    const collapse = page.getByRole("button", { name: "Riduci menu" });
+    await collapse.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByLabel("Pannello di navigazione")).toHaveClass(/is-collapsed/);
+    await expect(page.getByRole("button", { name: "Espandi menu" })).toBeFocused();
+  }
+
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,

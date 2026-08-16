@@ -21,6 +21,7 @@ export function AppShell({
   searchResults = [],
 }: AppShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [isNavigationCollapsed, setIsNavigationCollapsed] = useState(false);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const quickActionTriggerRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -60,8 +61,10 @@ export function AppShell({
       </a>
       <SidebarNavigation
         activeRoute={activeRoute}
+        isCollapsed={isNavigationCollapsed}
         isOpen={isNavigationOpen}
         onClose={closeNavigation}
+        onToggleCollapsed={() => setIsNavigationCollapsed((isCollapsed) => !isCollapsed)}
       />
       <button
         aria-label="Chiudi navigazione"
@@ -70,7 +73,7 @@ export function AppShell({
         tabIndex={isNavigationOpen ? 0 : -1}
         type="button"
       />
-      <div className="app-workspace">
+      <div className={`app-workspace${isNavigationCollapsed ? " is-sidebar-collapsed" : ""}`}>
         <OfflineBanner />
         <MobileHeader activeRoute={activeRoute} />
         <TopHeader

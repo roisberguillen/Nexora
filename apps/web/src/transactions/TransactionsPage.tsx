@@ -3,7 +3,7 @@ import { categoryLabel, type Tag } from "@nexora/domain";
 import { useEffect, useState, type FormEvent } from "react";
 
 import "./transactions.css";
-import { parseLocalizedAmountMinor } from "../accounts/accountCommands";
+import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import { localCivilDate } from "../date/localCivilDate";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import {
@@ -14,6 +14,12 @@ import {
 import type { TransactionsViewModel } from "./buildTransactionsViewModel";
 import { previewTrashSelection } from "./trashSelection";
 import { paginateTransactions, transactionPageSize } from "./pagination";
+import {
+  emptyTransactionFilters,
+  filterTransactions,
+  hasTransactionFilters,
+  type TransactionFilters,
+} from "./transactionFilters";
 
 interface TransactionsPageProps {
   readonly initialEditorOpen?: boolean;
@@ -25,6 +31,7 @@ interface TransactionsPageProps {
   readonly onTrashMany: (ids: readonly string[]) => Promise<void>;
   readonly onCreateManual: (input: CreateManualTransactionInput) => Promise<readonly string[]>;
   readonly onCreateTransfer: (input: CreateTransferInput) => Promise<void>;
+  readonly onUpdateManual: (id: string, input: CreateManualTransactionInput) => Promise<void>;
   readonly onExecuteSalaryAllocations: (
     planIds: readonly string[],
     executionId: string,
@@ -43,9 +50,11 @@ export function TransactionsPage({
   onTrashMany,
   onCreateManual,
   onCreateTransfer,
+  onUpdateManual,
   onExecuteSalaryAllocations,
 }: TransactionsPageProps) {
   const [isEditorOpen, setIsEditorOpen] = useState(initialEditorOpen);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -58,8 +67,10 @@ export function TransactionsPage({
   const [selectedForTrash, setSelectedForTrash] = useState<ReadonlySet<string>>(new Set());
   const [isTrashConfirmOpen, setIsTrashConfirmOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<TransactionFilters>(emptyTransactionFilters);
   const selectionPreview = previewTrashSelection(model.items, selectedForTrash);
-  const pagination = paginateTransactions(model.items, currentPage);
+  const filteredItems = filterTransactions(model.items, filters);
+  const pagination = paginateTransactions(filteredItems, currentPage);
   const { currentPage: visiblePage, items: visibleItems, pageCount } = pagination;
 
   useEffect(() => {
@@ -117,7 +128,7 @@ export function TransactionsPage({
         ) {
           throw new Error("Split total must equal the transaction amount.");
         }
-        const planIds = await onCreateManual({
+        const manualInput = {
           accountId,
           amountMinor: signedAmount,
           bookedDate,
@@ -138,12 +149,17 @@ export function TransactionsPage({
                 expenseExceptionality: String(form.get("expenseExceptionality")) as
                   "ordinary" | "extraordinary",
               }),
-        });
+        };
+        const planIds =
+          editingId === null
+            ? await onCreateManual(manualInput)
+            : (await onUpdateManual(editingId, manualInput), []);
         setSalaryAllocationPlanIds(planIds);
         setSalaryAllocationExecutionId(planIds.length === 0 ? null : crypto.randomUUID());
         setSalaryAllocationNeedsRecovery(false);
       }
       setIsEditorOpen(false);
+      setEditingId(null);
       setMessage(
         kind === "transfer"
           ? "Trasferimento salvato con due gambe collegate."
@@ -242,6 +258,7 @@ export function TransactionsPage({
             className="primary-action"
             onClick={() => {
               setIsEditorOpen(true);
+              setEditingId(null);
               setError(null);
               setMessage(null);
             }}
@@ -318,6 +335,104 @@ export function TransactionsPage({
             </div>
             <span className="panel-meta">{model.items.length}</span>
           </div>
+          <form
+            aria-label="Filtri movimenti"
+            className="transaction-filters"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <label>
+              <span>Cerca movimenti</span>
+              <input
+                onChange={(event) => {
+                  setFilters((current) => ({ ...current, query: event.currentTarget.value }));
+                  setCurrentPage(1);
+                }}
+                placeholder="Descrizione o categoria"
+                type="search"
+                value={filters.query}
+              />
+            </label>
+            <label>
+              <span>Periodo</span>
+              <input
+                onChange={(event) => {
+                  setFilters((current) => ({ ...current, month: event.currentTarget.value }));
+                  setCurrentPage(1);
+                }}
+                type="month"
+                value={filters.month}
+              />
+            </label>
+            <label>
+              <span>Conto</span>
+              <select
+                onChange={(event) => {
+                  setFilters((current) => ({
+                    ...current,
+                    accountLabel: event.currentTarget.value,
+                  }));
+                  setCurrentPage(1);
+                }}
+                value={filters.accountLabel}
+              >
+                <option value="">Tutti i conti</option>
+                {[...new Set(model.items.map((item) => item.accountLabel))].sort().map((label) => (
+                  <option key={label} value={label}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Categoria</span>
+              <select
+                onChange={(event) => {
+                  setFilters((current) => ({
+                    ...current,
+                    categoryLabel: event.currentTarget.value,
+                  }));
+                  setCurrentPage(1);
+                }}
+                value={filters.categoryLabel}
+              >
+                <option value="">Tutte le categorie</option>
+                {[...new Set(model.items.map((item) => item.categoryLabel))].sort().map((label) => (
+                  <option key={label} value={label}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Tipo movimento</span>
+              <select
+                onChange={(event) => {
+                  setFilters((current) => ({ ...current, kindLabel: event.currentTarget.value }));
+                  setCurrentPage(1);
+                }}
+                value={filters.kindLabel}
+              >
+                <option value="">Tutti i tipi</option>
+                {[...new Set(model.items.map((item) => item.kindLabel))].sort().map((label) => (
+                  <option key={label} value={label}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {hasTransactionFilters(filters) ? (
+              <button
+                className="text-action"
+                onClick={() => {
+                  setFilters(emptyTransactionFilters);
+                  setCurrentPage(1);
+                }}
+                type="button"
+              >
+                Azzera filtri
+              </button>
+            ) : null}
+          </form>
           {selectionPreview.transactionGroups === 0 ? null : (
             <div aria-live="polite" className="account-feedback">
               <strong>{selectionPreview.transactionGroups} gruppi selezionati</strong> ·
@@ -380,6 +495,11 @@ export function TransactionsPage({
             <div className="account-list-empty">
               <h3>Nessun movimento registrato</h3>
               <p>Crea il primo movimento dal pulsante in alto.</p>
+            </div>
+          ) : filteredItems.length === 0 ? (
+            <div className="account-list-empty" role="status">
+              <h3>Nessun movimento corrisponde ai filtri</h3>
+              <p>Modifica o azzera i filtri per rivedere tutte le registrazioni.</p>
             </div>
           ) : (
             <div className="account-table-wrap">
@@ -445,6 +565,20 @@ export function TransactionsPage({
                       <td data-label="Azioni">
                         {item.canCancel ? (
                           <span className="table-actions">
+                            {item.source === "manual" && !item.isTransfer ? (
+                              <button
+                                className="text-action"
+                                disabled={isSaving}
+                                onClick={() => {
+                                  setEditingId(item.id);
+                                  setKind(item.kind as FormKind);
+                                  setIsEditorOpen(true);
+                                }}
+                                type="button"
+                              >
+                                Modifica
+                              </button>
+                            ) : null}
                             <button
                               className="text-action"
                               disabled={isSaving}
@@ -472,11 +606,11 @@ export function TransactionsPage({
               </table>
             </div>
           )}
-          {model.items.length > transactionPageSize ? (
+          {filteredItems.length > transactionPageSize ? (
             <nav aria-label="Paginazione movimenti" className="table-pagination">
               <p aria-live="polite">
                 Pagina {visiblePage} di {pageCount} · visualizzati {visibleItems.length} di{" "}
-                {model.items.length} movimenti
+                {filteredItems.length} movimenti
               </p>
               <div className="table-actions">
                 <button
@@ -501,11 +635,15 @@ export function TransactionsPage({
         </section>
         {isEditorOpen ? (
           <TransactionForm
+            editingItem={model.items.find((item) => item.id === editingId)}
             accounts={model.accounts}
             categories={model.categories}
             isSaving={isSaving}
             kind={kind}
-            onCancel={() => setIsEditorOpen(false)}
+            onCancel={() => {
+              setIsEditorOpen(false);
+              setEditingId(null);
+            }}
             onKindChange={setKind}
             onSubmit={save}
             tags={tags}
@@ -529,6 +667,7 @@ export function TransactionsPage({
 function TransactionForm({
   accounts,
   categories,
+  editingItem,
   isSaving,
   kind,
   onCancel,
@@ -539,6 +678,7 @@ function TransactionForm({
 }: {
   readonly accounts: TransactionsViewModel["accounts"];
   readonly categories: TransactionsViewModel["categories"];
+  readonly editingItem: TransactionsViewModel["items"][number] | undefined;
   readonly isSaving: boolean;
   readonly kind: FormKind;
   readonly onCancel: () => void;
@@ -549,8 +689,14 @@ function TransactionForm({
 }) {
   const [splitRows, setSplitRows] = useState<readonly string[]>([]);
   const [splitAmounts, setSplitAmounts] = useState<Record<string, string>>({});
-  const [amountText, setAmountText] = useState("");
-  const [selectedAccountId, setSelectedAccountId] = useState(accounts[0]?.id ?? "");
+  const [amountText, setAmountText] = useState(
+    editingItem === undefined
+      ? ""
+      : formatEditableAmountMinor(editingItem.amount.amountMinor, editingItem.amount.currency),
+  );
+  const [selectedAccountId, setSelectedAccountId] = useState(
+    editingItem?.accountId ?? accounts[0]?.id ?? "",
+  );
   const isTransfer = kind === "transfer";
   const hasSplits = splitRows.length > 0;
   const selectedAccount = accounts.find((account) => account.id === selectedAccountId);
@@ -631,6 +777,7 @@ function TransactionForm({
         <label>
           {isTransfer ? "Conto origine" : "Conto"}
           <select
+            defaultValue={selectedAccountId}
             name="account"
             onChange={(event) => setSelectedAccountId(event.currentTarget.value)}
             required
@@ -658,7 +805,7 @@ function TransactionForm({
         {!isTransfer && kind !== "adjustment" && !hasSplits ? (
           <label>
             Categoria
-            <select name="category">
+            <select defaultValue={editingItem?.categoryId ?? ""} name="category">
               <option value="">Senza categoria</option>
               {categoriesForKind.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -819,11 +966,16 @@ function TransactionForm({
         </label>
         <label>
           Data operazione
-          <input name="bookedDate" required type="date" defaultValue={localCivilDate()} />
+          <input
+            defaultValue={editingItem?.bookedDate ?? localCivilDate()}
+            name="bookedDate"
+            required
+            type="date"
+          />
         </label>
         <label>
           Stato
-          <select name="status">
+          <select defaultValue={editingItem?.status ?? "booked"} name="status">
             <option value="booked">Contabilizzato</option>
             <option value="expected">Previsto</option>
           </select>
@@ -831,12 +983,16 @@ function TransactionForm({
         {!isTransfer ? (
           <label>
             Controparte
-            <input name="payee" placeholder="Facoltativo" />
+            <input defaultValue={editingItem?.payee ?? ""} name="payee" placeholder="Facoltativo" />
           </label>
         ) : null}
         <label>
           Descrizione
-          <input name="description" placeholder="Facoltativa" />
+          <input
+            defaultValue={editingItem?.description ?? ""}
+            name="description"
+            placeholder="Facoltativa"
+          />
         </label>
         {isTransfer ? (
           <p className="immutable-note">

@@ -479,6 +479,43 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.transactions.set(transaction.id, transaction);
   }
 
+  public async updateTransaction(transaction: Transaction): Promise<void> {
+    if (transaction.kind === "transfer")
+      throw new DomainError("invalid_transfer", "Transfer legs cannot be updated independently.");
+    if (!this.transactions.has(transaction.id))
+      throw new DomainError("missing_reference", "Transaction does not exist.");
+    this.validateTransactionReferences(transaction);
+    this.transactions.set(transaction.id, transaction);
+  }
+
+  public async updateTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void> {
+    await this.runAtomically(async () => {
+      const { validateTransactionSplits } = await import("@nexora/domain");
+      validateTransactionSplits(transaction, splits);
+      await this.updateTransaction(transaction);
+      if (new Set(tagIds).size !== tagIds.length)
+        throw new DomainError("duplicate_entity", "Duplicate tag reference.");
+      for (const split of splits) {
+        const category = this.categories.get(split.categoryId);
+        if (category === undefined || category.isArchived || !category.accepts(transaction.kind))
+          throw new DomainError("invalid_category", "Split category is incompatible.");
+      }
+      for (const tagId of tagIds) {
+        const tag = this.tags.get(tagId);
+        if (tag === undefined || tag.isArchived)
+          throw new DomainError("missing_reference", "Tag is unavailable.");
+      }
+      for (const [splitId, split] of this.transactionSplits)
+        if (split.transactionId === transaction.id) this.transactionSplits.delete(splitId);
+      for (const split of splits) this.transactionSplits.set(split.id, split);
+      this.transactionTags.set(transaction.id, new Set(tagIds));
+    });
+  }
+
   public async saveTransactionWithSplits(
     transaction: Transaction,
     splits: readonly TransactionSplit[],

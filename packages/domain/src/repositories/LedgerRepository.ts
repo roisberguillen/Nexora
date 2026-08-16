@@ -67,6 +67,14 @@ export interface LedgerRepository {
   removeTagGlobally(id: string): Promise<void>;
   setTransactionTags(transactionId: string, tagIds: readonly string[]): Promise<void>;
   saveTransaction(transaction: Transaction): Promise<void>;
+  /** Updates an eligible standalone transaction without changing its identity. */
+  updateTransaction(transaction: Transaction): Promise<void>;
+  /** Atomically replaces a standalone transaction and its dependent split/tag details. */
+  updateTransactionWithDetails(
+    transaction: Transaction,
+    splits: readonly TransactionSplit[],
+    tagIds: readonly string[],
+  ): Promise<void>;
   saveTransactionWithSplits(
     transaction: Transaction,
     splits: readonly TransactionSplit[],

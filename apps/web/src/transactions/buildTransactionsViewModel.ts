@@ -23,14 +23,21 @@ export interface TransactionsViewModel {
 }
 
 export interface TransactionListItem {
+  readonly accountId?: string;
   readonly accountLabel: string;
   readonly amount: Money;
   readonly bookedDate: string;
+  readonly description?: string;
   readonly canCancel: boolean;
   readonly categoryLabel: string;
+  readonly categoryId?: string | undefined;
   readonly id: string;
   readonly isTransfer: boolean;
   readonly kindLabel: string;
+  readonly kind?: Transaction["kind"];
+  readonly source?: Transaction["source"];
+  readonly status?: Transaction["status"];
+  readonly payee?: string;
   readonly statusLabel: string;
   readonly title: string;
 }
@@ -62,14 +69,21 @@ export function buildTransactionsViewModel(data: {
       throw new Error("A persisted transfer is missing one or more ledger legs.");
     }
     return {
+      accountId: debit.accountId,
       accountLabel: `${accountById.get(debit.accountId)?.name ?? "Conto non disponibile"} → ${accountById.get(credit.accountId)?.name ?? "Conto non disponibile"}`,
       amount: debit.amount.negate(),
       bookedDate: debit.bookedDate.value,
+      description: debit.description ?? "",
       canCancel: debit.status !== "cancelled" && debit.status !== "reconciled",
       categoryLabel: "Trasferimento interno",
+      categoryId: undefined,
       id: transfer.id,
       isTransfer: true,
       kindLabel: "Trasferimento",
+      kind: "transfer",
+      source: debit.source,
+      status: debit.status,
+      payee: "",
       statusLabel: statusLabel(debit.status),
       title: debit.description ?? "Trasferimento interno",
     } as const;
@@ -112,9 +126,11 @@ function itemForTransaction(
   categoryById: ReadonlyMap<string, Category>,
 ): TransactionListItem {
   return Object.freeze({
+    accountId: transaction.accountId,
     accountLabel: accountById.get(transaction.accountId)?.name ?? "Conto non disponibile",
     amount: transaction.amount,
     bookedDate: transaction.bookedDate.value,
+    description: transaction.description ?? "",
     canCancel: transaction.status !== "cancelled" && transaction.status !== "reconciled",
     categoryLabel:
       transaction.categoryId === undefined
@@ -122,9 +138,14 @@ function itemForTransaction(
         : categoryById.get(transaction.categoryId) === undefined
           ? "Categoria non disponibile"
           : categoryLabel(categoryById.get(transaction.categoryId)!, [...categoryById.values()]),
+    categoryId: transaction.categoryId,
     id: transaction.id,
     isTransfer: false,
     kindLabel: kindLabel(transaction.kind),
+    kind: transaction.kind,
+    source: transaction.source,
+    status: transaction.status,
+    payee: transaction.payee ?? "",
     statusLabel: statusLabel(transaction.status),
     title: transaction.payee ?? transaction.description ?? kindLabel(transaction.kind),
   });

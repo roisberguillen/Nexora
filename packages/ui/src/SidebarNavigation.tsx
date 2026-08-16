@@ -3,8 +3,12 @@ import { NavIcon, type NavIconName } from "./NavIcon";
 interface NavigationItem {
   readonly label: string;
   readonly icon: NavIconName;
-  readonly available: boolean;
   readonly route: NavigationRoute;
+}
+
+interface NavigationGroup {
+  readonly items: readonly NavigationItem[];
+  readonly label: string;
 }
 
 export type NavigationRoute =
@@ -28,35 +32,79 @@ export type NavigationRoute =
   | "privacy-security"
   | "new-transaction";
 
-const navigationItems: readonly NavigationItem[] = [
-  { label: "Panoramica", icon: "overview", available: true, route: "overview" },
-  { label: "Conti", icon: "accounts", available: true, route: "accounts" },
-  { label: "Movimenti", icon: "transactions", available: true, route: "transactions" },
-  { label: "Categorie", icon: "transactions", available: true, route: "categories" },
-  { label: "Tag", icon: "transactions", available: true, route: "tags" },
-  { label: "Importa", icon: "transactions", available: true, route: "imports" },
-  { label: "Budget", icon: "budget", available: true, route: "budgets" },
-  { label: "Prestiti", icon: "accounts", available: true, route: "loans" },
-  { label: "Investimenti", icon: "accounts", available: true, route: "investments" },
-  { label: "Ricorrenze", icon: "recurring", available: true, route: "recurring" },
-  { label: "Esporta", icon: "transactions", available: true, route: "exports" },
-  { label: "Backup", icon: "settings", available: true, route: "backup" },
-  { label: "Diario", icon: "budget", available: true, route: "journal" },
-  { label: "Analisi", icon: "overview", available: true, route: "analytics" },
-  { label: "Impostazioni", icon: "settings", available: true, route: "settings" },
+const navigationGroups: readonly NavigationGroup[] = [
+  {
+    label: "Principale",
+    items: [
+      { label: "Panoramica", icon: "overview", route: "overview" },
+      { label: "Movimenti", icon: "transactions", route: "transactions" },
+      { label: "Conti", icon: "accounts", route: "accounts" },
+    ],
+  },
+  {
+    label: "Pianificazione",
+    items: [
+      { label: "Budget", icon: "budget", route: "budgets" },
+      { label: "Ricorrenze e allocazioni", icon: "recurring", route: "recurring" },
+      { label: "Prestiti", icon: "accounts", route: "loans" },
+    ],
+  },
+  {
+    label: "Patrimonio",
+    items: [{ label: "Investimenti", icon: "accounts", route: "investments" }],
+  },
+  {
+    label: "Approfondimenti",
+    items: [
+      { label: "Analisi", icon: "overview", route: "analytics" },
+      { label: "Diario finanziario", icon: "budget", route: "journal" },
+    ],
+  },
+  {
+    label: "Organizzazione",
+    items: [
+      { label: "Categorie", icon: "transactions", route: "categories" },
+      { label: "Tag", icon: "transactions", route: "tags" },
+    ],
+  },
+  {
+    label: "Dati",
+    items: [
+      { label: "Importa", icon: "transactions", route: "imports" },
+      { label: "Esporta", icon: "transactions", route: "exports" },
+      { label: "Backup", icon: "settings", route: "backup" },
+    ],
+  },
+  {
+    label: "Sistema",
+    items: [
+      { label: "Notifiche", icon: "bell", route: "notifications" },
+      { label: "Impostazioni e cestino", icon: "settings", route: "settings" },
+      { label: "Profilo", icon: "profile", route: "profile" },
+      { label: "Privacy e sicurezza", icon: "settings", route: "privacy-security" },
+    ],
+  },
 ];
 
 interface SidebarNavigationProps {
   readonly activeRoute: NavigationRoute;
+  readonly isCollapsed: boolean;
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onToggleCollapsed: () => void;
 }
 
-export function SidebarNavigation({ activeRoute, isOpen, onClose }: SidebarNavigationProps) {
+export function SidebarNavigation({
+  activeRoute,
+  isCollapsed,
+  isOpen,
+  onClose,
+  onToggleCollapsed,
+}: SidebarNavigationProps) {
   return (
     <aside
       aria-label="Pannello di navigazione"
-      className={`app-sidebar${isOpen ? " is-open" : ""}`}
+      className={`app-sidebar${isOpen ? " is-open" : ""}${isCollapsed ? " is-collapsed" : ""}`}
       id="primary-navigation"
     >
       <div className="sidebar-brand-row">
@@ -73,35 +121,44 @@ export function SidebarNavigation({ activeRoute, isOpen, onClose }: SidebarNavig
           <span aria-hidden="true">×</span>
           <span className="sr-only">Chiudi navigazione</span>
         </button>
+        <button
+          aria-label={isCollapsed ? "Espandi menu" : "Riduci menu"}
+          aria-pressed={isCollapsed}
+          className="icon-button sidebar-collapse"
+          onClick={onToggleCollapsed}
+          type="button"
+        >
+          <span aria-hidden="true">{isCollapsed ? "›" : "‹"}</span>
+        </button>
       </div>
 
       <nav aria-label="Navigazione principale">
-        <ul className="navigation-list">
-          {navigationItems.map((item) => (
-            <li key={item.label}>
-              {item.available ? (
-                <a
-                  aria-current={item.route === activeRoute ? "page" : undefined}
-                  className={`navigation-item${item.route === activeRoute ? " is-active" : ""}`}
-                  href={`./#${item.route}`}
-                  onClick={onClose}
-                >
-                  <NavIcon name={item.icon} />
-                  <span>{item.label}</span>
-                </a>
-              ) : (
-                <span
-                  aria-disabled="true"
-                  className="navigation-item is-disabled"
-                  title="Disponibile in una milestone successiva"
-                >
-                  <NavIcon name={item.icon} />
-                  <span>{item.label}</span>
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+        {navigationGroups.map((group) => (
+          <section className="navigation-group" key={group.label}>
+            <h2>{group.label}</h2>
+            <ul className="navigation-list">
+              {group.items.map((item) => {
+                const isActive =
+                  item.route === activeRoute ||
+                  (item.route === "transactions" && activeRoute === "new-transaction");
+                return (
+                  <li key={item.route}>
+                    <a
+                      aria-current={isActive ? "page" : undefined}
+                      className={`navigation-item${isActive ? " is-active" : ""}`}
+                      href={`./#${item.route}`}
+                      onClick={onClose}
+                      title={isCollapsed ? item.label : undefined}
+                    >
+                      <NavIcon name={item.icon} />
+                      <span>{item.label}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
       </nav>
 
       <div className="sidebar-status">

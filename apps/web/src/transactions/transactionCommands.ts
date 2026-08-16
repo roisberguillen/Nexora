@@ -89,6 +89,59 @@ export async function createManualTransaction(
   return transaction;
 }
 
+export async function updateManualTransaction(
+  repository: LedgerRepository,
+  id: string,
+  input: CreateManualTransactionInput,
+): Promise<Transaction> {
+  const existing = await repository.findTransactionById(id);
+  if (existing === undefined)
+    throw new DomainError("missing_reference", "Transaction does not exist.");
+  if (
+    existing.source !== "manual" ||
+    existing.status === "reconciled" ||
+    existing.status === "cancelled"
+  )
+    throw new DomainError(
+      "invalid_transaction",
+      "Only active manual transactions can be edited. Use an adjustment for reconciled data.",
+    );
+  if (existing.kind === "transfer")
+    throw new DomainError("invalid_transfer", "Transfers must be corrected as a linked operation.");
+  const [splits, tags] = await Promise.all([
+    repository.listTransactionSplits(id),
+    repository.listTransactionTags(id),
+  ]);
+  const account = await requireAccount(repository, input.accountId);
+  const categoryId = optional(input.categoryId);
+  const description = optional(input.description);
+  const payee = optional(input.payee);
+  const transaction = Transaction.create({
+    id,
+    kind: input.kind,
+    status: input.status,
+    accountId: account.id,
+    amount: Money.fromMinor(input.amountMinor, account.currency),
+    bookedDate: LocalDate.parse(input.bookedDate),
+    source: "manual",
+    ...(categoryId === undefined ? {} : { categoryId }),
+    ...(description === undefined ? {} : { description }),
+    ...(payee === undefined ? {} : { payee }),
+    ...(input.expenseVariability === undefined
+      ? {}
+      : { expenseVariability: input.expenseVariability }),
+    ...(input.expenseExceptionality === undefined
+      ? {}
+      : { expenseExceptionality: input.expenseExceptionality }),
+  });
+  await repository.updateTransactionWithDetails(
+    transaction,
+    splits,
+    tags.map((tag) => tag.id),
+  );
+  return transaction;
+}
+
 export async function createTransfer(
   repository: LedgerRepository,
   input: CreateTransferInput,

@@ -1,11 +1,20 @@
 import { InMemoryLedgerRepository } from "@nexora/database";
-import { Account, LocalDate } from "@nexora/domain";
+import {
+  Account,
+  Category,
+  LocalDate,
+  Money,
+  Tag,
+  Transaction,
+  TransactionSplit,
+} from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import {
   createManualTransaction,
   createTransfer,
   signedAmountForKind,
+  updateManualTransaction,
 } from "./transactionCommands";
 
 describe("transaction commands", () => {
@@ -60,6 +69,79 @@ describe("transaction commands", () => {
     expect(
       (await repository.findTransactionById(transfer.creditTransactionId))?.amount.amountMinor,
     ).toBe(12_345n);
+  });
+
+  it("modifica solo un movimento manuale attivo mantenendo la sua identità", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(account("main"));
+    const created = await createManualTransaction(
+      repository,
+      {
+        accountId: "main",
+        amountMinor: -1200n,
+        bookedDate: "2026-07-28",
+        description: "Prima",
+        kind: "expense",
+        payee: "",
+        status: "booked",
+      },
+      () => "manual-edit",
+    );
+
+    const updated = await updateManualTransaction(repository, created.id, {
+      accountId: "main",
+      amountMinor: -2500n,
+      bookedDate: "2026-07-29",
+      description: "Dopo",
+      kind: "expense",
+      payee: "",
+      status: "booked",
+    });
+
+    expect(updated).toMatchObject({ id: "manual-edit", description: "Dopo" });
+    expect(updated.amount.amountMinor).toBe(-2500n);
+  });
+
+  it("preserva split e tag quando modifica un movimento manuale", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(account("main"));
+    const category = Category.create({ id: "food", name: "Cibo", kindScope: "expense" });
+    const tag = Tag.create({ id: "home", name: "Casa" });
+    await repository.saveCategory(category);
+    await repository.saveTag(tag);
+    const transaction = Transaction.create({
+      id: "split-edit",
+      kind: "expense",
+      status: "booked",
+      accountId: "main",
+      amount: Money.fromMinor(-2500n, "EUR"),
+      bookedDate: LocalDate.parse("2026-07-28"),
+      source: "manual",
+    });
+    const split = TransactionSplit.create({
+      id: "split-one",
+      transactionId: transaction.id,
+      categoryId: category.id,
+      amount: Money.fromMinor(-2500n, "EUR"),
+    });
+    await repository.saveTransactionWithDetails(transaction, [split], [tag.id]);
+
+    await updateManualTransaction(repository, transaction.id, {
+      accountId: "main",
+      amountMinor: -2500n,
+      bookedDate: "2026-07-29",
+      description: "Aggiornata",
+      kind: "expense",
+      payee: "",
+      status: "booked",
+    });
+
+    expect((await repository.listTransactionSplits(transaction.id)).map((item) => item.id)).toEqual(
+      [split.id],
+    );
+    expect((await repository.listTransactionTags(transaction.id)).map((item) => item.id)).toEqual([
+      tag.id,
+    ]);
   });
 
   it("rifiuta conti uguali e valute diverse per un trasferimento", async () => {

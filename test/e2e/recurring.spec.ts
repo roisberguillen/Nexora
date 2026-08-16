@@ -83,7 +83,9 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await expect(page.getByText("Piano eliminato.")).toBeVisible();
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
-  await page.getByLabel("Tipo").selectOption("income");
+  const transactionKind = page.locator('select[name="kind"]');
+  if ((await transactionKind.count()) > 0) await transactionKind.selectOption("income");
+  else await page.getByRole("radio", { name: "Entrata", exact: true }).check();
   await page
     .locator('select[name="account"]')
     .selectOption({ label: "Conto quotidiano demo · EUR" });

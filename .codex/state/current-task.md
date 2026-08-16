@@ -1,11 +1,11 @@
 # Current task
 
-- Task: Money Manager semantic account/category/transfer/adjustment migration fix.
-- Roadmap phase: Phase 12 remains complete. This corrective task does not start another roadmap
-  phase or authorize the full-history migration.
-- Status: complete locally on 2026-08-16. The supplied 45-row workbook passed read-only parsing,
-  semantic planning, isolated in-memory commit, duplicate-only rerun and full undo. No real source
-  row, amount, identifier, workbook or generated fixture was retained in Git.
-- Baseline: published checkpoint `d07b327` on `codex/phase-12-5-0-checkpoint`.
-- Next task: publish this verified correction, then wait for explicit authorization before any
-  further real-data phase or full-history import.
+- Task: Phase 12.5.C desktop UX menu and transactions review.
+- Roadmap phase: Phase 12 remains complete. This UI task does not authorize a financial-domain,
+  repository or database change.
+- Status: incomplete on 2026-08-16. Menu grouping/collapse, local transaction filters and editing
+  of eligible manual movements are verified. Editing movements with persistent splits remains P1
+  because their replacement must preserve split/tag details atomically.
+- Baseline: `e7de11d` on `codex/phase-12-5-0-checkpoint`.
+- Next task: implement atomic replacement of an eligible transaction with its split/tag details
+  across all ledger adapters before declaring Phase 12.5.C complete.

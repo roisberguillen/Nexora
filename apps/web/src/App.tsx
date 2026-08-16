@@ -30,6 +30,7 @@ import { Dashboard } from "./dashboard/Dashboard";
 import {
   createManualTransaction,
   createTransfer,
+  updateManualTransaction,
   type CreateManualTransactionInput,
   type CreateTransferInput,
 } from "./transactions/transactionCommands";
@@ -415,6 +416,10 @@ function AppContent({
     });
     return salaryAllocationPlanIds;
   };
+  const updateManualMovement = (id: string, input: CreateManualTransactionInput): Promise<void> =>
+    mutateLedger(async (ledger) => {
+      await updateManualTransaction(ledger.repository, id, input);
+    });
 
   const createTransferMovement = (input: CreateTransferInput): Promise<void> =>
     mutateLedger(async (ledger) => {
@@ -706,6 +711,7 @@ function AppContent({
                   onTrashMany={trashMovements}
                   onCreateManual={createManualMovement}
                   onCreateTransfer={createTransferMovement}
+                  onUpdateManual={updateManualMovement}
                   onExecuteSalaryAllocations={executeAllocations}
                 />
               ) : route === "categories" ? (
