@@ -91,7 +91,7 @@ export function buildTransactionsViewModel(data: {
       status: debit.status,
       payee: "",
       statusLabel: statusLabel(debit.status),
-      title: debit.description ?? "Trasferimento interno",
+      title: transactionListTitle(debit.description, undefined, "Trasferimento interno"),
     } as const;
   });
   const cashFlowByMonth = Object.fromEntries(
@@ -167,8 +167,21 @@ function itemForTransaction(
     status: transaction.status,
     payee: transaction.payee ?? "",
     statusLabel: statusLabel(transaction.status),
-    title: transaction.payee ?? transaction.description ?? kindLabel(transaction.kind),
+    title: transactionListTitle(
+      transaction.payee,
+      transaction.description,
+      kindLabel(transaction.kind),
+    ),
   });
+}
+
+/** Keeps the primary list label meaningful when optional imported fields are blank. */
+export function transactionListTitle(
+  payee: string | undefined,
+  description: string | undefined,
+  fallback: string,
+): string {
+  return [payee, description, fallback].find((value) => value?.trim().length)!.trim();
 }
 
 function kindLabel(kind: Transaction["kind"]): string {

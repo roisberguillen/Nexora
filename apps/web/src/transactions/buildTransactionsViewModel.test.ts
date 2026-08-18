@@ -1,9 +1,15 @@
 import { Account, Category, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
-import { buildTransactionsViewModel } from "./buildTransactionsViewModel";
+import { buildTransactionsViewModel, transactionListTitle } from "./buildTransactionsViewModel";
 
 describe("buildTransactionsViewModel", () => {
+  it("uses payee, then description, then kind as the stable list title", () => {
+    expect(transactionListTitle("Supermercato", "Spesa settimanale", "Spesa")).toBe("Supermercato");
+    expect(transactionListTitle(" ", "Spesa settimanale", "Spesa")).toBe("Spesa settimanale");
+    expect(transactionListTitle(undefined, " ", "Spesa")).toBe("Spesa");
+  });
+
   it("collassa le due gambe del trasferimento in una sola riga neutra", () => {
     const source = account("source", "Conto principale");
     const destination = account("destination", "Risparmi");

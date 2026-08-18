@@ -1,10 +1,12 @@
 # Current task
 
-- Task: Phase 12.5.C2.1 Movements page hierarchy and KPI.
-- Roadmap phase: the user-requested UI slice follows the completed Phase 12.5.D review and is
-  limited to the top of `#transactions`; it does not authorize financial-domain or persistence work.
-- Status: complete on 2026-08-17. The page now exposes the Movimenti H1, the existing
-  `#new-transaction` entry route and month-aware income, expense and net KPI from the existing
-  cash-flow report. Transfers and cancelled transactions remain excluded by domain semantics.
+- Task: Phase 12.5.C2.4 chronological grouping and transaction detail.
+- Roadmap phase: UI-only representation slice for `#transactions`; it does not authorize
+  financial-domain, persistence, query, filter, KPI or command changes.
+- Status: complete on 2026-08-18. The local implementation adds chronological date groups and an
+  accessible transaction-detail surface using only the existing view model. It also restores route
+  transitions into and out of the existing standalone movement editor. Targeted component checks,
+  formatting, lint, typecheck, full unit suite, build, manifest and orchestration validation pass.
+  Transfer, split and financial-detail flows pass on all configured browser viewports.
 - Baseline: `b0972b1` on `codex/phase-12-5-0-checkpoint`.
-- Next task: 12.5.C2.2 — Ricerca bancaria + filtri rapidi, only on explicit request.
+- Next task: 12.5.C2.5.

@@ -16,6 +16,10 @@
 
 ### Changed
 
+- Movimenti ora raggruppa cronologicamente le righe e offre un dettaglio contestuale accessibile;
+  la route di nuova registrazione ripristina correttamente editor, transfer, split e dettagli
+  finanziari su desktop e mobile.
+
 - La pagina Movimenti espone ora una gerarchia bancaria più immediata: titolo essenziale, accesso
   esplicito al flusso esistente di nuova registrazione e KPI di entrate, uscite e saldo netto
   calcolati dal report finanziario già verificato, senza includere trasferimenti o annullati.

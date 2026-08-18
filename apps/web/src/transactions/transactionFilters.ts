@@ -6,6 +6,7 @@ export interface TransactionFilters {
   readonly kindLabel: string;
   readonly month: string;
   readonly query: string;
+  readonly statusLabel: string;
 }
 
 export const emptyTransactionFilters: TransactionFilters = Object.freeze({
@@ -14,6 +15,7 @@ export const emptyTransactionFilters: TransactionFilters = Object.freeze({
   kindLabel: "",
   month: "",
   query: "",
+  statusLabel: "",
 });
 
 export function filterTransactions(
@@ -25,12 +27,20 @@ export function filterTransactions(
     if (filters.accountLabel !== "" && item.accountLabel !== filters.accountLabel) return false;
     if (filters.categoryLabel !== "" && item.categoryLabel !== filters.categoryLabel) return false;
     if (filters.kindLabel !== "" && item.kindLabel !== filters.kindLabel) return false;
+    if (filters.statusLabel !== "" && item.statusLabel !== filters.statusLabel) return false;
     if (filters.month !== "" && !item.bookedDate.startsWith(filters.month)) return false;
     return (
       query === "" ||
-      [item.title, item.accountLabel, item.categoryLabel, item.kindLabel, item.statusLabel].some(
-        (value) => value.toLocaleLowerCase("it-IT").includes(query),
-      )
+      [
+        item.title,
+        item.description ?? "",
+        item.payee ?? "",
+        item.accountLabel,
+        item.categoryLabel,
+        item.kindLabel,
+        item.statusLabel,
+        item.amount.amountMinor.toString(),
+      ].some((value) => value.toLocaleLowerCase("it-IT").includes(query))
     );
   });
 }

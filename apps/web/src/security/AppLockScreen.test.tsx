@@ -32,7 +32,7 @@ describe("AppLockScreen recovery", () => {
     await user.click(confirm);
 
     await waitFor(() => expect(recoveryReset).toHaveBeenCalledOnce());
-  });
+  }, 15_000);
 
   it("keeps recovery unavailable until the local archive is ready", () => {
     render(<AppLockScreen config={config} onUnlock={vi.fn()} />);

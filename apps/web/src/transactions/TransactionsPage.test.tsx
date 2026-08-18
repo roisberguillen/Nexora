@@ -29,12 +29,37 @@ describe("TransactionsPage", () => {
   it("updates the KPI for the selected month", () => {
     render(<TransactionsPage {...pageProps()} />);
 
+    fireEvent.click(screen.getByRole("button", { name: "Filtri" }));
     fireEvent.change(screen.getByLabelText("Periodo"), { target: { value: "2026-08" } });
 
     const summary = screen.getByRole("region", { name: "Riepilogo movimenti" });
     expect(within(summary).getByText("Entrate").closest("article")).toHaveTextContent("0,00");
     expect(within(summary).getByText("Uscite").closest("article")).toHaveTextContent("300");
     expect(within(summary).getByText("Saldo netto").closest("article")).toHaveTextContent("300");
+  });
+
+  it("opens a transaction detail and restores focus to its row when closed with Escape", async () => {
+    const user = userEvent.setup();
+    render(<TransactionsPage {...pageProps()} />);
+
+    const rowControl = screen.getByRole("button", { name: /^Spesa/ });
+    await user.click(rowControl);
+    expect(screen.getByRole("heading", { name: "Spesa" })).toBeVisible();
+    expect(screen.getByText("Dettaglio movimento")).toBeVisible();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByText("Dettaglio movimento")).toBeNull();
+    expect(rowControl).toHaveFocus();
+  });
+
+  it("opens the standalone editor when navigation changes to a new transaction", () => {
+    const rendered = render(<TransactionsPage {...pageProps()} />);
+
+    rendered.rerender(<TransactionsPage {...pageProps()} initialEditorOpen standaloneEditor />);
+
+    expect(screen.getByRole("radio", { name: "Trasferimento" })).toBeVisible();
+    expect(screen.getByText("Dettagli finanziari (facoltativi)")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Aggiungi ripartizione" })).toBeVisible();
   });
 });
 

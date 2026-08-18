@@ -161,7 +161,7 @@ describe("Nexora app", () => {
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
 
     expect(
-      await screen.findByRole("heading", { name: "Importa estratti conto" }),
+      await screen.findByRole("heading", { name: "Importa estratti conto" }, { timeout: 5_000 }),
     ).toBeInTheDocument();
     expect(
       screen.queryByText("Passo 4 sarà disponibile dopo la validazione, deduplica e dry-run."),

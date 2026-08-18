@@ -1,5 +1,51 @@
 # Test evidence
 
+## Phase 12.5.C2.4 chronological grouping and transaction detail — complete — 2026-08-18
+
+- The UI-only implementation groups the existing, already filtered and sorted transaction view
+  model by civil booked date for chronological sorts (`Oggi`, `Ieri`, Italian long dates, with a
+  year only when needed). Amount sorting deliberately retains one neutral `Movimenti` group rather
+  than implying a false date order.
+- Opening is available only from the explicit row control. The desktop contextual panel and the
+  mobile full-screen surface expose only projected data: amount, account, category, booked date,
+  type, source, payee, description and transfer route. Split/tag data are intentionally absent
+  because they are not part of `TransactionListItem`; no domain, repository or persistence contract
+  was changed. Escape and Close restore focus to the opened row.
+- Targeted Vitest: **3 files, 13/13 passed, 0 skipped** (`transactionDateGroups`,
+  `TransactionList`, `TransactionsPage`). It covers relative/year labels, filtered/sorted grouping,
+  neutral amount ordering, explicit open control, Escape and focus return. Web typecheck passed.
+- A global-concurrency regression made `App` import-preview and `AppLockScreen` recovery time out
+  despite passing in isolation. Their bounded test waits were made resilient without changing
+  runtime behavior. Targeted regression: **12/12 passed**; full `pnpm test`: **136 files passed,
+  1 skipped; 560 tests passed, 4 documented skips**. Workspace build passed with the known
+  non-blocking chunk-size advisory; manifest regeneration/check and `pnpm codex:validate` passed.
+- Browser regression: movement route transitions now synchronize the standalone editor state, so
+  transfer, split and financial-detail controls render after `Nuovo movimento`. Saving or closing
+  the standalone editor returns to `#transactions`. The E2E locator now targets the amount textbox
+  rather than the new sort option, and date grouping preserves valid nested-list semantics. The
+  transfer, split and financial-detail flows pass **18/18** across 320, 375, 390, 768, 1024 and
+  1440 px, including the existing axe assertion.
+
+## Phase 12.5.C2.3 movements banking-list redesign — partial — 2026-08-18
+
+- The UI-only list implementation uses the existing transaction view model, `FinancialAmount` and
+  `NavIcon`. It adds title/category/account/date hierarchy, real status/source indicators, neutral
+  transfer amounts, a contextual action menu and opt-in bulk selection without changing command or
+  persistence behavior.
+- Targeted Vitest: **3 files, 10/10 passed, 0 skipped** (`TransactionList`, `TransactionsPage`,
+  `buildTransactionsViewModel`), covering title fallback, financial amount semantics, badges,
+  menu permissions, Escape/focus return and selection visibility. Web typecheck and lint passed.
+- Responsive Playwright list smoke: **4/4 passed, 0 skipped** at 320, 390, 768 and 1440 px,
+  including axe, menu keyboard behavior and horizontal-overflow checks. A first run caught insufficient
+  contrast caused by dimming cancelled rows; the visual treatment was changed to a token surface and
+  text decoration, then all four viewports passed.
+- `pnpm verify` passed after formatting and manifest regeneration: **135 files passed, 1 skipped;
+  553 tests passed, 4 documented skips**. `pnpm manifest:check` and `pnpm codex:validate` passed.
+- The complete `test/e2e/transactions.spec.ts` run is **not green**: existing form-flow tests cannot
+  find the transfer type, split button or financial-detail control after activating `Nuovo movimento`
+  (observed at 320 and 375 px before cancellation). This is outside the list redesign and prevents
+  declaring the phase complete or publishing a commit.
+
 ## Phase 12.5.C2.1 movements hierarchy and KPI — complete — 2026-08-17
 
 - The Transactions view model now delegates overall and month-scoped Income/Expense/Net totals to

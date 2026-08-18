@@ -7,6 +7,264 @@
   margin-top: 1rem;
 }
 
+.transaction-list-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.transaction-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.transaction-list-layout {
+  min-width: 0;
+}
+.transaction-list-layout.has-details {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem);
+}
+.transaction-date-group {
+  list-style: none;
+}
+.transaction-date-group > h3 {
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  margin: 1.25rem 0 0;
+  padding: 0 0 0.5rem;
+}
+.transaction-date-group > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.transaction-list-row {
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  min-height: 4.5rem;
+  padding: 0.75rem 0.25rem;
+}
+
+.transaction-list-row:hover {
+  background: var(--color-surface-hover);
+}
+.transaction-list-row.is-details-selected {
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+.transaction-list-open {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  display: block;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+.transaction-list-open:focus-visible .transaction-list-main {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+.transaction-details-panel {
+  align-self: start;
+  background: var(--color-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1rem;
+  position: sticky;
+  top: 1rem;
+}
+.transaction-details-panel header {
+  align-items: start;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.transaction-details-panel h2,
+.transaction-details-panel h3 {
+  margin: 0;
+}
+.transaction-details-close {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  height: 2.75rem;
+  width: 2.75rem;
+}
+.transaction-details-amount {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.transaction-details-panel dl {
+  display: grid;
+  gap: 0.25rem 1rem;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  margin: 0;
+}
+.transaction-details-panel dt {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+.transaction-details-panel dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.transaction-transfer-route {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.transaction-list-row.is-cancelled {
+  background: var(--color-surface-muted);
+  text-decoration: line-through;
+}
+
+.transaction-select {
+  align-items: center;
+  display: flex;
+  min-height: 2.75rem;
+}
+
+.transaction-select input {
+  block-size: 1.125rem;
+  inline-size: 1.125rem;
+}
+
+.transaction-category-icon {
+  align-items: center;
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  display: inline-flex;
+  height: 2.5rem;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+.transaction-category-icon .nav-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.transaction-list-main,
+.transaction-list-summary {
+  min-width: 0;
+}
+
+.transaction-list-main {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.transaction-list-main strong,
+.transaction-list-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-list-main strong {
+  color: var(--text-primary);
+}
+
+.transaction-list-meta,
+.transaction-list-main time {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.transaction-list-summary {
+  align-items: end;
+  display: grid;
+  gap: 0.25rem;
+  justify-items: end;
+}
+
+.transaction-list-summary .financial-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.transaction-status {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.12rem 0.4rem;
+  white-space: nowrap;
+}
+
+.transaction-menu-wrap {
+  position: relative;
+}
+
+.transaction-menu-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  display: inline-flex;
+  font-size: 1.5rem;
+  height: 2.75rem;
+  justify-content: center;
+  line-height: 1;
+  width: 2.75rem;
+}
+
+.transaction-menu-trigger:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+  color: var(--text-primary);
+}
+
+.transaction-action-menu {
+  background: var(--color-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0.25rem 1.25rem rgb(17 24 39 / 0.12);
+  display: grid;
+  min-width: 11rem;
+  padding: 0.25rem;
+  position: absolute;
+  right: 0;
+  top: calc(100% - 0.25rem);
+  z-index: 2;
+}
+
+.transaction-action-menu button {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.transaction-action-menu button:hover,
+.transaction-action-menu button:focus-visible {
+  background: var(--color-surface-muted);
+}
+
+.transaction-action-menu .is-destructive {
+  color: var(--danger-text);
+}
+
 .transactions-kpi-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 1.5rem;
@@ -102,6 +360,22 @@
 }
 
 @media (max-width: 480px) {
+  .transaction-list-layout.has-details {
+    display: block;
+  }
+  .transaction-list-layout.has-details .transaction-list {
+    display: none;
+  }
+  .transaction-details-panel {
+    border: 0;
+    border-radius: 0;
+    inset: 0;
+    max-height: none;
+    min-height: 100dvh;
+    padding: max(1rem, env(safe-area-inset-top)) 1rem max(6.5rem, env(safe-area-inset-bottom));
+    position: fixed;
+    z-index: 5;
+  }
   .transactions-kpi-grid {
     grid-template-columns: 1fr;
   }
@@ -124,47 +398,41 @@
     padding-bottom: 6.5rem;
   }
 
-  .transaction-management-table tr {
-    border: 1px solid var(--border-subtle);
-    border-radius: 0.875rem;
-    box-shadow: 0 0.2rem 0.75rem rgb(17 24 39 / 0.05);
-    margin-bottom: 0.75rem;
-    padding: 0.875rem !important;
-  }
-
-  .transaction-management-table td[data-label="Operazione"] strong {
-    font-size: 1rem;
-  }
-
-  .transaction-management-table td[data-label="Importo"] {
-    align-items: center;
-    border-top: 1px solid var(--border-subtle);
-    margin-top: 0.35rem;
-    padding-top: 0.65rem;
-  }
-
-  .transaction-management-table td,
-  .transaction-management-table td:first-child,
-  .transaction-management-table td:nth-child(3),
-  .transaction-management-table td:nth-child(4) {
+  .transaction-list-row {
+    align-items: start;
     gap: 0.5rem;
-    grid-template-columns: minmax(4.75rem, 0.65fr) minmax(0, 1.35fr);
-    padding: 0.3rem 0;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-height: 5.5rem;
+    padding: 0.75rem 0;
   }
 
-  .transaction-management-table td[data-label="Azioni"] {
-    grid-template-columns: 1fr;
-    margin-top: 0.25rem;
-    padding-top: 0.5rem;
+  .transaction-list-row:has(.transaction-select) {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
   }
 
-  .transaction-management-table td[data-label="Azioni"]::before {
-    display: none;
+  .transaction-category-icon {
+    height: 2.25rem;
+    width: 2.25rem;
   }
 
-  .transaction-management-table td[data-label="Azioni"] .table-actions {
-    display: flex;
-    gap: 0.75rem;
-    grid-column: 1;
+  .transaction-list-summary {
+    grid-column: 3;
+    grid-row: 1;
+    padding-right: 2.75rem;
+  }
+
+  .transaction-list-row:has(.transaction-select) .transaction-list-summary {
+    grid-column: 4;
+  }
+
+  .transaction-menu-wrap {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+    margin-top: -2.5rem;
+  }
+
+  .transaction-list-row:has(.transaction-select) .transaction-menu-wrap {
+    grid-column: 4;
   }
 }

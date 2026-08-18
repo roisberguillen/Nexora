@@ -16,6 +16,36 @@ async function setTransactionKind(page: Page, kind: keyof typeof transactionKind
   await page.getByRole("radio", { name: transactionKindLabels[kind], exact: true }).check();
 }
 
+test("la lista bancaria dei movimenti mantiene gerarchia, menu e nessun overflow", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+
+  const list = page.getByRole("list", { name: "Movimenti registrati nel ledger" });
+  await expect(list).toBeVisible();
+  await expect(list).toContainText("Esercente campione");
+  await page.getByRole("button", { name: "Seleziona" }).click();
+  await expect(list.getByRole("checkbox")).not.toHaveCount(0);
+
+  const actions = list.getByRole("button", { name: "Azioni per Esercente campione" });
+  await actions.focus();
+  await actions.press("Enter");
+  await expect(page.getByRole("menuitem", { name: "Sposta nel cestino" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(actions).toBeFocused();
+
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
 test("la gestione movimenti registra e annulla un trasferimento senza overflow", async ({
   page,
 }) => {
@@ -31,19 +61,18 @@ test("la gestione movimenti registra e annulla un trasferimento senza overflow",
   const source = await accounts.inputValue();
   await page.getByLabel("Conto destinazione").selectOption({ index: 1 });
   await expect(page.getByLabel("Conto destinazione")).not.toHaveValue(source);
-  await page.getByLabel("Importo").fill("25,00");
+  await page.getByRole("textbox", { name: "Importo" }).fill("25,00");
   await page.getByLabel("Descrizione").fill("Riserva mensile");
   await page.getByRole("button", { name: "Salva movimento" }).click();
 
   await expect(page.getByRole("status")).toContainText("Trasferimento salvato");
-  const table = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
-  await expect(table).toContainText("Riserva mensile");
-  await table
-    .getByRole("row", { name: /Riserva mensile/ })
-    .getByRole("button", { name: "Annulla" })
-    .click();
+  const list = page.getByRole("list", { name: "Movimenti registrati nel ledger" });
+  await expect(list).toContainText("Riserva mensile");
+  const transferActions = list.getByRole("button", { name: "Azioni per Riserva mensile" });
+  await transferActions.click();
+  await page.getByRole("menuitem", { name: "Annulla" }).click();
   await expect(page.getByRole("status")).toContainText("Trasferimento annullato");
-  await expect(table).toContainText("Annullato");
+  await expect(list).toContainText("Annullato");
 
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -60,15 +89,17 @@ test("i filtri movimenti sono combinabili e si possono azzerare", async ({ page 
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await page.goto("/#transactions");
 
-  const table = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
-  await page.getByLabel("Cerca movimenti").fill("Esercente campione");
-  await expect(table).toContainText("Esercente campione");
-  await page.getByLabel("Tipo movimento").selectOption({ label: "Spesa" });
-  await expect(table.getByRole("row")).toHaveCount(2);
+  const list = page.getByRole("list", { name: "Movimenti registrati nel ledger" });
+  await page.getByLabel("Cerca nei movimenti").fill("Esercente campione");
+  await expect(list).toContainText("Esercente campione");
+  await page.getByRole("button", { name: "Uscite" }).click();
+  await expect(
+    list.locator(":scope > .transaction-date-group > ul > .transaction-list-row"),
+  ).toHaveCount(1);
 
   await page.getByRole("button", { name: "Azzera filtri" }).click();
-  await expect(page.getByLabel("Cerca movimenti")).toHaveValue("");
-  await expect(table.getByRole("row")).not.toHaveCount(2);
+  await expect(page.getByLabel("Cerca nei movimenti")).toHaveValue("");
+  await expect(list.getByRole("listitem")).not.toHaveCount(1);
 });
 
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {
@@ -94,7 +125,7 @@ test("una spesa può avere dettagli finanziari facoltativi senza classificare i 
   await page.getByText("Dettagli finanziari (facoltativi)").click();
   await page.getByLabel("Fissa").check();
   await page.getByRole("radio", { name: "Ordinario", exact: true }).check();
-  await page.getByLabel("Importo").fill("12,50");
+  await page.getByRole("textbox", { name: "Importo" }).fill("12,50");
   await page.getByRole("button", { name: "Salva movimento" }).click();
   await expect(page.getByRole("status")).toContainText("Movimento salvato");
 
@@ -109,9 +140,9 @@ test("un movimento nel cestino può essere ripristinato e purgato dalla gestione
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await page.goto("/#transactions");
-  const table = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
-  const row = table.getByRole("row").filter({ hasText: "Esercente campione" });
-  await row.getByRole("button", { name: "Cestina" }).click();
+  const list = page.getByRole("list", { name: "Movimenti registrati nel ledger" });
+  await list.getByRole("button", { name: "Azioni per Esercente campione" }).click();
+  await page.getByRole("menuitem", { name: "Sposta nel cestino" }).click();
   await expect(page.getByRole("status")).toContainText("Movimento spostato nel cestino");
 
   await page.goto("/#settings");
@@ -120,9 +151,9 @@ test("un movimento nel cestino può essere ripristinato e purgato dalla gestione
   await expect(page.getByText("Il cestino è vuoto.")).toBeVisible();
 
   await page.goto("/#transactions");
-  const restoredTable = page.getByRole("table", { name: "Movimenti registrati nel ledger" });
-  const restoredRow = restoredTable.getByRole("row").filter({ hasText: "Esercente campione" });
-  await restoredRow.getByRole("button", { name: "Cestina" }).click();
+  const restoredList = page.getByRole("list", { name: "Movimenti registrati nel ledger" });
+  await restoredList.getByRole("button", { name: "Azioni per Esercente campione" }).click();
+  await page.getByRole("menuitem", { name: "Sposta nel cestino" }).click();
   await page.goto("/#settings");
   const purgeButton = page.getByRole("button", { name: "Elimina definitivamente" });
   await expect(purgeButton).toHaveCount(1);

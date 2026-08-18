@@ -12,6 +12,8 @@ import {
   type CreateTransferInput,
 } from "./transactionCommands";
 import type { TransactionsViewModel } from "./buildTransactionsViewModel";
+import { TransactionList } from "./TransactionList";
+import { TransactionDetailsPanel } from "./TransactionDetailsPanel";
 import { previewTrashSelection } from "./trashSelection";
 import { paginateTransactions, transactionPageSize } from "./pagination";
 import {
@@ -65,21 +67,45 @@ export function TransactionsPage({
   );
   const [salaryAllocationNeedsRecovery, setSalaryAllocationNeedsRecovery] = useState(false);
   const [selectedForTrash, setSelectedForTrash] = useState<ReadonlySet<string>>(new Set());
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+  const [detailsTrigger, setDetailsTrigger] = useState<HTMLElement | null>(null);
   const [isTrashConfirmOpen, setIsTrashConfirmOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<TransactionFilters>(emptyTransactionFilters);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [sort, setSort] = useState("recent");
   const selectionPreview = previewTrashSelection(model.items, selectedForTrash);
   const filteredItems = filterTransactions(model.items, filters);
   const cashFlow =
     filters.month === ""
       ? model.cashFlow
       : (model.cashFlowByMonth[filters.month] ?? model.emptyCashFlow);
-  const pagination = paginateTransactions(filteredItems, currentPage);
+  const sortedItems = [...filteredItems].sort((left, right) => {
+    if (sort === "oldest") return left.bookedDate.localeCompare(right.bookedDate);
+    if (sort === "amount-desc") return right.amount.amountMinor > left.amount.amountMinor ? 1 : -1;
+    if (sort === "amount-asc") return left.amount.amountMinor > right.amount.amountMinor ? 1 : -1;
+    return right.bookedDate.localeCompare(left.bookedDate);
+  });
+  const pagination = paginateTransactions(sortedItems, currentPage);
   const { currentPage: visiblePage, items: visibleItems, pageCount } = pagination;
+  const selectedTransaction = visibleItems.find((item) => item.id === selectedTransactionId);
+
+  useEffect(() => {
+    setIsEditorOpen(initialEditorOpen);
+    if (!initialEditorOpen) setEditingId(null);
+  }, [initialEditorOpen]);
 
   useEffect(() => {
     if (currentPage !== visiblePage) setCurrentPage(visiblePage);
   }, [currentPage, visiblePage]);
+
+  useEffect(() => {
+    if (selectedTransactionId !== null && selectedTransaction === undefined) {
+      setSelectedTransactionId(null);
+      setDetailsTrigger(null);
+    }
+  }, [selectedTransaction, selectedTransactionId]);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -164,6 +190,7 @@ export function TransactionsPage({
       }
       setIsEditorOpen(false);
       setEditingId(null);
+      if (standaloneEditor) window.location.hash = "#transactions";
       setMessage(
         kind === "transfer"
           ? "Trasferimento salvato con due gambe collegate."
@@ -361,91 +388,96 @@ export function TransactionsPage({
               <p className="eyebrow">Registrazioni</p>
               <h2 id="transaction-list-title">Movimenti</h2>
             </div>
-            <span className="panel-meta">{model.items.length}</span>
+            <div className="transaction-list-toolbar">
+              <span className="panel-meta">{model.items.length}</span>
+              <button
+                aria-pressed={isSelectionMode}
+                className="secondary-action"
+                onClick={() => {
+                  setIsSelectionMode((active) => !active);
+                  setSelectedForTrash(new Set());
+                }}
+                type="button"
+              >
+                {isSelectionMode ? "Fine selezione" : "Seleziona"}
+              </button>
+            </div>
           </div>
           <form
             aria-label="Filtri movimenti"
             className="transaction-filters"
             onSubmit={(event) => event.preventDefault()}
           >
-            <label>
-              <span>Cerca movimenti</span>
+            <label className="transaction-search">
+              <span>Cerca nei movimenti</span>
               <input
                 onChange={(event) => {
                   setFilters((current) => ({ ...current, query: event.currentTarget.value }));
                   setCurrentPage(1);
                 }}
-                placeholder="Descrizione o categoria"
+                placeholder="Descrizione, controparte, categoria o importo"
                 type="search"
                 value={filters.query}
               />
             </label>
+            <div className="transaction-quick-filters" role="group" aria-label="Filtri rapidi">
+              {(
+                [
+                  ["", "Tutti"],
+                  ["Spesa", "Uscite"],
+                  ["Entrata", "Entrate"],
+                  ["Trasferimento", "Trasferimenti"],
+                  ["Previsto", "Previsti"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={label}
+                  type="button"
+                  aria-pressed={
+                    (value === "Previsto"
+                      ? filters.statusLabel === value
+                      : filters.kindLabel === value) ||
+                    (value === "" && filters.kindLabel === "" && filters.statusLabel === "")
+                  }
+                  onClick={() => {
+                    setFilters((current) =>
+                      value === "Previsto"
+                        ? { ...current, statusLabel: value, kindLabel: "" }
+                        : {
+                            ...current,
+                            kindLabel: value,
+                            statusLabel: value === "" ? "" : current.statusLabel,
+                          },
+                    );
+                    setCurrentPage(1);
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button
+              className="secondary-action"
+              type="button"
+              onClick={() => setIsFiltersOpen(true)}
+            >
+              Filtri
+              {[
+                filters.month,
+                filters.accountLabel,
+                filters.categoryLabel,
+                filters.statusLabel,
+              ].filter(Boolean).length
+                ? ` (${[filters.month, filters.accountLabel, filters.categoryLabel, filters.statusLabel].filter(Boolean).length})`
+                : ""}
+            </button>
             <label>
-              <span>Periodo</span>
-              <input
-                onChange={(event) => {
-                  setFilters((current) => ({ ...current, month: event.currentTarget.value }));
-                  setCurrentPage(1);
-                }}
-                type="month"
-                value={filters.month}
-              />
-            </label>
-            <label>
-              <span>Conto</span>
-              <select
-                onChange={(event) => {
-                  setFilters((current) => ({
-                    ...current,
-                    accountLabel: event.currentTarget.value,
-                  }));
-                  setCurrentPage(1);
-                }}
-                value={filters.accountLabel}
-              >
-                <option value="">Tutti i conti</option>
-                {[...new Set(model.items.map((item) => item.accountLabel))].sort().map((label) => (
-                  <option key={label} value={label}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span>Categoria</span>
-              <select
-                onChange={(event) => {
-                  setFilters((current) => ({
-                    ...current,
-                    categoryLabel: event.currentTarget.value,
-                  }));
-                  setCurrentPage(1);
-                }}
-                value={filters.categoryLabel}
-              >
-                <option value="">Tutte le categorie</option>
-                {[...new Set(model.items.map((item) => item.categoryLabel))].sort().map((label) => (
-                  <option key={label} value={label}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span>Tipo movimento</span>
-              <select
-                onChange={(event) => {
-                  setFilters((current) => ({ ...current, kindLabel: event.currentTarget.value }));
-                  setCurrentPage(1);
-                }}
-                value={filters.kindLabel}
-              >
-                <option value="">Tutti i tipi</option>
-                {[...new Set(model.items.map((item) => item.kindLabel))].sort().map((label) => (
-                  <option key={label} value={label}>
-                    {label}
-                  </option>
-                ))}
+              <span>Ordina</span>
+              <select value={sort} onChange={(event) => setSort(event.currentTarget.value)}>
+                <option value="recent">Più recenti</option>
+                <option value="oldest">Meno recenti</option>
+                <option value="amount-desc">Importo più alto</option>
+                <option value="amount-asc">Importo più basso</option>
               </select>
             </label>
             {hasTransactionFilters(filters) ? (
@@ -461,6 +493,110 @@ export function TransactionsPage({
               </button>
             ) : null}
           </form>
+          {hasTransactionFilters(filters) ? (
+            <div className="active-filters" aria-label="Filtri attivi">
+              {(
+                [
+                  ["month", "Periodo"],
+                  ["accountLabel", "Conto"],
+                  ["categoryLabel", "Categoria"],
+                  ["kindLabel", "Tipo"],
+                  ["statusLabel", "Stato"],
+                ] as const
+              ).map(([key, label]) =>
+                filters[key] ? (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setFilters((current) => ({ ...current, [key]: "" }))}
+                  >
+                    {label}: {filters[key]} ×
+                  </button>
+                ) : null,
+              )}
+            </div>
+          ) : null}
+          {isFiltersOpen ? (
+            <AccessibleDialog
+              labelledBy="transaction-filters-title"
+              onClose={() => setIsFiltersOpen(false)}
+            >
+              <h2 id="transaction-filters-title">Filtri movimenti</h2>
+              <label>
+                Periodo
+                <input
+                  type="month"
+                  value={filters.month}
+                  onChange={(event) => {
+                    const month = event.currentTarget.value;
+                    setFilters((current) => ({ ...current, month }));
+                  }}
+                />
+              </label>
+              <label>
+                Conto
+                <select
+                  value={filters.accountLabel}
+                  onChange={(event) =>
+                    setFilters((current) => ({
+                      ...current,
+                      accountLabel: event.currentTarget.value,
+                    }))
+                  }
+                >
+                  <option value="">Tutti i conti</option>
+                  {[...new Set(model.items.map((item) => item.accountLabel))]
+                    .sort()
+                    .map((value) => (
+                      <option key={value}>{value}</option>
+                    ))}
+                </select>
+              </label>
+              <label>
+                Categoria
+                <select
+                  value={filters.categoryLabel}
+                  onChange={(event) =>
+                    setFilters((current) => ({
+                      ...current,
+                      categoryLabel: event.currentTarget.value,
+                    }))
+                  }
+                >
+                  <option value="">Tutte le categorie</option>
+                  {[...new Set(model.items.map((item) => item.categoryLabel))]
+                    .sort()
+                    .map((value) => (
+                      <option key={value}>{value}</option>
+                    ))}
+                </select>
+              </label>
+              <label>
+                Stato
+                <select
+                  value={filters.statusLabel}
+                  onChange={(event) =>
+                    setFilters((current) => ({
+                      ...current,
+                      statusLabel: event.currentTarget.value,
+                    }))
+                  }
+                >
+                  <option value="">Tutti gli stati</option>
+                  {[...new Set(model.items.map((item) => item.statusLabel))].sort().map((value) => (
+                    <option key={value}>{value}</option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="primary-action"
+                type="button"
+                onClick={() => setIsFiltersOpen(false)}
+              >
+                Applica filtri
+              </button>
+            </AccessibleDialog>
+          ) : null}
           {selectionPreview.transactionGroups === 0 ? null : (
             <div aria-live="polite" className="account-feedback">
               <strong>{selectionPreview.transactionGroups} gruppi selezionati</strong> ·
@@ -530,108 +666,49 @@ export function TransactionsPage({
               <p>Modifica o azzera i filtri per rivedere tutte le registrazioni.</p>
             </div>
           ) : (
-            <div className="account-table-wrap">
-              <table className="account-table transaction-management-table">
-                <caption className="sr-only">Movimenti registrati nel ledger</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Seleziona</th>
-                    <th scope="col">Operazione</th>
-                    <th scope="col">Conto</th>
-                    <th scope="col">Data</th>
-                    <th scope="col">Stato</th>
-                    <th scope="col">Importo</th>
-                    <th scope="col">Azioni</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visibleItems.map((item) => (
-                    <tr key={item.id}>
-                      <td data-label="Seleziona">
-                        <input
-                          aria-label={`Seleziona ${item.title}`}
-                          checked={selectedForTrash.has(item.id)}
-                          disabled={!item.canCancel || isSaving}
-                          onChange={(event) =>
-                            setSelectedForTrash((current) => {
-                              const next = new Set(current);
-                              if (event.currentTarget.checked) next.add(item.id);
-                              else next.delete(item.id);
-                              return next;
-                            })
-                          }
-                          type="checkbox"
-                        />
-                      </td>
-                      <td data-label="Operazione">
-                        <span>
-                          <strong>{item.title}</strong>
-                          <small>
-                            {item.kindLabel} · {item.categoryLabel}
-                          </small>
-                        </span>
-                      </td>
-                      <td data-label="Conto">{item.accountLabel}</td>
-                      <td data-label="Data">{item.bookedDate}</td>
-                      <td data-label="Stato">
-                        <span className="account-status">{item.statusLabel}</span>
-                      </td>
-                      <td data-label="Importo">
-                        <FinancialAmount
-                          amountMinor={item.amount.amountMinor}
-                          currency={item.amount.currency}
-                          showPositiveSign={item.amount.amountMinor > 0n && !item.isTransfer}
-                          tone={
-                            item.amount.amountMinor < 0n
-                              ? "negative"
-                              : item.isTransfer
-                                ? "neutral"
-                                : "positive"
-                          }
-                        />
-                      </td>
-                      <td data-label="Azioni">
-                        {item.canCancel ? (
-                          <span className="table-actions">
-                            {item.source === "manual" && !item.isTransfer ? (
-                              <button
-                                className="text-action"
-                                disabled={isSaving}
-                                onClick={() => {
-                                  setEditingId(item.id);
-                                  setKind(item.kind as FormKind);
-                                  setIsEditorOpen(true);
-                                }}
-                                type="button"
-                              >
-                                Modifica
-                              </button>
-                            ) : null}
-                            <button
-                              className="text-action"
-                              disabled={isSaving}
-                              onClick={() => void cancel(item.id, item.isTransfer)}
-                              type="button"
-                            >
-                              Annulla
-                            </button>
-                            <button
-                              className="text-action"
-                              disabled={isSaving}
-                              onClick={() => void trash(item.id, item.isTransfer)}
-                              type="button"
-                            >
-                              Cestina
-                            </button>
-                          </span>
-                        ) : (
-                          <span className="table-muted">Non annullabile</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div
+              className={
+                selectedTransaction === undefined
+                  ? "transaction-list-layout"
+                  : "transaction-list-layout has-details"
+              }
+            >
+              <TransactionList
+                isSaving={isSaving}
+                items={visibleItems}
+                onCancel={(item) => void cancel(item.id, item.isTransfer)}
+                onEdit={(item) => {
+                  setEditingId(item.id);
+                  setKind(item.kind as FormKind);
+                  setIsEditorOpen(true);
+                }}
+                onOpen={(item, trigger) => {
+                  setDetailsTrigger(trigger);
+                  setSelectedTransactionId(item.id);
+                }}
+                onToggleSelection={(id, selected) =>
+                  setSelectedForTrash((current) => {
+                    const next = new Set(current);
+                    if (selected) next.add(id);
+                    else next.delete(id);
+                    return next;
+                  })
+                }
+                onTrash={(item) => void trash(item.id, item.isTransfer)}
+                selectedIds={selectedForTrash}
+                selectedItemId={selectedTransactionId ?? undefined}
+                selectionMode={isSelectionMode}
+                sort={sort}
+              />
+              {selectedTransaction === undefined ? null : (
+                <TransactionDetailsPanel
+                  item={selectedTransaction}
+                  onClose={() => {
+                    detailsTrigger?.focus();
+                    setSelectedTransactionId(null);
+                  }}
+                />
+              )}
             </div>
           )}
           {filteredItems.length > transactionPageSize ? (
@@ -671,6 +748,7 @@ export function TransactionsPage({
             onCancel={() => {
               setIsEditorOpen(false);
               setEditingId(null);
+              if (standaloneEditor) window.location.hash = "#transactions";
             }}
             onKindChange={setKind}
             onSubmit={save}

@@ -39,6 +39,7 @@ describe("filterTransactions", () => {
       kindLabel: "Spesa",
       month: "2026-08",
       query: "super",
+      statusLabel: "",
     });
 
     expect(result.map((item) => item.id)).toEqual(["1"]);
@@ -51,6 +52,16 @@ describe("filterTransactions", () => {
         (item) => item.id,
       ),
     ).toEqual(["2"]);
+  });
+
+  it("cerca senza distinzione maiuscole e spazi e combina lo stato", () => {
+    expect(
+      filterTransactions(items, {
+        ...emptyTransactionFilters,
+        query: "  SUPERmercato ",
+        statusLabel: "Contabilizzato",
+      }).map((item) => item.id),
+    ).toEqual(["1"]);
   });
 });
 
