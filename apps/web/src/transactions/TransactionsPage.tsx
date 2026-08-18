@@ -880,18 +880,20 @@ function TransactionForm({
             </select>
           </label>
         )}
-        <label className="transaction-amount-field">
-          <span>Importo</span>
-          <input
-            aria-label="Importo"
-            inputMode="decimal"
-            name="amount"
-            onChange={(event) => setAmountText(event.currentTarget.value)}
-            placeholder="0,00"
-            required
-            value={amountText}
-          />
-        </label>
+        {!isTransfer ? (
+          <label className="transaction-amount-field">
+            <span>Importo</span>
+            <input
+              aria-label="Importo"
+              inputMode="decimal"
+              name="amount"
+              onChange={(event) => setAmountText(event.currentTarget.value)}
+              placeholder="0,00"
+              required
+              value={amountText}
+            />
+          </label>
+        ) : null}
         <label>
           {isTransfer ? "Conto origine" : "Conto"}
           <select
@@ -1143,6 +1145,18 @@ function TransactionForm({
           </details>
         ) : (
           <>
+            <label>
+              Importo
+              <input
+                aria-label="Importo"
+                inputMode="decimal"
+                name="amount"
+                onChange={(event) => setAmountText(event.currentTarget.value)}
+                placeholder="0,00"
+                required
+                value={amountText}
+              />
+            </label>
             <label>
               Data operazione
               <input
