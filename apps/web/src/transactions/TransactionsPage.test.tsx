@@ -1,7 +1,7 @@
 import { Account, LocalDate, Money, Transaction } from "@nexora/domain";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { TransactionsPage } from "./TransactionsPage";
 import { buildTransactionsViewModel } from "./buildTransactionsViewModel";
@@ -58,8 +58,62 @@ describe("TransactionsPage", () => {
     rendered.rerender(<TransactionsPage {...pageProps()} initialEditorOpen standaloneEditor />);
 
     expect(screen.getByRole("radio", { name: "Trasferimento" })).toBeVisible();
-    expect(screen.getByText("Dettagli finanziari (facoltativi)")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Aggiungi ripartizione" })).toBeVisible();
+    const advancedDetails = screen.getByText("Altri dettagli").closest("details");
+    expect(advancedDetails).not.toBeNull();
+    expect(advancedDetails).not.toHaveProperty("open", true);
+  });
+
+  it("creates an income through the banking field order and existing command contract", async () => {
+    const user = userEvent.setup();
+    const onCreateManual = vi.fn(async () => [] as readonly string[]);
+    render(
+      <TransactionsPage
+        {...pageProps()}
+        initialEditorOpen
+        onCreateManual={onCreateManual}
+        standaloneEditor
+      />,
+    );
+
+    await user.click(screen.getByRole("radio", { name: "Entrata" }));
+    await user.type(screen.getByRole("textbox", { name: "Importo" }), "12,50");
+    await user.type(screen.getByLabelText("Controparte"), "Datore di lavoro");
+    await user.type(screen.getByLabelText("Descrizione"), "Rimborso");
+    await user.click(screen.getByRole("button", { name: "Salva movimento" }));
+
+    expect(onCreateManual).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accountId: "checking",
+        amountMinor: 1_250n,
+        kind: "income",
+        payee: "Datore di lavoro",
+        description: "Rimborso",
+      }),
+    );
+  });
+
+  it("creates an expense with the existing signed minor-unit contract", async () => {
+    const user = userEvent.setup();
+    const onCreateManual = vi.fn(async () => [] as readonly string[]);
+    render(
+      <TransactionsPage
+        {...pageProps()}
+        initialEditorOpen
+        onCreateManual={onCreateManual}
+        standaloneEditor
+      />,
+    );
+
+    await user.type(screen.getByRole("textbox", { name: "Importo" }), "12,50");
+    await user.click(screen.getByRole("button", { name: "Salva movimento" }));
+
+    expect(onCreateManual).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accountId: "checking",
+        amountMinor: -1_250n,
+        kind: "expense",
+      }),
+    );
   });
 });
 

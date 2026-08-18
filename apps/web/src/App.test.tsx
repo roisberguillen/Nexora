@@ -76,9 +76,11 @@ describe("Nexora app", () => {
     await user.click(await screen.findByRole("button", { name: "Nuova operazione" }));
     await user.click(screen.getByRole("button", { name: /Aggiungi nuovo movimento/ }));
 
-    expect(await screen.findByRole("heading", { name: "Nuova registrazione" })).toBeInTheDocument();
-    expect(screen.getAllByText("Aggiungi movimento")).toHaveLength(2);
-    expect(screen.getByRole("complementary", { name: "Aggiungi movimento" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Nuovo movimento" }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText("Nuovo movimento")).toHaveLength(4);
+    expect(screen.getByRole("complementary", { name: "Nuovo movimento" })).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Uscita" })).toBeChecked();
     await user.click(screen.getByRole("radio", { name: "Entrata" }));
     expect(screen.getByRole("radio", { name: "Entrata" })).toBeChecked();

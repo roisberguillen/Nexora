@@ -107,6 +107,7 @@ test("il modulo movimenti espone righe split responsive", async ({ page }) => {
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByText("Altri dettagli").click();
   await page.getByRole("button", { name: "Aggiungi ripartizione" }).click();
   await expect(page.getByLabel("Categoria split 1")).toBeVisible();
   await expect(page.getByLabel("Importo split 1")).toBeVisible();
@@ -121,6 +122,7 @@ test("una spesa può avere dettagli finanziari facoltativi senza classificare i 
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByText("Altri dettagli").click();
   await expect(page.getByText("Dettagli finanziari (facoltativi)")).toBeVisible();
   await page.getByText("Dettagli finanziari (facoltativi)").click();
   await page.getByLabel("Fissa").check();

@@ -122,6 +122,26 @@
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+.transaction-amount-field input {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  min-height: 3.25rem;
+}
+
+.transaction-advanced-details {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+}
+
+.transaction-advanced-details > summary {
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 2.75rem;
+}
 .transaction-transfer-route {
   margin: 0;
   overflow-wrap: anywhere;

@@ -16,6 +16,12 @@
 
 ### Changed
 
+- Il modulo “Nuovo movimento” presenta ora Entrate e Uscite con una gerarchia bancaria: tipo e
+  importo in evidenza, seguiti da conto, controparte, categoria, data e descrizione. Ripartizioni,
+  tag, stato e classificazioni della spesa restano disponibili in “Altri dettagli”, chiuso per
+  impostazione predefinita; conversione monetaria, validazioni, comandi e trasferimenti esistenti
+  non cambiano.
+
 - Movimenti ora raggruppa cronologicamente le righe e offre un dettaglio contestuale accessibile;
   la route di nuova registrazione ripristina correttamente editor, transfer, split e dettagli
   finanziari su desktop e mobile.

@@ -244,8 +244,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 810,
-      "sha256": "61fc47d93f19d13d9e3cdcef93c1f4ec481dcaca6df1a1a7c2d1f13a8b85ce44"
+      "size": 1005,
+      "sha256": "0545e2d0bbdaf2fb44d404f72cc067ba1e359ad1239cea7a2d7d7383b3b18e35"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -749,8 +749,8 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 9750,
-      "sha256": "0691b2013e2b062b939607e90a145f61f0bf2bdb69dc71cdc8c8239d3a902a6f"
+      "size": 9763,
+      "sha256": "e2f7153b1e43a90bb1c11b4a4fc14110b72610de8fe2f3f75b1588317a366a72"
     },
     {
       "path": "apps/web/src/App.tsx",
@@ -1459,18 +1459,18 @@
     },
     {
       "path": "apps/web/src/transactions/transactions.css",
-      "size": 8732,
-      "sha256": "86789de5abf99758e8fe4fb8fc4f9ff396621b2c081944acf278aabdd6271d39"
+      "size": 9133,
+      "sha256": "6cb6dd8d9d8fa6d04c5dcb6015fb9aaed8358e411561b2db2a9166b140fa762a"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.test.tsx",
-      "size": 4289,
-      "sha256": "1cad16a1266f5735d39aac2d07dab43edea2a5e88a8e9131cf66de0a26b51c5f"
+      "size": 6042,
+      "sha256": "a3b051bb4bc5a37dfb06ff08f1dcad87bc1832f4b685ff39efe953a9ea407195"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 43160,
-      "sha256": "953eb3ae61e73f96460dd4c4affe89c43c7af89f5d5d3583371d4788d21d2022"
+      "size": 45081,
+      "sha256": "fd2ce912da3b36c558fd0dcfb6f6c89f385eac23f96d6e9b0bac01feeaf00741"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -1509,8 +1509,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 28457,
-      "sha256": "26de6112e56e49160255559803e2b7155c55b5af7447c695f5819bf47bb75250"
+      "size": 28869,
+      "sha256": "a15259a58558bae600937136ce5d1a3ff9b057fb2638e3fcaecc53fb5df061ed"
     },
     {
       "path": "design/mockup/README.md",
@@ -3109,8 +3109,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 10469,
-      "sha256": "cea99480fafab600122629516110d91f8ff60ae6082621ed9b9fa76070a2f87b"
+      "size": 10569,
+      "sha256": "be2267426c4caecaeba0d8b3a74bb0c3ad9852cfbbeae661488fafab9bc47f29"
     },
     {
       "path": "test/project-privacy.test.ts",

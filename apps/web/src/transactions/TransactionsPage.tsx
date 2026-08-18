@@ -276,8 +276,8 @@ export function TransactionsPage({
     >
       <header className="accounts-heading">
         <div>
-          <p className="eyebrow">{standaloneEditor ? "Nuova registrazione" : "Operazioni"}</p>
-          <h1>{standaloneEditor ? "Nuova registrazione" : "Movimenti"}</h1>
+          <p className="eyebrow">{standaloneEditor ? "Nuovo movimento" : "Operazioni"}</p>
+          <h1>{standaloneEditor ? "Nuovo movimento" : "Movimenti"}</h1>
           <p>
             {standaloneEditor
               ? "Aggiungi movimento"
@@ -828,8 +828,8 @@ function TransactionForm({
     <aside aria-labelledby="transaction-form-title" className="account-editor-panel">
       <div className="account-editor-heading">
         <div>
-          <p className="eyebrow">Nuova registrazione</p>
-          <h2 id="transaction-form-title">Aggiungi movimento</h2>
+          <p className="eyebrow">Nuovo movimento</p>
+          <h2 id="transaction-form-title">Nuovo movimento</h2>
         </div>
         <button
           aria-label="Chiudi modulo movimento"
@@ -880,10 +880,21 @@ function TransactionForm({
             </select>
           </label>
         )}
+        <label className="transaction-amount-field">
+          <span>Importo</span>
+          <input
+            aria-label="Importo"
+            inputMode="decimal"
+            name="amount"
+            onChange={(event) => setAmountText(event.currentTarget.value)}
+            placeholder="0,00"
+            required
+            value={amountText}
+          />
+        </label>
         <label>
           {isTransfer ? "Conto origine" : "Conto"}
           <select
-            defaultValue={selectedAccountId}
             name="account"
             onChange={(event) => setSelectedAccountId(event.currentTarget.value)}
             required
@@ -908,198 +919,233 @@ function TransactionForm({
             </select>
           </label>
         ) : null}
-        {!isTransfer && kind !== "adjustment" && !hasSplits ? (
-          <label>
-            Categoria
-            <select defaultValue={editingItem?.categoryId ?? ""} name="category">
-              <option value="">Senza categoria</option>
-              {categoriesForKind.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {categoryLabel(category, categories)}
-                </option>
-              ))}
-            </select>
-          </label>
-        ) : null}
-        {!isTransfer && kind !== "adjustment" ? (
-          <fieldset className="split-editor">
-            <legend>Ripartizione per categoria</legend>
-            {splitRows.map((rowId, index) => (
-              <div className="split-row" key={rowId}>
-                <select aria-label={`Categoria split ${index + 1}`} name="splitCategory" required>
-                  <option value="">Categoria</option>
+        {!isTransfer ? (
+          <>
+            <label>
+              Controparte
+              <input
+                defaultValue={editingItem?.payee ?? ""}
+                name="payee"
+                placeholder="Facoltativa"
+              />
+            </label>
+            {kind !== "adjustment" && !hasSplits ? (
+              <label>
+                Categoria
+                <select defaultValue={editingItem?.categoryId ?? ""} name="category">
+                  <option value="">Senza categoria</option>
                   {categoriesForKind.map((category) => (
                     <option key={category.id} value={category.id}>
                       {categoryLabel(category, categories)}
                     </option>
                   ))}
                 </select>
-                <input
-                  aria-label={`Importo split ${index + 1}`}
-                  inputMode="decimal"
-                  name="splitAmount"
-                  onChange={(event) =>
-                    setSplitAmounts((amounts) => ({
-                      ...amounts,
-                      [rowId]: event.currentTarget.value,
-                    }))
-                  }
-                  placeholder="0,00"
-                  required
-                />
+              </label>
+            ) : null}
+            <label>
+              Data
+              <input
+                defaultValue={editingItem?.bookedDate ?? localCivilDate()}
+                name="bookedDate"
+                required
+                type="date"
+              />
+            </label>
+            <label>
+              Descrizione
+              <input
+                defaultValue={editingItem?.description ?? ""}
+                name="description"
+                placeholder="Facoltativa"
+              />
+            </label>
+          </>
+        ) : null}
+        {!isTransfer ? (
+          <details className="transaction-advanced-details">
+            <summary>Altri dettagli</summary>
+            {kind !== "adjustment" ? (
+              <fieldset className="split-editor">
+                <legend>Ripartizione per categoria</legend>
+                {splitRows.map((rowId, index) => (
+                  <div className="split-row" key={rowId}>
+                    <select
+                      aria-label={`Categoria split ${index + 1}`}
+                      name="splitCategory"
+                      required
+                    >
+                      <option value="">Categoria</option>
+                      {categoriesForKind.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {categoryLabel(category, categories)}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      aria-label={`Importo split ${index + 1}`}
+                      inputMode="decimal"
+                      name="splitAmount"
+                      onChange={(event) =>
+                        setSplitAmounts((amounts) => ({
+                          ...amounts,
+                          [rowId]: event.currentTarget.value,
+                        }))
+                      }
+                      placeholder="0,00"
+                      required
+                    />
+                    <button
+                      aria-label={`Rimuovi split ${index + 1}`}
+                      className="text-action"
+                      onClick={() => setSplitRows((rows) => rows.filter((id) => id !== rowId))}
+                      type="button"
+                    >
+                      Rimuovi
+                    </button>
+                  </div>
+                ))}
+                {hasSplits ? (
+                  <div aria-live="polite" className="split-summary">
+                    <span>
+                      Assegnato:{" "}
+                      {assignedAmount === undefined ? (
+                        "—"
+                      ) : (
+                        <FinancialAmount amountMinor={assignedAmount} currency={currency} />
+                      )}
+                    </span>
+                    <span className={amountRemaining === 0n ? "is-balanced" : "is-unbalanced"}>
+                      Da assegnare:{" "}
+                      {amountRemaining === undefined ? (
+                        "—"
+                      ) : (
+                        <FinancialAmount amountMinor={amountRemaining} currency={currency} />
+                      )}
+                    </span>
+                  </div>
+                ) : null}
                 <button
-                  aria-label={`Rimuovi split ${index + 1}`}
                   className="text-action"
-                  onClick={() => setSplitRows((rows) => rows.filter((id) => id !== rowId))}
+                  onClick={() => setSplitRows((rows) => [...rows, crypto.randomUUID()])}
                   type="button"
                 >
-                  Rimuovi
+                  Aggiungi ripartizione
                 </button>
-              </div>
-            ))}
-            {hasSplits ? (
-              <div aria-live="polite" className="split-summary">
-                <span>
-                  Assegnato:{" "}
-                  {assignedAmount === undefined ? (
-                    "—"
-                  ) : (
-                    <FinancialAmount amountMinor={assignedAmount} currency={currency} />
-                  )}
-                </span>
-                <span className={amountRemaining === 0n ? "is-balanced" : "is-unbalanced"}>
-                  Da assegnare:{" "}
-                  {amountRemaining === undefined ? (
-                    "—"
-                  ) : (
-                    <FinancialAmount amountMinor={amountRemaining} currency={currency} />
-                  )}
-                </span>
-              </div>
+              </fieldset>
             ) : null}
-            <button
-              className="text-action"
-              onClick={() => setSplitRows((rows) => [...rows, crypto.randomUUID()])}
-              type="button"
-            >
-              Aggiungi ripartizione
-            </button>
-          </fieldset>
-        ) : null}
-        {kind === "expense" ? (
-          <details className="expense-behavior-details">
-            <summary>Dettagli finanziari (facoltativi)</summary>
-            <p className="import-help">
-              La categoria descrive la destinazione della spesa. Queste informazioni non modificano
-              le categorie esistenti.
-            </p>
-            <fieldset>
-              <legend>Natura della spesa</legend>
-              <label>
-                <input defaultChecked name="expenseVariability" type="radio" value="unclassified" />
-                Non specificata
-              </label>
-              <label>
-                <input name="expenseVariability" type="radio" value="fixed" /> Fissa
-              </label>
-              <label>
-                <input name="expenseVariability" type="radio" value="variable" /> Variabile
-              </label>
+            {kind === "expense" ? (
+              <details className="expense-behavior-details">
+                <summary>Dettagli finanziari (facoltativi)</summary>
+                <p className="import-help">
+                  La categoria descrive la destinazione della spesa. Queste informazioni non
+                  modificano le categorie esistenti.
+                </p>
+                <fieldset>
+                  <legend>Natura della spesa</legend>
+                  <label>
+                    <input
+                      defaultChecked
+                      name="expenseVariability"
+                      type="radio"
+                      value="unclassified"
+                    />
+                    Non specificata
+                  </label>
+                  <label>
+                    <input name="expenseVariability" type="radio" value="fixed" /> Fissa
+                  </label>
+                  <label>
+                    <input name="expenseVariability" type="radio" value="variable" /> Variabile
+                  </label>
+                </fieldset>
+                <fieldset>
+                  <legend>Evento</legend>
+                  <label>
+                    <input
+                      defaultChecked
+                      name="expenseExceptionality"
+                      type="radio"
+                      value="unclassified"
+                    />
+                    Non specificato
+                  </label>
+                  <label>
+                    <input name="expenseExceptionality" type="radio" value="ordinary" /> Ordinario
+                  </label>
+                  <label>
+                    <input name="expenseExceptionality" type="radio" value="extraordinary" />
+                    Straordinario
+                  </label>
+                </fieldset>
+                <p className="import-help">
+                  Per una spesa ricorrente usa una vera{" "}
+                  <a href="#recurring">regola di ricorrenza</a>: frequenza e prossima data restano
+                  gestite in un solo punto.
+                </p>
+              </details>
+            ) : null}
+            <fieldset className="tag-selector">
+              <legend>Tag</legend>
+              {tags.filter((tag) => !tag.isArchived).length === 0 ? (
+                <p>Nessun tag attivo. Puoi crearne uno dalla sezione Tag.</p>
+              ) : (
+                <div>
+                  {tags
+                    .filter((tag) => !tag.isArchived)
+                    .map((tag) => (
+                      <label key={tag.id}>
+                        <input name="tagId" type="checkbox" value={tag.id} />
+                        {tag.name}
+                      </label>
+                    ))}
+                </div>
+              )}
             </fieldset>
-            <fieldset>
-              <legend>Evento</legend>
+            {kind === "adjustment" ? (
               <label>
-                <input
-                  defaultChecked
-                  name="expenseExceptionality"
-                  type="radio"
-                  value="unclassified"
-                />
-                Non specificato
+                Direzione
+                <select name="adjustmentDirection">
+                  <option value="increase">Aumenta il saldo</option>
+                  <option value="decrease">Riduce il saldo</option>
+                </select>
               </label>
-              <label>
-                <input name="expenseExceptionality" type="radio" value="ordinary" /> Ordinario
-              </label>
-              <label>
-                <input name="expenseExceptionality" type="radio" value="extraordinary" />
-                Straordinario
-              </label>
-            </fieldset>
-            <p className="import-help">
-              Per una spesa ricorrente usa una vera <a href="#recurring">regola di ricorrenza</a>:
-              frequenza e prossima data restano gestite in un solo punto.
-            </p>
+            ) : null}
+            <label>
+              Stato
+              <select defaultValue={editingItem?.status ?? "booked"} name="status">
+                <option value="booked">Contabilizzato</option>
+                <option value="expected">Previsto</option>
+              </select>
+            </label>
           </details>
-        ) : null}
-        {!isTransfer ? (
-          <fieldset className="tag-selector">
-            <legend>Tag</legend>
-            {tags.filter((tag) => !tag.isArchived).length === 0 ? (
-              <p>Nessun tag attivo. Puoi crearne uno dalla sezione Tag.</p>
-            ) : (
-              <div>
-                {tags
-                  .filter((tag) => !tag.isArchived)
-                  .map((tag) => (
-                    <label key={tag.id}>
-                      <input name="tagId" type="checkbox" value={tag.id} />
-                      {tag.name}
-                    </label>
-                  ))}
-              </div>
-            )}
-          </fieldset>
-        ) : null}
-        {kind === "adjustment" ? (
-          <label>
-            Direzione
-            <select name="adjustmentDirection">
-              <option value="increase">Aumenta il saldo</option>
-              <option value="decrease">Riduce il saldo</option>
-            </select>
-          </label>
-        ) : null}
-        <label>
-          Importo
-          <input
-            aria-label="Importo"
-            inputMode="decimal"
-            name="amount"
-            onChange={(event) => setAmountText(event.currentTarget.value)}
-            placeholder="0,00"
-            required
-          />
-        </label>
-        <label>
-          Data operazione
-          <input
-            defaultValue={editingItem?.bookedDate ?? localCivilDate()}
-            name="bookedDate"
-            required
-            type="date"
-          />
-        </label>
-        <label>
-          Stato
-          <select defaultValue={editingItem?.status ?? "booked"} name="status">
-            <option value="booked">Contabilizzato</option>
-            <option value="expected">Previsto</option>
-          </select>
-        </label>
-        {!isTransfer ? (
-          <label>
-            Controparte
-            <input defaultValue={editingItem?.payee ?? ""} name="payee" placeholder="Facoltativo" />
-          </label>
-        ) : null}
-        <label>
-          Descrizione
-          <input
-            defaultValue={editingItem?.description ?? ""}
-            name="description"
-            placeholder="Facoltativa"
-          />
-        </label>
+        ) : (
+          <>
+            <label>
+              Data operazione
+              <input
+                defaultValue={editingItem?.bookedDate ?? localCivilDate()}
+                name="bookedDate"
+                required
+                type="date"
+              />
+            </label>
+            <label>
+              Stato
+              <select defaultValue={editingItem?.status ?? "booked"} name="status">
+                <option value="booked">Contabilizzato</option>
+                <option value="expected">Previsto</option>
+              </select>
+            </label>
+            <label>
+              Descrizione
+              <input
+                defaultValue={editingItem?.description ?? ""}
+                name="description"
+                placeholder="Facoltativa"
+              />
+            </label>
+          </>
+        )}
         {isTransfer ? (
           <p className="immutable-note">
             Nexora crea automaticamente due gambe nella stessa valuta. Nessun trasferimento viene
