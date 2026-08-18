@@ -115,6 +115,41 @@ describe("TransactionsPage", () => {
       }),
     );
   });
+
+  it("preserves existing expense classifications when editing", async () => {
+    const user = userEvent.setup();
+    const account = Account.create({
+      id: "checking",
+      name: "Conto corrente",
+      type: "checking",
+      currency: "EUR",
+    });
+    const model = buildTransactionsViewModel({
+      accounts: [account],
+      categories: [],
+      transactions: [
+        Transaction.create({
+          id: "expense-with-details",
+          kind: "expense",
+          status: "booked",
+          accountId: account.id,
+          amount: Money.fromMinor(-1_250n, "EUR"),
+          bookedDate: LocalDate.parse("2026-08-18"),
+          expenseExceptionality: "ordinary",
+          expenseVariability: "fixed",
+        }),
+      ],
+      transfers: [],
+    });
+    render(<TransactionsPage {...pageProps()} model={model} />);
+
+    await user.click(screen.getByRole("button", { name: "Azioni per Spesa" }));
+    await user.click(screen.getByRole("menuitem", { name: "Modifica" }));
+    await user.click(screen.getByText("Altri dettagli"));
+
+    expect(screen.getByRole("radio", { name: "Fissa" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Ordinario" })).toBeChecked();
+  });
 });
 
 function pageProps() {

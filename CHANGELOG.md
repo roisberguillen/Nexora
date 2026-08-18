@@ -20,7 +20,8 @@
   importo in evidenza, seguiti da conto, controparte, categoria, data e descrizione. Ripartizioni,
   tag, stato e classificazioni della spesa restano disponibili in “Altri dettagli”, chiuso per
   impostazione predefinita; conversione monetaria, validazioni, comandi e trasferimenti esistenti
-  non cambiano.
+  non cambiano. In modifica, le classificazioni Fissa/Variabile e Ordinario/Straordinario già
+  presenti sono precompilate e quindi non vengono perse.
 
 - Movimenti ora raggruppa cronologicamente le righe e offre un dettaglio contestuale accessibile;
   la route di nuova registrazione ripristina correttamente editor, transfer, split e dettagli

@@ -34,6 +34,8 @@ export interface TransactionListItem {
   readonly amount: Money;
   readonly bookedDate: string;
   readonly description?: string;
+  readonly expenseExceptionality?: Transaction["expenseExceptionality"];
+  readonly expenseVariability?: Transaction["expenseVariability"];
   readonly canCancel: boolean;
   readonly categoryLabel: string;
   readonly categoryId?: string | undefined;
@@ -151,6 +153,8 @@ function itemForTransaction(
     amount: transaction.amount,
     bookedDate: transaction.bookedDate.value,
     description: transaction.description ?? "",
+    expenseExceptionality: transaction.expenseExceptionality,
+    expenseVariability: transaction.expenseVariability,
     canCancel: transaction.status !== "cancelled" && transaction.status !== "reconciled",
     categoryLabel:
       transaction.categoryId === undefined

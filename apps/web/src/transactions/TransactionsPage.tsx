@@ -1044,7 +1044,7 @@ function TransactionForm({
                   <legend>Natura della spesa</legend>
                   <label>
                     <input
-                      defaultChecked
+                      defaultChecked={editingItem?.expenseVariability === undefined}
                       name="expenseVariability"
                       type="radio"
                       value="unclassified"
@@ -1052,17 +1052,29 @@ function TransactionForm({
                     Non specificata
                   </label>
                   <label>
-                    <input name="expenseVariability" type="radio" value="fixed" /> Fissa
+                    <input
+                      defaultChecked={editingItem?.expenseVariability === "fixed"}
+                      name="expenseVariability"
+                      type="radio"
+                      value="fixed"
+                    />{" "}
+                    Fissa
                   </label>
                   <label>
-                    <input name="expenseVariability" type="radio" value="variable" /> Variabile
+                    <input
+                      defaultChecked={editingItem?.expenseVariability === "variable"}
+                      name="expenseVariability"
+                      type="radio"
+                      value="variable"
+                    />{" "}
+                    Variabile
                   </label>
                 </fieldset>
                 <fieldset>
                   <legend>Evento</legend>
                   <label>
                     <input
-                      defaultChecked
+                      defaultChecked={editingItem?.expenseExceptionality === undefined}
                       name="expenseExceptionality"
                       type="radio"
                       value="unclassified"
@@ -1070,10 +1082,21 @@ function TransactionForm({
                     Non specificato
                   </label>
                   <label>
-                    <input name="expenseExceptionality" type="radio" value="ordinary" /> Ordinario
+                    <input
+                      defaultChecked={editingItem?.expenseExceptionality === "ordinary"}
+                      name="expenseExceptionality"
+                      type="radio"
+                      value="ordinary"
+                    />{" "}
+                    Ordinario
                   </label>
                   <label>
-                    <input name="expenseExceptionality" type="radio" value="extraordinary" />
+                    <input
+                      defaultChecked={editingItem?.expenseExceptionality === "extraordinary"}
+                      name="expenseExceptionality"
+                      type="radio"
+                      value="extraordinary"
+                    />{" "}
                     Straordinario
                   </label>
                 </fieldset>

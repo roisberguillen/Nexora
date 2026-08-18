@@ -69,6 +69,8 @@ describe("buildTransactionsViewModel", () => {
       accountId: source.id,
       amount: Money.fromMinor(-30_000n, "EUR"),
       bookedDate: LocalDate.parse("2026-08-03"),
+      expenseExceptionality: "ordinary",
+      expenseVariability: "fixed",
     });
     const cancelled = Transaction.create({
       id: "cancelled",
@@ -95,6 +97,10 @@ describe("buildTransactionsViewModel", () => {
       income: { amountMinor: 0n },
       expense: { amountMinor: 30_000n },
       net: { amountMinor: -30_000n },
+    });
+    expect(model.items.find((item) => item.id === "expense")).toMatchObject({
+      expenseExceptionality: "ordinary",
+      expenseVariability: "fixed",
     });
   });
 

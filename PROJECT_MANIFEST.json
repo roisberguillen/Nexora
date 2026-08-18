@@ -244,8 +244,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 1005,
-      "sha256": "0545e2d0bbdaf2fb44d404f72cc067ba1e359ad1239cea7a2d7d7383b3b18e35"
+      "size": 1151,
+      "sha256": "b8eb58cca51682d8dd4a55a90295134dbedb088612b59900d8ecb1bd8b501a2b"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -1394,13 +1394,13 @@
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.test.ts",
-      "size": 4990,
-      "sha256": "4396daf20c3a8489f6476b4a2b1d990b72d922399028aa8bebc8b00e075090bf"
+      "size": 5228,
+      "sha256": "612a2827f2783f6b154e5dd4f3d8480c7b46f1107b0a61b0b2454fd215e37be7"
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.ts",
-      "size": 7037,
-      "sha256": "4947cc3087691288cbf7aa198495c3cf2958dda1995fa86471f06e86d7f58d35"
+      "size": 7295,
+      "sha256": "a07f861e46d7c0e5635495a34d4725dafbedaade2e7c8b4a7331e459a349fcc9"
     },
     {
       "path": "apps/web/src/transactions/pagination.test.ts",
@@ -1464,13 +1464,13 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.test.tsx",
-      "size": 6042,
-      "sha256": "a3b051bb4bc5a37dfb06ff08f1dcad87bc1832f4b685ff39efe953a9ea407195"
+      "size": 7245,
+      "sha256": "53604f9f5ccdfd4cc3f2c1ff474f66083c69109cfe9fa18772df9baddb5336a1"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 45081,
-      "sha256": "fd2ce912da3b36c558fd0dcfb6f6c89f385eac23f96d6e9b0bac01feeaf00741"
+      "size": 45956,
+      "sha256": "fe82dbd73c354bf533bf0a340b0b0e644d6fef20ab79cf396105a07931a2b316"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -1509,8 +1509,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 28869,
-      "sha256": "a15259a58558bae600937136ce5d1a3ff9b057fb2638e3fcaecc53fb5df061ed"
+      "size": 29005,
+      "sha256": "cc3731e83b7774282f65c8ce71671d3f5c7a6665da541c22336a393da14dcdd4"
     },
     {
       "path": "design/mockup/README.md",

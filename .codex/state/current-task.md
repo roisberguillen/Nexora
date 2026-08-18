@@ -7,8 +7,10 @@
   income and expense (type, amount, account, counterparty, category, date and description) with
   a closed-by-default `Altri dettagli` disclosure for split, tags, status and expense properties.
   Amount parsing, signed minor units, validation, command mapping and the existing transfer flow
-  remain unchanged. Targeted component tests cover income and expense creation; the complete unit,
-  formatting, lint, typecheck, build, manifest and orchestration checks pass. Split and financial
-  details pass in the browser at 320, 390, 768, 1024 and 1440 px.
+  remain unchanged. Editing rehydrates existing expense behavior values, while the established
+  command continues preserving split and tag records. Targeted component tests cover income,
+  expense and expense-detail editing; the complete unit, formatting, lint, typecheck, build,
+  manifest and orchestration checks pass. Split and financial details pass in the browser at 320,
+  390, 768, 1024 and 1440 px.
 - Baseline: `b0972b1` on `codex/phase-12-5-0-checkpoint`.
 - Next task: 12.5.C2.6.
