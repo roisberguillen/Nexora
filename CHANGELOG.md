@@ -4,6 +4,8 @@
 
 ### Documentation
 
+- Added the mandatory `nexora-ui-ux-mobile-desktop/v1` change manifest, review template and
+  staged-commit gate. Every modification now needs a recorded PASS/N.A. review without open P0.
 - Completed Phase 12.5.D: independent UI, responsive, accessibility and security review. No P0/P1
   findings remain; the full Playwright matrix passed on the isolated local preview.
 
