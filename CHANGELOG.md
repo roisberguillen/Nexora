@@ -4,6 +4,8 @@
 
 ### Documentation
 
+- Retired only the obsolete `mockup-to-ui` and `quality-gates` skills; their review process is
+  superseded by the enforced manifest gate.
 - Added the mandatory `nexora-ui-ux-mobile-desktop/v1` change manifest, review template and
   staged-commit gate. Every modification now needs a recorded PASS/N.A. review without open P0.
 - Completed Phase 12.5.D: independent UI, responsive, accessibility and security review. No P0/P1
