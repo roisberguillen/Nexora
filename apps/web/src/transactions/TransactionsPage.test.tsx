@@ -1,4 +1,4 @@
-import { Account, LocalDate, Money, Transaction } from "@nexora/domain";
+import { Account, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -167,6 +167,88 @@ describe("TransactionsPage", () => {
     expect(screen.getByRole("radio", { name: "Fissa" })).toBeChecked();
     expect(screen.getByRole("radio", { name: "Ordinario" })).toBeChecked();
   });
+
+  it("keeps a registered transfer in read-only detail and never exposes edit", async () => {
+    const user = userEvent.setup();
+    const origin = Account.create({
+      id: "origin",
+      name: "Conto origine",
+      type: "checking",
+      currency: "EUR",
+    });
+    const destination = Account.create({
+      id: "destination",
+      name: "Conto destinazione",
+      type: "savings",
+      currency: "EUR",
+    });
+    const debit = Transaction.create({
+      id: "transfer-debit",
+      kind: "transfer",
+      status: "booked",
+      accountId: origin.id,
+      amount: Money.fromMinor(-18_500n, "EUR"),
+      bookedDate: LocalDate.parse("2026-08-18"),
+      source: "manual",
+      description: "Giroconto",
+    });
+    const credit = Transaction.create({
+      id: "transfer-credit",
+      kind: "transfer",
+      status: "booked",
+      accountId: destination.id,
+      amount: Money.fromMinor(18_500n, "EUR"),
+      bookedDate: LocalDate.parse("2026-08-18"),
+      source: "manual",
+      description: "Giroconto",
+    });
+    const transfer = Transfer.create({
+      id: "transfer-1",
+      debitTransaction: debit,
+      creditTransaction: credit,
+    });
+    const model = buildTransactionsViewModel({
+      accounts: [origin, destination],
+      categories: [],
+      transactions: [debit, credit],
+      transfers: [transfer],
+    });
+    render(<TransactionsPage {...pageProps()} model={model} />);
+
+    await user.click(screen.getByRole("button", { name: /^Giroconto/ }));
+    expect(screen.getByText("Conto origine")).toBeVisible();
+    expect(screen.getByText("Conto destinazione")).toBeVisible();
+    expect(screen.queryByRole("button", { name: /modifica/i })).toBeNull();
+    expect(screen.queryByRole("menuitem", { name: "Modifica" })).toBeNull();
+  });
+
+  it("blocks the impossible transfer-edit state without calling either save callback", async () => {
+    const user = userEvent.setup();
+    const onCreateTransfer = vi.fn(async () => undefined);
+    const onUpdateManual = vi.fn(async () => undefined);
+    render(
+      <TransactionsPage
+        {...pageProps()}
+        initialEditorOpen
+        onCreateTransfer={onCreateTransfer}
+        onUpdateManual={onUpdateManual}
+        standaloneEditor
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Azioni per Spesa" }));
+    await user.click(screen.getByRole("menuitem", { name: "Modifica" }));
+    await user.click(screen.getByRole("radio", { name: "Trasferimento" }));
+    await user.selectOptions(screen.getByLabelText("Conto destinazione"), "savings");
+    await user.type(screen.getByRole("textbox", { name: "Importo" }), "10,00");
+    await user.click(screen.getByRole("button", { name: "Salva movimento" }));
+
+    expect(onCreateTransfer).not.toHaveBeenCalled();
+    expect(onUpdateManual).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "I trasferimenti registrati non possono essere modificati",
+    );
+  });
 });
 
 function pageProps() {
@@ -176,8 +258,14 @@ function pageProps() {
     type: "checking",
     currency: "EUR",
   });
+  const savings = Account.create({
+    id: "savings",
+    name: "Risparmi",
+    type: "savings",
+    currency: "EUR",
+  });
   const model = buildTransactionsViewModel({
-    accounts: [account],
+    accounts: [account, savings],
     categories: [],
     transactions: [
       transaction("income", "income", "booked", 120_000n, "2026-07-10"),

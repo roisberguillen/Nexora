@@ -20,6 +20,10 @@
 
 ### Changed
 
+- Risolto il blocker C2.6: i trasferimenti registrati sono esplicitamente non modificabili dalla
+  UI e una guardia impedisce qualsiasi falso update o nuova creazione nello stato impossibile
+  `transfer + editingId`; creazione atomica, annullamento e KPI restano invariati.
+
 - Il modulo “Nuovo movimento” presenta ora Entrate e Uscite con una gerarchia bancaria: tipo e
   importo in evidenza, seguiti da conto, controparte, categoria, data e descrizione. Ripartizioni,
   tag, stato e classificazioni della spesa restano disponibili in “Altri dettagli”, chiuso per

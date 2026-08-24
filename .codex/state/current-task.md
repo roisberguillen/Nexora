@@ -1,16 +1,8 @@
 # Current task
 
-- Task: Phase 12.5.C2.5 banking-style income and expense transaction form.
-- Roadmap phase: UI-only redesign of the shared manual transaction form. It does not authorize
-  financial-domain, persistence, query, transfer, split, validation or command changes.
-- Status: complete on 2026-08-18. The standalone new-movement flow has a banking hierarchy for
-  income and expense (type, amount, account, counterparty, category, date and description) with
-  a closed-by-default `Altri dettagli` disclosure for split, tags, status and expense properties.
-  Amount parsing, signed minor units, validation, command mapping and the existing transfer flow
-  remain unchanged. Editing rehydrates existing expense behavior values, while the established
-  command continues preserving split and tag records. Targeted component tests cover income,
-  expense and expense-detail editing; the complete unit, formatting, lint, typecheck, build,
-  manifest and orchestration checks pass. Split and financial details pass in the browser at 320,
-  390, 768, 1024 and 1440 px.
-- Baseline: `b0972b1` on `codex/phase-12-5-0-checkpoint`.
-- Next task: 12.5.C2.6.
+- Task: 12.5.C2.6-R — resolve transfer editing blocker
+- Roadmap phase: Phase 12.5
+- Status: COMPLETE — transfer editing intentionally unsupported and safely blocked — 2026-08-24.
+- Decision: registered transfers remain read-only; correction requires cancellation and new creation.
+- Evidence: `.codex/reviews/ui-ux/2026-08-24-transfer-c2-6-blocker.md` and `.codex/state/test-evidence.md`.
+- Next task: 12.5.C2.7 follow-up only when explicitly scheduled; do not advance other 12.5.Cx work.

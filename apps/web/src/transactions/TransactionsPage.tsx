@@ -133,6 +133,9 @@ export function TransactionsPage({
       const status = String(form.get("status") ?? "booked") as "expected" | "booked";
       const description = String(form.get("description") ?? "");
       if (kind === "transfer") {
+        if (editingId !== null) {
+          throw new Error("Registered transfers cannot be edited.");
+        }
         await onCreateTransfer({
           amountMinor,
           bookedDate,
@@ -714,6 +717,10 @@ export function TransactionsPage({
                 items={visibleItems}
                 onCancel={(item) => void cancel(item.id, item.isTransfer)}
                 onEdit={(item) => {
+                  if (item.isTransfer) {
+                    setError("I trasferimenti registrati non possono essere modificati.");
+                    return;
+                  }
                   setEditingId(item.id);
                   setKind(item.kind as FormKind);
                   setIsEditorOpen(true);
@@ -1253,6 +1260,8 @@ function tryParseAmountMinor(value: string, currency: string): bigint | undefine
 
 function transactionErrorMessage(error: unknown): string {
   if (!(error instanceof Error)) return "Il movimento non è stato salvato.";
+  if (error.message.includes("Registered transfers cannot be edited"))
+    return "I trasferimenti registrati non possono essere modificati. Se necessario, annulla il trasferimento e creane uno nuovo.";
   if (error.message.includes("same currency"))
     return "Il trasferimento richiede due conti nella stessa valuta.";
   if (error.message.includes("different"))

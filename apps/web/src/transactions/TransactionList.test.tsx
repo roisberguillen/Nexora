@@ -62,6 +62,31 @@ describe("TransactionList", () => {
     expect(amount).not.toHaveTextContent("+");
   });
 
+  it("does not expose manual edit for a registered transfer", async () => {
+    const user = userEvent.setup();
+    render(
+      <TransactionList
+        {...props({
+          items: [
+            item({
+              accountLabel: "Conto origine → Conto destinazione",
+              amount: Money.fromMinor(185_000n, "EUR"),
+              isTransfer: true,
+              kind: "transfer",
+              kindLabel: "Trasferimento",
+              source: "manual",
+              title: "Giroconto",
+            }),
+          ],
+        })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Azioni per Giroconto" }));
+    expect(screen.queryByRole("menuitem", { name: "Modifica" })).toBeNull();
+    expect(screen.getByRole("menuitem", { name: "Annulla" })).toBeVisible();
+  });
+
   it("opens details only from the row's explicit main control", async () => {
     const user = userEvent.setup();
     const onOpen = vi.fn();
