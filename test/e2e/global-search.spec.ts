@@ -8,7 +8,9 @@ test("la ricerca globale trova e apre dati locali su ogni superficie", async ({ 
   if (isMobile) {
     await page.getByRole("button", { name: "Apri ricerca globale" }).click();
   }
-  const search = page.getByRole("searchbox", { name: "Ricerca globale" });
+  const search = page.getByRole(isMobile ? "searchbox" : "combobox", {
+    name: "Ricerca globale",
+  });
   if (isMobile) {
     await expect(search).toBeFocused();
   }
@@ -26,7 +28,9 @@ test("la ricerca globale gestisce no-results, clear ed Escape", async ({ page })
   if (isMobile) {
     await page.getByRole("button", { name: "Apri ricerca globale" }).click();
   }
-  const search = page.getByRole("searchbox", { name: "Ricerca globale" });
+  const search = page.getByRole(isMobile ? "searchbox" : "combobox", {
+    name: "Ricerca globale",
+  });
   await search.fill("nessun risultato Nexora");
   await expect(page.getByText("Nessun risultato locale.", { exact: true })).toBeVisible();
   const clear = page.getByRole("button", { name: "Cancella ricerca" }).last();

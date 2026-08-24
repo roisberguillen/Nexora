@@ -78,6 +78,7 @@ export function TopHeader({
           placeholder="Cerca conti, categorie, tag e movimenti"
           value={query}
           type="search"
+          role="combobox"
         />
         {query.trim() === "" ? null : (
           <button

@@ -1,3 +1,21 @@
+## 12.5.C3.3 — Dashboard/Home Mobile/Desktop audit — COMPLETE — 2026-08-24
+
+- Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; Dashboard `#overview` audit
+  avviato dopo C3.2 COMPLETE, senza iniziare C3.4 e senza nuove route.
+- Audit iniziale: Dashboard funzionante su mobile ma axe desktop rilevava un P1 ARIA nella ricerca
+  globale condivisa dalla shell; nessun P0/P1 Dashboard-specifico o difetto finanziario aperto.
+- Correzione: `packages/ui/src/TopHeader.tsx` dichiara il campo ricerca come `combobox`, rendendo
+  coerenti `aria-expanded`, `aria-controls`, `listbox` e `option`; nessun cambio di logica o dati.
+- Stati e finanza: empty seed esplicito, metriche reali, transfer esclusi dai flussi e collassati
+  in una riga neutrale, annullati esclusi dai saldi, valute diverse non convertite implicitamente.
+- Viewport browser: `test/e2e/c3-dashboard-audit.spec.ts` e `dashboard.spec.ts` passano su 320,
+  375, 390, 768, 1024 e 1440; overflow e axe PASS, CTA demo >=44 px.
+- Zoom 200%: PASS con CDP su 1024→512 e 1440→720 CSS px; Dashboard e shell restano utilizzabili.
+- Keyboard/touch: Enter sulla CTA dello stato vuoto PASS; target touch della CTA misurato >=44 px.
+- Test mirati: `buildDashboardViewModel.test.ts` 5/5 PASS; `pnpm build` PASS con advisory chunk-size
+  preesistente. Browser combinato: 19 PASS e 5 skip intenzionali per viewport non applicabili.
+- Esito: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Dashboard/Home congelata C3; C3.4 è NEXT.
+
 # Test evidence
 ## 12.5.C3.2 — Global Search Mobile/Desktop audit — COMPLETE — 2026-08-24
 

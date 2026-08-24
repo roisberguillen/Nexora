@@ -113,6 +113,11 @@
       "sha256": "62602a7c089778809ce470f34b7686741d60b83d231e6b51fc657aef7983896f"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-24-c3-3-dashboard-home.md",
+      "size": 11516,
+      "sha256": "62e5a168401061b71ee480647a3495890f02a7672181c0a6e7bc78e27b11975f"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-c2-8.md",
       "size": 11949,
       "sha256": "2ea343d7c628bc8d68996671f387a47139242f23a334d35a147a6c8f8a395e85"
@@ -274,8 +279,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 380,
-      "sha256": "e1ef98a5e11c63e3babe33d63df73892117337038c3725c07395887d8c0a84e9"
+      "size": 374,
+      "sha256": "1ac19a0b46fd5ecc8d12e3851a3a5d0f563d19a3d81c6fc94f1c3bc464136002"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -299,18 +304,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 4505,
-      "sha256": "72041309152d1407fad0bd3dceba963b3e71bb9108169714403aca16443644f6"
+      "size": 4582,
+      "sha256": "e6d60d4b00e9dc06c96dd04b1261f3d69b8c4a21c4ed70cc3c1faa73ed4ef10a"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 48018,
-      "sha256": "681e27ee6ff530049b0d93237f85584cdb72c5d61f2eda745b4e1f5ffe9ec2ff"
+      "size": 49509,
+      "sha256": "3412a52219de589a16e028ca5b06f00961260b2dffad5a329a8d28ad14842a98"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 3754,
-      "sha256": "e797c2f858dd982da219223915f942ddc6cc108d0ccb890d90c2141e70004f16"
+      "size": 3758,
+      "sha256": "9bb4a9ba241b2e1e8e0374a7f17e16e8594b23a2e4591d0ae7ec3fbf85762d22"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1559,8 +1564,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 30391,
-      "sha256": "8a974cd19dfcf28cd6e171794cb190e4dcc9f2131678b79ffe930769e9799d38"
+      "size": 30576,
+      "sha256": "ff26889a9949e57c486342c87c037f6a7c0b9d61e4a3eb501823086e10ece824"
     },
     {
       "path": "design/mockup/README.md",
@@ -2809,8 +2814,8 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 6716,
-      "sha256": "9d6d3180bd32a752d15ff0fa00fa5e0aeca185fe4990de5785be1ff53e43ec44"
+      "size": 6715,
+      "sha256": "2f4ba481ed5ca709fcdcfa35bf8b1c26d23a7b65a66092fd3b6df8e2d598736b"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
@@ -2919,8 +2924,8 @@
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
-      "size": 4233,
-      "sha256": "c0cdf24b6e0ead161d2255e4fd86d923ead2b8cee0b8dfa412687f6e75701d2c"
+      "size": 4259,
+      "sha256": "145a1e5b63392e806ef36feabdc06f53c80d5ee3a6532cca9575b2ac8dd8597d"
     },
     {
       "path": "packages/ui/tsconfig.json",
@@ -3043,6 +3048,11 @@
       "sha256": "a80a455e78ce677c074de19c703a8299143db49203294c5f30f7ca81e5ee6fea"
     },
     {
+      "path": "test/e2e/c3-dashboard-audit.spec.ts",
+      "size": 2591,
+      "sha256": "b2044dd708d40bf87bb8d1b1f87ef6a1d119b453eb2266ef2c93983db8e52f96"
+    },
+    {
       "path": "test/e2e/c3-shell-audit.spec.ts",
       "size": 3079,
       "sha256": "a789f80bd815d58f7f974e40ea0e8d80855d0fda2fe66ec976f0bbbc1bcb2455"
@@ -3104,8 +3114,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 4871,
-      "sha256": "16bc77ca11c2fc668ddbc0812d9a8e9067c6c288b2be08cfdf98017bf208fd60"
+      "size": 4933,
+      "sha256": "1a4d07f8eb0bdb2dbc9ce4fa1c26c827a9364c5d7ef7c90b66e345c51ec21dbe"
     },
     {
       "path": "test/e2e/google-drive-onboarding.spec.ts",

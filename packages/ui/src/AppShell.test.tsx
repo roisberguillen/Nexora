@@ -15,7 +15,7 @@ describe("AppShell", () => {
     expect(screen.getByRole("navigation", { name: "Navigazione principale" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Nexora/i })).toBeInTheDocument();
     expect(screen.getByRole("main")).toHaveTextContent("Contenuto di prova");
-    expect(screen.getByRole("searchbox", { name: "Ricerca globale" })).toBeEnabled();
+    expect(screen.getByRole("combobox", { name: "Ricerca globale" })).toBeEnabled();
     expect(
       within(screen.getByRole("navigation", { name: "Navigazione principale" })).getByRole("link", {
         name: "Movimenti",
