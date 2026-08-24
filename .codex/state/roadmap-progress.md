@@ -17,12 +17,29 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.4 | complete | hierarchical budget CRUD, macro/subcategory scope, split-safe progress, responsive UI and adapter parity; merged via PR #4 with GitHub Actions green on `main` (`e9b4d3f`) |
 | 12.4.1 | complete | recurring effective-dated monthly budget revisions, migration v19, historical month navigation and GitHub `verify` green; merged via PR #6 (`5efc529`) |
 | 12.5 | complete | allocation plan CRUD, confirmed idempotent execution, backup/reset compatibility and responsive UI; merged via PR #7 with GitHub `verify` green on `main` (`3edeabb`) |
-| 12.5.0 | complete — 2026-08-15 | non-functional safe checkpoint before user-operated real-data validation: isolated origin/profile runbook, ignored local artifacts, synthetic backup/restore drill and all local quality gates green |
-| 12.5.1 | complete — 2026-08-15 | read-only mapping report documents Mediobanca CSV, N26 PDF and the usable Money Manager workbook (11 columns, 45 post-header source rows), including explicit review-only handling for transfers, unmapped account label, Directa absence and parser/profile gaps |
-| 12.5.2 | complete — 2026-08-15 | one-month Mediobanca CSV validated only in the isolated 127.0.0.1:4174 ledger: Data valuta exclusive, 48/48 explained dry-run rows, atomic commit, complete undo and duplicate-only re-run; the local-account fallback regression is covered |
 | 12.A–E | complete | CI/manifest repair, investment repository integrity, removal of unsafe investment CSV import, Europe/Rome civil-date defaults and final automated coverage; GitHub CI green on `main` (`4ab136e`) |
-| 13 | next | platform delivery only after Phase 12 closes; not started |
+| 12.5.C2.1 | complete | evidence and state aligned; banking shell foundation closed |
+| 12.5.C2.2 | complete / functionally covered | existing verified behavior covers the slice; no new completion claim added |
+| 12.5.C2.3 | aligned with real evidence | state is kept coherent with available evidence; formal closure is not claimed without a dedicated reconciliation |
+| 12.5.C2.4 | complete | evidence recorded in the phase review and test evidence |
+| 12.5.C2.5 | complete | evidence recorded in the phase review and test evidence |
+| 12.5.C2.6-R | complete | transfer editing blocker resolved and verified |
+| 12.5.C2.7 | complete | Mobile Banking UX Movimenti closed with `UI_REVIEW_PASS`, all required gates green and zoom 200% verified |
+| 12.5.C2.8 | next | Stati UI, accessibilità e hardening Movimenti |
+| 12.5.C2.9 | pending | follow-up slice after C2.8 |
+| 12.5.C3 | planned | audit screen-by-screen after the C2 sequence |
+| 12.5.C4 | planned | real complete flows |
+| 12.5.C5 | planned | cross-surface consistency |
+| 12.5.D | planned | final independent review |
+| 12.5.E | planned | final gate: READY / NOT READY |
+| 12.5.F | planned | release freeze |
+| 13 | planned | desktop delivery only after 12.5.F; not started |
 | 14–17 | planned | no completion claim |
+
+The 12.5.C2 sequence is authoritative for the current banking UX checkpoint:
+C2.8 is the next task, while C2.9 and the subsequent C3–F gates remain pending or
+planned until their own evidence exists. Phase 13 must not be treated as next before
+the 12.5 release freeze.
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not
 an approved implementation. The Phase 12.3 work was recovered selectively on
