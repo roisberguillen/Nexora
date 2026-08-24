@@ -110,7 +110,7 @@ Esito: UI_REVIEW_INCOMPLETE
 | A-01 | Nomi accessibili, label icone, semantica e landmark sono corretti | PASS | Axe e locator role/label passano nei flussi Movimenti. |
 | A-02 | Keyboard-only path completo, ordine focus e focus visibile | PASS | Component test ed E2E verificano Escape e focus return del sheet. |
 | A-03 | Contrasto testo >=4.5:1 e UI >=3:1; colore non unico segnale | PASS | Axe passa; stati includono label e testo oltre al colore. |
-| A-04 | Zoom browser 200% mantiene contenuto e azioni utilizzabili | N/A | N/A: verifica browser 200% dedicata resta da eseguire prima della chiusura. |
+| A-04 | Zoom browser 200% mantiene contenuto e azioni utilizzabili | PASS | Chromium headed controllato con CDP `Emulation.setDeviceMetricsOverride`: viewport fisico 1024/1440, CSS viewport 512/720, `deviceScaleFactor=2` (`devicePixelRatio≈2`). Verificati titolo, ricerca/clear, filtri, reset/applica, Escape/focus return, lista, dettaglio/importo, CTA nuovo movimento, Entrata, Uscita, Trasferimento e overflow: 2/2 contesti verdi. |
 | A-05 | Error association, aria-live e messaggi sono annunciabili | PASS | aria-live/role status/alert esistenti restano invariati. |
 | A-06 | Grafici e dati complessi hanno alternativa accessibile | N/A | N/A: Movimenti non introduce grafici nella superficie modificata. |
 | A-07 | Touch target >=44 px e interazioni non dipendono da hover | PASS | Clear, Filtri, quick filters e CTA hanno min-height 2.75rem. |
@@ -143,8 +143,8 @@ Esito: UI_REVIEW_INCOMPLETE
 ## Criticita e decisione
 
 P0 aperti: Nessuno
-P1 aperti: Verifica zoom 200% e format:check globale — owner: QA/repository hygiene; chiusura richiesta prima della fase COMPLETE.
+P1 aperti: `format:check` globale — owner: QA/repository hygiene; chiusura richiesta prima della fase COMPLETE. Zoom 200% risolto in C2.7-F1.
 P2 aperti: Nessuno
 Test automatici: component Vitest 20/20; lint PASS; typecheck PASS; build PASS; E2E Movimenti 60/60; codex:validate PASS; manifest aggiornato.
-Verifica manuale/visuale: browser Chromium 320, 375, 390, 768, 1024, 1440; axe nei flussi esistenti; keyboard Escape/focus return verificati.
+Verifica manuale/visuale: browser Chromium 320, 375, 390, 768, 1024, 1440; zoom equivalente reale a 200% su finestra fisica 1024/1440 con CSS viewport 512/720 e `devicePixelRatio≈2`; axe nei flussi esistenti; keyboard Escape/focus return verificati.
 Riferimenti: MOCKUP_INTEGRATION, STITCH_UI_REFERENCE, DESIGN.md
