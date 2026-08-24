@@ -4,6 +4,7 @@
 
 ### Documentation
 
+- Closed Phase 12.5.C3.4 Accounts/Conti with `SCREEN_AUDIT_PASS`; corrected mobile touch targets and hid invalid delete actions for accounts with activity.
 - Closed Phase 12.5.C3.3 Dashboard/Home with `SCREEN_AUDIT_PASS`; recorded responsive browser
   evidence for empty/populated states, financial projections, accessibility and zoom 200%.
 - Closed Phase 12.5.C3.1 App Shell + Navigation with `SCREEN_AUDIT_PASS`; added drawer focus

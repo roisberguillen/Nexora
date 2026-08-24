@@ -480,15 +480,17 @@ function AccountList({
                       >
                         {account.isArchived ? "Riattiva" : "Archivia"}
                       </button>
-                      <button
-                        aria-label={`Elimina il conto vuoto ${account.name}`}
-                        className="text-action"
-                        disabled={isSaving}
-                        onClick={() => onDeleteUnused(account)}
-                        type="button"
-                      >
-                        Elimina
-                      </button>
+                      {accountHasActivity(activityByAccount, account.id) ? null : (
+                        <button
+                          aria-label={`Elimina il conto vuoto ${account.name}`}
+                          className="text-action"
+                          disabled={isSaving}
+                          onClick={() => onDeleteUnused(account)}
+                          type="button"
+                        >
+                          Elimina
+                        </button>
+                      )}
                       <button
                         aria-label={`Svuota ${account.name}: ${activityByAccount[account.id]?.transactions ?? 0} movimenti`}
                         className="text-action"
@@ -514,6 +516,14 @@ function AccountList({
       )}
     </section>
   );
+}
+
+function accountHasActivity(
+  activityByAccount: AccountsPageProps["activityByAccount"],
+  accountId: string,
+): boolean {
+  const activity = activityByAccount[accountId];
+  return (activity?.transactions ?? 0) > 0 || (activity?.transfers ?? 0) > 0;
 }
 
 interface AccountFormProps {

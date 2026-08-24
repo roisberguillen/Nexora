@@ -118,6 +118,11 @@
       "sha256": "62e5a168401061b71ee480647a3495890f02a7672181c0a6e7bc78e27b11975f"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-24-c3-4-accounts.md",
+      "size": 12161,
+      "sha256": "f5b633d951e60eebdbcdd9ea983adeef3f42757800d0a51eb0c1d68ffb0c4931"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-c2-8.md",
       "size": 11949,
       "sha256": "2ea343d7c628bc8d68996671f387a47139242f23a334d35a147a6c8f8a395e85"
@@ -279,8 +284,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 374,
-      "sha256": "1ac19a0b46fd5ecc8d12e3851a3a5d0f563d19a3d81c6fc94f1c3bc464136002"
+      "size": 382,
+      "sha256": "0d868f939795bdf8ce6ad9332e833baf171c0e7a187212f26c338c629dd1d5b2"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -304,18 +309,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 4582,
-      "sha256": "e6d60d4b00e9dc06c96dd04b1261f3d69b8c4a21c4ed70cc3c1faa73ed4ef10a"
+      "size": 4821,
+      "sha256": "d88a81d1da127066bcb28bda45d6b576bb76fbfd8546df1dedaba808cacf57ed"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 49509,
-      "sha256": "3412a52219de589a16e028ca5b06f00961260b2dffad5a329a8d28ad14842a98"
+      "size": 50880,
+      "sha256": "39bc54e64e78d05a5cc4f9f1485228d7841f6f128a7e1dda5a09d82e6a77a6e1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 3758,
-      "sha256": "9bb4a9ba241b2e1e8e0374a7f17e16e8594b23a2e4591d0ae7ec3fbf85762d22"
+      "size": 3761,
+      "sha256": "54e83e921b5c8d588202f5db2e9f6ac87c90d23410c905009947a68682203369"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -779,8 +784,8 @@
     },
     {
       "path": "apps/web/src/accounts/AccountsPage.tsx",
-      "size": 23068,
-      "sha256": "0f51c091f30783f16a7bf29a6d345ddbeedc98ae12be302e573b77fa25b6db2b"
+      "size": 23449,
+      "sha256": "81e5cb3e603d4ee2603228abbd022c35394341b852cb91f5f86a43fe78d6a0b5"
     },
     {
       "path": "apps/web/src/accounts/buildAccountsViewModel.test.ts",
@@ -1149,8 +1154,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 30990,
-      "sha256": "2d80b34d6da4c3b16189f2fc0371e8c2d3871fd6a801c1f9ac6221b1fecc8aee"
+      "size": 30995,
+      "sha256": "c57f6f4d88037ec240661d42bb032bbe518acd3330daf25c121957b6334f279b"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1564,8 +1569,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 30576,
-      "sha256": "ff26889a9949e57c486342c87c037f6a7c0b9d61e4a3eb501823086e10ece824"
+      "size": 30732,
+      "sha256": "afee339fe57568d2937d2d5cad1c3512e0a791f652827aa2cbeee4dcf7546d6e"
     },
     {
       "path": "design/mockup/README.md",
@@ -3046,6 +3051,11 @@
       "path": "test/e2e/budgets.spec.ts",
       "size": 3294,
       "sha256": "a80a455e78ce677c074de19c703a8299143db49203294c5f30f7ca81e5ee6fea"
+    },
+    {
+      "path": "test/e2e/c3-accounts-audit.spec.ts",
+      "size": 3475,
+      "sha256": "66730b0ed5e035ed08c7328b3ec85bc31a6f096decc040410e85cfc60f85ff7e"
     },
     {
       "path": "test/e2e/c3-dashboard-audit.spec.ts",

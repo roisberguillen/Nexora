@@ -1,3 +1,20 @@
+## 12.5.C3.4 — Accounts Mobile/Desktop audit — COMPLETE — 2026-08-24
+
+- Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; C3.3 COMPLETE/PASS and C3.4 NEXT.
+- Audit iniziale: lista/editor passavano ma azioni account avevano target 32/40 px; Elimina era mostrato anche
+  su conti con attività. Detail route e filtro Movimenti non sono esposti nel codice corrente e sono stati
+  documentati N/A senza introdurre una seconda implementazione.
+- Correzioni: `AccountsPage.tsx` mostra Elimina solo per conti senza transazioni/transfer; `page.css` porta
+  azioni e close editor a 44 px minimi.
+- Viewport browser: `c3-accounts-audit.spec.ts` PASS su 320, 375, 390, 768, 1024 e 1440; lista/editor,
+  create, valid delete visibility, axe, touch target e overflow verificati.
+- Zoom 200%: PASS con CDP su 1024→512 e 1440→720 CSS px; editor, CTA, overflow e axe PASS.
+- Funzionalità: create/update/archive/reactivate/empty/delete-empty, validation, success/error, double-submit
+  and local persistence paths remain covered by existing unit/E2E tests.
+- Test mirati: accountCommands/buildAccountsViewModel 5/5 PASS; C3.4 browser 14 PASS, 4 skip intenzionali;
+  existing accounts browser 13 PASS, 5 skip intenzionali; `pnpm build` PASS with advisory chunk-size preexisting.
+- Esito: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Conti congelati C3; C3.5 è NEXT.
+
 ## 12.5.C3.3 — Dashboard/Home Mobile/Desktop audit — COMPLETE — 2026-08-24
 
 - Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; Dashboard `#overview` audit
