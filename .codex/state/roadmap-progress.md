@@ -20,24 +20,24 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.A–E | complete | CI/manifest repair, investment repository integrity, removal of unsafe investment CSV import, Europe/Rome civil-date defaults and final automated coverage; GitHub CI green on `main` (`4ab136e`) |
 | 12.5.C2.1 | complete | evidence and state aligned; banking shell foundation closed |
 | 12.5.C2.2 | complete / functionally covered | existing verified behavior covers the slice; no new completion claim added |
-| 12.5.C2.3 | aligned with real evidence | state is kept coherent with available evidence; formal closure is not claimed without a dedicated reconciliation |
+| 12.5.C2.3 | complete | closure demonstrated by subsequent C2.7/C2.8 evidence for list, detail, form, responsive and accessibility |
 | 12.5.C2.4 | complete | evidence recorded in the phase review and test evidence |
 | 12.5.C2.5 | complete | evidence recorded in the phase review and test evidence |
 | 12.5.C2.6-R | complete | transfer editing blocker resolved and verified |
 | 12.5.C2.7 | complete | Mobile Banking UX Movimenti closed with `UI_REVIEW_PASS`, all required gates green and zoom 200% verified |
 | 12.5.C2.8 | complete | UI hardening, accessibilità, stati, double-submit e responsive verification |
-| 12.5.C2.9 | next | Final Transactions Gate |
-| 12.5.C3 | planned | audit screen-by-screen after the C2 sequence |
+| 12.5.C2.9 | complete | Final Transactions Gate PASS; Movimenti frozen after the C2 sequence |
+| 12.5.C3.0 | next | prepare full screen-by-screen Mobile/Desktop audit |
 | 12.5.C4 | planned | real complete flows |
 | 12.5.C5 | planned | cross-surface consistency |
 | 12.5.D | planned | final independent review |
 | 12.5.E | planned | final gate: READY / NOT READY |
 | 12.5.F | planned | release freeze |
-| 13 | planned | desktop delivery only after 12.5.F; not started |
+| 13 | pending | desktop delivery only after 12.5.F; not started |
 | 14–17 | planned | no completion claim |
 
 The 12.5.C2 sequence is authoritative for the current banking UX checkpoint:
-C2.8 is complete and C2.9 is the next task, while the subsequent C3–F gates remain pending or
+C2 is complete and C3.0 is the next task, while the subsequent C3–F gates remain pending or
 planned until their own evidence exists. Phase 13 must not be treated as next before
 the 12.5 release freeze.
 
