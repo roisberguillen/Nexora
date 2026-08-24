@@ -426,3 +426,9 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
 - **Conseguenze:** lo storico resta auditabile e backup/restore mantengono i marker. I piani
   disattivati possono continuare a riferire un conto archiviato per leggere la configurazione
   storica; i piani attivi bloccano invece l'archiviazione.
+## 2026-08-24 — Fase 12.5.C2.6: modifica trasferimenti bloccata
+
+- Decisione: non introdurre in questa fase un comando/application callback di aggiornamento trasferimento.
+- Evidenza: `apps/web/src/transactions/TransactionsPage.tsx` riceve solo `onCreateTransfer`; nel ramo `kind === "transfer"` invoca `onCreateTransfer` anche quando `editingId` è valorizzato. `apps/web/src/App.tsx` passa `onCreateTransfer` e `onUpdateManual`, senza `onUpdateTransfer`. Nei package applicativi non è emerso un comando di update transfer.
+- Motivazione: la richiesta limita C2.6 a UX/UI e vieta modifiche al dominio; aggiungere la modifica richiederebbe ampliare application/domain/persistence e definire una semantica atomica e idempotente per le due gambe.
+- Impatto: C2.6 resta BLOCKED; nessun codice runtime modificato e la creazione trasferimenti esistente non è alterata. Lo sblocco richiede una decisione o una fase che espliciti il supporto applicativo alla modifica.
