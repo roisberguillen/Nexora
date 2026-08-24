@@ -46,7 +46,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 14–17 | planned | no completion claim |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
-complete; C3.1 is next, while C3.2–C3.21 and C4–F remain pending until their own evidence exists.
+complete; C3.1 is complete and C3.2 is next, while C3.3–C3.21 and C4–F remain pending until their own evidence exists.
 Phase 13 must not be treated as next before
 the 12.5 release freeze.
 

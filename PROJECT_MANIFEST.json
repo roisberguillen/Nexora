@@ -270,7 +270,7 @@
     {
       "path": ".codex/state/current-task.md",
       "size": 389,
-      "sha256": "630713b533398ed5d797faced82d8d4be751dfb8eecda8919ff5bbdd2a18efc6"
+      "sha256": "0729eae60fd793cc7e9de4cdde2c026280c6c11ff5cd78690633a6bed919a30d"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -294,13 +294,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 4352,
-      "sha256": "9db42018b2042d86b689450411e8925a6f255805a00cac56e8363a13d84beee5"
+      "size": 4373,
+      "sha256": "39bd54cd9cad13388636ef4f35d276ba1c645b27ce63d33312db0702c13a7acf"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 45985,
-      "sha256": "9e665e4759369e87bb6b8fe4bb2bdbed9f1047ea605f1b8937c045bd513c4c4d"
+      "size": 46127,
+      "sha256": "c7949ba7999fda4f4f92f33d656a497a7d0135da1113e64c85be7871ddb2a4a1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",

@@ -14,6 +14,8 @@
   overflow; zoom 200% CDP su 1024→512 e 1440→720 PASS.
 - Gate finali: `pnpm verify` PASS — 136 file, 571 test PASS, 1 file skipped e 4 skip documentati;
   build PASS con advisory chunk-size preesistente. `format:check`, `manifest:check`,
+  `codex:validate`, `test:ui-ux` e `quality:ui-ux` PASS.
+- Esito: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. App Shell + Navigation congelata C3.
 
 ## 12.5.C3.0 — Full Mobile/Desktop screen audit preparation — COMPLETE — 2026-08-24
 
