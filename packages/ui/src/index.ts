@@ -3,6 +3,7 @@ export { OfflineBanner } from "./OfflineBanner";
 export { nexoraTokens, type NexoraTokens } from "./tokens";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { filterGlobalSearchResults, type GlobalSearchResult } from "./GlobalSearch";
+export { GlobalSearchDialog } from "./GlobalSearchDialog";
 export {
   FinancialAmount,
   formatMinorUnits,

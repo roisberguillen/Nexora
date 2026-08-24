@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useEffect, useRef, useState } from "react";
+import { type PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 
 import { SidebarNavigation, type NavigationRoute } from "./SidebarNavigation";
 import type { GlobalSearchResult } from "./GlobalSearch";
@@ -7,6 +7,7 @@ import { MobileBottomNavigation } from "./MobileBottomNavigation";
 import { MobileHeader } from "./MobileHeader";
 import { QuickActionSheet, type QuickAction } from "./QuickActionSheet";
 import { OfflineBanner } from "./OfflineBanner";
+import { GlobalSearchDialog } from "./GlobalSearchDialog";
 
 interface AppShellProps extends PropsWithChildren {
   readonly activeRoute?: NavigationRoute;
@@ -23,7 +24,9 @@ export function AppShell({
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [isNavigationCollapsed, setIsNavigationCollapsed] = useState(false);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const quickActionTriggerRef = useRef<HTMLButtonElement>(null);
+  const searchTriggerRef = useRef<HTMLButtonElement>(null);
   const navigationRef = useRef<HTMLElement>(null);
   const navigationTriggerRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -43,7 +46,7 @@ export function AppShell({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsNavigationOpen(false);
-        requestAnimationFrame(() => navigationTriggerRef.current?.focus());
+        navigationTriggerRef.current?.focus();
         return;
       }
       if (event.key !== "Tab" || navigationRef.current === null) {
@@ -75,12 +78,16 @@ export function AppShell({
 
   const closeNavigation = () => {
     setIsNavigationOpen(false);
-    requestAnimationFrame(() => navigationTriggerRef.current?.focus());
+    navigationTriggerRef.current?.focus();
   };
   const closeQuickActions = () => {
     setIsQuickActionsOpen(false);
     requestAnimationFrame(() => quickActionTriggerRef.current?.focus());
   };
+  const closeSearch = useCallback(() => {
+    setIsSearchOpen(false);
+    searchTriggerRef.current?.focus();
+  }, []);
 
   return (
     <div className="app-frame">
@@ -104,7 +111,11 @@ export function AppShell({
       />
       <div className={`app-workspace${isNavigationCollapsed ? " is-sidebar-collapsed" : ""}`}>
         <OfflineBanner />
-        <MobileHeader activeRoute={activeRoute} />
+        <MobileHeader
+          activeRoute={activeRoute}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          searchTriggerRef={searchTriggerRef}
+        />
         <TopHeader
           isNavigationOpen={isNavigationOpen}
           onToggleNavigation={() => {
@@ -125,6 +136,7 @@ export function AppShell({
       {isQuickActionsOpen ? (
         <QuickActionSheet actions={quickActions} onClose={closeQuickActions} />
       ) : null}
+      {isSearchOpen ? <GlobalSearchDialog onClose={closeSearch} results={searchResults} /> : null}
     </div>
   );
 }

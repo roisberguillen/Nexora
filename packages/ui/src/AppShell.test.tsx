@@ -129,4 +129,68 @@ describe("AppShell", () => {
     await user.click(screen.getByRole("button", { name: "Aggiungi nuovo movimento" }));
     expect(quickActionCount).toBe(1);
   });
+
+  it("apre la ricerca mobile, gestisce clear, risultati e ritorno del focus", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppShell
+        searchResults={[
+          {
+            detail: "Conto",
+            href: "./#accounts",
+            id: "account-1",
+            label: "Conto quotidiano",
+          },
+        ]}
+      >
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Apri ricerca globale" });
+    await user.click(trigger);
+    const search = within(screen.getByRole("dialog", { name: "Ricerca globale" })).getByRole(
+      "searchbox",
+      { name: "Ricerca globale" },
+    );
+    expect(search).toHaveFocus();
+
+    await user.type(search, "Conto");
+    expect(screen.getByRole("option", { name: /Conto quotidiano/ })).toBeVisible();
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Ricerca globale" })).getByRole("button", {
+        name: "Cancella ricerca",
+      }),
+    );
+    expect(search).toHaveValue("");
+    await user.keyboard("{Escape}");
+    expect(trigger).toHaveFocus();
+  });
+
+  it("seleziona un risultato della ricerca globale con le frecce e Invio", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppShell
+        searchResults={[
+          {
+            detail: "Categoria",
+            href: "./#categories",
+            id: "category-1",
+            label: "Casa",
+          },
+        ]}
+      >
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Apri ricerca globale" }));
+    const search = within(screen.getByRole("dialog", { name: "Ricerca globale" })).getByRole(
+      "searchbox",
+      { name: "Ricerca globale" },
+    );
+    await user.type(search, "Casa");
+    await user.keyboard("{ArrowDown}{Enter}");
+    expect(window.location.hash).toBe("#categories");
+  });
 });

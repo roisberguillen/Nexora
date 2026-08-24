@@ -1,4 +1,4 @@
-import { type RefObject, useState } from "react";
+import { type KeyboardEvent, type RefObject, useRef, useState } from "react";
 
 import { filterGlobalSearchResults, type GlobalSearchResult } from "./GlobalSearch";
 
@@ -16,7 +16,25 @@ export function TopHeader({
   searchResults,
 }: TopHeaderProps) {
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const resultRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const results = filterGlobalSearchResults(searchResults, query).slice(0, 8);
+
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown" && results.length > 0) {
+      event.preventDefault();
+      setActiveIndex((index) => (index + 1) % results.length);
+    } else if (event.key === "ArrowUp" && results.length > 0) {
+      event.preventDefault();
+      setActiveIndex((index) => (index <= 0 ? results.length - 1 : index - 1));
+    } else if (event.key === "Enter" && activeIndex >= 0) {
+      event.preventDefault();
+      resultRefs.current[activeIndex]?.click();
+    } else if (event.key === "Escape") {
+      setQuery("");
+      setActiveIndex(-1);
+    }
+  };
   return (
     <header className="top-header">
       <button
@@ -45,20 +63,53 @@ export function TopHeader({
           ⌕
         </span>
         <input
+          aria-activedescendant={
+            activeIndex >= 0 ? `global-search-result-${activeIndex}` : undefined
+          }
+          aria-autocomplete="list"
+          aria-controls="global-search-results"
+          aria-expanded={query.trim() !== ""}
           id="global-search"
-          onChange={(event) => setQuery(event.currentTarget.value)}
+          onChange={(event) => {
+            setQuery(event.currentTarget.value);
+            setActiveIndex(-1);
+          }}
+          onKeyDown={handleInputKeyDown}
           placeholder="Cerca conti, categorie, tag e movimenti"
+          value={query}
           type="search"
         />
         {query.trim() === "" ? null : (
+          <button
+            aria-label="Cancella ricerca"
+            className="global-search-clear"
+            onClick={() => {
+              setQuery("");
+              setActiveIndex(-1);
+            }}
+            type="button"
+          >
+            ×
+          </button>
+        )}
+        {query.trim() === "" ? null : (
           <div aria-live="polite" className="global-search-results" id="global-search-results">
             {results.length === 0 ? (
-              <p>Nessun risultato locale.</p>
+              <p role="status">Nessun risultato locale.</p>
             ) : (
-              <ul>
-                {results.map((result) => (
+              <ul aria-label="Risultati ricerca" role="listbox">
+                {results.map((result, index) => (
                   <li key={result.id}>
-                    <a href={result.href} onClick={() => setQuery("")}>
+                    <a
+                      aria-selected={index === activeIndex}
+                      href={result.href}
+                      id={`global-search-result-${index}`}
+                      onClick={() => setQuery("")}
+                      ref={(element) => {
+                        resultRefs.current[index] = element;
+                      }}
+                      role="option"
+                    >
                       <strong>{result.label}</strong>
                       <small>{result.detail}</small>
                     </a>

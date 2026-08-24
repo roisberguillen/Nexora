@@ -1,4 +1,27 @@
 # Test evidence
+## 12.5.C3.2 — Global Search Mobile/Desktop audit — COMPLETE — 2026-08-24
+
+- Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; C3.1 congelata e C3.2
+  avviata come superficie `#search`, senza nuove categorie o route.
+- Audit iniziale: P1 ricerca mobile assente sotto 768 px; P1 keyboard/focus result incompleto;
+  clear, empty query, no-results e touch target registrati come correzioni della stessa superficie.
+- Correzioni: trigger mobile e dialog full-screen locale; focus automatico, Escape, focus return,
+  scroll lock, clear, listbox/option, Arrow Up/Down, Enter, Tab trap e controlled query. Desktop
+  mantiene TopHeader e stesso `filterGlobalSearchResults`/`buildGlobalSearchResults`.
+- Funzionalità: conti, categorie, tag, movimenti, prestiti e investimenti; destinazioni hash reali;
+  nessun dominio, persistenza, API, indice, servizio online o nuova categoria introdotti.
+- Viewport browser: 320, 375, 390, 768, 1024 e 1440 PASS per apertura, query, risultati,
+  navigazione, no-results, clear ed Escape. Target trigger/clear/close/risultati >=44 px.
+- Keyboard/resize: 768 PASS con selezione risultato via Enter, target touch e resize live
+  `768→390→320→1440`; query preservata e nessun overflow/overlay duplicato.
+- Zoom 200%: PASS con CDP su 1024→512 e 1440→720 CSS px; scrollWidth <= clientWidth.
+- Stati: empty query e no-results PASS; loading/error N/A motivati perché la proiezione è sincrona
+  e locale; offline coerente con local-first, senza dipendenze di rete.
+- Test mirati: `GlobalSearch.test.ts` + `AppShell.test.tsx` 9/9 PASS; UI/web typecheck PASS.
+- Browser: `test/e2e/global-search.spec.ts` 15 PASS, 9 skip intenzionali limitati a test aggiuntivi
+  non applicabili agli altri viewport; build PASS con advisory chunk-size preesistente.
+- Esito: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Global Search congelata C3; C3.3 è NEXT.
+
 
 ## 12.5.C3.1 — App Shell + Navigation Mobile/Desktop audit — COMPLETE — 2026-08-24
 

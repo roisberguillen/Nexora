@@ -108,6 +108,11 @@
       "sha256": "03d3b2e7f3c42e7fcc47eaeacd581141a5265fb498b37bd0c85f0ba60f562bfd"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-24-c3-2-global-search.md",
+      "size": 13708,
+      "sha256": "62602a7c089778809ce470f34b7686741d60b83d231e6b51fc657aef7983896f"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-c2-8.md",
       "size": 11949,
       "sha256": "2ea343d7c628bc8d68996671f387a47139242f23a334d35a147a6c8f8a395e85"
@@ -269,8 +274,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 389,
-      "sha256": "0729eae60fd793cc7e9de4cdde2c026280c6c11ff5cd78690633a6bed919a30d"
+      "size": 380,
+      "sha256": "e1ef98a5e11c63e3babe33d63df73892117337038c3725c07395887d8c0a84e9"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -294,18 +299,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 4373,
-      "sha256": "39bd54cd9cad13388636ef4f35d276ba1c645b27ce63d33312db0702c13a7acf"
+      "size": 4505,
+      "sha256": "72041309152d1407fad0bd3dceba963b3e71bb9108169714403aca16443644f6"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 46127,
-      "sha256": "c7949ba7999fda4f4f92f33d656a497a7d0135da1113e64c85be7871ddb2a4a1"
+      "size": 48018,
+      "sha256": "681e27ee6ff530049b0d93237f85584cdb72c5d61f2eda745b4e1f5ffe9ec2ff"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 3753,
-      "sha256": "ce2a8f445eba844a806ff325d510dc7687850a79cdbc3f3fa44ead9f5676719e"
+      "size": 3754,
+      "sha256": "e797c2f858dd982da219223915f942ddc6cc108d0ccb890d90c2141e70004f16"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -2804,13 +2809,13 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 4799,
-      "sha256": "19c3651a95928dd45b5ea7c61f59f0079cad4039e146f6c8b32c0ac7eef35593"
+      "size": 6716,
+      "sha256": "9d6d3180bd32a752d15ff0fa00fa5e0aeca185fe4990de5785be1ff53e43ec44"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
-      "size": 4670,
-      "sha256": "00e97cc9ba5c4b3b755acc3de48deddf5924e7f9e7aebf992a43fd2d723c2fc5"
+      "size": 5138,
+      "sha256": "e01ac642860a5d1af03e68e0590015238e21b19da930232e9dd6a6f4aa7b260a"
     },
     {
       "path": "packages/ui/src/ErrorBoundary.test.tsx",
@@ -2843,9 +2848,14 @@
       "sha256": "84e913b1b1807e1fc946c86d4acc302fa14b9217aa6c0bb4bd9ef70fd4c19656"
     },
     {
+      "path": "packages/ui/src/GlobalSearchDialog.tsx",
+      "size": 5786,
+      "sha256": "dec01836118e8e25240dd7926370f711b3b38016fdea77cc9a00e7ccc77d3fbb"
+    },
+    {
       "path": "packages/ui/src/index.ts",
-      "size": 880,
-      "sha256": "683d2f7ca5484ec352a9fbdb96107944effdbab0149d8002c3a22e628e7cffc6"
+      "size": 939,
+      "sha256": "409c274603258435ad655d8e58afef30e56c4892f4bc7f49769126eae115e654"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -2859,8 +2869,8 @@
     },
     {
       "path": "packages/ui/src/MobileHeader.tsx",
-      "size": 744,
-      "sha256": "75208be81a4a5a463d64cf43cfcd136245cb2774bd9e09b00fa6cc049ffea00c"
+      "size": 1178,
+      "sha256": "c01275b3e896d971b22223dfec3217acaded4bb2bf0618ef2e9089ce8427e838"
     },
     {
       "path": "packages/ui/src/NavIcon.test.tsx",
@@ -2894,8 +2904,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 17581,
-      "sha256": "d84869a7983b4c7b7a77e318dd1f549baef02a2a5ba82054bb10f29357331f08"
+      "size": 20347,
+      "sha256": "17bbb3b36ceeed92055487f04ea9c0b3f2384695a3542c3060b0bbea4a003df8"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -2909,8 +2919,8 @@
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
-      "size": 2318,
-      "sha256": "1eaa8e4a35bd69d4e86d30d52ddaffe183c61810f99e260c94b1aa37be5aa6fd"
+      "size": 4233,
+      "sha256": "c0cdf24b6e0ead161d2255e4fd86d923ead2b8cee0b8dfa412687f6e75701d2c"
     },
     {
       "path": "packages/ui/tsconfig.json",
@@ -3094,8 +3104,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 719,
-      "sha256": "9761c22fc9354e68a3d6ac221591095f6517e33a2ad6241fd6a097cdd5cdedd6"
+      "size": 4871,
+      "sha256": "16bc77ca11c2fc668ddbc0812d9a8e9067c6c288b2be08cfdf98017bf208fd60"
     },
     {
       "path": "test/e2e/google-drive-onboarding.spec.ts",
