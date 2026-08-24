@@ -1,5 +1,24 @@
 # Test evidence
 
+## 12.5.C3.0 — Full Mobile/Desktop screen audit preparation — COMPLETE — 2026-08-24
+
+- Routing: pnpm codex:route --task C3.0 — PASS; documentation, ECONOMY, low data risk.
+- Gate di ingresso verificati: C2.9 COMPLETE, TRANSACTIONS_GATE_PASS, Movimenti congelata,
+  P0/P1 aperti assenti, branch codex/phase-12-5-0-checkpoint.
+- Documenti analizzati: stato corrente, roadmap, evidence, review finale C2.9, repository map,
+  MOCKUP_INTEGRATION, DESIGN, STITCH_UI_REFERENCE, STITCH_SCREEN_MATRIX, MOBILE_UI_IMPLEMENTATION_PLAN,
+  PRIMARY_FLOWS, manifest UI/UX, template v2 e agent guidance UI/UX/QA/security.
+- Repository reale confrontato: 34 superfici/stati inventariati contro la routing hash di App.tsx;
+  nessuna route artificiale introdotta. Allocazioni restano in #recurring; startup/recovery in
+  bootstrap; Movimenti è regression review C3.5 su gate C2 esistente.
+- Framework e checklist: docs/ux/C3_SCREEN_AUDIT_FRAMEWORK.md; template standard:
+  .codex/templates/c3-screen-audit.md; tracking: .codex/state/ui-screen-review-matrix.md.
+- Coperti: mobile-first 320/375/390, tablet 768, desktop 1024/1440, zoom 200%, keyboard/focus,
+  safe area, touch >=44 px, responsive, funzionalità, stati, edge case, accessibilità, severity,
+  browser evidence, PASS/BLOCKED e freeze rule.
+- Nessun codice applicativo, CSS/SCSS, dominio, database, repository, import, backup, Tauri o test
+  funzionale modificato.
+
 ## Phase 12.5.C2.4 chronological grouping and transaction detail — complete — 2026-08-18
 
 - The UI-only implementation groups the existing, already filtered and sorted transaction view

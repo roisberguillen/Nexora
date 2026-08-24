@@ -27,7 +27,15 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C2.7 | complete | Mobile Banking UX Movimenti closed with `UI_REVIEW_PASS`, all required gates green and zoom 200% verified |
 | 12.5.C2.8 | complete | UI hardening, accessibilità, stati, double-submit e responsive verification |
 | 12.5.C2.9 | complete | Final Transactions Gate PASS; Movimenti frozen after the C2 sequence |
-| 12.5.C3.0 | next | prepare full screen-by-screen Mobile/Desktop audit |
+| 12.5.C2 | complete | final Transactions Gate PASS; Movimenti frozen |
+| 12.5.C3.0 | complete | full Mobile/Desktop screen audit framework prepared |
+| 12.5.C3.1 | next | App Shell + Navigation Mobile/Desktop audit |
+| 12.5.C3.2–C3.21 | pending | subsequent screen-by-screen audits |
+| C4 | pending | real complete flows |
+| C5 | pending | cross-surface consistency |
+| D | pending | final independent review |
+| E | pending | final gate: READY / NOT READY |
+| F | pending | release freeze |
 | 12.5.C4 | planned | real complete flows |
 | 12.5.C5 | planned | cross-surface consistency |
 | 12.5.D | planned | final independent review |
@@ -36,9 +44,9 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 13 | pending | desktop delivery only after 12.5.F; not started |
 | 14–17 | planned | no completion claim |
 
-The 12.5.C2 sequence is authoritative for the current banking UX checkpoint:
-C2 is complete and C3.0 is the next task, while the subsequent C3–F gates remain pending or
-planned until their own evidence exists. Phase 13 must not be treated as next before
+The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
+complete; C3.1 is next, while C3.2–C3.21 and C4–F remain pending until their own evidence exists.
+Phase 13 must not be treated as next before
 the 12.5 release freeze.
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not

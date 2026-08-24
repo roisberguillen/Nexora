@@ -4,6 +4,8 @@
 
 ### Documentation
 
+- Prepared the Phase 12.5.C3.0 screen-by-screen Mobile/Desktop audit framework, 34-surface
+  inventory, review template and tracking matrix.
 - Retired only the obsolete `mockup-to-ui` and `quality-gates` skills; their review process is
   superseded by the enforced manifest gate.
 - Added the mandatory `nexora-ui-ux-mobile-desktop/v1` change manifest, review template and

@@ -93,6 +93,36 @@
       "sha256": "c2c0ca95f5af05fa6f1f448b7fe684a8791c8a15808e0f655d82ccdbd70d3833"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-22-integrate-ui-ux-manifest.md",
+      "size": 1579,
+      "sha256": "f40f7b321f8916c62622a112108aedcaf3885f93b53f952b57a880d51b75ccb4"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-08-23-retire-obsolete-skills.md",
+      "size": 1258,
+      "sha256": "7a5d8ab7c7717138ebfe24f15f51f8ae4dbaa99dd7907f0faea33abe902a1cb1"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-c2-8.md",
+      "size": 11949,
+      "sha256": "2ea343d7c628bc8d68996671f387a47139242f23a334d35a147a6c8f8a395e85"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-c2-9-final-gate.md",
+      "size": 10794,
+      "sha256": "3273596e10885ede48128fe8cf6c041b817e8543bff88a2d6d3482c57526d38d"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-mobile-c2-7.md",
+      "size": 13629,
+      "sha256": "77e10a840c0dfe092522a3e6b70a0ccfed34e08fe031f12a42e32e5ed027299e"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-08-24-transfer-c2-6-blocker.md",
+      "size": 8632,
+      "sha256": "af5ab5e145645e1b6f80d0f622f63ec74f15eed81ebf8077a6a1c0f3cbd04508"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -106,11 +136,6 @@
       "path": ".codex/skills/import-pipeline/SKILL.md",
       "size": 323,
       "sha256": "a8b6ab9e1395b69165a107566702cec45d1f32d7d1a94e735adb06a957410b38"
-    },
-    {
-      "path": ".codex/skills/mockup-to-ui/SKILL.md",
-      "size": 737,
-      "sha256": "2523060470f5e8001098245a74a6f098f744f5fc1286ff5af50029b70fac0e06"
     },
     {
       "path": ".codex/skills/nexora-backup/agents/openai.yaml",
@@ -198,11 +223,6 @@
       "sha256": "3817aea34024907f13111a48089e2b0d8a3e25df5bb0427f18ffe9ee312faba7"
     },
     {
-      "path": ".codex/skills/quality-gates/SKILL.md",
-      "size": 224,
-      "sha256": "618ddf2f1176ffb47bcf121b3e9bcd1e8141607e728abec25aa2cef219fa67a7"
-    },
-    {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
       "size": 1266,
       "sha256": "bfd441809b0d4ba66d9cbd7ff15b1287094f64d103bbf12039c1b1260f8ba964"
@@ -244,8 +264,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 1151,
-      "sha256": "b8eb58cca51682d8dd4a55a90295134dbedb088612b59900d8ecb1bd8b501a2b"
+      "size": 393,
+      "sha256": "6d2a7147fbca7e119dbbc3da25706406056ddd4832f4949fdd59e9c54563d968"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -269,13 +289,23 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 3142,
-      "sha256": "1c050e9b1e035501f0c27114f93efd2c1bd9048443aa54c89c84d3add6acf342"
+      "size": 4242,
+      "sha256": "3add3f72ffe6faecf75332c26274af76028b75f10a75e84a908142de2b20526a"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 43476,
-      "sha256": "e0a9e73f55e6c4076b0ae0c18a7970091933a594f19bbe9e69f6a1c3a69487ec"
+      "size": 44893,
+      "sha256": "6d85e9d73e755196286ef277fe1bb0ba39186ab5e7670bf56ad86d60a211b48f"
+    },
+    {
+      "path": ".codex/state/ui-screen-review-matrix.md",
+      "size": 3750,
+      "sha256": "a4d607c0e9de1aa56b3dd533384bccf8441141e293711c8d9b7824719a933c53"
+    },
+    {
+      "path": ".codex/templates/c3-screen-audit.md",
+      "size": 1911,
+      "sha256": "4a5afa75858e51d0161be35985819319664347e52913cf12256085c7d422b622"
     },
     {
       "path": ".codex/templates/escalation-request.md",
@@ -298,9 +328,19 @@
       "sha256": "b4412857a13119e2f7b7e6f158eeb3331f4c3eba6b11b79812d557d983cd2b26"
     },
     {
+      "path": ".codex/templates/ui-ux-review.md",
+      "size": 1937,
+      "sha256": "4616585789bc09b0254b07d9e99d990f29164a78b326b5d53b580275cd270d7f"
+    },
+    {
       "path": ".env.example",
       "size": 205,
       "sha256": "610ceea06d8b43692f0be54a7b1c7c050dce4488998bfb5e3762538707feb13f"
+    },
+    {
+      "path": ".githooks/pre-commit",
+      "size": 66,
+      "sha256": "f6332922cb62adcb7a630806f07dc015e35b5fbb5118e44d6d1b03bc3096794b"
     },
     {
       "path": ".github/workflows/ci.yml",
@@ -1449,8 +1489,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionList.test.tsx",
-      "size": 4069,
-      "sha256": "337e845aa3640191fb0f46f52c8b24eae63947a4c4f4c6f8b25c9de6a878835d"
+      "size": 5483,
+      "sha256": "5bc25adbd8d693638eea698405ebdac318e98667555fb54d0f33b212af8eaa47"
     },
     {
       "path": "apps/web/src/transactions/TransactionList.tsx",
@@ -1459,18 +1499,18 @@
     },
     {
       "path": "apps/web/src/transactions/transactions.css",
-      "size": 9133,
-      "sha256": "6cb6dd8d9d8fa6d04c5dcb6015fb9aaed8358e411561b2db2a9166b140fa762a"
+      "size": 12203,
+      "sha256": "59c1c502666e576d601f6d2e847bd6c67ffcc67f572247abfbfe641889b2b8b2"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.test.tsx",
-      "size": 7245,
-      "sha256": "53604f9f5ccdfd4cc3f2c1ff474f66083c69109cfe9fa18772df9baddb5336a1"
+      "size": 12798,
+      "sha256": "79beb9fe5b0807511202871120bd993cb65808ad12cd2fb35c103d532485b703"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 45956,
-      "sha256": "fe82dbd73c354bf533bf0a340b0b0e644d6fef20ab79cf396105a07931a2b316"
+      "size": 49187,
+      "sha256": "31330e2442942433581af6ca1b41d9ad5d9d939ddf87c2e29de2ca70843f1579"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -1509,8 +1549,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 29005,
-      "sha256": "cc3731e83b7774282f65c8ce71671d3f5c7a6665da541c22336a393da14dcdd4"
+      "size": 30239,
+      "sha256": "65ccc57536a5db8db74bb98463743df9c44176f390454e5895481ef37bf81333"
     },
     {
       "path": "design/mockup/README.md",
@@ -1674,8 +1714,8 @@
     },
     {
       "path": "docs/CURRENT_SOURCES.md",
-      "size": 1107,
-      "sha256": "8785215bfe5e2a9eb5ad6ffcebb1930fc2cb5b4ee6cdfd7526062ac8bad45ef4"
+      "size": 1170,
+      "sha256": "0f613ce83ba1c763c218fdfb3cc3f992d1f5e30004704c06fa83300cfcb72d0b"
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
@@ -1689,8 +1729,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 27441,
-      "sha256": "1bc55da2af6d9fe6bac9eb37e3c5378dd0b8272e40c856c12f6559409daaa042"
+      "size": 28325,
+      "sha256": "a34993df85d7f3b8107803d126e4ff22418bf0edafcdecbeda9b1638871b3e3e"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
@@ -1809,8 +1849,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 17646,
-      "sha256": "d5d0c6e41ea937f7d73e5f0689e582518467f4145d643cd409b066dcd33d1f6a"
+      "size": 17709,
+      "sha256": "27aae4fb52c78a61a2d6211e84fa482f6cfb752d62189dab70c317849746c1b3"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -1853,6 +1893,11 @@
       "sha256": "3808faa4a7f58c57b12bb88172b494177299506c7e28023073c8377a67814405"
     },
     {
+      "path": "docs/ux/C3_SCREEN_AUDIT_FRAMEWORK.md",
+      "size": 7940,
+      "sha256": "4a5d6c064c1294312a0b95a9d25f1af9dc588b9b8deb863d283d95a15ff5c0f6"
+    },
+    {
       "path": "docs/ux/DESIGN.md",
       "size": 1565,
       "sha256": "359256fa062867a42bc81fd85b02a8881087bd0d55f916cbb4c691bd601eac93"
@@ -1883,6 +1928,11 @@
       "sha256": "192fc330a296fdf989d7c3fdd8f6bb52ac7582fd20f5d11ea26e2355808bd387"
     },
     {
+      "path": "docs/ux/UI_UX_CHANGE_MANIFEST.md",
+      "size": 6301,
+      "sha256": "6fdb4bf7f0538f15bbaa4c461695a245d2c30498557b3cab09392a1e6398f805"
+    },
+    {
       "path": "eslint.config.mjs",
       "size": 1260,
       "sha256": "ab32343d7bf19914ff27babd0f5c13f7ab5f2f12662e64dade5ac888cd0421e8"
@@ -1899,8 +1949,8 @@
     },
     {
       "path": "package.json",
-      "size": 1997,
-      "sha256": "c2d804931cda30abdcbdb50cd99b3a2d4a1bbc802c6e426d68561316aa83e2d0"
+      "size": 2183,
+      "sha256": "896491ac87f146fdd124a1c1545f7b52a0424a3c787c64573138b1dc688f75b3"
     },
     {
       "path": "packages/application/package.json",
@@ -2913,6 +2963,21 @@
       "sha256": "e4bd9eda116846f378d3e02ea82d8b6d48d79feed2b80ea3b10c3432d2b589c0"
     },
     {
+      "path": "scripts/setup-git-hooks.mjs",
+      "size": 732,
+      "sha256": "0577145eccdf11132ddee1b0549769cf7d5cc495a60a6c64d365698cfa02cdc4"
+    },
+    {
+      "path": "scripts/validate-ui-ux-review.mjs",
+      "size": 3364,
+      "sha256": "d175bd1767867f251c29e8f8e8864a54cea4ffb2c7d408f8fa39d7d61f8f5350"
+    },
+    {
+      "path": "scripts/validate-ui-ux-review.test.mjs",
+      "size": 2163,
+      "sha256": "27b6e864b822d9e11a8663ed9ce792beed2b5d4dfdf1495c93f699e6d6664cec"
+    },
+    {
       "path": "scripts/verify-project.sh",
       "size": 263,
       "sha256": "09cf7da5878e096cf99f40480c8d2c10ef0bc0b9b48dcd60777d1b73a190e246"
@@ -3109,8 +3174,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 10569,
-      "sha256": "be2267426c4caecaeba0d8b3a74bb0c3ad9852cfbbeae661488fafab9bc47f29"
+      "size": 11785,
+      "sha256": "3663eabeaef00e36a74838aab8a4c72ebfcf0af2d1302adb40f813b012a77e5b"
     },
     {
       "path": "test/project-privacy.test.ts",
