@@ -4,6 +4,8 @@
 
 ### Documentation
 
+- Closed Phase 12.5.C3.1 App Shell + Navigation with `SCREEN_AUDIT_PASS`; added drawer focus
+  management, responsive browser evidence and C3 tracking.
 - Prepared the Phase 12.5.C3.0 screen-by-screen Mobile/Desktop audit framework, 34-surface
   inventory, review template and tracking matrix.
 - Retired only the obsolete `mockup-to-ui` and `quality-gates` skills; their review process is

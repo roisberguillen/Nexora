@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { type RefObject, useState } from "react";
 
 import { filterGlobalSearchResults, type GlobalSearchResult } from "./GlobalSearch";
 
 interface TopHeaderProps {
   readonly isNavigationOpen: boolean;
+  readonly navigationTriggerRef?: RefObject<HTMLButtonElement | null>;
   readonly onToggleNavigation: () => void;
   readonly searchResults: readonly GlobalSearchResult[];
 }
 
-export function TopHeader({ isNavigationOpen, onToggleNavigation, searchResults }: TopHeaderProps) {
+export function TopHeader({
+  isNavigationOpen,
+  navigationTriggerRef,
+  onToggleNavigation,
+  searchResults,
+}: TopHeaderProps) {
   const [query, setQuery] = useState("");
   const results = filterGlobalSearchResults(searchResults, query).slice(0, 8);
   return (
@@ -18,6 +24,7 @@ export function TopHeader({ isNavigationOpen, onToggleNavigation, searchResults 
         aria-expanded={isNavigationOpen}
         className="icon-button menu-trigger"
         onClick={onToggleNavigation}
+        ref={navigationTriggerRef}
         type="button"
       >
         <span aria-hidden="true" className="menu-lines">

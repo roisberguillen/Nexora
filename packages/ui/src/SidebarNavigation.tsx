@@ -1,3 +1,5 @@
+import { type RefObject } from "react";
+
 import { NavIcon, type NavIconName } from "./NavIcon";
 
 interface NavigationItem {
@@ -90,6 +92,7 @@ interface SidebarNavigationProps {
   readonly activeRoute: NavigationRoute;
   readonly isCollapsed: boolean;
   readonly isOpen: boolean;
+  readonly navigationRef?: RefObject<HTMLElement | null>;
   readonly onClose: () => void;
   readonly onToggleCollapsed: () => void;
 }
@@ -98,6 +101,7 @@ export function SidebarNavigation({
   activeRoute,
   isCollapsed,
   isOpen,
+  navigationRef,
   onClose,
   onToggleCollapsed,
 }: SidebarNavigationProps) {
@@ -106,6 +110,7 @@ export function SidebarNavigation({
       aria-label="Pannello di navigazione"
       className={`app-sidebar${isOpen ? " is-open" : ""}${isCollapsed ? " is-collapsed" : ""}`}
       id="primary-navigation"
+      ref={navigationRef}
     >
       <div className="sidebar-brand-row">
         <a className="brand" href="./#overview" onClick={onClose}>

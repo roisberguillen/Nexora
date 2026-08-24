@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -36,11 +36,37 @@ describe("AppShell", () => {
 
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByLabelText("Pannello di navigazione")).toHaveClass("is-open");
+    await waitFor(() =>
+      expect(
+        within(screen.getByLabelText("Pannello di navigazione")).getByRole("button", {
+          name: "Chiudi navigazione",
+        }),
+      ).toHaveFocus(),
+    );
 
     await user.keyboard("{Escape}");
 
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByLabelText("Pannello di navigazione")).not.toHaveClass("is-open");
+    expect(trigger).toHaveFocus();
+  });
+
+  it("mantiene il focus nel drawer mobile mentre è aperto", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppShell>
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Apri navigazione" }));
+    const navigation = screen.getByLabelText("Pannello di navigazione");
+    const close = within(navigation).getByRole("button", { name: "Chiudi navigazione" });
+    await waitFor(() => expect(close).toHaveFocus());
+    await user.keyboard("{Tab}");
+    expect(navigation).toContainElement(document.activeElement as HTMLElement);
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(navigation).toContainElement(document.activeElement as HTMLElement);
   });
 
   it("raggruppa tutte le route desktop e può ridurre il menu senza perdere la route attiva", async () => {

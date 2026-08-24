@@ -1,5 +1,20 @@
 # Test evidence
 
+## 12.5.C3.1 — App Shell + Navigation Mobile/Desktop audit — COMPLETE — 2026-08-24
+
+- Routing: `ui_component`, profilo `CRITICAL`, rischio dati `medium`; App Shell/navigation scope
+  identificato senza audit della ricerca completa e con Movimenti congelata.
+- Baseline: component shell 4/4; browser shell 7 PASS, 5 skip offline intenzionali su 320/375/
+  390/768/1024/1440; axe e overflow PASS.
+- Rilievo P1 risolto: drawer aperto senza focus return e focus trap; corretti solo AppShell,
+  SidebarNavigation, TopHeader e test UI. Nessuna modifica a dominio, persistenza o Movimenti.
+- Test mirati post-fix: `packages/ui/src/AppShell.test.tsx` 5/5 PASS.
+- Browser C3.1: `test/e2e/c3-shell-audit.spec.ts` 3 PASS, 9 skip intenzionali; drawer/focus,
+  Escape/return, route + browser back/forward, live resize 800→390→1440→768→320, axe e
+  overflow; zoom 200% CDP su 1024→512 e 1440→720 PASS.
+- Gate finali: `pnpm verify` PASS — 136 file, 571 test PASS, 1 file skipped e 4 skip documentati;
+  build PASS con advisory chunk-size preesistente. `format:check`, `manifest:check`,
+
 ## 12.5.C3.0 — Full Mobile/Desktop screen audit preparation — COMPLETE — 2026-08-24
 
 - Routing: pnpm codex:route --task C3.0 — PASS; documentation, ECONOMY, low data risk.

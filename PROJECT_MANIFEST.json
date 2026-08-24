@@ -103,6 +103,11 @@
       "sha256": "7a5d8ab7c7717138ebfe24f15f51f8ae4dbaa99dd7907f0faea33abe902a1cb1"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-24-c3-1-app-shell-navigation.md",
+      "size": 12178,
+      "sha256": "03d3b2e7f3c42e7fcc47eaeacd581141a5265fb498b37bd0c85f0ba60f562bfd"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-08-24-movimenti-c2-8.md",
       "size": 11949,
       "sha256": "2ea343d7c628bc8d68996671f387a47139242f23a334d35a147a6c8f8a395e85"
@@ -264,8 +269,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 393,
-      "sha256": "6d2a7147fbca7e119dbbc3da25706406056ddd4832f4949fdd59e9c54563d968"
+      "size": 389,
+      "sha256": "630713b533398ed5d797faced82d8d4be751dfb8eecda8919ff5bbdd2a18efc6"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -289,18 +294,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 4242,
-      "sha256": "3add3f72ffe6faecf75332c26274af76028b75f10a75e84a908142de2b20526a"
+      "size": 4352,
+      "sha256": "9db42018b2042d86b689450411e8925a6f255805a00cac56e8363a13d84beee5"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 44893,
-      "sha256": "6d85e9d73e755196286ef277fe1bb0ba39186ab5e7670bf56ad86d60a211b48f"
+      "size": 45985,
+      "sha256": "9e665e4759369e87bb6b8fe4bb2bdbed9f1047ea605f1b8937c045bd513c4c4d"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 3750,
-      "sha256": "a4d607c0e9de1aa56b3dd533384bccf8441141e293711c8d9b7824719a933c53"
+      "size": 3753,
+      "sha256": "ce2a8f445eba844a806ff325d510dc7687850a79cdbc3f3fa44ead9f5676719e"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1549,8 +1554,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 30239,
-      "sha256": "65ccc57536a5db8db74bb98463743df9c44176f390454e5895481ef37bf81333"
+      "size": 30391,
+      "sha256": "8a974cd19dfcf28cd6e171794cb190e4dcc9f2131678b79ffe930769e9799d38"
     },
     {
       "path": "design/mockup/README.md",
@@ -2799,13 +2804,13 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 3799,
-      "sha256": "889223972e215dc035fb530531fc6e9db2337d2ba0acb1ec223b1c388f58d117"
+      "size": 4799,
+      "sha256": "19c3651a95928dd45b5ea7c61f59f0079cad4039e146f6c8b32c0ac7eef35593"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
-      "size": 3361,
-      "sha256": "b37c0367a26c54a43408456e36d4488f4f61d02fcf09b6399a38e18fade6e081"
+      "size": 4670,
+      "sha256": "00e97cc9ba5c4b3b755acc3de48deddf5924e7f9e7aebf992a43fd2d723c2fc5"
     },
     {
       "path": "packages/ui/src/ErrorBoundary.test.tsx",
@@ -2884,8 +2889,8 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 5105,
-      "sha256": "c9b3b8b9b6eab9b464c29d29ffb1dc6b79a76f17000494a8b9db06ececcb5490"
+      "size": 5247,
+      "sha256": "29fc8c52f71e76038ec6ba539380e2206b23b07785afc6dc60576da2111415f5"
     },
     {
       "path": "packages/ui/src/styles.css",
@@ -2904,8 +2909,8 @@
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
-      "size": 2165,
-      "sha256": "440021aaffce87e165c311986c8facec3ca9a3046db4490f30b4aa29ecf8909c"
+      "size": 2318,
+      "sha256": "1eaa8e4a35bd69d4e86d30d52ddaffe183c61810f99e260c94b1aa37be5aa6fd"
     },
     {
       "path": "packages/ui/tsconfig.json",
@@ -3026,6 +3031,11 @@
       "path": "test/e2e/budgets.spec.ts",
       "size": 3294,
       "sha256": "a80a455e78ce677c074de19c703a8299143db49203294c5f30f7ca81e5ee6fea"
+    },
+    {
+      "path": "test/e2e/c3-shell-audit.spec.ts",
+      "size": 3079,
+      "sha256": "a789f80bd815d58f7f974e40ea0e8d80855d0fda2fe66ec976f0bbbc1bcb2455"
     },
     {
       "path": "test/e2e/categories.spec.ts",

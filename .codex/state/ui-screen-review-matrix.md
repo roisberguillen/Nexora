@@ -10,10 +10,10 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 
 | Fase | Superficie/stato | Route | Mobile | Desktop | A11y | Funzioni | P0 | P1 | P2 | Stato |
 | --- | --- | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
-| C3.1 | App Shell | shell | — | — | — | — | 0 | 0 | 0 | NEXT |
-| C3.1 | Navigazione mobile | shell | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.1 | Navigazione desktop | shell | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.2 | Ricerca globale | #search | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.1 | App Shell | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.1 | Navigazione mobile | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.1 | Navigazione desktop | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.2 | Ricerca globale | #search | — | — | — | — | 0 | 0 | 0 | NEXT |
 | C3.3 | Dashboard/Home | #overview | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.4 | Conti | #accounts | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.4 | Dettaglio conto | #accounts + dettaglio | — | — | — | — | 0 | 0 | 0 | PENDING |
