@@ -38,6 +38,23 @@ describe("TransactionsPage", () => {
     expect(within(summary).getByText("Saldo netto").closest("article")).toHaveTextContent("300");
   });
 
+  it("clears the movement search and returns focus to the filter trigger after Escape", async () => {
+    const user = userEvent.setup();
+    render(<TransactionsPage {...pageProps()} />);
+
+    const search = screen.getByRole("searchbox", { name: "Cerca nei movimenti" });
+    await user.type(search, "Spesa");
+    await user.click(screen.getByRole("button", { name: "Cancella ricerca movimenti" }));
+    expect(search).toHaveValue("");
+
+    const filters = screen.getByRole("button", { name: "Filtri" });
+    await user.click(filters);
+    expect(screen.getByRole("dialog", { name: "Filtri movimenti" })).toBeVisible();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "Filtri movimenti" })).toBeNull();
+    expect(filters).toHaveFocus();
+  });
+
   it("opens a transaction detail and restores focus to its row when closed with Escape", async () => {
     const user = userEvent.setup();
     render(<TransactionsPage {...pageProps()} />);

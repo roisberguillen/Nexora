@@ -102,6 +102,35 @@ test("i filtri movimenti sono combinabili e si possono azzerare", async ({ page 
   await expect(list.getByRole("listitem")).not.toHaveCount(1);
 });
 
+test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancellare", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+
+  const search = page.getByRole("searchbox", { name: "Cerca nei movimenti" });
+  await search.fill("Esercente");
+  await page.getByRole("button", { name: "Cancella ricerca movimenti" }).click();
+  await expect(search).toHaveValue("");
+
+  const filterTrigger = page.getByRole("button", { name: "Filtri" });
+  await filterTrigger.click();
+  const sheet = page.getByRole("dialog", { name: "Filtri movimenti" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Applica filtri" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
+  await expect(filterTrigger).toBeFocused();
+
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+});
+
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();

@@ -90,6 +90,13 @@ export function TransactionsPage({
   const pagination = paginateTransactions(sortedItems, currentPage);
   const { currentPage: visiblePage, items: visibleItems, pageCount } = pagination;
   const selectedTransaction = visibleItems.find((item) => item.id === selectedTransactionId);
+  const activeFilterCount = [
+    filters.month,
+    filters.accountLabel,
+    filters.categoryLabel,
+    filters.kindLabel,
+    filters.statusLabel,
+  ].filter(Boolean).length;
 
   useEffect(() => {
     setIsEditorOpen(initialEditorOpen);
@@ -410,15 +417,31 @@ export function TransactionsPage({
           >
             <label className="transaction-search">
               <span>Cerca nei movimenti</span>
-              <input
-                onChange={(event) => {
-                  setFilters((current) => ({ ...current, query: event.currentTarget.value }));
-                  setCurrentPage(1);
-                }}
-                placeholder="Descrizione, controparte, categoria o importo"
-                type="search"
-                value={filters.query}
-              />
+              <span className="transaction-search-control">
+                <input
+                  onChange={(event) => {
+                    const query = event.currentTarget.value;
+                    setFilters((current) => ({ ...current, query }));
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Descrizione, controparte, categoria o importo"
+                  type="search"
+                  value={filters.query}
+                />
+                {filters.query ? (
+                  <button
+                    aria-label="Cancella ricerca movimenti"
+                    className="transaction-search-clear"
+                    onClick={() => {
+                      setFilters((current) => ({ ...current, query: "" }));
+                      setCurrentPage(1);
+                    }}
+                    type="button"
+                  >
+                    ×
+                  </button>
+                ) : null}
+              </span>
             </label>
             <div className="transaction-quick-filters" role="group" aria-label="Filtri rapidi">
               {(
@@ -457,19 +480,14 @@ export function TransactionsPage({
               ))}
             </div>
             <button
+              aria-controls="transaction-filters-sheet"
+              aria-expanded={isFiltersOpen}
               className="secondary-action"
               type="button"
               onClick={() => setIsFiltersOpen(true)}
             >
               Filtri
-              {[
-                filters.month,
-                filters.accountLabel,
-                filters.categoryLabel,
-                filters.statusLabel,
-              ].filter(Boolean).length
-                ? ` (${[filters.month, filters.accountLabel, filters.categoryLabel, filters.statusLabel].filter(Boolean).length})`
-                : ""}
+              {activeFilterCount ? ` (${activeFilterCount})` : ""}
             </button>
             <label>
               <span>Ordina</span>
@@ -517,85 +535,103 @@ export function TransactionsPage({
             </div>
           ) : null}
           {isFiltersOpen ? (
-            <AccessibleDialog
-              labelledBy="transaction-filters-title"
-              onClose={() => setIsFiltersOpen(false)}
-            >
-              <h2 id="transaction-filters-title">Filtri movimenti</h2>
-              <label>
-                Periodo
-                <input
-                  type="month"
-                  value={filters.month}
-                  onChange={(event) => {
-                    const month = event.currentTarget.value;
-                    setFilters((current) => ({ ...current, month }));
-                  }}
-                />
-              </label>
-              <label>
-                Conto
-                <select
-                  value={filters.accountLabel}
-                  onChange={(event) =>
-                    setFilters((current) => ({
-                      ...current,
-                      accountLabel: event.currentTarget.value,
-                    }))
-                  }
-                >
-                  <option value="">Tutti i conti</option>
-                  {[...new Set(model.items.map((item) => item.accountLabel))]
-                    .sort()
-                    .map((value) => (
-                      <option key={value}>{value}</option>
-                    ))}
-                </select>
-              </label>
-              <label>
-                Categoria
-                <select
-                  value={filters.categoryLabel}
-                  onChange={(event) =>
-                    setFilters((current) => ({
-                      ...current,
-                      categoryLabel: event.currentTarget.value,
-                    }))
-                  }
-                >
-                  <option value="">Tutte le categorie</option>
-                  {[...new Set(model.items.map((item) => item.categoryLabel))]
-                    .sort()
-                    .map((value) => (
-                      <option key={value}>{value}</option>
-                    ))}
-                </select>
-              </label>
-              <label>
-                Stato
-                <select
-                  value={filters.statusLabel}
-                  onChange={(event) =>
-                    setFilters((current) => ({
-                      ...current,
-                      statusLabel: event.currentTarget.value,
-                    }))
-                  }
-                >
-                  <option value="">Tutti gli stati</option>
-                  {[...new Set(model.items.map((item) => item.statusLabel))].sort().map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
-              </label>
-              <button
-                className="primary-action"
-                type="button"
-                onClick={() => setIsFiltersOpen(false)}
+            <div className="transaction-filter-sheet" id="transaction-filters-sheet">
+              <AccessibleDialog
+                labelledBy="transaction-filters-title"
+                onClose={() => setIsFiltersOpen(false)}
               >
-                Applica filtri
-              </button>
-            </AccessibleDialog>
+                <h2 id="transaction-filters-title">Filtri movimenti</h2>
+                <label>
+                  Periodo
+                  <input
+                    type="month"
+                    value={filters.month}
+                    onChange={(event) => {
+                      const month = event.currentTarget.value;
+                      setFilters((current) => ({ ...current, month }));
+                    }}
+                  />
+                </label>
+                <label>
+                  Conto
+                  <select
+                    value={filters.accountLabel}
+                    onChange={(event) =>
+                      setFilters((current) => ({
+                        ...current,
+                        accountLabel: event.currentTarget.value,
+                      }))
+                    }
+                  >
+                    <option value="">Tutti i conti</option>
+                    {[...new Set(model.items.map((item) => item.accountLabel))]
+                      .sort()
+                      .map((value) => (
+                        <option key={value}>{value}</option>
+                      ))}
+                  </select>
+                </label>
+                <label>
+                  Categoria
+                  <select
+                    value={filters.categoryLabel}
+                    onChange={(event) =>
+                      setFilters((current) => ({
+                        ...current,
+                        categoryLabel: event.currentTarget.value,
+                      }))
+                    }
+                  >
+                    <option value="">Tutte le categorie</option>
+                    {[...new Set(model.items.map((item) => item.categoryLabel))]
+                      .sort()
+                      .map((value) => (
+                        <option key={value}>{value}</option>
+                      ))}
+                  </select>
+                </label>
+                <label>
+                  Stato
+                  <select
+                    value={filters.statusLabel}
+                    onChange={(event) =>
+                      setFilters((current) => ({
+                        ...current,
+                        statusLabel: event.currentTarget.value,
+                      }))
+                    }
+                  >
+                    <option value="">Tutti gli stati</option>
+                    {[...new Set(model.items.map((item) => item.statusLabel))]
+                      .sort()
+                      .map((value) => (
+                        <option key={value}>{value}</option>
+                      ))}
+                  </select>
+                </label>
+                <div className="form-actions">
+                  {activeFilterCount ? (
+                    <button
+                      className="secondary-action"
+                      onClick={() => {
+                        setFilters(emptyTransactionFilters);
+                        setCurrentPage(1);
+                      }}
+                      type="button"
+                    >
+                      Azzera filtri
+                    </button>
+                  ) : null}
+                  <button
+                    className="primary-action"
+                    type="button"
+                    onClick={() => setIsFiltersOpen(false)}
+                  >
+                    Applica filtri
+                  </button>
+                </div>
+              </AccessibleDialog>
+            </div>
           ) : null}
           {selectionPreview.transactionGroups === 0 ? null : (
             <div aria-live="polite" className="account-feedback">
