@@ -20,6 +20,10 @@
 
 ### Changed
 
+- Completato 12.5.C2.8: Movimenti ora protegge ogni mutazione dal doppio submit, espone loading/
+  disabled/error feedback accessibili e mantiene validazione, focus, responsive behavior e transfer
+  read-only verificati su tutti i viewport; nessuna regola finanziaria o persistence contract è cambiata.
+
 - Risolto il blocker C2.6: i trasferimenti registrati sono esplicitamente non modificabili dalla
   UI e una guardia impedisce qualsiasi falso update o nuova creazione nello stato impossibile
   `transfer + editingId`; creazione atomica, annullamento e KPI restano invariati.

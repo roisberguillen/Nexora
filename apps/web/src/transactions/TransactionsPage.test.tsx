@@ -133,6 +133,53 @@ describe("TransactionsPage", () => {
     );
   });
 
+  it("guards the save command against a synchronous double submit", async () => {
+    let resolveSave: ((value: readonly string[]) => void) | undefined;
+    const onCreateManual = vi.fn(
+      () => new Promise<readonly string[]>((resolve) => (resolveSave = resolve)),
+    );
+    render(
+      <TransactionsPage
+        {...pageProps()}
+        initialEditorOpen
+        onCreateManual={onCreateManual}
+        standaloneEditor
+      />,
+    );
+
+    const form = screen.getByRole("button", { name: "Salva movimento" }).closest("form");
+    expect(form).not.toBeNull();
+    fireEvent.change(screen.getByRole("textbox", { name: "Importo" }), {
+      target: { value: "12,50" },
+    });
+    fireEvent.submit(form!);
+    fireEvent.submit(form!);
+
+    expect(onCreateManual).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Salvataggio…" })).toBeDisabled();
+    resolveSave?.([]);
+  });
+
+  it("keeps validation failures readable and preserves the editor", async () => {
+    const user = userEvent.setup();
+    const onCreateManual = vi.fn(async () => [] as readonly string[]);
+    render(
+      <TransactionsPage
+        {...pageProps()}
+        initialEditorOpen
+        onCreateManual={onCreateManual}
+        standaloneEditor
+      />,
+    );
+
+    await user.type(screen.getByRole("textbox", { name: "Importo" }), "12,345");
+    await user.click(screen.getByRole("button", { name: "Salva movimento" }));
+
+    expect(onCreateManual).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert")).toHaveTextContent(/accetta al massimo 2 decimali/i);
+    expect(screen.getByRole("textbox", { name: "Importo" })).toHaveValue("12,345");
+  });
+
   it("preserves existing expense classifications when editing", async () => {
     const user = userEvent.setup();
     const account = Account.create({

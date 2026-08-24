@@ -94,6 +94,9 @@
 .transaction-details-panel h3 {
   margin: 0;
 }
+.transaction-details-panel h2 {
+  overflow-wrap: anywhere;
+}
 .transaction-details-close {
   background: transparent;
   border: 0;

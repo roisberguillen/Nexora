@@ -62,6 +62,26 @@ describe("TransactionList", () => {
     expect(amount).not.toHaveTextContent("+");
   });
 
+  it("keeps long labels and extreme minor-unit amounts available to assistive users", () => {
+    const title = "Rimborso con descrizione molto lunga e caratteri Unicode € 東京";
+    render(
+      <TransactionList
+        {...props({
+          items: [
+            item({
+              amount: Money.fromMinor(9_999_999_999_999_999n, "EUR"),
+              title,
+            }),
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.getByText(title)).toBeVisible();
+    expect(screen.getByTitle(title)).toBeVisible();
+    expect(screen.getByText(/99\.999\.999\.999\.999,99/)).toBeVisible();
+  });
+
   it("does not expose manual edit for a registered transfer", async () => {
     const user = userEvent.setup();
     render(

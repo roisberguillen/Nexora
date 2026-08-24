@@ -1,6 +1,6 @@
 import { FinancialAmount, MetricCard } from "@nexora/ui";
 import { categoryLabel, type Tag } from "@nexora/domain";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import "./transactions.css";
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
@@ -58,6 +58,7 @@ export function TransactionsPage({
   const [isEditorOpen, setIsEditorOpen] = useState(initialEditorOpen);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const isSavingRef = useRef(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [kind, setKind] = useState<FormKind>("expense");
@@ -116,6 +117,7 @@ export function TransactionsPage({
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSavingRef.current) return;
     const form = new FormData(event.currentTarget);
     const accountId = String(form.get("account") ?? "");
     const amountText = String(form.get("amount") ?? "");
@@ -124,6 +126,7 @@ export function TransactionsPage({
       setError("Scegli un conto attivo.");
       return;
     }
+    isSavingRef.current = true;
     setIsSaving(true);
     setError(null);
     setMessage(null);
@@ -209,11 +212,14 @@ export function TransactionsPage({
     } catch (cause) {
       setError(transactionErrorMessage(cause));
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };
 
   const executeSalaryAllocations = async () => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     setError(null);
     try {
@@ -229,11 +235,14 @@ export function TransactionsPage({
         "L'esecuzione delle allocazioni potrebbe essere parziale. Riprova: i trasferimenti già registrati non verranno duplicati.",
       );
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };
 
   const cancel = async (id: string, isTransfer: boolean) => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     setError(null);
     setMessage(null);
@@ -243,11 +252,14 @@ export function TransactionsPage({
     } catch (cause) {
       setError(transactionErrorMessage(cause));
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };
 
   const trash = async (id: string, isTransfer: boolean) => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     setError(null);
     setMessage(null);
@@ -261,10 +273,13 @@ export function TransactionsPage({
     } catch (cause) {
       setError(transactionErrorMessage(cause));
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };
   const trashSelected = async () => {
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     setError(null);
     try {
@@ -275,6 +290,7 @@ export function TransactionsPage({
     } catch (cause) {
       setError(transactionErrorMessage(cause));
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };
@@ -883,7 +899,7 @@ function TransactionForm({
           ×
         </button>
       </div>
-      <form className="account-form" onSubmit={onSubmit}>
+      <form aria-busy={isSaving} className="account-form" onSubmit={onSubmit}>
         {useSegmentedKinds ? (
           <fieldset className="transaction-kind-segmented">
             <legend>Tipo movimento</legend>
@@ -1260,6 +1276,12 @@ function tryParseAmountMinor(value: string, currency: string): bigint | undefine
 
 function transactionErrorMessage(error: unknown): string {
   if (!(error instanceof Error)) return "Il movimento non è stato salvato.";
+  if (/invalid_money|solo cifre|accetta al massimo/i.test(error.message)) {
+    return error.message;
+  }
+  if (error.message.includes("Split total must equal")) {
+    return "La somma delle ripartizioni deve corrispondere all'importo del movimento.";
+  }
   if (error.message.includes("Registered transfers cannot be edited"))
     return "I trasferimenti registrati non possono essere modificati. Se necessario, annulla il trasferimento e creane uno nuovo.";
   if (error.message.includes("same currency"))
