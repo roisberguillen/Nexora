@@ -109,8 +109,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-08-24-c3-2-global-search.md",
-      "size": 13708,
-      "sha256": "62602a7c089778809ce470f34b7686741d60b83d231e6b51fc657aef7983896f"
+      "size": 15146,
+      "sha256": "3e997d4cf481d2132160042f08c895a230985cdc78e0c2d64164b8e9d7a8b06e"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-08-24-c3-3-dashboard-home.md",
@@ -314,8 +314,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 50880,
-      "sha256": "39bc54e64e78d05a5cc4f9f1485228d7841f6f128a7e1dda5a09d82e6a77a6e1"
+      "size": 51495,
+      "sha256": "ea601fdd9040674da369c9422ba48096631471f37d6e102e6eb5390a241ce688"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1569,8 +1569,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 30732,
-      "sha256": "afee339fe57568d2937d2d5cad1c3512e0a791f652827aa2cbeee4dcf7546d6e"
+      "size": 30882,
+      "sha256": "d165927a1bc1834660cd5c935e70ecf81d514a174c6996689d8c05d4d9750065"
     },
     {
       "path": "design/mockup/README.md",
@@ -2819,8 +2819,8 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 6715,
-      "sha256": "2f4ba481ed5ca709fcdcfa35bf8b1c26d23a7b65a66092fd3b6df8e2d598736b"
+      "size": 7219,
+      "sha256": "e035b468ea0aac855df25ef9fcd50493b84d9c099da5302abb8a1d8b8d42e00d"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
@@ -2929,8 +2929,8 @@
     },
     {
       "path": "packages/ui/src/TopHeader.tsx",
-      "size": 4259,
-      "sha256": "145a1e5b63392e806ef36feabdc06f53c80d5ee3a6532cca9575b2ac8dd8597d"
+      "size": 4376,
+      "sha256": "558724d9f7c40d45647d29147604ab194591bd14f62be9cdce16b05e683824ef"
     },
     {
       "path": "packages/ui/tsconfig.json",
@@ -3124,8 +3124,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 4933,
-      "sha256": "1a4d07f8eb0bdb2dbc9ce4fa1c26c827a9364c5d7ef7c90b66e345c51ec21dbe"
+      "size": 4984,
+      "sha256": "67279210fcbff894f6b2f2306b2c3423aa8149bafc50ba5438600a63d88c5d5b"
     },
     {
       "path": "test/e2e/google-drive-onboarding.spec.ts",

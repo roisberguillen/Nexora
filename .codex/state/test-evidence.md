@@ -1,3 +1,12 @@
+## Global Search desktop clear focus regression — FIXED — 2026-08-25
+
+- Routing: `ui_component`, profilo `STANDARD`, rischio dati `low`; fix scoped to `TopHeader` clear focus.
+- Correzione: il pulsante `Cancella ricerca` desktop ripristina il focus sull’input tramite ref dopo aver
+  svuotato la query; il comportamento mobile resta invariato.
+- Test mirati: `AppShell.test.tsx` + `GlobalSearch.test.ts` 10/10 PASS; `global-search.spec.ts` 15 PASS,
+  9 skip intenzionali; verifica manuale nel Chrome reale confermata.
+- Esito: P1 GS-P1-03 chiuso; Global Search resta `SCREEN_AUDIT_PASS`, senza P0/P1 aperti.
+
 ## 12.5.C3.4 — Accounts Mobile/Desktop audit — COMPLETE — 2026-08-24
 
 - Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; C3.3 COMPLETE/PASS and C3.4 NEXT.

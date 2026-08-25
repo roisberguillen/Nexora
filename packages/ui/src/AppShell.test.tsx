@@ -167,6 +167,22 @@ describe("AppShell", () => {
     expect(trigger).toHaveFocus();
   });
 
+  it("mantiene il focus nel campo desktop dopo il clear", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppShell searchResults={[]}>
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    const search = screen.getByRole("combobox", { name: "Ricerca globale" });
+    await user.type(search, "nessun risultato");
+    await user.click(screen.getByRole("button", { name: "Cancella ricerca" }));
+
+    expect(search).toHaveValue("");
+    expect(search).toHaveFocus();
+  });
+
   it("seleziona un risultato della ricerca globale con le frecce e Invio", async () => {
     const user = userEvent.setup();
     render(

@@ -17,6 +17,7 @@ export function TopHeader({
 }: TopHeaderProps) {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
   const resultRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const results = filterGlobalSearchResults(searchResults, query).slice(0, 8);
 
@@ -79,6 +80,7 @@ export function TopHeader({
           value={query}
           type="search"
           role="combobox"
+          ref={inputRef}
         />
         {query.trim() === "" ? null : (
           <button
@@ -87,6 +89,7 @@ export function TopHeader({
             onClick={() => {
               setQuery("");
               setActiveIndex(-1);
+              inputRef.current?.focus();
             }}
             type="button"
           >

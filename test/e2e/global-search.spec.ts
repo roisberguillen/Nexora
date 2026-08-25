@@ -46,6 +46,8 @@ test("la ricerca globale gestisce no-results, clear ed Escape", async ({ page })
     expect(closeBox?.height).toBeGreaterThanOrEqual(44);
     await page.keyboard.press("Escape");
     await expect(page.getByRole("button", { name: "Apri ricerca globale" })).toBeFocused();
+  } else {
+    await expect(search).toBeFocused();
   }
 });
 

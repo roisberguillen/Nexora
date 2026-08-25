@@ -16,6 +16,16 @@ Esito: UI_REVIEW_PASS
 Route: `#search` nella shell; nessuna route nuova
 Flusso principale: trigger → campo → query → risultato → destinazione reale
 Viewport applicabili: 320, 375, 390, 768, 1024, 1440 px; zoom 200%; keyboard-only; touch >=44×44 px
+Code review: PASS
+Code review evidence: `packages/ui/src/TopHeader.tsx` now restores focus through `inputRef` after desktop clear; regression assertion added to `packages/ui/src/AppShell.test.tsx`.
+Automated browser verification: PASS
+Automated browser evidence: `test/e2e/global-search.spec.ts` — 15 PASS, 9 intentional skips; desktop clear-focus assertion passes at 1024 and 1440.
+Visual browser verification: PASS
+Visual browser route/surface: `http://localhost:5173/#overview` — Global Search in the Nexora shell.
+Visual browser viewports: 320, 375, 390, 768, 1024, 1440 px and 200% zoom covered by the existing C3.2 browser matrix.
+Visual browser interactions: open trigger, type query, no-results, clear, keyboard focus, Escape, result selection and responsive resize.
+Visual browser evidence: Chrome reale conferma query vuota dopo clear con `#global-search` ancora focalizzato; screenshot archiviato nell’audit Chrome.
+Visual browser screenshots: `C:\Users\Roi23\.codex\visualizations\2026\08\25\nexora-chrome-search\01-global-search-chrome.png`; existing C3.2 screenshots/evidence retained.
 
 ## Scope e implementazione reale
 
@@ -39,6 +49,8 @@ Nessuno.
 - **GS-P1-02 risolto:** il percorso tastiera e il focus dei risultati non erano completi. Aggiunti
   listbox/option semantics, `aria-activedescendant`, Arrow Up/Down, Enter, Tab trap, focus visible
   e chiusura senza overlay residui.
+- **GS-P1-03 risolto:** il clear desktop rimuoveva la query ma lasciava il focus sul `body`. `TopHeader`
+  ora conserva un ref dell’input e ripristina il focus dopo il clear; aggiunta regressione component/E2E.
 
 ### P2
 
@@ -72,7 +84,8 @@ compressa, dialog utilizzabile, nessun overflow e testo/nomi lunghi con `overflo
 
 ## Funzionalità, stati e navigazione
 
-- PASS apertura mobile e desktop, query Unicode/spazi trim, query vuota con prompt locale e clear.
+- PASS apertura mobile e desktop, query Unicode/spazi trim, query vuota con prompt locale e clear con
+  ritorno focus verificato anche sul campo desktop.
 - PASS risultati reali, massimo 8 elementi, titolo e contesto minimo leggibile.
 - PASS no-results distinto dall’empty query; campo e clear restano disponibili.
 - PASS click/tap e Enter su risultato; chiusura ricerca, hash route reale e active navigation.
@@ -114,11 +127,11 @@ fuori dall’integrazione della ricerca.
 ## Test
 
 - `pnpm exec vitest run packages/ui/src/GlobalSearch.test.ts packages/ui/src/AppShell.test.tsx`:
-  2 file, 9/9 PASS, 0 skip.
+  2 file, 10/10 PASS, 0 skip; include regressione focus clear desktop.
 - `pnpm --filter @nexora/ui typecheck`: PASS.
 - `pnpm --filter @nexora/web typecheck`: PASS.
 - `pnpm exec playwright test test/e2e/global-search.spec.ts`: 15 PASS, 9 skip intenzionali;
-  2 test base su ciascuno dei 6 viewport, keyboard/resize su 768, zoom su 1024/1440.
+  2 test base su ciascuno dei 6 viewport, clear focus desktop, keyboard/resize su 768, zoom su 1024/1440.
 - `pnpm build`: PASS; advisory preesistente sui chunk oltre 500 kB.
 
 ## Conclusione e freeze
