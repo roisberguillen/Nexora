@@ -22,6 +22,16 @@ Automated browser verification: PASS
 Automated browser evidence: `test/e2e/global-search.spec.ts` — 15 PASS, 9 intentional skips; desktop clear-focus assertion passes at 1024 and 1440.
 Visual browser verification: PASS
 Visual browser route/surface: `http://localhost:5173/#overview` — Global Search in the Nexora shell.
+Visual browser viewports: 320, 375, 390, 768, 1024, 1440 px and 200% zoom covered by the updated C3.2 browser matrix.
+Visual browser interactions: open trigger, type query, no-results, clear, keyboard focus, Escape, result selection and responsive resize.
+Visual browser evidence: Chrome reale conferma query vuota dopo clear con `#global-search` ancora focalizzato; screenshot archiviato nell’audit Chrome.
+Visual browser screenshots: `C:\Users\Roi23\.codex\visualizations\2026\08\25\nexora-chrome-search\01-global-search-chrome.png`; existing C3.2 screenshots/evidence retained.
+Code review: PASS
+Code review evidence: `packages/ui/src/TopHeader.tsx` now restores focus through `inputRef` after desktop clear; regression assertion added to `packages/ui/src/AppShell.test.tsx`.
+Automated browser verification: PASS
+Automated browser evidence: `test/e2e/global-search.spec.ts` — 15 PASS, 9 intentional skips; desktop clear-focus assertion passes at 1024 and 1440.
+Visual browser verification: PASS
+Visual browser route/surface: `http://localhost:5173/#overview` — Global Search in the Nexora shell.
 Visual browser viewports: 320, 375, 390, 768, 1024, 1440 px and 200% zoom covered by the existing C3.2 browser matrix.
 Visual browser interactions: open trigger, type query, no-results, clear, keyboard focus, Escape, result selection and responsive resize.
 Visual browser evidence: Chrome reale conferma query vuota dopo clear con `#global-search` ancora focalizzato; screenshot archiviato nell’audit Chrome.
