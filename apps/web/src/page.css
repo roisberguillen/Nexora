@@ -67,6 +67,17 @@
   gap: 1rem;
   margin-top: 1rem;
 }
+.dashboard-priority-grid .metric-card,
+.dashboard-priority-grid .metric-value,
+.dashboard-priority-grid .metric-supporting {
+  min-width: 0;
+}
+
+@media (min-width: 75.01rem) {
+  .dashboard-priority-grid .metric-value {
+    font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+  }
+}
 .dashboard-decision-grid,
 .dashboard-analytics-grid {
   display: grid;
