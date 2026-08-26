@@ -658,3 +658,19 @@ Keep only the latest relevant evidence per completed phase.
   chart restano coperti; suite completa 589 PASS / 4 skip previsti.
 - Severity: P0=0, P1=0, P2=0.
 - Esito: `SCREEN_AUDIT_PASS`; Dashboard/Home `FROZEN` per C3. C3.5 resta il prossimo task.
+
+## 12.5.C3.5 — Transactions quick-filter visual correction — IN PROGRESS — 2026-08-26
+
+- Riproduzione Chrome: i filtri rapidi desktop erano pulsanti nativi non stilizzati e si
+  impilavano sotto l’intestazione della lista; il campo di ricerca risultava spinto sotto la
+  gerarchia prevista.
+- Correzione: aggiunti layout flex, token Nexora, stato `aria-pressed="true"` visibile, focus
+  nativo coerente e target minimi da 44 px; su desktop il gruppo usa due colonne, su mobile
+  conserva lo scorrimento orizzontale.
+- Chrome reale: `#transactions`, viewport `1278 px`; filtri verificati con `Tutti` attivo,
+  altezze `44 px`, stile selezionato blu e `scrollWidth === clientWidth` (`1263/1263`).
+- Test mirati: `TransactionsPage.test.tsx` `12/12 PASS`; `transactions.spec.ts` desktop/mobile
+  `20/20 PASS`, inclusi axe, filtri combinabili, overflow, trasferimenti, split e dialog.
+- Gate statici: format, lint e typecheck PASS; build PASS.
+- Stato audit: P0=0, P1 corretto; C3.5 resta `IN_PROGRESS` fino alla chiusura completa della
+  review Mobile/Desktop.

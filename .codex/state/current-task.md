@@ -1,7 +1,7 @@
 # Current task
 
-- Task: 12.5.C3.3-R4 — Dashboard Visual Baseline & Evidence Closure
+- Task: 12.5.C3.5 — Transactions / Movimenti visual audit and filter correction
 - Roadmap phase: Phase 12.5
-- Status: 12.5.C3.3-R4 COMPLETE — Dashboard SCREEN_AUDIT_PASS / FROZEN — 2026-08-26. C3.4 remains COMPLETE.
-- Evidence: `.codex/reviews/ui-ux/2026-08-26-c3-3-r4-dashboard-visual-baseline.md` and `.codex/state/test-evidence.md`.
-- Next task: 12.5.C3.5 — Transactions regression Mobile/Desktop audit. Non iniziare in questo task.
+- Status: 12.5.C3.5 visual filter correction COMPLETE — verified in Chrome/Playwright — 2026-08-26. Full C3.5 screen audit remains IN_PROGRESS.
+- Evidence: `.codex/state/test-evidence.md`; Dashboard R4 remains frozen in `.codex/reviews/ui-ux/2026-08-26-c3-3-r4-dashboard-visual-baseline.md`.
+- Next task: complete the C3.5 Transactions Mobile/Desktop audit and evidence closure.

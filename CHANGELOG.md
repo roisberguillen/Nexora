@@ -4,6 +4,9 @@
 
 ### Documentation
 
+- Fixed the Transactions quick-filter toolbar: desktop and mobile filters now use Nexora styling,
+  preserve 44 px touch targets, and expose a clear selected state.
+
 - Closed Dashboard/Home `12.5.C3.3-R4`: aligned the visible and accessible H1, regenerated and
   revalidated the 1440 px visual baseline, and recorded final browser/evidence closure.
 
