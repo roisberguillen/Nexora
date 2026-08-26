@@ -462,6 +462,31 @@
 }
 
 @media (max-width: 480px) {
+  .transactions-page.is-standalone {
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  body:has(.transactions-page.is-standalone) {
+    overflow-x: hidden;
+  }
+
+  .transactions-page.is-standalone .accounts-layout {
+    display: block;
+  }
+
+  .transactions-page.is-standalone .account-management-panel {
+    display: none;
+  }
+
+  .transactions-page.is-standalone .account-editor-panel {
+    margin: 1rem -1rem 0;
+    padding: 1rem;
+    border-inline: 0;
+    border-radius: 0;
+  }
+
   .transactions-page:not(.is-standalone) .accounts-heading {
     align-items: center;
     flex-direction: row;

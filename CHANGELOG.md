@@ -4,6 +4,9 @@
 
 ### Documentation
 
+- Fixed mobile Movimenti `Nuovo movimento`: the standalone editor now fills the screen width and
+  opens with the `Conto` field visible before the transaction list.
+
 - Fixed the Transactions quick-filter toolbar: desktop and mobile filters now use Nexora styling,
   preserve 44 px touch targets, and expose a clear selected state.
 

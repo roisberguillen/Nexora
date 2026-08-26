@@ -131,6 +131,25 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 });
 
+test("su mobile nuovo movimento apre il form a tutta larghezza con il conto visibile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto("/#transactions");
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+
+  await expect(page).toHaveURL(/#new-transaction$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Nuovo movimento" })).toBeVisible();
+  await expect(page.getByLabel("Conto")).toBeVisible();
+  await expect(page.locator(".account-management-panel")).toBeHidden();
+
+  const editor = page.locator(".account-editor-panel");
+  const bounds = await editor.boundingBox();
+  expect(bounds).not.toBeNull();
+  expect(bounds?.x).toBe(0);
+  expect(bounds?.width).toBe(320);
+});
+
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();

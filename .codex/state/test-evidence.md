@@ -674,3 +674,16 @@ Keep only the latest relevant evidence per completed phase.
 - Gate statici: format, lint e typecheck PASS; build PASS.
 - Stato audit: P0=0, P1 corretto; C3.5 resta `IN_PROGRESS` fino alla chiusura completa della
   review Mobile/Desktop.
+
+## 12.5.C3.5 — Mobile standalone transaction editor correction — COMPLETE — 2026-08-27
+
+- Riproduzione: su `#transactions` mobile, `Nuovo movimento` lasciava la lista prima del form e
+  il campo `Conto` risultava oltre il viewport.
+- Correzione: su `#new-transaction` mobile la lista viene nascosta, l’editor occupa tutta la
+  larghezza disponibile e il campo `Conto` è immediatamente disponibile; lo scrolling verticale
+  del form resta preservato.
+- Chrome reale: verificato a 320, 375 e 390 px; editor full-width da bordo a bordo, lista
+  `display: none`, `Conto` visibile e nessuna scrollbar orizzontale resa visibile.
+- Test: regression E2E dedicata PASS; suite `transactions.spec.ts` sui progetti Chromium 320 e
+  1440: `22/22 PASS`; format, lint, typecheck e build PASS.
+- Stato audit: correzione mobile COMPLETE; audit completo C3.5 Mobile/Desktop resta `IN_PROGRESS`.
