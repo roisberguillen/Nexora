@@ -1,3 +1,5 @@
+# Test evidence
+
 ## Global Search desktop clear focus regression — FIXED — 2026-08-25
 
 - Routing: `ui_component`, profilo `STANDARD`, rischio dati `low`; fix scoped to `TopHeader` clear focus.
@@ -6,6 +8,16 @@
 - Test mirati: `AppShell.test.tsx` + `GlobalSearch.test.ts` 10/10 PASS; `global-search.spec.ts` 15 PASS,
   9 skip intenzionali; verifica manuale nel Chrome reale confermata.
 - Esito: P1 GS-P1-03 chiuso; Global Search resta `SCREEN_AUDIT_PASS`, senza P0/P1 aperti.
+
+## Rendered browser review gate — 2026-08-25
+
+- Extended the existing v2 screen review validator and template with separate Code review,
+  Automated browser verification and Visual browser verification fields.
+- Visual evidence requires rendered route/surface, pertinent interactions, required viewports,
+  zoom 200%, concrete observations and screenshot evidence or an explicit N/A rationale.
+- `pnpm test:ui-ux`: 8/8 passed, including missing visual review, missing evidence, missing viewport,
+  failed visual status and backend-only gate cases. `pnpm codex:validate` passed.
+- No application screen, domain, persistence or financial behavior was changed.
 
 ## 12.5.C3.4 — Accounts Mobile/Desktop audit — COMPLETE — 2026-08-24
 
@@ -42,7 +54,6 @@
   preesistente. Browser combinato: 19 PASS e 5 skip intenzionali per viewport non applicabili.
 - Esito: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Dashboard/Home congelata C3; C3.4 è NEXT.
 
-# Test evidence
 ## 12.5.C3.2 — Global Search Mobile/Desktop audit — COMPLETE — 2026-08-24
 
 - Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; C3.1 congelata e C3.2
@@ -66,7 +77,6 @@
   non applicabili agli altri viewport; build PASS con advisory chunk-size preesistente.
 - Esito: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Global Search congelata C3; C3.3 è NEXT.
 
-
 ## 12.5.C3.1 — App Shell + Navigation Mobile/Desktop audit — COMPLETE — 2026-08-24
 
 - Routing: `ui_component`, profilo `CRITICAL`, rischio dati `medium`; App Shell/navigation scope
@@ -86,246 +96,137 @@
 
 ## 12.5.C3.0 — Full Mobile/Desktop screen audit preparation — COMPLETE — 2026-08-24
 
-- Routing: pnpm codex:route --task C3.0 — PASS; documentation, ECONOMY, low data risk.
-- Gate di ingresso verificati: C2.9 COMPLETE, TRANSACTIONS_GATE_PASS, Movimenti congelata,
-  P0/P1 aperti assenti, branch codex/phase-12-5-0-checkpoint.
+- Routing: `pnpm codex:route --task "12.5.C3.0 ..."` — PASS; documentation, ECONOMY, low data risk.
+- Gate di ingresso verificati: C2.9 COMPLETE, `TRANSACTIONS_GATE_PASS`, Movimenti congelata,
+  P0/P1 aperti assenti, branch `codex/phase-12-5-0-checkpoint`.
 - Documenti analizzati: stato corrente, roadmap, evidence, review finale C2.9, repository map,
   MOCKUP_INTEGRATION, DESIGN, STITCH_UI_REFERENCE, STITCH_SCREEN_MATRIX, MOBILE_UI_IMPLEMENTATION_PLAN,
   PRIMARY_FLOWS, manifest UI/UX, template v2 e agent guidance UI/UX/QA/security.
-- Repository reale confrontato: 34 superfici/stati inventariati contro la routing hash di App.tsx;
-  nessuna route artificiale introdotta. Allocazioni restano in #recurring; startup/recovery in
-  bootstrap; Movimenti è regression review C3.5 su gate C2 esistente.
-- Framework e checklist: docs/ux/C3_SCREEN_AUDIT_FRAMEWORK.md; template standard:
-  .codex/templates/c3-screen-audit.md; tracking: .codex/state/ui-screen-review-matrix.md.
+- Repository reale confrontato: 34 superfici/stati inventariati contro la routing hash di `App.tsx`;
+  nessuna route artificiale introdotta. Allocazioni restano in `#recurring`; startup/recovery in
+  `bootstrap`; Movimenti è regression review C3.5 su gate C2 esistente.
+- Framework e checklist: `docs/ux/C3_SCREEN_AUDIT_FRAMEWORK.md`; template standard:
+  `.codex/templates/c3-screen-audit.md`; tracking: `.codex/state/ui-screen-review-matrix.md`.
 - Coperti: mobile-first 320/375/390, tablet 768, desktop 1024/1440, zoom 200%, keyboard/focus,
   safe area, touch >=44 px, responsive, funzionalità, stati, edge case, accessibilità, severity,
   browser evidence, PASS/BLOCKED e freeze rule.
 - Nessun codice applicativo, CSS/SCSS, dominio, database, repository, import, backup, Tauri o test
   funzionale modificato.
+- Validazioni C3.0: `pnpm manifest:check` PASS (`PROJECT_MANIFEST.json is current`),
+  `pnpm codex:validate` PASS (17 routes), `pnpm test:ui-ux` PASS (6/6),
+  `pnpm quality:ui-ux` PASS (nessuna modifica UI staged) e `pnpm format:check` PASS.
 
-## Phase 12.5.C2.4 chronological grouping and transaction detail — complete — 2026-08-18
+## 12.5.C2.9 — Final Transactions Gate — COMPLETE — 2026-08-24
 
-- The UI-only implementation groups the existing, already filtered and sorted transaction view
-  model by civil booked date for chronological sorts (`Oggi`, `Ieri`, Italian long dates, with a
-  year only when needed). Amount sorting deliberately retains one neutral `Movimenti` group rather
-  than implying a false date order.
-- Opening is available only from the explicit row control. The desktop contextual panel and the
-  mobile full-screen surface expose only projected data: amount, account, category, booked date,
-  type, source, payee, description and transfer route. Split/tag data are intentionally absent
-  because they are not part of `TransactionListItem`; no domain, repository or persistence contract
-  was changed. Escape and Close restore focus to the opened row.
-- Targeted Vitest: **3 files, 13/13 passed, 0 skipped** (`transactionDateGroups`,
-  `TransactionList`, `TransactionsPage`). It covers relative/year labels, filtered/sorted grouping,
-  neutral amount ordering, explicit open control, Escape and focus return. Web typecheck passed.
-- A global-concurrency regression made `App` import-preview and `AppLockScreen` recovery time out
-  despite passing in isolation. Their bounded test waits were made resilient without changing
-  runtime behavior. Targeted regression: **12/12 passed**; full `pnpm test`: **136 files passed,
-  1 skipped; 560 tests passed, 4 documented skips**. Workspace build passed with the known
-  non-blocking chunk-size advisory; manifest regeneration/check and `pnpm codex:validate` passed.
-- Browser regression: movement route transitions now synchronize the standalone editor state, so
-  transfer, split and financial-detail controls render after `Nuovo movimento`. Saving or closing
-  the standalone editor returns to `#transactions`. The E2E locator now targets the amount textbox
-  rather than the new sort option, and date grouping preserves valid nested-list semantics. The
-  transfer, split and financial-detail flows pass **18/18** across 320, 375, 390, 768, 1024 and
-  1440 px, including the existing axe assertion.
+- Review finale: `.codex/reviews/ui-ux/2026-08-24-movimenti-c2-9-final-gate.md` —
+  `TRANSACTIONS_GATE_PASS`; freeze della superficie Movimenti consentito.
+- Funzionalità: lista, grouping, dettaglio, ricerca/clear, filtri/applica/reset, Entrata, Uscita,
+  Transfer, read-only transfer, split/tag, annullamento, cestino/restore e conferme PASS.
+- Stati e accessibilità: loading, empty, filtered-empty, error, offline, success, disabled,
+  keyboard, focus, dialog/sheet, accessible names, axe, contrasto e touch target PASS.
+- Invarianti: Money, minor units `bigint`, it-IT, transfer atomici a due gambe, esclusione dai KPI,
+  command layer reale e nessuna scrittura UI diretta agli adapter PASS.
+- Test mirati Movimenti: 8 file, 38/38 passati, 0 skip. E2E: 60/60 passati su 320/375/390/768/
+  1024/1440. Zoom 200% C2.7-F1 preservato e riconfermato come regression PASS.
+- Gate globali: doctor, format, lint, typecheck, test (136 file, 570 test, 1 file skipped e 4 skip
+  documentati), build, manifest, codex e verify PASS. Build: solo advisory preesistente chunk-size.
+- Skip: 4 globali documentati, nessuno Movimenti; P0/P1/P2 aperti: nessuno.
+- C2.3 riallineata a COMPLETE sulla base delle evidence successive C2.7/C2.8; nessun test inventato.
+- Stato finale: C2 COMPLETE, Movimenti congelati; prossimo task C3.0. Non iniziare C3.0 in C2.9.
 
-## Phase 12.5.C2.3 movements banking-list redesign — partial — 2026-08-18
+## 12.5.C2.8 — Transactions UI states, accessibility and hardening — COMPLETE — 2026-08-24
 
-- The UI-only list implementation uses the existing transaction view model, `FinancialAmount` and
-  `NavIcon`. It adds title/category/account/date hierarchy, real status/source indicators, neutral
-  transfer amounts, a contextual action menu and opt-in bulk selection without changing command or
-  persistence behavior.
-- Targeted Vitest: **3 files, 10/10 passed, 0 skipped** (`TransactionList`, `TransactionsPage`,
-  `buildTransactionsViewModel`), covering title fallback, financial amount semantics, badges,
-  menu permissions, Escape/focus return and selection visibility. Web typecheck and lint passed.
-- Responsive Playwright list smoke: **4/4 passed, 0 skipped** at 320, 390, 768 and 1440 px,
-  including axe, menu keyboard behavior and horizontal-overflow checks. A first run caught insufficient
-  contrast caused by dimming cancelled rows; the visual treatment was changed to a token surface and
-  text decoration, then all four viewports passed.
-- `pnpm verify` passed after formatting and manifest regeneration: **135 files passed, 1 skipped;
-  553 tests passed, 4 documented skips**. `pnpm manifest:check` and `pnpm codex:validate` passed.
-- The complete `test/e2e/transactions.spec.ts` run is **not green**: existing form-flow tests cannot
-  find the transfer type, split button or financial-detail control after activating `Nuovo movimento`
-  (observed at 320 and 375 px before cancellation). This is outside the list redesign and prevents
-  declaring the phase complete or publishing a commit.
+- Review: `.codex/reviews/ui-ux/2026-08-24-movimenti-c2-8.md` — `UI_HARDENING_PASS`.
+- Correzioni: guardia sincrona anti-doppio-submit su tutte le mutazioni Movimenti, `aria-busy` sul
+  form e messaggi leggibili per importi non validi e split non bilanciati; nessuna modifica a dominio,
+  repository, API, Money o regole sui trasferimenti.
+- Stati verificati: loading/disabled, empty ledger, filtered-empty, populated, error, offline locale,
+  success, pressed, focus e dialog/sheet. Errori preservano l’editor senza stack trace.
+- Accessibilità: accessible names, `role=alert`/`role=status`, keyboard Escape/Enter, focus trap e
+  focus return verificati; axe verde nei flussi E2E; target touch >=44 px; zoom 200% C2.7 preservato.
+- Edge case: double-submit, importi invalidi/zero/negativi/estremi, separatori italiani, Unicode,
+  testi lunghi, split/tag e trasferimenti read-only verificati senza nuovi command di dominio.
+- Responsive: E2E Movimenti 60/60 sui viewport 320, 375, 390, 768, 1024 e 1440 px; nessun overflow.
+- Test: component mirati 24/24; suite completa 136 file, 570 test, 1 file skipped e 4 skip documentati;
+  `format:check`, lint, typecheck, build, `verify`, `quality:ui-ux`, manifest e orchestrator PASS.
+- P0 aperti: nessuno. P1 aperti: nessuno. P2 aperti: nessuno. Stato: C2.8 COMPLETE; prossimo C2.9.
 
-## Phase 12.5.C2.1 movements hierarchy and KPI — complete — 2026-08-17
+## 12.5.C2.7-F2 — Global format check and C2.7 closure — COMPLETE — 2026-08-24
 
-- The Transactions view model now delegates overall and month-scoped Income/Expense/Net totals to
-  the existing domain `summarizeCashFlow` report with the standard EUR display currency. This keeps
-  cancelled transactions and both transfer legs out of the three KPI without duplicating accounting
-  logic. A month with no matching movement displays the same zero-valued domain report.
-- Targeted component/view-model suite: **5/5 passed** (`TransactionsPage` plus
-  `buildTransactionsViewModel`), including title, accessible primary CTA route, KPI amounts,
-  selected-month update, cancelled income and transfer exclusion.
-- Responsive E2E: `CI=1 NEXORA_E2E_PORT=4177 pnpm exec playwright test
-  test/e2e/transactions.spec.ts test/e2e/global-search.spec.ts` passed on the configured matrix
-  (320, 375, 390, 768, 1024 and 1440 px): **50 passed, 4 documented responsive skips, 0 failed**.
-  The Movements transfer flow retained its no-horizontal-overflow and axe checks.
-- `pnpm lint`, `pnpm typecheck`, `pnpm test` (**547 passed, 4 documented skips**), `pnpm verify`,
-  `pnpm manifest:check` and `pnpm codex:validate` passed. Build retained only the known
-  non-blocking chunk-size advisory.
-- Deferred unchanged: banking search, quick filters/drawer, ordering, list and editor redesign,
-  detail panel, action menu and mobile navigation belong to 12.5.C2.2–12.5.C2.8.
+- Comando iniziale: `pnpm format:check` — PASS, exit code 0, nessun file fuori formato; non sono
+  state necessarie correzioni e quindi non ci sono file classificati A/B/C da formattare.
+- La formattazione globale era già stata normalizzata nel worktree precedente; F2 ha verificato il
+  risultato senza riscritture indiscriminate e senza modifiche funzionali.
+- Regression gate: lint PASS; typecheck PASS; test PASS (136 file, 567 test, 1 file skipped e 4
+  skip documentati); build PASS; manifest:check PASS; codex:validate PASS; verify PASS.
+- Evidence preservate: component test Movimenti 20/20, E2E Movimenti 60/60, viewport 320/375/390/
+  768/1024/1440, zoom 200% PASS, A-04 PASS, P0/P1/P2 aperti: nessuno.
+- Stato finale: review `UI_REVIEW_PASS`; C2.7 `COMPLETE`; prossimo task C2.8. Nessun codice
+  applicativo, dominio, API, database o regola finanziaria modificato in F2.
 
-## Phase 12.5.D review — complete — 2026-08-17
+## 12.5.C2.7-F1 — Zoom browser 200% — COMPLETE — 2026-08-24
 
-- UI/responsive/accessibility review exercised the shell, navigation, accounts, movements,
-  categories, tags, imports, budgets, loans, investments, recurring/allocation flows, exports,
-  backup, analytics, journal, notifications, settings, profile and privacy through the complete
-  Playwright route matrix. No product P0/P1 was found in the completed cases; 320, 375, 390, 768,
-  1024 and 1440 px scenarios reported no overflow or accessibility failure. Existing 200% Budget
-  zoom, keyboard, focus-return and dialog tests also passed.
-- Security review: tracked files contain no real statement/workbook/PDF sources; `.gitignore`
-  excludes real-data validation material. Targeted scans found no committed credentials or real
-  IBAN/BIC. CSV parsing limits input to 10 MiB, 100,000 rows and 256 columns, rejects malformed
-  quoting and preserves atomic import semantics. Portable snapshot tests reject malformed restores;
-  CSP exceptions are constrained to WASM/OPFS, Google OAuth and the Tauri bridge. `pnpm audit
-  --prod --audit-level=high` reported no known vulnerabilities.
-- Targeted negative/accessibility suite: 30/30 passed for malformed CSV, portable restore,
-  security headers, import UI, reset protection, dialogs and AppShell. `pnpm doctor`,
-  `pnpm verify`, `pnpm format:check`, `pnpm codex:validate` and `pnpm manifest:check` passed.
-- Full E2E: `CI=1 NEXORA_E2E_PORT=4176 pnpm test:e2e` completed the isolated 306-case matrix with
-  **216 passed, 90 documented skips and 0 failures** in 6.4 minutes. The long IndexedDB 100,000
-  record persistence exercise completed successfully (150,975 ms insertion; 2,086 ms listing), as
-  did OPFS; the earlier incomplete observation was an interrupted run, not a teardown defect.
-- P2: the production build retains the pre-existing >500 kB chunk-size advisory; it is not a
-  functional, responsive or security regression.
+- Metodo: sessione Chromium headed controllata con CDP `Emulation.setDeviceMetricsOverride`,
+  finestra fisica 1024 e 1440 px, CSS viewport rispettivamente 512 e 720 px, `deviceScaleFactor: 2`
+  e `devicePixelRatio≈2`; non è stata usata una trasformazione CSS né un semplice test a 320 px.
+- Flussi verificati in entrambi i contesti: pagina Movimenti, ricerca/clear, filtri, apertura/applica,
+  reset, Escape e focus return, lista/gruppi/importi, dettaglio/importo, nuovo movimento, Entrata,
+  Uscita e Trasferimento.
+- Risultati: 2/2 contesti verdi; `scrollWidth <= innerWidth` (497<=512 e 705<=720); nessuna CTA,
+  label, overlay o controllo essenziale irraggiungibile; nessun difetto P0/P1/P2 trovato.
+- Correzioni codice: nessuna necessaria.
+- Regression: test Movimenti precedente 60/60; nessuna regressione introdotta.
+- Stato P1: zoom 200% RISOLTO; `format:check` globale resta aperto per C2.7-F2.
 
-## Phase 12.5.C desktop UX — complete — 2026-08-17
+## Fase 12.5.C2.6-R — Risoluzione blocker modifica Trasferimenti — COMPLETE — 2026-08-24
 
-- Desktop navigation is now grouped by primary work, planning, wealth, analysis, organisation,
-  data and system. It retains every existing route, adds the already-existing notifications,
-  profile and privacy routes to the desktop menu, keeps the active route exposed, and supports a
-  keyboard-operable collapsed desktop sidebar without changing mobile navigation.
-- Transactions now have local, combinable search, month, account, category and kind filters with
-  an explicit reset and a separate no-results state. Filtering uses the existing projected rows
-  only; it neither changes the ledger nor unfolds transfer legs.
-- The completed follow-up adds identity-preserving editing for eligible manual movements and an
-  atomic transaction-with-details replacement contract. Split and tag details are preserved across
-  InMemory, IndexedDB and SQLite; imported, reconciled, cancelled and transfer movements remain
-  non-editable.
-- Focused repository/command regression: 83/83 passed. Full `pnpm verify` passed with 133 test
-  files passed, 1 skipped, 544 tests passed and 4 documented skips. The complete browser matrix
-  was exercised on 320, 375, 390, 768, 1024 and 1440 px; approved desktop navigation baseline
-  snapshots were refreshed following the intentional menu grouping change.
+- Problema iniziale: la UI non disponeva di un contratto `onUpdateTransfer` e il ramo transfer poteva
+  essere raggiunto con `editingId`, rischiando una falsa creazione.
+- Decisione: i trasferimenti registrati sono intenzionalmente non modificabili; non è stato introdotto
+  `updateTransfer`, né sono stati modificati dominio, Money, repository, schema o migration.
+- Correzione: “Modifica” resta nascosta per i transfer nella lista; il dettaglio mobile/desktop è
+  read-only; una guardia applicativa blocca `transfer + editingId` senza chiamare `onCreateTransfer`
+  o `onUpdateManual`.
+- File runtime/test: `apps/web/src/transactions/TransactionsPage.tsx`,
+  `apps/web/src/transactions/TransactionList.test.tsx`,
+  `apps/web/src/transactions/TransactionsPage.test.tsx`.
+- Test mirati: 4 file, 25 test passati; E2E Movimenti precedente 60/60 su 320, 375, 390, 768, 1024,
+  1440 px; coperti creazione/annullamento transfer, dettaglio, azioni, Entrata/Uscita e KPI.
+- Gate completi da rieseguire dopo l’aggiornamento documentale: format, lint, typecheck, test, build,
+  manifest, orchestrator e verify.
 
-## Phase 12.5.C movement editing follow-up — complete — 2026-08-17
+## Fase 12.5.C2.7 — Mobile Banking UX Movimenti — parziale — 2026-08-24
 
-- Added an identity-preserving update path for active, manual, non-transfer movements in the
-  InMemory, SQLite and IndexedDB repositories. Imported, reconciled and cancelled movements remain
-  non-editable; transfers remain linked operations. The command preserves signed bigint money and
-  validates account, currency and category references before the atomic repository write.
-- Focused regression suite passed 10/10; web/database/domain typechecks, lint, production web
-  build and manifest check passed. The production build retained only the known chunk-size advisory.
-- The prior split/tag P1 is resolved by the atomic replacement contract; no data-loss workaround
-  or test bypass was introduced.
+- Modificati esclusivamente `apps/web/src/transactions/TransactionsPage.tsx`,
+  `apps/web/src/transactions/transactions.css`, il test componente Movimenti e
+  `test/e2e/transactions.spec.ts`; nessuna modifica a dominio, Money, repository, persistenza o
+  command layer.
+- La ricerca mobile ora dispone di clear action; i quick filter sono scorribili; i filtri usano un
+  bottom sheet accessibile con focus trap, Escape, focus return, safe area e reset; la CTA del nuovo
+  movimento resta raggiungibile a 320 px.
+- Test mirati: Vitest **20/20**; lint PASS; typecheck PASS; build PASS; E2E Movimenti **60/60** su
+  320, 375, 390, 768, 1024 e 1440 px, inclusi trasferimento, Entrata/Uscita, ricerca, filtro sheet,
+  focus/Escape, axe nei flussi esistenti e overflow.
+- Gate globali verdi dopo normalizzazione Prettier repository-wide: `pnpm format:check`, `pnpm lint`,
+  `pnpm typecheck`, `pnpm test` (**136 file passati, 564 test passati, 1 file condizionalmente
+  skipped e 4 skip documentati**), `pnpm build`, `pnpm manifest:check` e `pnpm codex:validate`.
+  Anche `pnpm quality:ui-ux` e `pnpm test:ui-ux` sono verdi; il test UI/UX passa 6/6.
+- La review schermata resta `UI_REVIEW_INCOMPLETE` soltanto perché manca la verifica browser
+  dedicata dello zoom 200%; la fase non è stata marcata `COMPLETE`, né sono stati creati commit o
+  push.
 
-## Phase 12.5.A real-source reconciliation — blocked by non-overlapping periods — 2026-08-16
+## UI/UX checklist governance consolidation — 2026-08-24
 
-- Read-only, local parser inspection did not write to a ledger, import batch, account, category,
-  backup, fixture or log. The temporary inspection test was deleted after the check.
-- Period check: source A contains 48 rows from 2026-07-30 through 2026-08-14; source B contains
-  48 rows from 2026-06-02 through 2026-06-28; source C contains 45 rows from 2026-08-01 through
-  2026-08-15. The three sources do not cover the same full period, so no matching, dry-run commit,
-  undo or deduplication reconciliation was performed.
-- The period-only inspection passed (1/1). Parser output included non-fatal ZIP metadata warnings
-  while reading the local workbook; no source values or identifiers were emitted.
-
-## Money Manager semantic migration fix — 2026-08-16
-
-- The importer now builds one account decision per source account and one category decision per
-  source path. Missing deterministic entities are created only during the final atomic commit;
-  generic account types require one plan-level choice. Semantic profiles retain account aliases,
-  account configuration and category targets.
-- Explicit Money Manager transfers create balanced `Transfer` legs, while `Modifica Saldo` creates
-  `adjustment` transactions. InMemory, IndexedDB and SQLite commit planned accounts, categories,
-  movements, transfers and audit rows in one rollback-safe operation.
-- Privacy-safe local validation of the user-provided workbook used an isolated in-memory repository:
-  45 source rows, 3 account-plan entries, 7 macro categories, 14 category paths, 40 standard
-  movements, 2 transfers and 3 adjustments; 45 ready, 0 review. The commit imported 45 rows, the
-  repeated dry-run classified 45 duplicates, and undo cancelled all first-batch transactions.
-  The temporary test and workbook inspection script were removed; no source row or value entered Git.
-- Targeted suites: 96/96 for importer, command, UI and real adapter rollback; hierarchy/adapter
-  follow-up 84/84; privacy/UI/import regression 21/21. Money Manager import Playwright: 6/6 at
-  1440 px, including account/category creation, transfer, adjustment, deduplication and undo.
-- Global gates before manifest regeneration: format, lint and typecheck passed; Vitest reported
-  132 files passed, 1 skipped, 537 tests passed and 4 documented skips; production build passed
-  with only the existing chunk-size advisory.
-- Full `pnpm test:e2e`: 210 passed, 90 documented viewport/optional-flow skips, 0 failed in
-  6.0 minutes. The Money Manager semantic flow passed on every configured viewport; the suite also
-  completed the synthetic 100,000-record OPFS and IndexedDB checks. Runner output contained only
-  the known `NO_COLOR`/`FORCE_COLOR` warning.
-
-## Mediobanca Premier CSV detection fix — 2026-08-15
-
-- Header-detected Mediobanca CSV normalization now uses `Data valuta` exclusively, preserves raw
-  cells for audit, maps `Tipologia`, `Entrate`/`Uscite` and `Divisa`, and requires an existing
-  named account or explicit local-account selection.
-- Targeted Vitest: 25 passed across importer, ImportsPage, migration, SQLite/IndexedDB and local
-  backup compatibility suites. Workspace typecheck passed.
-- Import E2E: the Mediobanca path passed 6/6 configured viewports; the complete import flow passed
-  5/5 at 1440 px. The user separately confirmed their local real-file test; no real source entered Git.
-
-## Phase 12.5.2 isolated Mediobanca sample validation — complete — 2026-08-15
-
-- Real source drill used only the user-authorized one-month CSV on 127.0.0.1:4174; the definitive
-  5173 origin was not opened or mutated. No real file, row, amount, identifier or source hash was
-  added to Git, fixtures, logs or this evidence.
-- Structural parser check: 48 source rows, six expected columns, semicolon CSV, EUR, one signed
-  outgoing amount cell per row and 48 valid Data valuta values. Data contabile was never used.
-- UI dry-run after explicit mapping/account selection: 48 ready, 0 duplicate, 0 review, 0 ignored,
-  0 invalid; the source-row invariant is exact. Commit: 48 imported. Undo: batch undone and all
-  imported transactions cancelled. Re-run: 48 duplicate, 0 ready and no second movement created.
-- Regression: apps/web/src/imports/importReview.test.ts passed 5/5. It covers an account-less valid
-  row resolved by an explicit local account and preserves review status for invalid data.
-- `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm build` and `pnpm verify`
-  passed after the fix. Full unit gate: 128 files passed, 1 skipped; 506 tests passed, 4
-  documented skips. The isolated browser proof supplied the real-data E2E evidence; no real
-  source was added to the automated suite.
-
-## Phase 12.5.1 real-source mapping — complete — 2026-08-15
-
-- Read-only analysis used three local user-provided files outside the repository. No ledger,
-  account, transaction, category, import batch, backup or test fixture was created or modified.
-- Mediobanca CSV: 48 data rows, semicolon delimiter, valid `Data valuta` on every row, EUR and
-  Italian-decimal monetary syntax. The source has no narrative/account/category/identifier field.
-- N26 PDF: 20 text-extractable pages, with Mastercard and six Space sections. The current N26
-  parser returned zero matching candidate rows because its English month/simple-layout regular
-  expression does not match the observed source layout.
-- Money Manager XLSX: one visible sheet with 11 columns, 46 physical rows and 45 post-header source
-  rows. Its Excel-serial civil date, first account, category/subcategory, note, kind, amount and EUR
-  fields were mapped structurally without retaining values. It has 40 Mediobanca-labelled, four
-  N26-labelled and one unresolved first-account row; no Directa-labelled row was found.
-- The duplicate numeric `Conto`, undocumented `EUR` field and two transfer-marked rows are explicitly
-  review-only. The current generic detector does not recognise `Giorno`/`Guadagni/Spese` or model a
-  distinct destination account, so no import was run or authorized.
-- No automated code test was changed or added. The report and state are documentation-only;
-  `pnpm format:check`, `pnpm manifest:check` and `pnpm codex:validate` passed before publication.
-
-## Phase 12.5.0 safe checkpoint — 2026-08-15
-
-- Baseline: Phase 12 closure is recorded on `main` commit
-  `9dc659cb995393b3fee30b03d8311b2b0b87d159`; the worktree was clean before
-  creating the checkpoint documentation.
-- `pnpm doctor`, `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm build`,
-  `pnpm manifest:check` and `pnpm verify` passed. `pnpm verify` repeated format,
-  lint, typecheck, the complete unit suite and the production build.
-- Full unit suite: 128 test files passed, 1 skipped; 504 tests passed, 4 documented
-  skips; 84.56 s. The verify rerun produced the same 504 passed / 4 skipped result.
-- Synthetic backup/recovery drill: 3 test files and 16 tests passed in 6.43 s. It
-  covers encrypted backup creation, passphrase/tamper/schema rejection, SQLite and
-  IndexedDB restore, rollback and removal of the temporary recovery ledger.
-- Full `pnpm test:e2e`: 198 passed, 90 documented skips, 0 failed, 6.2 min. It
-  includes browser backup/restore, OPFS and IndexedDB persistence and rollback; the
-  100,000-record performance cases use synthetic data only.
-- Repository privacy scan: tracked import examples and E2E fixtures are synthetic;
-  no tracked databases, bank statements, real IBANs or committed logs were found.
-  The only IBAN-shaped string is an explicit synthetic redaction test in
-  `packages/config/src/logging.test.ts`.
-- The local real-data drill is isolated by browser origin (`127.0.0.1:4174` source,
-  `127.0.0.1:4175` disposable restore) and dedicated ignored browser profiles. No
-  active user ledger was opened, mutated or used by this checkpoint.
+- Consolidated the existing UI/UX manifest into checklist v2 without adding a parallel skill.
+  Screen reviews now require identified controls, per-control evidence, metadata, P0/P1/P2,
+  320/375/390/768/1024/1440 px, 200% zoom, keyboard-only and touch >=44 px.
+- Added the persistent screen matrix at `.codex/state/ui-screen-review-matrix.md`; every initial
+  surface is `NOT_REVIEWED` and no surface was artificially marked `PASS`.
+- Updated the validator, template, UI/UX agents, QA guidance, UI skill, router and finalizer gate.
+  Legacy non-surface governance reports remain readable; real screen reports require v2.
+- Tests: `pnpm test:ui-ux` passed 6/6; `pnpm codex:validate` passed; UI routing smoke returned
+  `ui_component` with the expected responsive/accessibility tests.
+- No application screen, financial domain, repository, persistence or command behavior changed.
 
 Keep only the latest relevant evidence per completed phase.
 
@@ -715,3 +616,45 @@ Keep only the latest relevant evidence per completed phase.
   `0ea79e8`: install, doctor, formatting, lint, typecheck, unit tests, production build,
   manifest check and Playwright E2E all completed successfully. The frozen recovery checkpoint
   `backup/pre-phase-12.3-worktree-20260809` remains at `862c2a7`.
+## Fase 12.5.C2.6 — 2026-08-24
+
+- Esito: BLOCKED (blocco architetturale; nessuna modifica runtime).
+- File analizzati: `apps/web/src/App.tsx`, `apps/web/src/transactions/TransactionsPage.tsx`, package application pertinenti, `packages/database/src/indexeddb/IndexedDbLedgerRepository.ts`, `packages/database/src/sqlite/SqliteLedgerRepository.ts`, `packages/database/src/in-memory/InMemoryLedgerRepository.ts`, `docs/adr/0005-transfers.md` e `docs/ux/MOCKUP_INTEGRATION.md`.
+- Evidenze: il callback disponibile per i trasferimenti è `onCreateTransfer`; il ramo `kind === "transfer"` usa sempre la creazione anche con `editingId`; i repository rifiutano l’aggiornamento indipendente delle gambe collegate. Non esiste un callback application `onUpdateTransfer` esposto all’app.
+- Verifiche eseguite: `pnpm codex:route --task "Fase 12.5.C2.6: migliorare esclusivamente la UX/UI di creazione e modifica dei trasferimenti bancari, preservando invarianti finanziarie, command layer e persistenza; aggiungere test e gate"` PASS; ispezione mirata repository/documentazione e ricerca dei callback/comandi PASS.
+- Gate: `pnpm format:check` FAIL (drift Prettier repository-wide: 422 file segnalati; nessuna riscrittura di formattazione applicata perché la fase è bloccata e il problema non è confinato alle due modifiche documentali).
+- Gate: `pnpm codex:validate` PASS (`Nexora Task Orchestrator valid: 17 routes`).
+- Gate non eseguiti: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm manifest:check`, E2E/browser e verifica visuale. Non è stata modificata la runtime.
+- Viewport/limitazioni: nessuna validazione UI eseguita; la modifica UI richiesta non può essere completata senza ampliare il command/application layer, fuori scope.
+- Sblocco richiesto: decisione esplicita e fase autorizzata per aggiornare atomicamente il trasferimento come operazione sulle due gambe, poi implementazione UX/test.
+## 12.5.C3.3-R2 — Dashboard/Home monthly financial overview correction — COMPLETE — 2026-08-26
+
+- Correzione applicativa reale di `Dashboard.tsx`, `buildDashboardViewModel.ts`, `appModels.ts` e
+  `page.css`; C3.4 resta COMPLETE e C3.5 resta il prossimo task.
+- KPI filtrati per mese locale `Europe/Rome` con `today` iniettato: entrate, spese, risparmio,
+  saving rate e confronto agosto/luglio 2026; trasferimenti e annullati esclusi dal dominio.
+- Budget/soglie/split via `resolveActiveBudgetsForPeriod` e `calculateBudgetProgress`; ricorrenze
+  attive come fonte delle prossime uscite; top categorie e ultimi 5 movimenti reali.
+- Disponibilità: conti attivi `checking`, `savings`, `cash`; virtual subaccounts/investimenti/
+  prestiti esclusi e decisione registrata in `docs/DECISIONS_LOG.md`. Fine mese e alert locali
+  restano deferred per assenza di regola condivisa affidabile.
+- Test mirati: ViewModel 6/6 e App 16/16 PASS; typecheck, lint e build PASS.
+- Browser: C3 Dashboard E2E eseguito su 320, 375, 390, 768, 1024 e 1440; axe, overflow,
+  label delle nuove sezioni, keyboard CTA e zoom 200% PASS dopo correzione contrasto trend.
+- Review: `.codex/reviews/ui-ux/2026-08-26-c3-3-r2-dashboard-home.md`, P0=0, P1=0.
+
+## 12.5.C3.3-R4 — Dashboard Visual Baseline & Evidence Closure — COMPLETE — 2026-08-26
+
+- Accessibilità: l’unico H1 visibile è `Panoramica finanziaria` e il suo accessible name coincide
+  con il testo visibile; rimossa l’ARIA ridondante che esponeva il vecchio titolo.
+- Baseline visuale: il test senza update ha rilevato la baseline obsoleta; lo screenshot generato
+  è stato verificato visivamente in Chrome e mostra la UI R3 corrente, quindi è stata aggiornata
+  soltanto `dashboard-1440-chromium-1440-win32.png`. Il test è stato rieseguito senza update e ha
+  chiuso con 2/2 PASS.
+- Browser: E2E Dashboard verificato su 320, 375, 390, 768, 1024 e 1440 px; zoom 200% già PASS
+  in R3 e preservato. Nessuna baseline di altre schermate è stata modificata.
+- Financial regression: cash flow mensile, transfer/cancelled exclusion, saving rate, stato e
+  overlap Budget, prossime uscite, top categorie, trend, multi-valuta/account count e zero-value
+  chart restano coperti; suite completa 589 PASS / 4 skip previsti.
+- Severity: P0=0, P1=0, P2=0.
+- Esito: `SCREEN_AUDIT_PASS`; Dashboard/Home `FROZEN` per C3. C3.5 resta il prossimo task.

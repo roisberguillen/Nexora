@@ -14,7 +14,7 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.1 | Navigazione mobile | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.1 | Navigazione desktop | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.2 | Ricerca globale | #search | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.3-R2 | Dashboard/Home | #overview | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.3-R4 | Dashboard/Home | #overview | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.4 | Conti | #accounts | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.4 | Dettaglio conto | #accounts + editor reale | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.4 | Nuovo conto | #accounts + editor | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |

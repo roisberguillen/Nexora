@@ -7,7 +7,9 @@ test("cinque schede aprono il ledger senza recovery concorrente", async ({ conte
   await Promise.all(pages.map((page) => page.goto("/")));
 
   for (const page of pages) {
-    await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible({
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+    ).toBeVisible({
       timeout: 15_000,
     });
     await expect(

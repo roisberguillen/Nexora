@@ -5,13 +5,17 @@ test("la PWA riapre cinquanta volte senza restare in caricamento", async ({ page
   test.setTimeout(90_000);
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible({
-    timeout: 15_000,
-  });
+  await expect(page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" })).toBeVisible(
+    {
+      timeout: 15_000,
+    },
+  );
 
   for (let attempt = 0; attempt < 50; attempt += 1) {
     await page.reload();
-    await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible({
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+    ).toBeVisible({
       timeout: 15_000,
     });
     await expect(

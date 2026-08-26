@@ -54,7 +54,9 @@ test("C3.1 shell: zoom browser 200% resta utilizzabile", async ({ context, page 
     mobile: false,
   });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+  ).toBeVisible();
 
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,

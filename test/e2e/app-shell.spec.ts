@@ -4,7 +4,9 @@ import { expect, test } from "@playwright/test";
 test("la shell è accessibile e non produce overflow", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+  ).toBeVisible();
 
   const viewport = page.viewportSize();
   if (viewport && viewport.width < 900) {
@@ -53,7 +55,9 @@ test("la build resta consultabile offline", async ({ context, page }, testInfo) 
   await context.setOffline(true);
   try {
     await page.reload({ waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+    ).toBeVisible();
     const networkIsUnavailable = await page.evaluate(async () => {
       try {
         await fetch(`/network-probe-${Date.now()}`, { cache: "no-store" });

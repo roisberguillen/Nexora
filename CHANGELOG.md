@@ -4,6 +4,9 @@
 
 ### Documentation
 
+- Closed Dashboard/Home `12.5.C3.3-R4`: aligned the visible and accessible H1, regenerated and
+  revalidated the 1440 px visual baseline, and recorded final browser/evidence closure.
+
 - Completed Dashboard/Home `12.5.C3.3-R3` hardening: zero-value trend bars no longer imply quantity,
   overlapping budgets are not aggregated, availability account counts share the same EUR/liquid
   scope, the header is compact, and the no-budget state is no longer duplicated.

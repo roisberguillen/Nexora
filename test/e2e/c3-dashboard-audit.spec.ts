@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 
 test("C3.3 Dashboard: stato vuoto, dati reali e responsive senza overflow", async ({ page }) => {
   await page.goto("/#overview");
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+  ).toBeVisible();
   await expect(page.getByText("Panoramica finanziaria", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Il ledger è pronto per i primi dati" }),
@@ -52,7 +54,9 @@ test("C3.3 Dashboard: zoom 200% mantiene contenuto prioritario e azioni", async 
     width: Math.floor(width / 2),
   });
   await page.goto("/#overview");
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
 

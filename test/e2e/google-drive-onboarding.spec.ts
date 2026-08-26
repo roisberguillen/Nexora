@@ -25,7 +25,9 @@ test("Google Drive resta opzionale: non appare all'avvio e si collega solo da Ba
   );
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
+  ).toBeVisible();
   await expect(page.getByRole("dialog", { name: "Collega il tuo account Google" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Collega Google Drive" })).toHaveCount(0);
 

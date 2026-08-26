@@ -42,8 +42,12 @@ describe("Nexora app", () => {
     render(<App ledgerPromise={Promise.resolve(browserLedger("indexeddb"))} />);
 
     expect(
-      await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
+      await screen.findByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
     ).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(
+      screen.queryByRole("heading", { name: "Il tuo quadro finanziario" }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Stato archivio")).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
@@ -61,7 +65,7 @@ describe("Nexora app", () => {
     render(<App ledgerPromise={Promise.resolve(browserLedger("indexeddb"))} />);
 
     expect(
-      await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
+      await screen.findByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("dialog", { name: "Collega il tuo account Google" }),
@@ -221,7 +225,7 @@ describe("Nexora app", () => {
 
     await user.click(screen.getByRole("link", { name: "Panoramica" }));
     expect(
-      await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
+      await screen.findByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Riepilogo finanziario")).toHaveTextContent("0,00 €");
   }, 15_000);

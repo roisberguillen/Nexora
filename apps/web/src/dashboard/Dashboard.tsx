@@ -23,7 +23,7 @@ export function Dashboard({
       <header className="dashboard-heading">
         <div>
           <p className="eyebrow">{model.periodLabel}</p>
-          <h1 aria-label="Il tuo quadro finanziario">Panoramica finanziaria</h1>
+          <h1>Panoramica finanziaria</h1>
         </div>
         <span className={`month-status is-${model.monthStatus.toLowerCase().replaceAll(" ", "-")}`}>
           {model.monthStatus}
