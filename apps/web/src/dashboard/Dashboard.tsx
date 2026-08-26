@@ -2,6 +2,7 @@ import { DEFAULT_LOCALE } from "@nexora/config";
 import { FinancialAmount, MetricCard } from "@nexora/ui";
 import type { DashboardActivityItem, DashboardViewModel } from "./buildDashboardViewModel";
 import type { TotalResetReport } from "../reset/totalReset";
+import { barSize } from "./trendBar";
 
 interface DashboardProps {
   readonly hasSeedFeedback: boolean;
@@ -21,12 +22,8 @@ export function Dashboard({
     <div id="overview" className="dashboard-page">
       <header className="dashboard-heading">
         <div>
-          <p className="eyebrow">{model.periodLabel} · panoramica mensile</p>
-          <h1>Il tuo quadro finanziario</h1>
-          <p>
-            Il tuo mese in un colpo d’occhio: disponibilità, flussi, budget e prossime uscite dal
-            ledger locale.
-          </p>
+          <p className="eyebrow">{model.periodLabel}</p>
+          <h1 aria-label="Il tuo quadro finanziario">Panoramica finanziaria</h1>
         </div>
         <span className={`month-status is-${model.monthStatus.toLowerCase().replaceAll(" ", "-")}`}>
           {model.monthStatus}
@@ -85,39 +82,15 @@ export function Dashboard({
               <PanelHeading
                 eyebrow="Piano mensile"
                 title="Budget"
-                meta={
-                  model.budget.activeCount ? `${model.budget.activeCount} attivi` : "Nessun budget"
-                }
+                meta={`${model.budget.activeCount} attivi`}
               />
               {model.budget.activeCount ? (
                 <div className="dashboard-budget-content">
-                  <div className="budget-summary-values">
-                    <span>
-                      <small>Spesa attribuita</small>
-                      <FinancialAmount
-                        amountMinor={model.budget.spent.amountMinor}
-                        currency={model.currency}
-                        tone="negative"
-                      />
-                    </span>
-                    <span>
-                      <small>Residuo</small>
-                      <FinancialAmount
-                        amountMinor={model.budget.remaining.amountMinor}
-                        currency={model.currency}
-                        tone={model.budget.remaining.amountMinor < 0n ? "negative" : "positive"}
-                      />
-                    </span>
-                    <span>
-                      <small>Usato</small>
-                      <strong>{formatPercent(model.budget.percentage)}</strong>
-                    </span>
-                  </div>
-                  <progress
-                    max="100"
-                    value={Math.min(model.budget.percentage, 100)}
-                    aria-label={`Budget usato ${formatPercent(model.budget.percentage)}`}
-                  />
+                  <p className="dashboard-budget-status">
+                    {model.budget.attentionCount
+                      ? `${model.budget.attentionCount} richiede attenzione`
+                      : "Tutti i budget sono in linea"}
+                  </p>
                   {model.budget.criticalCategories.length ? (
                     <ul className="dashboard-compact-list">
                       {model.budget.criticalCategories.map((item) => (
@@ -137,9 +110,12 @@ export function Dashboard({
                   </a>
                 </div>
               ) : (
-                <p className="dashboard-muted">
-                  Crea un budget mensile per ricevere uno stato e un residuo affidabili.
-                </p>
+                <div className="dashboard-budget-content">
+                  <p className="dashboard-muted">Budget non configurato.</p>
+                  <a className="text-action" href="#budgets">
+                    Configura budget
+                  </a>
+                </div>
               )}
             </div>
             <div className="data-panel">
@@ -191,6 +167,7 @@ export function Dashboard({
                 role="img"
               >
                 <span
+                  className={model.expenseTrend.current.amountMinor === 0n ? "is-zero" : undefined}
                   style={
                     {
                       "--bar-size": `${barSize(model.expenseTrend.current.amountMinor, model.expenseTrend.previous.amountMinor)}%`,
@@ -200,6 +177,7 @@ export function Dashboard({
                   <small>{model.periodLabel}</small>
                 </span>
                 <span
+                  className={model.expenseTrend.previous.amountMinor === 0n ? "is-zero" : undefined}
                   style={
                     {
                       "--bar-size": `${barSize(model.expenseTrend.previous.amountMinor, model.expenseTrend.current.amountMinor)}%`,
@@ -387,10 +365,6 @@ function formatMoney(amountMinor: bigint, currency: string): string {
 }
 function formatPercent(value: number): string {
   return `${new Intl.NumberFormat(DEFAULT_LOCALE, { maximumFractionDigits: 1 }).format(value)}%`;
-}
-function barSize(current: bigint, previous: bigint): number {
-  const max = current > previous ? current : previous;
-  return max > 0n ? Math.max(8, Number((current * 100n) / max)) : 8;
 }
 function formatLocalDate(value: string): string {
   const [year, month, day] = value.split("-").map(Number);

@@ -1,5 +1,15 @@
 # Decision Log
 
+## 2026-08-26 — Dashboard budget summary is overlap-safe
+
+- **Contesto:** i budget gerarchici possono coprire contemporaneamente una macro categoria e una
+  sua sottocategoria; la stessa transazione può quindi appartenere a entrambi i progressi.
+- **Scelta:** la Dashboard non espone un totale aggregato speso/limite quando i perimetri non sono
+  matematicamente disgiunti. Mostra il numero di budget attivi, lo stato più critico e al massimo
+  tre budget che richiedono attenzione. Il dettaglio Budget resta la fonte dei progressi singoli.
+- **Conseguenze:** nessuna deduplicazione euristica nella UI e nessun rischio di dichiarare una
+  spesa complessiva doppia; lo stato mese continua a usare le soglie dei singoli budget.
+
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
 ## 2026-08-26 — Dashboard mensile e definizione della disponibilità

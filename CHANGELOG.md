@@ -4,6 +4,10 @@
 
 ### Documentation
 
+- Completed Dashboard/Home `12.5.C3.3-R3` hardening: zero-value trend bars no longer imply quantity,
+  overlapping budgets are not aggregated, availability account counts share the same EUR/liquid
+  scope, the header is compact, and the no-budget state is no longer duplicated.
+
 - Corrected Dashboard/Home in `12.5.C3.3-R2`: monthly EUR KPIs, current period/status, liquid
   availability, savings rate, budget progress, recurring upcoming expenses, month-over-month
   trend, top categories and compact recent activity now use real ledger projections.

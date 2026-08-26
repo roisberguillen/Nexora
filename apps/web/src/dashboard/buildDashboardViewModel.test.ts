@@ -1,5 +1,15 @@
 import { createDemoLedgerSeed } from "@nexora/database";
-import { Account, InvestmentPosition, Loan, LocalDate, Money, Transaction } from "@nexora/domain";
+import {
+  Account,
+  Budget,
+  Category,
+  type CreateAccountProps,
+  InvestmentPosition,
+  Loan,
+  LocalDate,
+  Money,
+  Transaction,
+} from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import { buildDashboardViewModel, type DashboardLedgerData } from "./buildDashboardViewModel";
@@ -15,6 +25,54 @@ function demoLedgerData(): DashboardLedgerData {
     ],
     transfers: seed.transfers.map((bundle) => bundle.transfer),
   };
+}
+
+function account(id = "cash", props: Partial<CreateAccountProps> = {}) {
+  return Account.create({
+    id,
+    name: id,
+    type: "checking",
+    currency: "EUR",
+    ...props,
+  });
+}
+
+function transaction(
+  id: string,
+  kind: "income" | "expense",
+  amountMinor: bigint,
+  date = "2026-08-10",
+  categoryId?: string,
+) {
+  return Transaction.create({
+    id,
+    kind,
+    status: "booked",
+    accountId: "cash",
+    amount: Money.fromMinor(kind === "expense" ? -amountMinor : amountMinor, "EUR"),
+    bookedDate: LocalDate.parse(date),
+    ...(categoryId === undefined ? {} : { categoryId }),
+  });
+}
+
+function minimalData(
+  transactions: readonly Transaction[] = [],
+  budgets: readonly Budget[] = [],
+  accounts: readonly Account[] = [account()],
+  categories: readonly Category[] = [],
+): DashboardLedgerData {
+  return { accounts, categories, transactions, transfers: [], budgets };
+}
+
+function budget(id: string, amountMinor = 100_000n, categoryId?: string) {
+  return Budget.create({
+    id,
+    period: "2026-08",
+    amount: Money.fromMinor(amountMinor, "EUR"),
+    ...(categoryId === undefined ? {} : { categoryId }),
+    firstAlertPercentage: 50,
+    secondAlertPercentage: 80,
+  });
 }
 
 describe("buildDashboardViewModel", () => {
@@ -112,6 +170,73 @@ describe("buildDashboardViewModel", () => {
     expect(
       dashboard.accounts.find((account) => account.id === usdAccount.id)?.balance.amountMinor,
     ).toBe(900_719_925_474_099_312_845n);
+  });
+
+  it("conta solo i conti liquidi attivi inclusi nella disponibilità EUR", () => {
+    const accounts = [
+      account("checking", { openingBalance: Money.fromMinor(100_000n, "EUR") }),
+      account("savings", { type: "savings", openingBalance: Money.fromMinor(200_000n, "EUR") }),
+      account("cash", { openingBalance: Money.fromMinor(300_000n, "EUR") }),
+      account("usd", { currency: "USD", openingBalance: Money.fromMinor(900n, "USD") }),
+      account("investment", {
+        type: "investment",
+        openingBalance: Money.fromMinor(500_000n, "EUR"),
+      }),
+      account("loan", { type: "loan", openingBalance: Money.fromMinor(700_000n, "EUR") }),
+      account("archived", { isArchived: true, openingBalance: Money.fromMinor(800_000n, "EUR") }),
+    ];
+    const dashboard = buildDashboardViewModel(minimalData([], [], accounts));
+    expect(dashboard.availableBalance.amountMinor).toBe(600_000n);
+    expect(dashboard.activeLiquidAccountCount).toBe(3);
+  });
+
+  it.each([
+    [120_000n, 40_000n, 80_000n, 66.66],
+    [100_000n, 100_000n, 0n, 0],
+    [40_000n, 120_000n, -80_000n, -200],
+    [0n, 40_000n, -40_000n, undefined],
+  ])("calcola risparmio e tasso senza valori floating o NaN", (income, expense, savings, rate) => {
+    const dashboard = buildDashboardViewModel(
+      minimalData([
+        ...(income === 0n ? [] : [transaction("income", "income", income)]),
+        ...(expense === 0n ? [] : [transaction("expense", "expense", expense)]),
+      ]),
+    );
+    expect(dashboard.savings.amountMinor).toBe(savings);
+    expect(dashboard.savingRatePercent).toBe(rate);
+  });
+
+  it("non aggrega budget con perimetri sovrapposti macro/sottocategoria", () => {
+    const parent = Category.create({ id: "home", name: "Casa", kindScope: "expense" });
+    const child = Category.create({
+      id: "rent",
+      name: "Affitto",
+      kindScope: "expense",
+      parentId: parent.id,
+    });
+    const dashboard = buildDashboardViewModel(
+      minimalData(
+        [transaction("rent-expense", "expense", 60_000n, "2026-08-10", child.id)],
+        [budget("home-budget", 100_000n, parent.id), budget("rent-budget", 50_000n, child.id)],
+        [account()],
+        [parent, child],
+      ),
+    );
+    expect(dashboard.budget.activeCount).toBe(2);
+    expect(dashboard.budget.criticalCategories).toHaveLength(2);
+    expect("spent" in dashboard.budget).toBe(false);
+  });
+
+  it.each([
+    [40_000n, "IN LINEA"],
+    [60_000n, "ATTENZIONE"],
+    [85_000n, "FUORI PIANO"],
+    [110_000n, "FUORI PIANO"],
+  ])("deriva lo stato mese dal budget più critico", (spent, status) => {
+    const dashboard = buildDashboardViewModel(
+      minimalData([transaction("expense", "expense", spent)], [budget("monthly")]),
+    );
+    expect(dashboard.monthStatus).toBe(status);
   });
 
   it("espone separatamente debiti e rendimento degli investimenti", () => {

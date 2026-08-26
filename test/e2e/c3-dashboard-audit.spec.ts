@@ -4,9 +4,11 @@ import { expect, test } from "@playwright/test";
 test("C3.3 Dashboard: stato vuoto, dati reali e responsive senza overflow", async ({ page }) => {
   await page.goto("/#overview");
   await expect(page.getByRole("heading", { name: "Il tuo quadro finanziario" })).toBeVisible();
+  await expect(page.getByText("Panoramica finanziaria", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Il ledger è pronto per i primi dati" }),
   ).toBeVisible();
+  await expect(page.getByText("NESSUN BUDGET", { exact: true })).toHaveCount(1);
 
   const demoButton = page.getByRole("button", { name: "Carica dati dimostrativi" });
   const demoBox = await demoButton.boundingBox();

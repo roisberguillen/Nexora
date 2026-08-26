@@ -68,10 +68,7 @@ export interface DashboardBudgetCategory {
 }
 export interface DashboardBudgetSummary {
   readonly activeCount: number;
-  readonly limit: Money;
-  readonly spent: Money;
-  readonly remaining: Money;
-  readonly percentage: number;
+  readonly attentionCount: number;
   readonly criticalCategories: readonly DashboardBudgetCategory[];
 }
 export interface DashboardUpcomingExpense {
@@ -148,7 +145,10 @@ export function buildDashboardViewModel(
     }),
   }));
   const liquidAccounts = data.accounts.filter(
-    (account) => !account.isArchived && ["checking", "savings", "cash"].includes(account.type),
+    (account) =>
+      !account.isArchived &&
+      account.currency === currency &&
+      ["checking", "savings", "cash"].includes(account.type),
   );
   const savings = cashFlow.net;
   return Object.freeze({
@@ -203,9 +203,7 @@ export function buildDashboardViewModel(
     periodLabel: periodLabel(period),
     monthStatus: monthStatus(progress),
     availableBalance: sum(
-      liquidAccounts
-        .filter((account) => account.currency === currency)
-        .map((account) => calculateAccountBalance(account, data.transactions)),
+      liquidAccounts.map((account) => calculateAccountBalance(account, data.transactions)),
     ),
     activeLiquidAccountCount: liquidAccounts.length,
     savings,
@@ -270,12 +268,8 @@ function monthStatus(
   items: readonly { progress: { status: string } }[],
 ): DashboardViewModel["monthStatus"] {
   if (items.length === 0) return "NESSUN BUDGET";
-  if (
-    items.some(
-      ({ progress }) => progress.status === "critical" || progress.status === "over_budget",
-    )
-  )
-    return "FUORI PIANO";
+  if (items.some(({ progress }) => progress.status === "over_budget")) return "FUORI PIANO";
+  if (items.some(({ progress }) => progress.status === "critical")) return "FUORI PIANO";
   if (items.some(({ progress }) => progress.status === "warning")) return "ATTENZIONE";
   return "IN LINEA";
 }
@@ -284,10 +278,6 @@ function buildBudgetSummary(
   currency: string,
   categories: readonly Category[],
 ): DashboardBudgetSummary {
-  const sum = (values: readonly Money[]) =>
-    values.reduce((total, value) => total.add(value), Money.zero(currency));
-  const limit = sum(items.map(({ progress }) => progress.limit));
-  const spent = sum(items.map(({ progress }) => progress.spent));
   const criticalCategories = items
     .filter(({ progress }) => progress.status !== "normal")
     .map(({ budget, progress }) => ({
@@ -315,11 +305,7 @@ function buildBudgetSummary(
     .slice(0, 3);
   return {
     activeCount: items.length,
-    limit,
-    spent,
-    remaining: limit.subtract(spent),
-    percentage:
-      limit.amountMinor > 0n ? Number((spent.amountMinor * 10_000n) / limit.amountMinor) / 100 : 0,
+    attentionCount: items.filter(({ progress }) => progress.status !== "normal").length,
     criticalCategories,
   };
 }
