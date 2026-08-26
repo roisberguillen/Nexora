@@ -8,7 +8,7 @@ test("il verticale pilota aggiorna dashboard, conti e movimenti dal ledger local
   const navigationLabel = (page.viewportSize()?.width ?? 0) < 900 ? "Home" : "Panoramica";
   await expect(page.getByRole("link", { name: navigationLabel })).toBeVisible();
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
-  await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Spese896,40");
+  await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Spese del mese0,00");
 
   await page.goto("/#accounts");
   await page.getByRole("button", { name: "Nuovo conto" }).click();
@@ -29,7 +29,7 @@ test("il verticale pilota aggiorna dashboard, conti e movimenti dal ledger local
   );
 
   await page.goto("/#overview");
-  await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Spese921,40");
+  await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Spese del mese25,00");
   await expect(page.getByRole("complementary", { name: "Conti" })).toContainText("Fondo progetto");
 
   const dimensions = await page.evaluate(() => ({

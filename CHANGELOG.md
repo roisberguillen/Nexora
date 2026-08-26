@@ -4,6 +4,10 @@
 
 ### Documentation
 
+- Corrected Dashboard/Home in `12.5.C3.3-R2`: monthly EUR KPIs, current period/status, liquid
+  availability, savings rate, budget progress, recurring upcoming expenses, month-over-month
+  trend, top categories and compact recent activity now use real ledger projections.
+
 - Fixed Global Search desktop clear focus regression; the input now retains keyboard focus after clearing the query, with component and E2E coverage.
 - Closed Phase 12.5.C3.4 Accounts/Conti with `SCREEN_AUDIT_PASS`; corrected mobile touch targets and hid invalid delete actions for accounts with activity.
 - Closed Phase 12.5.C3.3 Dashboard/Home with `SCREEN_AUDIT_PASS`; recorded responsive browser

@@ -19,12 +19,28 @@ function demoLedgerData(): DashboardLedgerData {
 
 describe("buildDashboardViewModel", () => {
   it("calcola metriche esatte escludendo trasferimenti e operazioni annullate", () => {
-    const dashboard = buildDashboardViewModel(demoLedgerData());
+    const dashboard = buildDashboardViewModel(
+      demoLedgerData(),
+      "EUR",
+      new Date("2026-07-27T12:00:00+02:00"),
+    );
 
     expect(dashboard.netWorth.amountMinor).toBe(513_360n);
     expect(dashboard.income.amountMinor).toBe(240_000n);
     expect(dashboard.expense.amountMinor).toBe(89_640n);
     expect(dashboard.netCashFlow.amountMinor).toBe(150_360n);
+  });
+
+  it("filtra KPI, risparmio e trend sul mese corrente deterministico", () => {
+    const data = demoLedgerData();
+    const dashboard = buildDashboardViewModel(data, "EUR", new Date("2026-08-26T12:00:00+02:00"));
+    expect(dashboard.period).toBe("2026-08");
+    expect(dashboard.income.amountMinor).toBe(0n);
+    expect(dashboard.expense.amountMinor).toBe(0n);
+    expect(dashboard.savings.amountMinor).toBe(0n);
+    expect(dashboard.savingRatePercent).toBeUndefined();
+    expect(dashboard.expenseTrend.previous.amountMinor).toBe(89_640n);
+    expect(dashboard.monthStatus).toBe("NESSUN BUDGET");
   });
 
   it("collassa le due gambe del trasferimento in una sola attività neutrale", () => {

@@ -16,9 +16,14 @@ test("C3.3 Dashboard: stato vuoto, dati reali e responsive senza overflow", asyn
   await page.keyboard.press("Enter");
 
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
-  await expect(page.getByLabel("Riepilogo finanziario")).toContainText(
-    "Patrimonio locale5.133,60 €",
-  );
+  await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Disponibilità attuale");
+  await expect(page.getByText("Entrate del mese")).toBeVisible();
+  await expect(page.getByText("Spese del mese")).toBeVisible();
+  await expect(page.getByText("Risparmio del mese")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Budget" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Prossime uscite" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Andamento spese" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Spese principali" })).toBeVisible();
   await expect(page.getByText("Trasferimento interno", { exact: true })).toHaveCount(1);
   await expect(page.getByText("Conto quotidiano demo → Riserva demo")).toHaveCount(1);
 

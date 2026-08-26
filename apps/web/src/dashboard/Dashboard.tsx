@@ -1,6 +1,5 @@
 import { DEFAULT_LOCALE } from "@nexora/config";
 import { FinancialAmount, MetricCard } from "@nexora/ui";
-
 import type { DashboardActivityItem, DashboardViewModel } from "./buildDashboardViewModel";
 import type { TotalResetReport } from "../reset/totalReset";
 
@@ -11,7 +10,6 @@ interface DashboardProps {
   readonly onAddDemoData: () => void;
   readonly totalResetReport?: TotalResetReport;
 }
-
 export function Dashboard({
   hasSeedFeedback,
   isSeeding,
@@ -20,25 +18,25 @@ export function Dashboard({
   totalResetReport,
 }: DashboardProps) {
   return (
-    <div id="overview">
+    <div id="overview" className="dashboard-page">
       <header className="dashboard-heading">
         <div>
-          <p className="eyebrow">Panoramica</p>
+          <p className="eyebrow">{model.periodLabel} · panoramica mensile</p>
           <h1>Il tuo quadro finanziario</h1>
           <p>
-            Saldi e flussi vengono calcolati dal ledger locale verificato. I trasferimenti interni
-            non alterano entrate o spese.
+            Il tuo mese in un colpo d’occhio: disponibilità, flussi, budget e prossime uscite dal
+            ledger locale.
           </p>
         </div>
+        <span className={`month-status is-${model.monthStatus.toLowerCase().replaceAll(" ", "-")}`}>
+          {model.monthStatus}
+        </span>
       </header>
-      {totalResetReport === undefined ? null : (
+      {totalResetReport ? (
         <p className="dashboard-feedback" role="status">
           Ripristino locale {totalResetReport.local === "succeeded" ? "riuscito" : "non riuscito"}.
-          Backup Google Drive eliminati: {totalResetReport.cloudDeleted}; rimanenti:{" "}
-          {totalResetReport.cloudRemaining}.
         </p>
-      )}
-
+      ) : null}
       {isDashboardEmpty(model) ? (
         <EmptyDashboard isSeeding={isSeeding} onAddDemoData={onAddDemoData} />
       ) : (
@@ -48,122 +46,233 @@ export function Dashboard({
               Dataset dimostrativo salvato nel dispositivo.
             </p>
           ) : null}
-          <section aria-label="Riepilogo finanziario" className="metrics-grid">
+          <section aria-label="Riepilogo finanziario" className="dashboard-priority-grid">
             <MetricCard
-              amountMinor={model.netWorth.amountMinor}
-              currency={model.netWorth.currency}
+              amountMinor={model.availableBalance.amountMinor}
+              currency={model.availableBalance.currency}
               isFeatured
-              label="Patrimonio locale"
-              supportingText="Saldo complessivo dei conti nella valuta principale"
+              label="Disponibilità attuale"
+              supportingText={`${model.activeLiquidAccountCount} conti attivi · conti correnti, risparmio e contanti`}
             />
             <MetricCard
               amountMinor={model.income.amountMinor}
               currency={model.income.currency}
-              label="Entrate"
-              supportingText="Totale registrato, trasferimenti esclusi"
+              label="Entrate del mese"
+              supportingText="Solo operazioni contabilizzate di questo mese"
               tone="positive"
             />
             <MetricCard
               amountMinor={model.expense.amountMinor}
               currency={model.expense.currency}
-              label="Spese"
-              supportingText="Totale registrato, operazioni annullate escluse"
+              label="Spese del mese"
+              supportingText="Trasferimenti e annullati esclusi"
               tone="negative"
             />
             <MetricCard
-              amountMinor={model.netCashFlow.amountMinor}
-              currency={model.netCashFlow.currency}
-              label="Saldo dei flussi"
-              supportingText="Entrate meno spese nello storico disponibile"
-              tone={model.netCashFlow.amountMinor < 0n ? "negative" : "positive"}
-            />
-            <MetricCard
-              amountMinor={model.loanBalance.amountMinor}
-              currency={model.loanBalance.currency}
-              label="Debiti residui"
-              supportingText="Capitale residuo dei prestiti registrati"
-              tone="negative"
-            />
-            <MetricCard
-              amountMinor={model.investmentValue.amountMinor}
-              currency={model.investmentValue.currency}
-              label="Investimenti"
-              supportingText={`Rendimento ${model.investmentGainLoss.amountMinor < 0n ? "negativo" : "positivo"}`}
-              tone={model.investmentGainLoss.amountMinor < 0n ? "negative" : "positive"}
+              amountMinor={model.savings.amountMinor}
+              currency={model.savings.currency}
+              label="Risparmio del mese"
+              supportingText={
+                model.savingRatePercent === undefined
+                  ? "Tasso non disponibile senza entrate"
+                  : `Tasso di risparmio ${formatPercent(model.savingRatePercent)}`
+              }
+              tone={model.savings.amountMinor < 0n ? "negative" : "positive"}
             />
           </section>
-
-          {model.excludedCurrencyAccountCount > 0 ? (
-            <p className="currency-notice" role="note">
-              {model.excludedCurrencyAccountCount}{" "}
-              {model.excludedCurrencyAccountCount === 1
-                ? "conto in altra valuta è escluso"
-                : "conti in altre valute sono esclusi"}{" "}
-              dal patrimonio {model.currency}: Nexora non applica cambi impliciti.
-            </p>
-          ) : null}
-
-          <div className="dashboard-grid">
-            <RecentActivity activity={model.activity} />
-            <AccountOverview model={model} />
-          </div>
+          <section aria-labelledby="budget-title" className="dashboard-decision-grid">
+            <div className="data-panel dashboard-budget-panel">
+              <PanelHeading
+                eyebrow="Piano mensile"
+                title="Budget"
+                meta={
+                  model.budget.activeCount ? `${model.budget.activeCount} attivi` : "Nessun budget"
+                }
+              />
+              {model.budget.activeCount ? (
+                <div className="dashboard-budget-content">
+                  <div className="budget-summary-values">
+                    <span>
+                      <small>Spesa attribuita</small>
+                      <FinancialAmount
+                        amountMinor={model.budget.spent.amountMinor}
+                        currency={model.currency}
+                        tone="negative"
+                      />
+                    </span>
+                    <span>
+                      <small>Residuo</small>
+                      <FinancialAmount
+                        amountMinor={model.budget.remaining.amountMinor}
+                        currency={model.currency}
+                        tone={model.budget.remaining.amountMinor < 0n ? "negative" : "positive"}
+                      />
+                    </span>
+                    <span>
+                      <small>Usato</small>
+                      <strong>{formatPercent(model.budget.percentage)}</strong>
+                    </span>
+                  </div>
+                  <progress
+                    max="100"
+                    value={Math.min(model.budget.percentage, 100)}
+                    aria-label={`Budget usato ${formatPercent(model.budget.percentage)}`}
+                  />
+                  {model.budget.criticalCategories.length ? (
+                    <ul className="dashboard-compact-list">
+                      {model.budget.criticalCategories.map((item) => (
+                        <li key={item.id}>
+                          <span>{item.label}</span>
+                          <strong>
+                            {formatPercent(item.percentage)} · {item.status}
+                          </strong>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="dashboard-muted">Nessuna categoria oltre soglia.</p>
+                  )}
+                  <a className="text-action" href="#budgets">
+                    Vedi budget
+                  </a>
+                </div>
+              ) : (
+                <p className="dashboard-muted">
+                  Crea un budget mensile per ricevere uno stato e un residuo affidabili.
+                </p>
+              )}
+            </div>
+            <div className="data-panel">
+              <PanelHeading
+                eyebrow="Previsioni registrate"
+                title="Prossime uscite"
+                meta={`${model.upcomingExpenses.length}`}
+              />
+              {model.upcomingExpenses.length ? (
+                <ul className="dashboard-compact-list upcoming-list">
+                  {model.upcomingExpenses.map((item) => (
+                    <li key={item.id}>
+                      <span>
+                        <strong>{item.name}</strong>
+                        <small>
+                          {formatLocalDate(item.expectedDate)} · tra {item.daysUntil} giorni
+                        </small>
+                      </span>
+                      <FinancialAmount
+                        amountMinor={item.amount.amountMinor}
+                        currency={item.amount.currency}
+                        tone="negative"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="dashboard-muted">
+                  Nessuna ricorrenza in scadenza. Le uscite derivano solo da ricorrenze attive.
+                </p>
+              )}
+            </div>
+          </section>
+          <section aria-labelledby="trend-title" className="dashboard-analytics-grid">
+            <div className="data-panel">
+              <PanelHeading
+                eyebrow="Confronto"
+                title="Andamento spese"
+                meta={
+                  model.expenseTrend.differencePercent === undefined
+                    ? "Base non disponibile"
+                    : `${formatPercent(Math.abs(model.expenseTrend.differencePercent))}`
+                }
+              />
+              <p className="trend-copy">{trendText(model)}</p>
+              <div
+                className="trend-bars"
+                aria-label="Confronto spese mese corrente e precedente"
+                role="img"
+              >
+                <span
+                  style={
+                    {
+                      "--bar-size": `${barSize(model.expenseTrend.current.amountMinor, model.expenseTrend.previous.amountMinor)}%`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <small>{model.periodLabel}</small>
+                </span>
+                <span
+                  style={
+                    {
+                      "--bar-size": `${barSize(model.expenseTrend.previous.amountMinor, model.expenseTrend.current.amountMinor)}%`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <small>Mese scorso</small>
+                </span>
+              </div>
+            </div>
+            <div className="data-panel">
+              <PanelHeading eyebrow="Dove spendi" title="Spese principali" meta="Top 3" />
+              {model.topExpenseCategories.length ? (
+                <ul className="dashboard-compact-list">
+                  {model.topExpenseCategories.map((item) => (
+                    <li key={item.id}>
+                      <span>{item.label}</span>
+                      <strong>
+                        <FinancialAmount
+                          amountMinor={item.amount.amountMinor}
+                          currency={item.amount.currency}
+                          tone="negative"
+                        />
+                        <small>{formatPercent(item.percentageOfExpenses)}</small>
+                      </strong>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="dashboard-muted">Nessuna spesa contabilizzata nel mese.</p>
+              )}
+            </div>
+          </section>
+          <RecentActivity activity={model.activity} />
+          <AccountOverview model={model} />
         </>
       )}
     </div>
   );
 }
-
-interface EmptyDashboardProps {
-  readonly isSeeding: boolean;
-  readonly onAddDemoData: () => void;
-}
-
-function EmptyDashboard({ isSeeding, onAddDemoData }: EmptyDashboardProps) {
+function PanelHeading({
+  eyebrow,
+  title,
+  meta,
+}: {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly meta: string;
+}) {
   return (
-    <section aria-labelledby="empty-dashboard-title" className="empty-dashboard">
-      <span aria-hidden="true" className="empty-dashboard-mark">
-        N
-      </span>
+    <div className="panel-heading">
       <div>
-        <p className="eyebrow">Archivio verificato</p>
-        <h2 id="empty-dashboard-title">Il ledger è pronto per i primi dati</h2>
-        <p>
-          Nessun dato è stato inserito automaticamente. Puoi usare un dataset interamente sintetico
-          per esplorare la dashboard.
-        </p>
-        <button
-          className="primary-action"
-          disabled={isSeeding}
-          onClick={onAddDemoData}
-          type="button"
-        >
-          {isSeeding ? "Creazione dati demo…" : "Carica dati dimostrativi"}
-        </button>
+        <p className="eyebrow">{eyebrow}</p>
+        <h2>{title}</h2>
       </div>
-    </section>
+      <span className="panel-meta">{meta}</span>
+    </div>
   );
 }
-
 function RecentActivity({ activity }: { readonly activity: readonly DashboardActivityItem[] }) {
   return (
     <section aria-labelledby="activity-title" className="data-panel activity-panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow">Ledger</p>
-          <h2 id="activity-title">Movimenti recenti</h2>
-        </div>
-        <span className="panel-meta">Ultimi {activity.length}</span>
-      </div>
+      <PanelHeading eyebrow="Ledger" title="Movimenti recenti" meta={`Ultimi ${activity.length}`} />
       <div className="activity-table-wrap">
         <table className="activity-table">
           <caption className="sr-only">Ultimi movimenti registrati nel ledger</caption>
           <thead>
             <tr>
-              <th scope="col">Operazione</th>
-              <th scope="col">Categoria</th>
-              <th scope="col">Conto</th>
-              <th scope="col">Data</th>
-              <th scope="col">Importo</th>
+              <th>Operazione</th>
+              <th>Categoria</th>
+              <th>Conto</th>
+              <th>Data</th>
+              <th>Importo</th>
             </tr>
           </thead>
           <tbody>
@@ -191,20 +300,17 @@ function RecentActivity({ activity }: { readonly activity: readonly DashboardAct
           </tbody>
         </table>
       </div>
+      <a className="text-action dashboard-more-action" href="#transactions">
+        Vedi tutti i movimenti
+      </a>
     </section>
   );
 }
 
 function AccountOverview({ model }: { readonly model: DashboardViewModel }) {
   return (
-    <aside aria-labelledby="accounts-title" className="data-panel accounts-panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow">Disponibilità</p>
-          <h2 id="accounts-title">Conti</h2>
-        </div>
-        <span className="panel-meta">{model.counts.accounts}</span>
-      </div>
+    <aside aria-label="Conti" className="data-panel accounts-panel dashboard-accounts-secondary">
+      <PanelHeading eyebrow="Disponibilità" title="Conti" meta={String(model.counts.accounts)} />
       <ul className="account-list">
         {model.accounts.map((account) => (
           <li key={account.id}>
@@ -214,11 +320,9 @@ function AccountOverview({ model }: { readonly model: DashboardViewModel }) {
             <span className="account-copy">
               <strong>{account.name}</strong>
               <small>
-                {account.institution === undefined
-                  ? account.typeLabel
-                  : `${account.typeLabel} · ${account.institution}`}
+                {account.typeLabel}
+                {account.institution === undefined ? "" : ` · ${account.institution}`}
               </small>
-              {account.isArchived ? <span className="archived-badge">Archiviato</span> : null}
             </span>
             <FinancialAmount
               amountMinor={account.balance.amountMinor}
@@ -232,7 +336,62 @@ function AccountOverview({ model }: { readonly model: DashboardViewModel }) {
     </aside>
   );
 }
-
+function EmptyDashboard({
+  isSeeding,
+  onAddDemoData,
+}: {
+  readonly isSeeding: boolean;
+  readonly onAddDemoData: () => void;
+}) {
+  return (
+    <section aria-labelledby="empty-dashboard-title" className="empty-dashboard">
+      <span aria-hidden="true" className="empty-dashboard-mark">
+        N
+      </span>
+      <div>
+        <p className="eyebrow">Archivio verificato</p>
+        <h2 id="empty-dashboard-title">Il ledger è pronto per i primi dati</h2>
+        <p>
+          Nessun dato è stato inserito automaticamente. Puoi usare un dataset interamente sintetico
+          per esplorare la dashboard.
+        </p>
+        <button
+          className="primary-action"
+          disabled={isSeeding}
+          onClick={onAddDemoData}
+          type="button"
+        >
+          {isSeeding ? "Creazione dati demo…" : "Carica dati dimostrativi"}
+        </button>
+      </div>
+    </section>
+  );
+}
+function trendText(model: DashboardViewModel): string {
+  const amount = model.expenseTrend.difference.amountMinor;
+  if (amount === 0n) return "Hai speso quanto il mese scorso.";
+  const formatted = formatMoney(
+    model.expenseTrend.difference.amountMinor < 0n
+      ? -model.expenseTrend.difference.amountMinor
+      : model.expenseTrend.difference.amountMinor,
+    model.currency,
+  );
+  return amount < 0n
+    ? `Hai speso ${formatted} meno del mese scorso.`
+    : `Hai speso ${formatted} in più rispetto al mese scorso.`;
+}
+function formatMoney(amountMinor: bigint, currency: string): string {
+  return new Intl.NumberFormat(DEFAULT_LOCALE, { style: "currency", currency }).format(
+    Number(amountMinor) / 100,
+  );
+}
+function formatPercent(value: number): string {
+  return `${new Intl.NumberFormat(DEFAULT_LOCALE, { maximumFractionDigits: 1 }).format(value)}%`;
+}
+function barSize(current: bigint, previous: bigint): number {
+  const max = current > previous ? current : previous;
+  return max > 0n ? Math.max(8, Number((current * 100n) / max)) : 8;
+}
 function formatLocalDate(value: string): string {
   const [year, month, day] = value.split("-").map(Number);
   return new Intl.DateTimeFormat(DEFAULT_LOCALE, {
@@ -242,7 +401,6 @@ function formatLocalDate(value: string): string {
     year: "numeric",
   }).format(new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, day ?? 1)));
 }
-
 function isDashboardEmpty(model: DashboardViewModel): boolean {
   return (
     model.counts.accounts === 0 && model.counts.transactions === 0 && model.counts.transfers === 0

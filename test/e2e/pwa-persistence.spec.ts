@@ -57,7 +57,7 @@ async function expectReadyLedger(page: Page): Promise<void> {
 async function expectSeedCounts(page: Page, netWorth: string): Promise<void> {
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
   await expect(page.getByLabel("Riepilogo finanziario")).toContainText(
-    `Patrimonio locale${netWorth} €`,
+    `Disponibilità attuale${netWorth} €`,
   );
   const accounts = page.getByRole("complementary", { name: "Conti" });
   await expect(accounts).toContainText("Conto quotidiano demo");

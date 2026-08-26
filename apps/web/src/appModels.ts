@@ -86,9 +86,12 @@ export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
     dashboardModel = buildDashboardViewModel({
       accounts,
       categories,
+      budgets,
       loans,
       investmentPositions,
+      recurringRules,
       transactions,
+      transactionSplits,
       transfers,
     });
   } catch (cause) {

@@ -121,15 +121,17 @@ describe("Nexora app", () => {
       "Dataset dimostrativo salvato nel dispositivo.",
     );
     const metrics = screen.getByLabelText("Riepilogo finanziario");
-    expect(within(metrics).getByText("Patrimonio locale").closest("article")).toHaveTextContent(
+    expect(within(metrics).getByText("Disponibilità attuale").closest("article")).toHaveTextContent(
       "5.133,60 €",
     );
-    expect(within(metrics).getByText("Entrate").closest("article")).toHaveTextContent(
-      "+2.400,00 €",
+    expect(within(metrics).getByText("Entrate del mese").closest("article")).toHaveTextContent(
+      "0,00 €",
     );
-    expect(within(metrics).getByText("Spese").closest("article")).toHaveTextContent("896,40 €");
-    expect(within(metrics).getByText("Saldo dei flussi").closest("article")).toHaveTextContent(
-      "+1.503,60 €",
+    expect(within(metrics).getByText("Spese del mese").closest("article")).toHaveTextContent(
+      "0,00 €",
+    );
+    expect(within(metrics).getByText("Risparmio del mese").closest("article")).toHaveTextContent(
+      "0,00 €",
     );
 
     expect(screen.getByText("Conto quotidiano demo → Riserva demo")).toBeInTheDocument();
@@ -221,6 +223,6 @@ describe("Nexora app", () => {
     expect(
       await screen.findByRole("heading", { name: "Il tuo quadro finanziario" }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Riepilogo finanziario")).toHaveTextContent("150,00 €");
+    expect(screen.getByLabelText("Riepilogo finanziario")).toHaveTextContent("0,00 €");
   }, 15_000);
 });

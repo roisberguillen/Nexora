@@ -1,4 +1,4 @@
-# 12.5.C3.3 — Dashboard/Home Mobile/Desktop audit
+# 12.5.C3.3-R2 — Dashboard/Home monthly financial overview correction
 
 Framework: `docs/ux/C3_SCREEN_AUDIT_FRAMEWORK.md`
 Template: `.codex/templates/c3-screen-audit.md`
@@ -7,15 +7,25 @@ Manifest: `nexora-ui-ux-mobile-desktop/v2`
 Surface: Dashboard/Home
 Schermata: Dashboard / Home
 Route/contenitore: `#overview`
-Task/Fase: 12.5.C3.3
+Task/Fase: 12.5.C3.3-R2
 Branch: `codex/phase-12-5-0-checkpoint`
-Data: 2026-08-24
+Data: 2026-08-26
 Revisore: Codex — UI/UX + QA
 Result: `SCREEN_AUDIT_PASS`
 Esito: UI_REVIEW_PASS
 Route: `#overview`; nessuna route nuova
 Flusso principale: ingresso → stato vuoto → dati demo sintetici → riepilogo → movimenti/conti
 Viewport applicabili: 320, 375, 390, 768, 1024, 1440 px; zoom 200%; keyboard-only; touch >=44×44 px
+Code review: PASS
+Code review evidence: Dashboard and ViewModel inspected for real monthly projections and domain invariants.
+Automated browser verification: PASS
+Automated browser evidence: Playwright C3 dashboard suite passed on six Chromium viewport projects with axe and overflow checks.
+Visual browser verification: PASS
+Visual browser route/surface: Rendered `#overview` populated state in the production preview.
+Visual browser viewports: 320, 375, 390, 768, 1024, 1440 px; 200% zoom.
+Visual browser interactions: Empty CTA via keyboard, demo seed, navigation links and responsive reflow verified.
+Visual browser evidence: The rendered hierarchy begins with month/status and liquid availability, followed by monthly KPIs, budget, recurring expenses, trend and categories.
+Visual browser screenshots: `test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png` plus Playwright artifacts for the six viewport runs.
 
 ## Scope e implementazione reale
 

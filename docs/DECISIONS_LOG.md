@@ -2,6 +2,19 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-08-26 — Dashboard mensile e definizione della disponibilità
+
+- **Contesto:** la Dashboard precedente mostrava flussi sull'intero storico e mescolava
+  patrimonio, debiti e investimenti nella fascia primaria.
+- **Scelta:** la Dashboard usa il mese locale `Europe/Rome` come periodo di riferimento; entrate,
+  spese, risparmio, tasso e confronto usano soltanto transazioni contabilizzate del mese corrente
+  e precedente. La disponibilità è la somma dei saldi EUR dei conti attivi `checking`, `savings` e
+  `cash`. `investment`, `loan` e `virtual_subaccount` sono esclusi: per i sottoconti manca ancora
+  una regola di dominio che garantisca l'assenza di doppio conteggio con il conto padre.
+- **Conseguenze:** il ViewModel resta puro e deterministico con `today` iniettato nei test; budget,
+  soglie, gerarchie e split riusano i servizi di dominio esistenti. “Disponibile fino a fine mese”
+  resta rinviato perché non esiste una previsione di cassa formalizzata.
+
 ## 2026-08-13 — Import CSV investimento rimosso finché non esiste un batch atomico
 
 - **Contesto:** la pagina Investimenti conteneva un parser CSV locale con split delimitatore,

@@ -9,9 +9,10 @@ test("la dashboard sintetica è accessibile e responsive", async ({ page }) => {
 
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
-  await expect(page.getByLabel("Riepilogo finanziario")).toContainText(
-    "Patrimonio locale5.133,60 €",
-  );
+  await expect(page.getByLabel("Riepilogo finanziario")).toContainText("Disponibilità attuale");
+  await expect(page.getByText("Entrate del mese")).toBeVisible();
+  await expect(page.getByText("Spese del mese")).toBeVisible();
+  await expect(page.getByText("Risparmio del mese")).toBeVisible();
   await expect(page.getByText("Conto quotidiano demo → Riserva demo")).toHaveCount(1);
 
   const dimensions = await page.evaluate(() => ({

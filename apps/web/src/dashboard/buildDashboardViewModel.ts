@@ -1,20 +1,27 @@
 import {
   calculateAccountBalance,
+  calculateBudgetProgress,
   calculateTotalBalance,
+  categoryLabel,
   Money,
+  resolveActiveBudgetsForPeriod,
   summarizeCashFlow,
   type Account,
+  type Budget,
   type Category,
-  type Loan,
   type InvestmentPosition,
+  type Loan,
+  type RecurringRule,
   type Transaction,
   type TransactionKind,
+  type TransactionSplit,
   type TransactionStatus,
   type Transfer,
 } from "@nexora/domain";
 
 const defaultCurrency = "EUR";
-const recentActivityLimit = 6;
+const recentActivityLimit = 5;
+const dashboardTimeZone = "Europe/Rome";
 
 export interface DashboardLedgerData {
   readonly accounts: readonly Account[];
@@ -23,15 +30,17 @@ export interface DashboardLedgerData {
   readonly transfers: readonly Transfer[];
   readonly loans?: readonly Loan[];
   readonly investmentPositions?: readonly InvestmentPosition[];
+  readonly budgets?: readonly Budget[];
+  readonly recurringRules?: readonly RecurringRule[];
+  readonly transactionSplits?: readonly TransactionSplit[];
 }
-
 export interface DashboardCounts {
   readonly accounts: number;
   readonly categories: number;
   readonly transactions: number;
   readonly transfers: number;
 }
-
+export type DashboardActivityTone = "negative" | "neutral" | "positive";
 export interface DashboardAccountItem {
   readonly balance: Money;
   readonly id: string;
@@ -40,9 +49,6 @@ export interface DashboardAccountItem {
   readonly name: string;
   readonly typeLabel: string;
 }
-
-export type DashboardActivityTone = "negative" | "neutral" | "positive";
-
 export interface DashboardActivityItem {
   readonly accountLabel: string;
   readonly amount: Money;
@@ -54,7 +60,39 @@ export interface DashboardActivityItem {
   readonly title: string;
   readonly tone: DashboardActivityTone;
 }
-
+export interface DashboardBudgetCategory {
+  readonly id: string;
+  readonly label: string;
+  readonly percentage: number;
+  readonly status: string;
+}
+export interface DashboardBudgetSummary {
+  readonly activeCount: number;
+  readonly limit: Money;
+  readonly spent: Money;
+  readonly remaining: Money;
+  readonly percentage: number;
+  readonly criticalCategories: readonly DashboardBudgetCategory[];
+}
+export interface DashboardUpcomingExpense {
+  readonly id: string;
+  readonly name: string;
+  readonly amount: Money;
+  readonly expectedDate: string;
+  readonly daysUntil: number;
+}
+export interface DashboardExpenseTrend {
+  readonly current: Money;
+  readonly previous: Money;
+  readonly difference: Money;
+  readonly differencePercent: number | undefined;
+}
+export interface DashboardCategorySummary {
+  readonly id: string;
+  readonly label: string;
+  readonly amount: Money;
+  readonly percentageOfExpenses: number;
+}
 export interface DashboardViewModel {
   readonly accounts: readonly DashboardAccountItem[];
   readonly activity: readonly DashboardActivityItem[];
@@ -68,20 +106,51 @@ export interface DashboardViewModel {
   readonly loanBalance: Money;
   readonly investmentValue: Money;
   readonly investmentGainLoss: Money;
+  readonly period: string;
+  readonly periodLabel: string;
+  readonly monthStatus: "IN LINEA" | "ATTENZIONE" | "FUORI PIANO" | "NESSUN BUDGET";
+  readonly availableBalance: Money;
+  readonly activeLiquidAccountCount: number;
+  readonly savings: Money;
+  readonly savingRatePercent: number | undefined;
+  readonly budget: DashboardBudgetSummary;
+  readonly upcomingExpenses: readonly DashboardUpcomingExpense[];
+  readonly expenseTrend: DashboardExpenseTrend;
+  readonly topExpenseCategories: readonly DashboardCategorySummary[];
 }
 
 export function buildDashboardViewModel(
   data: DashboardLedgerData,
   currency = defaultCurrency,
+  today: Date = new Date(),
 ): DashboardViewModel {
-  const cashFlow = summarizeCashFlow(data.transactions, currency);
+  const period = periodFor(today);
+  const previousPeriod = previousMonth(period);
+  const monthlyTransactions = transactionsForPeriod(data.transactions, period);
+  const cashFlow = summarizeCashFlow(monthlyTransactions, currency);
+  const previousCashFlow = summarizeCashFlow(
+    transactionsForPeriod(data.transactions, previousPeriod),
+    currency,
+  );
   const accountById = new Map(data.accounts.map((account) => [account.id, account]));
   const categoryById = new Map(data.categories.map((category) => [category.id, category]));
-  const loans = data.loans ?? [];
-  const positions = data.investmentPositions ?? [];
   const sum = (values: readonly Money[]) =>
     values.reduce((total, value) => total.add(value), Money.zero(currency));
-
+  const splits = data.transactionSplits ?? [];
+  const progress = resolveActiveBudgetsForPeriod(data.budgets ?? [], period).map((budget) => ({
+    budget,
+    progress: calculateBudgetProgress({
+      budget,
+      targetPeriod: period,
+      categories: data.categories,
+      transactions: data.transactions,
+      splits,
+    }),
+  }));
+  const liquidAccounts = data.accounts.filter(
+    (account) => !account.isArchived && ["checking", "savings", "cash"].includes(account.type),
+  );
+  const savings = cashFlow.net;
   return Object.freeze({
     accounts: Object.freeze(
       data.accounts
@@ -113,26 +182,241 @@ export function buildDashboardViewModel(
       .length,
     expense: cashFlow.expense,
     income: cashFlow.income,
-    netCashFlow: cashFlow.net,
+    netCashFlow: savings,
     netWorth: calculateTotalBalance(data.accounts, data.transactions, currency),
     loanBalance: sum(
-      loans
+      (data.loans ?? [])
         .filter((loan) => loan.remainingPrincipal.currency === currency)
         .map((loan) => loan.remainingPrincipal),
     ),
     investmentValue: sum(
-      positions
+      (data.investmentPositions ?? [])
         .filter((position) => position.currentValue.currency === currency)
         .map((position) => position.currentValue),
     ),
     investmentGainLoss: sum(
-      positions
+      (data.investmentPositions ?? [])
         .filter((position) => position.currentValue.currency === currency)
         .map((position) => position.gainLoss()),
+    ),
+    period,
+    periodLabel: periodLabel(period),
+    monthStatus: monthStatus(progress),
+    availableBalance: sum(
+      liquidAccounts
+        .filter((account) => account.currency === currency)
+        .map((account) => calculateAccountBalance(account, data.transactions)),
+    ),
+    activeLiquidAccountCount: liquidAccounts.length,
+    savings,
+    savingRatePercent:
+      cashFlow.income.amountMinor > 0n
+        ? Number((savings.amountMinor * 10_000n) / cashFlow.income.amountMinor) / 100
+        : undefined,
+    budget: buildBudgetSummary(progress, currency, data.categories),
+    upcomingExpenses: buildUpcomingExpenses(data.recurringRules ?? [], today, currency),
+    expenseTrend: {
+      current: cashFlow.expense,
+      previous: previousCashFlow.expense,
+      difference: cashFlow.expense.subtract(previousCashFlow.expense),
+      differencePercent:
+        previousCashFlow.expense.amountMinor > 0n
+          ? Number(
+              (cashFlow.expense.subtract(previousCashFlow.expense).amountMinor * 10_000n) /
+                previousCashFlow.expense.amountMinor,
+            ) / 100
+          : undefined,
+    },
+    topExpenseCategories: buildTopCategories(
+      monthlyTransactions,
+      splits,
+      data.categories,
+      currency,
     ),
   });
 }
 
+function periodFor(today: Date): string {
+  const parts = new Intl.DateTimeFormat("en", {
+    timeZone: dashboardTimeZone,
+    year: "numeric",
+    month: "2-digit",
+  }).formatToParts(today);
+  return `${parts.find((part) => part.type === "year")?.value}-${parts.find((part) => part.type === "month")?.value}`;
+}
+function previousMonth(period: string): string {
+  const [rawYear, rawMonth] = period.split("-").map(Number);
+  const year = rawYear ?? 1970;
+  const month = rawMonth ?? 1;
+  return month === 1 ? `${year - 1}-12` : `${year}-${String(month - 1).padStart(2, "0")}`;
+}
+function periodLabel(period: string): string {
+  const [rawYear, rawMonth] = period.split("-").map(Number);
+  const year = rawYear ?? 1970;
+  const month = rawMonth ?? 1;
+  return new Intl.DateTimeFormat("it-IT", { month: "long", year: "numeric", timeZone: "UTC" })
+    .format(new Date(Date.UTC(year, month - 1, 1)))
+    .replace(/^./, (letter) => letter.toUpperCase());
+}
+function transactionsForPeriod(
+  transactions: readonly Transaction[],
+  period: string,
+): Transaction[] {
+  return transactions.filter(
+    (transaction) => transaction.bookedDate.toString().slice(0, 7) === period,
+  );
+}
+function monthStatus(
+  items: readonly { progress: { status: string } }[],
+): DashboardViewModel["monthStatus"] {
+  if (items.length === 0) return "NESSUN BUDGET";
+  if (
+    items.some(
+      ({ progress }) => progress.status === "critical" || progress.status === "over_budget",
+    )
+  )
+    return "FUORI PIANO";
+  if (items.some(({ progress }) => progress.status === "warning")) return "ATTENZIONE";
+  return "IN LINEA";
+}
+function buildBudgetSummary(
+  items: readonly { budget: Budget; progress: ReturnType<typeof calculateBudgetProgress> }[],
+  currency: string,
+  categories: readonly Category[],
+): DashboardBudgetSummary {
+  const sum = (values: readonly Money[]) =>
+    values.reduce((total, value) => total.add(value), Money.zero(currency));
+  const limit = sum(items.map(({ progress }) => progress.limit));
+  const spent = sum(items.map(({ progress }) => progress.spent));
+  const criticalCategories = items
+    .filter(({ progress }) => progress.status !== "normal")
+    .map(({ budget, progress }) => ({
+      id: budget.id,
+      label:
+        budget.categoryId === undefined
+          ? "Tutte le categorie"
+          : categoryLabel(
+              categories.find((category) => category.id === budget.categoryId) ?? {
+                id: budget.categoryId,
+                name: "Categoria",
+                parentId: undefined,
+              },
+              categories,
+            ),
+      percentage: progress.percentage,
+      status:
+        progress.status === "over_budget"
+          ? "FUORI BUDGET"
+          : progress.status === "critical"
+            ? "CRITICO"
+            : "ATTENZIONE",
+    }))
+    .sort((left, right) => right.percentage - left.percentage)
+    .slice(0, 3);
+  return {
+    activeCount: items.length,
+    limit,
+    spent,
+    remaining: limit.subtract(spent),
+    percentage:
+      limit.amountMinor > 0n ? Number((spent.amountMinor * 10_000n) / limit.amountMinor) / 100 : 0,
+    criticalCategories,
+  };
+}
+function buildUpcomingExpenses(
+  rules: readonly RecurringRule[],
+  today: Date,
+  currency: string,
+): DashboardUpcomingExpense[] {
+  const todayDate = new Intl.DateTimeFormat("en-CA", {
+    timeZone: dashboardTimeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(today);
+  return rules
+    .filter(
+      (rule) =>
+        rule.enabled &&
+        rule.kind === "expense" &&
+        rule.amount.currency === currency &&
+        rule.nextExpectedDate.toString() > todayDate,
+    )
+    .map((rule) => ({
+      id: rule.id,
+      name: rule.name,
+      amount: rule.amount.negate(),
+      expectedDate: rule.nextExpectedDate.toString(),
+      daysUntil: daysBetween(todayDate, rule.nextExpectedDate.toString()),
+    }))
+    .sort(
+      (left, right) =>
+        left.expectedDate.localeCompare(right.expectedDate) || left.id.localeCompare(right.id),
+    )
+    .slice(0, 3);
+}
+function daysBetween(from: string, to: string): number {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
+}
+function buildTopCategories(
+  transactions: readonly Transaction[],
+  splits: readonly TransactionSplit[],
+  categories: readonly Category[],
+  currency: string,
+): DashboardCategorySummary[] {
+  const splitByTransaction = new Map<string, TransactionSplit[]>();
+  for (const split of splits)
+    splitByTransaction.set(split.transactionId, [
+      ...(splitByTransaction.get(split.transactionId) ?? []),
+      split,
+    ]);
+  const totals = new Map<string, Money>();
+  let total = Money.zero(currency);
+  for (const transaction of transactions) {
+    if (
+      transaction.kind !== "expense" ||
+      !transaction.affectsIncomeExpense() ||
+      transaction.amount.currency !== currency
+    )
+      continue;
+    const rows = splitByTransaction.get(transaction.id);
+    const amounts = rows?.length
+      ? rows.map((row) => ({ id: row.categoryId, amount: row.amount.negate() }))
+      : [{ id: transaction.categoryId ?? "uncategorized", amount: transaction.amount.negate() }];
+    for (const item of amounts) {
+      total = total.add(item.amount);
+      totals.set(item.id, (totals.get(item.id) ?? Money.zero(currency)).add(item.amount));
+    }
+  }
+  return [...totals.entries()]
+    .map(([id, amount]) => ({
+      id,
+      label:
+        id === "uncategorized"
+          ? "Senza categoria"
+          : categoryLabel(
+              categories.find((category) => category.id === id) ?? {
+                id,
+                name: "Categoria",
+                parentId: undefined,
+              },
+              categories,
+            ),
+      amount,
+      percentageOfExpenses:
+        total.amountMinor > 0n
+          ? Number((amount.amountMinor * 10_000n) / total.amountMinor) / 100
+          : 0,
+    }))
+    .sort((left, right) =>
+      right.amount.amountMinor === left.amount.amountMinor
+        ? left.id.localeCompare(right.id)
+        : right.amount.amountMinor > left.amount.amountMinor
+          ? 1
+          : -1,
+    )
+    .slice(0, 3);
+}
 function buildActivity(
   transactions: readonly Transaction[],
   transfers: readonly Transfer[],
@@ -146,19 +430,15 @@ function buildActivity(
   const activity = transactions
     .filter((transaction) => !transferLegIds.has(transaction.id))
     .map((transaction) => transactionActivity(transaction, accountById, categoryById));
-
   for (const transfer of transfers) {
     const debit = transactionById.get(transfer.debitTransactionId);
     const credit = transactionById.get(transfer.creditTransactionId);
-    if (debit === undefined || credit === undefined) {
+    if (debit === undefined || credit === undefined)
       throw new Error("A persisted transfer is missing one or more ledger legs.");
-    }
     activity.push(transferActivity(transfer, debit, credit, accountById));
   }
-
   return activity;
 }
-
 function transactionActivity(
   transaction: Transaction,
   accountById: ReadonlyMap<string, Account>,
@@ -166,8 +446,7 @@ function transactionActivity(
 ): DashboardActivityItem {
   const category =
     transaction.categoryId === undefined ? undefined : categoryById.get(transaction.categoryId);
-
-  return Object.freeze({
+  return {
     accountLabel: accountById.get(transaction.accountId)?.name ?? "Conto non disponibile",
     amount: transaction.amount,
     bookedDate: transaction.bookedDate.value,
@@ -180,20 +459,16 @@ function transactionActivity(
       transaction.description ??
       transactionKindLabel(transaction.kind, transaction.status),
     tone: transactionTone(transaction.kind),
-  });
+  };
 }
-
 function transferActivity(
   transfer: Transfer,
   debit: Transaction,
   credit: Transaction,
   accountById: ReadonlyMap<string, Account>,
 ): DashboardActivityItem {
-  const debitAccount = accountById.get(debit.accountId)?.name ?? "Conto non disponibile";
-  const creditAccount = accountById.get(credit.accountId)?.name ?? "Conto non disponibile";
-
-  return Object.freeze({
-    accountLabel: `${debitAccount} → ${creditAccount}`,
+  return {
+    accountLabel: `${accountById.get(debit.accountId)?.name ?? "Conto non disponibile"} → ${accountById.get(credit.accountId)?.name ?? "Conto non disponibile"}`,
     amount: debit.amount.negate(),
     bookedDate: debit.bookedDate.value,
     categoryLabel: "Trasferimento interno",
@@ -202,72 +477,42 @@ function transferActivity(
     kindLabel: transactionKindLabel("transfer", debit.status),
     title: debit.description ?? "Trasferimento interno",
     tone: "neutral",
-  });
+  };
 }
-
 function compareAccounts(left: DashboardAccountItem, right: DashboardAccountItem): number {
-  if (left.isArchived !== right.isArchived) {
-    return left.isArchived ? 1 : -1;
-  }
+  if (left.isArchived !== right.isArchived) return left.isArchived ? 1 : -1;
   return left.name.localeCompare(right.name, "it-IT");
 }
-
 function compareActivity(left: DashboardActivityItem, right: DashboardActivityItem): number {
   const byDate = right.bookedDate.localeCompare(left.bookedDate);
   return byDate === 0 ? left.id.localeCompare(right.id) : byDate;
 }
-
 function transactionTone(kind: TransactionKind): DashboardActivityTone {
-  if (kind === "income") {
-    return "positive";
-  }
-  if (kind === "expense") {
-    return "negative";
-  }
-  return "neutral";
+  return kind === "income" ? "positive" : kind === "expense" ? "negative" : "neutral";
 }
-
 function transactionKindLabel(kind: TransactionKind, status: TransactionStatus): string {
-  if (status === "cancelled") {
-    return "Annullato";
-  }
-  switch (kind) {
-    case "income":
-      return "Entrata";
-    case "expense":
-      return "Spesa";
-    case "transfer":
-      return "Trasferimento";
-    case "adjustment":
-      return "Rettifica";
-    default:
-      return assertNever(kind);
-  }
+  if (status === "cancelled") return "Annullato";
+  return kind === "income"
+    ? "Entrata"
+    : kind === "expense"
+      ? "Spesa"
+      : kind === "transfer"
+        ? "Trasferimento"
+        : "Rettifica";
 }
-
 function fallbackCategoryLabel(kind: TransactionKind): string {
   return kind === "transfer" ? "Trasferimento interno" : "Senza categoria";
 }
-
 function accountTypeLabel(type: Account["type"]): string {
-  switch (type) {
-    case "checking":
-      return "Conto corrente";
-    case "savings":
-      return "Risparmio";
-    case "cash":
-      return "Contanti";
-    case "investment":
-      return "Investimenti";
-    case "loan":
-      return "Prestito";
-    case "virtual_subaccount":
-      return "Sottoconto";
-    default:
-      return assertNever(type);
-  }
-}
-
-function assertNever(value: never): never {
-  throw new Error(`Unsupported dashboard value: ${String(value)}`);
+  return type === "checking"
+    ? "Conto corrente"
+    : type === "savings"
+      ? "Risparmio"
+      : type === "cash"
+        ? "Contanti"
+        : type === "investment"
+          ? "Investimenti"
+          : type === "loan"
+            ? "Prestito"
+            : "Sottoconto";
 }
