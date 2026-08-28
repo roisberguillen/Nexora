@@ -4,6 +4,9 @@
 
 ### Documentation
 
+- Adjusted Movimenti inner spacing so search labels, date headings, and transaction rows keep a
+  readable inset from the panel edges on desktop and mobile.
+
 - Fixed mobile Movimenti `Nuovo movimento`: the standalone editor now fills the screen width and
   opens with the `Conto` field visible before the transaction list.
 

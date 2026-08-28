@@ -687,3 +687,31 @@ Keep only the latest relevant evidence per completed phase.
 - Test: regression E2E dedicata PASS; suite `transactions.spec.ts` sui progetti Chromium 320 e
   1440: `22/22 PASS`; format, lint, typecheck e build PASS.
 - Stato audit: correzione mobile COMPLETE; audit completo C3.5 Mobile/Desktop resta `IN_PROGRESS`.
+
+## 12.5.C3.5 — Transactions regression Mobile/Desktop audit — BLOCKED — 2026-08-28
+
+- Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; baseline `12.5.C2.9
+  TRANSACTIONS_GATE_PASS`; nessun redesign o nuova feature introdotti nella review.
+- E2E Movimenti: `transactions.spec.ts` `66/66 PASS` sui progetti Chromium 320, 375, 390, 768,
+  1024 e 1440; inclusi lista/empty, ricerca, filtri, form, Entrata/Uscita, trasferimento,
+  split, dialog e gestione cestino. La regression dedicata al form mobile è inclusa.
+- Browser Chrome: route `#transactions` e stato empty leggibili nel tab utente; il dataset demo
+  non è stato caricato perché l’archivio locale ha restituito l’errore protetto “Nexora non riesce
+  ad aprire i tuoi dati”. Non sono stati modificati o resettati dati dell’utente. Evidence Chrome
+  precedente del fix mobile: 320/375/390, editor full-width, `Conto` visibile, lista nascosta.
+- Gate globali: format, lint, typecheck, `codex:validate` e `quality:ui-ux` PASS; `pnpm test`
+  ha 587 PASS, 2 failure preesistenti in `apps/web/src/settings/SettingsPage.test.tsx` e 4 skip
+  documentati; `manifest:check` BLOCKED perché `PROJECT_MANIFEST.json` è stale.
+- Zoom 200%: baseline C2.7-F1 resta PASS e non è stata introdotta una modifica strutturale
+  desktop; la nuova chiusura C3.5 dedicata resta sospesa insieme ai gate globali.
+- Esito: `SCREEN_AUDIT_BLOCKED`; P0/P1 Movimenti dimostrati: nessuno. C3.5 non è chiusa e C3.6
+  non viene iniziata.
+
+### C3.5 visual spacing follow-up — 2026-08-28
+
+- Chrome feedback confirmed search label, date headings, and transaction rows were too close to
+  the panel edge at 1440 px and on mobile.
+- Scoped CSS correction adds `12 px` horizontal inset to the search block, date headings, and
+  transaction rows; Chrome confirmed the spacing visually and no horizontal overflow.
+- Regression: `TransactionsPage.test.tsx` `12/12 PASS`; `transactions.spec.ts` Chromium 320/1440
+  `22/22 PASS`; lint, typecheck, format and diff check PASS.
