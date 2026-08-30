@@ -688,6 +688,16 @@ Keep only the latest relevant evidence per completed phase.
   1440: `22/22 PASS`; format, lint, typecheck e build PASS.
 - Stato audit: correzione mobile COMPLETE; audit completo C3.5 Mobile/Desktop resta `IN_PROGRESS`.
 
+## 12.5.C3.5 — Transactions regression closure — PASS — 2026-08-30
+
+- Chiusura: `SCREEN_AUDIT_PASS`; baseline C2.9 confermata e Movimenti congelata per C3.
+- Browser Chrome: `#transactions` popolata con dataset demo, ricerca/filtri/form verificati;
+  console app senza errori rilevanti. I messaggi “listener asynchronous response” sono rumore
+  dell’estensione Chrome.
+- Gate: `pnpm test` `589 PASS / 4 skip`, E2E Movimenti `66/66 PASS` sui sei viewport,
+  `manifest:check`, `codex:validate`, `quality:ui-ux`, format, lint e typecheck PASS.
+- P0/P1/P2: nessuno aperto. Prossimo task autorizzato: `12.5.C3.6 — Budget Mobile/Desktop audit`.
+
 ## 12.5.C3.5 — Transactions regression Mobile/Desktop audit — BLOCKED — 2026-08-28
 
 - Routing: `localized_bug`, profilo `STANDARD`, rischio dati `low`; baseline `12.5.C2.9

@@ -18,8 +18,8 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.4 | Conti | #accounts | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.4 | Dettaglio conto | #accounts + editor reale | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.4 | Nuovo conto | #accounts + editor | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.5 | Movimenti (regression review) | #transactions | — | — | — | — | 0 | 0 | 0 | NEXT |
-| C3.5 | Nuovo movimento | #new-transaction | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.5 | Movimenti (regression review) | #transactions | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.5 | Nuovo movimento | #new-transaction | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.6 | Budget | #budgets | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.7 | Ricorrenze | #recurring | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.7 | Allocazioni | #recurring + allocazioni | — | — | — | — | 0 | 0 | 0 | PENDING |

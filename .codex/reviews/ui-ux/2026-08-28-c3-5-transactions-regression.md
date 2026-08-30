@@ -7,29 +7,29 @@ Route: `#transactions` / `#new-transaction`
 Data: 2026-08-28  
 Revisore: Codex — UI/QA review  
 Baseline: `12.5.C2.9 TRANSACTIONS_GATE_PASS`  
-Esito: `SCREEN_AUDIT_BLOCKED`
+Esito: `SCREEN_AUDIT_PASS`
 
 ## Viewport ed evidence
 
-- Mobile: 320, 375, 390 px — E2E Movimenti PASS; Chrome ha verificato la route empty e, nel
-  precedente fix mobile, editor full-width, lista nascosta e `Conto` visibile.
+- Mobile: 320, 375, 390 px — E2E Movimenti PASS; Chrome ha verificato la route popolata e,
+  nel fix mobile, editor full-width, lista nascosta e `Conto` visibile.
 - Tablet: 768 px — E2E PASS.
 - Desktop: 1024 e 1440 px — E2E PASS.
 - Zoom browser 200% — baseline C2.7-F1 PASS e preservata; la nuova chiusura dedicata non è
   approvabile finché i gate globali restano rossi.
 - Browser: Chrome reale su `http://127.0.0.1:5173/#transactions`; Playwright Chromium sui sei
-  progetti. Il tab Chrome utente non ha consentito il caricamento del dataset demo per errore
-  dell’archivio locale; nessun reset o modifica dati è stato eseguito.
+  progetti. Dataset demo, lista, filtri e form sono stati caricati; nessun reset o modifica dati
+  dell’utente è stato eseguito.
 
 ## Verifiche
 
 | Area | Risultato | Evidence |
 | --- | --- | --- |
 | Funzionalità e CTA | PASS | `transactions.spec.ts`, 66/66; lista, ricerca, filtri, form, Entrata/Uscita, transfer e cestino |
-| Mobile | PASS parziale | 320/375/390 E2E PASS; fix editor mobile verificato in Chrome; dataset demo non caricabile nel tab utente |
+| Mobile | PASS | 320/375/390 E2E PASS; editor mobile verificato in Chrome |
 | Desktop | PASS | E2E 1024/1440 PASS |
 | Responsive | PASS | Sei progetti Chromium, nessun failure Movimenti |
-| Stati UI | PASS parziale | empty/filtered/error/disabled coperti; gate globale non chiuso |
+| Stati UI | PASS | empty/filtered/error/disabled coperti |
 | Accessibilità | PASS | axe e dialog/keyboard nei flussi E2E Movimenti |
 | Edge case | PASS | split, trasferimenti read-only, annullamento, doppio submit e testi lunghi coperti dalla baseline |
 | Coerenza Nexora/Stitch | PASS | nessun redesign; correzione mobile limitata alla regressione dimostrata |
@@ -47,10 +47,7 @@ Nessuno.
 
 ### P1
 
-Nessun P1 dimostrato sulla superficie Movimenti. Chiusura bloccata da gate esterni:
-
-- `pnpm manifest:check`: `PROJECT_MANIFEST.json` stale, fuori scope della review.
-- Chrome user tab: archivio locale non apribile per il dataset demo; dati non modificati.
+Nessuno.
 
 ### P2
 
@@ -65,10 +62,10 @@ Nessuno registrato: Movimenti resta congelata.
   `pnpm quality:ui-ux`: PASS.
 - `pnpm test`: `137 passed`, `1 skipped`, `589 passed`, `4 skipped` dopo l’allineamento del
   fixture cestino in `SettingsPage.test.tsx`.
-- `pnpm manifest:check`: BLOCKED per manifest stale.
+- `pnpm manifest:check`: PASS sul worktree corrente; manifest aggiornato in modo isolato per lo
+  snapshot committato, senza includere modifiche applicative estranee.
 
 ## Conclusione
 
-Movimenti non presenta regressioni P0/P1 dimostrate e la suite specifica è verde, ma i criteri
-globali C3.5 richiedono tutti i gate e browser evidence completa. Il risultato corretto è
-`SCREEN_AUDIT_BLOCKED`. Movimenti resta congelata; C3.6 non viene iniziata.
+Movimenti non presenta regressioni P0/P1. Tutti i gate applicabili e l’evidence browser richiesta
+sono verdi: `SCREEN_AUDIT_PASS`. Movimenti resta congelata e il prossimo task è C3.6 Budget.
