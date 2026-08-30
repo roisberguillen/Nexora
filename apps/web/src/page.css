@@ -1235,7 +1235,17 @@
   }
 
   .account-list li {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .account-list li .form-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .account-list li .form-actions .text-action {
+    margin: 0;
   }
 
   .account-balance {

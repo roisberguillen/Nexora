@@ -106,4 +106,30 @@ describe("LoansPage", () => {
       }),
     );
   });
+
+  it("ignores a second submit while a loan is being saved", async () => {
+    const user = userEvent.setup();
+    let release!: () => void;
+    const onCreate = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          release = resolve;
+        }),
+    );
+    render(
+      <LoansPage
+        accounts={[account]}
+        loans={[]}
+        onCreate={onCreate}
+        onDelete={async () => undefined}
+        onUpdate={async () => undefined}
+      />,
+    );
+    await user.type(screen.getByLabelText("Finanziaria"), "Banca demo");
+    await user.type(screen.getByLabelText("Rata mensile"), "100,00");
+    await user.type(screen.getByLabelText("Capitale residuo"), "1000,00");
+    await user.dblClick(screen.getByRole("button", { name: "Salva prestito" }));
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    release();
+  });
 });

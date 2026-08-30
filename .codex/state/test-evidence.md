@@ -1,5 +1,15 @@
 # Test evidence
 
+## 12.5.C3.8 — Prestiti Mobile/Desktop audit — PASS — 2026-08-30
+
+- Chiusura: `SCREEN_AUDIT_PASS`; Prestiti congelata per C3, prossimo task C3.9 Investimenti.
+- Browser: Chrome headed su `#loans` a 390/1440 px; Playwright sui viewport 320/375/390/768/1024/1440;
+  empty, lista, dettaglio, form, CRUD e overflow verificati.
+- Correzioni: azioni card mobile a capo entro 320 px; doppio submit del form protetto.
+- Test mirati: LoansPage + Loan domain `6/6 PASS`; E2E Loans `6 PASS`; suite completa `590 PASS / 4 skip`.
+- Gate: lint, typecheck, test, build e codex validate PASS; advisory preesistente sui chunk oltre 500 kB.
+- P0/P1/P2: nessuno aperto.
+
 ## Global Search desktop clear focus regression — FIXED — 2026-08-25
 
 - Routing: `ui_component`, profilo `STANDARD`, rischio dati `low`; fix scoped to `TopHeader` clear focus.

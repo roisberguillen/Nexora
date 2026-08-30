@@ -23,10 +23,12 @@ export function LoansPage({
   const [selected, setSelected] = useState<Loan | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<Loan | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const loanAccounts = accounts.filter((account) => account.type === "loan" && !account.isArchived);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
     const element = event.currentTarget;
     const form = new FormData(element);
     const account = loanAccounts.find((item) => item.id === String(form.get("accountId")));
@@ -34,6 +36,7 @@ export function LoansPage({
       setError("Crea prima un conto di tipo prestito attivo.");
       return;
     }
+    setIsSaving(true);
     try {
       const input = loanInputFromForm(form, account);
       if (editing === null) await onCreate(input);
@@ -44,6 +47,8 @@ export function LoansPage({
       if (editing === null) element.reset();
     } catch {
       setError("Impossibile salvare il prestito. Verifica campi, importi e capitale residuo.");
+    } finally {
+      setIsSaving(false);
     }
   };
   const confirmDelete = async () => {
@@ -277,8 +282,16 @@ export function LoansPage({
                   Annulla
                 </button>
               )}
-              <button className="primary-action" disabled={loanAccounts.length === 0} type="submit">
-                {editing === null ? "Salva prestito" : "Aggiorna prestito"}
+              <button
+                className="primary-action"
+                disabled={loanAccounts.length === 0 || isSaving}
+                type="submit"
+              >
+                {isSaving
+                  ? "Salvataggio…"
+                  : editing === null
+                    ? "Salva prestito"
+                    : "Aggiorna prestito"}
               </button>
             </div>
           </form>
