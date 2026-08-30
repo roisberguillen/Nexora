@@ -1,5 +1,16 @@
 # Test evidence
 
+## 12.5.C3.10 — Analytics Mobile/Desktop audit — BLOCKED — 2026-08-30
+
+- Browser: Chrome headed su `#analytics` a 390/1440 px; resize metrici 320/375/390/768/1024/1440;
+  nessun overflow e reflow responsive PASS.
+- Verificati KPI previsione/confronto, trend, tabella accessibile, trasferimenti e annullati esclusi;
+  la pagina non espone periodo, filtri, categorie/split o filtered-empty richiesti dal brief.
+- Rilievi P1: `AN-P1-01` scope Analytics incompleto; `AN-P1-02` conversione bigint→Number nel meter.
+- Test mirati: AnalyticsPage + monthlyTrends `2/2 PASS`; E2E superfici esistenti PASS; nessuna modifica
+  applicativa effettuata durante questo audit.
+- Esito: `SCREEN_AUDIT_BLOCKED`; C3.10 resta corrente, C3.11 non iniziata.
+
 ## 12.5.C3.9 — Investimenti Mobile/Desktop audit — PASS — 2026-08-30
 
 - Chiusura: `SCREEN_AUDIT_PASS`; Investimenti congelata per C3, prossimo task C3.10 Analisi.
