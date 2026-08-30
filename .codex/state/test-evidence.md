@@ -700,11 +700,13 @@ Keep only the latest relevant evidence per completed phase.
   ad aprire i tuoi dati”. Non sono stati modificati o resettati dati dell’utente. Evidence Chrome
   precedente del fix mobile: 320/375/390, editor full-width, `Conto` visibile, lista nascosta.
 - Gate globali: format, lint, typecheck, `codex:validate` e `quality:ui-ux` PASS; `pnpm test`
-  ha 587 PASS, 2 failure preesistenti in `apps/web/src/settings/SettingsPage.test.tsx` e 4 skip
-  documentati; `manifest:check` BLOCKED perché `PROJECT_MANIFEST.json` è stale.
+  ha `589 PASS`, `1 skipped` e 4 skip documentati dopo l’allineamento del fixture cestino in
+  `SettingsPage.test.tsx`; `manifest:check` resta BLOCKED perché `PROJECT_MANIFEST.json` è stale
+  rispetto alle modifiche locali fuori scope.
 - Zoom 200%: baseline C2.7-F1 resta PASS e non è stata introdotta una modifica strutturale
   desktop; la nuova chiusura C3.5 dedicata resta sospesa insieme ai gate globali.
-- Esito: `SCREEN_AUDIT_BLOCKED`; P0/P1 Movimenti dimostrati: nessuno. C3.5 non è chiusa e C3.6
+- Esito: `SCREEN_AUDIT_BLOCKED`; P0/P1 Movimenti dimostrati: nessuno. C3.5 non è chiusa solo per
+  il manifest fuori scope; C3.6
   non viene iniziata.
 
 ### C3.5 visual spacing follow-up — 2026-08-28

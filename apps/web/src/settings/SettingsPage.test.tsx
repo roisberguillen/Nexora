@@ -16,7 +16,7 @@ const trashedTransaction: TrashedTransaction = {
     source: "manual",
     description: "Spesa nel cestino",
   }),
-  deletedAt: "2026-07-29T10:00:00.000Z",
+  deletedAt: "2026-08-29T10:00:00.000Z",
   deletionGroupId: "transaction:trashed-expense",
 };
 
