@@ -159,3 +159,7 @@ Test automatici: 5 file/28 test mirati PASS; suite 589 PASS/4 skip; E2E 6 PASS.
 Verifica manuale/visuale: Chrome headed, #recurring, 320 px e 1440 px; responsive E2E sugli altri viewport.
 Riferimenti: MOCKUP_INTEGRATION, STITCH_UI_REFERENCE, DESIGN.md
 Conclusione: SCREEN_AUDIT_PASS. Ricorrenze e Allocazioni congelate per C3; prossimo task C3.8.
+
+Follow-up Chrome 2026-08-30: verificato nuovamente a 1440 px e 390 px; corretta la spaziatura
+tipografica degli empty state affinché titolo e descrizione rispettino il margine verticale del
+pattern Nexora. Nessun overflow residuo.

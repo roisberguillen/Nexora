@@ -217,10 +217,8 @@ export function RecurringPage({
           </div>
           {rules.length === 0 ? (
             <div className="account-list-empty">
-              <strong>Nessuna ricorrenza</strong>
-              <span>
-                Usa il modulo “Nuova ricorrenza” per pianificare la prima entrata o spesa.
-              </span>
+              <h3>Nessuna ricorrenza</h3>
+              <p>Usa il modulo “Nuova ricorrenza” per pianificare la prima entrata o spesa.</p>
             </div>
           ) : null}
           {deleteCandidate === null ? null : (
@@ -612,8 +610,8 @@ function AllocationPlans({
       </ul>
       {plans.length === 0 ? (
         <div className="account-list-empty">
-          <strong>Nessun piano di allocazione</strong>
-          <span>Crea un piano per distribuire automaticamente un reddito confermato.</span>
+          <h3>Nessun piano di allocazione</h3>
+          <p>Crea un piano per distribuire automaticamente un reddito confermato.</p>
         </div>
       ) : null}
       {(["salary", "photo_income"] as const).map((trigger) => {
