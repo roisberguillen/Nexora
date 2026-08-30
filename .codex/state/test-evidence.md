@@ -230,6 +230,18 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## 12.5.C3.6 — Budget Mobile/Desktop audit — PASS — 2026-08-30
+
+- Chiusura: `SCREEN_AUDIT_PASS`; Budget congelata per C3, prossimo task C3.7 Recurring + Allocations.
+- Browser: Chrome headed su `#budgets` e Playwright sui viewport 320/375/390/768/1024/1440;
+  lista/editor, stato vuoto, periodo, CTA, card/progresso e overflow verificati. Zoom 200% PASS.
+- Domain: soglie, propagazione mensile, macro/sottocategorie, split, trasferimenti e annullati
+  verificati tramite `calculateBudgetProgress` e `resolveActiveBudgetsForPeriod`.
+- Test mirati: 4 file, `13/13 PASS`; E2E Budget `7 PASS / 5 skip` intenzionali.
+- Gate: format, lint, typecheck, test, build, manifest, codex validate e quality UI/UX PASS;
+  suite completa `589 PASS / 4 skip`, 137 file passati e 1 skipped.
+- P0/P1/P2: nessuno aperto; nessun file runtime modificato.
+
 ## Phase 12 closure review — 2026-08-14
 
 - GitHub CI `31725944677` for `4ab136e` is green: frozen install, doctor, format, lint,

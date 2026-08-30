@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-30
+
+- Closed the C3.6 Budget mobile/desktop screen audit with `SCREEN_AUDIT_PASS`; Budget is frozen
+  for C3 after responsive, period, threshold, hierarchy, accessibility and financial-propagation
+  verification.
+
 ## [Unreleased]
 
 ### Documentation
