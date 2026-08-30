@@ -162,4 +162,5 @@ Conclusione: SCREEN_AUDIT_PASS. Ricorrenze e Allocazioni congelate per C3; pross
 
 Follow-up Chrome 2026-08-30: verificato nuovamente a 1440 px e 390 px; corretta la spaziatura
 tipografica degli empty state affinché titolo e descrizione rispettino il margine verticale del
-pattern Nexora. Nessun overflow residuo.
+pattern Nexora. Inoltre il pannello desktop “Nuova ricorrenza” è stato portato a tutta larghezza,
+coerente con “Nuovo piano” delle Allocazioni. Nessun overflow residuo.
