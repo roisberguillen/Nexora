@@ -786,3 +786,14 @@ Keep only the latest relevant evidence per completed phase.
   transaction rows; Chrome confirmed the spacing visually and no horizontal overflow.
 - Regression: `TransactionsPage.test.tsx` `12/12 PASS`; `transactions.spec.ts` Chromium 320/1440
   `22/22 PASS`; lint, typecheck, format and diff check PASS.
+
+### C3.10 Analytics panel spacing follow-up — 2026-08-30
+
+- Chrome verification: the forecast metric group has a uniform `24.8 px` outer inset at 1440 px
+  and 375 px; `scrollWidth === clientWidth` at both viewports.
+- Component test: `AnalyticsPage.test.tsx` `2/2 PASS`.
+- UI gate: `pnpm test:ui-ux` `8/8 PASS`.
+- Responsive smoke: `phase-12-surfaces.spec.ts` `6/6 PASS` across Chromium 320, 375, 390, 768,
+  1024 and 1440.
+- Follow-up spacing: panel separation is `20 px` and comparison content keeps `24 px` bottom
+  padding in Chrome at 1440 px and 375 px.

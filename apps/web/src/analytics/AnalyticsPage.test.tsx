@@ -29,6 +29,11 @@ describe("AnalyticsPage", () => {
     ).toBeVisible();
     expect(screen.getByRole("img", { name: "Grafico delle spese mensili" })).toBeVisible();
     expect(screen.getAllByText("2026-08")).toHaveLength(2);
+    expect(
+      screen
+        .getByRole("img", { name: "Grafico delle spese mensili" })
+        .closest(".analytics-panel-content"),
+    ).not.toBeNull();
   });
   it("shows empty-state fallback", () => {
     render(<AnalyticsPage transactions={[]} />);

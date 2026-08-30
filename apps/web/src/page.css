@@ -287,6 +287,31 @@
   font-weight: 750;
 }
 
+.analytics-panel-content {
+  padding: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+#analytics > .data-panel + .data-panel {
+  margin-top: 1.25rem;
+}
+
+.analytics-panel-content > .metrics-grid {
+  margin: 0;
+}
+
+.analytics-panel-content > .activity-table-wrap {
+  margin: 0;
+}
+
+#analytics > .accounts-heading {
+  margin-bottom: 1.25rem;
+}
+
+.analytics-panel-content > .import-help {
+  margin-top: 0.75rem;
+}
+
 .activity-table {
   width: 100%;
   border-collapse: collapse;

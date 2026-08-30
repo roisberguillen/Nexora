@@ -18,6 +18,11 @@
 
 ### Documentation
 
+- Corretto il padding interno dei pannelli Analisi: previsione, confronto, grafico e tabella ora
+  mantengono un inset uniforme dal bordo su desktop e mobile.
+- Aggiunto un distacco verticale coerente tra i pannelli Analisi e mantenuto il margine inferiore
+  del contenuto del confronto.
+
 - Adjusted Movimenti inner spacing so search labels, date headings, and transaction rows keep a
   readable inset from the panel edges on desktop and mobile.
 

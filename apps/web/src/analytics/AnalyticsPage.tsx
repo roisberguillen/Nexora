@@ -36,32 +36,37 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
           </div>
           <span className="panel-meta">Mediana di {forecast.historyMonths} mesi</span>
         </div>
-        <div className="metrics-grid">
-          <div className="metric-card">
-            <span>Spesa attesa</span>
-            <FinancialAmount
-              amountMinor={forecast.expectedExpense.amountMinor}
-              currency={currency}
-              tone="negative"
-            />
+        <div className="analytics-panel-content">
+          <div className="metrics-grid">
+            <div className="metric-card">
+              <span>Spesa attesa</span>
+              <FinancialAmount
+                amountMinor={forecast.expectedExpense.amountMinor}
+                currency={currency}
+                tone="negative"
+              />
+            </div>
+            <div className="metric-card">
+              <span>Intervallo prudente</span>
+              <FinancialAmount
+                amountMinor={forecast.lowerExpense.amountMinor}
+                currency={currency}
+              />
+            </div>
+            <div className="metric-card">
+              <span>Massimo prudente</span>
+              <FinancialAmount
+                amountMinor={forecast.upperExpense.amountMinor}
+                currency={currency}
+                tone="negative"
+              />
+            </div>
           </div>
-          <div className="metric-card">
-            <span>Intervallo prudente</span>
-            <FinancialAmount amountMinor={forecast.lowerExpense.amountMinor} currency={currency} />
-          </div>
-          <div className="metric-card">
-            <span>Massimo prudente</span>
-            <FinancialAmount
-              amountMinor={forecast.upperExpense.amountMinor}
-              currency={currency}
-              tone="negative"
-            />
-          </div>
+          <p className="import-help">
+            La fascia applica un margine del 10% alla mediana storica; non è una garanzia né un
+            consiglio finanziario.
+          </p>
         </div>
-        <p className="import-help">
-          La fascia applica un margine del 10% alla mediana storica; non è una garanzia né un
-          consiglio finanziario.
-        </p>
       </section>
       <section aria-labelledby="comparison-title" className="data-panel">
         <div className="panel-heading">
@@ -70,30 +75,32 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
             <h2 id="comparison-title">Ultimo mese rispetto al precedente</h2>
           </div>
         </div>
-        {latest === undefined || previous === undefined ? (
-          <p className="import-help">Servono almeno due mesi contabilizzati per il confronto.</p>
-        ) : (
-          <div className="metrics-grid">
-            <Metric
-              label="Entrate"
-              current={latest.income.amountMinor}
-              previous={previous.income.amountMinor}
-              currency={currency}
-            />
-            <Metric
-              label="Spese"
-              current={latest.expense.amountMinor}
-              previous={previous.expense.amountMinor}
-              currency={currency}
-            />
-            <Metric
-              label="Risparmio"
-              current={latest.savings.amountMinor}
-              previous={previous.savings.amountMinor}
-              currency={currency}
-            />
-          </div>
-        )}
+        <div className="analytics-panel-content">
+          {latest === undefined || previous === undefined ? (
+            <p className="import-help">Servono almeno due mesi contabilizzati per il confronto.</p>
+          ) : (
+            <div className="metrics-grid">
+              <Metric
+                label="Entrate"
+                current={latest.income.amountMinor}
+                previous={previous.income.amountMinor}
+                currency={currency}
+              />
+              <Metric
+                label="Spese"
+                current={latest.expense.amountMinor}
+                previous={previous.expense.amountMinor}
+                currency={currency}
+              />
+              <Metric
+                label="Risparmio"
+                current={latest.savings.amountMinor}
+                previous={previous.savings.amountMinor}
+                currency={currency}
+              />
+            </div>
+          )}
+        </div>
       </section>
       <section aria-labelledby="trends-title" className="data-panel">
         <div className="panel-heading">
@@ -103,73 +110,75 @@ export function AnalyticsPage({ transactions }: { readonly transactions: readonl
           </div>
           <span className="panel-meta">{trends.length}</span>
         </div>
-        {trends.length === 0 ? (
-          <div className="account-list-empty">
-            <h3>Dati insufficienti</h3>
-            <p>Registra entrate o spese contabilizzate per vedere i trend.</p>
-          </div>
-        ) : (
-          <div className="activity-table-wrap">
-            <div aria-label="Grafico delle spese mensili" className="analytics-bars" role="img">
-              {trends.map((trend) => (
-                <div key={trend.month}>
-                  <span>{trend.month}</span>
-                  <meter
-                    aria-label={`Spese ${trend.month}`}
-                    max={Number(maximumExpense || 1n)}
-                    value={Number(trend.expense.amountMinor)}
-                  />{" "}
-                  <FinancialAmount
-                    amountMinor={trend.expense.amountMinor}
-                    currency={currency}
-                    tone="negative"
-                  />
-                </div>
-              ))}
+        <div className="analytics-panel-content">
+          {trends.length === 0 ? (
+            <div className="account-list-empty">
+              <h3>Dati insufficienti</h3>
+              <p>Registra entrate o spese contabilizzate per vedere i trend.</p>
             </div>
-            <table className="activity-table">
-              <caption className="sr-only">Trend mensili di entrate, spese e risparmio</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Mese</th>
-                  <th scope="col">Entrate</th>
-                  <th scope="col">Spese</th>
-                  <th scope="col">Risparmio</th>
-                </tr>
-              </thead>
-              <tbody>
+          ) : (
+            <div className="activity-table-wrap">
+              <div aria-label="Grafico delle spese mensili" className="analytics-bars" role="img">
                 {trends.map((trend) => (
-                  <tr key={trend.month}>
-                    <td data-label="Mese">{trend.month}</td>
-                    <td data-label="Entrate">
-                      <FinancialAmount
-                        amountMinor={trend.income.amountMinor}
-                        currency={currency}
-                        showPositiveSign
-                        tone="positive"
-                      />
-                    </td>
-                    <td data-label="Spese">
-                      <FinancialAmount
-                        amountMinor={trend.expense.amountMinor}
-                        currency={currency}
-                        tone="negative"
-                      />
-                    </td>
-                    <td data-label="Risparmio">
-                      <FinancialAmount
-                        amountMinor={trend.savings.amountMinor}
-                        currency={currency}
-                        showPositiveSign={trend.savings.amountMinor > 0n}
-                        tone={trend.savings.amountMinor < 0n ? "negative" : "positive"}
-                      />
-                    </td>
-                  </tr>
+                  <div key={trend.month}>
+                    <span>{trend.month}</span>
+                    <meter
+                      aria-label={`Spese ${trend.month}`}
+                      max={Number(maximumExpense || 1n)}
+                      value={Number(trend.expense.amountMinor)}
+                    />{" "}
+                    <FinancialAmount
+                      amountMinor={trend.expense.amountMinor}
+                      currency={currency}
+                      tone="negative"
+                    />
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </div>
+              <table className="activity-table">
+                <caption className="sr-only">Trend mensili di entrate, spese e risparmio</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Mese</th>
+                    <th scope="col">Entrate</th>
+                    <th scope="col">Spese</th>
+                    <th scope="col">Risparmio</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trends.map((trend) => (
+                    <tr key={trend.month}>
+                      <td data-label="Mese">{trend.month}</td>
+                      <td data-label="Entrate">
+                        <FinancialAmount
+                          amountMinor={trend.income.amountMinor}
+                          currency={currency}
+                          showPositiveSign
+                          tone="positive"
+                        />
+                      </td>
+                      <td data-label="Spese">
+                        <FinancialAmount
+                          amountMinor={trend.expense.amountMinor}
+                          currency={currency}
+                          tone="negative"
+                        />
+                      </td>
+                      <td data-label="Risparmio">
+                        <FinancialAmount
+                          amountMinor={trend.savings.amountMinor}
+                          currency={currency}
+                          showPositiveSign={trend.savings.amountMinor > 0n}
+                          tone={trend.savings.amountMinor < 0n ? "negative" : "positive"}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
