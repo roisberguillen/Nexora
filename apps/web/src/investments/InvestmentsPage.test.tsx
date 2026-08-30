@@ -82,4 +82,34 @@ describe("InvestmentsPage", () => {
     await user.click(screen.getByRole("button", { name: "Elimina posizione" }));
     expect(onDelete).toHaveBeenCalledWith(position.id);
   });
+
+  it("ignores a second submit while saving", async () => {
+    const user = userEvent.setup();
+    let release!: () => void;
+    const onCreate = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          release = resolve;
+        }),
+    );
+    render(
+      <InvestmentsPage
+        accounts={[account]}
+        onCreate={onCreate}
+        onDelete={async () => undefined}
+        onUpdate={async () => undefined}
+        positions={[]}
+      />,
+    );
+
+    await user.type(screen.getByLabelText("Nome posizione"), "ETF globale");
+    await user.type(screen.getByLabelText("Capitale investito"), "1000,00");
+    await user.type(screen.getByLabelText("Valore corrente"), "1000,00");
+    const saveButton = screen.getByRole("button", { name: "Salva posizione" });
+    await user.dblClick(saveButton);
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Salvataggio…" })).toBeDisabled();
+    release();
+    await screen.findByRole("button", { name: "Salva posizione" });
+  });
 });

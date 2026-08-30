@@ -2,6 +2,10 @@
 
 ## 2026-08-30
 
+- Closed the C3.9 Investments mobile/desktop screen audit with `SCREEN_AUDIT_PASS`; full-width
+  editor, responsive reflow, CRUD, double-submit protection, Money/bigint precision and currency
+  separation verified; Investments is frozen for C3.
+
 - Closed the C3.8 Loans mobile/desktop screen audit with `SCREEN_AUDIT_PASS`; loan detail,
   CRUD, precision, responsive actions and protected deletion are verified and frozen for C3.
 - Closed the C3.7 Recurring + Allocations mobile/desktop screen audit with `SCREEN_AUDIT_PASS`;

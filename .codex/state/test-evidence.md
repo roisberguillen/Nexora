@@ -1,5 +1,19 @@
 # Test evidence
 
+## 12.5.C3.9 — Investimenti Mobile/Desktop audit — PASS — 2026-08-30
+
+- Chiusura: `SCREEN_AUDIT_PASS`; Investimenti congelata per C3, prossimo task C3.10 Analisi.
+- Browser: Chrome headed su `#investments` a 390/1440 px; resize metrici 320/375/390/768/1024/1440;
+  nessun overflow, mobile monocolonna, editor desktop full-width.
+- Funzionalità: empty, create, edit, delete, error, saving/double-submit e local-first verificati;
+  il dettaglio operativo è rappresentato dalla card/lista e dal form di modifica.
+- Finanza: Money/bigint, segno positivo/zero/negativo, rendimento estremo e capitale zero; niente
+  somma FX falsa; gli investimenti restano esclusi da Disponibilità attuale Dashboard.
+- Test mirati: InvestmentsPage + InvestmentPosition `10/10 PASS`; E2E Investimenti `6 PASS`.
+- Gate: format, build e verifiche browser PASS; suite completa `595 PASS / 4 skip`.
+- P0/P1/P2: nessuno aperto. Distribuzione grafica e dettaglio route separati sono N/A perché assenti
+  dal modello corrente; nessuna metrica inventata.
+
 ## 12.5.C3.8 — Prestiti Mobile/Desktop audit — PASS — 2026-08-30
 
 - Chiusura: `SCREEN_AUDIT_PASS`; Prestiti congelata per C3, prossimo task C3.9 Investimenti.

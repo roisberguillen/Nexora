@@ -951,6 +951,14 @@
   margin-top: 1.25rem;
 }
 
+#investments > .accounts-layout {
+  display: block;
+}
+
+#investments > .accounts-layout > .account-editor-panel {
+  margin-top: 1.25rem;
+}
+
 #recurring > .recurring-allocation-panel > .allocation-plan-form {
   margin: 1.25rem 1.5rem 1.5rem;
 }

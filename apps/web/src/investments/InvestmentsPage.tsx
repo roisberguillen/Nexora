@@ -23,6 +23,7 @@ export function InvestmentsPage({
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<InvestmentPosition | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<InvestmentPosition | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const investmentAccounts = accounts.filter(
     (account) => account.type === "investment" && !account.isArchived,
@@ -30,6 +31,7 @@ export function InvestmentsPage({
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
     const element = event.currentTarget;
     const form = new FormData(element);
     const account = investmentAccounts.find((item) => item.id === String(form.get("accountId")));
@@ -37,6 +39,7 @@ export function InvestmentsPage({
       setError("Crea prima un conto di tipo investimento attivo.");
       return;
     }
+    setIsSaving(true);
     try {
       const input: InvestmentPositionInput = {
         accountId: account.id,
@@ -56,6 +59,8 @@ export function InvestmentsPage({
       if (editing === null) element.reset();
     } catch {
       setError("Impossibile salvare la posizione. Verifica importi e data.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -230,10 +235,14 @@ export function InvestmentsPage({
               )}
               <button
                 className="primary-action"
-                disabled={investmentAccounts.length === 0}
+                disabled={investmentAccounts.length === 0 || isSaving}
                 type="submit"
               >
-                {editing === null ? "Salva posizione" : "Aggiorna posizione"}
+                {isSaving
+                  ? "Salvataggio…"
+                  : editing === null
+                    ? "Salva posizione"
+                    : "Aggiorna posizione"}
               </button>
             </div>
           </form>

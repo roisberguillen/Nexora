@@ -24,7 +24,7 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.7 | Ricorrenze | #recurring | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.7 | Allocazioni | #recurring + allocazioni | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.8 | Prestiti | #loans | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.9 | Investimenti | #investments | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.9 | Investimenti | #investments | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.10 | Analisi | #analytics | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.11 | Diario finanziario | #journal | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.12 | Categorie | #categories | — | — | — | — | 0 | 0 | 0 | PENDING |
