@@ -1103,6 +1103,16 @@
 }
 
 @media (max-width: 48rem) {
+  .account-table-wrap {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .account-table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
   .dashboard-decision-grid,
   .dashboard-analytics-grid {
     grid-template-columns: 1fr;

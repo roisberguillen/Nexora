@@ -35,7 +35,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C3.4 | complete | Accounts / Conti `SCREEN_AUDIT_PASS`; list/editor, CRUD, archive/delete rules, responsive and accessibility evidence closed |
 | 12.5.C3.5 | complete | Transactions regression `SCREEN_AUDIT_PASS`; Movimenti frozen after six-viewport regression and gate closure |
 | 12.5.C3.6 | complete | Budget `SCREEN_AUDIT_PASS`; mobile/desktop, period, thresholds, hierarchy and financial propagation verified; Budget frozen |
-| 12.5.C3.7–C3.21 | pending | subsequent screen-by-screen audits; C3.7 Recurring + Allocations is next |
+| 12.5.C3.7 | complete | Recurring + Allocations `SCREEN_AUDIT_PASS`; responsive, confirmation, idempotency and transfer invariants verified; surface frozen |
+| 12.5.C3.8–C3.21 | pending | subsequent screen-by-screen audits; C3.8 Prestiti is next |
 | C4 | pending | real complete flows |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
@@ -50,8 +51,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 14–17 | planned | no completion claim |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
-complete; C3.1, C3.2, C3.3, C3.4, C3.5 and C3.6 are complete, while C3.7–C3.21 and C4–F remain
-pending until their own evidence exists.
+complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6 and C3.7 are complete, while C3.8–C3.21 and C4–F
+remain pending until their own evidence exists.
 Phase 13 must not be treated as next before
 the 12.5 release freeze.
 

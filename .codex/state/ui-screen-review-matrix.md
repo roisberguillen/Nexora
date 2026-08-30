@@ -21,8 +21,8 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.5 | Movimenti (regression review) | #transactions | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.5 | Nuovo movimento | #new-transaction | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
 | C3.6 | Budget | #budgets | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.7 | Ricorrenze | #recurring | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.7 | Allocazioni | #recurring + allocazioni | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.7 | Ricorrenze | #recurring | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.7 | Allocazioni | #recurring + allocazioni | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.8 | Prestiti | #loans | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.9 | Investimenti | #investments | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.10 | Analisi | #analytics | — | — | — | — | 0 | 0 | 0 | PENDING |

@@ -54,6 +54,7 @@ export function RecurringPage({
   const [nominalMonth, setNominalMonth] = useState(1);
   const [weekendPolicy, setWeekendPolicy] = useState<WeekendPolicy>("none");
   const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [deleteCandidate, setDeleteCandidate] = useState<RecurringRule | null>(null);
   const openEditor = (rule: RecurringRule | null) => {
     setFormKind(rule?.kind ?? "income");
@@ -86,40 +87,46 @@ export function RecurringPage({
   };
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
     const form = new FormData(event.currentTarget);
-    const account = accounts.find((item) => item.id === String(form.get("accountId")))!;
-    const kind = String(form.get("kind")) as "income" | "expense";
-    const rawAmount = parseLocalizedAmountMinor(String(form.get("amount") ?? ""), account.currency);
-    const input: RecurringRuleInput = {
-      name: String(form.get("name") ?? ""),
-      accountId: account.id,
-      kind,
-      amountMinor: kind === "expense" ? -abs(rawAmount) : abs(rawAmount),
-      frequencyUnit,
-      interval,
-      nominalDay,
-      ...(frequencyUnit === "year" ? { nominalMonth } : {}),
-      weekendPolicy,
-      nextNominalDate: nominalDate,
-      enabled: Boolean(form.get("enabled")),
-      ...(kind === "expense" && editing?.kind === "expense"
-        ? {
-            ...(editing.expenseVariability === undefined
-              ? {}
-              : { expenseVariability: editing.expenseVariability }),
-            ...(editing.expenseExceptionality === undefined
-              ? {}
-              : { expenseExceptionality: editing.expenseExceptionality }),
-          }
-        : {}),
-      ...(optional(String(form.get("categoryId") ?? "")) === undefined
-        ? {}
-        : { categoryId: optional(String(form.get("categoryId") ?? ""))! }),
-      ...(optional(String(form.get("payee") ?? "")) === undefined
-        ? {}
-        : { payee: optional(String(form.get("payee") ?? ""))! }),
-    };
+    setIsSaving(true);
     try {
+      const account = accounts.find((item) => item.id === String(form.get("accountId")));
+      if (account === undefined) throw new Error("missing account");
+      const kind = String(form.get("kind")) as "income" | "expense";
+      const rawAmount = parseLocalizedAmountMinor(
+        String(form.get("amount") ?? ""),
+        account.currency,
+      );
+      const input: RecurringRuleInput = {
+        name: String(form.get("name") ?? ""),
+        accountId: account.id,
+        kind,
+        amountMinor: kind === "expense" ? -abs(rawAmount) : abs(rawAmount),
+        frequencyUnit,
+        interval,
+        nominalDay,
+        ...(frequencyUnit === "year" ? { nominalMonth } : {}),
+        weekendPolicy,
+        nextNominalDate: nominalDate,
+        enabled: Boolean(form.get("enabled")),
+        ...(kind === "expense" && editing?.kind === "expense"
+          ? {
+              ...(editing.expenseVariability === undefined
+                ? {}
+                : { expenseVariability: editing.expenseVariability }),
+              ...(editing.expenseExceptionality === undefined
+                ? {}
+                : { expenseExceptionality: editing.expenseExceptionality }),
+            }
+          : {}),
+        ...(optional(String(form.get("categoryId") ?? "")) === undefined
+          ? {}
+          : { categoryId: optional(String(form.get("categoryId") ?? ""))! }),
+        ...(optional(String(form.get("payee") ?? "")) === undefined
+          ? {}
+          : { payee: optional(String(form.get("payee") ?? ""))! }),
+      };
       setError(null);
       if (editing === null) await onCreate(input);
       else await onUpdate(editing.id, input);
@@ -127,6 +134,8 @@ export function RecurringPage({
       event.currentTarget.reset();
     } catch {
       setError("Impossibile salvare la ricorrenza. Verifica conto, categoria, importo e data.");
+    } finally {
+      setIsSaving(false);
     }
   };
   return (
@@ -206,6 +215,14 @@ export function RecurringPage({
               </tbody>
             </table>
           </div>
+          {rules.length === 0 ? (
+            <div className="account-list-empty">
+              <strong>Nessuna ricorrenza</strong>
+              <span>
+                Usa il modulo “Nuova ricorrenza” per pianificare la prima entrata o spesa.
+              </span>
+            </div>
+          ) : null}
           {deleteCandidate === null ? null : (
             <div
               aria-labelledby="delete-recurring-title"
@@ -403,8 +420,8 @@ export function RecurringPage({
               <button className="secondary-action" onClick={() => openEditor(null)} type="button">
                 Annulla
               </button>
-              <button className="primary-action" type="submit">
-                Salva ricorrenza
+              <button className="primary-action" disabled={isSaving} type="submit">
+                {isSaving ? "Salvataggio…" : "Salva ricorrenza"}
               </button>
             </div>
           </form>
@@ -451,17 +468,23 @@ function AllocationPlans({
   const [deleteCandidate, setDeleteCandidate] = useState<AllocationPlan | null>(null);
   const [receipt, setReceipt] = useState<string | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [needsExecutionRecovery, setNeedsExecutionRecovery] = useState(false);
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
     const form = new FormData(event.currentTarget);
     const source = accounts.find((account) => account.id === String(form.get("allocationSource")));
     const targetId = String(form.get("allocationTarget"));
-    if (source === undefined) return;
+    if (source === undefined) {
+      setError("Seleziona un conto di origine.");
+      return;
+    }
     if (source.id === targetId) {
       setError("Il conto di origine e quello di destinazione devono essere diversi.");
       return;
     }
+    setIsSaving(true);
     try {
       const input: AllocationPlanInput = {
         name: String(form.get("allocationName") ?? ""),
@@ -483,6 +506,8 @@ function AllocationPlans({
       event.currentTarget.reset();
     } catch {
       setError("Impossibile salvare il piano. Verifica conti, valuta e importo.");
+    } finally {
+      setIsSaving(false);
     }
   };
   const active = accounts.filter((account) => !account.isArchived);
@@ -585,6 +610,12 @@ function AllocationPlans({
           </li>
         ))}
       </ul>
+      {plans.length === 0 ? (
+        <div className="account-list-empty">
+          <strong>Nessun piano di allocazione</strong>
+          <span>Crea un piano per distribuire automaticamente un reddito confermato.</span>
+        </div>
+      ) : null}
       {(["salary", "photo_income"] as const).map((trigger) => {
         const planIds = planIdsFor(trigger);
         if (planIds.length === 0) return null;
@@ -678,8 +709,8 @@ function AllocationPlans({
               Annulla
             </button>
           )}
-          <button className="primary-action" type="submit">
-            {editing === null ? "Salva piano" : "Aggiorna piano"}
+          <button className="primary-action" disabled={isSaving} type="submit">
+            {isSaving ? "Salvataggio…" : editing === null ? "Salva piano" : "Aggiorna piano"}
           </button>
         </div>
       </form>
@@ -708,7 +739,15 @@ function AllocationPlans({
               .filter((plan) => plan.enabled && plan.trigger === confirmingTrigger)
               .map((plan) => (
                 <li key={plan.id}>
-                  {plan.name}: {formatMinorUnits(plan.amount.amountMinor, plan.amount.currency)}
+                  <strong>{plan.name}</strong> —{" "}
+                  {formatMinorUnits(plan.amount.amountMinor, plan.amount.currency)}
+                  <small>
+                    {accounts.find((account) => account.id === plan.sourceAccountId)?.name ??
+                      "Conto rimosso"}
+                    {" → "}
+                    {accounts.find((account) => account.id === plan.targetAccountId)?.name ??
+                      "Conto rimosso"}
+                  </small>
                 </li>
               ))}
           </ul>

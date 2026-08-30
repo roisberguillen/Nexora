@@ -230,6 +230,18 @@
 
 Keep only the latest relevant evidence per completed phase.
 
+## 12.5.C3.7 — Ricorrenze + Allocazioni Mobile/Desktop audit — PASS — 2026-08-30
+
+- Chiusura: `SCREEN_AUDIT_PASS`; Ricorrenze + Allocazioni congelate per C3, prossimo task C3.8 Prestiti.
+- Browser: Chrome headed su `#recurring` e Playwright sui viewport 320/375/390/768/1024/1440;
+  stati vuoti, editor, liste, preview/conferma e overflow verificati. Zoom 200% PASS.
+- Test mirati: 5 file, `28/28 PASS`; E2E Ricorrenze + Allocazioni `6 PASS`.
+- Gate: lint, typecheck, test, build, codex validate e quality UI/UX PASS; suite completa
+  `589 PASS / 4 skip`, 137 file passati e 1 skipped.
+- Correzioni: overflow mobile, stati vuoti, preview origine/destinazione, doppio submit e
+  validazione conto assente; invarianti transfer/idempotenza confermati.
+- P0/P1/P2: nessuno aperto.
+
 ## 12.5.C3.6 — Budget Mobile/Desktop audit — PASS — 2026-08-30
 
 - Chiusura: `SCREEN_AUDIT_PASS`; Budget congelata per C3, prossimo task C3.7 Recurring + Allocations.

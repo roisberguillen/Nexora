@@ -89,8 +89,8 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page
     .locator('select[name="account"]')
     .selectOption({ label: "Conto quotidiano demo · EUR" });
-  await page.getByLabel("Importo").fill("2500,00");
-  await page.getByLabel("Data operazione").fill("2026-08-28");
+  await page.getByRole("textbox", { name: "Importo", exact: true }).fill("2500,00");
+  await page.locator('input[name="bookedDate"]').last().fill("2026-08-28");
   await page.getByRole("button", { name: "Salva movimento" }).click();
   const confirmation = page.getByRole("dialog", { name: "Conferma allocazioni stipendio" });
   await expect(confirmation).toContainText("Stipendio ricevuto");
@@ -122,6 +122,8 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,
+    innerWidth: window.innerWidth,
   }));
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.innerWidth);
 });
