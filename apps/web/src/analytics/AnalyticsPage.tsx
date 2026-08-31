@@ -133,7 +133,7 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
       </section>
 
       <section aria-labelledby="trend-title" className="data-panel analytics-section">
-        <div className="panel-heading">
+        <div className="panel-heading analytics-trend-heading">
           <div>
             <p className="eyebrow">Andamento</p>
             <h2 id="trend-title">Ultimi mesi</h2>
@@ -165,28 +165,34 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
                   aria-hidden="true"
                   style={{ "--analytics-bar": `${trend.expenseBarPercent}%` } as CSSProperties}
                 />
-                <small>
-                  <span className="sr-only">Entrate </span>
-                  <FinancialAmount
-                    amountMinor={trend.income.amountMinor}
-                    currency="EUR"
-                    showPositiveSign
-                  />
-                  <span className="sr-only">, spese </span>
-                  <FinancialAmount
-                    amountMinor={trend.expense.amountMinor}
-                    currency="EUR"
-                    tone="negative"
-                  />
-                  <span className="sr-only">, risparmio </span>
-                  <FinancialAmount amountMinor={trend.savings.amountMinor} currency="EUR" />
+                <small className="analytics-trend-values">
+                  <span>
+                    <b>Entrate</b>
+                    <FinancialAmount
+                      amountMinor={trend.income.amountMinor}
+                      currency="EUR"
+                      showPositiveSign
+                    />
+                  </span>
+                  <span>
+                    <b>Spese</b>
+                    <FinancialAmount
+                      amountMinor={trend.expense.amountMinor}
+                      currency="EUR"
+                      tone="negative"
+                    />
+                  </span>
+                  <span>
+                    <b>Risparmio</b>
+                    <FinancialAmount amountMinor={trend.savings.amountMinor} currency="EUR" />
+                  </span>
                 </small>
               </div>
             ))}
           </div>
           <div className="analytics-average">
             <strong>Media spese ultimi {trendWindow} mesi</strong>
-            <span>
+            <span className="analytics-average-detail">
               <FinancialAmount amountMinor={model.averageExpense.amountMinor} currency="EUR" /> ·{" "}
               {model.averageExpenseDelta.isZero() ? (
                 "in linea con la media"

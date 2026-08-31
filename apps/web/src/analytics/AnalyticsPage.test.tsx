@@ -29,6 +29,10 @@ describe("AnalyticsPage", () => {
       />,
     );
     expect(screen.getByRole("heading", { name: "Rispetto a luglio 2026" })).toBeVisible();
+    expect(screen.getAllByText("Entrate").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Spese").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Risparmio").length).toBeGreaterThan(0);
+    expect(screen.getByText("Media spese ultimi 6 mesi")).toBeVisible();
     expect(
       screen.getByRole("img", { name: "Andamento mensile di entrate, spese e risparmio" }),
     ).toBeVisible();
