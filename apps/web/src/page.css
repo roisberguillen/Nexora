@@ -931,6 +931,10 @@
   margin-top: 0;
 }
 
+#journal > .journal-heading {
+  margin-bottom: 1.25rem;
+}
+
 .accounts-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
