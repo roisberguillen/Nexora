@@ -822,3 +822,13 @@ Keep only the latest relevant evidence per completed phase.
   evidence, with no runtime/data integrity failure observed in the redesign.
 - Browser follow-up: Chrome 200% smoke at 1024 px showed no horizontal overflow; keyboard traversal
   reached month navigation and all 3/6/12 month controls at 375 px without a trap.
+
+### C3.10 Analytics closure — 2026-08-31
+
+- Chrome follow-up: trend dates remain on one line, the expense bar has a coherent gap from the
+  date, and the 3/6/12 month controls keep equal dimensions at 412 px and 1440 px.
+- Component test: `AnalyticsPage.test.tsx` `2/2 PASS`; typecheck `PASS`.
+- Manifest regenerated from a clean detached worktree at `cb70846`; `manifest:check` and
+  `codex:validate` pass there. The original dirty worktree remains untouched outside the scoped
+  files.
+- Result: C3.10 `SCREEN_AUDIT_PASS / FROZEN`; no P0/P1/P2 findings remain.
