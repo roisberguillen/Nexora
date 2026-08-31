@@ -123,33 +123,35 @@ export function JournalPage({
             <h2 id="journal-summary-title">{selectedPeriod}</h2>
           </div>
         </div>
-        <p className="import-help">
-          Questa sintesi è derivata dai dati locali e non modifica il ledger.
-        </p>
-        <div className="metrics-grid">
-          <div className="metric-card">
-            <span>Entrate</span>
-            <FinancialAmount
-              amountMinor={trend?.income.amountMinor ?? 0n}
-              currency="EUR"
-              tone="positive"
-            />
-          </div>
-          <div className="metric-card">
-            <span>Spese</span>
-            <FinancialAmount
-              amountMinor={trend?.expense.amountMinor ?? 0n}
-              currency="EUR"
-              tone="negative"
-            />
-          </div>
-          <div className="metric-card">
-            <span>Risparmio</span>
-            <FinancialAmount amountMinor={trend?.savings.amountMinor ?? 0n} currency="EUR" />
-          </div>
-          <div className="metric-card">
-            <span>Valutazioni investimento</span>
-            <FinancialAmount amountMinor={invested} currency="EUR" />
+        <div className="journal-summary-content">
+          <p className="import-help">
+            Questa sintesi è derivata dai dati locali e non modifica il ledger.
+          </p>
+          <div className="metrics-grid">
+            <div className="metric-card">
+              <span>Entrate</span>
+              <FinancialAmount
+                amountMinor={trend?.income.amountMinor ?? 0n}
+                currency="EUR"
+                tone="positive"
+              />
+            </div>
+            <div className="metric-card">
+              <span>Spese</span>
+              <FinancialAmount
+                amountMinor={trend?.expense.amountMinor ?? 0n}
+                currency="EUR"
+                tone="negative"
+              />
+            </div>
+            <div className="metric-card">
+              <span>Risparmio</span>
+              <FinancialAmount amountMinor={trend?.savings.amountMinor ?? 0n} currency="EUR" />
+            </div>
+            <div className="metric-card">
+              <span>Valutazioni investimento</span>
+              <FinancialAmount amountMinor={invested} currency="EUR" />
+            </div>
           </div>
         </div>
       </section>

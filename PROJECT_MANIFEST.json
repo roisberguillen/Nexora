@@ -184,8 +184,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-08-31-c3-11-journal.md",
-      "size": 8144,
-      "sha256": "23e5b4966d3c70f859324eb85754574596564896a56ee48a6b6b749ed0f2aea2"
+      "size": 8525,
+      "sha256": "3c14767b517152bfd8ee4c8c229fc68a0f4608b00cddfbab2b40d09065eea659"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -1154,13 +1154,13 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.test.tsx",
-      "size": 2935,
-      "sha256": "6289e33835427f4511c799af6f5ed531a9538061afa7151c036811563a6a4461"
+      "size": 3119,
+      "sha256": "3c375a5d347b9cb6b5f05cb25c3a7dca04e0adbe0594d2079b6f05054360c465"
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 11003,
-      "sha256": "e774861357e9b450c2222115de3c4d3a9c217adf9c12ea3e3ae1a2eab2f632cb"
+      "size": 11126,
+      "sha256": "cdb0b21f211621ab41d2f4ceb9cd133f5c5a53fac8a6939d1f880c3495964704"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -1219,8 +1219,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 40707,
-      "sha256": "ed6f1c08798c147d6a24a24441aa235eefcbbc934d51db426e4ca9a8ef449069"
+      "size": 40883,
+      "sha256": "af1339e7fa887217072a6cff1d36c396ec2dc6d8809e61905e27d69d02bc6a8a"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1634,8 +1634,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 33649,
-      "sha256": "e76c8647304a1af9eecb548a2fc0293bd0f35edab69b050d1216e9ae86b3e142"
+      "size": 33807,
+      "sha256": "1ec67d6571b8dfd11e3b65e7c2ce6bc239f9691587bcd28f49ef00ae8f3f435e"
     },
     {
       "path": "design/mockup/README.md",

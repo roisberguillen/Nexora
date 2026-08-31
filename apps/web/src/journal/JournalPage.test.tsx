@@ -18,6 +18,9 @@ describe("JournalPage", () => {
     expect(screen.getByText("Nessuna riflessione")).toBeVisible();
     expect(screen.getByRole("button", { name: "Nuova nota" })).toBeVisible();
     expect(screen.getByText("Sintesi automatica")).toBeVisible();
+    expect(document.querySelector(".journal-summary-content")).toContainElement(
+      screen.getByText("Questa sintesi è derivata dai dati locali e non modifica il ledger."),
+    );
     expect(screen.getByLabelText("Percezione di controllo")).toBeVisible();
   });
 

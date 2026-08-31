@@ -312,6 +312,18 @@
   margin-top: 0.75rem;
 }
 
+.journal-summary-content {
+  padding: 1.5rem;
+}
+
+.journal-summary-content > .import-help {
+  margin: 0;
+}
+
+.journal-summary-content > .metrics-grid {
+  margin-top: 1.25rem;
+}
+
 .analytics-heading {
   align-items: start;
 }
