@@ -1016,6 +1016,14 @@
   padding: 2rem 1.5rem;
 }
 
+#journal > .accounts-layout {
+  display: block;
+}
+
+#journal > .accounts-layout > .account-editor-panel {
+  margin-top: 1.25rem;
+}
+
 .account-list-empty h3 {
   margin: 0;
 }
