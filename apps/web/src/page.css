@@ -1022,6 +1022,7 @@
 
 #journal > .accounts-layout {
   display: block;
+  margin-top: 1.25rem;
 }
 
 #journal > .accounts-layout > .account-editor-panel {
