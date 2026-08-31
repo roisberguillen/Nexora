@@ -797,3 +797,28 @@ Keep only the latest relevant evidence per completed phase.
   1024 and 1440.
 - Follow-up spacing: panel separation is `20 px` and comparison content keeps `24 px` bottom
   padding in Chrome at 1440 px and 375 px.
+
+### C3.10 Analytics redesign — 2026-08-31
+
+- View model/component tests: `AnalyticsPage.test.tsx` and `buildAnalyticsViewModel.test.ts`
+  `4/4 PASS`; domain trend regression included.
+- Typecheck: `pnpm typecheck` PASS.
+- Build: `pnpm build` PASS.
+- E2E: `phase-12-surfaces.spec.ts` `6/6 PASS` on Chromium 320, 375, 390, 768, 1024 and 1440;
+  coverage includes month navigation, 3-month trend window, summary, categories, changes and
+  forecast ordering.
+- Browser: Chrome dev surface verified at 1440 px; seven sections are ordered with forecast last,
+  month navigation and trend window controls work, and no horizontal overflow is present.
+- Status: C3.10 remains `IN_PROGRESS`; zoom 200%, keyboard-only evidence and full global gates
+  are still pending before an audit PASS can be claimed.
+
+### C3.10 Analytics redesign gate update — 2026-08-31
+
+- Full test suite: `138 passed`, `1 skipped`; `597 passed`, `4 skipped` (documented skips).
+- Lint, typecheck and build: PASS. `pnpm codex:validate`: PASS.
+- `manifest:check`: BLOCKED because the repository manifest is stale against unrelated pre-existing
+  worktree changes; no out-of-scope files were regenerated or staged.
+- Review status remains `SCREEN_AUDIT_BLOCKED` pending dedicated 200% zoom and keyboard-only
+  evidence, with no runtime/data integrity failure observed in the redesign.
+- Browser follow-up: Chrome 200% smoke at 1024 px showed no horizontal overflow; keyboard traversal
+  reached month navigation and all 3/6/12 month controls at 375 px without a trap.

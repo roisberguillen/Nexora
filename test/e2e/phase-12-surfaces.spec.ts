@@ -9,7 +9,20 @@ test("analytics, journal and notifications use the persisted ledger without resp
 
   await page.goto("/#analytics");
   await expect(page.getByRole("heading", { name: "Analisi", exact: true })).toBeVisible();
-  await expect(page.getByRole("img", { name: "Grafico delle spese mensili" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Come è andato/ })).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: "Andamento mensile di entrate, spese e risparmio" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dove hai speso" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Cosa è cambiato" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Mese successivo" })).toBeVisible();
+  await page.locator(".analytics-period-selector button").first().click();
+  await expect(page.locator(".analytics-period-selector span")).toHaveText(/2026/);
+  await page.getByRole("button", { name: "3 mesi" }).click();
+  await expect(page.getByRole("button", { name: "3 mesi" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
 
   await page.goto("/#journal");
   await expect(page.getByRole("heading", { name: "Diario", exact: true })).toBeVisible();

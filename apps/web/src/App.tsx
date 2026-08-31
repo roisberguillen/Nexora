@@ -811,7 +811,11 @@ function AppContent({
                   transactions={ledgerState.rawTransactions}
                 />
               ) : route === "analytics" ? (
-                <AnalyticsPage transactions={ledgerState.rawTransactions} />
+                <AnalyticsPage
+                  categories={ledgerState.categories}
+                  transactions={ledgerState.rawTransactions}
+                  transactionSplits={ledgerState.transactionSplits}
+                />
               ) : route === "notifications" ? (
                 <NotificationsPage
                   accounts={ledgerState.rawAccounts}

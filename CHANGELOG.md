@@ -18,6 +18,10 @@
 
 ### Documentation
 
+- Avviato il redesign C3.10 Analytics: mese selezionabile come sorgente unica, sintesi KPI,
+  confronto, trend 3/6/12 mesi, media spese, categorie split-aware, insight deterministici,
+  storico accessibile e previsione spostata in fondo.
+
 - Corretto il padding interno dei pannelli Analisi: previsione, confronto, grafico e tabella ora
   mantengono un inset uniforme dal bordo su desktop e mobile.
 - Aggiunto un distacco verticale coerente tra i pannelli Analisi e mantenuto il margine inferiore
