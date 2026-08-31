@@ -30,6 +30,14 @@ test("analytics, journal and notifications use the persisted ledger without resp
   await page.getByLabel("Percezione di controllo").selectOption("4");
   await page.getByRole("button", { name: "Salva diario" }).click();
   await expect(page.getByRole("status")).toContainText("Diario mensile salvato");
+  await page.getByRole("button", { name: "Modifica" }).click();
+  await page.getByLabel("Come è andato il mese?").fill("Riflessione E2E aggiornata");
+  await page.getByRole("button", { name: "Salva diario" }).click();
+  await expect(page.getByRole("status")).toContainText("Diario mensile salvato");
+  await page.getByRole("button", { name: "Elimina…" }).click();
+  await expect(page.getByRole("dialog", { name: "Eliminare questo diario?" })).toBeVisible();
+  await page.getByRole("button", { name: "Elimina diario" }).click();
+  await expect(page.getByText("Nessuna riflessione")).toBeVisible();
 
   await page.goto("/#notifications");
   await expect(page.getByRole("heading", { name: "Notifiche", exact: true })).toBeVisible();

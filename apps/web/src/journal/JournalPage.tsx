@@ -5,7 +5,7 @@ import {
   type Transaction,
 } from "@nexora/domain";
 import { FinancialAmount } from "@nexora/ui";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 
 import type { MonthlyJournalInput } from "./journalCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
@@ -26,11 +26,19 @@ export function JournalPage({
 }) {
   const currentPeriod = localCivilMonth();
   const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
-  const selected = journals.find((journal) => journal.period === selectedPeriod);
+  const [editingJournalId, setEditingJournalId] = useState<string | undefined>(
+    () => journals.find((journal) => journal.period === currentPeriod)?.id,
+  );
+  const selected = journals.find((journal) => journal.id === editingJournalId);
+  const orderedJournals = [...journals].sort((left, right) =>
+    right.period.localeCompare(left.period),
+  );
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [deleteCandidate, setDeleteCandidate] = useState<MonthlyJournal | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const editorRef = useRef<HTMLElement>(null);
   const trend = calculateMonthlyTrends(transactions, "EUR").find(
     (item) => item.month === selectedPeriod,
   );
@@ -40,26 +48,41 @@ export function JournalPage({
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     const form = new FormData(event.currentTarget);
     const control = String(form.get("perceivedControl"));
+    const period = String(form.get("period"));
     try {
       await onSave(
         {
-          period: String(form.get("period")),
+          period,
           ...(String(form.get("note")).trim() === "" ? {} : { note: String(form.get("note")) }),
           ...(String(form.get("nextMonthGoals")).trim() === ""
             ? {}
             : { nextMonthGoals: String(form.get("nextMonthGoals")) }),
           ...(control === "" ? {} : { perceivedControl: Number(control) as 1 | 2 | 3 | 4 | 5 }),
         },
-        selected?.id,
+        editingJournalId,
       );
+      setSelectedPeriod(period);
       setError(null);
       setFeedback("Diario mensile salvato nei dati locali.");
     } catch {
       setFeedback(null);
       setError("Impossibile salvare il diario. Verifica il periodo e i campi indicati.");
+    } finally {
+      setIsSaving(false);
     }
+  };
+
+  const startNewJournal = () => {
+    const currentJournal = journals.find((journal) => journal.period === currentPeriod);
+    setSelectedPeriod(currentPeriod);
+    setEditingJournalId(currentJournal?.id);
+    setError(null);
+    setFeedback(null);
+    editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const confirmDelete = async () => {
@@ -67,7 +90,10 @@ export function JournalPage({
     setIsDeleting(true);
     try {
       await onDelete(deleteCandidate.id);
-      if (selectedPeriod === deleteCandidate.period) setSelectedPeriod(currentPeriod);
+      if (editingJournalId === deleteCandidate.id) {
+        setEditingJournalId(undefined);
+        setSelectedPeriod(currentPeriod);
+      }
       setDeleteCandidate(null);
       setFeedback("Diario mensile eliminato dai dati locali.");
       setError(null);
@@ -80,12 +106,15 @@ export function JournalPage({
 
   return (
     <div id="journal">
-      <header className="accounts-heading">
+      <header className="accounts-heading journal-heading">
         <div>
           <p className="eyebrow">Riflessione mensile</p>
           <h1>Diario</h1>
           <p>Annota ciò che ha funzionato e definisci un obiettivo pratico per il mese prossimo.</p>
         </div>
+        <button className="primary-action" onClick={startNewJournal} type="button">
+          Nuova nota
+        </button>
       </header>
       <section aria-labelledby="journal-summary-title" className="data-panel">
         <div className="panel-heading">
@@ -134,16 +163,16 @@ export function JournalPage({
               <p className="eyebrow">Archivio locale</p>
               <h2 id="journal-list-title">Mesi registrati</h2>
             </div>
-            <span className="panel-meta">{journals.length}</span>
+            <span className="panel-meta">{orderedJournals.length}</span>
           </div>
-          {journals.length === 0 ? (
+          {orderedJournals.length === 0 ? (
             <div className="account-list-empty">
               <h3>Nessuna riflessione</h3>
               <p>Il primo diario resta privato sul dispositivo e non modifica saldi o budget.</p>
             </div>
           ) : (
-            <ul className="account-list">
-              {journals.map((journal) => (
+            <ul className="account-list journal-list">
+              {orderedJournals.map((journal) => (
                 <li key={journal.id}>
                   <div className="account-copy">
                     <strong>{journal.period}</strong>
@@ -159,6 +188,7 @@ export function JournalPage({
                     className="secondary-action"
                     onClick={() => {
                       setSelectedPeriod(journal.period);
+                      setEditingJournalId(journal.id);
                       setFeedback(null);
                       setError(null);
                     }}
@@ -178,7 +208,11 @@ export function JournalPage({
             </ul>
           )}
         </section>
-        <aside aria-labelledby="journal-form-title" className="account-editor-panel">
+        <aside
+          aria-labelledby="journal-form-title"
+          className="account-editor-panel"
+          ref={editorRef}
+        >
           <h2 id="journal-form-title">{selected === undefined ? "Nuovo mese" : "Modifica mese"}</h2>
           {error === null ? null : (
             <p className="account-error" role="alert">
@@ -200,7 +234,6 @@ export function JournalPage({
               <input
                 defaultValue={selected?.period ?? selectedPeriod}
                 name="period"
-                onChange={(event) => setSelectedPeriod(event.target.value)}
                 pattern="[0-9]{4}-(0[1-9]|1[0-2])"
                 required
               />
@@ -230,8 +263,8 @@ export function JournalPage({
               </select>
             </label>
             <div className="form-actions">
-              <button className="primary-action" type="submit">
-                Salva diario
+              <button className="primary-action" disabled={isSaving} type="submit">
+                {isSaving ? "Salvataggio…" : "Salva diario"}
               </button>
             </div>
           </form>

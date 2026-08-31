@@ -914,6 +914,11 @@
   line-height: 1.65;
 }
 
+.journal-heading > .primary-action {
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
 .accounts-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1517,6 +1522,14 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .journal-list li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .journal-list li .text-action {
+    grid-column: 2;
+  }
+
   .account-list li .form-actions {
     width: 100%;
     justify-content: flex-start;
@@ -1549,6 +1562,19 @@
   .split-row {
     grid-template-columns: 1fr;
   }
+}
+
+.journal-list li {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: start;
+}
+
+.journal-list .account-copy {
+  min-width: 0;
+}
+
+.journal-list .account-copy small {
+  overflow-wrap: anywhere;
 }
 
 .import-upload-panel,

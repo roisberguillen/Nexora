@@ -16,6 +16,7 @@ describe("JournalPage", () => {
       />,
     );
     expect(screen.getByText("Nessuna riflessione")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Nuova nota" })).toBeVisible();
     expect(screen.getByText("Sintesi automatica")).toBeVisible();
     expect(screen.getByLabelText("Percezione di controllo")).toBeVisible();
   });
@@ -55,5 +56,30 @@ describe("JournalPage", () => {
     );
     await user.click(screen.getByRole("button", { name: "Elimina diario" }));
     expect(onDelete).toHaveBeenCalledWith(journal.id);
+  });
+
+  it("keeps journal entries ordered from newest to oldest", () => {
+    const older = MonthlyJournal.create({
+      id: "journal-june",
+      period: "2026-06",
+      note: "nota precedente",
+    });
+    const newer = MonthlyJournal.create({
+      id: "journal-august",
+      period: "2026-08",
+      note: "nota recente",
+    });
+    render(
+      <JournalPage
+        investments={[]}
+        journals={[older, newer]}
+        onDelete={async () => undefined}
+        onSave={async () => undefined}
+        transactions={[]}
+      />,
+    );
+    const entries = screen.getAllByRole("listitem");
+    expect(entries[0]).toHaveTextContent("2026-08");
+    expect(entries[1]).toHaveTextContent("2026-06");
   });
 });

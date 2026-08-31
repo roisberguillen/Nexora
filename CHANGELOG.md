@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Chiusa la review C3.11 del Diario finanziario con CRUD responsive, keyboard, privacy e isolamento
+  dai dati finanziari verificati; superficie congelata per C3.
+
 - Avviato il redesign C3.10 Analytics: mese selezionabile come sorgente unica, sintesi KPI,
   confronto, trend 3/6/12 mesi, media spese, categorie split-aware, insight deterministici,
   storico accessibile e previsione spostata in fondo.

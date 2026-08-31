@@ -183,6 +183,11 @@
       "sha256": "762a64bdcf7cecfd142e9214976ded2d2011e0a728288ad55a2f13cc5778c53d"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-31-c3-11-journal.md",
+      "size": 8144,
+      "sha256": "23e5b4966d3c70f859324eb85754574596564896a56ee48a6b6b749ed0f2aea2"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -324,8 +329,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 401,
-      "sha256": "746176bd955ba9a51da0a5bef09466877ba955c235dc41e3d4f18871a4fc1dc5"
+      "size": 368,
+      "sha256": "e48735d9a67df78edaef32fa4af6b25fb857769de568c0e2b598e679b7d18687"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -349,18 +354,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 5763,
-      "sha256": "63b38c1d1a57a9e9f9622272413afdf8b58a97f06a8e5737f7a1677906a046be"
+      "size": 5908,
+      "sha256": "3ac92af3a3d8badba7af03386bf3326dac1b0f78409cce9067c857f35369c9b6"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 59371,
-      "sha256": "27d6b7e731558092124cb5f165cd15c9779ccefe2e786dc0d657e4a2898594cd"
+      "size": 60444,
+      "sha256": "72b30548da5a67407988214a0a9efff84647c4d30e096cc6102c61328469a167"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4426,
-      "sha256": "8e1313b7ee761e3de7bb81e06b425bdc345c0ce44e77fd2577d7b1dc408cbfe5"
+      "size": 4436,
+      "sha256": "c7a892e7bc55e7cabf4755edb09525f3592b886489c8c803150ba6589c997c39"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1149,13 +1154,13 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.test.tsx",
-      "size": 2147,
-      "sha256": "2d0bb3cf5cd40afff53ca51bf7c76983e39aadfadeb2f2fc069a3670282e811f"
+      "size": 2935,
+      "sha256": "6289e33835427f4511c799af6f5ed531a9538061afa7151c036811563a6a4461"
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 9828,
-      "sha256": "d585a68027c26bfc069bce007fdbb336d5f7ce33c0b333941f2b8ef4b5743167"
+      "size": 11003,
+      "sha256": "e774861357e9b450c2222115de3c4d3a9c217adf9c12ea3e3ae1a2eab2f632cb"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -1214,8 +1219,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 40289,
-      "sha256": "d5f147b0acc846b5cf394cf62cd00e3057692c2180f7460284042fbe41b9bedd"
+      "size": 40707,
+      "sha256": "ed6f1c08798c147d6a24a24441aa235eefcbbc934d51db426e4ca9a8ef449069"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1629,8 +1634,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 33485,
-      "sha256": "f2c642280cc7fbdd817f6482dd705c26072cb99882b4bc41e947d1603839530a"
+      "size": 33649,
+      "sha256": "e76c8647304a1af9eecb548a2fc0293bd0f35edab69b050d1216e9ae86b3e142"
     },
     {
       "path": "design/mockup/README.md",
@@ -3229,8 +3234,8 @@
     },
     {
       "path": "test/e2e/phase-12-surfaces.spec.ts",
-      "size": 2239,
-      "sha256": "1a7c1080b027a10f89834ccbb9736551f603cc1d2512be051e8452b940417feb"
+      "size": 2839,
+      "sha256": "a31a17a792deef74fcd67c8342e7ff2adf872bd81d4a5d16deac55080d36c988"
     },
     {
       "path": "test/e2e/pilot-ledger-flow.spec.ts",

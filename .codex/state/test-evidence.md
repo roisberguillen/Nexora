@@ -832,3 +832,18 @@ Keep only the latest relevant evidence per completed phase.
   `codex:validate` pass there. The original dirty worktree remains untouched outside the scoped
   files.
 - Result: C3.10 `SCREEN_AUDIT_PASS / FROZEN`; no P0/P1/P2 findings remain.
+
+### 12.5.C3.11 — Financial Journal Mobile/Desktop audit — 2026-08-31
+
+- Chrome real: `#journal` checked at 320, 375, 390, 768, 1024 and 1440 px; CTA, editor,
+  empty state, responsive reflow and no horizontal overflow verified.
+- Chrome 1024 px at 200%: no horizontal overflow; CTA and form remain reachable.
+- Chrome keyboard smoke at 375 px: focus reaches CTA, period, both textareas, control select,
+  save and mobile navigation without a trap; touch CTA/save targets are 44 px high.
+- Component/command tests: `JournalPage.test.tsx` and `journalCommands.test.ts` `5/5 PASS`.
+- Full E2E: `phase-12-surfaces.spec.ts` `6/6 PASS`, including create, edit, delete confirmation
+  and empty-state return for the journal.
+- Full suite: `598 passed`, `4 skipped`; format, lint, typecheck and build PASS.
+- Security/financial isolation: React renders journal text without unsafe HTML; commands call only
+  monthly-journal repository methods and do not create transactions or alter financial metrics.
+- Findings: P0=0, P1=0, P2=0. Result pending final isolated manifest gate.
