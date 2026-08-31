@@ -73,7 +73,8 @@
 }
 
 @media (min-width: 75.01rem) {
-  .dashboard-priority-grid .metric-value {
+  .dashboard-priority-grid .metric-value,
+  .journal-summary-content .metric-value {
     font-size: clamp(1.25rem, 1.8vw, 1.75rem);
   }
 }
@@ -1184,7 +1185,8 @@
 }
 
 .account-form input,
-.account-form select {
+.account-form select,
+.account-form textarea {
   width: 100%;
   min-height: 2.75rem;
   padding: 0.625rem 0.75rem;
@@ -1192,17 +1194,26 @@
   border-radius: var(--radius-md);
   background: var(--color-card);
   color: var(--color-on-surface);
+  font: inherit;
+  line-height: 1.5;
 }
 
 .account-form input:focus,
-.account-form select:focus {
+.account-form select:focus,
+.account-form textarea:focus {
   border-color: var(--color-primary);
 }
 
 .account-form input:disabled,
-.account-form select:disabled {
+.account-form select:disabled,
+.account-form textarea:disabled {
   background: var(--color-surface-low);
   color: var(--color-on-surface-muted);
+}
+
+.account-form textarea {
+  min-height: 8rem;
+  resize: vertical;
 }
 
 .account-form .budget-alert-toggle,

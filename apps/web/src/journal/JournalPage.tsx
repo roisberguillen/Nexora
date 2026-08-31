@@ -129,28 +129,41 @@ export function JournalPage({
           </p>
           <div className="metrics-grid">
             <div className="metric-card">
-              <span>Entrate</span>
+              <span className="metric-label">Entrate</span>
               <FinancialAmount
                 amountMinor={trend?.income.amountMinor ?? 0n}
+                className="metric-value"
                 currency="EUR"
+                showPositiveSign
                 tone="positive"
               />
             </div>
             <div className="metric-card">
-              <span>Spese</span>
+              <span className="metric-label">Spese</span>
               <FinancialAmount
                 amountMinor={trend?.expense.amountMinor ?? 0n}
+                className="metric-value"
                 currency="EUR"
                 tone="negative"
               />
             </div>
             <div className="metric-card">
-              <span>Risparmio</span>
-              <FinancialAmount amountMinor={trend?.savings.amountMinor ?? 0n} currency="EUR" />
+              <span className="metric-label">Risparmio</span>
+              <FinancialAmount
+                amountMinor={trend?.savings.amountMinor ?? 0n}
+                className="metric-value"
+                currency="EUR"
+                showPositiveSign
+                tone={
+                  trend?.savings.amountMinor !== undefined && trend.savings.amountMinor < 0n
+                    ? "negative"
+                    : "positive"
+                }
+              />
             </div>
             <div className="metric-card">
-              <span>Valutazioni investimento</span>
-              <FinancialAmount amountMinor={invested} currency="EUR" />
+              <span className="metric-label">Valutazioni investimento</span>
+              <FinancialAmount amountMinor={invested} className="metric-value" currency="EUR" />
             </div>
           </div>
         </div>

@@ -847,3 +847,10 @@ Keep only the latest relevant evidence per completed phase.
 - Security/financial isolation: React renders journal text without unsafe HTML; commands call only
   monthly-journal repository methods and do not create transactions or alter financial metrics.
 - Findings: P0=0, P1=0, P2=0. Result pending final isolated manifest gate.
+
+### C3.11 Journal typography follow-up — 2026-08-31
+
+- Component test: `JournalPage.test.tsx` `3/3 PASS`; typecheck `PASS`.
+- Chrome: Dashboard and Journal compared at 1440 px and Journal checked at 412 px; financial
+  amounts share JetBrains Mono, weight 750 and responsive metric sizing; labels share Inter
+  styling; no horizontal overflow observed.

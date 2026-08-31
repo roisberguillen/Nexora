@@ -18,6 +18,12 @@
 
 ### Documentation
 
+- Allineata la tipografia della sintesi del Diario alla Dashboard: label Inter condivise, importi
+  JetBrains Mono con dimensione/peso coerenti e segno positivo esplicito per entrate e risparmio.
+
+- Ripristinato l'inset orizzontale coerente della sintesi del Diario: descrizione e metriche
+  mantengono ora spazio uniforme dai bordi su mobile e desktop.
+
 - Chiusa la review C3.11 del Diario finanziario con CRUD responsive, keyboard, privacy e isolamento
   dai dati finanziari verificati; superficie congelata per C3.
 

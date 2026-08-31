@@ -21,6 +21,8 @@ describe("JournalPage", () => {
     expect(document.querySelector(".journal-summary-content")).toContainElement(
       screen.getByText("Questa sintesi è derivata dai dati locali e non modifica il ledger."),
     );
+    expect(document.querySelectorAll(".journal-summary-content .metric-label")).toHaveLength(4);
+    expect(document.querySelectorAll(".journal-summary-content .metric-value")).toHaveLength(4);
     expect(screen.getByLabelText("Percezione di controllo")).toBeVisible();
   });
 
