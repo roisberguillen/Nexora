@@ -313,7 +313,7 @@
 }
 
 .journal-summary-content {
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 2.25rem;
 }
 
 .journal-summary-content > .import-help {
@@ -1425,6 +1425,10 @@
   .accounts-heading {
     align-items: start;
     flex-direction: column;
+  }
+
+  .journal-heading > .primary-action {
+    align-self: flex-end;
   }
 
   .activity-table thead,
