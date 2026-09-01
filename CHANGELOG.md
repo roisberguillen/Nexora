@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto spazio inferiore coerente ai pannelli Confronto e Spese principali della Dashboard su
+  mobile e desktop.
+
 - Aggiunta l’azione “Diario finanziario” al menu rapido mobile `+`, con navigazione diretta alla
   superficie Journal.
 

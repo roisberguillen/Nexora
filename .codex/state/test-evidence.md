@@ -860,3 +860,10 @@ Keep only the latest relevant evidence per completed phase.
 - Component/App test: quick action navigation test `1/1 PASS`.
 - Chrome at 412 px: mobile `+` menu exposes “Diario finanziario”; selecting it navigates to
   `#journal`, closes the sheet and preserves no horizontal overflow.
+
+### Dashboard comparison panel spacing follow-up — 2026-09-01
+
+- Chrome at 412 px and 1440 px: comparison panel has `16px` bottom padding and no horizontal
+  overflow; the following panel remains separated by the existing grid gap.
+- Dashboard view-model tests: 8 failures remain pre-existing and date-sensitive because fixtures
+  target the prior monthly period; typecheck `PASS`.
