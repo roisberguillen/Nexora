@@ -144,8 +144,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-08-26-c3-3-r2-dashboard-home.md",
-      "size": 1839,
-      "sha256": "d135556d391213e972c12dd5951045e29d6364fde0a2e062b1d91c6d0deb2016"
+      "size": 1502,
+      "sha256": "7023844c809cf2742ebac08c4afcc49a9dc74d145c96561f3c9619c4937d8a97"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-08-26-c3-3-r3-dashboard-hardening.md",
@@ -374,8 +374,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 64167,
-      "sha256": "840a38c304a5808b01b4cb57f68463757216ee0a7432eef8b358c0885c9abb2a"
+      "size": 63881,
+      "sha256": "6b4f0e8107cc21a35922aaea4b0cb249942fc00c4b67fefa1a259b5ea38da24f"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1649,8 +1649,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 34981,
-      "sha256": "7328f8dec32e5b425e30a03aafed427aad96c18e8b438f336d6a3554704baa16"
+      "size": 35123,
+      "sha256": "204107a8e28a7fec3f195139bcfe7c38396c2a0fc4193fcce7ff85103242a6fc"
     },
     {
       "path": "design/mockup/README.md",
