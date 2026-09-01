@@ -1,5 +1,6 @@
 import type { Account, Category, Transaction } from "@nexora/domain";
 import { useState } from "react";
+import { useRef } from "react";
 import { buildLedgerWorkbook } from "@nexora/importers";
 import {
   buildTransactionsCsv,
@@ -24,8 +25,9 @@ export function ExportsPage({
   const [categoryId, setCategoryId] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [isExportingJson, setIsExportingJson] = useState(false);
+  const [activeExport, setActiveExport] = useState<"csv" | "xlsx" | "json" | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
+  const exportLock = useRef(false);
   const filteredTransactions = filterExportTransactions(transactions, {
     ...(accountId === "" ? {} : { accountId }),
     ...(categoryId === "" ? {} : { categoryId }),
@@ -33,6 +35,20 @@ export function ExportsPage({
     ...(to === "" ? {} : { to }),
   });
   const data = { accounts, categories, transactions: filteredTransactions };
+  const runSyncExport = (format: "csv" | "xlsx", action: () => void) => {
+    if (exportLock.current) return;
+    exportLock.current = true;
+    setActiveExport(format);
+    setExportError(null);
+    try {
+      action();
+    } catch {
+      setExportError("L’esportazione non è riuscita.");
+    } finally {
+      exportLock.current = false;
+      setActiveExport(null);
+    }
+  };
   return (
     <section className="data-panel" id="exports">
       <div className="panel-heading">
@@ -73,51 +89,64 @@ export function ExportsPage({
         </label>
       </div>
       <p aria-live="polite" className="import-help">
-        {filteredTransactions.length} movimenti inclusi.
+        {filteredTransactions.length === 0
+          ? "Nessun movimento corrisponde ai filtri selezionati."
+          : `${filteredTransactions.length} movimenti inclusi.`}
       </p>
       <div className="form-actions">
         <button
           className="primary-action"
+          disabled={activeExport !== null}
           onClick={() =>
-            downloadText(
-              "nexora-movimenti.csv",
-              buildTransactionsCsv(data),
-              "text/csv;charset=utf-8",
+            runSyncExport("csv", () =>
+              downloadText(
+                "nexora-movimenti.csv",
+                buildTransactionsCsv(data),
+                "text/csv;charset=utf-8",
+              ),
             )
           }
           type="button"
         >
-          Scarica CSV movimenti
+          {activeExport === "csv" ? "Preparazione CSV…" : "Scarica CSV movimenti"}
         </button>
         <button
           className="secondary-action"
+          disabled={activeExport !== null}
           onClick={() =>
-            downloadBytes(
-              "nexora-movimenti.xlsx",
-              buildLedgerWorkbook(buildTransactionsRows(data)),
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            runSyncExport("xlsx", () =>
+              downloadBytes(
+                "nexora-movimenti.xlsx",
+                buildLedgerWorkbook(buildTransactionsRows(data)),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              ),
             )
           }
           type="button"
         >
-          Scarica XLSX movimenti
+          {activeExport === "xlsx" ? "Preparazione XLSX…" : "Scarica XLSX movimenti"}
         </button>
         <button
           className="secondary-action"
-          disabled={isExportingJson}
+          disabled={activeExport !== null}
           onClick={() => {
-            setIsExportingJson(true);
+            if (exportLock.current) return;
+            exportLock.current = true;
+            setActiveExport("json");
             setExportError(null);
             void onExportCompleteJson()
               .then((bytes) =>
                 downloadBytes("nexora-ledger-completo.json", bytes, "application/json"),
               )
               .catch(() => setExportError("L’esportazione completa non è riuscita."))
-              .finally(() => setIsExportingJson(false));
+              .finally(() => {
+                exportLock.current = false;
+                setActiveExport(null);
+              });
           }}
           type="button"
         >
-          {isExportingJson ? "Preparazione JSON…" : "Scarica JSON completo"}
+          {activeExport === "json" ? "Preparazione JSON…" : "Scarica JSON completo"}
         </button>
       </div>
       {exportError === null ? null : <p role="alert">{exportError}</p>}

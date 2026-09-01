@@ -208,6 +208,11 @@
       "sha256": "0dd0ce39382009b628eb5422a9430e45b02bf418dc12f13ccb4ab67880e73924"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-01-c3-15-export.md",
+      "size": 7198,
+      "sha256": "3dc3afe510894781a3542e483aac68ade2774db5cea4809c023ee93d90a9e280"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -359,8 +364,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 341,
-      "sha256": "ea7ffe85db9377728de975cd5f5af92464bad5e77678a20b137e717b1a7a8c4b"
+      "size": 351,
+      "sha256": "602f6130e48fcdd3c01f4bd2ec4361ed1b866045e293730dd6fe1c5884ac504b"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -384,18 +389,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 6372,
-      "sha256": "14ba7e8d6b840b881b3936988b559fa1565533f8104e8f0dc20d8dc05dffcf75"
+      "size": 6529,
+      "sha256": "103defc7910f2bcb44de5029ff5ea5e6ef2bbb4cbc53d448009fd816a9c75305"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 67707,
-      "sha256": "4f3aacf9eb24e63216cbf3d54a4c08927120ad55f0745c3624170fd72d9be0be"
+      "size": 69042,
+      "sha256": "3d37e351351d959bfa0e0c98c5f763a33baf227157db6b1fe39b75b029da098b"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4466,
-      "sha256": "e4b4dd6c2aa649eebe9f64b590fa0dd44af0cc3eb60cd167615d88acc8b985d1"
+      "size": 4476,
+      "sha256": "02280300492fbad21aff914c1d320ec8dc10f42d399a2d0b813bdb4376661acb"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1094,8 +1099,8 @@
     },
     {
       "path": "apps/web/src/exports/ExportsPage.tsx",
-      "size": 4660,
-      "sha256": "2b17892cba4ba504ddb2b3e811ce57b5cae124429374dc8155192375fe684414"
+      "size": 5749,
+      "sha256": "21a447567ca328f91a0d9e9f7c61e8eec513354376bb80fc176cfa002777547b"
     },
     {
       "path": "apps/web/src/imports/importCommands.test.ts",
@@ -1249,8 +1254,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 41822,
-      "sha256": "5a10ea18839cabe43f026cca922cf61b23301a0ea649bbf1461b048d1dd3cb1c"
+      "size": 42000,
+      "sha256": "a2ecf085117d01c81804fa1cf5a1a37f7a9459fcdeaf7cc8b22132f3232c74e8"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1664,8 +1669,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 35883,
-      "sha256": "74e5a49cfdd69efc8e90f44eb87e7b9d4ce06b070e3c30ebf24f4cdf3d99cdfb"
+      "size": 36257,
+      "sha256": "d7883ad266de1c3e26d5b11e8b220a79b8b274da6158d72cc005ad19768c2b0a"
     },
     {
       "path": "design/mockup/README.md",
@@ -3194,8 +3199,8 @@
     },
     {
       "path": "test/e2e/exports.spec.ts",
-      "size": 1517,
-      "sha256": "6919c57496809ff8512710fba49721fbb7047823ae9a4ba83332dc25b2dc1a63"
+      "size": 3588,
+      "sha256": "498fad4b8b18685b6312855f39c06e4552051e42348f6fd3fe0233ba4d505f50"
     },
     {
       "path": "test/e2e/fixtures/atomic-rollback.ts",

@@ -925,6 +925,24 @@ Keep only the latest relevant evidence per completed phase.
 - Result: Dashboard and Budget date-sensitive failures resolved; C3.11 remains COMPLETE, Dashboard
   remains FROZEN, and C3.12 remains NEXT. Overall C3.11-F gates are PASS.
 
+### 12.5.C3.15 — Export Mobile/Desktop audit — 2026-09-01
+
+- Browser audit: `#exports` checked at 320, 375, 390, 768, 1024 and 1440 px; mobile actions are
+  stacked and no longer clipped, filters and count remain readable, and the route is read-only.
+- Formats verified against source: filtered CSV and XLSX movement exports, plus complete JSON
+  snapshot; PDF is N/A. CSV was parsed in E2E and checked for filename, header, filtered row data,
+  minor-unit amount and account name. JSON entity/relationship keys were verified.
+- Financial/security checks: ISO dates, per-row currency, bigint minor units, deterministic order,
+  transfer/split/tag relations in JSON, static XLSX cells, CSV quoting/formula neutralization,
+  constant safe filenames and no sensitive logging.
+- Scoped correction: Export CTA actions now reflow to a full-width mobile stack; a shared lock
+  prevents concurrent/double downloads; empty filtered scopes are explicit.
+- Zoom: Chromium E2E desktop-only at 200% on 1024/1440; width criterion and controls pass.
+- Tests: Export/importer targeted `4 passed`; E2E Export `14 passed`, `4 skipped` (zoom intentionally
+  desktop-only); build `PASS`.
+- Review: `.codex/reviews/ui-ux/2026-09-01-c3-15-export.md`.
+- Result: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Export is `FROZEN`; C3.16 Backup + Restore is next.
+
 ### 12.5.C3.14 — Import Mobile/Desktop audit — 2026-09-01
 
 - Browser audit: `#imports` checked at 320, 375, 390, 768, 1024 and 1440 px; local file picker,

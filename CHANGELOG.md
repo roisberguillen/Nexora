@@ -18,6 +18,11 @@
 
 ### Documentation
 
+- Chiusa C3.15 Export con `SCREEN_AUDIT_PASS / FROZEN`: CSV, XLSX e JSON completo verificati per
+  scope, precisione, relazioni, privacy, formula safety e responsive mobile/desktop.
+- Corretto il reflow mobile delle CTA Export, protetti i download dal doppio submit e reso esplicito
+  lo stato vuoto dei filtri; aggiunta verifica programmatica del CSV e zoom 200% desktop.
+
 - Chiusa C3.14 Import con `SCREEN_AUDIT_PASS / FROZEN`: formati reali, preview read-only, mapping,
   deduplica, trasferimenti, atomicità, undo, sicurezza e responsive mobile/desktop verificati.
 - Chiarita la presenza del CSV tra i formati supportati e mostrato il nome del file nei pannelli
