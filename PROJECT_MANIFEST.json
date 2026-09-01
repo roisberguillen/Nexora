@@ -234,8 +234,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-02-c3-20-settings-trash-reset.md",
-      "size": 5897,
-      "sha256": "d2c310a3147517155855b7ac68e2ae408784ed0ebdfebe8ffde2af90f28f40a9"
+      "size": 6074,
+      "sha256": "2f1b2ec5831d235164e4b69c8282113d651c6a13b4cf896157ed18fa2c746879"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -1709,8 +1709,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 39859,
-      "sha256": "68de28b96e81b59634118f2632138f0c86f6d7d4d569ec79cbd0a0262e52cd97"
+      "size": 39992,
+      "sha256": "db04ec4190fd3ff388b8a3bf1204b344ec44b449a25c48c5a5161ca2f52ace01"
     },
     {
       "path": "design/mockup/README.md",
@@ -3054,8 +3054,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20347,
-      "sha256": "17bbb3b36ceeed92055487f04ea9c0b3f2384695a3542c3060b0bbea4a003df8"
+      "size": 20605,
+      "sha256": "91754cbd64a25ab5a99b25ba5bc34ee30f43695a9cece4e61e6040d08dca663a"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3179,8 +3179,8 @@
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
-      "size": 2856,
-      "sha256": "f8a2f7e86699bf6141145ac6332b8864a45aa839fd5f21d14a8f56dd2d2b05ee"
+      "size": 3577,
+      "sha256": "742cc12b2958411ef74ae81ec037ba90e80ffaeab7dff9cc276adf51fefef69d"
     },
     {
       "path": "test/e2e/atomic-rollback.spec.ts",

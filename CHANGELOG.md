@@ -31,6 +31,8 @@
 - Verificate e rese effettive su tutte le route le preferenze Dimensione testo e Riduci animazioni,
   con persistenza al reload.
 - Aggiunto padding coerente alle azioni e agli stati della sezione Connessione dispositivi.
+- Reso l’header desktop coerente con il tema scuro e valorizzata la ricerca globale con bordo,
+  contrasto e stato focus dedicati.
 
 - Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,

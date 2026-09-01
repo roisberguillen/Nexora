@@ -44,6 +44,21 @@ test("la shell è accessibile e non produce overflow", async ({ page }) => {
   expect(accessibility.violations).toEqual([]);
 });
 
+test("la ricerca resta evidenziata e coerente nel tema scuro", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium-1024" && testInfo.project.name !== "chromium-1440");
+
+  await page.goto("/#settings");
+  await page.getByLabel("Tema").selectOption("dark");
+
+  const header = page.locator(".top-header");
+  const search = page.getByRole("combobox", { name: "Ricerca globale" });
+  await expect(header).toHaveCSS("background-color", "rgb(16, 24, 39)");
+  await expect(search).toHaveCSS("background-color", "rgb(24, 35, 56)");
+  await expect(search).toHaveCSS("border-top-color", "rgb(22, 72, 216)");
+  await search.focus();
+  await expect(search).toHaveCSS("box-shadow", /0px 0px 0px 4px/);
+});
+
 test("la build resta consultabile offline", async ({ context, page }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium-1440");
 

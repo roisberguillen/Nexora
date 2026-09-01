@@ -100,6 +100,8 @@ Nessuno.
   modalità Sistema supportata via `prefers-color-scheme`.
 - Correzione post-freeze aggiuntiva: Dimensione testo e Riduci animazioni verificate con persistenza;
   CTA e messaggio della Connessione dispositivi allineati all’inset del pannello.
+- Correzione post-freeze aggiuntiva: header desktop tematizzato anche in modalità scura e ricerca
+  globale evidenziata con focus accessibile; verifica sui breakpoint desktop.
 - `apps/web/src/settings/preferences.test.ts`: fallback malformed-storage verificato.
 - Review, test evidence, matrice, roadmap e changelog aggiornati.
 - Unit/integration mirati Settings/repository/reset: 64 pass.
