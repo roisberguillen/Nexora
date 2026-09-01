@@ -203,6 +203,11 @@
       "sha256": "2b74d316ec3288605167273b4346fa819ef64890ff57dd41ae35210f6a22c657"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-01-c3-14-import.md",
+      "size": 6501,
+      "sha256": "0dd0ce39382009b628eb5422a9430e45b02bf418dc12f13ccb4ab67880e73924"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -354,8 +359,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 335,
-      "sha256": "785a2ee811cde056ede606057231b277fc183164351d289ddf757a7b4789a7c2"
+      "size": 341,
+      "sha256": "ea7ffe85db9377728de975cd5f5af92464bad5e77678a20b137e717b1a7a8c4b"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -379,18 +384,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 6226,
-      "sha256": "e674f6e537250b2dcce4978578eedd4db5997451071e5ee4aea068b88ee682da"
+      "size": 6372,
+      "sha256": "14ba7e8d6b840b881b3936988b559fa1565533f8104e8f0dc20d8dc05dffcf75"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 66310,
-      "sha256": "1c14e2c1ebdf5b9e2e477ffa88586a49c94c6b9f0e3d355869ab04cb0d4f2e1f"
+      "size": 67707,
+      "sha256": "4f3aacf9eb24e63216cbf3d54a4c08927120ad55f0745c3624170fd72d9be0be"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4456,
-      "sha256": "b304159b4f15f4c07618e00de8e418b9607bd23e021d4fa92b69b60ab8029ab1"
+      "size": 4466,
+      "sha256": "e4b4dd6c2aa649eebe9f64b590fa0dd44af0cc3eb60cd167615d88acc8b985d1"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1129,8 +1134,8 @@
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
-      "size": 33149,
-      "sha256": "43d60fb0d15d47bd601b2900c0f01c9cae69d02440849a4332c20ef29d4a6c8d"
+      "size": 33384,
+      "sha256": "fcc1d37afcf05e5c4cf92fcbcc3db18264fdd7025c55a1ec384df79a49cf5bea"
     },
     {
       "path": "apps/web/src/imports/mappingProfiles.test.ts",
@@ -1244,8 +1249,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 41685,
-      "sha256": "f64ad55d3a5bebd397058562f7d68e1547af45f29ec2c3b8b2bb7222eb32fafa"
+      "size": 41822,
+      "sha256": "5a10ea18839cabe43f026cca922cf61b23301a0ea649bbf1461b048d1dd3cb1c"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1659,8 +1664,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 35514,
-      "sha256": "1465cecc1d08d049e3c6bd6c02d3a87b5ec5697eb5ddc2e381650b15a9da686e"
+      "size": 35883,
+      "sha256": "74e5a49cfdd69efc8e90f44eb87e7b9d4ce06b070e3c30ebf24f4cdf3d99cdfb"
     },
     {
       "path": "design/mockup/README.md",
@@ -3234,8 +3239,8 @@
     },
     {
       "path": "test/e2e/imports.spec.ts",
-      "size": 8740,
-      "sha256": "5cf0b9fbc6ea2d715540dfcd68cd14e0f3edb2950df567a555cbb146703abd1e"
+      "size": 9536,
+      "sha256": "35965018c13fd3fd5b3c2317a92815e602f484efb79124ac1a9109a794fabc6b"
     },
     {
       "path": "test/e2e/indexeddb-performance.spec.ts",

@@ -29,7 +29,7 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.11 | Diario finanziario | #journal | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.12 | Categorie | #categories | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.13 | Tag | #tags | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.14 | Importazione | #imports | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.14 | Importazione | #imports | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.15 | Esportazione | #exports | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.16 | Backup | #backup | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.16 | Restore | #backup + restore | — | — | — | — | 0 | 0 | 0 | PENDING |

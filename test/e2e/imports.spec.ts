@@ -227,3 +227,24 @@ test("rileva il CSV Mediobanca Premier dalle intestazioni e usa Data valuta", as
   await expect(page.getByText("1 pronte")).toBeVisible();
   await expect(page.getByRole("button", { name: "Conferma 1 righe" })).toBeEnabled();
 });
+
+test("mantiene il flusso Import utilizzabile al 200% su desktop", async ({ page }) => {
+  test.skip(
+    !["chromium-1024", "chromium-1440"].includes(test.info().project.name),
+    "La verifica zoom è prevista sulle larghezze desktop.",
+  );
+
+  await page.goto("/#imports");
+  await page.evaluate(() => {
+    document.documentElement.style.zoom = "2";
+  });
+
+  await expect(page.getByRole("heading", { name: "Importa estratti conto" })).toBeVisible();
+  await expect(page.getByLabel("Seleziona un estratto CSV, XLSX o PDF")).toBeVisible();
+
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth * 2);
+});

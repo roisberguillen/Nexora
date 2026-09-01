@@ -925,6 +925,25 @@ Keep only the latest relevant evidence per completed phase.
 - Result: Dashboard and Budget date-sensitive failures resolved; C3.11 remains COMPLETE, Dashboard
   remains FROZEN, and C3.12 remains NEXT. Overall C3.11-F gates are PASS.
 
+### 12.5.C3.14 — Import Mobile/Desktop audit — 2026-09-01
+
+- Browser audit: `#imports` checked at 320, 375, 390, 768, 1024 and 1440 px; local file picker,
+  mapping, preview, status summary, confirmation and import history/undo remain reachable without
+  critical overflow. Browser inspection was read-only and did not alter the local ledger.
+- Supported paths verified against source: Money Manager XLSX, generic CSV, Mediobanca CSV/XLSX and
+  N26 PDF. Tags are N/A because no current importer persists Tag relations.
+- Domain/importer: preview/dry-run write nothing; exact account/currency matching, explicit new
+  account/category proposals, transfer semantics, minor-unit amounts, source audit, duplicate
+  re-import, atomic batch and batch-scoped undo are covered by existing tests.
+- Scoped UI correction: the intro now names CSV as supported and the selected filename is visible
+  in the migration plan, mapping and preview headings; long names wrap safely.
+- Zoom: Chromium E2E desktop-only at 200% on 1024/1440; file picker and heading remain usable and
+  the width criterion is satisfied.
+- Tests: Importer/UI targeted suite `53 passed`, E2E Import `38 passed`, `4 skipped` (zoom test
+  intentionally desktop-only), build `PASS`.
+- Review: `.codex/reviews/ui-ux/2026-09-01-c3-14-import.md`.
+- Result: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Import is `FROZEN`; C3.15 Export is next.
+
 ### 12.5.C3.12 — Categories Mobile/Desktop audit — 2026-09-01
 
 - Browser audit: `#categories` checked at 320, 375, 390, 768, 1024 and 1440 px; no horizontal

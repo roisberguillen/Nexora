@@ -18,6 +18,11 @@
 
 ### Documentation
 
+- Chiusa C3.14 Import con `SCREEN_AUDIT_PASS / FROZEN`: formati reali, preview read-only, mapping,
+  deduplica, trasferimenti, atomicità, undo, sicurezza e responsive mobile/desktop verificati.
+- Chiarita la presenza del CSV tra i formati supportati e mostrato il nome del file nei pannelli
+  di piano, mapping e anteprima; aggiunta regressione zoom 200% su desktop.
+
 - Chiusa C3.13 Tag con `SCREEN_AUDIT_PASS / FROZEN`: responsive, CRUD, associazioni multi-tag,
   protezione duplicati, rename/merge, integrazione Movimenti, accessibilità e sicurezza verificate.
 - Chiusa C3.12 Categorie con `SCREEN_AUDIT_PASS / FROZEN`: tree responsive, CRUD, gerarchia,

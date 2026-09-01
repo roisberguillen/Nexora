@@ -217,7 +217,7 @@ export function ImportsPage({
           <p className="eyebrow">Importazione locale</p>
           <h1>Importa estratti conto</h1>
           <p>
-            Carica un XLSX o un PDF. Verifica le colonne e rivedi ogni riga prima di qualsiasi
+            Carica un CSV, XLSX o PDF. Verifica le colonne e rivedi ogni riga prima di qualsiasi
             importazione nel ledger.
           </p>
         </div>
@@ -309,6 +309,7 @@ export function ImportsPage({
                 <div>
                   <p className="eyebrow">Money Manager riconosciuto</p>
                   <h2 id="money-manager-plan-title">Piano di migrazione</h2>
+                  <p className="import-file-name">File: {source?.filename}</p>
                 </div>
                 <span className="panel-meta">{preview.length} movimenti</span>
               </div>
@@ -410,6 +411,7 @@ export function ImportsPage({
               <div>
                 <p className="eyebrow">Passo 2 di 4</p>
                 <h2 id="mapping-title">Foglio e colonne</h2>
+                <p className="import-file-name">File: {source?.filename}</p>
               </div>
               <span className="panel-meta">{selectedSheet.rows.length - 1}</span>
             </div>
@@ -540,6 +542,7 @@ export function ImportsPage({
               <div>
                 <p className="eyebrow">Passo 3 di 4</p>
                 <h2 id="preview-title">Anteprima e revisione</h2>
+                <p className="import-file-name">File: {source?.filename}</p>
               </div>
               <span className="panel-meta">{preview.length}</span>
             </div>

@@ -1659,6 +1659,13 @@
   line-height: 1.5;
 }
 
+.import-file-name {
+  margin: 0.35rem 0 0;
+  color: var(--color-on-surface-muted);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
 .file-picker,
 .account-form-label {
   display: grid;
