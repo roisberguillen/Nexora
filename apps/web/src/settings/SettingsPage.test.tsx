@@ -122,6 +122,20 @@ describe("SettingsPage destructive flows", () => {
     expect(await screen.findByRole("status")).toHaveTextContent("Cestino svuotato");
   });
 
+  it("mostra un errore accessibile se il ripristino non riesce", async () => {
+    const user = userEvent.setup();
+    render(
+      <SettingsPage
+        onRestoreTransaction={async () => Promise.reject(new Error("synthetic failure"))}
+        trashedTransactions={[trashedTransaction]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Ripristina" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Ripristino non completato");
+    expect(screen.getByText(/Spesa nel cestino/)).toBeVisible();
+  });
+
   it("protegge il ripristino totale con una frase distinta e consente l'annullamento", async () => {
     const user = userEvent.setup();
     const resetApplication = vi.fn(async () => ({

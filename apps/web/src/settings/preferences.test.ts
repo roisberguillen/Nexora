@@ -20,4 +20,15 @@ describe("app preferences", () => {
       trashRetentionDays: 90,
     });
   });
+
+  it("falls back to safe defaults for malformed local preferences", () => {
+    const storage = { getItem: () => "{not-json" };
+
+    expect(readAppPreferences(storage)).toEqual({
+      reduceMotion: false,
+      theme: "light",
+      textScale: "medium",
+      trashRetentionDays: 30,
+    });
+  });
 });

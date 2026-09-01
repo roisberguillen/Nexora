@@ -18,6 +18,12 @@
 
 ### Documentation
 
+- Chiusa C3.20 Settings + Cestino + Reset con `SCREEN_AUDIT_PASS / FROZEN`: preferenze reali e
+  persistenti, storage invalido con fallback sicuro, lifecycle soft-delete/restore/purge, reset
+  finanziario e totale con conferme forti, atomicità, App Lock, backup e integrità finanziaria
+  verificati su mobile, tablet e desktop.
+- Aggiunto feedback accessibile quando il ripristino di un movimento dal Cestino fallisce.
+
 - Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,
   recovery totale esplicito, isolamento delle superfici sensibili e fallback fail-closed verificati

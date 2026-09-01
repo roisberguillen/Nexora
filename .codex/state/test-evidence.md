@@ -1,5 +1,20 @@
 # Test evidence
 
+## 12.5.C3.20 — Settings + Trash + Reset Mobile/Desktop audit — PASS — 2026-09-02
+
+- Settings: tema, dimensione testo, riduzione animazioni e retention Cestino sono preferenze reali,
+  locali e persistenti; EUR/locale non configurabili restano dichiarati. Storage malformato ricade
+  sui default sicuri.
+- Trash: transazioni soft-deleted, restore con feedback anche su failure, purge singola e bulk con
+  conferma, double-submit guard, gruppi transfer atomici e relazioni split/tag/import preservate.
+- Reset: reset finanziario con preview, backup verificato o rinuncia esplicita, frase forte e PIN
+  App Lock; reset totale separato con frase forte, report, rimozione del solo stato locale e backup
+  Drive invariati.
+- Test mirati Settings/repository/reset: `64 passed`; E2E Settings/Cestino/Reset: `24 passed` su
+  320/375/390/768/1024/1440; zoom desktop e dialog keyboard/accessibility coperti.
+- Review: `.codex/reviews/ui-ux/2026-09-02-c3-20-settings-trash-reset.md`; P0/P1/P2 = 0/0/0.
+- Esito: `SCREEN_AUDIT_PASS`; Settings, Cestino e Reset FROZEN; prossimo C3.21 Startup + Recovery.
+
 ## 12.5.C3.18 — Profile Mobile/Desktop audit — PASS — 2026-09-01
 
 - Contract: profile exposes only local `displayName`; no fake email, avatar, upload, auth or logout.

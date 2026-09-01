@@ -104,6 +104,7 @@ export function SettingsPage({
   const [isPurgeAllOpen, setIsPurgeAllOpen] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
   const [purgeMessage, setPurgeMessage] = useState<string | null>(null);
+  const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
   const [isApplicationResetOpen, setIsApplicationResetOpen] = useState(false);
   const [applicationResetPhrase, setApplicationResetPhrase] = useState("");
   const [applicationResetReport, setApplicationResetReport] = useState<TotalResetReport | null>(
@@ -289,9 +290,15 @@ export function SettingsPage({
                         disabled={isRestoring}
                         onClick={() => {
                           setIsRestoring(true);
-                          void onRestoreTransaction(transaction.id).finally(() =>
-                            setIsRestoring(false),
-                          );
+                          setRestoreMessage(null);
+                          void onRestoreTransaction(transaction.id)
+                            .then(() => setRestoreMessage("Movimento ripristinato."))
+                            .catch(() =>
+                              setRestoreMessage(
+                                "Ripristino non completato: il movimento è rimasto nel cestino.",
+                              ),
+                            )
+                            .finally(() => setIsRestoring(false));
                         }}
                         type="button"
                       >
@@ -314,6 +321,14 @@ export function SettingsPage({
                   ))}
                 </ul>
               </>
+            )}
+            {restoreMessage === null ? null : (
+              <p
+                className={restoreMessage === "Movimento ripristinato." ? undefined : "form-error"}
+                role={restoreMessage === "Movimento ripristinato." ? "status" : "alert"}
+              >
+                {restoreMessage}
+              </p>
             )}
             {purgeMessage === null ? null : <p role="status">{purgeMessage}</p>}
             {purgeId === null ? null : (

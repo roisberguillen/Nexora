@@ -38,10 +38,10 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.18 | Profilo | #profile | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.19 | Privacy/Sicurezza | #privacy-security | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.19 | App Lock | #privacy-security + lock | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.20 | Impostazioni | #settings | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.20 | Cestino | #settings + cestino | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.20 | Reset finanziario | #settings + reset | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.20 | Reset totale | #settings + reset | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.20 | Impostazioni | #settings | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.20 | Cestino | #settings + cestino | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.20 | Reset finanziario | #settings + reset | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.20 | Reset totale | #settings + reset | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.21 | Startup | bootstrap | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.21 | Recovery | bootstrap + recovery | — | — | — | — | 0 | 0 | 0 | PENDING |
 

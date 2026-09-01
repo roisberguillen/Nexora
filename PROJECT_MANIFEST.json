@@ -233,6 +233,11 @@
       "sha256": "65331533479c0532e7008f68921bb61a6b4ada2e3969bace77400f9cfbff3b04"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-02-c3-20-settings-trash-reset.md",
+      "size": 5224,
+      "sha256": "9031fa41d44e0b8809e7df7a64c14a835bb8cd01086a8e3ad172cf25f30466cd"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -384,8 +389,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 408,
-      "sha256": "edaaad38eddd5cf7a51dc91b27a5468154507bc03df938f94703bd38ef9c54dc"
+      "size": 388,
+      "sha256": "9a95542dea18bd9b096992d2da17a03b61dc966690c66d1ffd1f6e27dc798baf"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -409,18 +414,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 7152,
-      "sha256": "cdd3084880ed610f90c18c261116b71281858383152645c14476b041884a375f"
+      "size": 7259,
+      "sha256": "92fda96e57865ebe191df72c59066a0553e0754f6f974c371851b2501630f1f0"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 74945,
-      "sha256": "54b3aae9efbe84dd93aa882305fc75659a8f2e879d2ebb53e1a29fe925425ce3"
+      "size": 76042,
+      "sha256": "cbdf2a54519c9fdc888d2e55d67338b09c35bf2787d5a271b3aa88c52d44e38e"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4546,
-      "sha256": "cb68bde7a9de551d064ae01ce36d063f8d3116931b26ff93b2bbbe85b99c1dd6"
+      "size": 4586,
+      "sha256": "e18660be87841916fed813643c0ad7e40285f89b4d7b9ee719a207fbd9511e02"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1424,8 +1429,8 @@
     },
     {
       "path": "apps/web/src/settings/preferences.test.ts",
-      "size": 732,
-      "sha256": "b941259f95c25b0f58dfcc10d9516a9d9322622991396346576803629a88d5c1"
+      "size": 1032,
+      "sha256": "426a11bd929311788210d67f2d148746c22e9fa0081744262d0a0b713a36cd43"
     },
     {
       "path": "apps/web/src/settings/preferences.ts",
@@ -1434,13 +1439,13 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 9925,
-      "sha256": "b16b5a46381e3d2b79d2f562dbc3b6fc1e378d803858782660d9145abf16a003"
+      "size": 10470,
+      "sha256": "2dcef564b75e54d3a8f650034d8b651285417722a37a58ce982e2310254a47a3"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 29488,
-      "sha256": "0af0b0f29d772dccb30ccffc4d5b6357d740642e63da4f15f67e5deee2ef7277"
+      "size": 30264,
+      "sha256": "44e0ccabdba0642aaec6ceab176971084808d55e2cd34d2b4a34d0efd1bdd6b6"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -1704,8 +1709,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 38853,
-      "sha256": "d04c9a5eee8c5eb1f98cc8341aba764123de04819265325c7551251f94479347"
+      "size": 39275,
+      "sha256": "c49e27939c3206e7eab502b31122531f4f91981e38208688918ad7d5c537078e"
     },
     {
       "path": "design/mockup/README.md",
