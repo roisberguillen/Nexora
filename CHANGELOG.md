@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Bilanciato lo spazio inferiore dello stato vuoto “Spese principali” nella Dashboard mobile e
+  desktop.
+
 - Aggiunto spazio inferiore coerente al pannello “Movimenti recenti” della Dashboard su mobile e
   desktop.
 

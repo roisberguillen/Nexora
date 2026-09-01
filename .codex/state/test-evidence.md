@@ -872,3 +872,8 @@ Keep only the latest relevant evidence per completed phase.
 
 - Chrome at 412 px and 1440 px: `Movimenti recenti` has an additional `16px` bottom inset after
   the final action; no horizontal overflow observed.
+
+### Dashboard top expenses empty-state spacing follow-up — 2026-09-01
+
+- Chrome at 412 px and 1440 px: the “Spese principali” panel uses a balanced `24px` bottom inset
+  for its empty state; no horizontal overflow observed.

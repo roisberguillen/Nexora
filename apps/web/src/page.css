@@ -92,6 +92,9 @@
 .dashboard-analytics-grid > .data-panel {
   padding-bottom: 1rem;
 }
+.dashboard-analytics-grid > .data-panel:nth-child(2) {
+  padding-bottom: 1.5rem;
+}
 .activity-panel {
   padding-bottom: 1rem;
 }
