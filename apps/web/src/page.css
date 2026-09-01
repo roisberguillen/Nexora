@@ -2005,9 +2005,13 @@
 }
 .profile-form-actions {
   display: flex;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 0.25rem;
+}
+.profile-form-actions .secondary-action {
+  margin-top: 0;
 }
 .profile-groups,
 .settings-groups {

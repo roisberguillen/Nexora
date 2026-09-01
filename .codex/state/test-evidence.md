@@ -19,6 +19,8 @@
   E2E Profile `14 passed`, `4 skipped` motivati.
 - Regressione post-freeze aggiuntiva: spazio tra le sezioni Profile verificato con E2E responsive;
   nessun overflow o sovrapposizione.
+- Regressione post-freeze aggiuntiva: pulsanti Profile “Salva profilo” e “Annulla” verificati con
+  altezza comune di 44 px e margine superiore coerente.
 
 ## 12.5.C3.17 — Notifications Mobile/Desktop audit — PASS — 2026-09-01
 
