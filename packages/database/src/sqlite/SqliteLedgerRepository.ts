@@ -468,6 +468,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
             [tag.id],
           );
           if (found.length > 0) throw new DomainError("duplicate_entity", "Tag id already exists.");
+          const duplicate = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM tags WHERE lower(name) = lower(?) LIMIT 1",
+            [tag.name],
+          );
+          if (duplicate.length > 0)
+            throw new DomainError("duplicate_entity", "A tag with the same name already exists.");
           await this.database.run("INSERT INTO tags (id, name, is_archived) VALUES (?, ?, ?)", [
             tag.id,
             tag.name,
@@ -1158,6 +1164,12 @@ export class SqliteLedgerRepository implements LedgerRepository {
             [tag.id],
           );
           if (found.length === 0) throw new DomainError("missing_reference", "Tag does not exist.");
+          const duplicate = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM tags WHERE lower(name) = lower(?) AND id <> ? LIMIT 1",
+            [tag.name, tag.id],
+          );
+          if (duplicate.length > 0)
+            throw new DomainError("duplicate_entity", "A tag with the same name already exists.");
           await this.database.run(
             "UPDATE tags SET name = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
             [tag.name, tag.isArchived ? 1 : 0, tag.id],

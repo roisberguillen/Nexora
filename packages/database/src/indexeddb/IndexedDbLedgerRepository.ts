@@ -51,6 +51,7 @@ import {
   transactionSplitToRecord,
   type TransactionSplitRecord,
   type TagRecord,
+  type StoredTagRecord,
   tagFromRecord,
   tagToRecord,
 } from "../records/LedgerRecords";
@@ -401,6 +402,13 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
         this.withTransaction(["tags"], "readwrite", async (transaction) => {
           const tags = transaction.objectStore("tags");
           await this.assertNew(tags, tag.id, "Tag");
+          const duplicate = (await requestResult<StoredTagRecord[]>(tags.getAll())).find(
+            (candidate) =>
+              candidate.id !== tag.id &&
+              candidate.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase(),
+          );
+          if (duplicate !== undefined)
+            throw new DomainError("duplicate_entity", "A tag with the same name already exists.");
           await requestResult(tags.add(tagToRecord(tag)));
         }),
       ),
@@ -802,6 +810,13 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           if ((await requestResult<unknown>(tags.get(tag.id))) === undefined) {
             throw new DomainError("missing_reference", "Tag does not exist.");
           }
+          const duplicate = (await requestResult<StoredTagRecord[]>(tags.getAll())).find(
+            (candidate) =>
+              candidate.id !== tag.id &&
+              candidate.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase(),
+          );
+          if (duplicate !== undefined)
+            throw new DomainError("duplicate_entity", "A tag with the same name already exists.");
           await requestResult(tags.put(tagToRecord(tag)));
         }),
       ),

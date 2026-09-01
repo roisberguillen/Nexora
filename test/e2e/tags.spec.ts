@@ -10,6 +10,9 @@ test("la gestione tag crea, modifica e archivia senza overflow", async ({ page }
 
   const table = page.getByRole("table", { name: "Tag registrati nel ledger" });
   await expect(table).toContainText("Lavoro sintetico");
+  await page.getByLabel("Nome").fill("lavoro sintetico");
+  await page.getByRole("button", { name: "Salva tag" }).click();
+  await expect(page.getByRole("alert")).toHaveText("Impossibile salvare il tag.");
   await table.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Nome").fill("Fotografia sintetica");
   await page.getByRole("button", { name: "Salva tag" }).click();
@@ -34,6 +37,7 @@ test("un tag attivo può essere assegnato a un nuovo movimento", async ({ page }
   await page.getByRole("button", { name: "Salva tag" }).click();
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByText("Altri dettagli").click();
   await expect(page.getByRole("checkbox", { name: "Progetto sintetico" })).toBeVisible();
   await page.getByRole("checkbox", { name: "Progetto sintetico" }).check();
   await page.getByLabel("Importo", { exact: true }).fill("12,00");
@@ -60,4 +64,20 @@ test("unisce e deduplica un tag", async ({ page }) => {
   await expect(page.getByRole("table", { name: "Tag registrati nel ledger" })).not.toContainText(
     "Origine tag",
   );
+});
+
+test("la tassonomia resta utilizzabile al 200% su desktop", async ({ page }) => {
+  test.skip(test.info().project.name !== "chromium-1440", "Il controllo zoom richiede il desktop.");
+  await page.goto("/#tags");
+  await page.evaluate(() => {
+    document.documentElement.style.zoom = "2";
+  });
+  await expect(page.getByRole("heading", { name: "Gestisci i tag" })).toBeVisible();
+  await expect(page.getByLabel("Nome")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salva tag" })).toBeVisible();
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 });

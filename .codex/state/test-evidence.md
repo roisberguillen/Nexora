@@ -1,5 +1,19 @@
 # Test evidence
 
+## 12.5.C3.13 — Tags Mobile/Desktop audit — PASS — 2026-09-01
+
+- Browser: Chromium headed su `#tags` con matrice 320/375/390/768/1024/1440; lista/editor, empty,
+  create, rename, archive, merge/deduplica, overflow e axe verificati. Zoom 200% desktop PASS.
+- Cross-screen: il flusso Tags → Movimenti apre “Altri dettagli”, associa più tag e salva senza perdita;
+  rimozione/merge preservano le transazioni e la relazione resta basata su ID.
+- Correzioni: unicità nomi case-insensitive in InMemory, IndexedDB e SQLite; UI Tags con guardia anti-doppio-submit
+  e feedback `Salvataggio…`; E2E aggiornato al percorso reale del selettore Tag.
+- Test mirati: tag commands + IndexedDB + SQLite `82 passed`; E2E Tags `19 passed, 5 skipped` (skip solo zoom
+  non applicabile ai progetti non desktop); build PASS con advisory chunk-size preesistente.
+- Integrità: join composta `transaction_id + tag_id`, duplicate relation bloccata, rename/merge per ID,
+  delete usato protetto, remove globale senza cancellazione di Transactions, XSS renderizzato come testo.
+- P0/P1/P2 aperti: 0/0/0. Risultato `SCREEN_AUDIT_PASS`; Tags FROZEN; prossimo C3.14 Import.
+
 ## 12.5.C3.10 — Analytics Mobile/Desktop audit — BLOCKED — 2026-08-30
 
 - Browser: Chrome headed su `#analytics` a 390/1440 px; resize metrici 320/375/390/768/1024/1440;

@@ -218,6 +218,15 @@ describe("SqliteLedgerRepository", () => {
     expect(await repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("rifiuta tag con nome duplicato senza case sensitivity", async () => {
+    await repository.saveTag(Tag.create({ id: "tag-one", name: "Lavoro" }));
+    await expect(
+      repository.saveTag(Tag.create({ id: "tag-two", name: "lavoro" })),
+    ).rejects.toMatchObject({
+      code: "duplicate_entity",
+    });
+  });
+
   it("unisce categorie e tag senza lasciare riferimenti orfani", async () => {
     const main = account("account-management");
     const source = Category.create({

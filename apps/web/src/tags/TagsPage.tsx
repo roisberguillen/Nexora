@@ -24,11 +24,14 @@ export function TagsPage({
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Tag | null>(null);
   const [mergeTargetId, setMergeTargetId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const input = { name: String(new FormData(event.currentTarget).get("name") ?? "") };
+    if (isSaving) return;
     try {
+      setIsSaving(true);
       setError(null);
       if (editing === null) await onCreate(input);
       else await onUpdate(editing.id, { ...input, isArchived: editing.isArchived });
@@ -36,26 +39,61 @@ export function TagsPage({
       event.currentTarget.reset();
     } catch {
       setError("Impossibile salvare il tag.");
+    } finally {
+      setIsSaving(false);
     }
   };
   const remove = async (id: string) => {
+    if (isSaving) return;
     try {
+      setIsSaving(true);
       setError(null);
       await onDeleteUnused(id);
       if (editing?.id === id) setEditing(null);
     } catch {
       setError("Il tag è usato: archivialo o rimuovilo prima dai movimenti.");
+    } finally {
+      setIsSaving(false);
     }
   };
   const merge = async () => {
-    if (editing === null || mergeTargetId === "") return;
+    if (editing === null || mergeTargetId === "" || isSaving) return;
     try {
+      setIsSaving(true);
       setError(null);
       await onMerge(editing.id, mergeTargetId);
       setEditing(null);
       setMergeTargetId("");
     } catch {
       setError("Impossibile unire il tag scelto.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const toggleArchive = async () => {
+    if (editing === null || isSaving) return;
+    try {
+      setIsSaving(true);
+      setError(null);
+      await onUpdate(editing.id, { name: editing.name, isArchived: !editing.isArchived });
+      setEditing(null);
+    } catch {
+      setError("Impossibile aggiornare lo stato del tag.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const removeGlobally = async () => {
+    if (editing === null || isSaving) return;
+    try {
+      setIsSaving(true);
+      setError(null);
+      await onRemoveGlobally(editing.id);
+      setEditing(null);
+    } catch {
+      setError("Impossibile rimuovere il tag dai movimenti.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -103,6 +141,7 @@ export function TagsPage({
                       <td data-label="Azioni">
                         <button
                           className="text-action"
+                          disabled={isSaving}
                           onClick={() => setEditing(tag)}
                           type="button"
                         >
@@ -110,6 +149,7 @@ export function TagsPage({
                         </button>
                         <button
                           className="text-action"
+                          disabled={isSaving}
                           onClick={() => void remove(tag.id)}
                           type="button"
                         >
@@ -144,12 +184,8 @@ export function TagsPage({
               <>
                 <button
                   className="text-action"
-                  onClick={() =>
-                    void onUpdate(editing.id, {
-                      name: editing.name,
-                      isArchived: !editing.isArchived,
-                    })
-                  }
+                  disabled={isSaving}
+                  onClick={() => void toggleArchive()}
                   type="button"
                 >
                   {editing.isArchived ? "Riattiva" : "Archivia"}
@@ -172,7 +208,7 @@ export function TagsPage({
                 </label>
                 <button
                   className="text-action"
-                  disabled={mergeTargetId === ""}
+                  disabled={mergeTargetId === "" || isSaving}
                   onClick={() => void merge()}
                   type="button"
                 >
@@ -180,7 +216,8 @@ export function TagsPage({
                 </button>
                 <button
                   className="text-action"
-                  onClick={() => void onRemoveGlobally(editing.id)}
+                  disabled={isSaving}
+                  onClick={() => void removeGlobally()}
                   type="button"
                 >
                   Rimuovi da tutti i movimenti
@@ -191,8 +228,8 @@ export function TagsPage({
               <button className="secondary-action" onClick={() => setEditing(null)} type="button">
                 Annulla
               </button>
-              <button className="primary-action" type="submit">
-                Salva tag
+              <button className="primary-action" disabled={isSaving} type="submit">
+                {isSaving ? "Salvataggio…" : "Salva tag"}
               </button>
             </div>
           </form>

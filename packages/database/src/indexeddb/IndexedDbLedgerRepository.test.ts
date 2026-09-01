@@ -258,6 +258,13 @@ describe("IndexedDbLedgerRepository", () => {
     expect(await ledger.repository.listTransactionTags(transaction.id)).toEqual([tag]);
   });
 
+  it("rifiuta tag con nome duplicato senza case sensitivity", async () => {
+    await ledger.repository.saveTag(Tag.create({ id: "tag-one", name: "Lavoro" }));
+    await expect(
+      ledger.repository.saveTag(Tag.create({ id: "tag-two", name: "lavoro" })),
+    ).rejects.toMatchObject({ code: "duplicate_entity" });
+  });
+
   it("unisce categorie e tag senza lasciare riferimenti orfani", async () => {
     const main = account("account-management");
     const source = Category.create({

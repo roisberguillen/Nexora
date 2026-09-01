@@ -18,6 +18,8 @@
 
 ### Documentation
 
+- Chiusa C3.13 Tag con `SCREEN_AUDIT_PASS / FROZEN`: responsive, CRUD, associazioni multi-tag,
+  protezione duplicati, rename/merge, integrazione Movimenti, accessibilità e sicurezza verificate.
 - Chiusa C3.12 Categorie con `SCREEN_AUDIT_PASS / FROZEN`: tree responsive, CRUD, gerarchia,
   riferimenti per ID, protezioni distruttive, accessibilità e integrazioni cross-screen verificate.
 

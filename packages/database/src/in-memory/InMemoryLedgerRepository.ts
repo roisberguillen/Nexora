@@ -234,6 +234,7 @@ export class InMemoryLedgerRepository implements LedgerRepository {
 
   public async saveTag(tag: Tag): Promise<void> {
     this.assertNew(this.tags, tag.id, "Tag");
+    this.assertUniqueTagName(tag);
     this.tags.set(tag.id, tag);
   }
   public async saveRecurringRule(rule: RecurringRule): Promise<void> {
@@ -416,7 +417,18 @@ export class InMemoryLedgerRepository implements LedgerRepository {
   }
   public async updateTag(tag: Tag): Promise<void> {
     if (!this.tags.has(tag.id)) throw new DomainError("missing_reference", "Tag does not exist.");
+    this.assertUniqueTagName(tag);
     this.tags.set(tag.id, tag);
+  }
+
+  private assertUniqueTagName(tag: Tag): void {
+    const duplicate = [...this.tags.values()].find(
+      (candidate) =>
+        candidate.id !== tag.id &&
+        candidate.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase(),
+    );
+    if (duplicate !== undefined)
+      throw new DomainError("duplicate_entity", "A tag with the same name already exists.");
   }
 
   public async deleteUnusedTag(id: string): Promise<void> {
