@@ -38,6 +38,7 @@ export {
   type CreatedPortableBackup,
   type PortableBackupEngineOptions,
   type PortableBackupRepository,
+  type PortableBackupContentsSummary,
   type VerifiedPortableBackup,
 } from "./backup/PortableBackupEngine";
 export {

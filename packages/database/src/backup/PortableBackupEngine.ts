@@ -38,12 +38,32 @@ export interface CreatedPortableBackup {
   readonly createdAt: string;
   readonly size: number;
   readonly manifest: BackupManifest;
+  readonly summary: PortableBackupContentsSummary;
+}
+
+export interface PortableBackupContentsSummary {
+  readonly accounts: number;
+  readonly categories: number;
+  readonly tags: number;
+  readonly transactions: number;
+  readonly splits: number;
+  readonly transfers: number;
+  readonly budgets: number;
+  readonly recurringRules: number;
+  readonly allocationPlans: number;
+  readonly loans: number;
+  readonly investmentPositions: number;
+  readonly monthlyJournals: number;
+  readonly importBatches: number;
+  readonly importRows: number;
+  readonly transactionTags: number;
 }
 
 export interface VerifiedPortableBackup {
   readonly checksumSha256: string;
   readonly size: number;
   readonly manifest: BackupManifest;
+  readonly summary: PortableBackupContentsSummary;
 }
 
 interface DecodedPortableBackup extends VerifiedPortableBackup {
@@ -96,6 +116,7 @@ export class PortableBackupEngine {
           createdAt,
           size: verified.size,
           manifest: verified.manifest,
+          summary: verified.summary,
         };
       } catch (cause) {
         if (cause instanceof BackupError) throw cause;
@@ -115,6 +136,7 @@ export class PortableBackupEngine {
         checksumSha256: verified.checksumSha256,
         size: verified.size,
         manifest: verified.manifest,
+        summary: verified.summary,
       };
     });
   }
@@ -192,6 +214,7 @@ export class PortableBackupEngine {
         manifest: decrypted.manifest,
         snapshot: validatePortableLedgerSnapshot(decoded),
         canonicalSnapshot: canonicalSnapshot(decoded),
+        summary: summarizeSnapshot(decoded),
       };
     } catch (cause) {
       throw new BackupError("invalid_archive", "The portable ledger payload is invalid.", cause);
@@ -221,6 +244,33 @@ export class PortableBackupEngine {
     );
     return result;
   }
+}
+
+function summarizeSnapshot(snapshot: PortableLedgerSnapshot): PortableBackupContentsSummary {
+  const entityCount = (name: string): number => snapshot.entities[name]?.length ?? 0;
+  const relationCount = (name: string): number =>
+    snapshot.relations[name]?.reduce<number>((total, relation) => {
+      if (!relation || typeof relation !== "object" || Array.isArray(relation)) return total;
+      const values = (relation as { readonly values?: unknown }).values;
+      return total + (Array.isArray(values) ? values.length : 0);
+    }, 0) ?? 0;
+  return {
+    accounts: entityCount("accounts"),
+    categories: entityCount("categories"),
+    tags: entityCount("tags"),
+    transactions: entityCount("transactions"),
+    splits: relationCount("splits"),
+    transfers: entityCount("transfers"),
+    budgets: entityCount("budgets"),
+    recurringRules: entityCount("recurringRules"),
+    allocationPlans: entityCount("allocationPlans"),
+    loans: entityCount("loans"),
+    investmentPositions: entityCount("investmentPositions"),
+    monthlyJournals: entityCount("monthlyJournals"),
+    importBatches: entityCount("importBatches"),
+    importRows: relationCount("importRows"),
+    transactionTags: relationCount("transactionTags"),
+  };
 }
 
 function canonicalSnapshot(snapshot: PortableLedgerSnapshot): string {

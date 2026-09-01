@@ -294,6 +294,23 @@ const verifiedReceipt: VerifiedPortableBackup = {
     createdAt: "2026-08-02T10:00:00.000Z",
     files: [{ path: "ledger.json", sha256: "1".repeat(64), size: 3 }],
   },
+  summary: {
+    accounts: 1,
+    categories: 0,
+    tags: 0,
+    transactions: 0,
+    splits: 0,
+    transfers: 0,
+    budgets: 0,
+    recurringRules: 0,
+    allocationPlans: 0,
+    loans: 0,
+    investmentPositions: 0,
+    monthlyJournals: 0,
+    importBatches: 0,
+    importRows: 0,
+    transactionTags: 0,
+  },
 };
 
 function createLedger(overrides: Partial<Ledger> = {}): Ledger {

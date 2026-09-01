@@ -44,7 +44,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C3.13 | complete | Tags `SCREEN_AUDIT_PASS / FROZEN`; responsive, CRUD, relations, duplicate protection, accessibility and Transactions integration verified |
 | 12.5.C3.14 | complete | Import `SCREEN_AUDIT_PASS / FROZEN`; responsive, preview, mapping, deduplica, atomicità, undo e sicurezza verificati |
 | 12.5.C3.15 | complete | Export `SCREEN_AUDIT_PASS / FROZEN`; scope, formati, precisione, relazioni, privacy, sicurezza e responsive verificati |
-| 12.5.C3.16–C3.21 | pending | subsequent screen-by-screen audits; C3.16 Backup + Restore is next |
+| 12.5.C3.16 | complete | Backup + Restore `SCREEN_AUDIT_PASS / FROZEN`; cifratura, round-trip, validazione, atomicità, recovery e responsive verificati |
+| 12.5.C3.17–C3.21 | pending | subsequent screen-by-screen audits; C3.17 Notifications is next |
 | C4 | pending | real complete flows |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |

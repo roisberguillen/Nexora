@@ -1,5 +1,28 @@
 # Test evidence
 
+## 12.5.C3.16 — Backup + Restore Mobile/Desktop audit — PASS — 2026-09-01
+
+- Contratto: backup browser portabile cifrato con snapshot `ledger.json`; include accounts,
+  categories, tags, transactions, splits, transfers, budgets, recurring rules, allocation plans,
+  loans, investments, journal, import batches e relazioni import rows/transaction tags. Settings,
+  notifiche e segreti non sono inclusi.
+- Sicurezza/integrità: formato archivio 1, snapshot 1, schema ledger 20; AES-256-GCM,
+  PBKDF2-HMAC-SHA-256, checksum SHA-256, limiti payload, tamper/wrong passphrase/malformed/future
+  schema rifiutati prima della scrittura; nessun dato sensibile nei log o filename.
+- Round-trip: IndexedDB → SQLite e IndexedDB → IndexedDB; Money bigint/minor units, date, stati,
+  ID e relazioni preservati. Restore atomico su entrambi gli adapter; failure post-write con
+  rollback e confronto del checkpoint verificato.
+- UX: verifica read-only, preview con file/schema/data/checksum e conteggi reali, conferma forte
+  prima della sostituzione, Annulla, focus dialog e lock anti-doppio-submit locale/cloud.
+- Browser/E2E: Chromium 390/1440, download, file picker, verifica, preview, dialog, focus,
+  annullamento, overflow e axe PASS; 320/375/768/1024 e zoom 200% coperti dalla matrice E2E.
+  Il tab manuale 5173 era inizialmente senza server; nessun dato locale è stato modificato.
+- Test mirati: `34 passed`; E2E Backup/Restore `4 passed, 2 skipped` (round-trip reale una sola
+  volta su desktop). Gate completo `pnpm verify`: 138 file, 602 test passed, 1 file skipped e 4
+  skip documentati; build PASS con advisory chunk-size preesistente.
+- Review: `.codex/reviews/ui-ux/2026-09-01-c3-16-backup-restore.md`; `P0/P1/P2 = 0/0/0`.
+- Esito: `SCREEN_AUDIT_PASS`; Backup + Restore FROZEN; prossimo C3.17 Notifications.
+
 ## 12.5.C3.13 — Tags Mobile/Desktop audit — PASS — 2026-09-01
 
 - Browser: Chromium headed su `#tags` con matrice 320/375/390/768/1024/1440; lista/editor, empty,

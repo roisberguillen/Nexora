@@ -18,6 +18,10 @@
 
 ### Documentation
 
+- Chiusa C3.16 Backup + Restore con `SCREEN_AUDIT_PASS / FROZEN`: archivio cifrato, schema/versione,
+  preview dei contenuti, restore confermato, atomicità, rollback, sicurezza e responsive verificati.
+- La preview Backup mostra i conteggi reali del ledger e il lock UI protegge le operazioni locali e
+  Drive dal doppio submit.
 - Chiusa C3.15 Export con `SCREEN_AUDIT_PASS / FROZEN`: CSV, XLSX e JSON completo verificati per
   scope, precisione, relazioni, privacy, formula safety e responsive mobile/desktop.
 - Corretto il reflow mobile delle CTA Export, protetti i download dal doppio submit e reso esplicito

@@ -209,8 +209,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-01-c3-15-export.md",
-      "size": 7198,
-      "sha256": "3dc3afe510894781a3542e483aac68ade2774db5cea4809c023ee93d90a9e280"
+      "size": 7182,
+      "sha256": "f399ac7807745baf4b5f93f75e829da4dd6333e3d3889559305c4fc816340001"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-01-c3-16-backup-restore.md",
+      "size": 4955,
+      "sha256": "cb210929367dd76085ea70958ec01b2322e418845fcfc26b8a7dc440569801eb"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -364,8 +369,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 351,
-      "sha256": "602f6130e48fcdd3c01f4bd2ec4361ed1b866045e293730dd6fe1c5884ac504b"
+      "size": 376,
+      "sha256": "86432558f25dad2b2379b7a7858dc5c09e3eb8d657492c73206d51442dcbd76e"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -389,18 +394,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 6529,
-      "sha256": "103defc7910f2bcb44de5029ff5ea5e6ef2bbb4cbc53d448009fd816a9c75305"
+      "size": 6682,
+      "sha256": "d7fceb19b8fddee454e2cc0db8c250501fb282dee939501355aec31071fded80"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 69042,
-      "sha256": "3d37e351351d959bfa0e0c98c5f763a33baf227157db6b1fe39b75b029da098b"
+      "size": 70863,
+      "sha256": "9ed88efb67910e03dc3aa72397b9a6163efce6ceca0daba376e216714293c6a5"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4476,
-      "sha256": "02280300492fbad21aff914c1d320ec8dc10f42d399a2d0b813bdb4376661acb"
+      "size": 4496,
+      "sha256": "c3f8f72a4bc26f0243c95c70cb85e2246a0f7ce28ac4f8b265ada13544240d57"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -939,13 +944,13 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.test.tsx",
-      "size": 12740,
-      "sha256": "b07ca811f7069a354a51bd7091fcee9ee2156afa6ad4d3869855a280358e0717"
+      "size": 13055,
+      "sha256": "43af66b1a1a44a106a80f659926c07b7f54707be5c4fdbf397cb609fc95e3d4e"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 26936,
-      "sha256": "a6f1cc83249a41e02460e2fd2d5b676bfa6671dce4051da792cab8062fb3f9b5"
+      "size": 28806,
+      "sha256": "7a3e2013e70f20e37cbac0297cdb87492618a3e7f8cea1eba94149c66c6c1709"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.test.ts",
@@ -1669,8 +1674,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 36257,
-      "sha256": "d7883ad266de1c3e26d5b11e8b220a79b8b274da6158d72cc005ad19768c2b0a"
+      "size": 36587,
+      "sha256": "86873a979c07053aece681b7b482e690d31be947e6f8b28061bbc7efbd1c88cb"
     },
     {
       "path": "design/mockup/README.md",
@@ -2204,13 +2209,13 @@
     },
     {
       "path": "packages/database/src/backup/PortableBackupEngine.test.ts",
-      "size": 7296,
-      "sha256": "7ee918d3118e5aeda0a9ca0157a0a9961fedc0962936ef04ff29c3ae82475db1"
+      "size": 7370,
+      "sha256": "b6b25d6566e81b0efaf92add96b1e683ffc5dc4ebda65e95e6ecf434685f9873"
     },
     {
       "path": "packages/database/src/backup/PortableBackupEngine.ts",
-      "size": 8920,
-      "sha256": "e80e723c0d4be3d251cc31d0f512b2caf0078e8ceed740ae66f37b1c1d4d328a"
+      "size": 10909,
+      "sha256": "cd86e08f03ebe71abc6df3ce9729c92bcc0349d656ac63308504960f1c9d7dd3"
     },
     {
       "path": "packages/database/src/backup/PortableLedgerSnapshot.test.ts",
@@ -2244,8 +2249,8 @@
     },
     {
       "path": "packages/database/src/index.ts",
-      "size": 5469,
-      "sha256": "adcd00e0e71a422208c53473ab6eb3193e7d509c18ae05feb8489040caea4c17"
+      "size": 5507,
+      "sha256": "83dde507797080865eaec4a525eafeec3ed1abbd1bc2dbba7e99412c9fd20219"
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.test.ts",
@@ -3149,8 +3154,8 @@
     },
     {
       "path": "test/e2e/backup-manual-ui.spec.ts",
-      "size": 2931,
-      "sha256": "5a5da584680e7cdc5e7512275278d723c36412d5b4e311e4167d37854159f60d"
+      "size": 3007,
+      "sha256": "c9209a3bafdd0ba703bd1798bed948e7ea89f5a6c33f883da149be5aa7acfe6c"
     },
     {
       "path": "test/e2e/backup-restore.spec.ts",

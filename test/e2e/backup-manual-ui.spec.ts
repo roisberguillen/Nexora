@@ -48,6 +48,7 @@ test("download, verifica e conferma del restore manuale usano il ledger reale", 
   await page.getByRole("button", { name: "Verifica archivio senza ripristinare" }).click();
   await expect(page.getByRole("heading", { name: "Archivio verificato" })).toBeVisible();
   await expect(page.getByText(download.suggestedFilename())).toBeVisible();
+  await expect(page.getByText(/\d+ conti · \d+ movimenti/)).toBeVisible();
 
   await page.getByRole("button", { name: "Ripristina archivio verificato" }).click();
   const dialog = page.getByRole("dialog", { name: "Confermare il ripristino?" });

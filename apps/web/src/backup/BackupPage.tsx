@@ -1,5 +1,5 @@
 import type { Ledger, VerifiedPortableBackup } from "@nexora/database";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useGoogleDriveSession } from "../cloud/GoogleDriveSessionContext";
 import type { CloudBackupMetadata } from "../cloud/cloudTypes";
@@ -58,6 +58,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   }>();
   const [isCloudRestoreConfirmationOpen, setIsCloudRestoreConfirmationOpen] = useState(false);
   const [history, setHistory] = useState(() => readBackupHistory());
+  const localOperationLock = useRef(false);
+  const cloudOperationLock = useRef(false);
   const [cloudStatus, setCloudStatus] = useState<
     "idle" | "authorizing" | "connected" | "expired" | "error"
   >(googleDriveSession.status);
@@ -100,6 +102,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       ledger.createEncryptedBackupArchive === undefined
     )
       return;
+    if (localOperationLock.current) return;
+    localOperationLock.current = true;
     setIsCreating(true);
     setMessage(null);
     setOperationError(null);
@@ -139,6 +143,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       setOperationError("Backup non creato: nessun dato del ledger è stato modificato.");
     } finally {
       setIsCreating(false);
+      localOperationLock.current = false;
     }
   };
 
@@ -150,6 +155,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       ledger.restoreEncryptedBackupArchive === undefined
     )
       return;
+    if (localOperationLock.current) return;
+    localOperationLock.current = true;
     setIsRestoring(true);
     setMessage(null);
     setOperationError(null);
@@ -179,6 +186,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         "Ripristino non completato: l’archivio locale corrente è rimasto protetto.",
       );
       setIsRestoring(false);
+      localOperationLock.current = false;
     }
   };
   const runRecoveryDrill = async () => {
@@ -188,6 +196,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       ledger.verifyEncryptedBackupArchive === undefined
     )
       return;
+    if (localOperationLock.current) return;
+    localOperationLock.current = true;
     setIsRestoring(true);
     setMessage(null);
     setOperationError(null);
@@ -218,10 +228,13 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       );
     } finally {
       setIsRestoring(false);
+      localOperationLock.current = false;
     }
   };
   const connectCloud = async () => {
     if (!cloudConfig.enabled) return;
+    if (cloudOperationLock.current) return;
+    cloudOperationLock.current = true;
     setIsCloudBusy(true);
     setMessage(null);
     setOperationError(null);
@@ -235,6 +248,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       setMessage("Collegamento Google Drive non riuscito. Nessun dato locale è stato condiviso.");
     } finally {
       setIsCloudBusy(false);
+      cloudOperationLock.current = false;
     }
   };
   const disconnectCloud = async () => {
@@ -247,6 +261,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
   };
   const uploadCloud = async () => {
     if (ledger.createEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
+    if (cloudOperationLock.current) return;
+    cloudOperationLock.current = true;
     setIsCloudBusy(true);
     setMessage(null);
     setCloudError(undefined);
@@ -295,10 +311,13 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       setMessage("Caricamento cloud non completato: l’archivio locale non è stato modificato.");
     } finally {
       setIsCloudBusy(false);
+      cloudOperationLock.current = false;
     }
   };
   const verifyCloudRestore = async (backup: CloudBackupMetadata) => {
     if (ledger.verifyEncryptedBackupArchive === undefined || passphrase.trim().length < 12) return;
+    if (cloudOperationLock.current) return;
+    cloudOperationLock.current = true;
     setIsCloudBusy(true);
     setMessage(null);
     setOperationError(null);
@@ -344,6 +363,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       setOperationError("Verifica Drive non riuscita: il ledger locale è rimasto protetto.");
     } finally {
       setIsCloudBusy(false);
+      cloudOperationLock.current = false;
     }
   };
   const restoreVerifiedCloud = async () => {
@@ -353,6 +373,8 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
       passphrase.trim().length < 12
     )
       return;
+    if (cloudOperationLock.current) return;
+    cloudOperationLock.current = true;
     setIsCloudBusy(true);
     setMessage(null);
     setOperationError(null);
@@ -388,6 +410,7 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
         "Ripristino Google Drive non completato: l’archivio locale corrente è rimasto protetto.",
       );
       setIsCloudBusy(false);
+      cloudOperationLock.current = false;
     }
   };
 
@@ -508,8 +531,19 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
               <dt>Integrità</dt>
               <dd>{verifiedArchive.checksumSha256.slice(0, 12)}…</dd>
             </div>
+            <div>
+              <dt>Contenuto</dt>
+              <dd>
+                {verifiedArchive.summary.accounts} conti · {verifiedArchive.summary.transactions}{" "}
+                movimenti · {verifiedArchive.summary.categories} categorie ·{" "}
+                {verifiedArchive.summary.tags} tag
+              </dd>
+            </div>
           </dl>
-          <p>La verifica è avvenuta in sola lettura. I dati correnti non sono stati modificati.</p>
+          <p>
+            La verifica è avvenuta in sola lettura. I dati correnti non sono stati modificati. La
+            conferma successiva sostituirà il ledger corrente con questo contenuto.
+          </p>
         </section>
       )}
       <div className="form-actions">
@@ -647,6 +681,15 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
               <div>
                 <dt>Integrità</dt>
                 <dd>{verifiedCloudArchive.receipt.checksumSha256.slice(0, 12)}…</dd>
+              </div>
+              <div>
+                <dt>Contenuto</dt>
+                <dd>
+                  {verifiedCloudArchive.receipt.summary.accounts} conti ·{" "}
+                  {verifiedCloudArchive.receipt.summary.transactions} movimenti ·{" "}
+                  {verifiedCloudArchive.receipt.summary.categories} categorie ·{" "}
+                  {verifiedCloudArchive.receipt.summary.tags} tag
+                </dd>
               </div>
             </dl>
             <p>Il contenuto è rimasto cifrato su Drive ed è stato verificato localmente.</p>

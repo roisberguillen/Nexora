@@ -78,6 +78,7 @@ beforeAll(async () => {
         schemaVersion: PORTABLE_LEDGER_SCHEMA_VERSION,
         appVersion: "0.5.0",
       },
+      summary: expect.objectContaining({ accounts: 1, transactions: 0 }),
     });
     const payload = encodePortableLedgerSnapshot(
       await capturePortableLedgerSnapshot(source.repository),
