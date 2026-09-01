@@ -15,6 +15,8 @@
 - Esito: `SCREEN_AUDIT_PASS`; Profile FROZEN; prossimo C3.19 Privacy/Sicurezza.
 - Regressione post-freeze: padding interno del pannello “I tuoi dati” verificato sui viewport
   Profile C3.18; unit `8 passed`, E2E `14 passed`, `4 skipped` motivati.
+- Regressione post-freeze aggiuntiva: padding verticale del pannello verificato con build aggiornata;
+  E2E Profile `14 passed`, `4 skipped` motivati.
 
 ## 12.5.C3.17 — Notifications Mobile/Desktop audit — PASS — 2026-09-01
 

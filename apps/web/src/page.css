@@ -1943,6 +1943,7 @@
 .profile-identity {
   display: grid;
   gap: 1rem;
+  padding-block: 1.5rem;
 }
 .profile-identity > .profile-section-heading,
 .profile-identity > .profile-identity-row,
@@ -2419,6 +2420,10 @@
 
   .profile-section-heading {
     align-items: flex-start;
+  }
+
+  .profile-identity {
+    padding-block: 1rem;
   }
 
   .profile-identity > .profile-section-heading,

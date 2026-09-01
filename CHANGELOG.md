@@ -24,6 +24,8 @@
   la superficie ora espone solo dati e azioni realmente disponibili in locale.
 - Rifinito il padding interno del pannello “I tuoi dati” del Profilo, verificato su desktop compatto
   e mobile senza overflow.
+- Aggiunto anche spazio verticale sopra e sotto il contenuto del pannello Profilo per separarlo
+  correttamente dai bordi.
 
 - Chiusa C3.17 Notifications con `SCREEN_AUDIT_PASS / FROZEN`: derivazione locale, soglie Budget,
   deduplica, read/unread, badge, deep-link, privacy, timezone Europe/Rome e responsive verificati.
