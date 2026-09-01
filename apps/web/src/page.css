@@ -92,6 +92,9 @@
 .dashboard-analytics-grid > .data-panel {
   padding-bottom: 1rem;
 }
+.activity-panel {
+  padding-bottom: 1rem;
+}
 .dashboard-budget-content,
 .dashboard-muted {
   padding: 1.25rem 1.5rem;

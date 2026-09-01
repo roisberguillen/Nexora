@@ -867,3 +867,8 @@ Keep only the latest relevant evidence per completed phase.
   overflow; the following panel remains separated by the existing grid gap.
 - Dashboard view-model tests: 8 failures remain pre-existing and date-sensitive because fixtures
   target the prior monthly period; typecheck `PASS`.
+
+### Dashboard recent activity spacing follow-up — 2026-09-01
+
+- Chrome at 412 px and 1440 px: `Movimenti recenti` has an additional `16px` bottom inset after
+  the final action; no horizontal overflow observed.

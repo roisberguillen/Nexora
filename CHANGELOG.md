@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto spazio inferiore coerente al pannello “Movimenti recenti” della Dashboard su mobile e
+  desktop.
+
 - Aggiunto spazio inferiore coerente ai pannelli Confronto e Spese principali della Dashboard su
   mobile e desktop.
 
