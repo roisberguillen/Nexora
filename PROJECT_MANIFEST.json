@@ -223,6 +223,11 @@
       "sha256": "9008805ca6bf051f6e0ea841db5e68dae8554207a23d8d1f22df10235e82f1cb"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-01-c3-18-profile.md",
+      "size": 4592,
+      "sha256": "c9e6712b97acf18e9aaa6e78c53e7e0bea10d743a596a669bfb357317fddf9ad"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -374,8 +379,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 363,
-      "sha256": "cc5a4c50de8d43dff3b73118f227f59b2038b8a3f9a71ed1d23cb0fb6bb995ca"
+      "size": 355,
+      "sha256": "ada568734cd1d10882490ea77ca3d1b30ce13fc460ce203f089034a3b6360733"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -399,18 +404,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 6817,
-      "sha256": "812e7bfaa3548296ec0f3f5de54c2f51cecf0a41baf4e0914a407ea0705c527d"
+      "size": 7004,
+      "sha256": "f989d40f7da8fcf65f567aeefc43c779a33ea21bca94fea10744f2670043eac4"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 72466,
-      "sha256": "a08e7c73f56c95de62fce0d41bfb53cc3aceb0da9ca59e650106f4eaf65c4b1a"
+      "size": 73475,
+      "sha256": "2fa5aecb8a37fdd7c1df218b73663c3bffee8acb2b7099839cc10019ea53dbb7"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4516,
-      "sha256": "1ac109799e5879628cedf32994319be0baaa32a30d6d5a4708b128e9a8ff4c74"
+      "size": 4526,
+      "sha256": "2446e50137d312c0b1eae01c80050156450268692c80a09f301d5707e703e7b6"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1264,8 +1269,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 45076,
-      "sha256": "67b4cc4a9e349297292561c31cc3d928f4f6e025edcda352f591124734ae5b3f"
+      "size": 46692,
+      "sha256": "23c2074c31375a5448697737af59a9e06da7f4fe0df3647b8e489ee32c9b6ebd"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1279,13 +1284,23 @@
     },
     {
       "path": "apps/web/src/profile/ProfilePage.test.tsx",
-      "size": 539,
-      "sha256": "729b59ef18268a16e83cead8160b279002e5f2afb3ec54b0255abaada44c4bb2"
+      "size": 2601,
+      "sha256": "e87f0a459b41d6e5d4260a3ae9aa9ec28c48ad66b50f3340f5d8524f21be19ea"
     },
     {
       "path": "apps/web/src/profile/ProfilePage.tsx",
-      "size": 1747,
-      "sha256": "ad496c04b4ac0aeecf18d6fde02b75d9dddb63bb9cd57c196e5fcb82b7a82d76"
+      "size": 5058,
+      "sha256": "5b32fa528655dd5b1ed9cc03a6f2f2eb8d618f749ab480920a8aaa74c4b5f93c"
+    },
+    {
+      "path": "apps/web/src/profile/profileStorage.test.ts",
+      "size": 1291,
+      "sha256": "abde56be50a81abba4d8c5c20a5502f62f319546d1307f74bbfe0e3267483602"
+    },
+    {
+      "path": "apps/web/src/profile/profileStorage.ts",
+      "size": 1496,
+      "sha256": "6d1f7ddcc4c4b7dd7dce1a6bbcc0a786b7a705347a70f670d6c80d6bc8c70a38"
     },
     {
       "path": "apps/web/src/pwa/pwa.css",
@@ -1339,13 +1354,13 @@
     },
     {
       "path": "apps/web/src/reset/resetLocalApp.test.ts",
-      "size": 1526,
-      "sha256": "647a7ed8a6a11bfdd9ebc52985cd672dcb502626eaf6a4933b4d035a4c515392"
+      "size": 1592,
+      "sha256": "9d3e9da2afc579f477435b925aa835bda43387ac691426dcb6fa5a77aaf369df"
     },
     {
       "path": "apps/web/src/reset/resetLocalApp.ts",
-      "size": 2127,
-      "sha256": "f5373c0ea0e302787896b90674de6f5239c2170eb646aa88d92a90dbaaa607b6"
+      "size": 2150,
+      "sha256": "f7ca50e2b0c1a3b898d2a80279e010f230e8edf36dccc0d882804973bd2b588e"
     },
     {
       "path": "apps/web/src/reset/totalReset.test.ts",
@@ -1679,8 +1694,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 37382,
-      "sha256": "483d01fa58faf03e96c73b2bd9a3e6290cb4317f09d33754d504d05870f581f1"
+      "size": 37748,
+      "sha256": "eb78c7bd92fd15878b0bbbf3769cb922206279c4b0af247a3f27ecee4947e55c"
     },
     {
       "path": "design/mockup/README.md",
@@ -3186,6 +3201,11 @@
       "path": "test/e2e/c3-notifications-audit.spec.ts",
       "size": 3635,
       "sha256": "8d8048cb7cdc6efd6df0e4c57e779845f795db3f8f2cf2a10f2d562d35ad17da"
+    },
+    {
+      "path": "test/e2e/c3-profile-audit.spec.ts",
+      "size": 3911,
+      "sha256": "34557f9e346a9165ee420c22bbb1ff8c2adbc37f75552ce6d12ebf449e88c211"
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",

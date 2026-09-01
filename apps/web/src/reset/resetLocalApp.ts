@@ -7,6 +7,7 @@ const nexoraStorageKeys = [
   "nexora.ledger-storage.v1",
   "nexora.local-notifications.v1",
   "nexora.notification-preferences.v1",
+  "nexora.profile.v1",
 ] as const;
 
 export interface LocalResetEnvironment {

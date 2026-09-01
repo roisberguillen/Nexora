@@ -20,8 +20,9 @@ describe("resetLocalApp", () => {
     expect(close).toHaveBeenCalledOnce();
     expect(deleteDatabase).toHaveBeenCalledWith("nexora-ledger");
     expect(deleteCache).toHaveBeenCalledWith("nexora-pwa");
-    expect(removeItem).toHaveBeenCalledTimes(6);
+    expect(removeItem).toHaveBeenCalledTimes(7);
     expect(removeItem).toHaveBeenCalledWith("nexora.app-lock.v1");
+    expect(removeItem).toHaveBeenCalledWith("nexora.profile.v1");
   });
 
   it("svuota il ledger OPFS senza rimuovere il contenitore SQLite", async () => {

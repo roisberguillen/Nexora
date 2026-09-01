@@ -46,7 +46,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C3.15 | complete | Export `SCREEN_AUDIT_PASS / FROZEN`; scope, formati, precisione, relazioni, privacy, sicurezza e responsive verificati |
 | 12.5.C3.16 | complete | Backup + Restore `SCREEN_AUDIT_PASS / FROZEN`; cifratura, round-trip, validazione, atomicità, recovery e responsive verificati |
 | 12.5.C3.17 | complete | Notifications `SCREEN_AUDIT_PASS / FROZEN`; derivation, deduplica, read state, deep-link e responsive verificati |
-| 12.5.C3.18–C3.21 | pending | subsequent screen-by-screen audits; C3.18 Profile is next |
+| 12.5.C3.18 | complete | Profile `SCREEN_AUDIT_PASS / FROZEN`; local display name, responsive form, persistence and privacy links verified |
+| 12.5.C3.19–C3.21 | pending | subsequent screen-by-screen audits; C3.19 Privacy/Sicurezza is next |
 | C4 | pending | real complete flows |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
@@ -61,7 +62,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 14–17 | planned | no completion claim |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
-complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12 and C3.13 are complete, while C3.14–C3.21 and C4–F
+complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
+C3.14, C3.15, C3.16, C3.17 and C3.18 are complete, while C3.19–C3.21 and C4–F
 remain pending until their own evidence exists.
 Phase 13 must not be treated as next before
 the 12.5 release freeze.

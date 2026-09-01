@@ -1,5 +1,19 @@
 # Test evidence
 
+## 12.5.C3.18 — Profile Mobile/Desktop audit — PASS — 2026-09-01
+
+- Contract: profile exposes only local `displayName`; no fake email, avatar, upload, auth or logout.
+- Persistence: versioned `nexora.profile.v1`, safe malformed-storage fallback, trim/collapse,
+  empty/length validation and reset integration verified; ledger is not modified.
+- Form: edit/save/cancel, accessible labels, error feedback and double-submit guard covered by
+  Profile and storage unit tests.
+- Browser/E2E: 320/375/390/768/1024/1440, no horizontal overflow, target sizes, navigation,
+  persistence after reload, axe and 200% desktop zoom; `14 passed`, `4 skipped` (zoom is desktop-only).
+- Quality: targeted typecheck and build were green before the final selector-only E2E correction;
+  the corrected Profile E2E suite is green with `14 passed`, `4 skipped`.
+- Review: `.codex/reviews/ui-ux/2026-09-01-c3-18-profile.md`; `P0/P1/P2 = 0/0/0`.
+- Esito: `SCREEN_AUDIT_PASS`; Profile FROZEN; prossimo C3.19 Privacy/Sicurezza.
+
 ## 12.5.C3.17 — Notifications Mobile/Desktop audit — PASS — 2026-09-01
 
 - Derivazione: `deriveLocalNotifications` è l’unica semantica; verificati backup/recovery overdue,

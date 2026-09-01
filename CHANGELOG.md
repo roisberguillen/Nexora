@@ -18,6 +18,11 @@
 
 ### Documentation
 
+- Chiusa C3.18 Profile con `SCREEN_AUDIT_PASS / FROZEN`: profilo locale con nome visualizzato,
+  modifica/salvataggio/annulla, persistenza, validazione, privacy e responsive verificati.
+- Eliminati dal Profilo i percorsi non supportati (email, avatar, upload, autenticazione e logout):
+  la superficie ora espone solo dati e azioni realmente disponibili in locale.
+
 - Chiusa C3.17 Notifications con `SCREEN_AUDIT_PASS / FROZEN`: derivazione locale, soglie Budget,
   deduplica, read/unread, badge, deep-link, privacy, timezone Europe/Rome e responsive verificati.
 - Corretto il layout dei pannelli Notifiche, aggiunta lettura esplicita degli alert, esclusi alert
