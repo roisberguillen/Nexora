@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aumentato a `32px` lo spazio inferiore dello stato vuoto “Spese principali” per una chiusura più
+  ariosa e coerente del pannello Dashboard.
+
 - Aggiunto un distacco superiore coerente al pannello “Disponibilità / Conti” della Dashboard.
 
 - Bilanciato lo spazio inferiore dello stato vuoto “Spese principali” nella Dashboard mobile e
