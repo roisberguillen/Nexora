@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunta l’azione “Diario finanziario” al menu rapido mobile `+`, con navigazione diretta alla
+  superficie Journal.
+
 - Allineata la tipografia della sintesi del Diario alla Dashboard: label Inter condivise, importi
   JetBrains Mono con dimensione/peso coerenti e segno positivo esplicito per entrate e risparmio.
 

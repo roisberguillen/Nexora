@@ -854,3 +854,9 @@ Keep only the latest relevant evidence per completed phase.
 - Chrome: Dashboard and Journal compared at 1440 px and Journal checked at 412 px; financial
   amounts share JetBrains Mono, weight 750 and responsive metric sizing; labels share Inter
   styling; no horizontal overflow observed.
+
+### Journal quick action follow-up — 2026-09-01
+
+- Component/App test: quick action navigation test `1/1 PASS`.
+- Chrome at 412 px: mobile `+` menu exposes “Diario finanziario”; selecting it navigates to
+  `#journal`, closes the sheet and preserves no horizontal overflow.

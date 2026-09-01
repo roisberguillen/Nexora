@@ -898,6 +898,14 @@ const quickActions: readonly QuickAction[] = [
     },
   },
   {
+    label: "Diario finanziario",
+    description: "Nota e obiettivo mensile",
+    icon: "overview",
+    onSelect: () => {
+      window.location.hash = "#journal";
+    },
+  },
+  {
     label: "Nuovo prestito",
     icon: "accounts",
     onSelect: () => {
