@@ -27,6 +27,8 @@ const transaction = Transaction.create({
   categoryId: "fuel",
 });
 
+const BUDGET_TEST_TODAY = new Date("2026-08-15T12:00:00+02:00");
+
 describe("BudgetsPage", () => {
   it("requires the two user-selected notification thresholds", () => {
     render(
@@ -38,6 +40,7 @@ describe("BudgetsPage", () => {
         onUpdate={async () => undefined}
         transactions={[]}
         transactionSplits={[]}
+        today={BUDGET_TEST_TODAY}
       />,
     );
 
@@ -59,6 +62,7 @@ describe("BudgetsPage", () => {
         onUpdate={async () => undefined}
         transactions={[]}
         transactionSplits={[]}
+        today={BUDGET_TEST_TODAY}
       />,
     );
 
@@ -86,6 +90,7 @@ describe("BudgetsPage", () => {
         onUpdate={onUpdate}
         transactions={[transaction]}
         transactionSplits={[]}
+        today={BUDGET_TEST_TODAY}
       />,
     );
 

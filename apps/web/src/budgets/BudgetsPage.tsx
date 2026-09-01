@@ -24,6 +24,7 @@ export function BudgetsPage({
   onCreate,
   onUpdate,
   onDelete,
+  today,
 }: {
   readonly budgets: readonly Budget[];
   readonly categories: readonly Category[];
@@ -32,6 +33,7 @@ export function BudgetsPage({
   readonly onCreate: (input: BudgetInput) => Promise<void>;
   readonly onUpdate: (id: string, input: BudgetInput) => Promise<void>;
   readonly onDelete: (id: string) => Promise<void>;
+  readonly today?: Date;
 }) {
   const [editing, setEditing] = useState<Budget>();
   const [deleteCandidate, setDeleteCandidate] = useState<Budget>();
@@ -39,8 +41,8 @@ export function BudgetsPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedMacroCategoryId, setSelectedMacroCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState(() => currentBudgetPeriod());
-  const isCurrentPeriod = selectedPeriod === currentBudgetPeriod();
+  const [selectedPeriod, setSelectedPeriod] = useState(() => currentBudgetPeriod(today));
+  const isCurrentPeriod = selectedPeriod === currentBudgetPeriod(today);
   const visibleBudgets = resolveActiveBudgetsForPeriod(budgets, selectedPeriod);
   const activeMacroCategories = categories.filter(
     (category) =>
