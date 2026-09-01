@@ -224,8 +224,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-01-c3-18-profile.md",
-      "size": 5057,
-      "sha256": "d2a9aee355532aa862603b163d81e4f0bf2f28c9b4aa3c5f018b385ea3873528"
+      "size": 5197,
+      "sha256": "4e50f906079744ce62bd09b9323f7b6d135978d667c833937ddd5ce782d204b5"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -409,8 +409,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 73797,
-      "sha256": "5e0b0cd0999ce832bd74e9570dd0b7b33f13eb3cbc680277a906bbc55926cdfe"
+      "size": 73933,
+      "sha256": "c52bc967acd181b938b8219cc59f74f1dd21d87641880bfa1b26d8567e8b43f1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1269,8 +1269,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 47236,
-      "sha256": "0d30954163e7774acd04d8df3df1a2d4e2604f247561197dc1f328dc229e0f72"
+      "size": 47309,
+      "sha256": "d151b5937e0bfaeb16812daa82ebc799f678c5819d516683034bd60e6270e73d"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1694,8 +1694,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 38003,
-      "sha256": "4764ac1abad1d7ef80afe7ce2e94136ba708c0c867cf46da3113d3547a72fca4"
+      "size": 38103,
+      "sha256": "f22c5b64b44e59469bff8f5af97ddac655db23c74dd2d44bd8609c873d26db5f"
     },
     {
       "path": "design/mockup/README.md",

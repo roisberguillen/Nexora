@@ -26,6 +26,7 @@
   e mobile senza overflow.
 - Aggiunto anche spazio verticale sopra e sotto il contenuto del pannello Profilo per separarlo
   correttamente dai bordi.
+- Aggiunta una distanza coerente tra la sezione “I tuoi dati” e “Sicurezza e impostazioni”.
 
 - Chiusa C3.17 Notifications con `SCREEN_AUDIT_PASS / FROZEN`: derivazione locale, soglie Budget,
   deduplica, read/unread, badge, deep-link, privacy, timezone Europe/Rome e responsive verificati.

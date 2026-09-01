@@ -1945,6 +1945,9 @@
   gap: 1rem;
   padding-block: 1.5rem;
 }
+#profile > .profile-identity + .profile-group {
+  margin-top: 1.25rem;
+}
 .profile-identity > .profile-section-heading,
 .profile-identity > .profile-identity-row,
 .profile-identity > .profile-form,
