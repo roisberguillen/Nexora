@@ -28,6 +28,9 @@
 - Allineati anche i margini laterali del dialog di conferma reset al contenuto del pannello Settings.
 - Reso operativo il tema chiaro/scuro persistente su tutte le route, con modalità Sistema collegata
   alla preferenza del dispositivo.
+- Verificate e rese effettive su tutte le route le preferenze Dimensione testo e Riduci animazioni,
+  con persistenza al reload.
+- Aggiunto padding coerente alle azioni e agli stati della sezione Connessione dispositivi.
 
 - Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,

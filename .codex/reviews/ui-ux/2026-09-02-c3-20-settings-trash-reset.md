@@ -98,6 +98,8 @@ Nessuno.
   verifica responsive su 320, 375, 390, 768, 1024 e 1440 px.
 - Correzione post-freeze aggiuntiva: tema chiaro/scuro applicato prima del mount e persistente al reload;
   modalità Sistema supportata via `prefers-color-scheme`.
+- Correzione post-freeze aggiuntiva: Dimensione testo e Riduci animazioni verificate con persistenza;
+  CTA e messaggio della Connessione dispositivi allineati all’inset del pannello.
 - `apps/web/src/settings/preferences.test.ts`: fallback malformed-storage verificato.
 - Review, test evidence, matrice, roadmap e changelog aggiornati.
 - Unit/integration mirati Settings/repository/reset: 64 pass.

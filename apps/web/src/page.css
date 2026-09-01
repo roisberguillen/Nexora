@@ -2068,6 +2068,13 @@
 .settings-group > p.account-error {
   padding-block: 0.75rem;
 }
+.settings-group > .settings-actions {
+  padding-inline: 1.25rem;
+}
+.settings-group > p.account-feedback,
+.settings-group > p.account-error {
+  margin-inline: 1.25rem;
+}
 .settings-group > .secondary-action {
   align-self: flex-start;
   margin: 0.25rem 1.25rem 1.25rem;

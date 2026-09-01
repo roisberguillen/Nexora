@@ -246,6 +246,23 @@ test("le impostazioni applicano il tema chiaro e scuro anche dopo il reload", as
   await expect(page.locator("body")).toHaveCSS("background-color", "rgb(246, 247, 251)");
 });
 
+test("le impostazioni applicano dimensione testo e riduzione animazioni", async ({ page }) => {
+  await page.goto("/#settings");
+  const textScale = page.getByLabel("Dimensione testo");
+  const reduceMotion = page.getByLabel("Riduci animazioni");
+
+  await textScale.selectOption("large");
+  await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
+  await expect(page.locator("html")).toHaveCSS("font-size", "18px");
+
+  await reduceMotion.check();
+  await expect(page.locator("html")).toHaveAttribute("data-reduce-motion", "true");
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
+  await expect(page.locator("html")).toHaveAttribute("data-reduce-motion", "true");
+});
+
 test("il ripristino totale rimuove il profilo locale e riporta all'onboarding", async ({
   page,
 }) => {
