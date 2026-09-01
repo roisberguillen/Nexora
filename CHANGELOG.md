@@ -18,6 +18,8 @@
 
 ### Documentation
 
+- Aggiunto un distacco superiore coerente al pannello “Movimenti recenti” della Dashboard.
+
 - Aumentato a `32px` lo spazio inferiore dello stato vuoto “Spese principali” per una chiusura più
   ariosa e coerente del pannello Dashboard.
 

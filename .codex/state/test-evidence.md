@@ -883,6 +883,11 @@ Keep only the latest relevant evidence per completed phase.
 - Chrome at 412 px: the empty “Spese principali” panel now uses a `32px` bottom inset; no
   horizontal overflow observed.
 
+### Dashboard recent activity top spacing follow-up — 2026-09-01
+
+- Chrome at 412 px and 1440 px: `Movimenti recenti` has a `20px` top separation from the previous
+  panel and no horizontal overflow.
+
 ### Dashboard accounts panel spacing follow-up — 2026-09-01
 
 - Chrome at 412 px and 1440 px: the “Disponibilità / Conti” panel has a `20px` top separation
