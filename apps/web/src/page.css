@@ -2190,12 +2190,28 @@
 }
 
 #notifications .notification-list .notification-actions {
+  align-items: center;
+  display: grid;
+  grid-template-columns: max-content minmax(8rem, max-content) max-content;
+  column-gap: 1rem;
   justify-content: flex-end;
 }
 
 #notifications .notification-list .notification-actions .text-action {
   margin: 0;
   white-space: nowrap;
+}
+
+#notifications .notification-list .notification-open-action {
+  grid-column: 1;
+}
+
+#notifications .notification-list .notification-read-action {
+  grid-column: 2;
+}
+
+#notifications .notification-list .notification-dismiss-action {
+  grid-column: 3;
 }
 
 @media (max-width: 48rem) {
@@ -2226,6 +2242,7 @@
   }
 
   #notifications .notification-list .notification-actions {
+    display: flex;
     justify-content: flex-start;
   }
 }

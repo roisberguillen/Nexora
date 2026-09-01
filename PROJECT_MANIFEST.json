@@ -219,8 +219,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-01-c3-17-notifications.md",
-      "size": 6480,
-      "sha256": "5eeff659d977f554768ce222d213ececa49e688ac800fd1f94ded976d53dbd64"
+      "size": 6823,
+      "sha256": "5b3ef0d10ee4adfabbb765712b6bd8359dc0a8dff8cabcf9f9d5db80c5ca6baf"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -1259,13 +1259,13 @@
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
-      "size": 9621,
-      "sha256": "4dae1587ca2409d63ecd3626e9715adc8ad3f802b74c73e2e1862f581f2fa448"
+      "size": 9699,
+      "sha256": "93f1c99450c847bd55df96995055305ef29a1014a69e55a9d40a1d194d23b7a9"
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 44595,
-      "sha256": "6cd893d7ad9f6caabac518b1818efebbb8425f800440bafc9b4dd35e0d0a17fd"
+      "size": 45002,
+      "sha256": "a41e7e97b98eb3696c347bf891339b3b1459172b586279e33bba125a7aa8aeb8"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1679,8 +1679,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 37135,
-      "sha256": "20ac3ec6eea49f325a84e847488de48ed1e3b87077fd476c1824d3ca34e77d53"
+      "size": 37291,
+      "sha256": "fc2f902ccfbfce731bdd596b7a07dd5574aeffb9fdf0b26eb9668205b9f9b912"
     },
     {
       "path": "design/mockup/README.md",
@@ -3184,8 +3184,8 @@
     },
     {
       "path": "test/e2e/c3-notifications-audit.spec.ts",
-      "size": 2834,
-      "sha256": "cf6a80436748f851318e32fb9ec429dd86f616cbe91132b90e5897d57a70b706"
+      "size": 3406,
+      "sha256": "b8b35cfdcfb74171a1f79eaadacebe1c27c16b76c2749c0d618ee5977a9f1fb3"
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",

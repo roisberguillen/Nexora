@@ -226,7 +226,7 @@ export function NotificationsPage({
                   </div>
                   <div className="notification-actions">
                     <a
-                      className="text-action"
+                      className="text-action notification-open-action"
                       href={notification.href}
                       onClick={() => markRead(notification.id)}
                     >
@@ -235,7 +235,7 @@ export function NotificationsPage({
                     {isRead ? null : (
                       <button
                         aria-label={`Segna come letta: ${notification.title}`}
-                        className="text-action"
+                        className="text-action notification-read-action"
                         onClick={() => markRead(notification.id)}
                         type="button"
                       >
@@ -244,7 +244,7 @@ export function NotificationsPage({
                     )}
                     <button
                       aria-label={`Ignora notifica: ${notification.title}`}
-                      className="text-action"
+                      className="text-action notification-dismiss-action"
                       onClick={() =>
                         updateStates({
                           ...states,

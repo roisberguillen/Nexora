@@ -25,6 +25,8 @@
   alla Fase 13.
 - Rifinito l’allineamento della lista Notifiche: contenuto e azioni sono ordinati su desktop e
   disposti in modo leggibile su mobile.
+- Stabilizzato l’allineamento a colonne delle azioni Notifiche anche per le righe già lette;
+  verifica Chrome desktop/mobile completata senza overflow.
 
 - Chiusa C3.16 Backup + Restore con `SCREEN_AUDIT_PASS / FROZEN`: archivio cifrato, schema/versione,
   preview dei contenuti, restore confermato, atomicità, rollback, sicurezza e responsive verificati.

@@ -107,6 +107,8 @@ Nessuno aperto.
   overflow e axe restano PASS su tutti i viewport.
 - Regressione post-freeze verificata il 2026-09-01: margini globali rimossi dai comandi della
   lista per mantenere allineamento coerente tra tutte le righe.
+- Verifica Chrome post-regressione il 2026-09-01: colonne esplicite mantengono “Apri” e “Ignora”
+  allineati anche nelle righe già lette; mobile a 390 px resta senza overflow.
 - Gate completo `pnpm verify`: `138 passed`, `1 skipped`; `606 passed`, `4 skipped`; build PASS
   con advisory preesistente sui chunk oltre 500 kB.
 

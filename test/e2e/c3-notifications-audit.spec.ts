@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 test.describe("C3.17 Notifications audit", () => {
   test("shows local alerts, preserves read state and keeps the surface within the viewport", async ({
     page,
-  }, testInfo) => {
+  }) => {
     await page.goto("/#notifications");
     await expect(page.getByRole("heading", { name: "Notifiche", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Segna tutte come lette" })).toBeVisible();
@@ -20,6 +20,18 @@ test.describe("C3.17 Notifications audit", () => {
       .first()
       .evaluate((element) => getComputedStyle(element).margin);
     expect(actionMargin).toBe("0px");
+    const actionColumns = await page
+      .locator(".notification-list > .account-list > li")
+      .evaluateAll((rows) =>
+        rows.map((row) =>
+          [".notification-open-action", ".notification-dismiss-action"].map((selector) => {
+            const element = row.querySelector<HTMLElement>(selector);
+            return element ? Math.round(element.getBoundingClientRect().left) : null;
+          }),
+        ),
+      );
+    expect(new Set(actionColumns.map(([open]) => open)).size).toBe(1);
+    expect(new Set(actionColumns.map(([, dismiss]) => dismiss)).size).toBe(1);
     expect(await new AxeBuilder({ page }).analyze()).toMatchObject({ violations: [] });
 
     await page.getByRole("button", { name: "Segna tutte come lette" }).click();
