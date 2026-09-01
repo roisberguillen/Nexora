@@ -98,6 +98,9 @@
 .activity-panel {
   padding-bottom: 1rem;
 }
+.dashboard-accounts-secondary {
+  margin-top: 1.25rem;
+}
 .dashboard-budget-content,
 .dashboard-muted {
   padding: 1.25rem 1.5rem;

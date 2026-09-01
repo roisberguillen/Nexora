@@ -18,6 +18,8 @@
 
 ### Documentation
 
+- Aggiunto un distacco superiore coerente al pannello “Disponibilità / Conti” della Dashboard.
+
 - Bilanciato lo spazio inferiore dello stato vuoto “Spese principali” nella Dashboard mobile e
   desktop.
 
