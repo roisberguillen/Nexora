@@ -2072,6 +2072,28 @@
   align-self: flex-start;
   margin: 0.25rem 1.25rem 1.25rem;
 }
+.settings-dialog {
+  display: grid;
+  box-sizing: border-box;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 1.25rem;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-on-surface);
+}
+.settings-dialog > h2,
+.settings-dialog > p {
+  margin: 0;
+}
+.settings-dialog > label {
+  display: grid;
+  gap: 0.5rem;
+}
+.settings-dialog > .form-actions {
+  margin-top: 0.25rem;
+}
 .profile-row,
 .settings-row {
   display: flex;

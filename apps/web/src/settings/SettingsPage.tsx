@@ -333,6 +333,7 @@ export function SettingsPage({
             {purgeMessage === null ? null : <p role="status">{purgeMessage}</p>}
             {purgeId === null ? null : (
               <AccessibleDialog
+                className="settings-dialog"
                 labelledBy="purge-transaction-title"
                 onClose={() => !isPurging && setPurgeId(null)}
               >
@@ -378,6 +379,7 @@ export function SettingsPage({
             )}
             {isPurgeAllOpen ? (
               <AccessibleDialog
+                className="settings-dialog"
                 labelledBy="purge-all-transactions-title"
                 onClose={() => !isPurging && setIsPurgeAllOpen(false)}
               >
@@ -448,6 +450,7 @@ export function SettingsPage({
             </button>
             {isResetOpen ? (
               <AccessibleDialog
+                className="settings-dialog"
                 labelledBy="reset-financial-title"
                 onClose={() => {
                   if (isResetting) return;
@@ -595,6 +598,7 @@ export function SettingsPage({
             </button>
             {isApplicationResetOpen ? (
               <AccessibleDialog
+                className="settings-dialog"
                 labelledBy="reset-application-title"
                 onClose={() => !isResetting && setIsApplicationResetOpen(false)}
               >

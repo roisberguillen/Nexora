@@ -14,9 +14,11 @@ function focusableElements(container: HTMLElement): readonly HTMLElement[] {
  */
 export function AccessibleDialog({
   children,
+  className,
   labelledBy,
   onClose,
 }: PropsWithChildren<{
+  readonly className?: string;
   readonly labelledBy: string;
   readonly onClose: () => void;
 }>) {
@@ -62,7 +64,7 @@ export function AccessibleDialog({
     <div
       aria-labelledby={labelledBy}
       aria-modal="true"
-      className="account-feedback"
+      className={className === undefined ? "account-feedback" : className}
       ref={dialogRef}
       role="dialog"
     >

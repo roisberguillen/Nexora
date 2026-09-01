@@ -23,6 +23,8 @@
   finanziario e totale con conferme forti, atomicità, App Lock, backup e integrità finanziaria
   verificati su mobile, tablet e desktop.
 - Aggiunto feedback accessibile quando il ripristino di un movimento dal Cestino fallisce.
+- Uniformati padding, gap e separazione delle azioni nei dialog distruttivi di Settings, con verifica
+  responsive dedicata.
 
 - Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,
