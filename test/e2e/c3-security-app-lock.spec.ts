@@ -6,6 +6,11 @@ test.describe("C3.19 Privacy/Security + App Lock", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: "Privacy e sicurezza" }),
     ).toBeVisible();
+    const setupPadding = await page.locator("form.app-lock-setup").evaluate((element) => {
+      const styles = getComputedStyle(element);
+      return { inlineStart: styles.paddingInlineStart, inlineEnd: styles.paddingInlineEnd };
+    });
+    expect(setupPadding).toEqual({ inlineStart: "20px", inlineEnd: "20px" });
 
     await page.getByLabel("PIN o passphrase", { exact: true }).fill("4937");
     await page.getByLabel("Conferma PIN o passphrase").fill("4937");

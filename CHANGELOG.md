@@ -22,6 +22,8 @@
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,
   recovery totale esplicito, isolamento delle superfici sensibili e fallback fail-closed verificati
   su mobile e desktop. Secure storage nativo, biometria e lifecycle lock restano Phase 13.
+- Rifinito il form di configurazione App Lock con padding interno coerente con i pannelli e
+  verificato su tutte le viewport responsive.
 
 - Chiusa C3.18 Profile con `SCREEN_AUDIT_PASS / FROZEN`: profilo locale con nome visualizzato,
   modifica/salvataggio/annulla, persistenza, validazione, privacy e responsive verificati.
