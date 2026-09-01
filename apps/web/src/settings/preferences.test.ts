@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { readAppPreferences, writeAppPreferences } from "./preferences";
+import { applyAppPreferences, readAppPreferences, writeAppPreferences } from "./preferences";
 
 describe("app preferences", () => {
   it("persists only validated local preference values", () => {
@@ -30,5 +30,16 @@ describe("app preferences", () => {
       textScale: "medium",
       trashRetentionDays: 30,
     });
+  });
+
+  it("applies the selected theme to the document root", () => {
+    applyAppPreferences({
+      reduceMotion: false,
+      theme: "dark",
+      textScale: "medium",
+      trashRetentionDays: 30,
+    });
+
+    expect(document.documentElement.dataset.theme).toBe("dark");
   });
 });

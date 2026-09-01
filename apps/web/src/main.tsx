@@ -33,6 +33,7 @@ import { StartupModelLoadError } from "./startup/StartupOrchestrator";
 import { readStoragePreferenceHint } from "./startup/storagePreference";
 import { withStartupLock } from "./startup/StartupLock";
 import { renderPreMountError } from "./startup/PreMountError";
+import { applyAppPreferences, readAppPreferences } from "./settings/preferences";
 
 const rootElement = document.querySelector("#root");
 
@@ -40,6 +41,10 @@ if (!(rootElement instanceof HTMLElement)) {
   renderPreMountError(null);
   throw new Error("Nexora root element is missing");
 }
+
+// Apply the local visual preference before mounting so every route starts with
+// the selected theme, text scale and motion policy without a visible reset.
+applyAppPreferences(readAppPreferences());
 
 const nativeRuntime = isTauri();
 const applyPwaUpdate =

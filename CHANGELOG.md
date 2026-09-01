@@ -26,6 +26,8 @@
 - Uniformati padding, gap e separazione delle azioni nei dialog distruttivi di Settings, con verifica
   responsive dedicata.
 - Allineati anche i margini laterali del dialog di conferma reset al contenuto del pannello Settings.
+- Reso operativo il tema chiaro/scuro persistente su tutte le route, con modalità Sistema collegata
+  alla preferenza del dispositivo.
 
 - Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,

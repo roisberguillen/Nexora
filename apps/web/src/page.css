@@ -2145,6 +2145,18 @@
   --color-on-surface-muted: #b6c3d6;
   --color-outline: #3c4c64;
 }
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+    --color-surface: #101827;
+    --color-surface-low: #172235;
+    --color-surface-high: #243650;
+    --color-card: #182338;
+    --color-on-surface: #eef4ff;
+    --color-on-surface-muted: #b6c3d6;
+    --color-outline: #3c4c64;
+  }
+}
 :root[data-text-scale="large"] {
   font-size: 112.5%;
 }

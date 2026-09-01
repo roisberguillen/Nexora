@@ -229,6 +229,23 @@ test("il reset finanziario richiede la frase esatta e svuota il ledger", async (
   await expect(page.getByRole("heading", { name: "Nessun movimento registrato" })).toBeVisible();
 });
 
+test("le impostazioni applicano il tema chiaro e scuro anche dopo il reload", async ({ page }) => {
+  await page.goto("/#settings");
+  const theme = page.getByLabel("Tema");
+
+  await theme.selectOption("dark");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(16, 24, 39)");
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+
+  await page.goto("/#settings");
+  await page.getByLabel("Tema").selectOption("light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(246, 247, 251)");
+});
+
 test("il ripristino totale rimuove il profilo locale e riporta all'onboarding", async ({
   page,
 }) => {

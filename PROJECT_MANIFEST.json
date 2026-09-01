@@ -234,8 +234,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-02-c3-20-settings-trash-reset.md",
-      "size": 5546,
-      "sha256": "f5aa1094f8752f6540328b7b6b76085b497c606cfe597bc7ff1b92c54128b244"
+      "size": 5711,
+      "sha256": "f27adca31a8f98ca6dff906825366aeac6a6805bc6793514161887d4378e9d77"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -1244,8 +1244,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 6187,
-      "sha256": "518953fcbe03ed31f73a44835a03a725bc1d0e4087a096b330a3d45b42573224"
+      "size": 6470,
+      "sha256": "5fdece3d603685a59806279ad4919cac3b31b6dc8cc10af97241e68764754c19"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -1279,8 +1279,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 48094,
-      "sha256": "16d5ee0e286bcd22dc0207821bccd152e98e4dd12db31c9e335b8d46a518c4cd"
+      "size": 48421,
+      "sha256": "ece824228f39fd3fe4649e35c365cbdfae12b3969c66c4af55942ea7758b1f8d"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1429,8 +1429,8 @@
     },
     {
       "path": "apps/web/src/settings/preferences.test.ts",
-      "size": 1032,
-      "sha256": "426a11bd929311788210d67f2d148746c22e9fa0081744262d0a0b713a36cd43"
+      "size": 1329,
+      "sha256": "983d879f10f4b96c77aaeaad7ba5f60f77afdb5af1db9890a60f9802c81f3850"
     },
     {
       "path": "apps/web/src/settings/preferences.ts",
@@ -1709,8 +1709,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 39502,
-      "sha256": "1b0b042f48afa063a9b3a00a017089e9151faf3c9d29573c4b44efc00092db3a"
+      "size": 39638,
+      "sha256": "36cbb65e7472cef425c1af2c45560ddb682f9ccbdb8fa7185e7665625643095b"
     },
     {
       "path": "design/mockup/README.md",
@@ -3379,8 +3379,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 12725,
-      "sha256": "5fc2379b710db76ffa791fcd58a999f441354402556e592a2c1b36351a9f87a1"
+      "size": 13460,
+      "sha256": "34d43d96d4c3c07c7f8dcf5370b46490a793153f8bbd2b72ef7250ffb84249c6"
     },
     {
       "path": "test/project-privacy.test.ts",
