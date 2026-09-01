@@ -18,6 +18,11 @@
 
 ### Documentation
 
+- Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
+  segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,
+  recovery totale esplicito, isolamento delle superfici sensibili e fallback fail-closed verificati
+  su mobile e desktop. Secure storage nativo, biometria e lifecycle lock restano Phase 13.
+
 - Chiusa C3.18 Profile con `SCREEN_AUDIT_PASS / FROZEN`: profilo locale con nome visualizzato,
   modifica/salvataggio/annulla, persistenza, validazione, privacy e responsive verificati.
 - Eliminati dal Profilo i percorsi non supportati (email, avatar, upload, autenticazione e logout):

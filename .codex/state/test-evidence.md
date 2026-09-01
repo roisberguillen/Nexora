@@ -1044,3 +1044,15 @@ Keep only the latest relevant evidence per completed phase.
 - Quality gates: `pnpm verify`, `pnpm manifest:check`, `pnpm codex:validate` and
   `pnpm quality:ui-ux` PASS.
 - Result: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Categories is `FROZEN`; C3.13 Tags is next.
+### 12.5.C3.19 — Privacy/Sicurezza + App Lock — 2026-09-01
+
+- Unit/UI security suite: `9 passed`; malformed/unreadable App Lock storage fails closed.
+- E2E App Lock: `12 passed` su Chromium 320/375/390/768/1024/1440; enable confirmation,
+  timeout/manual lock, unlock, refresh/direct-route isolation, wrong/current secret disable and
+  recovery boundary verified.
+- `pnpm verify`: PASS — `615 passed`, `4 skipped`; format, lint, typecheck e build PASS.
+- Full E2E: `317 passed`, `138 skipped`; 6 unrelated failures remain in the existing pilot-ledger
+  locator/baseline tests and are reproduced in isolation; no C3.19 test fails.
+- Review: `.codex/reviews/ui-ux/2026-09-01-c3-19-privacy-security-app-lock.md`.
+- Result: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Privacy/Sicurezza and App Lock are `FROZEN`;
+  C3.20 Settings/cestino/reset is next.

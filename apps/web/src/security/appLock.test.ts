@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createAppLock,
   getAppLockTimeoutMilliseconds,
@@ -34,5 +34,24 @@ describe("app lock", () => {
   it("uses an explicit and bounded inactivity timeout", async () => {
     const config = await createAppLock("passphrase", 15, storage);
     expect(getAppLockTimeoutMilliseconds(config)).toBe(900_000);
+  });
+
+  it("fails closed for malformed or unreadable storage", () => {
+    storageValues.set("nexora.app-lock.v1", JSON.stringify({ version: 1, salt: "broken" }));
+    const malformedConfig = readAppLock(storage);
+    expect(malformedConfig).toBeDefined();
+    return expect(verifyAppLock("4937", malformedConfig!)).resolves.toBe(false);
+  });
+
+  it("fails closed when browser storage is unreadable", () => {
+    expect(
+      readAppLock({
+        getItem: () => {
+          throw new Error("storage blocked");
+        },
+        removeItem: vi.fn(),
+        setItem: vi.fn(),
+      }),
+    ).toBeDefined();
   });
 });

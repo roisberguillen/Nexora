@@ -22,6 +22,7 @@ export function AppLockScreen({
   const [isRecovering, setIsRecovering] = useState(false);
   const unlock = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isVerifying) return;
     setIsVerifying(true);
     setError(undefined);
     try {

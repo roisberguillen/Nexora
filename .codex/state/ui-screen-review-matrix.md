@@ -36,8 +36,8 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.17 | Notifiche | #notifications | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.17 | Preferenze notifiche | #notifications + impostazioni | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.18 | Profilo | #profile | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.19 | Privacy/Sicurezza | #privacy-security | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.19 | App Lock | #privacy-security + lock | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.19 | Privacy/Sicurezza | #privacy-security | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.19 | App Lock | #privacy-security + lock | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.20 | Impostazioni | #settings | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.20 | Cestino | #settings + cestino | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.20 | Reset finanziario | #settings + reset | — | — | — | — | 0 | 0 | 0 | PENDING |

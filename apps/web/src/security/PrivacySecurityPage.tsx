@@ -1,7 +1,7 @@
 import type { Ledger } from "@nexora/database";
 import { useState } from "react";
 
-import { createAppLock, removeAppLock, type AppLockConfig } from "./appLock";
+import { createAppLock, removeAppLock, verifyAppLock, type AppLockConfig } from "./appLock";
 
 export function PrivacySecurityPage({
   ledger,
@@ -42,7 +42,8 @@ export function PrivacySecurityPage({
           </div>
           <p className="import-help">
             Proteggi profilo utente e dispositivo: un browser già aperto può leggere il ledger
-            locale.
+            locale. App Lock nasconde l’interfaccia finché il PIN non è verificato, ma non cifra il
+            ledger e non protegge da chi può modificare i dati locali del browser.
           </p>
         </section>
         <section className="data-panel settings-group">
@@ -57,17 +58,15 @@ export function PrivacySecurityPage({
                 <button className="secondary-action" onClick={onManualLock} type="button">
                   Blocca ora
                 </button>
-                <button
-                  className="secondary-action"
-                  onClick={() => {
-                    removeAppLock();
-                    onLockConfigChanged(undefined);
-                  }}
-                  type="button"
-                >
-                  Disattiva blocco
-                </button>
+                <AppLockDisable
+                  config={lockConfig}
+                  onDisabled={() => onLockConfigChanged(undefined)}
+                />
               </div>
+              <p className="import-help">
+                Il PIN non può essere visualizzato o recuperato. Il cambio PIN non è disponibile in
+                questa versione: per configurarne uno nuovo, disattiva il blocco e riattivalo.
+              </p>
             </>
           ) : (
             <AppLockSetup onConfigured={onLockConfigChanged} />
@@ -98,16 +97,23 @@ function AppLockSetup({
   readonly onConfigured: (config: AppLockConfig) => void;
 }) {
   const [passphrase, setPassphrase] = useState("");
+  const [confirmation, setConfirmation] = useState("");
   const [timeoutMinutes, setTimeoutMinutes] = useState<AppLockConfig["timeoutMinutes"]>(5);
   const [error, setError] = useState<string>();
   const [isSaving, setIsSaving] = useState(false);
   const save = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(undefined);
+    if (passphrase !== confirmation) {
+      setError("Il PIN o la passphrase di conferma non coincidono.");
+      return;
+    }
+    if (isSaving) return;
     setIsSaving(true);
     try {
       onConfigured(await createAppLock(passphrase, timeoutMinutes));
       setPassphrase("");
+      setConfirmation("");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Impossibile attivare il blocco.");
     } finally {
@@ -132,6 +138,17 @@ function AppLockSetup({
         type="password"
         value={passphrase}
       />
+      <label className="field-label" htmlFor="confirm-app-lock">
+        Conferma PIN o passphrase
+      </label>
+      <input
+        autoComplete="new-password"
+        id="confirm-app-lock"
+        onChange={(event) => setConfirmation(event.target.value)}
+        required
+        type="password"
+        value={confirmation}
+      />
       <label className="field-label" htmlFor="app-lock-timeout">
         Blocca dopo inattività
       </label>
@@ -154,6 +171,83 @@ function AppLockSetup({
       <button className="primary-action" disabled={isSaving} type="submit">
         {isSaving ? "Attivazione…" : "Attiva blocco"}
       </button>
+    </form>
+  );
+}
+
+function AppLockDisable({
+  config,
+  onDisabled,
+}: {
+  readonly config: AppLockConfig;
+  readonly onDisabled: () => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [passphrase, setPassphrase] = useState("");
+  const [error, setError] = useState<string>();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const disable = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isSaving) return;
+    setError(undefined);
+    setIsSaving(true);
+    try {
+      if (!(await verifyAppLock(passphrase, config))) {
+        setError("PIN o passphrase non corretti.");
+        return;
+      }
+      removeAppLock();
+      setPassphrase("");
+      setIsOpen(false);
+      onDisabled();
+    } catch {
+      setError("Impossibile verificare il blocco locale. Riprova.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (!isOpen) {
+    return (
+      <button className="secondary-action" onClick={() => setIsOpen(true)} type="button">
+        Disattiva blocco
+      </button>
+    );
+  }
+
+  return (
+    <form className="app-lock-disable" onSubmit={(event) => void disable(event)}>
+      <label className="field-label" htmlFor="disable-app-lock">
+        PIN o passphrase attuali
+      </label>
+      <input
+        autoComplete="current-password"
+        autoFocus
+        id="disable-app-lock"
+        onChange={(event) => setPassphrase(event.target.value)}
+        required
+        type="password"
+        value={passphrase}
+      />
+      {error ? (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <div className="form-actions">
+        <button
+          className="secondary-action"
+          disabled={isSaving}
+          onClick={() => setIsOpen(false)}
+          type="button"
+        >
+          Annulla
+        </button>
+        <button className="primary-action" disabled={isSaving} type="submit">
+          {isSaving ? "Verifica in corso…" : "Conferma disattivazione"}
+        </button>
+      </div>
     </form>
   );
 }

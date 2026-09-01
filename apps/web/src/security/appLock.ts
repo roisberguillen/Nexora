@@ -9,6 +9,17 @@ export interface AppLockConfig {
   readonly timeoutMinutes: 1 | 5 | 15;
 }
 
+// A present but malformed record is treated as locked. The all-zero verifier is
+// intentionally unreachable through the normal PBKDF2 flow and can only be
+// cleared through the explicit total-recovery path.
+const INVALID_APP_LOCK_CONFIG: AppLockConfig = {
+  version: 1,
+  iterations: APP_LOCK_PBKDF2_ITERATIONS,
+  salt: "AAAAAAAAAAAAAAAAAAAAAA==",
+  verifier: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+  timeoutMinutes: 5,
+};
+
 interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -16,13 +27,19 @@ interface StorageLike {
 }
 
 export function readAppLock(storage: StorageLike = window.localStorage): AppLockConfig | undefined {
-  const raw = storage.getItem(APP_LOCK_STORAGE_KEY);
+  let raw: string | null;
+  try {
+    raw = storage.getItem(APP_LOCK_STORAGE_KEY);
+  } catch {
+    return INVALID_APP_LOCK_CONFIG;
+  }
   if (!raw) return undefined;
   try {
     const value: unknown = JSON.parse(raw);
-    return isAppLockConfig(value) ? value : undefined;
+    // Fail closed: a present but malformed lock record must never expose the app.
+    return isAppLockConfig(value) ? value : INVALID_APP_LOCK_CONFIG;
   } catch {
-    return undefined;
+    return INVALID_APP_LOCK_CONFIG;
   }
 }
 
@@ -66,11 +83,21 @@ function isAppLockConfig(value: unknown): value is AppLockConfig {
     candidate.version === 1 &&
     candidate.iterations === APP_LOCK_PBKDF2_ITERATIONS &&
     typeof candidate.salt === "string" &&
+    isBase64(candidate.salt, 16) &&
     typeof candidate.verifier === "string" &&
+    isBase64(candidate.verifier, 32) &&
     (candidate.timeoutMinutes === 1 ||
       candidate.timeoutMinutes === 5 ||
       candidate.timeoutMinutes === 15)
   );
+}
+
+function isBase64(value: string, expectedByteLength: number): boolean {
+  try {
+    return base64ToBytes(value).byteLength === expectedByteLength;
+  } catch {
+    return false;
+  }
 }
 async function deriveVerifier(
   passphrase: string,

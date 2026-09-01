@@ -228,6 +228,11 @@
       "sha256": "46118005cb931706db4847cbddedba05a89f40404ee4b69624b3a9dcd9362671"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-01-c3-19-privacy-security-app-lock.md",
+      "size": 6912,
+      "sha256": "bc49a8c2bd6f71af95696f94b937b2edabb15a64c74a8fb113825d8423146358"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -379,8 +384,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 355,
-      "sha256": "ada568734cd1d10882490ea77ca3d1b30ce13fc460ce203f089034a3b6360733"
+      "size": 408,
+      "sha256": "edaaad38eddd5cf7a51dc91b27a5468154507bc03df938f94703bd38ef9c54dc"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -404,18 +409,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 7004,
-      "sha256": "f989d40f7da8fcf65f567aeefc43c779a33ea21bca94fea10744f2670043eac4"
+      "size": 7152,
+      "sha256": "cdd3084880ed610f90c18c261116b71281858383152645c14476b041884a375f"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 74095,
-      "sha256": "ada9e79019d3f648a10ae5f83d1966cf52cbff641f252e475dd4f2d26c7cd5bd"
+      "size": 74945,
+      "sha256": "54b3aae9efbe84dd93aa882305fc75659a8f2e879d2ebb53e1a29fe925425ce3"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4526,
-      "sha256": "2446e50137d312c0b1eae01c80050156450268692c80a09f301d5707e703e7b6"
+      "size": 4546,
+      "sha256": "cb68bde7a9de551d064ae01ce36d063f8d3116931b26ff93b2bbbe85b99c1dd6"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1269,8 +1274,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 47397,
-      "sha256": "2f8bb6a06331d66ad707d3abb56b5425625ace311513c21339052e323a6a8234"
+      "size": 47528,
+      "sha256": "51997ce161bb6938d7177978ba8f5fb5573c4ef037603cb405925ff4c7f85c14"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1374,13 +1379,13 @@
     },
     {
       "path": "apps/web/src/security/appLock.test.ts",
-      "size": 1441,
-      "sha256": "4caa13bb83b11a266aba224ae95bbf23341ab947521d4ff33b8732da7de22f2d"
+      "size": 2055,
+      "sha256": "15b81b8c84bd76cb8c37f58d5557c0fe8c5c4a5fdd029e5b59c41e0d9b0befd8"
     },
     {
       "path": "apps/web/src/security/appLock.ts",
-      "size": 3695,
-      "sha256": "52b9bcc92ee895e8755cd9a357bdbaf59f526307c38541ba4e72c6b4911ebddb"
+      "size": 4584,
+      "sha256": "46f4496b3a674f88c2c816073491a7a9b257c69de9f724a0acf1c613e78039d8"
     },
     {
       "path": "apps/web/src/security/AppLockScreen.test.tsx",
@@ -1389,13 +1394,18 @@
     },
     {
       "path": "apps/web/src/security/AppLockScreen.tsx",
-      "size": 5133,
-      "sha256": "242a159829e247c64d93ae93b49ac45f2a3be5b312666fd28f83b1392a382cc0"
+      "size": 5162,
+      "sha256": "1a87ab4854c1efd3de09cb6a7378c82ddb68037ff3ae6973b49bbb3952e47c6a"
+    },
+    {
+      "path": "apps/web/src/security/PrivacySecurityPage.test.tsx",
+      "size": 2547,
+      "sha256": "e81d68c30e25a82910de64bc8331bf7e28ea599cb7a5030077669af0a4e404c2"
     },
     {
       "path": "apps/web/src/security/PrivacySecurityPage.tsx",
-      "size": 5372,
-      "sha256": "f91d9bafb5500d1605ec80198138bcda180990dfd44748c3098df59e70905bec"
+      "size": 8262,
+      "sha256": "45383d523a89cd6b72336eb7f49284e389cf03491cef7ff0e8022276d57165e2"
     },
     {
       "path": "apps/web/src/settings/AccessibleDialog.tsx",
@@ -1694,8 +1704,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 38234,
-      "sha256": "d8fe214608969c09fceefd976285c68fd21e53f5e29e4933c9ee15e91816ad3e"
+      "size": 38613,
+      "sha256": "287ecbdf061857f82193f3e54cdde5708032c93d1e550e771048de634f2cd62e"
     },
     {
       "path": "design/mockup/README.md",
@@ -3206,6 +3216,11 @@
       "path": "test/e2e/c3-profile-audit.spec.ts",
       "size": 3911,
       "sha256": "34557f9e346a9165ee420c22bbb1ff8c2adbc37f75552ce6d12ebf449e88c211"
+    },
+    {
+      "path": "test/e2e/c3-security-app-lock.spec.ts",
+      "size": 3131,
+      "sha256": "81a5febcf57644170291e69fa4079e68c8745a1a3d6fa3b49c2f9b7a3de6f307"
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",
