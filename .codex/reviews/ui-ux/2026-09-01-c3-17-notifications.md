@@ -105,6 +105,8 @@ Nessuno aperto.
 - E2E C3.17: `14 passed`, `4 skipped` solo zoom non applicabile ai viewport 320/375/390/768.
 - Regressione lista: azioni allineate a destra su desktop e disposte sotto il contenuto su mobile;
   overflow e axe restano PASS su tutti i viewport.
+- Regressione post-freeze verificata il 2026-09-01: margini globali rimossi dai comandi della
+  lista per mantenere allineamento coerente tra tutte le righe.
 - Gate completo `pnpm verify`: `138 passed`, `1 skipped`; `606 passed`, `4 skipped`; build PASS
   con advisory preesistente sui chunk oltre 500 kB.
 

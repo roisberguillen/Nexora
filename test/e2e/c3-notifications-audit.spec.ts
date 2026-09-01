@@ -15,6 +15,11 @@ test.describe("C3.17 Notifications audit", () => {
       scrollWidth: document.documentElement.scrollWidth,
     }));
     expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+    const actionMargin = await page
+      .locator(".notification-list .notification-actions .text-action")
+      .first()
+      .evaluate((element) => getComputedStyle(element).margin);
+    expect(actionMargin).toBe("0px");
     expect(await new AxeBuilder({ page }).analyze()).toMatchObject({ violations: [] });
 
     await page.getByRole("button", { name: "Segna tutte come lette" }).click();

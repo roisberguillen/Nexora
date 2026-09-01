@@ -2193,6 +2193,11 @@
   justify-content: flex-end;
 }
 
+#notifications .notification-list .notification-actions .text-action {
+  margin: 0;
+  white-space: nowrap;
+}
+
 @media (max-width: 48rem) {
   #notifications > .data-panel {
     padding: 1rem;

@@ -1264,8 +1264,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 44485,
-      "sha256": "dc75e8b59f566785ba84e4cd557e26b9511e08fee0d63fe19154f3b36e978bba"
+      "size": 44595,
+      "sha256": "6cd893d7ad9f6caabac518b1818efebbb8425f800440bafc9b4dd35e0d0a17fd"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -3184,8 +3184,8 @@
     },
     {
       "path": "test/e2e/c3-notifications-audit.spec.ts",
-      "size": 2609,
-      "sha256": "4e7872643c2ea8de4f9c296d1747717449a9f9691f3bb41f00819320f8572e04"
+      "size": 2834,
+      "sha256": "cf6a80436748f851318e32fb9ec429dd86f616cbe91132b90e5897d57a70b706"
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",
