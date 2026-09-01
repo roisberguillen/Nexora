@@ -20,6 +20,11 @@ test.describe("C3.17 Notifications audit", () => {
       .first()
       .evaluate((element) => getComputedStyle(element).margin);
     expect(actionMargin).toBe("0px");
+    const actionDisplay = await page
+      .locator(".notification-list .notification-actions .text-action")
+      .first()
+      .evaluate((element) => getComputedStyle(element).display);
+    expect(actionDisplay).toBe("flex");
     const actionColumns = await page
       .locator(".notification-list > .account-list > li")
       .evaluateAll((rows) =>

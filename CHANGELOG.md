@@ -27,6 +27,7 @@
   disposti in modo leggibile su mobile.
 - Stabilizzato l’allineamento a colonne delle azioni Notifiche anche per le righe già lette;
   verifica Chrome desktop/mobile completata senza overflow.
+- Uniformata la centratura visiva del link “Apri” con i bottoni della lista Notifiche.
 
 - Chiusa C3.16 Backup + Restore con `SCREEN_AUDIT_PASS / FROZEN`: archivio cifrato, schema/versione,
   preview dei contenuti, restore confermato, atomicità, rollback, sicurezza e responsive verificati.

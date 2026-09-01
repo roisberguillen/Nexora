@@ -109,6 +109,7 @@ Nessuno aperto.
   lista per mantenere allineamento coerente tra tutte le righe.
 - Verifica Chrome post-regressione il 2026-09-01: colonne esplicite mantengono “Apri” e “Ignora”
   allineati anche nelle righe già lette; mobile a 390 px resta senza overflow.
+- Uniformata anche la centratura interna di link e bottoni delle azioni con `inline-flex`.
 - Gate completo `pnpm verify`: `138 passed`, `1 skipped`; `606 passed`, `4 skipped`; build PASS
   con advisory preesistente sui chunk oltre 500 kB.
 
