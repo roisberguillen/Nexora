@@ -33,8 +33,8 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.15 | Esportazione | #exports | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.16 | Backup | #backup | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.16 | Restore | #backup + restore | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.17 | Notifiche | #notifications | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.17 | Preferenze notifiche | #notifications + impostazioni | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.17 | Notifiche | #notifications | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.17 | Preferenze notifiche | #notifications + impostazioni | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.18 | Profilo | #profile | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.19 | Privacy/Sicurezza | #privacy-security | — | — | — | — | 0 | 0 | 0 | PENDING |
 | C3.19 | App Lock | #privacy-security + lock | — | — | — | — | 0 | 0 | 0 | PENDING |

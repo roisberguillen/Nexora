@@ -1,5 +1,23 @@
 # Test evidence
 
+## 12.5.C3.17 — Notifications Mobile/Desktop audit — PASS — 2026-09-01
+
+- Derivazione: `deriveLocalNotifications` è l’unica semantica; verificati backup/recovery overdue,
+  saldo basso, budget threshold, recurring imminenti/entrate mancanti e loan due. Soglia Budget più
+  grave senza duplicato, regole recurring disabilitate e prestiti estinti esclusi.
+- Date: `today` deterministico nei test; date civili calcolate in `Europe/Rome`, compreso il bordo
+  mezzanotte UTC. Money resta in minor units/bigint.
+- Stato: `readAt`/`dismissed` persistiti separatamente dal ledger; mark read, mark all read, badge
+  unread reale e deep-link verificati. Deduplica ripetuta produce lo stesso insieme di ID.
+- Security/privacy: React escaping XSS, nessun contenuto completo nei log o URL, nessuna rete per la
+  derivazione; notifiche OS-native/background `DEFERRED TO PHASE 13`.
+- Browser/E2E: 320/375/390/768/1024/1440, overflow, lista, CTA, deep-link, axe e zoom 200% desktop;
+  `14 passed`, `4 skipped` motivati dal test zoom non applicabile ai viewport non desktop.
+- Test mirati Notifications: `14 passed`; gate completo `pnpm verify`: 138 file, 606 test passed,
+  1 file skipped e 4 skip documentati; build PASS con advisory chunk-size preesistente.
+- Review: `.codex/reviews/ui-ux/2026-09-01-c3-17-notifications.md`; `P0/P1/P2 = 0/0/0`.
+- Esito: `SCREEN_AUDIT_PASS`; Notifications e Preferenze notifiche FROZEN; prossimo C3.18 Profile.
+
 ## 12.5.C3.16 — Backup + Restore Mobile/Desktop audit — PASS — 2026-09-01
 
 - Contratto: backup browser portabile cifrato con snapshot `ledger.json`; include accounts,

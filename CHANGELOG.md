@@ -18,6 +18,12 @@
 
 ### Documentation
 
+- Chiusa C3.17 Notifications con `SCREEN_AUDIT_PASS / FROZEN`: derivazione locale, soglie Budget,
+  deduplica, read/unread, badge, deep-link, privacy, timezone Europe/Rome e responsive verificati.
+- Corretto il layout dei pannelli Notifiche, aggiunta lettura esplicita degli alert, esclusi alert
+  duplicati o stale per soglie Budget e prestiti estinti; le notifiche OS-native restano rinviate
+  alla Fase 13.
+
 - Chiusa C3.16 Backup + Restore con `SCREEN_AUDIT_PASS / FROZEN`: archivio cifrato, schema/versione,
   preview dei contenuti, restore confermato, atomicità, rollback, sicurezza e responsive verificati.
 - La preview Backup mostra i conteggi reali del ledger e il lock UI protegge le operazioni locali e

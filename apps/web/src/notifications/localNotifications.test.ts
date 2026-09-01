@@ -37,7 +37,7 @@ describe("local notification state", () => {
 });
 
 describe("local notification derivation", () => {
-  it("emits each configured budget threshold once with deterministic identifiers", () => {
+  it("emits only the most severe configured budget threshold", () => {
     const budget = Budget.create({
       id: "food",
       period: "2026-07",
@@ -89,7 +89,7 @@ describe("local notification derivation", () => {
       deriveLocalNotifications({ ...input, transactions: [expense(-9_000n)] }).map(
         (item) => item.id,
       ),
-    ).toEqual(["budget-threshold:food:2026-07:50", "budget-threshold:food:2026-07:80"]);
+    ).toEqual(["budget-threshold:food:2026-07:80"]);
   });
 
   it("segnala backup e recovery drill scaduti con identificativi deterministici", () => {
@@ -220,5 +220,117 @@ describe("local notification derivation", () => {
         expect.objectContaining({ id: "loan:loan:2026-08-04", href: "./#loans", kind: "loan" }),
       ]),
     );
+  });
+
+  it("non segnala una rata quando il prestito è già estinto", () => {
+    const loan = Loan.create({
+      id: "paid-loan",
+      accountId: "loan-account",
+      lender: "Banca",
+      installment: Money.fromMinor(10_000n, "EUR"),
+      remainingPrincipal: Money.fromMinor(0n, "EUR"),
+      nextDueDate: LocalDate.parse("2026-08-04"),
+    });
+
+    expect(
+      deriveLocalNotifications({
+        backupHistory: [],
+        budgets: [],
+        loans: [loan],
+        recurringRules: [],
+        today: new Date("2026-08-01T12:00:00.000Z"),
+        transactions: [],
+      }).some((notification) => notification.kind === "loan"),
+    ).toBe(false);
+  });
+
+  it("ignora le ricorrenze disabilitate e deduplica le derivazioni ripetute", () => {
+    const enabled = RecurringRule.create({
+      accountId: "main",
+      amount: Money.fromMinor(-25_000n, "EUR"),
+      id: "enabled",
+      kind: "expense",
+      name: "Affitto",
+      nextExpectedDate: LocalDate.parse("2026-08-04"),
+      nominalDay: 4,
+    });
+    const disabled = RecurringRule.create({
+      accountId: "main",
+      amount: Money.fromMinor(-10_000n, "EUR"),
+      enabled: false,
+      id: "disabled",
+      kind: "expense",
+      name: "Regola disabilitata",
+      nextExpectedDate: LocalDate.parse("2026-08-04"),
+      nominalDay: 4,
+    });
+    const input = {
+      backupHistory: [
+        {
+          id: "backup",
+          occurredAt: "2026-08-01T12:00:00.000Z",
+          operation: "local_backup" as const,
+          outcome: "succeeded" as const,
+          storageKind: "indexeddb" as const,
+        },
+        {
+          id: "recovery",
+          occurredAt: "2026-08-01T12:00:00.000Z",
+          operation: "restore_test" as const,
+          outcome: "succeeded" as const,
+          storageKind: "indexeddb" as const,
+        },
+      ],
+      budgets: [],
+      loans: [],
+      recurringRules: [enabled, disabled],
+      today: new Date("2026-08-03T23:30:00.000Z"),
+      transactions: [],
+    };
+
+    const first = deriveLocalNotifications(input);
+    const second = deriveLocalNotifications(input);
+    expect(first).toEqual(second);
+    expect(first.map((notification) => notification.id)).toEqual(["recurring:enabled:2026-08-04"]);
+  });
+
+  it("calcola oggi secondo Europe/Rome anche vicino alla mezzanotte UTC", () => {
+    const rule = RecurringRule.create({
+      accountId: "main",
+      amount: Money.fromMinor(-25_000n, "EUR"),
+      id: "rent",
+      kind: "expense",
+      name: "Affitto",
+      nextExpectedDate: LocalDate.parse("2026-08-04"),
+      nominalDay: 4,
+    });
+
+    expect(
+      deriveLocalNotifications({
+        backupHistory: [
+          {
+            id: "backup",
+            occurredAt: "2026-08-01T12:00:00.000Z",
+            operation: "local_backup",
+            outcome: "succeeded",
+            storageKind: "indexeddb",
+          },
+          {
+            id: "recovery",
+            occurredAt: "2026-08-01T12:00:00.000Z",
+            operation: "restore_test",
+            outcome: "succeeded",
+            storageKind: "indexeddb",
+          },
+        ],
+        budgets: [],
+        loans: [],
+        recurringRules: [rule],
+        today: new Date("2026-08-03T23:30:00.000Z"),
+        transactions: [],
+      }),
+    ).toEqual([
+      expect.objectContaining({ id: "recurring:rent:2026-08-04", description: "Prevista oggi." }),
+    ]);
   });
 });

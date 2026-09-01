@@ -82,6 +82,11 @@ export function NotificationsPage({
     .filter((notification) => states[notification.id]?.dismissed !== true)
     .sort((left, right) => priorityRank(right.priority) - priorityRank(left.priority));
   const unread = visible.filter((notification) => states[notification.id]?.readAt === undefined);
+  const markRead = (notificationId: string) =>
+    updateStates({
+      ...states,
+      [notificationId]: { ...states[notificationId], readAt: new Date().toISOString() },
+    });
 
   return (
     <div id="notifications">
@@ -92,22 +97,27 @@ export function NotificationsPage({
           <p>Avvisi derivati dal ledger su questo dispositivo. Nessun dato viene inviato online.</p>
         </div>
         {unread.length === 0 ? null : (
-          <button
-            className="secondary-action"
-            onClick={() =>
-              updateStates(
-                Object.fromEntries(
-                  visible.map((notification) => [
-                    notification.id,
-                    { ...states[notification.id], readAt: new Date().toISOString() },
-                  ]),
-                ),
-              )
-            }
-            type="button"
-          >
-            Segna tutte come lette
-          </button>
+          <div className="notification-header-actions">
+            <button
+              className="secondary-action"
+              onClick={() =>
+                updateStates(
+                  Object.fromEntries(
+                    visible.map((notification) => [
+                      notification.id,
+                      { ...states[notification.id], readAt: new Date().toISOString() },
+                    ]),
+                  ),
+                )
+              }
+              type="button"
+            >
+              Segna tutte come lette
+            </button>
+            <span aria-label={`${unread.length} notifiche non lette`} className="panel-meta">
+              {unread.length}
+            </span>
+          </div>
         )}
       </header>
       <section aria-labelledby="system-notification-heading" className="data-panel">
@@ -215,9 +225,23 @@ export function NotificationsPage({
                     </small>
                   </div>
                   <div className="notification-actions">
-                    <a className="text-action" href={notification.href}>
+                    <a
+                      className="text-action"
+                      href={notification.href}
+                      onClick={() => markRead(notification.id)}
+                    >
                       Apri
                     </a>
+                    {isRead ? null : (
+                      <button
+                        aria-label={`Segna come letta: ${notification.title}`}
+                        className="text-action"
+                        onClick={() => markRead(notification.id)}
+                        type="button"
+                      >
+                        Segna come letta
+                      </button>
+                    )}
                     <button
                       aria-label={`Ignora notifica: ${notification.title}`}
                       className="text-action"

@@ -214,8 +214,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-01-c3-16-backup-restore.md",
-      "size": 4955,
-      "sha256": "cb210929367dd76085ea70958ec01b2322e418845fcfc26b8a7dc440569801eb"
+      "size": 6310,
+      "sha256": "7e9be1289573d7a827b667609380b9d5c2d87fcc3339c07ab42f6a4317a7b69e"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-01-c3-17-notifications.md",
+      "size": 6287,
+      "sha256": "0dd3b27193e2f386ffc92f27813f78fc05479424984bfb827be8389f96686c74"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -369,8 +374,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 376,
-      "sha256": "86432558f25dad2b2379b7a7858dc5c09e3eb8d657492c73206d51442dcbd76e"
+      "size": 363,
+      "sha256": "cc5a4c50de8d43dff3b73118f227f59b2038b8a3f9a71ed1d23cb0fb6bb995ca"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -394,18 +399,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 6682,
-      "sha256": "d7fceb19b8fddee454e2cc0db8c250501fb282dee939501355aec31071fded80"
+      "size": 6817,
+      "sha256": "812e7bfaa3548296ec0f3f5de54c2f51cecf0a41baf4e0914a407ea0705c527d"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 70863,
-      "sha256": "9ed88efb67910e03dc3aa72397b9a6163efce6ceca0daba376e216714293c6a5"
+      "size": 72305,
+      "sha256": "4510c1a9f7205305a7ee1c9b24076cb32315fb6882c56d5ad45b975a305746e1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4496,
-      "sha256": "c3f8f72a4bc26f0243c95c70cb85e2246a0f7ce28ac4f8b265ada13544240d57"
+      "size": 4516,
+      "sha256": "1ac109799e5879628cedf32994319be0baaa32a30d6d5a4708b128e9a8ff4c74"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1239,28 +1244,28 @@
     },
     {
       "path": "apps/web/src/notifications/localNotifications.test.ts",
-      "size": 6745,
-      "sha256": "06a8414384a6feb71095425dcd91f3378f199d5989d85e7b04fc1a5f48cc4827"
+      "size": 10065,
+      "sha256": "d182e8152ebbea0c623d8a0fbdd5df7770c8405b4a9711994371123fc4fa7e4f"
     },
     {
       "path": "apps/web/src/notifications/localNotifications.ts",
-      "size": 8744,
-      "sha256": "389323de1882aae74577f2e70a7b6e10d0407f123f4e9820deac0f066f8f9ef9"
+      "size": 9111,
+      "sha256": "56c2e39ed048a1f3c0325f70f8f423a018d98a70f91f2d8fff4a440483209bfa"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.test.tsx",
-      "size": 1025,
-      "sha256": "ac268673dd16cb1ffa6a5cba4094e600e06a24ee77b1efb85b4d66a89c4bd120"
+      "size": 1676,
+      "sha256": "daf61ee7a9efd9f4ae014d4a4195a9ab422f4491b641ba5482727117893643d2"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
-      "size": 8643,
-      "sha256": "58fcd1cae7620efe242055c48f2192aba79eb7e8bf2e8fd8aaf08067248ec5e0"
+      "size": 9621,
+      "sha256": "4dae1587ca2409d63ecd3626e9715adc8ad3f802b74c73e2e1862f581f2fa448"
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 42000,
-      "sha256": "a2ecf085117d01c81804fa1cf5a1a37f7a9459fcdeaf7cc8b22132f3232c74e8"
+      "size": 43986,
+      "sha256": "da45ab465144e65f3213edf62e8b16eb160ddfb87ed9154226ba893a2dcb12ec"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1674,8 +1679,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 36587,
-      "sha256": "86873a979c07053aece681b7b482e690d31be947e6f8b28061bbc7efbd1c88cb"
+      "size": 36998,
+      "sha256": "55dc93128032922087880968257eb4629cfbf084e947eaab95ea6bf96b7d1782"
     },
     {
       "path": "design/mockup/README.md",
@@ -3176,6 +3181,11 @@
       "path": "test/e2e/c3-dashboard-audit.spec.ts",
       "size": 3310,
       "sha256": "0a176fae172e9fd19256dc760326177c0ad991211a312fe775b2ad1fa0f5c7f3"
+    },
+    {
+      "path": "test/e2e/c3-notifications-audit.spec.ts",
+      "size": 2599,
+      "sha256": "269725f19085be647bb2f365c2bd70eaffea36f4239118e76e5ddbe693bd9668"
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",

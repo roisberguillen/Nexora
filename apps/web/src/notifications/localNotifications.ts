@@ -119,7 +119,11 @@ export function deriveLocalNotifications(input: {
       splits: transactionSplits,
       transactions,
     }).percentage;
-    if (budget.firstAlertPercentage !== undefined && usage >= budget.firstAlertPercentage) {
+    if (
+      budget.firstAlertPercentage !== undefined &&
+      usage >= budget.firstAlertPercentage &&
+      (budget.secondAlertPercentage === undefined || usage < budget.secondAlertPercentage)
+    ) {
       notifications.push({
         description: `Hai usato il ${usage.toFixed(0)}% del limite mensile.`,
         href: "./#budgets",
@@ -168,7 +172,12 @@ export function deriveLocalNotifications(input: {
     });
   }
   for (const loan of loans) {
-    if (loan.nextDueDate === undefined) continue;
+    if (
+      loan.nextDueDate === undefined ||
+      loan.remainingPrincipal.amountMinor === 0n ||
+      loan.installmentsRemaining === 0
+    )
+      continue;
     const days = daysUntil(loan.nextDueDate.toString(), today);
     if (days < 0 || days > 7) continue;
     notifications.push({
@@ -240,7 +249,13 @@ export function writeLocalNotificationStates(
 }
 
 function daysUntil(isoDate: string, today: Date): number {
-  const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayInRome = new Intl.DateTimeFormat("sv-SE", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone: "Europe/Rome",
+    year: "numeric",
+  }).format(today);
+  const start = Date.parse(`${todayInRome}T00:00:00Z`);
   const target = Date.parse(`${isoDate}T00:00:00Z`);
   return Math.round((target - start) / 86_400_000);
 }
