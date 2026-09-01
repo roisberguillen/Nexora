@@ -14,6 +14,8 @@ import { describe, expect, it } from "vitest";
 
 import { buildDashboardViewModel, type DashboardLedgerData } from "./buildDashboardViewModel";
 
+const DASHBOARD_TEST_TODAY = new Date("2026-08-15T12:00:00+02:00");
+
 function demoLedgerData(): DashboardLedgerData {
   const seed = createDemoLedgerSeed();
   return {
@@ -102,7 +104,7 @@ describe("buildDashboardViewModel", () => {
   });
 
   it("collassa le due gambe del trasferimento in una sola attività neutrale", () => {
-    const dashboard = buildDashboardViewModel(demoLedgerData());
+    const dashboard = buildDashboardViewModel(demoLedgerData(), "EUR", DASHBOARD_TEST_TODAY);
     const transferActivity = dashboard.activity.find(
       (activity) => activity.kindLabel === "Trasferimento",
     );
@@ -122,7 +124,7 @@ describe("buildDashboardViewModel", () => {
   });
 
   it("mantiene visibile l'annullamento ma non lo include nei saldi", () => {
-    const dashboard = buildDashboardViewModel(demoLedgerData());
+    const dashboard = buildDashboardViewModel(demoLedgerData(), "EUR", DASHBOARD_TEST_TODAY);
 
     expect(dashboard.activity).toContainEqual(
       expect.objectContaining({
@@ -159,11 +161,15 @@ describe("buildDashboardViewModel", () => {
     });
     const data = demoLedgerData();
 
-    const dashboard = buildDashboardViewModel({
-      ...data,
-      accounts: [...data.accounts, usdAccount],
-      transactions: [...data.transactions, usdIncome],
-    });
+    const dashboard = buildDashboardViewModel(
+      {
+        ...data,
+        accounts: [...data.accounts, usdAccount],
+        transactions: [...data.transactions, usdIncome],
+      },
+      "EUR",
+      DASHBOARD_TEST_TODAY,
+    );
 
     expect(dashboard.netWorth.amountMinor).toBe(513_360n);
     expect(dashboard.excludedCurrencyAccountCount).toBe(1);
@@ -185,7 +191,11 @@ describe("buildDashboardViewModel", () => {
       account("loan", { type: "loan", openingBalance: Money.fromMinor(700_000n, "EUR") }),
       account("archived", { isArchived: true, openingBalance: Money.fromMinor(800_000n, "EUR") }),
     ];
-    const dashboard = buildDashboardViewModel(minimalData([], [], accounts));
+    const dashboard = buildDashboardViewModel(
+      minimalData([], [], accounts),
+      "EUR",
+      DASHBOARD_TEST_TODAY,
+    );
     expect(dashboard.availableBalance.amountMinor).toBe(600_000n);
     expect(dashboard.activeLiquidAccountCount).toBe(3);
   });
@@ -201,6 +211,8 @@ describe("buildDashboardViewModel", () => {
         ...(income === 0n ? [] : [transaction("income", "income", income)]),
         ...(expense === 0n ? [] : [transaction("expense", "expense", expense)]),
       ]),
+      "EUR",
+      DASHBOARD_TEST_TODAY,
     );
     expect(dashboard.savings.amountMinor).toBe(savings);
     expect(dashboard.savingRatePercent).toBe(rate);
@@ -221,6 +233,8 @@ describe("buildDashboardViewModel", () => {
         [account()],
         [parent, child],
       ),
+      "EUR",
+      DASHBOARD_TEST_TODAY,
     );
     expect(dashboard.budget.activeCount).toBe(2);
     expect(dashboard.budget.criticalCategories).toHaveLength(2);
@@ -235,6 +249,8 @@ describe("buildDashboardViewModel", () => {
   ])("deriva lo stato mese dal budget più critico", (spent, status) => {
     const dashboard = buildDashboardViewModel(
       minimalData([transaction("expense", "expense", spent)], [budget("monthly")]),
+      "EUR",
+      DASHBOARD_TEST_TODAY,
     );
     expect(dashboard.monthStatus).toBe(status);
   });
@@ -262,12 +278,16 @@ describe("buildDashboardViewModel", () => {
       valuationDate: LocalDate.parse("2026-08-01"),
     });
     const data = demoLedgerData();
-    const dashboard = buildDashboardViewModel({
-      ...data,
-      accounts: [...data.accounts, account],
-      loans: [loan],
-      investmentPositions: [position],
-    });
+    const dashboard = buildDashboardViewModel(
+      {
+        ...data,
+        accounts: [...data.accounts, account],
+        loans: [loan],
+        investmentPositions: [position],
+      },
+      "EUR",
+      DASHBOARD_TEST_TODAY,
+    );
     expect(dashboard.loanBalance.amountMinor).toBe(200_000n);
     expect(dashboard.investmentValue.amountMinor).toBe(112_500n);
     expect(dashboard.investmentGainLoss.amountMinor).toBe(12_500n);

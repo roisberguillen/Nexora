@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Stabilizzati i test date-sensitive del view model Dashboard con una data esplicita nelle fixture;
+  il comportamento runtime continua a usare la data corrente.
+
 - Aggiunto un distacco superiore coerente al pannello “Movimenti recenti” della Dashboard.
 
 - Aumentato a `32px` lo spazio inferiore dello stato vuoto “Spese principali” per una chiusura più

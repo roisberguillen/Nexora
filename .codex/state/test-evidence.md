@@ -892,3 +892,23 @@ Keep only the latest relevant evidence per completed phase.
 
 - Chrome at 412 px and 1440 px: the “Disponibilità / Conti” panel has a `20px` top separation
   from “Movimenti recenti”; no horizontal overflow observed.
+
+### 12.5.C3.11-F — Deterministic Dashboard date tests — 2026-09-01
+
+- Root cause: dashboard view-model tests relied on the runtime default `new Date()` while their
+  fixtures and assertions target August 2026; after the calendar moved to September, monthly
+  income/expense/savings, saving rate, budgets, month status and related period projections used
+  2026-09 instead of 2026-08.
+- Scoped change: added test-only `DASHBOARD_TEST_TODAY` (`2026-08-15T12:00:00+02:00`) and passed
+  it explicitly to the affected Dashboard view-model calls. Runtime code and Dashboard UI were
+  not modified; runtime date behavior remains unchanged.
+- Dashboard suite: `20 passed`, `0 failed`, `0 skipped` across 2 test files.
+- Global suite: `598 passed`, `1 failed`, `4 skipped` across 139 files; the remaining failure is
+  the pre-existing date-sensitive `BudgetsPage.test.tsx` expectation (`aria-valuenow` 36 vs 0),
+  outside this Dashboard-only scope.
+- Quality gates: `pnpm lint` PASS, `pnpm typecheck` PASS, `pnpm build` PASS, `pnpm codex:validate`
+  PASS; `pnpm format:check` remains blocked by 381 pre-existing files, and `pnpm manifest:check`
+  remains blocked because `PROJECT_MANIFEST.json` is stale against unrelated worktree changes.
+- Result: Dashboard date-sensitive failures resolved; C3.11 remains COMPLETE, Dashboard remains
+  FROZEN, and C3.12 remains NEXT. Overall C3.11-F status is BLOCKED pending unrelated global
+  Budget, formatting and manifest gates.
