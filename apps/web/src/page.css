@@ -1944,6 +1944,13 @@
   display: grid;
   gap: 1rem;
 }
+.profile-identity > .profile-section-heading,
+.profile-identity > .profile-identity-row,
+.profile-identity > .profile-form,
+.profile-identity > .account-feedback,
+.profile-identity > .account-error {
+  margin-inline: 1.5rem;
+}
 .profile-section-heading {
   display: flex;
   align-items: center;
@@ -2412,6 +2419,14 @@
 
   .profile-section-heading {
     align-items: flex-start;
+  }
+
+  .profile-identity > .profile-section-heading,
+  .profile-identity > .profile-identity-row,
+  .profile-identity > .profile-form,
+  .profile-identity > .account-feedback,
+  .profile-identity > .account-error {
+    margin-inline: 1rem;
   }
 
   .profile-hero-copy {
