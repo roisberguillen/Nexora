@@ -47,3 +47,20 @@ test("unisce una categoria e riassegna i riferimenti", async ({ page }) => {
   await page.getByRole("button", { name: "Unisci e riassegna" }).click();
   await expect(tree).not.toContainText("Origine merge");
 });
+
+test("la tassonomia resta utilizzabile al 200% su desktop", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium-1440", "Verifica zoom solo sul viewport desktop.");
+  await page.goto("/#categories");
+  await page.evaluate(() => {
+    document.documentElement.style.zoom = "2";
+  });
+
+  await expect(page.getByRole("heading", { name: "Gestisci le categorie" })).toBeVisible();
+  await expect(page.getByLabel("Nome")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salva categoria" })).toBeVisible();
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth * 2);
+});

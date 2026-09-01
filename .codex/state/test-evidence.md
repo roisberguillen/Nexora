@@ -910,3 +910,21 @@ Keep only the latest relevant evidence per completed phase.
   `pnpm manifest:check`, `pnpm codex:validate` and `pnpm quality:ui-ux` all PASS.
 - Result: Dashboard and Budget date-sensitive failures resolved; C3.11 remains COMPLETE, Dashboard
   remains FROZEN, and C3.12 remains NEXT. Overall C3.11-F gates are PASS.
+
+### 12.5.C3.12 — Categories Mobile/Desktop audit — 2026-09-01
+
+- Browser audit: `#categories` checked at 320, 375, 390, 768, 1024 and 1440 px; no horizontal
+  overflow, editor reflow, tree readability and action reachability verified.
+- Zoom: Chromium desktop-only 200% E2E smoke keeps heading, form, CTA and dimensions usable.
+- Domain/repository: two-level hierarchy, compatible scopes, stable category IDs, self-parent/cycle
+  rejection, archived-parent protection, used-reference delete protection and atomic merge verified.
+- Cross-screen: Transactions, splits, Budget, Analytics, Recurring and Import preserve category
+  references by ID; no surface was reopened.
+- Accessibility/security: explicit tree `aria-level`/position/set size added for macro and child;
+  labels and axe E2E pass; user names render as text with no unsafe HTML.
+- Tests: targeted Categories/domain `12 passed`; repository category coverage `92 passed`; E2E
+  Categories matrix `13 passed`, `5 skipped` (zoom test desktop-only); full suite `599 passed`,
+  `4 skipped`, `0 failed`.
+- Quality gates: `pnpm verify`, `pnpm manifest:check`, `pnpm codex:validate` and
+  `pnpm quality:ui-ux` PASS.
+- Result: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Categories is `FROZEN`; C3.13 Tags is next.

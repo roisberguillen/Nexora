@@ -152,7 +152,7 @@ export function CategoriesPage({
             </div>
           ) : null}
           <div className="category-tree" role="tree" aria-label="Categorie finanziarie">
-            {roots.map((root) => {
+            {roots.map((root, rootIndex) => {
               const children = categories.filter((category) => category.parentId === root.id);
               const isOpen = expanded.has(root.id);
               return (
@@ -160,6 +160,9 @@ export function CategoriesPage({
                   className="category-tree-group"
                   key={root.id}
                   role="treeitem"
+                  aria-level={1}
+                  aria-posinset={rootIndex + 1}
+                  aria-setsize={roots.length}
                   aria-expanded={children.length === 0 ? undefined : isOpen}
                 >
                   <div className="category-tree-root">
@@ -198,8 +201,14 @@ export function CategoriesPage({
                   </div>
                   {isOpen ? (
                     <ul className="category-tree-children" role="group">
-                      {children.map((child) => (
-                        <li key={child.id} role="treeitem">
+                      {children.map((child, childIndex) => (
+                        <li
+                          aria-level={2}
+                          aria-posinset={childIndex + 1}
+                          aria-setsize={children.length}
+                          key={child.id}
+                          role="treeitem"
+                        >
                           <div>
                             <strong>{child.name}</strong>
                             <small>

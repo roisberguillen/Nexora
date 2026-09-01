@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Chiusa C3.12 Categorie con `SCREEN_AUDIT_PASS / FROZEN`: tree responsive, CRUD, gerarchia,
+  riferimenti per ID, protezioni distruttive, accessibilità e integrazioni cross-screen verificate.
+
 - Normalizzati i file del progetto con Prettier e rigenerato `PROJECT_MANIFEST.json`; tutti i gate
   di conformità C3.11-F risultano verdi.
 

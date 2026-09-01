@@ -27,7 +27,11 @@ describe("CategoriesPage", () => {
     );
 
     expect(screen.getByRole("tree", { name: "Categorie finanziarie" })).toBeVisible();
+    expect(screen.getByRole("treeitem", { name: /Trasporti/ })).toHaveAttribute("aria-level", "1");
     expect(screen.getByText("Carburante")).toBeVisible();
+    expect(
+      screen.getByRole("tree").querySelector('[role="treeitem"][aria-level="2"]'),
+    ).toHaveAttribute("aria-level", "2");
     await user.click(screen.getByRole("button", { name: "Aggiungi sottocategoria" }));
     expect(screen.getByLabelText("Macro categoria")).toHaveValue(macro.id);
   });
