@@ -2037,6 +2037,9 @@
   gap: 0.75rem;
   padding: 0 1.25rem 1.25rem;
 }
+.app-lock-setup > .primary-action {
+  margin-top: 0.25rem;
+}
 .app-lock-disable {
   display: grid;
   flex-basis: 100%;

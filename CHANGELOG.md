@@ -24,6 +24,7 @@
   su mobile e desktop. Secure storage nativo, biometria e lifecycle lock restano Phase 13.
 - Rifinito il form di configurazione App Lock con padding interno coerente con i pannelli e
   verificato su tutte le viewport responsive.
+- Aggiunto un distacco superiore coerente alla CTA “Attiva blocco” rispetto al selettore timeout.
 
 - Chiusa C3.18 Profile con `SCREEN_AUDIT_PASS / FROZEN`: profilo locale con nome visualizzato,
   modifica/salvataggio/annulla, persistenza, validazione, privacy e responsive verificati.

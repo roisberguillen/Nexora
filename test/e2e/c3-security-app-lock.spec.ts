@@ -11,6 +11,10 @@ test.describe("C3.19 Privacy/Security + App Lock", () => {
       return { inlineStart: styles.paddingInlineStart, inlineEnd: styles.paddingInlineEnd };
     });
     expect(setupPadding).toEqual({ inlineStart: "20px", inlineEnd: "20px" });
+    await expect(page.getByRole("button", { name: "Attiva blocco" })).toHaveCSS(
+      "margin-top",
+      "4px",
+    );
 
     await page.getByLabel("PIN o passphrase", { exact: true }).fill("4937");
     await page.getByLabel("Conferma PIN o passphrase").fill("4937");

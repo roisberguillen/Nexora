@@ -122,6 +122,8 @@ Nessuno.
 - Test browser: route reale `#privacy-security`, sei viewport e zoom desktop 200%.
 - Correzione post-freeze: il form di configurazione App Lock usa padding inline e inferiore
   coerente con i pannelli (`1.25rem`), verificato nel test responsive su tutte le viewport.
+- Correzione post-freeze: la CTA “Attiva blocco” mantiene `0.25rem` di aria superiore rispetto
+  all’ultimo controllo del form, verificata nella matrice E2E responsive.
 
 Riferimenti: mockup Stitch ufficiale via `docs/ux/MOCKUP_INTEGRATION.md`, framework C3 e contratto
 privacy/security locale. I revisori indipendenti nominati dal framework non sono disponibili nel
