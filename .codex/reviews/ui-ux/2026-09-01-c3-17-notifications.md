@@ -99,9 +99,12 @@ Nessuno aperto.
   comando singolo accessibile e grouping responsive delle azioni.
 - `apps/web/src/notifications/localNotifications.ts`: livello budget più grave, guardia loan estinto
   e calcolo civil-date Europe/Rome.
-- `apps/web/src/page.css`: layout, padding, spaziature e reflow specifici della superficie.
+- `apps/web/src/page.css`: layout, padding, spaziature, reflow e griglia allineata della lista
+  specifici della superficie.
 - Test unit/component: `14 passed` sui tre file Notifications.
 - E2E C3.17: `14 passed`, `4 skipped` solo zoom non applicabile ai viewport 320/375/390/768.
+- Regressione lista: azioni allineate a destra su desktop e disposte sotto il contenuto su mobile;
+  overflow e axe restano PASS su tutti i viewport.
 - Gate completo `pnpm verify`: `138 passed`, `1 skipped`; `606 passed`, `4 skipped`; build PASS
   con advisory preesistente sui chunk oltre 500 kB.
 

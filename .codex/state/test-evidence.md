@@ -17,6 +17,8 @@
   1 file skipped e 4 skip documentati; build PASS con advisory chunk-size preesistente.
 - Review: `.codex/reviews/ui-ux/2026-09-01-c3-17-notifications.md`; `P0/P1/P2 = 0/0/0`.
 - Esito: `SCREEN_AUDIT_PASS`; Notifications e Preferenze notifiche FROZEN; prossimo C3.18 Profile.
+- Regressione post-freeze: lista notifiche riallineata con due colonne desktop e una colonna mobile;
+  E2E C3.17 ripetuto con `14 passed`, `4 skipped` motivati.
 
 ## 12.5.C3.16 — Backup + Restore Mobile/Desktop audit — PASS — 2026-09-01
 

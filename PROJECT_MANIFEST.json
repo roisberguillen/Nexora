@@ -219,8 +219,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-01-c3-17-notifications.md",
-      "size": 6287,
-      "sha256": "0dd3b27193e2f386ffc92f27813f78fc05479424984bfb827be8389f96686c74"
+      "size": 6480,
+      "sha256": "5eeff659d977f554768ce222d213ececa49e688ac800fd1f94ded976d53dbd64"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -404,8 +404,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 72305,
-      "sha256": "4510c1a9f7205305a7ee1c9b24076cb32315fb6882c56d5ad45b975a305746e1"
+      "size": 72466,
+      "sha256": "a08e7c73f56c95de62fce0d41bfb53cc3aceb0da9ca59e650106f4eaf65c4b1a"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1264,8 +1264,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 43986,
-      "sha256": "da45ab465144e65f3213edf62e8b16eb160ddfb87ed9154226ba893a2dcb12ec"
+      "size": 44485,
+      "sha256": "dc75e8b59f566785ba84e4cd557e26b9511e08fee0d63fe19154f3b36e978bba"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1679,8 +1679,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 36998,
-      "sha256": "55dc93128032922087880968257eb4629cfbf084e947eaab95ea6bf96b7d1782"
+      "size": 37135,
+      "sha256": "20ac3ec6eea49f325a84e847488de48ed1e3b87077fd476c1824d3ca34e77d53"
     },
     {
       "path": "design/mockup/README.md",
@@ -3184,8 +3184,8 @@
     },
     {
       "path": "test/e2e/c3-notifications-audit.spec.ts",
-      "size": 2599,
-      "sha256": "269725f19085be647bb2f365c2bd70eaffea36f4239118e76e5ddbe693bd9668"
+      "size": 2609,
+      "sha256": "4e7872643c2ea8de4f9c296d1747717449a9f9691f3bb41f00819320f8572e04"
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",

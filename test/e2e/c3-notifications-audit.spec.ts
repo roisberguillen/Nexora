@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 test.describe("C3.17 Notifications audit", () => {
   test("shows local alerts, preserves read state and keeps the surface within the viewport", async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.goto("/#notifications");
     await expect(page.getByRole("heading", { name: "Notifiche", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Segna tutte come lette" })).toBeVisible();

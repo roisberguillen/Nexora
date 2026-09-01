@@ -2180,6 +2180,19 @@
   margin: -0.5rem -1.5rem;
 }
 
+#notifications .notification-list .account-list > li {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+}
+
+#notifications .notification-list .account-copy {
+  min-width: 0;
+}
+
+#notifications .notification-list .notification-actions {
+  justify-content: flex-end;
+}
+
 @media (max-width: 48rem) {
   #notifications > .data-panel {
     padding: 1rem;
@@ -2200,6 +2213,15 @@
 
   #notifications .notification-list .account-list {
     margin: -0.5rem -1rem;
+  }
+
+  #notifications .notification-list .account-list > li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  #notifications .notification-list .notification-actions {
+    justify-content: flex-start;
   }
 }
 

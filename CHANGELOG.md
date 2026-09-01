@@ -23,6 +23,8 @@
 - Corretto il layout dei pannelli Notifiche, aggiunta lettura esplicita degli alert, esclusi alert
   duplicati o stale per soglie Budget e prestiti estinti; le notifiche OS-native restano rinviate
   alla Fase 13.
+- Rifinito l’allineamento della lista Notifiche: contenuto e azioni sono ordinati su desktop e
+  disposti in modo leggibile su mobile.
 
 - Chiusa C3.16 Backup + Restore con `SCREEN_AUDIT_PASS / FROZEN`: archivio cifrato, schema/versione,
   preview dei contenuti, restore confermato, atomicità, rollback, sicurezza e responsive verificati.
