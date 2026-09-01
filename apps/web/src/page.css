@@ -2076,7 +2076,7 @@
   display: grid;
   box-sizing: border-box;
   gap: 1rem;
-  margin: 1rem 0 0;
+  margin: 1rem 1.25rem 0;
   padding: 1.25rem;
   border: 1px solid var(--color-outline);
   border-radius: var(--radius-md);

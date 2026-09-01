@@ -25,6 +25,7 @@
 - Aggiunto feedback accessibile quando il ripristino di un movimento dal Cestino fallisce.
 - Uniformati padding, gap e separazione delle azioni nei dialog distruttivi di Settings, con verifica
   responsive dedicata.
+- Allineati anche i margini laterali del dialog di conferma reset al contenuto del pannello Settings.
 
 - Chiusa C3.19 Privacy/Sicurezza + App Lock con `SCREEN_AUDIT_PASS / FROZEN`: conferma del
   segreto, PBKDF2 senza plaintext, timeout, lock manuale, riautenticazione alla disattivazione,

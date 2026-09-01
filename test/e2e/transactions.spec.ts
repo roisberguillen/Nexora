@@ -256,6 +256,8 @@ test("la gestione dati espone dialog accessibili con Escape e focus di ritorno",
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveCSS("padding", "20px");
   await expect(dialog).toHaveCSS("gap", "16px");
+  await expect(dialog).toHaveCSS("margin-left", "20px");
+  await expect(dialog).toHaveCSS("margin-right", "20px");
   expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
