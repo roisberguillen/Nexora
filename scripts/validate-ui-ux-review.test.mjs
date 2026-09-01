@@ -1,7 +1,7 @@
-import assert from 'node:assert/strict';
-import test from 'node:test';
+import assert from "node:assert/strict";
+import test from "node:test";
 
-import { requiresReview, validateReviewContent } from './validate-ui-ux-review.mjs';
+import { requiresReview, validateReviewContent } from "./validate-ui-ux-review.mjs";
 
 const validReview = `# UI/UX change review
 
@@ -32,26 +32,28 @@ P1/P2 aperti: Nessuno
 Esito: PASS
 `;
 
-test('accetta una review completa', () => {
+test("accetta una review completa", () => {
   assert.deepEqual(validateReviewContent(validReview), []);
 });
 
-test('rileva campi e verifiche mancanti', () => {
-  const invalidReview = validReview.replace('Route: /dashboard\n', '').replace(
-    '| Mobile | M-01 | PASS | Viewport e touch verificati. |\n',
-    '',
+test("rileva campi e verifiche mancanti", () => {
+  const invalidReview = validReview
+    .replace("Route: /dashboard\n", "")
+    .replace("| Mobile | M-01 | PASS | Viewport e touch verificati. |\n", "");
+  assert.match(validateReviewContent(invalidReview).join("\n"), /Route/);
+  assert.match(validateReviewContent(invalidReview).join("\n"), /Mobile/);
+});
+
+test("rileva P0 aperti", () => {
+  const invalidReview = validReview.replace(
+    "P0 aperti: Nessuno",
+    "P0 aperti: Contrasto insufficiente",
   );
-  assert.match(validateReviewContent(invalidReview).join('\n'), /Route/);
-  assert.match(validateReviewContent(invalidReview).join('\n'), /Mobile/);
+  assert.match(validateReviewContent(invalidReview).join("\n"), /P0 aperti/);
 });
 
-test('rileva P0 aperti', () => {
-  const invalidReview = validReview.replace('P0 aperti: Nessuno', 'P0 aperti: Contrasto insufficiente');
-  assert.match(validateReviewContent(invalidReview).join('\n'), /P0 aperti/);
-});
-
-test('richiede una review per ogni modifica nello stage', () => {
-  assert.equal(requiresReview(['apps/web/src/routes/dashboard.tsx']), true);
-  assert.equal(requiresReview(['docs/ux/guide.md']), true);
+test("richiede una review per ogni modifica nello stage", () => {
+  assert.equal(requiresReview(["apps/web/src/routes/dashboard.tsx"]), true);
+  assert.equal(requiresReview(["docs/ux/guide.md"]), true);
   assert.equal(requiresReview([]), false);
 });

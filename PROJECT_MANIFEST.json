@@ -143,6 +143,11 @@
       "sha256": "af5ab5e145645e1b6f80d0f622f63ec74f15eed81ebf8077a6a1c0f3cbd04508"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-08-26-c3-3-r2-dashboard-home.md",
+      "size": 1839,
+      "sha256": "d135556d391213e972c12dd5951045e29d6364fde0a2e062b1d91c6d0deb2016"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-08-26-c3-3-r3-dashboard-hardening.md",
       "size": 2756,
       "sha256": "861aec51378ea734b3067ac7bc933ab36d7d985ebe59fd1fd940b9d496bddc87"
@@ -184,8 +189,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-08-31-c3-11-journal.md",
-      "size": 8525,
-      "sha256": "3c14767b517152bfd8ee4c8c229fc68a0f4608b00cddfbab2b40d09065eea659"
+      "size": 9301,
+      "sha256": "4c946903a42a848253b55cfb2b8bc4e13b35463ae02bd4db661a20ed4e19ec86"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -201,6 +206,11 @@
       "path": ".codex/skills/import-pipeline/SKILL.md",
       "size": 323,
       "sha256": "a8b6ab9e1395b69165a107566702cec45d1f32d7d1a94e735adb06a957410b38"
+    },
+    {
+      "path": ".codex/skills/mockup-to-ui/SKILL.md",
+      "size": 737,
+      "sha256": "2523060470f5e8001098245a74a6f098f744f5fc1286ff5af50029b70fac0e06"
     },
     {
       "path": ".codex/skills/nexora-backup/agents/openai.yaml",
@@ -288,6 +298,11 @@
       "sha256": "3817aea34024907f13111a48089e2b0d8a3e25df5bb0427f18ffe9ee312faba7"
     },
     {
+      "path": ".codex/skills/quality-gates/SKILL.md",
+      "size": 224,
+      "sha256": "618ddf2f1176ffb47bcf121b3e9bcd1e8141607e728abec25aa2cef219fa67a7"
+    },
+    {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
       "size": 1266,
       "sha256": "bfd441809b0d4ba66d9cbd7ff15b1287094f64d103bbf12039c1b1260f8ba964"
@@ -359,8 +374,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 60444,
-      "sha256": "72b30548da5a67407988214a0a9efff84647c4d30e096cc6102c61328469a167"
+      "size": 64167,
+      "sha256": "840a38c304a5808b01b4cb57f68463757216ee0a7432eef8b358c0885c9abb2a"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -864,13 +879,13 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 10001,
-      "sha256": "28d81495a3e25354237c1eb6b13aad7448cb9a23931e83f716e6ccf9a79607a9"
+      "size": 10499,
+      "sha256": "ff584cc2037021c9e5bbdabca73380eaf2534d52c1a637b1092bc14900abaab8"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 41105,
-      "sha256": "f91b2c8ea08686a4da553e36485d0098e15d1b78cac34d193c7f886230628f12"
+      "size": 41284,
+      "sha256": "854868c9fa33725643634921c286e010696734f5e864d25c46ce2823edafb202"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -924,13 +939,13 @@
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.test.tsx",
-      "size": 4692,
-      "sha256": "29d222473e8d285d91cc6ee0fee693c8186f39acc5d26e4d37d53b8f4fc3302f"
+      "size": 4860,
+      "sha256": "ce31043ad78c9d86b14de646496b1f47b3e62d0ad9af58a8f9da9a703ed3a6fe"
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.tsx",
-      "size": 15946,
-      "sha256": "1b9c5af515d1460c6236ad4bb8c1bf3c0792491c24e5648a641ce4446c93bc5f"
+      "size": 15990,
+      "sha256": "d45bbd1271b3744e6629522de4d556f7331ec554932e09ce0250b6b4d1b1d930"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
@@ -1019,8 +1034,8 @@
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
-      "size": 9283,
-      "sha256": "1ce06d66fbae65096ce983962d16e898be6fec9dcbab3744df84ac7609b32670"
+      "size": 9713,
+      "sha256": "1dcf457129578cb6dcc4bf93c5cb0f6b237dd6eabce63c555b36b0749f6eb64b"
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.ts",
@@ -1154,13 +1169,13 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.test.tsx",
-      "size": 3119,
-      "sha256": "3c375a5d347b9cb6b5f05cb25c3a7dca04e0adbe0594d2079b6f05054360c465"
+      "size": 3313,
+      "sha256": "890d9b6fe4f556ae922a1ffd99e0df2467b7614c6e027bca6b365dbebadffa4f"
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 11126,
-      "sha256": "cdb0b21f211621ab41d2f4ceb9cd133f5c5a53fac8a6939d1f880c3495964704"
+      "size": 11686,
+      "sha256": "e09e3ce7bae6b1b5015c4ecb73b542945c58e27efeaa9ccb9e4a9e6ee6718c74"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -1219,8 +1234,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 40883,
-      "sha256": "af1339e7fa887217072a6cff1d36c396ec2dc6d8809e61905e27d69d02bc6a8a"
+      "size": 41685,
+      "sha256": "f64ad55d3a5bebd397058562f7d68e1547af45f29ec2c3b8b2bb7222eb32fafa"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1634,8 +1649,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 33807,
-      "sha256": "1ec67d6571b8dfd11e3b65e7c2ce6bc239f9691587bcd28f49ef00ae8f3f435e"
+      "size": 34981,
+      "sha256": "7328f8dec32e5b425e30a03aafed427aad96c18e8b438f336d6a3554704baa16"
     },
     {
       "path": "design/mockup/README.md",
@@ -3033,6 +3048,16 @@
       "sha256": "b4a74a8a302a9b1fa892f29b92b0878174c0b038519d32c9f6ead0ef51540cc8"
     },
     {
+      "path": "scripts/codex-finalize.mjs",
+      "size": 6822,
+      "sha256": "ecb39e31ef499e5f71c2afadc3918d1b8c3ba37219409bca598e6a7002fd23d8"
+    },
+    {
+      "path": "scripts/codex-finalize.test.mjs",
+      "size": 1829,
+      "sha256": "7180bd39085279c0843d89203f3949aa2618640e8ee0b3573c9e734a1f94eb46"
+    },
+    {
       "path": "scripts/codex-orchestrator.mjs",
       "size": 15342,
       "sha256": "ed14ccee0ca8d91f7c67526c2d6312c5cb506cb819fde0cd0c1dde89676855c9"
@@ -3055,17 +3080,17 @@
     {
       "path": "scripts/setup-git-hooks.mjs",
       "size": 732,
-      "sha256": "0577145eccdf11132ddee1b0549769cf7d5cc495a60a6c64d365698cfa02cdc4"
+      "sha256": "2b6a2978198c26b9b8d51dea49f3b66b66989485928c27dd2d168c7584e55228"
     },
     {
       "path": "scripts/validate-ui-ux-review.mjs",
-      "size": 3364,
-      "sha256": "d175bd1767867f251c29e8f8e8864a54cea4ffb2c7d408f8fa39d7d61f8f5350"
+      "size": 3383,
+      "sha256": "5f277237c9eadae2cfb6349d713a2cc4812177784fae0291841a6db20fe3c6a2"
     },
     {
       "path": "scripts/validate-ui-ux-review.test.mjs",
-      "size": 2163,
-      "sha256": "27b6e864b822d9e11a8663ed9ce792beed2b5d4dfdf1495c93f699e6d6664cec"
+      "size": 2173,
+      "sha256": "be46306f4514ea5c8d08201074e6ba2cee8fc15988723bb12509d2f68feda8b8"
     },
     {
       "path": "scripts/verify-project.sh",

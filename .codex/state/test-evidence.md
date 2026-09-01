@@ -906,10 +906,7 @@ Keep only the latest relevant evidence per completed phase.
 - Budget follow-up: `BudgetsPage` accepts an optional test date while retaining the runtime default;
   the component test now pins August 2026 so its February fixture remains deterministic.
 - Global suite: `599 passed`, `4 skipped`, `0 failed` across 139 files.
-- Quality gates: `pnpm lint` PASS, `pnpm typecheck` PASS, `pnpm build` PASS, `pnpm codex:validate`
-  PASS; `pnpm format:check` remains blocked by 381 pre-existing files, and `pnpm manifest:check`
-  remains blocked because `PROJECT_MANIFEST.json` is stale against unrelated worktree changes.
-- Scoped formatting check for `BudgetsPage.tsx` and `BudgetsPage.test.tsx`: PASS.
+- Quality gates: `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`,
+  `pnpm manifest:check`, `pnpm codex:validate` and `pnpm quality:ui-ux` all PASS.
 - Result: Dashboard and Budget date-sensitive failures resolved; C3.11 remains COMPLETE, Dashboard
-  remains FROZEN, and C3.12 remains NEXT. Overall C3.11-F status remains BLOCKED only on the
-  repository-wide formatting baseline and dirty-worktree manifest gate.
+  remains FROZEN, and C3.12 remains NEXT. Overall C3.11-F gates are PASS.

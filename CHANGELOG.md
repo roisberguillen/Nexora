@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Normalizzati i file del progetto con Prettier e rigenerato `PROJECT_MANIFEST.json`; tutti i gate
+  di conformità C3.11-F risultano verdi.
+
 - Stabilizzati i test date-sensitive del view model Dashboard con una data esplicita nelle fixture;
   il comportamento runtime continua a usare la data corrente.
 
