@@ -238,6 +238,10 @@ test("su mobile nuovo movimento apre il form a tutta larghezza con il conto visi
   expect((amountBounds?.x ?? 0) + (amountBounds?.width ?? 0)).toBeLessThan(
     (formBounds?.x ?? 0) + (formBounds?.width ?? 0) - 2,
   );
+  const headingPadding = await page
+    .locator(".account-editor-panel .account-editor-heading")
+    .evaluate((heading) => getComputedStyle(heading).paddingInline);
+  expect(headingPadding).toBe("16px");
   const kindSpacing = await page
     .locator(".transaction-kind-segmented")
     .evaluate((fieldset) => getComputedStyle(fieldset).marginBlockEnd);

@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Allineato il padding dell’intestazione dell’editor Nuovo movimento a quello del form mobile,
+  includendo titolo e chiusura.
+
 - Centrati verticalmente titolo, contatore e azione dell’intestazione Movimenti mobile, mantenendo
   invariata la posizione orizzontale dei controlli.
 
