@@ -132,6 +132,16 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
   await page.goto("/#transactions");
 
   const search = page.getByRole("searchbox", { name: "Cerca nei movimenti" });
+  const panelInsets = await page.locator(".account-management-panel").evaluate((panel) => {
+    const panelBounds = panel.getBoundingClientRect();
+    const heading = panel.querySelector<HTMLElement>(":scope > .panel-heading");
+    const filters = panel.querySelector<HTMLElement>(":scope > .transaction-filters");
+    return {
+      heading: (heading?.getBoundingClientRect().left ?? 0) - panelBounds.left,
+      filters: (filters?.getBoundingClientRect().left ?? 0) - panelBounds.left,
+    };
+  });
+  expect(panelInsets.heading).toBe(panelInsets.filters);
   const searchSpacing = await search.evaluate((input) => {
     const styles = getComputedStyle(input);
     return { margin: styles.margin, padding: styles.padding };

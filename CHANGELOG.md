@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Allineato il padding dell’intestazione del pannello Movimenti mobile a quello dei filtri e del
+  resto della pagina.
+
 - Compattata la gerarchia del dettaglio movimento mobile, eliminando la distribuzione verticale
   eccessiva tra importo e metadati.
 

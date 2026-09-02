@@ -516,6 +516,10 @@
     padding-inline: 1rem;
   }
 
+  .transactions-page:not(.is-standalone) .account-management-panel > .panel-heading {
+    padding-inline: 0.75rem;
+  }
+
   .transactions-page:not(.is-standalone) .accounts-heading {
     align-items: center;
     flex-direction: row;
