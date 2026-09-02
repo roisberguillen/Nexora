@@ -10,22 +10,23 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 
 | Fase | Superficie/stato | Route | Mobile | Desktop | A11y | Funzioni | P0 | P1 | P2 | Stato |
 | --- | --- | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
-| C3.1 | App Shell | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.1 | Navigazione mobile | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.1 | Navigazione desktop | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.2 | Ricerca globale | #search | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.0 | Audit framework | documentale | N/A | N/A | N/A | N/A | 0 | 0 | 0 | COMPLETE |
+| C3.1 | App Shell | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.1 | Navigazione mobile | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.1 | Navigazione desktop | shell | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.2 | Ricerca globale | #search | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.3-R4 | Dashboard/Home | #overview | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.4 | Conti | #accounts | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.4 | Dettaglio conto | #accounts + editor reale | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.4 | Nuovo conto | #accounts + editor | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.5 | Movimenti (regression review) | #transactions | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.5 | Nuovo movimento | #new-transaction | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
-| C3.6 | Budget | #budgets | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS |
+| C3.4 | Conti | #accounts | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.4 | Dettaglio conto | #accounts + editor reale | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.4 | Nuovo conto | #accounts + editor | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.5 | Movimenti (regression review) | #transactions | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.5 | Nuovo movimento | #new-transaction | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.6 | Budget | #budgets | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.7 | Ricorrenze | #recurring | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.7 | Allocazioni | #recurring + allocazioni | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.8 | Prestiti | #loans | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.9 | Investimenti | #investments | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.10 | Analisi | #analytics | — | — | — | — | 0 | 0 | 0 | PASS / FROZEN |
+| C3.10 | Analisi | #analytics | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.11 | Diario finanziario | #journal | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.12 | Categorie | #categories | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.13 | Tag | #tags | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
@@ -45,7 +46,7 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.21 | Startup | bootstrap | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.21 | Recovery | bootstrap + recovery | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 
-`—` significa non ancora verificato, non PASS. Le colonne P0/P1/P2 iniziano a zero perché non
+`N/A` indica il framework documentale C3.0. `—` significa non ancora verificato, non PASS. Le colonne P0/P1/P2 iniziano a zero perché non
 sono ancora stati aperti rilievi C3; non anticipano il risultato della review.
 
 ## Review layer contract

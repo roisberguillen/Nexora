@@ -50,6 +50,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C3.19 | complete | Privacy/Sicurezza + App Lock `SCREEN_AUDIT_PASS / FROZEN`; fail-closed lock, reauthentication, recovery and isolation verified |
 | 12.5.C3.20 | complete | Settings + Trash + Reset `SCREEN_AUDIT_PASS / FROZEN`; preferences, lifecycle, reset safety and integrity verified |
 | 12.5.C3.21 | complete | Startup + Recovery `SCREEN_AUDIT_PASS / FROZEN`; loading, safe bootstrap, explicit archive recovery and responsive states verified |
+| 12.5.C3-F | complete — 2026-09-02 | `C3_FINAL_GATE_PASS`; pilot ledger reconciled, full unit/E2E and repository quality gates verified; C3.0–C3.21 matrix frozen |
 | C4 | pending | real complete flows |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |

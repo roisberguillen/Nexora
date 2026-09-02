@@ -17,7 +17,7 @@ test("la gestione conti crea, modifica e archivia senza overflow", async ({ page
   });
   await expect(table).toContainText("Portafoglio sintetico");
   await expect(table).toContainText("123,45");
-  if ((await page.evaluate(() => document.documentElement.clientWidth)) >= 768) {
+  if ((await page.evaluate(() => document.documentElement.clientWidth)) > 768) {
     const row = table.getByRole("row", { name: /Portafoglio sintetico/ });
     const rowBox = await row.boundingBox();
     const actionCell = row.locator('td[data-label="Azioni"]');

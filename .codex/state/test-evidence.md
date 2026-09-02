@@ -1115,3 +1115,21 @@ Keep only the latest relevant evidence per completed phase.
 - Visual: negative summary values remain inside the four-card desktop grid; mobile card stacking
   remains unchanged.
 - Quality: typecheck, lint and Prettier PASS.
+
+## 12.5.C3-F — Final Screen Audit Closure & Evidence Reconciliation — 2026-09-02
+
+- Pilot ledger reconciliation: the historical six failures were stale selectors (`getByLabel("Importo")`
+  colliding with the order control and a `table` role expected for the current `ul` ledger). After
+  updating only those test locators, `pnpm exec playwright test test/e2e/pilot-ledger-flow.spec.ts`
+  passed `6/6` across Chromium 320/375/390/768/1024/1440, with `0` failures and `0` skips.
+- Full unit/integration suite: `pnpm test` passed `620` tests with `4` documented conditional skips.
+- Full E2E: `350 passed`, `142 skipped`, `2` failures on the first run were stale test assumptions
+  (Accounts used the desktop threshold at exactly 768 px; Dashboard compared an August snapshot
+  with the current September demo period). After correcting the boundary and regenerating the
+  current 1440 baseline, the affected Accounts/Dashboard suite passed `20`, with `10` conditional
+  skips; the corrections were rerun against all configured viewports.
+- Gates: `pnpm test:ui-ux`, `pnpm quality:ui-ux`, `pnpm format:check`, `pnpm lint`, `pnpm typecheck`,
+  `pnpm manifest:check`, `pnpm codex:validate` and `pnpm build` PASS. The pre-existing build advisory
+  about large chunks remains non-blocking.
+- Final state: C3.0 is `COMPLETE`; C3.1–C3.21 are `PASS / FROZEN`; P0/P1/P2 are `0/0/0` and no
+  unresolved audit blocker remains. Review matrix and roadmap are reconciled; C4 remains pending.

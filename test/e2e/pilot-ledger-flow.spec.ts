@@ -20,11 +20,11 @@ test("il verticale pilota aggiorna dashboard, conti e movimenti dal ledger local
 
   await page.goto("/#transactions");
   await page.getByRole("button", { name: "Nuovo movimento" }).click();
-  await page.getByLabel("Importo").fill("25,00");
+  await page.getByRole("textbox", { name: "Importo" }).fill("25,00");
   await page.getByLabel("Descrizione").fill("Spesa verticale pilota");
   await page.getByRole("button", { name: "Salva movimento" }).click();
   await expect(page.getByRole("status")).toContainText("Movimento salvato nel ledger locale");
-  await expect(page.getByRole("table", { name: "Movimenti registrati nel ledger" })).toContainText(
+  await expect(page.getByRole("list", { name: "Movimenti registrati nel ledger" })).toContainText(
     "Spesa verticale pilota",
   );
 
