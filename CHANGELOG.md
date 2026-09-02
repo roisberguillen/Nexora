@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Estesa la larghezza dei filtri rapidi Movimenti su mobile: ogni riga distribuisce i pulsanti fino
+  al bordo del contenitore, mantenendo wrapping e target touch.
+
 - Azzerati margine e padding del campo di ricerca Movimenti su mobile, mantenendo invariati gli
   spazi del pannello e dei filtri rapidi.
 

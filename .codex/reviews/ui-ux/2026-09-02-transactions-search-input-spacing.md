@@ -6,7 +6,7 @@ Schermata: Movimenti / Filtri movimenti
 Route: `#transactions`
 Flusso principale: ricerca di un movimento e cancellazione del testo
 Reviewer/fase: Codex / correzione C3
-Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; spaziatura del pannello e dei filtri rapidi invariata.
+Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga.
 Data: 2026-09-02
 Esito: PASS
 
@@ -22,6 +22,6 @@ Esito: PASS
 | Feedback | Focus e stato | PASS | Focus visibile e feedback invariati |
 | Accessibilità | Campo nominato | PASS | Ruolo searchbox e nome accessibile preservati |
 | Finanza | Dati ledger | PASS | Nessun calcolo o dato modificato |
-| Performance | CSS responsive | PASS | Una sola regola locale al breakpoint |
+| Performance | CSS responsive | PASS | Regola flex locale al breakpoint |
 
 P0 aperti: Nessuno

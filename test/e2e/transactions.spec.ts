@@ -141,6 +141,28 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
   await page.getByRole("button", { name: "Cancella ricerca movimenti" }).click();
   await expect(search).toHaveValue("");
 
+  const quickFilterBounds = await page.locator(".transaction-quick-filters").evaluate((group) => {
+    const bounds = group.getBoundingClientRect();
+    const buttons = [...group.querySelectorAll("button")];
+    const rows = new Map<number, number[]>();
+    for (const button of buttons) {
+      const buttonBounds = button.getBoundingClientRect();
+      const row = Math.round(buttonBounds.top);
+      const current = rows.get(row) ?? [];
+      current.push(buttonBounds.right);
+      rows.set(row, current);
+    }
+    return {
+      rightEdge: bounds.right,
+      rowRightEdges: [...rows.values()].map((rightEdges) => Math.max(...rightEdges)),
+    };
+  });
+  expect(
+    quickFilterBounds.rowRightEdges.every(
+      (rightEdge) => rightEdge >= quickFilterBounds.rightEdge - 1,
+    ),
+  ).toBe(true);
+
   const filterTrigger = page.getByRole("button", { name: "Filtri" });
   await filterTrigger.click();
   const sheet = page.getByRole("dialog", { name: "Filtri movimenti" });
