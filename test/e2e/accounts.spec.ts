@@ -32,6 +32,11 @@ test("la gestione conti crea, modifica e archivia senza overflow", async ({ page
         actionCellBox!.x + actionCellBox!.width + 1,
       );
     }
+  } else {
+    const row = table.getByRole("row", { name: /Portafoglio sintetico/ });
+    const buttons = await row.locator('td[data-label="Azioni"] .table-actions button').all();
+    const boxes = await Promise.all(buttons.map((button) => button.boundingBox()));
+    expect(boxes.every((box) => box !== null && Math.abs(box.y - boxes[0]!.y) <= 1)).toBe(true);
   }
 
   await table.getByRole("button", { name: "Modifica" }).click();
