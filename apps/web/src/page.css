@@ -2206,6 +2206,10 @@
   padding: 0;
 }
 
+.transaction-kind-segmented legend {
+  margin-block-end: 0.5rem;
+}
+
 .transaction-kind-segmented > div {
   display: grid;
   gap: 0.25rem;

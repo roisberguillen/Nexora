@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto spazio inferiore alla legenda “Tipo movimento”, separandola visivamente dai pulsanti di
+  selezione del tipo.
+
 - Centrati esplicitamente contatore e pulsante “Seleziona” nel toolbar dell’intestazione Movimenti
   mobile, preservando l’ancoraggio del gruppo a destra.
 

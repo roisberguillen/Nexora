@@ -253,6 +253,10 @@ test("su mobile nuovo movimento apre il form a tutta larghezza con il conto visi
     .locator(".transaction-kind-segmented")
     .evaluate((fieldset) => getComputedStyle(fieldset).marginBlockEnd);
   expect(kindSpacing).toBe("8px");
+  const legendSpacing = await page
+    .locator(".transaction-kind-segmented legend")
+    .evaluate((legend) => getComputedStyle(legend).marginBlockEnd);
+  expect(legendSpacing).toBe("8px");
   await page.getByText("Altri dettagli").click();
   const statusSpacing = await page
     .locator(".transaction-advanced-details > label:last-child")
