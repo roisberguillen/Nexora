@@ -28,6 +28,9 @@
 - Disposte su una sola riga flex le azioni delle righe Conti mobile, con scorrimento interno sui
   viewport più stretti.
 
+- Allineati i valori delle righe Conti mobile su una griglia coerente, mantenendo nomi, tipo e
+  saldi su una riga quando lo spazio lo consente.
+
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
   restano protetti.

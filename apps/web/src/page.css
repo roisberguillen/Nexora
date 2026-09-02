@@ -1615,6 +1615,25 @@
     grid-column: 2;
   }
 
+  .accounts-table td {
+    grid-template-columns: minmax(7.25rem, 0.75fr) minmax(0, 1.25fr);
+    align-items: center;
+  }
+
+  .accounts-table td:first-child > span:last-child {
+    min-width: 0;
+  }
+
+  .accounts-table td:first-child strong,
+  .accounts-table td:first-child small,
+  .accounts-table td[data-label="Tipo"],
+  .accounts-table td[data-label="Saldo iniziale"],
+  .accounts-table td[data-label="Saldo attuale"] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .accounts-table td[data-label="Azioni"] .table-actions {
     grid-column: 1 / -1;
     width: 100%;
