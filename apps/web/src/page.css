@@ -2201,6 +2201,7 @@
 .transaction-kind-segmented {
   border: 0;
   margin: 0;
+  margin-block-end: 0.5rem;
   min-inline-size: 0;
   padding: 0;
 }

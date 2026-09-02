@@ -213,6 +213,10 @@ test("su mobile nuovo movimento apre il form a tutta larghezza con il conto visi
   expect((amountBounds?.x ?? 0) + (amountBounds?.width ?? 0)).toBeLessThan(
     (formBounds?.x ?? 0) + (formBounds?.width ?? 0) - 2,
   );
+  const kindSpacing = await page
+    .locator(".transaction-kind-segmented")
+    .evaluate((fieldset) => getComputedStyle(fieldset).marginBlockEnd);
+  expect(kindSpacing).toBe("8px");
 });
 
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {

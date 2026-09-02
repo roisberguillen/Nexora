@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto spazio inferiore al gruppo “Tipo movimento” per separarlo visivamente dal campo
+  Importo nel form Nuovo movimento.
+
 - Rafforzato il padding diretto del form “Nuovo movimento” mobile, così i campi restano separati
   anche quando l’editor viene aperto a tutta larghezza.
 

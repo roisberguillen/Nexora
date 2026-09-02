@@ -6,7 +6,7 @@ Schermata: Movimenti / Filtri movimenti
 Route: `#transactions`
 Flusso principale: ricerca di un movimento e cancellazione del testo
 Reviewer/fase: Codex / correzione C3
-Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga, il selettore Ordina ha un bordo esplicito e il form Nuovo movimento mantiene un padding interno diretto.
+Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga, il selettore Ordina ha un bordo esplicito, il form Nuovo movimento mantiene un padding interno diretto e il gruppo Tipo movimento ha spazio inferiore.
 Data: 2026-09-02
 Esito: PASS
 
@@ -18,7 +18,7 @@ Esito: PASS
 | Tablet | Reflow dei filtri | PASS | Griglia fluida preservata |
 | Visuale | Spaziatura e bordo | PASS | Input senza inset e selettore bordato |
 | Ricerca | Campo e cancellazione | PASS | Test E2E mantiene entrambe le azioni |
-| Form | Controlli filtro | PASS | Gli altri controlli conservano gli inset |
+| Form | Controlli e spaziatura | PASS | Gli inset e la separazione dei gruppi sono coerenti |
 | Feedback | Focus e stato | PASS | Focus visibile e feedback invariati |
 | Accessibilità | Campo nominato | PASS | Ruolo searchbox e nome accessibile preservati |
 | Finanza | Dati ledger | PASS | Nessun calcolo o dato modificato |
