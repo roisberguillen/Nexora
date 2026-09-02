@@ -142,6 +142,21 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
     };
   });
   expect(panelInsets.heading).toBe(panelInsets.filters);
+  const headingAlignment = await page
+    .locator(".account-management-panel > .panel-heading")
+    .evaluate((heading) => {
+      const title = heading.querySelector<HTMLElement>(":scope > div:first-child");
+      const actions = heading.querySelector<HTMLElement>(":scope > .transaction-list-toolbar");
+      const titleBounds = title?.getBoundingClientRect();
+      const actionBounds = actions?.getBoundingClientRect();
+      return {
+        titleCenter: (titleBounds?.top ?? 0) + (titleBounds?.height ?? 0) / 2,
+        actionCenter: (actionBounds?.top ?? 0) + (actionBounds?.height ?? 0) / 2,
+      };
+    });
+  expect(
+    Math.abs(headingAlignment.titleCenter - headingAlignment.actionCenter),
+  ).toBeLessThanOrEqual(1);
   const searchSpacing = await search.evaluate((input) => {
     const styles = getComputedStyle(input);
     return { margin: styles.margin, padding: styles.padding };

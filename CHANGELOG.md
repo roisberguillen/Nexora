@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Centrati verticalmente titolo, contatore e azione dell’intestazione Movimenti mobile, mantenendo
+  invariata la posizione orizzontale dei controlli.
+
 - Allineato il padding dell’intestazione del pannello Movimenti mobile a quello dei filtri e del
   resto della pagina.
 

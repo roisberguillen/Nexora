@@ -517,7 +517,13 @@
   }
 
   .transactions-page:not(.is-standalone) .account-management-panel > .panel-heading {
+    align-items: center;
     padding-inline: 0.75rem;
+  }
+
+  .transactions-page:not(.is-standalone) .account-management-panel > .panel-heading > div,
+  .transactions-page:not(.is-standalone) .account-management-panel .transaction-list-toolbar {
+    align-self: center;
   }
 
   .transactions-page:not(.is-standalone) .accounts-heading {
