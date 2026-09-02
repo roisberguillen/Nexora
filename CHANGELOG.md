@@ -37,6 +37,9 @@
 - Corretto il flusso mobile dell’azione rapida “Nuovo conto”: il menu si chiude e viene mostrato
   direttamente il riquadro “Crea un conto”.
 
+- Corretta la dimensione dei valori nelle card riepilogative di Analisi desktop: gli importi
+  negativi lunghi restano contenuti nella griglia anche a 1440 px.
+
 - Ripristinata la larghezza completa delle celle Conti mobile, evitando il collasso dei valori
   alla sola larghezza del testo.
 

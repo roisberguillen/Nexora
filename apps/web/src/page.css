@@ -410,6 +410,12 @@
   min-width: 0;
 }
 
+@media (min-width: 75.01rem) {
+  .analytics-summary-grid .metric-value {
+    font-size: clamp(1.5rem, 1.7vw, 2.4rem);
+  }
+}
+
 .analytics-callout,
 .analytics-average {
   padding: 1rem;

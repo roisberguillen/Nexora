@@ -6,7 +6,8 @@ Schermata: Analisi / riepilogo mensile
 Route: `#analytics`  
 Flusso principale: lettura del mese, confronto, trend e storico  
 Reviewer/fase: Codex / audit Chrome  
-Modifiche: nessuna modifica al prodotto; acquisizione di evidenze mobile e desktop  
+Modifiche: contenimento dei valori monetari nelle card riepilogative desktop; acquisizione di
+evidenze mobile e desktop
 Data: 2026-09-02  
 Esito: PASS
 
@@ -16,7 +17,7 @@ Evidenze: `2026-09-02-analytics-mobile.png`, `2026-09-02-analytics-desktop.png`
 | --- | --- | --- | --- |
 | Universale | Gerarchia della pagina | PASS | Titolo, selezione mese, sintesi, confronto, trend, categorie e storico sono distinti. |
 | Mobile | 412x915 | PASS | Card impilate, testo leggibile, controlli mese accessibili e barra inferiore stabile. |
-| Desktop | 1440x900 | PASS | Navigazione persistente, contenuto analitico ordinato e metriche affiancate. |
+| Desktop | 1440x900 | PASS | Navigazione persistente, contenuto analitico ordinato, metriche affiancate e importi negativi contenuti. |
 | Tablet | Responsive | N/A | Non acquisito in questo controllo mirato. |
 | Visuale | Spaziatura e tipografia | PASS | Font, colori semantici e densità risultano coerenti con Dashboard. |
 | Ricerca | Navigazione globale | PASS | Barra di ricerca presente e non sovrapposta al contenuto. |

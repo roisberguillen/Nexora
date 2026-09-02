@@ -1107,3 +1107,11 @@ Keep only the latest relevant evidence per completed phase.
   is closed, and the URL is `#accounts`.
 - E2E shell mobile: `1 passed`, `2 skipped` conditionally (offline/theme tests); no shell overflow.
 - Quality: build, typecheck, lint and Prettier PASS.
+
+## Analytics summary overflow — 2026-09-02
+
+- Regression: `AnalyticsPage.test.tsx` `2 passed`; desktop 1440px and mobile 412x915 verified in
+  Chrome after the responsive metric-value adjustment.
+- Visual: negative summary values remain inside the four-card desktop grid; mobile card stacking
+  remains unchanged.
+- Quality: typecheck, lint and Prettier PASS.
