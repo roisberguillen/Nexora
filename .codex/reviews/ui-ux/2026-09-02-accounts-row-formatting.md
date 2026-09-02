@@ -6,14 +6,14 @@ Schermata: Conti / elenco conti
 Route: `#accounts`
 Flusso principale: consultazione dei conti e accesso alle azioni della riga
 Reviewer/fase: Codex / C3 follow-up
-Modifiche: griglia desktop della tabella Conti, colonne proporzionate, azioni centrate e non troncate, separatore inferiore continuo
+Modifiche: griglia desktop della tabella Conti, colonne proporzionate, azioni centrate e non troncate, azioni mobile orizzontali, separatore inferiore continuo
 Data: 2026-09-02
 Esito: PASS
 
 | Area | Superficie | Esito | Evidenza |
 | --- | --- | --- | --- |
 | Universale | Gerarchia della riga conto | PASS | Nome, tipo, saldi, stato e azioni hanno colonne dedicate. |
-| Mobile | Trasformazione responsive della tabella | PASS | La variante a blocchi mobile esistente resta attiva. |
+| Mobile | Trasformazione responsive della tabella | PASS | La variante a blocchi mobile resta attiva, con azioni su una linea orizzontale e scroll interno quando necessario. |
 | Desktop | Elenco Conti a larghezza ridotta | PASS | Azioni su due colonne con etichette complete e senza overflow. |
 | Tablet | Layout con editor laterale o sotto | PASS | Le proporzioni sono applicate solo alla tabella Conti. |
 | Visuale | Spaziatura e allineamento | PASS | Saldi allineati a destra, azioni centrate e separatore continuo tra le righe. |

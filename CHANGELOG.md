@@ -25,6 +25,9 @@
 
 - Centrate con flex le azioni delle righe Conti nella vista responsive.
 
+- Disposte su una sola riga flex le azioni delle righe Conti mobile, con scorrimento interno sui
+  viewport più stretti.
+
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
   restano protetti.

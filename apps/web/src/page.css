@@ -1615,6 +1615,14 @@
     grid-column: 2;
   }
 
+  .accounts-table td[data-label="Azioni"] .table-actions {
+    grid-column: 1 / -1;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
   .accounts-stats {
     grid-template-columns: 1fr;
   }
