@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto padding interno uniforme all’editor “Nuovo movimento” nella vista mobile, mantenendo
+  l’editor a tutta larghezza senza far aderire i controlli ai bordi.
+
 - Reso esplicito il bordo del selettore Ordina nei filtri Movimenti, mantenendo lo stile condiviso
   dei controlli.
 

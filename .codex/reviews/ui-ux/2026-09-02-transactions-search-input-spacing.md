@@ -6,7 +6,7 @@ Schermata: Movimenti / Filtri movimenti
 Route: `#transactions`
 Flusso principale: ricerca di un movimento e cancellazione del testo
 Reviewer/fase: Codex / correzione C3
-Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga e il selettore Ordina ha un bordo esplicito.
+Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga, il selettore Ordina ha un bordo esplicito e l’editor Nuovo movimento mantiene un padding interno uniforme.
 Data: 2026-09-02
 Esito: PASS
 

@@ -201,6 +201,9 @@ test("su mobile nuovo movimento apre il form a tutta larghezza con il conto visi
   expect(bounds).not.toBeNull();
   expect(bounds?.x).toBe(0);
   expect(bounds?.width).toBe(320);
+  const formBounds = await page.locator(".account-editor-panel .account-form").boundingBox();
+  expect(formBounds?.x).toBeGreaterThan((bounds?.x ?? 0) + 12);
+  expect(formBounds?.right ?? 0).toBeLessThan((bounds?.x ?? 0) + (bounds?.width ?? 0) - 12);
 });
 
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {

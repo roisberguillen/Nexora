@@ -503,7 +503,7 @@
 
   .transactions-page.is-standalone .account-editor-panel {
     margin: 1rem -1rem 0;
-    padding: 1rem;
+    padding: 1.25rem 1rem 1.5rem;
     border-inline: 0;
     border-radius: 0;
   }
