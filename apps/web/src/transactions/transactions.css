@@ -295,19 +295,26 @@
 
 .transaction-filters {
   display: grid;
-  grid-template-columns: minmax(12rem, 2fr) repeat(4, minmax(8.5rem, 1fr)) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 0.75rem;
   padding: 1rem 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 
+.transaction-filters > * {
+  min-width: 0;
+}
+
 .transaction-search {
+  grid-column: 1 / -1;
+  min-width: 0;
   padding-inline: 0.75rem;
 }
 
 .transaction-filters label {
   display: grid;
+  min-width: 0;
   gap: 0.35rem;
   color: var(--text-secondary);
   font-size: 0.8125rem;
@@ -344,6 +351,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   min-width: 0;
+  grid-column: 1 / -1;
 }
 
 .transaction-quick-filters button {
@@ -356,7 +364,8 @@
   cursor: pointer;
   font: inherit;
   font-weight: 700;
-  white-space: nowrap;
+  text-align: center;
+  white-space: normal;
 }
 
 .transaction-quick-filters button:hover {
@@ -373,12 +382,6 @@
 .transaction-quick-filters button[aria-pressed="true"]:hover {
   background: var(--color-primary-hover);
   color: #ffffff;
-}
-
-@media (min-width: 75.0625rem) {
-  .transaction-quick-filters {
-    grid-column: span 2;
-  }
 }
 
 .transaction-search-clear {
@@ -412,15 +415,25 @@
   padding-inline: 0.5rem;
 }
 
+.transaction-filters > .secondary-action {
+  grid-column: 1;
+  max-width: 100%;
+  margin-top: 0;
+}
+
+.transaction-filters > label:last-of-type {
+  grid-column: 2;
+}
+
 @media (max-width: 75rem) {
   .transaction-filters {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 }
 
 @media (max-width: 48rem) {
   .transaction-filters {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 }
 

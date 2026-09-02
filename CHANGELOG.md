@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Corretta la griglia dei filtri Movimenti: i pulsanti rapidi e le azioni restano leggibili e non
+  vengono più troncati nei layout stretti o nelle viste desktop affiancate.
+
 - Chiusa C3.21 Startup + Recovery con `SCREEN_AUDIT_PASS / FROZEN`: bootstrap deterministico,
   recovery esplicito, lock fail-closed, verifica backup non distruttiva e layout responsive coerente
   con tema, testo e motion settings; nessun P0/P1/P2 aperto.

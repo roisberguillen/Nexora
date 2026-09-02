@@ -42,6 +42,19 @@ test("la lista bancaria dei movimenti mantiene gerarchia, menu e nessun overflow
   }));
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 
+  const filterDimensions = await page.locator(".transaction-filters").evaluate((form) => {
+    const quickFilters = form.querySelector<HTMLElement>(".transaction-quick-filters");
+    const buttons = [
+      ...form.querySelectorAll<HTMLButtonElement>(".transaction-quick-filters button"),
+    ];
+    return {
+      formOverflow: form.scrollWidth > form.clientWidth,
+      quickOverflow: quickFilters === null || quickFilters.scrollWidth > quickFilters.clientWidth,
+      buttonsFit: buttons.every((button) => button.scrollWidth <= button.clientWidth),
+    };
+  });
+  expect(filterDimensions).toEqual({ formOverflow: false, quickOverflow: false, buttonsFit: true });
+
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);
 });
