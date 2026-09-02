@@ -34,12 +34,12 @@ describe("TransactionList", () => {
     expect(menu).toHaveFocus();
   });
 
-  it("does not expose edit for imported rows and only renders checkboxes in selection mode", async () => {
+  it("exposes edit for imported rows and only renders checkboxes in selection mode", async () => {
     const user = userEvent.setup();
     render(<TransactionList {...props({ selectionMode: false })} />);
     expect(screen.queryByRole("checkbox")).toBeNull();
     await user.click(screen.getByRole("button", { name: "Azioni per Importato" }));
-    expect(screen.queryByRole("menuitem", { name: "Modifica" })).toBeNull();
+    expect(screen.getByRole("menuitem", { name: "Modifica" })).toBeVisible();
   });
 
   it("renders transfers as neutral amounts without an income or expense sign", () => {

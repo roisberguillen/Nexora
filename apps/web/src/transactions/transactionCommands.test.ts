@@ -144,6 +144,44 @@ describe("transaction commands", () => {
     ]);
   });
 
+  it("modifica un movimento importato preservando origine e metadati di importazione", async () => {
+    const repository = new InMemoryLedgerRepository();
+    await repository.saveAccount(account("main"));
+    const imported = Transaction.create({
+      id: "imported-edit",
+      kind: "expense",
+      status: "booked",
+      accountId: "main",
+      amount: Money.fromMinor(-1200n, "EUR"),
+      bookedDate: LocalDate.parse("2026-07-28"),
+      description: "Prima descrizione",
+      payee: "Importato",
+      source: "import",
+      importBatchId: "batch-1",
+      sourceFingerprint: "a".repeat(64),
+    });
+    await repository.saveTransaction(imported);
+
+    const updated = await updateManualTransaction(repository, imported.id, {
+      accountId: "main",
+      amountMinor: -2500n,
+      bookedDate: "2026-07-29",
+      description: "Descrizione corretta",
+      kind: "expense",
+      payee: "Importato corretto",
+      status: "booked",
+    });
+
+    expect(updated).toMatchObject({
+      id: imported.id,
+      source: "import",
+      importBatchId: "batch-1",
+      sourceFingerprint: "a".repeat(64),
+    });
+    expect(updated.description).toBe("Descrizione corretta");
+    await expect(repository.findTransactionById(imported.id)).resolves.toEqual(updated);
+  });
+
   it("rifiuta conti uguali e valute diverse per un trasferimento", async () => {
     const repository = new InMemoryLedgerRepository();
     await repository.saveAccount(account("eur"));

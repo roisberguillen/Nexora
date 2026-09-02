@@ -97,14 +97,10 @@ export async function updateManualTransaction(
   const existing = await repository.findTransactionById(id);
   if (existing === undefined)
     throw new DomainError("missing_reference", "Transaction does not exist.");
-  if (
-    existing.source !== "manual" ||
-    existing.status === "reconciled" ||
-    existing.status === "cancelled"
-  )
+  if (existing.status === "reconciled" || existing.status === "cancelled")
     throw new DomainError(
       "invalid_transaction",
-      "Only active manual transactions can be edited. Use an adjustment for reconciled data.",
+      "Only active transactions can be edited. Use an adjustment for reconciled data.",
     );
   if (existing.kind === "transfer")
     throw new DomainError("invalid_transfer", "Transfers must be corrected as a linked operation.");
@@ -123,10 +119,16 @@ export async function updateManualTransaction(
     accountId: account.id,
     amount: Money.fromMinor(input.amountMinor, account.currency),
     bookedDate: LocalDate.parse(input.bookedDate),
-    source: "manual",
+    source: existing.source,
+    ...(existing.valueDate === undefined ? {} : { valueDate: existing.valueDate }),
     ...(categoryId === undefined ? {} : { categoryId }),
+    ...(existing.importBatchId === undefined ? {} : { importBatchId: existing.importBatchId }),
+    ...(existing.sourceFingerprint === undefined
+      ? {}
+      : { sourceFingerprint: existing.sourceFingerprint }),
     ...(description === undefined ? {} : { description }),
     ...(payee === undefined ? {} : { payee }),
+    ...(existing.note === undefined ? {} : { note: existing.note }),
     ...(input.expenseVariability === undefined
       ? {}
       : { expenseVariability: input.expenseVariability }),

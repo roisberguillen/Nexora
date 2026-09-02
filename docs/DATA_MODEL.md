@@ -154,7 +154,9 @@ da revisionare restano nell'audit senza creare movimenti.
 ## Invarianti
 - Un trasferimento crea esattamente due movimenti collegati, salvo fee separata.
 - La somma delle due gambe in stessa valuta è zero.
-- Importi immutabili dopo riconciliazione; correzioni tramite rettifica o audit event.
+- I movimenti attivi non manuali possono aggiornare i campi descrittivi e contabili tramite il
+  comando di modifica controllata; source, batch e fingerprint di importazione restano invariati.
+- Importi riconciliati immutabili; correzioni tramite rettifica o audit event.
 - Un sourceFingerprint non può comparire due volte per lo stesso importer/account, salvo override esplicito.
 
 ## Schema fisico SQLite

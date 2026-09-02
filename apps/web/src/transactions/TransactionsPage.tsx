@@ -733,10 +733,6 @@ export function TransactionsPage({
                 items={visibleItems}
                 onCancel={(item) => void cancel(item.id, item.isTransfer)}
                 onEdit={(item) => {
-                  if (item.isTransfer) {
-                    setError("I trasferimenti registrati non possono essere modificati.");
-                    return;
-                  }
                   setEditingId(item.id);
                   setKind(item.kind as FormKind);
                   setIsEditorOpen(true);

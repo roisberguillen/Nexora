@@ -173,7 +173,9 @@ function TransactionListRow({
             ref={menuRef}
             role="menu"
           >
-            {item.source === "manual" && !item.isTransfer ? (
+            {item.kind !== "transfer" &&
+            item.status !== "reconciled" &&
+            item.status !== "cancelled" ? (
               <button
                 onClick={() => {
                   setIsMenuOpen(false);

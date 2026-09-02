@@ -18,6 +18,10 @@
 
 ### Documentation
 
+- Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
+  preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
+  restano protetti.
+
 - Aggiunto spazio inferiore alla legenda “Tipo movimento”, separandola visivamente dai pulsanti di
   selezione del tipo.
 

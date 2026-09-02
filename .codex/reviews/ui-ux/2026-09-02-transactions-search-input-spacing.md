@@ -6,7 +6,7 @@ Schermata: Movimenti / Filtri movimenti
 Route: `#transactions`
 Flusso principale: ricerca di un movimento e cancellazione del testo
 Reviewer/fase: Codex / correzione C3
-Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga, le intestazioni del pannello e dell’editor usano inset coerenti e mantengono i blocchi centrati verticalmente, il toolbar del pannello centra contatore e azione in entrambi gli assi, il selettore Ordina ha un bordo esplicito, il form Nuovo movimento mantiene un padding interno diretto, la legenda Tipo movimento ha spazio inferiore, il gruppo e il campo Stato hanno separazioni coerenti e il dettaglio movimento usa una gerarchia verticale compatta.
+Modifiche: margine e padding propri dell’input azzerati nel breakpoint mobile; i filtri rapidi riempiono la larghezza interna del contenitore riga per riga, le intestazioni del pannello e dell’editor usano inset coerenti e mantengono i blocchi centrati verticalmente, il toolbar del pannello centra contatore e azione in entrambi gli assi, il selettore Ordina ha un bordo esplicito, il form Nuovo movimento mantiene un padding interno diretto, la legenda Tipo movimento ha spazio inferiore, il gruppo e il campo Stato hanno separazioni coerenti, il dettaglio movimento usa una gerarchia verticale compatta e le origini non manuali attive espongono la modifica controllata.
 Data: 2026-09-02
 Esito: PASS
 
@@ -18,7 +18,7 @@ Esito: PASS
 | Tablet | Reflow dei filtri | PASS | Griglia fluida preservata |
 | Visuale | Spaziatura e allineamento | PASS | Inset coerenti e blocchi centrati |
 | Ricerca | Campo e cancellazione | PASS | Test E2E mantiene entrambe le azioni |
-| Form | Controlli e spaziatura | PASS | Gli inset e la separazione dei gruppi sono coerenti |
+| Form | Controlli e modifica | PASS | Inset coerenti e modifica non manuale preservata |
 | Feedback | Focus e stato | PASS | Focus visibile e feedback invariati |
 | Accessibilità | Campo nominato | PASS | Ruolo searchbox e nome accessibile preservati |
 | Finanza | Dati ledger | PASS | Nessun calcolo o dato modificato |

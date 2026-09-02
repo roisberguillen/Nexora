@@ -455,3 +455,14 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
 - Evidenza: la UI non espone “Modifica” per i trasferimenti; il dettaglio mostra origine, destinazione e dati disponibili in sola lettura; la guardia di `TransactionsPage` rifiuta `kind === "transfer"` con `editingId` valorizzato prima di invocare callback.
 - Motivazione: una modifica sicura richiederebbe un contratto atomico per entrambe le gambe, mentre il dominio supporta già creazione atomica e annullamento del bundle.
 - Impatto: C2.6-R è RESOLVED; la creazione, l’annullamento, le invarianti `Money`/minor units e l’esclusione dai KPI restano invariate. Eventuali correzioni richiedono annullamento e nuova creazione.
+
+## 2026-09-02 — Modifica controllata dei movimenti non manuali
+
+- Decisione: i movimenti standalone attivi con origine `import`, `recurring` o `system` possono
+  essere modificati dall’editor normale. Il comando conserva origine, `importBatchId`,
+  `sourceFingerprint`, `valueDate` e nota; movimenti riconciliati, annullati e trasferimenti
+  collegati restano protetti.
+- Motivazione: consentire la correzione operativa richiesta senza trasformare un’importazione in un
+  movimento manuale, rompere l’idempotenza del batch o modificare una sola gamba di un trasferimento.
+- Impatto: l’identità del movimento e i metadati di provenienza restano auditabili; le invarianti
+  di segno, valuta, minor units e neutralità dei trasferimenti non cambiano.
