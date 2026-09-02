@@ -18,8 +18,20 @@ test("la gestione conti crea, modifica e archivia senza overflow", async ({ page
   await expect(table).toContainText("Portafoglio sintetico");
   await expect(table).toContainText("123,45");
   if ((await page.evaluate(() => document.documentElement.clientWidth)) >= 768) {
-    const rowBox = await table.getByRole("row", { name: /Portafoglio sintetico/ }).boundingBox();
+    const row = table.getByRole("row", { name: /Portafoglio sintetico/ });
+    const rowBox = await row.boundingBox();
+    const actionCell = row.locator('td[data-label="Azioni"]');
+    const actionCellBox = await actionCell.boundingBox();
+    expect(actionCellBox).not.toBeNull();
     expect(rowBox?.height, "desktop account row height").toBeLessThan(180);
+    for (const button of await actionCell.getByRole("button").all()) {
+      await expect(button).toBeVisible();
+      const buttonBox = await button.boundingBox();
+      expect(buttonBox).not.toBeNull();
+      expect(buttonBox!.x + buttonBox!.width).toBeLessThanOrEqual(
+        actionCellBox!.x + actionCellBox!.width + 1,
+      );
+    }
   }
 
   await table.getByRole("button", { name: "Modifica" }).click();

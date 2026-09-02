@@ -413,7 +413,7 @@ function AccountList({
         </div>
       ) : (
         <div className="account-table-wrap">
-          <table className="account-table">
+          <table className="account-table accounts-table">
             <caption className="sr-only">
               Conti registrati con saldo, stato e azioni disponibili
             </caption>

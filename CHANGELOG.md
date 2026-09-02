@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Migliorata la formattazione desktop dell’elenco Conti: colonne e azioni ora restano leggibili
+  senza testo troncato.
+
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
   restano protetti.

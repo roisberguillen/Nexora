@@ -1125,6 +1125,50 @@
   text-align: right;
 }
 
+.accounts-table {
+  table-layout: fixed;
+}
+
+.accounts-table th:nth-child(1),
+.accounts-table td:nth-child(1) {
+  width: 27%;
+}
+
+.accounts-table th:nth-child(2),
+.accounts-table td:nth-child(2) {
+  width: 12%;
+}
+
+.accounts-table th:nth-child(3),
+.accounts-table td:nth-child(3),
+.accounts-table th:nth-child(4),
+.accounts-table td:nth-child(4) {
+  width: 14%;
+  white-space: nowrap;
+}
+
+.accounts-table th:nth-child(5),
+.accounts-table td:nth-child(5) {
+  width: 8%;
+}
+
+.accounts-table th:nth-child(6),
+.accounts-table td:nth-child(6) {
+  width: 25%;
+}
+
+.account-table.accounts-table .table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: start;
+}
+
+.account-table.accounts-table .table-actions .text-action {
+  margin: 0;
+  white-space: nowrap;
+}
+
 .account-status {
   display: inline-flex;
   padding: 0.25rem 0.55rem;
