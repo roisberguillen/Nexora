@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Riordinate le righe dell’Albero categorie su desktop: contenuto e azioni restano sulla stessa
+  linea quando possibile, evitando altezze artificiali senza cambiare il reflow mobile.
+
 - Aggiunto il padding al contenuto vuoto dell’Albero categorie, mantenendo allineati testo e
   azione con il resto del pannello e preservando il padding interno della lista.
 

@@ -20,6 +20,10 @@ test("la gestione categorie crea, modifica e archivia senza overflow", async ({ 
   const tree = page.getByRole("tree", { name: "Categorie finanziarie" });
   const category = tree.locator(".category-tree-group").filter({ hasText: "Casa sintetica" });
   await expect(category).toContainText("Casa sintetica");
+  if ((await page.evaluate(() => document.documentElement.clientWidth)) >= 768) {
+    const categoryBox = await category.boundingBox();
+    expect(categoryBox?.height, "desktop category row height").toBeLessThan(180);
+  }
   await category.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Nome").fill("Abitazione sintetica");
   await page.getByRole("button", { name: "Salva categoria" }).click();
@@ -38,6 +42,19 @@ test("la gestione categorie crea, modifica e archivia senza overflow", async ({ 
   }));
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
+test("la tassonomia predefinita mantiene compatte le righe radice", async ({ page }) => {
+  await page.goto("/#categories");
+  await page.getByRole("button", { name: "Aggiungi tassonomia predefinita" }).click();
+
+  const tree = page.getByRole("tree", { name: "Categorie finanziarie" });
+  const root = tree.locator(".category-tree-group").first();
+  await expect(root).toBeVisible();
+  if ((await page.evaluate(() => document.documentElement.clientWidth)) >= 768) {
+    const rootBox = await root.boundingBox();
+    expect(rootBox?.height, "desktop root category height").toBeLessThan(180);
+  }
 });
 
 test("unisce una categoria e riassegna i riferimenti", async ({ page }) => {
