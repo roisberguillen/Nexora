@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Allineata la tipografia dei riepiloghi Analisi alla Dashboard tramite il componente/token
+  condiviso `metric-value`, mantenendo il font finanziario e la formattazione EUR esistenti.
+
 - Compattata la lista Conti: la colonna delle azioni usa una griglia desktop più densa per evitare
   righe artificialmente alte, mantenendo leggibilità, reflow mobile e target touch accessibili.
 

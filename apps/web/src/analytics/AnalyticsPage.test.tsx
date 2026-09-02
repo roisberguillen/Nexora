@@ -16,7 +16,7 @@ const row = (id: string, kind: "income" | "expense", amount: bigint, date: strin
   });
 describe("AnalyticsPage", () => {
   it("renders trend, forecast, comparison and accessible chart from booked ledger data", () => {
-    render(
+    const { container } = render(
       <AnalyticsPage
         categories={categories}
         transactions={[
@@ -29,6 +29,11 @@ describe("AnalyticsPage", () => {
       />,
     );
     expect(screen.getByRole("heading", { name: "Rispetto a luglio 2026" })).toBeVisible();
+    expect(
+      container
+        .querySelector(".analytics-section .analytics-summary-grid")
+        ?.querySelectorAll(".metric-value"),
+    ).toHaveLength(4);
     expect(screen.getAllByText("Entrate").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Spese").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Risparmio").length).toBeGreaterThan(0);

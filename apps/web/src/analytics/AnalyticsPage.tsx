@@ -86,7 +86,7 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
             />
             <div className="metric-card">
               <span>Tasso di risparmio</span>
-              <strong>
+              <strong className="metric-value">
                 {model.savingRatePercent === undefined
                   ? "—"
                   : `${model.savingRatePercent.toLocaleString("it-IT")} %`}
@@ -404,6 +404,7 @@ function SummaryMetric({
       <span>{label}</span>
       <FinancialAmount
         amountMinor={amount.amountMinor}
+        className="metric-value"
         currency="EUR"
         {...(tone === undefined ? {} : { tone })}
       />
