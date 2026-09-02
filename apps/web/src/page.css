@@ -1161,7 +1161,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
-  justify-content: start;
+  justify-content: center;
 }
 
 .account-table.accounts-table .table-actions .text-action {

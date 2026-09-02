@@ -23,6 +23,8 @@
 
 - Ripristinato il bordo inferiore continuo sulle righe Conti, incluso sotto il nome del conto.
 
+- Centrate con flex le azioni delle righe Conti nella vista responsive.
+
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
   restano protetti.
