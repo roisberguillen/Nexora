@@ -298,7 +298,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 0.75rem;
-  padding: 1rem 0;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -309,7 +309,7 @@
 .transaction-search {
   grid-column: 1 / -1;
   min-width: 0;
-  padding-inline: 0.75rem;
+  padding-inline: 0;
 }
 
 .transaction-filters label {
@@ -563,6 +563,7 @@
     display: grid;
     gap: 0.625rem;
     grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: 0.75rem;
   }
 
   .transaction-search {

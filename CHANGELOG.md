@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto padding orizzontale coerente al contenuto dei Filtri movimenti, incluso il foglio mobile,
+  mantenendo pulsanti e ricerca dentro i limiti del pannello.
+
 - Riordinate le righe dell’Albero categorie su desktop: contenuto e azioni restano sulla stessa
   linea quando possibile, evitando altezze artificiali senza cambiare il reflow mobile.
 
