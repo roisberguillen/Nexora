@@ -1087,3 +1087,13 @@ Keep only the latest relevant evidence per completed phase.
   `pnpm quality:ui-ux` PASS, build/typecheck/lint/format PASS; advisory chunk-size preesistente.
 - Review: `.codex/reviews/ui-ux/2026-09-02-c3-21-startup-recovery.md`; P0/P1/P2 = 0/0/0.
 - Esito: `SCREEN_AUDIT_PASS`; Startup + Recovery FROZEN; prossimo `12.5.C4`.
+
+## Accounts mobile visual audit — 2026-09-02
+
+- Chrome audit: `#accounts` inspected at 412x915; account cells measured 331px wide, values
+  remain aligned in the mobile grid, and the action group remains horizontal with internal scroll
+  on narrow viewports.
+- Regression E2E: Accounts create/edit/archive smoke `1 passed` on Chromium 320 and `1 passed`
+  on Chromium 1440; no page overflow.
+- Quality: build, typecheck, lint and Prettier PASS; screenshot from the extension viewport was
+  rejected as scale-corrupted and not used as visual evidence.

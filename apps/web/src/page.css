@@ -1615,7 +1615,8 @@
     grid-column: 2;
   }
 
-  .accounts-table td {
+  .account-table.accounts-table td {
+    width: 100%;
     grid-template-columns: minmax(7.25rem, 0.75fr) minmax(0, 1.25fr);
     align-items: center;
   }
@@ -1629,8 +1630,6 @@
   .accounts-table td[data-label="Tipo"],
   .accounts-table td[data-label="Saldo iniziale"],
   .accounts-table td[data-label="Saldo attuale"] {
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
   }
 

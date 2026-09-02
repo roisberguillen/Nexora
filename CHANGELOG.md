@@ -31,6 +31,12 @@
 - Allineati i valori delle righe Conti mobile su una griglia coerente, mantenendo nomi, tipo e
   saldi su una riga quando lo spazio lo consente.
 
+- Corretto il clipping dei valori nella tabella Conti mobile: l’ellissi resta limitata ai nomi
+  lunghi, senza nascondere tipo e saldi.
+
+- Ripristinata la larghezza completa delle celle Conti mobile, evitando il collasso dei valori
+  alla sola larghezza del testo.
+
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
   restano protetti.
