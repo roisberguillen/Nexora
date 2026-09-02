@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Compattata la gerarchia del dettaglio movimento mobile, eliminando la distribuzione verticale
+  eccessiva tra importo e metadati.
+
 - Aggiunto spazio superiore al campo “Stato” nei dettagli avanzati del form Nuovo movimento,
   separandolo visivamente dal blocco Tag.
 

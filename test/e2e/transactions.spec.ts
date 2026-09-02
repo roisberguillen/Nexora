@@ -224,6 +224,23 @@ test("su mobile nuovo movimento apre il form a tutta larghezza con il conto visi
   expect(statusSpacing).toBe("8px");
 });
 
+test("il dettaglio movimento mobile mantiene una gerarchia compatta", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
+  await page.goto("/#transactions");
+
+  await page.locator(".transaction-list-open").first().click();
+  const details = page.locator(".transaction-details-panel");
+  await expect(details).toBeVisible();
+  const amount = await details.locator(".transaction-details-amount").boundingBox();
+  const metadata = await details.locator("dl").first().boundingBox();
+  expect(amount).not.toBeNull();
+  expect(metadata).not.toBeNull();
+  expect((metadata?.y ?? 0) - ((amount?.y ?? 0) + (amount?.height ?? 0))).toBeLessThanOrEqual(48);
+  await expect(details).toHaveCSS("align-content", "start");
+});
+
 test("il modulo movimenti espone righe split responsive", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
