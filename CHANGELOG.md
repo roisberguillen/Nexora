@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto spazio superiore al campo “Stato” nei dettagli avanzati del form Nuovo movimento,
+  separandolo visivamente dal blocco Tag.
+
 - Aggiunto spazio inferiore al gruppo “Tipo movimento” per separarlo visivamente dal campo
   Importo nel form Nuovo movimento.
 

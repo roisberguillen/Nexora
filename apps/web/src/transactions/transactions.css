@@ -145,6 +145,10 @@
   font-weight: 700;
   min-height: 2.75rem;
 }
+
+.transaction-advanced-details > label:last-child {
+  margin-block-start: 0.5rem;
+}
 .transaction-transfer-route {
   margin: 0;
   overflow-wrap: anywhere;
