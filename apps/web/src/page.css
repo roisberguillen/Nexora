@@ -1134,10 +1134,6 @@
   width: 27%;
 }
 
-.accounts-table td:first-child {
-  border-bottom: 0;
-}
-
 .accounts-table th:nth-child(2),
 .accounts-table td:nth-child(2) {
   width: 12%;

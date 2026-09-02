@@ -21,8 +21,7 @@
 - Migliorata la formattazione desktop dell’elenco Conti: colonne e azioni ora restano leggibili
   senza testo troncato.
 
-- Rimosso il bordo inferiore dalla prima cella delle righe Conti per evitare una separazione
-  visiva isolata sotto il nome del conto.
+- Ripristinato il bordo inferiore continuo sulle righe Conti, incluso sotto il nome del conto.
 
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
