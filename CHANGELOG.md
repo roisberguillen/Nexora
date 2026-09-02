@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Azzerati margine e padding del campo di ricerca Movimenti su mobile, mantenendo invariati gli
+  spazi del pannello e dei filtri rapidi.
+
 - Centrato il gruppo dei filtri rapidi nella vista mobile Movimenti, mantenendo il wrapping e
   l’accessibilità dei pulsanti.
 

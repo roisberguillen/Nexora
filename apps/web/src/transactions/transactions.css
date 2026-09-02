@@ -570,6 +570,11 @@
     grid-column: 1 / -1;
   }
 
+  .transaction-search-control input {
+    margin: 0;
+    padding: 0;
+  }
+
   .transaction-quick-filters {
     display: flex;
     grid-column: 1 / -1;

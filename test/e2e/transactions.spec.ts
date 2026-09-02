@@ -132,6 +132,11 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
   await page.goto("/#transactions");
 
   const search = page.getByRole("searchbox", { name: "Cerca nei movimenti" });
+  const searchSpacing = await search.evaluate((input) => {
+    const styles = getComputedStyle(input);
+    return { margin: styles.margin, padding: styles.padding };
+  });
+  expect(searchSpacing).toEqual({ margin: "0px", padding: "0px" });
   await search.fill("Esercente");
   await page.getByRole("button", { name: "Cancella ricerca movimenti" }).click();
   await expect(search).toHaveValue("");
