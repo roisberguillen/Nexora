@@ -1097,3 +1097,10 @@ Keep only the latest relevant evidence per completed phase.
   on Chromium 1440; no page overflow.
 - Quality: build, typecheck, lint and Prettier PASS; screenshot from the extension viewport was
   rejected as scale-corrupted and not used as visual evidence.
+
+## Accounts quick action — 2026-09-02
+
+- Integration: App quick-action test `12 passed`; “Nuovo conto” opens the account creation form
+  and normalizes the URL to `#accounts`.
+- E2E shell mobile: `1 passed`, `2 skipped` conditionally (offline/theme tests); no shell overflow.
+- Quality: build, typecheck, lint and Prettier PASS.

@@ -6,7 +6,7 @@ Schermata: Conti / elenco conti
 Route: `#accounts`
 Flusso principale: consultazione dei conti e accesso alle azioni della riga
 Reviewer/fase: Codex / C3 follow-up
-Modifiche: griglia desktop della tabella Conti, colonne proporzionate, stato centrato, celle mobile a larghezza completa e valori allineati senza clipping, azioni centrate e non troncate, azioni mobile orizzontali, separatore inferiore continuo; regression E2E aggiornata
+Modifiche: griglia desktop della tabella Conti, colonne proporzionate, stato centrato, celle mobile a larghezza completa e valori allineati senza clipping, azioni centrate e non troncate, azioni mobile orizzontali, separatore inferiore continuo e menu rapido collegato alla creazione conto; regression E2E aggiornata
 Data: 2026-09-02
 Esito: PASS
 
@@ -18,7 +18,7 @@ Esito: PASS
 | Tablet | Layout con editor laterale o sotto | PASS | Le proporzioni sono applicate solo alla tabella Conti. |
 | Visuale | Spaziatura e allineamento | PASS | Saldi allineati a destra, azioni centrate e separatore continuo tra le righe. |
 | Ricerca | Ricerca globale e navigazione | PASS | Nessuna modifica alla barra di ricerca o alla navigazione. |
-| Form | Azioni della riga | PASS | I pulsanti mantengono target touch e testo non spezzato. |
+| Form | Azioni della riga e menu rapido | PASS | I pulsanti mantengono target touch e testo non spezzato; “Nuovo conto” apre direttamente il form. |
 | Feedback | Stato e azioni account | PASS | Nessuna modifica ai feedback o agli stati del dominio. |
 | Accessibilità | Tabella semantica e azioni nominate | PASS | Caption, header di colonna e nomi accessibili preservati. |
 | Finanza | Valori e stato del conto | PASS | Importi, valuta e stato non vengono alterati. |

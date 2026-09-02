@@ -693,6 +693,7 @@ function AppContent({
                     }),
                   )}
                   model={ledgerState.accounts}
+                  initialEditorOpen={window.location.hash === "#accounts?create"}
                   onCreate={createAccount}
                   onDeleteUnused={deleteUnusedAccount}
                   onEmpty={emptyAccount}
@@ -886,7 +887,7 @@ const quickActions: readonly QuickAction[] = [
     label: "Nuovo conto",
     icon: "accounts",
     onSelect: () => {
-      window.location.hash = "#accounts";
+      window.location.hash = "#accounts?create";
     },
   },
   {
@@ -1089,7 +1090,7 @@ function readAppRoute():
   | "notifications"
   | "privacy-security"
   | "new-transaction" {
-  if (window.location.hash === "#accounts") {
+  if (window.location.hash === "#accounts" || window.location.hash === "#accounts?create") {
     return "accounts";
   }
   if (window.location.hash === "#transactions") {

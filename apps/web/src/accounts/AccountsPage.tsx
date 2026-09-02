@@ -1,7 +1,7 @@
 import { DEFAULT_LOCALE } from "@nexora/config";
 import { DomainError, type AccountType } from "@nexora/domain";
 import { FinancialAmount } from "@nexora/ui";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 import {
   formatEditableAmountMinor,
@@ -19,6 +19,7 @@ interface AccountsPageProps {
   readonly activityByAccount: Readonly<
     Record<string, { readonly transactions: number; readonly transfers: number }>
   >;
+  readonly initialEditorOpen?: boolean;
   readonly model: AccountsViewModel;
   readonly onCreate: (input: CreateLedgerAccountInput) => Promise<void>;
   readonly onDeleteUnused: (accountId: string) => Promise<void>;
@@ -66,6 +67,7 @@ const emptyForm: AccountFormValues = {
 
 export function AccountsPage({
   activityByAccount,
+  initialEditorOpen = false,
   model,
   onCreate,
   onDeleteUnused,
@@ -74,13 +76,21 @@ export function AccountsPage({
   onSetArchived,
   onUpdate,
 }: AccountsPageProps) {
-  const [editor, setEditor] = useState<AccountEditor | null>(null);
+  const [editor, setEditor] = useState<AccountEditor | null>(
+    initialEditorOpen ? { mode: "create", values: emptyForm } : null,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [emptyingAccount, setEmptyingAccount] = useState<AccountManagementItem | null>(null);
   const [emptyPhrase, setEmptyPhrase] = useState("");
   const [emptyPin, setEmptyPin] = useState("");
+
+  useEffect(() => {
+    if (initialEditorOpen && window.location.hash === "#accounts?create") {
+      window.history.replaceState(null, "", "#accounts");
+    }
+  }, [initialEditorOpen]);
 
   const openCreate = () => {
     setEditor({ mode: "create", values: emptyForm });

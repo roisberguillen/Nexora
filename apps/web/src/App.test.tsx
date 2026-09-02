@@ -102,6 +102,17 @@ describe("Nexora app", () => {
     expect(screen.getByRole("heading", { name: "Nuovo budget" })).toBeInTheDocument();
   });
 
+  it("apre la creazione di un conto dal menu rapido", async () => {
+    const user = userEvent.setup();
+    render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
+
+    await user.click(await screen.findByRole("button", { name: "Nuova operazione" }));
+    await user.click(screen.getByRole("button", { name: "Nuovo conto" }));
+
+    expect(await screen.findByRole("heading", { name: "Crea un conto" })).toBeInTheDocument();
+    expect(window.location.hash).toBe("#accounts");
+  });
+
   it("apre il diario finanziario dal menu rapido", async () => {
     const user = userEvent.setup();
     render(<App ledgerPromise={Promise.resolve(browserLedger())} />);
