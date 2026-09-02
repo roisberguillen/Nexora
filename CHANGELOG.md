@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Centrati esplicitamente contatore e pulsante “Seleziona” nel toolbar dell’intestazione Movimenti
+  mobile, preservando l’ancoraggio del gruppo a destra.
+
 - Allineato il padding dell’intestazione dell’editor Nuovo movimento a quello del form mobile,
   includendo titolo e chiusura.
 

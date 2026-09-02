@@ -527,7 +527,9 @@
 
   .transactions-page:not(.is-standalone) .account-management-panel > .panel-heading > div,
   .transactions-page:not(.is-standalone) .account-management-panel .transaction-list-toolbar {
+    align-items: center;
     align-self: center;
+    justify-content: center;
   }
 
   .transactions-page:not(.is-standalone) .accounts-heading {

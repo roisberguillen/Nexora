@@ -157,6 +157,13 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
   expect(
     Math.abs(headingAlignment.titleCenter - headingAlignment.actionCenter),
   ).toBeLessThanOrEqual(1);
+  const toolbarAlignment = await page
+    .locator(".account-management-panel .transaction-list-toolbar")
+    .evaluate((toolbar) => ({
+      alignItems: getComputedStyle(toolbar).alignItems,
+      justifyContent: getComputedStyle(toolbar).justifyContent,
+    }));
+  expect(toolbarAlignment).toEqual({ alignItems: "center", justifyContent: "center" });
   const searchSpacing = await search.evaluate((input) => {
     const styles = getComputedStyle(input);
     return { margin: styles.margin, padding: styles.padding };
