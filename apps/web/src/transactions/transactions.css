@@ -415,6 +415,10 @@
   padding-inline: 0.5rem;
 }
 
+.transaction-filters > label:last-of-type select {
+  border: 1px solid var(--color-outline);
+}
+
 .transaction-filters > .secondary-action {
   grid-column: 1;
   max-width: 100%;

@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Reso esplicito il bordo del selettore Ordina nei filtri Movimenti, mantenendo lo stile condiviso
+  dei controlli.
+
 - Estesa la larghezza dei filtri rapidi Movimenti su mobile: ogni riga distribuisce i pulsanti fino
   al bordo del contenitore, mantenendo wrapping e target touch.
 

@@ -163,6 +163,11 @@ test("su mobile i filtri sono un foglio accessibile e la ricerca si può cancell
     ),
   ).toBe(true);
 
+  const sortBorder = await page
+    .locator(".transaction-filters > label:last-of-type select")
+    .evaluate((select) => getComputedStyle(select).borderTopWidth);
+  expect(sortBorder).toBe("1px");
+
   const filterTrigger = page.getByRole("button", { name: "Filtri" });
   await filterTrigger.click();
   const sheet = page.getByRole("dialog", { name: "Filtri movimenti" });
