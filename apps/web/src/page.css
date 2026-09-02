@@ -301,6 +301,16 @@
   font-weight: 750;
 }
 
+.account-management-panel > .empty-state {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.account-management-panel > .empty-state p {
+  margin: 0;
+}
+
 .analytics-panel-content {
   padding: 1.5rem;
   padding-bottom: 1.5rem;

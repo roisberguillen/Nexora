@@ -5,6 +5,14 @@ test("la gestione categorie crea, modifica e archivia senza overflow", async ({ 
   await page.goto("/#categories");
   await expect(page.getByRole("heading", { name: "Gestisci le categorie" })).toBeVisible();
 
+  const archive = page.locator(".account-management-panel");
+  const archiveBox = await archive.boundingBox();
+  const emptyCopyBox = await archive
+    .getByText(/Puoi aggiungere la tassonomia iniziale/)
+    .boundingBox();
+  expect(archiveBox).not.toBeNull();
+  expect(emptyCopyBox?.x).toBeGreaterThan((archiveBox?.x ?? 0) + 16);
+
   await page.getByLabel("Nome").fill("Casa sintetica");
   await page.getByLabel("Ambito").selectOption("expense");
   await page.getByRole("button", { name: "Salva categoria" }).click();

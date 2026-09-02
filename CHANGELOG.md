@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Aggiunto il padding al contenuto vuoto dell’Albero categorie, mantenendo allineati testo e
+  azione con il resto del pannello e preservando il padding interno della lista.
+
 - Allineata la tipografia dei riepiloghi Analisi alla Dashboard tramite il componente/token
   condiviso `metric-value`, mantenendo il font finanziario e la formattazione EUR esistenti.
 
