@@ -42,8 +42,8 @@ Allowed review results: `SCREEN_AUDIT_PASS`, `SCREEN_AUDIT_BLOCKED`. Tracking st
 | C3.20 | Cestino | #settings + cestino | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.20 | Reset finanziario | #settings + reset | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 | C3.20 | Reset totale | #settings + reset | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
-| C3.21 | Startup | bootstrap | — | — | — | — | 0 | 0 | 0 | PENDING |
-| C3.21 | Recovery | bootstrap + recovery | — | — | — | — | 0 | 0 | 0 | PENDING |
+| C3.21 | Startup | bootstrap | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
+| C3.21 | Recovery | bootstrap + recovery | PASS | PASS | PASS | PASS | 0 | 0 | 0 | PASS / FROZEN |
 
 `—` significa non ancora verificato, non PASS. Le colonne P0/P1/P2 iniziano a zero perché non
 sono ancora stati aperti rilievi C3; non anticipano il risultato della review.

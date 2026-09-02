@@ -18,6 +18,12 @@
 
 ### Documentation
 
+- Chiusa C3.21 Startup + Recovery con `SCREEN_AUDIT_PASS / FROZEN`: bootstrap deterministico,
+  recovery esplicito, lock fail-closed, verifica backup non distruttiva e layout responsive coerente
+  con tema, testo e motion settings; nessun P0/P1/P2 aperto.
+- Allineate loading e recovery startup ai token visivi e ai pulsanti condivisi dell’app, con padding
+  e reflow sicuri da 320 px a desktop.
+
 - Chiusa C3.20 Settings + Cestino + Reset con `SCREEN_AUDIT_PASS / FROZEN`: preferenze reali e
   persistenti, storage invalido con fallback sicuro, lifecycle soft-delete/restore/purge, reset
   finanziario e totale con conferme forti, atomicità, App Lock, backup e integrità finanziaria

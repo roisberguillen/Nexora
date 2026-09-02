@@ -18,6 +18,10 @@ describe("StartupRecoveryScreen", () => {
 
     await user.click(screen.getByRole("button", { name: "Avvia recupero guidato" }));
 
+    expect(screen.getByRole("button", { name: "Riprova" })).toHaveClass("primary-action");
+    expect(screen.getByRole("button", { name: "Avvia recupero guidato" })).toHaveClass(
+      "secondary-action",
+    );
     expect(screen.getByLabelText("File backup `.nexora-backup`")).toBeInTheDocument();
     expect(screen.getByLabelText("Passphrase del backup")).toBeInTheDocument();
     expect(

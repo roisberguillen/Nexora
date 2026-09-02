@@ -68,10 +68,14 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
         I tuoi dati non sono stati modificati. Puoi riprovare oppure avviare il recupero guidato.
       </p>
       <div className="startup-recovery__actions">
-        <button onClick={props.onRetry} type="button">
+        <button className="primary-action" onClick={props.onRetry} type="button">
           Riprova
         </button>
-        <button onClick={() => setIsGuidanceOpen((open) => !open)} type="button">
+        <button
+          className="secondary-action"
+          onClick={() => setIsGuidanceOpen((open) => !open)}
+          type="button"
+        >
           Avvia recupero guidato
         </button>
         {props.recoveryArchives?.map((archive) => (
@@ -112,6 +116,7 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
             />
           </label>
           <button
+            className="secondary-action"
             disabled={backup === undefined || passphrase.length < 12 || isVerifyingBackup}
             onClick={() => void verifyBackup()}
             type="button"
@@ -119,6 +124,7 @@ export function StartupRecoveryScreen(props: StartupRecoveryScreenProps): ReactE
             {isVerifyingBackup ? "Verifica backup…" : "Verifica backup senza ripristinare"}
           </button>
           <button
+            className="secondary-action"
             disabled={backup === undefined || passphrase.length < 12 || isVerifyingBackup}
             onClick={() => void restoreTemporarily()}
             type="button"

@@ -1071,3 +1071,19 @@ Keep only the latest relevant evidence per completed phase.
 - Review: `.codex/reviews/ui-ux/2026-09-01-c3-19-privacy-security-app-lock.md`.
 - Result: `SCREEN_AUDIT_PASS`; P0=0, P1=0, P2=0. Privacy/Sicurezza and App Lock are `FROZEN`;
   C3.20 Settings/cestino/reset is next.
+## 12.5.C3.21 — Startup + Recovery Mobile/Desktop audit — PASS — 2026-09-02
+
+- Routing: `pnpm codex:route --task "C3.21 Startup + Recovery Mobile/Desktop audit"` — CRITICAL,
+  high data risk; security, recovery, migration e startup gates verificati.
+- Startup: orchestrator, discovery, explicit storage selection, timeout, close-on-failure, lock
+  serialisation, model verification e no-shell-before-READY PASS.
+- Recovery: retry, safe archive selection, diagnostics, encrypted backup verification and isolated
+  temporary restore PASS; nessun reset automatico e nessuna modifica al ledger attivo.
+- UI: loading/recovery allineati ai token globali per tema chiaro/scuro, testo grande, reduced
+  motion, padding e CTA condivise; responsive 320/375/390/768/1024/1440 PASS.
+- Test mirati: startup/recovery/migration/security/persistence `71/71 PASS`; startup E2E `7 PASS,
+  5 skip condizionati` sui sei viewport e Chromium 1440 multi-tab.
+- Gate: `pnpm verify` PASS (`140 file`, `618 test`, `4 skip`), `pnpm test:ui-ux` PASS,
+  `pnpm quality:ui-ux` PASS, build/typecheck/lint/format PASS; advisory chunk-size preesistente.
+- Review: `.codex/reviews/ui-ux/2026-09-02-c3-21-startup-recovery.md`; P0/P1/P2 = 0/0/0.
+- Esito: `SCREEN_AUDIT_PASS`; Startup + Recovery FROZEN; prossimo `12.5.C4`.
