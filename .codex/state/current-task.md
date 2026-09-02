@@ -1,9 +1,9 @@
 # Current task
 
-- Task: 12.5.C3-F — Final Screen Audit Closure & Evidence Reconciliation
+- Task: 12.5.C4.0 — Framework e matrice dei flussi reali completi
 - Roadmap phase: Phase 12.5
-- Status: `C3_FINAL_GATE_PASS` — `12.5.C3 COMPLETE`; C3.0 is COMPLETE and C3.1–C3.21 are
-  `SCREEN_AUDIT_PASS / FROZEN` — 2026-09-02.
-- Evidence: `.codex/state/test-evidence.md`; `.codex/state/ui-screen-review-matrix.md`; reviews
-  under `.codex/reviews/ui-ux/`.
-- Next task: 12.5.C4 — real complete flows.
+- Status: `C4.0 COMPLETE` — framework e matrice documentale registrati; C3 resta
+  `C3_FINAL_GATE_PASS` e congelata — 2026-09-02.
+- Evidence: `docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md`; `.codex/state/c4-real-flow-matrix.md`;
+  `.codex/state/test-evidence.md`.
+- Next task: `12.5.C4.1` — Primo avvio, profilo, primo conto, persistenza e riapertura.

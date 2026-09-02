@@ -278,6 +278,16 @@
       "sha256": "ad32f0a8ab8eeeb0303fe8965a37cbbc69688c49c0ff47faef17ec57e93e7032"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-02-c3-final-gate.md",
+      "size": 2639,
+      "sha256": "92f83002bd4baaa21abc59442c604800a9fd8beb30b54efc2188adb825c2d14e"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-02-c4-0-real-flow-framework.md",
+      "size": 2572,
+      "sha256": "62e81feeb72051de23d458521e5f7670ab374686fa348e9ee9119595e57bfe30"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-02-categories-empty-content.md",
       "size": 1201,
       "sha256": "a2d52c2b54e36b4a2026d11ae579a2805ac1e5b8cbf0d7120aa8f8a35c1d6e91"
@@ -423,6 +433,11 @@
       "sha256": "618ddf2f1176ffb47bcf121b3e9bcd1e8141607e728abec25aa2cef219fa67a7"
     },
     {
+      "path": ".codex/state/c4-real-flow-matrix.md",
+      "size": 8452,
+      "sha256": "937b761e6ca5199b7bc115468b1f8eaa98b7196aebf9bea001635e0604f31c78"
+    },
+    {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
       "size": 1266,
       "sha256": "bfd441809b0d4ba66d9cbd7ff15b1287094f64d103bbf12039c1b1260f8ba964"
@@ -464,8 +479,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 364,
-      "sha256": "346026e79dc2ec459f4a51c9d8a28deedd175fb7c9acb3562ff7902b41792a99"
+      "size": 469,
+      "sha256": "9de48c390281dfdcac6835e211cb34748cb6a6b645d60e6878cadb2c69317127"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -489,18 +504,18 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 7361,
-      "sha256": "e3a31c68063c1a1c3c8387a85aa7b631203698699fae3917af58b767205e47d0"
+      "size": 7892,
+      "sha256": "a44269c17b14de956539c6a9735bc29d9c9705fb07dff7c6acba80bc64968ca4"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 78827,
-      "sha256": "9647cb53115776fc625134b5590cb84913f1b7a5f8b1d5a54b5f8406b569068d"
+      "size": 81913,
+      "sha256": "1e7b28e41254a2358288a284a096eabc929e9af9b7ea4661562443d83b79f293"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
-      "size": 4606,
-      "sha256": "cb3eb7ec503430629cc7df5cb13d41c0b9b6415ba0b230c3476ece902c47fff2"
+      "size": 4832,
+      "sha256": "7041d598df37b89213eddf38ac897092de7243c27534922f8df8325d6878ad65"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1784,8 +1799,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 45290,
-      "sha256": "24f004788e9dd15baa72928e180e82d9e327cb0c1c09159d8e78466c98d3f010"
+      "size": 45477,
+      "sha256": "268917016761345fa25e1779cfd90e60406ae7ade666062e9b9b91441d918870"
     },
     {
       "path": "design/mockup/README.md",
@@ -1949,8 +1964,8 @@
     },
     {
       "path": "docs/CURRENT_SOURCES.md",
-      "size": 1170,
-      "sha256": "0f613ce83ba1c763c218fdfb3cc3f992d1f5e30004704c06fa83300cfcb72d0b"
+      "size": 1247,
+      "sha256": "35c2e484fe61ced309627fabd4f04b387758c6c109281478db38f8122a42049e"
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
@@ -2131,6 +2146,11 @@
       "path": "docs/ux/C3_SCREEN_AUDIT_FRAMEWORK.md",
       "size": 7940,
       "sha256": "4a5d6c064c1294312a0b95a9d25f1af9dc588b9b8deb863d283d95a15ff5c0f6"
+    },
+    {
+      "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
+      "size": 7813,
+      "sha256": "ec94888e862bf86cdc33127786f55a1ba83b8a1ccba1246acf071f4a0f9f289c"
     },
     {
       "path": "docs/ux/DESIGN.md",

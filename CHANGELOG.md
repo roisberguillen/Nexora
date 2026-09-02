@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-02
+
+- Definito il framework documentale C4.0 per la verifica dei flussi reali completi e registrata
+  la matrice autorevole C4; C4.1 è il prossimo task e C3 resta congelata.
+
 ## 2026-08-30
 
 - Closed the C3.9 Investments mobile/desktop screen audit with `SCREEN_AUDIT_PASS`; full-width

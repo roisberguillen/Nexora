@@ -1133,3 +1133,25 @@ Keep only the latest relevant evidence per completed phase.
   about large chunks remains non-blocking.
 - Final state: C3.0 is `COMPLETE`; C3.1–C3.21 are `PASS / FROZEN`; P0/P1/P2 are `0/0/0` and no
   unresolved audit blocker remains. Review matrix and roadmap are reconciled; C4 remains pending.
+
+## 12.5.C4.0 — Framework e matrice dei flussi reali completi — 2026-09-02
+
+- Routing: `pnpm codex:route --task "12.5.C4.0 Framework e matrice dei flussi reali completi"` —
+  profilo `STANDARD`, rischio dati `low`, nessuno switch necessario.
+- Scope: documentale soltanto; nessuna modifica a comportamento applicativo, dominio, database, UI o
+  test funzionali. Nessun sub-agent usato e nessuna scansione indiscriminata del repository.
+- Fonti pertinenti consultate: PRD 4.1–4.16, `docs/TEST_STRATEGY.md`, framework C3, matrice C3,
+  review C3-F, parte finale della presente evidence e file E2E necessari per la mappatura.
+- Creati `docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md` e
+  `.codex/state/c4-real-flow-matrix.md`; aggiornati stato corrente, roadmap, changelog e mappa
+  delle fonti autorevoli.
+- Matrice registrata: C4.0 `COMPLETE`, C4.1 `NEXT`, C4.2–C4.10 e C4-F `PENDING`; nessun flusso
+  operativo dichiarato passato sulla sola presenza di test esistenti.
+- Controlli eseguiti: `pnpm format:check` PASS; `pnpm codex:validate` PASS (`17 routes`);
+  `pnpm manifest:update` PASS (`PROJECT_MANIFEST.json updated`); `pnpm manifest:check` PASS
+  (`PROJECT_MANIFEST.json is current`). Dopo il manifest, `pnpm format:check` e
+  `pnpm codex:validate` sono stati ripetuti e sono PASS.
+- `pnpm test:ui-ux` PASS (`4 passed`, `0 failed`, `0 skipped`) per la checklist richiesta dalla
+  guardia repository.
+- `git diff --check` PASS. Nessun test funzionale, browser o full-suite eseguito: non pertinente
+  alla fase documentale C4.0 e volutamente non usato per dichiarare PASS ai flussi operativi.
