@@ -23,6 +23,7 @@ test("la gestione conti crea, modifica e archivia senza overflow", async ({ page
     const actionCell = row.locator('td[data-label="Azioni"]');
     const actionCellBox = await actionCell.boundingBox();
     expect(actionCellBox).not.toBeNull();
+    await expect(row.locator('td[data-label="Conto"]')).toHaveCSS("border-bottom-style", "none");
     expect(rowBox?.height, "desktop account row height").toBeLessThan(180);
     for (const button of await actionCell.getByRole("button").all()) {
       await expect(button).toBeVisible();
