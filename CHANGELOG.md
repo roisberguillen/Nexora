@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Compattata la lista Conti: la colonna delle azioni usa una griglia desktop più densa per evitare
+  righe artificialmente alte, mantenendo leggibilità, reflow mobile e target touch accessibili.
+
 - Rifinita la lista Movimenti: righe più compatte e gerarchia visiva più pulita, mantenendo target
   touch accessibili. La modifica resta disponibile nel menu per le operazioni manuali; movimenti
   importati e trasferimenti restano protetti per preservare audit e collegamenti contabili.

@@ -17,6 +17,10 @@ test("la gestione conti crea, modifica e archivia senza overflow", async ({ page
   });
   await expect(table).toContainText("Portafoglio sintetico");
   await expect(table).toContainText("123,45");
+  if ((await page.evaluate(() => document.documentElement.clientWidth)) >= 768) {
+    const rowBox = await table.getByRole("row", { name: /Portafoglio sintetico/ }).boundingBox();
+    expect(rowBox?.height, "desktop account row height").toBeLessThan(180);
+  }
 
   await table.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Nome conto").fill("Contanti sintetici");
