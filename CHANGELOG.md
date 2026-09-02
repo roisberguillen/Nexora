@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Centrato il gruppo dei filtri rapidi nella vista mobile Movimenti, mantenendo il wrapping e
+  l’accessibilità dei pulsanti.
+
 - Aggiunto padding orizzontale coerente al contenuto dei Filtri movimenti, incluso il foglio mobile,
   mantenendo pulsanti e ricerca dentro i limiti del pannello.
 

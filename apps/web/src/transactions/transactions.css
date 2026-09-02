@@ -573,6 +573,7 @@
   .transaction-quick-filters {
     display: flex;
     grid-column: 1 / -1;
+    justify-content: center;
     max-width: 100%;
     overflow-x: auto;
     padding-block: 0.125rem 0.25rem;
