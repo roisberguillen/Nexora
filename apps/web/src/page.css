@@ -1206,6 +1206,10 @@
 }
 
 @media (min-width: 48.01rem) {
+  .accounts-table td:nth-child(5) {
+    text-align: center;
+  }
+
   .account-table .table-actions {
     display: grid;
     gap: 0.25rem;

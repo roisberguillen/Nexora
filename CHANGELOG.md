@@ -37,6 +37,8 @@
 - Ripristinata la larghezza completa delle celle Conti mobile, evitando il collasso dei valori
   alla sola larghezza del testo.
 
+- Centrato il badge di stato nella colonna Stato della tabella Conti desktop.
+
 - Abilitata la modifica controllata dei movimenti attivi importati, ricorrenti e di sistema,
   preservando origine e metadati di provenienza; trasferimenti collegati e movimenti riconciliati
   restano protetti.

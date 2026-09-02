@@ -6,7 +6,7 @@ Schermata: Conti / elenco conti
 Route: `#accounts`
 Flusso principale: consultazione dei conti e accesso alle azioni della riga
 Reviewer/fase: Codex / C3 follow-up
-Modifiche: griglia desktop della tabella Conti, colonne proporzionate, celle mobile a larghezza completa e valori allineati senza clipping, azioni centrate e non troncate, azioni mobile orizzontali, separatore inferiore continuo; regression E2E aggiornata
+Modifiche: griglia desktop della tabella Conti, colonne proporzionate, stato centrato, celle mobile a larghezza completa e valori allineati senza clipping, azioni centrate e non troncate, azioni mobile orizzontali, separatore inferiore continuo; regression E2E aggiornata
 Data: 2026-09-02
 Esito: PASS
 
