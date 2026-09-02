@@ -18,6 +18,10 @@
 
 ### Documentation
 
+- Rifinita la lista Movimenti: righe più compatte e gerarchia visiva più pulita, mantenendo target
+  touch accessibili. La modifica resta disponibile nel menu per le operazioni manuali; movimenti
+  importati e trasferimenti restano protetti per preservare audit e collegamenti contabili.
+
 - Corretta la griglia dei filtri Movimenti: i pulsanti rapidi e le azioni restano leggibili e non
   vengono più troncati nei layout stretti o nelle viste desktop affiancate.
 
