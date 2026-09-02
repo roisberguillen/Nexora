@@ -110,6 +110,7 @@ describe("Nexora app", () => {
     await user.click(screen.getByRole("button", { name: "Nuovo conto" }));
 
     expect(await screen.findByRole("heading", { name: "Crea un conto" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Nuova operazione" })).not.toBeInTheDocument();
     expect(window.location.hash).toBe("#accounts");
   });
 

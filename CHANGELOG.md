@@ -34,6 +34,9 @@
 - Corretto il clipping dei valori nella tabella Conti mobile: l’ellissi resta limitata ai nomi
   lunghi, senza nascondere tipo e saldi.
 
+- Corretto il flusso mobile dell’azione rapida “Nuovo conto”: il menu si chiude e viene mostrato
+  direttamente il riquadro “Crea un conto”.
+
 - Ripristinata la larghezza completa delle celle Conti mobile, evitando il collasso dei valori
   alla sola larghezza del testo.
 

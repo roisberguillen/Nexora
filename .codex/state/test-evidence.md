@@ -1102,5 +1102,8 @@ Keep only the latest relevant evidence per completed phase.
 
 - Integration: App quick-action test `12 passed`; “Nuovo conto” opens the account creation form
   and normalizes the URL to `#accounts`.
+- Chrome mobile: reproduced the prior stale-Dashboard behavior, then verified the fixed flow at
+  412x915; the create-account heading and “Nome conto” field are visible, the quick-action sheet
+  is closed, and the URL is `#accounts`.
 - E2E shell mobile: `1 passed`, `2 skipped` conditionally (offline/theme tests); no shell overflow.
 - Quality: build, typecheck, lint and Prettier PASS.

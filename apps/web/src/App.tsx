@@ -880,14 +880,14 @@ const quickActions: readonly QuickAction[] = [
     description: "Entrata, uscita o trasferimento",
     icon: "transactions",
     onSelect: () => {
-      window.location.hash = "#new-transaction";
+      navigateToHash("#new-transaction");
     },
   },
   {
     label: "Nuovo conto",
     icon: "accounts",
     onSelect: () => {
-      window.location.hash = "#accounts?create";
+      navigateToHash("#accounts?create");
     },
   },
   {
@@ -895,7 +895,7 @@ const quickActions: readonly QuickAction[] = [
     description: "Limite mensile di spesa",
     icon: "budget",
     onSelect: () => {
-      window.location.hash = "#budgets";
+      navigateToHash("#budgets");
     },
   },
   {
@@ -903,24 +903,29 @@ const quickActions: readonly QuickAction[] = [
     description: "Nota e obiettivo mensile",
     icon: "overview",
     onSelect: () => {
-      window.location.hash = "#journal";
+      navigateToHash("#journal");
     },
   },
   {
     label: "Nuovo prestito",
     icon: "accounts",
     onSelect: () => {
-      window.location.hash = "#loans";
+      navigateToHash("#loans");
     },
   },
   {
     label: "Nuovo investimento",
     icon: "overview",
     onSelect: () => {
-      window.location.hash = "#investments";
+      navigateToHash("#investments");
     },
   },
 ];
+
+function navigateToHash(hash: string) {
+  window.history.pushState(null, "", hash);
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+}
 
 function PersistenceState({
   diagnostics,
