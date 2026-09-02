@@ -508,6 +508,10 @@
     border-radius: 0;
   }
 
+  .transactions-page.is-standalone .account-editor-panel .account-form {
+    padding-inline: 1rem;
+  }
+
   .transactions-page:not(.is-standalone) .accounts-heading {
     align-items: center;
     flex-direction: row;

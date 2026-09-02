@@ -18,6 +18,9 @@
 
 ### Documentation
 
+- Rafforzato il padding diretto del form “Nuovo movimento” mobile, così i campi restano separati
+  anche quando l’editor viene aperto a tutta larghezza.
+
 - Aggiunto padding interno uniforme all’editor “Nuovo movimento” nella vista mobile, mantenendo
   l’editor a tutta larghezza senza far aderire i controlli ai bordi.
 
