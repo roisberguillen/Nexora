@@ -323,6 +323,11 @@
       "sha256": "ee510a5063a6c86acaa10285d542e11be25bcf098860f6cc268e4efd71f86575"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-03-c4-1-first-start-account-flow.md",
+      "size": 3384,
+      "sha256": "88e2e4f8e8ad280ecdadbc57feb9aca39fd79909c7fed2dbb3a777ed1f0db984"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -434,8 +439,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 8452,
-      "sha256": "937b761e6ca5199b7bc115468b1f8eaa98b7196aebf9bea001635e0604f31c78"
+      "size": 8739,
+      "sha256": "c36fe5ba98017a2611aa06551f43ce2293b62fa0acc8012b853d33c9b639869d"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -479,8 +484,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 469,
-      "sha256": "9de48c390281dfdcac6835e211cb34748cb6a6b645d60e6878cadb2c69317127"
+      "size": 541,
+      "sha256": "a01c1c88f49cb9b0b4243367b91e321ae90788abce0c9b7105e6cb079a5fe305"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -504,13 +509,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 7892,
-      "sha256": "a44269c17b14de956539c6a9735bc29d9c9705fb07dff7c6acba80bc64968ca4"
+      "size": 8033,
+      "sha256": "91577a76f7abce274c5a6c6c0822e813bb7feb59fb6500ee52d9a2b6843d8092"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 81913,
-      "sha256": "1e7b28e41254a2358288a284a096eabc929e9af9b7ea4661562443d83b79f293"
+      "size": 84444,
+      "sha256": "670464332b46b7a0697a02559c044965cc451671fabcbf80196ad17799f1011a"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1799,8 +1804,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 45477,
-      "sha256": "268917016761345fa25e1779cfd90e60406ae7ade666062e9b9b91441d918870"
+      "size": 45690,
+      "sha256": "22fefa049a7a02fee4f12628c99d28cda9b64a2aa488462f69e3713114307cfb"
     },
     {
       "path": "design/mockup/README.md",
@@ -3109,8 +3114,8 @@
     },
     {
       "path": "packages/ui/src/MobileBottomNavigation.tsx",
-      "size": 1922,
-      "sha256": "4c4efd4e26ae2f6049c5d16fe18f98b75b0b7edc8efeca81fb479f400a17ab70"
+      "size": 1994,
+      "sha256": "5348dc0d9127092e2a709aa360628e282be0f612eec2c4bf255690c22cb40b11"
     },
     {
       "path": "packages/ui/src/MobileHeader.tsx",
@@ -3150,7 +3155,7 @@
     {
       "path": "packages/ui/src/styles.css",
       "size": 20605,
-      "sha256": "91754cbd64a25ab5a99b25ba5bc34ee30f43695a9cece4e61e6040d08dca663a"
+      "sha256": "0e61313f70ba031b6a182edffff84e8fe2869f4df681fe4ba316d15206da19bc"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3326,6 +3331,11 @@
       "path": "test/e2e/c3-shell-audit.spec.ts",
       "size": 3095,
       "sha256": "5b6a719817caafed18d729fe067a481946f8f0a0b2c383a695c3baaa07b8cdee"
+    },
+    {
+      "path": "test/e2e/c4-first-start-account-flow.spec.ts",
+      "size": 9976,
+      "sha256": "4b81cc5f11c9929870bca57713e51cbddc49fd4b3e787732ba9ae2befdb01470"
     },
     {
       "path": "test/e2e/categories.spec.ts",

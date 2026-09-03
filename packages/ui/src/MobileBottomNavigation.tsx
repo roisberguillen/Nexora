@@ -4,12 +4,13 @@ import { NavIcon } from "./NavIcon";
 import type { NavigationRoute } from "./SidebarNavigation";
 
 const mobileItems: readonly {
-  readonly icon: "overview" | "transactions" | "budget" | "profile";
+  readonly icon: "overview" | "transactions" | "accounts" | "budget" | "profile";
   readonly label: string;
   readonly route: NavigationRoute;
 }[] = [
   { icon: "overview", label: "Home", route: "overview" },
   { icon: "transactions", label: "Movimenti", route: "transactions" },
+  { icon: "accounts", label: "Conti", route: "accounts" },
   { icon: "budget", label: "Analisi", route: "analytics" },
   { icon: "profile", label: "Profilo", route: "profile" },
 ];

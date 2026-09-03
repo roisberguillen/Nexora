@@ -1153,5 +1153,35 @@ Keep only the latest relevant evidence per completed phase.
   `pnpm codex:validate` sono stati ripetuti e sono PASS.
 - `pnpm test:ui-ux` PASS (`4 passed`, `0 failed`, `0 skipped`) per la checklist richiesta dalla
   guardia repository.
+
+## 12.5.C4.1 — Primo avvio, profilo, primo conto, persistenza e riapertura — 2026-09-03
+
+- Routing: `pnpm codex:route --task "12.5.C4.1 Primo avvio, profilo, primo conto, persistenza e
+  riapertura"` — `STANDARD`, rischio dati `low`, nessuno switch necessario.
+- Riproduzione iniziale: startup, profilo, conti e persistence smoke isolati erano verdi, ma il
+  percorso C4.1 non era ancora coperto end-to-end. La verifica a 320–768 px ha riprodotto un P1:
+  Conti non era raggiungibile dalla navigazione mobile perché la sidebar/menu era nascosta.
+- Correzione minima: aggiunta la voce `Conti` alla bottom navigation mobile e portata la griglia a
+  sei colonne; nessuna modifica a schema, dominio, migrazioni, palette, font o formato monetario.
+- Scelta conservativa: onboarding mantiene EUR, `it-IT`, `Europe/Rome` e mese civile; non sono
+  stati aggiunti selettori fittizi di valuta/locale né un nuovo wizard.
+- Nuovo test: `test/e2e/c4-first-start-account-flow.spec.ts`. Verifica percorso completo con stato
+  vuoto, profilo `Profilo C4.1 sintetico`, conto EUR `123,45`, Dashboard, Movimenti senza
+  transazioni implicite, reload, nuova pagina nello stesso context, service worker e riapertura
+  offline. Include IndexedDB isolato, negativi, doppio invio, axe e overflow.
+- Test dedicato: `18 passed`, `0 failed`, `0 skipped` iniziali su 320/375/390/768/1024/1440;
+  la prova zoom reale 200% è inclusa sui desktop 1024/1440. Dopo l'aggiunta della prova zoom il
+  conteggio finale del file dedicato è `20 passed`, `4 skipped`, `0 failed` (skip: zoom non desktop).
+- Test mirati richiesti: `37 passed`, `29 skipped`, `0 failed`; gli skip sono condizionati da
+  viewport/backend dei test esistenti e documentati nei test.
+- Full E2E: `368 passed`, `142 skipped`, `0 failed`; include i 20 casi C4.1 e smoke OPFS/IndexedDB
+  100.000 record passati. Full unit/integration: `620 passed`, `4 skipped`, `0 failed`.
+- Quality: `pnpm test:ui-ux` PASS (`4/4`); `pnpm quality:ui-ux` PASS; `pnpm verify` ripetuto
+  isolatamente PASS (format/lint/typecheck/unit/build). Il primo verify concorrente con full E2E
+  aveva avuto sei timeout di worker Vitest, registrati e non usati come esito finale.
+- Console/runtime: nessun `pageerror` o errore console rilevante nel test dedicato; axe PASS,
+  overflow assente e target fondamentali verificati dalle superfici interessate.
+- Esito: `FLOW_AUDIT_PASS`; P0/P1/P2 = `0/0/0`. C4.1 `COMPLETE`, C4.2 `NEXT`; C3 resta
+  congelata e C4.3–C4-F, C5, D, E, F e Fase 13 non sono state avviate.
 - `git diff --check` PASS. Nessun test funzionale, browser o full-suite eseguito: non pertinente
   alla fase documentale C4.0 e volutamente non usato per dichiarare PASS ai flussi operativi.

@@ -52,7 +52,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C3.21 | complete | Startup + Recovery `SCREEN_AUDIT_PASS / FROZEN`; loading, safe bootstrap, explicit archive recovery and responsive states verified |
 | 12.5.C3-F | complete — 2026-09-02 | `C3_FINAL_GATE_PASS`; pilot ledger reconciled, full unit/E2E and repository quality gates verified; C3.0–C3.21 matrix frozen |
 | 12.5.C4.0 | complete — 2026-09-02 | C4 real complete-flow framework and authoritative matrix registered; C4.1 next |
-| 12.5.C4.1 | next | first startup, profile, first account, persistence and reopen |
+| 12.5.C4.1 | complete — 2026-09-03 | `FLOW_AUDIT_PASS`; first startup, profile, first account, persistence, reopen and offline verified on OPFS/IndexedDB |
+| 12.5.C4.2 | next | complete income and expense cycle |
 | C4 | pending | real complete flows; only C4.0 preparatory documentation is complete |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
@@ -70,8 +71,8 @@ The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
 C3.14, C3.15, C3.16, C3.17, C3.18, C3.19, C3.20 and C3.21 are complete, while C4–F
 remain pending until their own evidence exists.
-Phase 13 must not be treated as next before the 12.5 release freeze. C4.0 is complete; C4.1 is
-the next task. C4.2–C4-F, C5, D, E, F and Phase 13 remain pending/not started.
+Phase 13 must not be treated as next before the 12.5 release freeze. C4.0 and C4.1 are complete;
+C4.2 is the next task. C4.3–C4-F, C5, D, E, F and Phase 13 remain pending/not started.
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not
 an approved implementation. The Phase 12.3 work was recovered selectively on

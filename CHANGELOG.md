@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-03
+
+- Completata C4.1 con verifica UI end-to-end del primo avvio, profilo, primo conto, persistenza,
+  nuova apertura e offline su OPFS e IndexedDB; resa disponibile la navigazione mobile verso Conti.
+
 ## 2026-09-02
 
 - Definito il framework documentale C4.0 per la verifica dei flussi reali completi e registrata

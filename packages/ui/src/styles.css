@@ -971,7 +971,7 @@ a {
     left: 0;
     display: grid;
     min-height: calc(4.75rem + env(safe-area-inset-bottom));
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: end;
     padding: 0.45rem 0.5rem max(0.45rem, env(safe-area-inset-bottom));
     border-top: 1px solid var(--color-outline);
