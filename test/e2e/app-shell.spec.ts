@@ -17,6 +17,12 @@ test("la shell è accessibile e non produce overflow", async ({ page }) => {
       "page",
     );
     const quickAction = page.getByRole("button", { name: "Nuova operazione" });
+    const navigationBox = await mobileNavigation.boundingBox();
+    const quickActionBox = await quickAction.boundingBox();
+    expect(navigationBox).not.toBeNull();
+    expect(quickActionBox).not.toBeNull();
+    expect(quickActionBox!.x + quickActionBox!.width).toBeLessThanOrEqual(viewport.width - 15);
+    expect(quickActionBox!.y + quickActionBox!.height).toBeLessThan(navigationBox!.y);
     await quickAction.click();
     await expect(page.getByRole("dialog", { name: "Nuova operazione" })).toBeVisible();
     await page.keyboard.press("Escape");

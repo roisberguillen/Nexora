@@ -8,6 +8,7 @@ import { MobileHeader } from "./MobileHeader";
 import { QuickActionSheet, type QuickAction } from "./QuickActionSheet";
 import { OfflineBanner } from "./OfflineBanner";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
+import { NavIcon } from "./NavIcon";
 
 interface AppShellProps extends PropsWithChildren {
   readonly activeRoute?: NavigationRoute;
@@ -127,11 +128,16 @@ export function AppShell({
         <main className="main-content" id="main-content" tabIndex={-1}>
           {children}
         </main>
-        <MobileBottomNavigation
-          activeRoute={activeRoute}
-          onQuickAction={() => setIsQuickActionsOpen(true)}
-          quickActionRef={quickActionTriggerRef}
-        />
+        <MobileBottomNavigation activeRoute={activeRoute} />
+        <button
+          aria-label="Nuova operazione"
+          className="mobile-quick-action"
+          onClick={() => setIsQuickActionsOpen(true)}
+          ref={quickActionTriggerRef}
+          type="button"
+        >
+          <NavIcon name="plus" />
+        </button>
       </div>
       {isQuickActionsOpen ? (
         <QuickActionSheet actions={quickActions} onClose={closeQuickActions} />

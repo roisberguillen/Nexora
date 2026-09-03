@@ -1,5 +1,17 @@
 # Test evidence
 
+## 12.5.C4.1 — Mobile quick action placement follow-up — PASS — 2026-09-03
+
+- Correzione UI: `Nuova operazione` è separata dal landmark della bottom navigation, ancorata sopra
+  il footer e allineata a destra; la griglia del footer usa cinque elementi e la safe area resta attiva.
+- Test mirati: `packages/ui/src/AppShell.test.tsx` `8 passed`; `test/e2e/app-shell.spec.ts` `9 passed`,
+  `9 skipped` intenzionali per test desktop-only; build e typecheck completi PASS.
+- E2E mobile verifica posizione sopra il footer, inset destro, apertura sheet, Escape e ritorno focus;
+  axe e controllo overflow inclusi.
+- Quality: `pnpm test:ui-ux` `4 passed`, lint PASS, manifest aggiornato e verificato dopo l’update.
+- Review: `.codex/reviews/ui-ux/2026-09-03-c4-1-quick-action-placement.md`; P0/P1/P2 = 0/0/0.
+- Esito: `PASS`; nessuna modifica a dati finanziari, persistenza o comportamento desktop.
+
 ## 12.5.C3.20 — Settings + Trash + Reset Mobile/Desktop audit — PASS — 2026-09-02
 
 - Settings: tema, dimensione testo, riduzione animazioni e retention Cestino sono preferenze reali,

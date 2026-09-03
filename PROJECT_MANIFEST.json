@@ -328,6 +328,11 @@
       "sha256": "88e2e4f8e8ad280ecdadbc57feb9aca39fd79909c7fed2dbb3a777ed1f0db984"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-03-c4-1-quick-action-placement.md",
+      "size": 1720,
+      "sha256": "ea928ac4ecc1e21566c548bccf6d84cb479e9b9090c05c0143fbf0ed1ab3d36e"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -514,8 +519,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 84444,
-      "sha256": "670464332b46b7a0697a02559c044965cc451671fabcbf80196ad17799f1011a"
+      "size": 85345,
+      "sha256": "4c4c50d3a9b503c52b64d3ee3cb15cb65bd9385e42feda10c5cc9171284ca999"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1804,8 +1809,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 45690,
-      "sha256": "22fefa049a7a02fee4f12628c99d28cda9b64a2aa488462f69e3713114307cfb"
+      "size": 45887,
+      "sha256": "78fd5abbc502a076836503c4d1ae7774d662d9a31d9ddbb4572d2b6f053608cf"
     },
     {
       "path": "design/mockup/README.md",
@@ -3064,8 +3069,8 @@
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
-      "size": 5138,
-      "sha256": "e01ac642860a5d1af03e68e0590015238e21b19da930232e9dd6a6f4aa7b260a"
+      "size": 5324,
+      "sha256": "75786439fd2bbf287259c5969e8b0a0dd88992ea6e0a677ddea345d1a5abcdf2"
     },
     {
       "path": "packages/ui/src/ErrorBoundary.test.tsx",
@@ -3114,8 +3119,8 @@
     },
     {
       "path": "packages/ui/src/MobileBottomNavigation.tsx",
-      "size": 1994,
-      "sha256": "5348dc0d9127092e2a709aa360628e282be0f612eec2c4bf255690c22cb40b11"
+      "size": 1578,
+      "sha256": "737781c025fcc44551b677f5f5812244a133548c59b0506a3d716121d9d657b9"
     },
     {
       "path": "packages/ui/src/MobileHeader.tsx",
@@ -3154,8 +3159,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20605,
-      "sha256": "0e61313f70ba031b6a182edffff84e8fe2869f4df681fe4ba316d15206da19bc"
+      "size": 20746,
+      "sha256": "973a241037a8bcdc31834f0cbc6a0d74eda6f7e8755aea3ea48d56953d79b380"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3279,8 +3284,8 @@
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
-      "size": 3577,
-      "sha256": "742cc12b2958411ef74ae81ec037ba90e80ffaeab7dff9cc276adf51fefef69d"
+      "size": 3969,
+      "sha256": "d020f7a665ef8ea577ccc3b5c262fbd3d3bf3b77d00f8be772df6ecb828f60fd"
     },
     {
       "path": "test/e2e/atomic-rollback.spec.ts",

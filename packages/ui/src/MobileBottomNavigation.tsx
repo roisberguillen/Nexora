@@ -1,5 +1,3 @@
-import type { RefObject } from "react";
-
 import { NavIcon } from "./NavIcon";
 import type { NavigationRoute } from "./SidebarNavigation";
 
@@ -15,15 +13,7 @@ const mobileItems: readonly {
   { icon: "profile", label: "Profilo", route: "profile" },
 ];
 
-export function MobileBottomNavigation({
-  activeRoute,
-  onQuickAction,
-  quickActionRef,
-}: {
-  readonly activeRoute: NavigationRoute;
-  readonly onQuickAction: () => void;
-  readonly quickActionRef?: RefObject<HTMLButtonElement | null>;
-}) {
+export function MobileBottomNavigation({ activeRoute }: { readonly activeRoute: NavigationRoute }) {
   return (
     <nav aria-label="Navigazione mobile" className="mobile-bottom-navigation">
       {mobileItems.slice(0, 2).map((item) => (
@@ -37,15 +27,6 @@ export function MobileBottomNavigation({
           <span>{item.label}</span>
         </a>
       ))}
-      <button
-        aria-label="Nuova operazione"
-        className="mobile-quick-action"
-        onClick={onQuickAction}
-        ref={quickActionRef}
-        type="button"
-      >
-        <NavIcon name="plus" />
-      </button>
       {mobileItems.slice(2).map((item) => (
         <a
           aria-current={activeRoute === item.route ? "page" : undefined}

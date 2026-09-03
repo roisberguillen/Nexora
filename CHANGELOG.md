@@ -2,6 +2,8 @@
 
 ## 2026-09-03
 
+- Separata la quick action mobile “Nuova operazione” dal footer: ora è ancorata appena sopra
+  la navigazione, allineata a destra e raggiungibile con il pollice senza alterare il flusso dati.
 - Completata C4.1 con verifica UI end-to-end del primo avvio, profilo, primo conto, persistenza,
   nuova apertura e offline su OPFS e IndexedDB; resa disponibile la navigazione mobile verso Conti.
 
