@@ -99,5 +99,12 @@ Esito: PASS
 ## Conclusione
 
 C4.2 è `FLOW_AUDIT_PASS / COMPLETE` sulla prova di fase. C4.0 e C4.1 restano complete, C3 resta
-congelata; C4.3 è il prossimo task. La failure del test storico C4.1 è registrata senza essere
-attribuita a C4.2 e senza modificarne lo scope.
+congelata; C4.3 è il prossimo task. La failure storica C4.1 è stata preservata e risolta nel solo
+harness E2E tramite C4.2-R, senza modificare la UI o lo scope finanziario C4.2.
+
+## Riconciliazione C4.2-R — 2026-09-03
+
+- Full E2E iniziale preservato: `376 passed`, `156 skipped`, `2 failed` sui test C4.1 zoom 200%.
+- Dopo la correzione del landmark-based navigation helper: `378 passed`, `156 skipped`, `0 failed`.
+- C4.2 dedicato resta verde: `8 passed`, `10 skipped`, `0 failed`; nessun cambiamento a entrate,
+  spese, saldi, Dashboard, Analisi, OPFS, IndexedDB o offline.

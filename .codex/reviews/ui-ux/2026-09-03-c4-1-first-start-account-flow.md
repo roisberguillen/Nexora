@@ -64,3 +64,9 @@ Nessuno.
 ## Conclusione
 
 `FLOW_AUDIT_PASS`; C4.1 è `COMPLETE`, C4.2 è il prossimo task. C3 resta `FROZEN`.
+
+## Riconciliazione C4.2-R — 2026-09-03
+
+La regressione zoom inizialmente riprodotta nel gate completo è stata risolta nel solo helper E2E;
+il test dedicato passa `2/2` su `chromium-1024` e `chromium-1440`, e il file C4.1 passa `20 passed`,
+`4 skipped`, `0 failed`. La UI non è stata modificata.

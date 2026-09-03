@@ -191,28 +191,36 @@ async function navigateToSurface(
   page: Page,
   surface: "accounts" | "overview" | "profile" | "transactions",
 ): Promise<void> {
-  const width = page.viewportSize()?.width ?? 0;
-  const labels = {
-    accounts: "Conti",
-    overview: width <= 768 ? "Home" : "Panoramica",
-    profile: "Profilo",
-    transactions: "Movimenti",
-  } as const;
-  if (width <= 768) {
+  const mobileNavigation = page.getByRole("navigation", { name: "Navigazione mobile" });
+  const desktopNavigation = page.getByRole("navigation", { name: "Navigazione principale" });
+  const isMobileNavigationVisible = await mobileNavigation.isVisible();
+  const isDesktopNavigationVisible = await desktopNavigation.isVisible();
+
+  if (isMobileNavigationVisible) {
     if (surface === "profile") {
       await page.getByRole("link", { name: "Apri profilo" }).click();
       return;
     }
-    await page
-      .getByRole("navigation", { name: "Navigazione mobile" })
-      .getByRole("link", { name: labels[surface], exact: true })
-      .click();
+    const labels = {
+      accounts: "Conti",
+      overview: "Home",
+      profile: "Profilo",
+      transactions: "Movimenti",
+    } as const;
+    await mobileNavigation.getByRole("link", { name: labels[surface], exact: true }).click();
     return;
   }
-  await page
-    .getByRole("navigation", { name: "Navigazione principale" })
-    .getByRole("link", { name: labels[surface], exact: true })
-    .click();
+  if (isDesktopNavigationVisible) {
+    const labels = {
+      accounts: "Conti",
+      overview: "Panoramica",
+      profile: "Profilo",
+      transactions: "Movimenti",
+    } as const;
+    await desktopNavigation.getByRole("link", { name: labels[surface], exact: true }).click();
+    return;
+  }
+  throw new Error("Nessuna navigazione visibile: impossibile raggiungere la superficie richiesta.");
 }
 
 async function expectNoOverflowAndA11y(page: Page): Promise<void> {

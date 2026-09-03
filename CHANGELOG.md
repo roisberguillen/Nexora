@@ -2,6 +2,8 @@
 
 ## 2026-09-03
 
+- Ripristinato il gate E2E dello zoom reale C4.1: la navigazione ora segue il landmark realmente
+  visibile dopo il ridimensionamento CDP; full E2E verde con `378 passed`, `156 skipped`, `0 failed`.
 - Completata C4.2 con il ciclo reale di entrata, due spese, dettaglio, ricerca, filtri, modifica,
   annullamento, riconciliazione Conti/Dashboard/Analisi, reload/reopen e prova offline IndexedDB;
   corretto anche lo stato `Contabilizzato` nel dettaglio e il ritorno del focus.

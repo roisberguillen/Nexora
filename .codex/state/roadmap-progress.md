@@ -53,7 +53,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C3-F | complete — 2026-09-02 | `C3_FINAL_GATE_PASS`; pilot ledger reconciled, full unit/E2E and repository quality gates verified; C3.0–C3.21 matrix frozen |
 | 12.5.C4.0 | complete — 2026-09-02 | C4 real complete-flow framework and authoritative matrix registered; C4.1 next |
 | 12.5.C4.1 | complete — 2026-09-03 | `FLOW_AUDIT_PASS`; first startup, profile, first account, persistence, reopen and offline verified on OPFS/IndexedDB |
-| 12.5.C4.2 | complete — 2026-09-03 | `FLOW_AUDIT_PASS`; complete income/expense cycle, reconciliation, persistence and offline verified |
+| 12.5.C4.2 | complete — 2026-09-03 | `FLOW_AUDIT_PASS`; complete income/expense cycle, reconciliation, persistence, offline and repaired C4.1 zoom gate verified |
+| 12.5.C4.2-R | complete — 2026-09-03 | E2E zoom navigation regression repaired in the test harness; full E2E green |
 | 12.5.C4.3 | next | complete transfer cycle |
 | C4 | pending — C4.0, C4.1 and C4.2 complete; C4.3 next | real complete flows; remaining C4 slices are not started |
 | C5 | pending | cross-surface consistency |

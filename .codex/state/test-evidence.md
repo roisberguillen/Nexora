@@ -1221,4 +1221,16 @@ Keep only the latest relevant evidence per completed phase.
 - Console/runtime: nessun `pageerror` o errore console rilevante nel test dedicato; axe PASS,
   overflow assente e target fondamentali verificati dalle superfici interessate.
 - Esito: `FLOW_AUDIT_PASS`; P0/P1/P2 = `0/0/0`. C4.1 `COMPLETE`, C4.2 `NEXT`; C3 resta
-  congelata e C4.3–C4-F, C5, D, E, F e Fase 13 non sono state avviate.
+    congelata e C4.3–C4-F, C5, D, E, F e Fase 13 non sono state avviate.
+
+## 12.5.C4.2-R — Ripristino gate E2E regressione zoom C4.1 — 2026-09-03
+
+- Routing: `pnpm codex:route --task "12.5.C4.2-R Ripristino gate E2E regressione zoom C4.1"` —
+  `localized_bug`, profilo `STANDARD`, rischio dati `low`, nessuno switch necessario.
+- Riproduzione obbligatoria prima della modifica: `pnpm exec playwright test test/e2e/c4-first-start-account-flow.spec.ts --project=chromium-1024 --project=chromium-1440 --grep "zoom browser reale"` — `0 passed`, `2 failed`; locator fallito `Navigazione principale → Profilo`, timeout 30s. Snapshot: `Navigazione mobile` visibile e sidebar desktop assente. `page.viewportSize()` configurato 1024/1440; viewport CSS renderizzato atteso 512/720 dopo CDP.
+- Correzione confinata a `test/e2e/c4-first-start-account-flow.spec.ts`: `navigateToSurface()` usa la visibilità reale dei landmark accessibili e non `page.viewportSize()`; errore esplicito se nessun landmark è visibile. Nessuna modifica UI/applicativa, zoom CDP e copertura non-desktop preservati.
+- Verifica zoom dopo correzione: `2 passed`, `0 failed` su `chromium-1024` e `chromium-1440`.
+- C4.1 dedicato: `20 passed`, `4 skipped`, `0 failed`; C4.2 dedicato: `8 passed`, `10 skipped`, `0 failed`.
+- `pnpm verify`: `620 passed`, `4 skipped`, format, lint, typecheck e build PASS. `pnpm test:ui-ux`: `4 passed`, `0 skipped`; `pnpm quality:ui-ux`: PASS.
+- Full E2E: cronologia preservata `376 passed`, `156 skipped`, `2 failed`; dopo C4.2-R `378 passed`, `156 skipped`, `0 failed` su 534 casi. OPFS/IndexedDB 100k, console, axe e overflow pertinenti PASS.
+- Manifest: `pnpm manifest:update` eseguito; restano da ripetere i controlli post-update prescritti prima del commit.
