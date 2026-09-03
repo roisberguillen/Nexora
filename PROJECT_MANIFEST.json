@@ -333,6 +333,11 @@
       "sha256": "ea928ac4ecc1e21566c548bccf6d84cb479e9b9090c05c0143fbf0ed1ab3d36e"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-03-c4-2-income-expense-flow.md",
+      "size": 6069,
+      "sha256": "5e2cd7d262cf04693b546d2ebd48a0d0d411eba68fc611272fb89cc887dead5c"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -444,8 +449,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 8739,
-      "sha256": "c36fe5ba98017a2611aa06551f43ce2293b62fa0acc8012b853d33c9b639869d"
+      "size": 9054,
+      "sha256": "b09e93f1052096615a0dad18ebfc59b7243f6d59f39c6971a659d309372463b4"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -489,8 +494,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 541,
-      "sha256": "a01c1c88f49cb9b0b4243367b91e321ae90788abce0c9b7105e6cb079a5fe305"
+      "size": 505,
+      "sha256": "ba4a2c44466e076ff6bdeb3cf90a1cb3b4159c8fdb9fe613051f419a9fbdc5e2"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -514,13 +519,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 8033,
-      "sha256": "91577a76f7abce274c5a6c6c0822e813bb7feb59fb6500ee52d9a2b6843d8092"
+      "size": 8202,
+      "sha256": "abc3eb3a190a7f2ba1995b65eebe713fb58d3b81aa49d9c25aa361ef8ca462dd"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 85345,
-      "sha256": "4c4c50d3a9b503c52b64d3ee3cb15cb65bd9385e42feda10c5cc9171284ca999"
+      "size": 87307,
+      "sha256": "01a7e02a222204136e6f1df218b362b140249fa77b23ede94cd35fac49e127a0"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1734,8 +1739,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionDetailsPanel.tsx",
-      "size": 3293,
-      "sha256": "b154499adacb07c9b1160038b778b158cc07da20b055b6c9f8f8cff916d6dc54"
+      "size": 3234,
+      "sha256": "1c07b29fc23ff932e0339b6d56d459fb48dcaa73b274e3e4832a9ed3aec91933"
     },
     {
       "path": "apps/web/src/transactions/transactionFilters.test.ts",
@@ -1769,8 +1774,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",
-      "size": 49007,
-      "sha256": "3f85f0611ec9425ffb613c5f6966dedeb74edeeb2ebb3cf56f3388744cfa2e6b"
+      "size": 49081,
+      "sha256": "7b42f3e6a59c869134108cc726b6a41b4099914286c932bd579a9d92638eb21b"
     },
     {
       "path": "apps/web/src/transactions/trashRetention.test.ts",
@@ -1809,8 +1814,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 45887,
-      "sha256": "78fd5abbc502a076836503c4d1ae7774d662d9a31d9ddbb4572d2b6f053608cf"
+      "size": 46164,
+      "sha256": "87e6b130ea29900c37951e8624b04f8def0c3218a1c0f0000df138d02c182123"
     },
     {
       "path": "design/mockup/README.md",
@@ -3341,6 +3346,11 @@
       "path": "test/e2e/c4-first-start-account-flow.spec.ts",
       "size": 9976,
       "sha256": "4b81cc5f11c9929870bca57713e51cbddc49fd4b3e787732ba9ae2befdb01470"
+    },
+    {
+      "path": "test/e2e/c4-income-expense-flow.spec.ts",
+      "size": 15330,
+      "sha256": "6f2844cb8b99e2913e65f39e6c619e1bfd8be5cbebc28239c21e58e2ff83a24e"
     },
     {
       "path": "test/e2e/categories.spec.ts",

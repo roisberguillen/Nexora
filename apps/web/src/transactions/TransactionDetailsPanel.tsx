@@ -47,9 +47,6 @@ export function TransactionDetailsPanel({ item, onClose }: TransactionDetailsPan
         showPositiveSign={!item.isTransfer && item.amount.amountMinor > 0n}
         tone={tone}
       />
-      {item.status === "expected" || item.status === "cancelled" ? (
-        <p className="transaction-status">{item.statusLabel}</p>
-      ) : null}
       {item.isTransfer ? (
         <section>
           <h3>Trasferimento</h3>
@@ -68,6 +65,7 @@ export function TransactionDetailsPanel({ item, onClose }: TransactionDetailsPan
         <Detail label="Controparte" value={item.payee} />
         <Detail label="Descrizione" value={item.description} />
       </dl>
+      {item.statusLabel ? <p className="transaction-status">{item.statusLabel}</p> : null}
     </aside>
   );
 }

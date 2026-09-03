@@ -1,5 +1,30 @@
 # Test evidence
 
+## 12.5.C4.2 — Ciclo completo di entrate e spese — FLOW_AUDIT_PASS — 2026-09-03
+
+- Routing: `pnpm codex:route --task "12.5.C4.2 Ciclo completo di entrate e spese"` — profilo
+  `STANDARD`, rischio dati `low`, nessuno switch necessario; stato iniziale C4.0/C4.1 complete,
+  C4.2 next, C3 frozen.
+- Riconciliazione UI sintetica: conto `500,00 €`; dopo entrata `1.000,00 €` e spese `250,00 €`/
+  `50,00 €`: saldo `1.200,00 €`, entrate `1.000,00 €`, uscite `300,00 €`, netto `700,00 €`.
+  Dopo modifica a `200,00 €`: `1.250,00 / 1.000,00 / 250,00 / 750,00 €`. Dopo annullamento della
+  seconda spesa: `1.300,00 / 1.000,00 / 200,00 / 800,00 €`; valori compatibili in Movimenti,
+  Conti, Dashboard e Analisi.
+- `test/e2e/c4-income-expense-flow.spec.ts`: `8 passed`, `10 skipped`, `0 failed`; sei viewport,
+  dettaglio, ricerca/filtri, modifica con classificazione preservata, annullamento, reload/reopen,
+  OPFS principale, IndexedDB offline isolato, axe, overflow e console inclusi.
+- Test correlati: E2E `103 passed`, `5 skipped`, `0 failed`; unit mirati `40 passed`, `0 failed`.
+  `pnpm verify`: `620 passed`, `4 skipped`; format/lint/typecheck/build PASS.
+- Full E2E: `376 passed`, `156 skipped`, `2 failed`; i due failure sono il test storico C4.1 zoom
+  200% su 1024/1440, locator desktop Profilo dopo resize CSS mobile, ripetuti isolatamente e fuori
+  dal flusso C4.2. Nessun failure C4.2; non occultato e non modificato fuori scope.
+- P1 risolti: dettaglio senza stato `Contabilizzato`; focus del dettaglio perso prima del rerender.
+  Correzioni minime in `TransactionDetailsPanel.tsx` e `TransactionsPage.tsx`, senza schema/dominio.
+- Riconciliazione documentale: spostata la frase sul mancato test funzionale nella sezione C4.0;
+  aggiornata la riga generale C4 e lo stato C4.2 corrente.
+- Review: `.codex/reviews/ui-ux/2026-09-03-c4-2-income-expense-flow.md`; P0/P1/P2 = `0/0/0`.
+- Esito: `FLOW_AUDIT_PASS`; C4.2 `COMPLETE`, C4.3 `NEXT`, C3 congelata.
+
 ## 12.5.C4.1 — Mobile quick action placement follow-up — PASS — 2026-09-03
 
 - Correzione UI: `Nuova operazione` è separata dal landmark della bottom navigation, ancorata sopra
@@ -1165,6 +1190,8 @@ Keep only the latest relevant evidence per completed phase.
   `pnpm codex:validate` sono stati ripetuti e sono PASS.
 - `pnpm test:ui-ux` PASS (`4 passed`, `0 failed`, `0 skipped`) per la checklist richiesta dalla
   guardia repository.
+- Nessun test funzionale, browser o full-suite eseguito: non pertinente alla fase documentale C4.0
+  e volutamente non usato per dichiarare PASS ai flussi operativi.
 
 ## 12.5.C4.1 — Primo avvio, profilo, primo conto, persistenza e riapertura — 2026-09-03
 
@@ -1195,5 +1222,3 @@ Keep only the latest relevant evidence per completed phase.
   overflow assente e target fondamentali verificati dalle superfici interessate.
 - Esito: `FLOW_AUDIT_PASS`; P0/P1/P2 = `0/0/0`. C4.1 `COMPLETE`, C4.2 `NEXT`; C3 resta
   congelata e C4.3–C4-F, C5, D, E, F e Fase 13 non sono state avviate.
-- `git diff --check` PASS. Nessun test funzionale, browser o full-suite eseguito: non pertinente
-  alla fase documentale C4.0 e volutamente non usato per dichiarare PASS ai flussi operativi.

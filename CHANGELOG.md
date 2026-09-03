@@ -2,6 +2,9 @@
 
 ## 2026-09-03
 
+- Completata C4.2 con il ciclo reale di entrata, due spese, dettaglio, ricerca, filtri, modifica,
+  annullamento, riconciliazione Conti/Dashboard/Analisi, reload/reopen e prova offline IndexedDB;
+  corretto anche lo stato `Contabilizzato` nel dettaglio e il ritorno del focus.
 - Separata la quick action mobile “Nuova operazione” dal footer: ora è ancorata appena sopra
   la navigazione, allineata a destra e raggiungibile con il pollice senza alterare il flusso dati.
 - Completata C4.1 con verifica UI end-to-end del primo avvio, profilo, primo conto, persistenza,

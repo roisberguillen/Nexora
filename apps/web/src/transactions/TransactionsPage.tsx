@@ -759,8 +759,9 @@ export function TransactionsPage({
                 <TransactionDetailsPanel
                   item={selectedTransaction}
                   onClose={() => {
-                    detailsTrigger?.focus();
+                    const trigger = detailsTrigger;
                     setSelectedTransactionId(null);
+                    requestAnimationFrame(() => trigger?.focus());
                   }}
                 />
               )}
