@@ -1,10 +1,10 @@
 # Current task
 
-- Task: 12.5.C4.2-R — Ripristino del gate E2E dopo la regressione zoom C4.1
+- Task: 12.5.C4.3 — Flusso completo dei trasferimenti tra conti
 - Roadmap phase: Phase 12.5
-- Status: `FLOW_AUDIT_PASS / COMPLETE` — C4.2-R ha ripristinato il gate zoom C4.1; C4.1/C4.2
-  restano verificate e C3 resta `C3_FINAL_GATE_PASS` e congelata — 2026-09-03.
-- Evidence: `test/e2e/c4-first-start-account-flow.spec.ts`;
-  `.codex/reviews/ui-ux/2026-09-03-c4-2-r-zoom-gate-repair.md`;
+- Status: `FLOW_AUDIT_PASS / COMPLETE` — trasferimenti tra conti, annullamento atomico,
+  persistenza, offline IndexedDB, report neutrali e zoom reale 200% verificati — 2026-09-04.
+- Evidence: `test/e2e/c4-transfer-flow.spec.ts`;
+  `.codex/reviews/ui-ux/2026-09-04-c4-3-transfer-flow.md`;
   `.codex/state/test-evidence.md`.
-- Next task: `12.5.C4.3` — Ciclo completo dei trasferimenti.
+- Next task: `12.5.C4.4` — Categoria/tag → movimento → ricerca → diario.

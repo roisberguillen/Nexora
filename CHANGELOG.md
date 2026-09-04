@@ -12,6 +12,11 @@
 - Completata C4.1 con verifica UI end-to-end del primo avvio, profilo, primo conto, persistenza,
   nuova apertura e offline su OPFS e IndexedDB; resa disponibile la navigazione mobile verso Conti.
 
+## 2026-09-04
+
+- Completata C4.3 con trasferimenti atomici tra conti, annullamento senza alterare entrate/spese,
+  persistenza dopo reload/reopen, rilettura offline IndexedDB, report neutrali e verifica zoom 200%.
+
 ## 2026-09-02
 
 - Definito il framework documentale C4.0 per la verifica dei flussi reali completi e registrata

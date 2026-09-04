@@ -343,6 +343,11 @@
       "sha256": "07e4e80de09b8902ae1b7f7c17e60e4411693c73a11edeb2b80c0c3ee1271753"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-04-c4-3-transfer-flow.md",
+      "size": 2024,
+      "sha256": "68fd591e8a29037660ca1cd3417f4eb165a7c8344f039c5baaddb5ddfba8c8ec"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -454,8 +459,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 9107,
-      "sha256": "e10eed309ee15074de18a2149fa85cae20e8121873802c7d4d10d3cb30e141c5"
+      "size": 9344,
+      "sha256": "d413dc986db76cfe3263159d72195d3dddd08989e849dcc9ec752743e17d1573"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -499,8 +504,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 520,
-      "sha256": "0e3f2f46283c5f7afe7335e922322a4d73ba7852abb8e2460a850a657c70f69d"
+      "size": 519,
+      "sha256": "ce8308ebfd41c08af725f5edc38850e23f949c74d7c5886bd5a4ff1c25a57c48"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -524,18 +529,23 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 8347,
-      "sha256": "dee7c4d41c5e6fdb1b1a24c782703dca25f5f40e4d268fff025693421b791c1c"
+      "size": 8459,
+      "sha256": "eac04ffc92070a608739c2abe0578f4e021f64adb2fac9e620508f7a000db6f0"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 89004,
-      "sha256": "69cf649a63196ce7b46b08d86b7410cc4d8be563245a452e6c86d1fa1940f4a0"
+      "size": 90923,
+      "sha256": "92e9b1ed1bf500565204fb9999612ffd05ad788763885c91ce350b858dc28c73"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
       "size": 4832,
       "sha256": "7041d598df37b89213eddf38ac897092de7243c27534922f8df8325d6878ad65"
+    },
+    {
+      "path": ".codex/state/ui-ux-review.md",
+      "size": 314,
+      "sha256": "fc265f506af4a9c564027c0d0795908967c038dc9cb152428ee937822c96f454"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1819,8 +1829,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 46363,
-      "sha256": "48ea93aacded492ebbd585217a3f6ebf79b98ce4f7d889ff2759f8713f1aa1bd"
+      "size": 46578,
+      "sha256": "23251fb51f13cc63fed9f2b30a6e96c4adcef30b84d6747d879c0b2e7d518c25"
     },
     {
       "path": "design/mockup/README.md",
@@ -3356,6 +3366,11 @@
       "path": "test/e2e/c4-income-expense-flow.spec.ts",
       "size": 15330,
       "sha256": "6f2844cb8b99e2913e65f39e6c619e1bfd8be5cbebc28239c21e58e2ff83a24e"
+    },
+    {
+      "path": "test/e2e/c4-transfer-flow.spec.ts",
+      "size": 16029,
+      "sha256": "c5d1716f7d36ee59c809665240cadd51cb3dd0c6bf553c55c0e1506e8de2d536"
     },
     {
       "path": "test/e2e/categories.spec.ts",

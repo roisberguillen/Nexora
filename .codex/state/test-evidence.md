@@ -1234,3 +1234,26 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm verify`: `620 passed`, `4 skipped`, format, lint, typecheck e build PASS. `pnpm test:ui-ux`: `4 passed`, `0 skipped`; `pnpm quality:ui-ux`: PASS.
 - Full E2E: cronologia preservata `376 passed`, `156 skipped`, `2 failed`; dopo C4.2-R `378 passed`, `156 skipped`, `0 failed` su 534 casi. OPFS/IndexedDB 100k, console, axe e overflow pertinenti PASS.
 - Manifest: `pnpm manifest:update` eseguito; restano da ripetere i controlli post-update prescritti prima del commit.
+
+## 12.5.C4.3 — Flusso completo dei trasferimenti tra conti — 2026-09-04
+
+- Routing: `pnpm codex:route --task "12.5.C4.3 Flusso completo dei trasferimenti tra conti"` —
+  `localized_bug`, profilo `STANDARD`, rischio dati `low`, nessuno switch necessario. Gate C4.2-R
+  verificato prima del lavoro: `2 passed`, `4 skipped`, `0 failed` sullo zoom C4.1.
+- Nuovo test: `test/e2e/c4-transfer-flow.spec.ts`; nessun codice applicativo, dominio o database
+  modificato. Il test copre sei profili (320/375/390/768/1024/1440), con CDP 200% sui due desktop,
+  fixture EUR, budget controllato, entrata 500 e spesa 100.
+- Riconciliazione: baseline source/destination `1.400,00 / 200,00`, totale `1.600,00`, entrate
+  `500,00`, spese `100,00`, netto `400,00`; trasferimento 300 porta a `1.100,00 / 500,00` senza
+  variazioni a report o budget; annullamento ripristina `1.400,00 / 200,00`; nuovo 250 porta a
+  `1.150,00 / 450,00`. Il trasferimento resta una singola riga UI e le due gambe collegate sono
+  verificate dai test `transactionCommands`/`Transfer` e dalle atomicity tests dei repository.
+- Suite dedicata C4.3: `8 passed`, `10 skipped`, `0 failed`; gli skip sono intenzionali per offline
+  IndexedDB e negativi eseguiti sui profili dedicati. Offline IndexedDB crea e rilegge il trasferimento;
+  axe, overflow e console/runtime errors passano nel flusso principale.
+- Test mirati: `transactionCommands.test.ts` + `Transfer.test.ts` — `9 passed`, `0 failed`.
+- Regressioni: C4.1 zoom `2 passed`, `4 skipped`, `0 failed`. La riesecuzione completa C4.2 ha avuto
+  un conflitto transitorio di porta 4173 e un locator legacy fallito a 390 px dopo reopen; non è stato
+  usato per dichiarare verde C4.3 né ha modificato il codice C4.2. Il gate C4.2-R richiesto resta verde.
+- Review UI/UX: `.codex/reviews/ui-ux/2026-09-04-c4-3-transfer-flow.md`; stato aggiornato in
+  `.codex/state/ui-ux-review.md`; P0/P1/P2 = `0/0/0`.
