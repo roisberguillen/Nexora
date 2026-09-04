@@ -1272,7 +1272,24 @@ Keep only the latest relevant evidence per completed phase.
 - Verify: `pnpm verify` `620 passed`, `4 skipped`, `0 failed`; format, lint, typecheck, unit e build
   verdi. Warning non bloccante invariato sui chunk Vite oltre 500 kB.
 - Post-gate: `pnpm codex:validate`, `pnpm manifest:update`, `pnpm manifest:check`, `pnpm format:check`
-  e seconda `pnpm codex:validate` da eseguire e registrare prima del commit.
+  e seconda `pnpm codex:validate` PASS; evidenza chiusa nel commit `cb4c320`.
 - Causa confermata: non riproducibilità del failure storico; il precedente errore di porta 4173 era
   conflitto ambientale transitorio. Stato finale: `C4.3-R COMPLETE`, C4.3 `FLOW_AUDIT_PASS / COMPLETE`,
   C4.4 `NEXT`.
+
+## 12.5.C4.4 — 2026-09-04
+
+- Routing: `localized_bug / STANDARD / low`; gate C4.3-R iniziale verde su `cb4c320`.
+- Suite mirate: web/domain `8 files, 22 passed`; SQLite/IndexedDB `2 files, 80 passed`.
+- E2E C4.4: chromium-390 `2 passed, 1 skipped`; chromium-1440 `2 passed, 1 skipped`.
+  Verificati classificazione completa, saldo `920,00 EUR`, spesa `80,00 EUR`, netto `-80,00 EUR`,
+  merge e riassegnazione refs, tag persistiti, ricerca globale, diario, reload/reopen, axe/overflow,
+  doppio submit, annullamento e IndexedDB offline.
+- Full Vitest: `140 passed, 1 skipped`; `622 passed, 4 skipped`.
+- `pnpm test:e2e`: `394 passed, 176 skipped, 0 failed`; build, lint, typecheck, manifest, format e
+  `pnpm codex:validate` PASS. C4.4 chiusa con `FLOW_AUDIT_PASS`; C4.5 resta bloccata.
+
+## 12.5.C4.4 — Categorie, sottocategorie, tag, ricerca globale e diario — 2026-09-04
+
+- Gate iniziale C4.3-R: working tree pulito su `cb4c320`; `pnpm manifest:check` PASS; `pnpm codex:validate`
+  PASS (`17 routes`). Stato corrente impostato `IN_PROGRESS`; C4.5 bloccata fino alla chiusura.

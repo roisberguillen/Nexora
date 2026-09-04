@@ -742,3 +742,16 @@
 - Aggiunto requisito prioritario di migrazione Money Manager XLSX.
 - Integrato il mockup ufficiale Nexora con immagine, prototipo HTML e design system.
 - Aggiunte istruzioni, skill e prompt Codex per trasformare il mockup in UI responsive e accessibile.
+
+## 12.5.C4.4 — Categorie, sottocategorie, tag, ricerca globale e diario — 2026-09-04
+
+- Implementata la classificazione completa con categoria padre/figlio, tag persistiti nel dettaglio
+  movimento, ricerca per descrizione, controparte, categoria, tag e conto, e diario mensile con
+  modifica idempotente e controllo 4/5. I duplicati di categoria sono rifiutati senza scritture
+  parziali in InMemory, SQLite e IndexedDB.
+- Nuovo E2E `test/e2e/c4-classification-search-journal-flow.spec.ts`: ciclo finanziario `1.000,00`
+  EUR → `920,00` EUR, spesa `80,00` EUR, netto `-80,00` EUR; merge categoria/tag, archiviazione e
+  riattivazione, ricerca globale, dialoghi di annullamento, reload/reopen e scenario IndexedDB offline.
+- Suite mirate: web/domain `22 passed`; repository SQLite/IndexedDB `80 passed`. E2E C4.4: profili
+  chromium-390 e chromium-1440 `2 passed / 1 skipped` ciascuno. Suite completa Vitest: `622 passed`,
+  `4 skipped`; lint, typecheck e build verdi.

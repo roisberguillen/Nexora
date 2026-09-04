@@ -24,6 +24,21 @@ export function validateCategoryHierarchy(categories: readonly Category[]): void
   }
 }
 
+/** Prevents ambiguous category selection within the same hierarchy level. */
+export function validateCategoryUniqueness(categories: readonly Category[]): void {
+  const seen = new Set<string>();
+  for (const category of categories) {
+    const normalizedName = category.name.trim().toLocaleLowerCase("it-IT");
+    const key = `${category.parentId ?? "root"}:${normalizedName}`;
+    if (seen.has(key))
+      throw new DomainError(
+        "duplicate_entity",
+        "Category names must be unique within the same parent.",
+      );
+    seen.add(key);
+  }
+}
+
 export function parentAcceptsChildScope(
   parentScope: CategoryKindScope,
   childScope: CategoryKindScope,

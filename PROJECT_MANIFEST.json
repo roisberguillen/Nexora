@@ -353,6 +353,11 @@
       "sha256": "68fd591e8a29037660ca1cd3417f4eb165a7c8344f039c5baaddb5ddfba8c8ec"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-04-c4-4-classification-search-journal-flow.md",
+      "size": 2373,
+      "sha256": "73c3087fcedc854ca4cd3a2c149dc2fa1b6ae28ef0552e2faf62bb5607a041bb"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -509,8 +514,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 461,
-      "sha256": "f83db12996db0dbbd4a6d7f343fbe6046ccda47df4aabcfa8d5d9680ed1708f9"
+      "size": 504,
+      "sha256": "54133646bb3485496385d6a56e77fe8f0786dea9165b3f877620cb432ab27257"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -534,13 +539,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 8611,
-      "sha256": "1224122af789b9ca40c635e8c844e755281df518ab6f3fe52e201ba2b3d7d896"
+      "size": 8740,
+      "sha256": "79ea8a594b7b0901f6687ecba5de8bb2515dd0772b4aff57650cac40d021a8f5"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 92629,
-      "sha256": "884faa6a68aaa92661d436ff41e4987428028fdb6e435b815034846b1bd4609d"
+      "size": 93714,
+      "sha256": "34fdca3e10a35801d648914f8682b3f05e5eb6c7a28e0d5ce2100b2a991499c1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1054,8 +1059,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 41524,
-      "sha256": "084d66790025e9458d8269eb0a4406b6f8f1b4a636404c2dc3ca33dea11e4eb5"
+      "size": 41714,
+      "sha256": "16f9c67ac42b6af68969429663081e21703c9a789a0f3984b9c6f16d51eb6ac6"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -1064,8 +1069,8 @@
     },
     {
       "path": "apps/web/src/appModels.ts",
-      "size": 3446,
-      "sha256": "9b4661d0016d10d10f26d419f140c15c6cafb7427e03ac0c8eacee6eb1559e99"
+      "size": 3520,
+      "sha256": "5982cc8813a6551481754f05e3ecae32d5dc5792c049fcf661bf763fc386e1c2"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -1719,13 +1724,13 @@
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.test.ts",
-      "size": 5228,
-      "sha256": "612a2827f2783f6b154e5dd4f3d8480c7b46f1107b0a61b0b2454fd215e37be7"
+      "size": 6102,
+      "sha256": "2f56099b7baff63cc44d84be5584e30ae5fdcedfa53292b356498b8da39fb1e8"
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.ts",
-      "size": 7295,
-      "sha256": "a07f861e46d7c0e5635495a34d4725dafbedaade2e7c8b4a7331e459a349fcc9"
+      "size": 7740,
+      "sha256": "92176a4b4468ebcc4f5855114fa026f37ef45dc5293219d9a3daba12b7695506"
     },
     {
       "path": "apps/web/src/transactions/pagination.test.ts",
@@ -1759,8 +1764,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionDetailsPanel.tsx",
-      "size": 3234,
-      "sha256": "1c07b29fc23ff932e0339b6d56d459fb48dcaa73b274e3e4832a9ed3aec91933"
+      "size": 3306,
+      "sha256": "4bd4184f13cdb9cd390faf2614c99366c13782259c50fbd0734563711390745b"
     },
     {
       "path": "apps/web/src/transactions/transactionFilters.test.ts",
@@ -1834,8 +1839,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 46768,
-      "sha256": "002ece9585435e9f5f02bd4703e2620d1faef043616e9ca49f44951030d41c06"
+      "size": 47744,
+      "sha256": "52074dc20e08ab5d5c00f8c84035d5a1b4ffb7de7b5a6f7df2647c1ed1bdde83"
     },
     {
       "path": "design/mockup/README.md",
@@ -2254,13 +2259,13 @@
     },
     {
       "path": "packages/application/src/LedgerSnapshot.test.ts",
-      "size": 2443,
-      "sha256": "e1825d29fe11ca40af2519a0e4cbc1faf2f0f3b70b7080bdfbb0b175aabd4a9f"
+      "size": 2554,
+      "sha256": "3fc55f58b98bbdb9d8f620b81cf26514b08ecfda349abff2f4b8ec30c5784500"
     },
     {
       "path": "packages/application/src/LedgerSnapshot.ts",
-      "size": 4720,
-      "sha256": "8368e043f4508b3c8ff1c1cc63abdaa261f8090ffaa8c117ffa67c5b220a6407"
+      "size": 5274,
+      "sha256": "103aa2f65555903fe62a67560c794d485dd10ca84f850c0cf6d2d89c8e75fbca"
     },
     {
       "path": "packages/application/tsconfig.json",
@@ -2409,8 +2414,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 46155,
-      "sha256": "069626f7d53d80840e9f0e9ea07fdd92c06c524a2648f8d32349c6c3bcb6b5cb"
+      "size": 46290,
+      "sha256": "bbbd44e2a35259f52ae9b3bf8cdc1af3a1288ea74a74ca6fdfee610f7276ea76"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -2424,8 +2429,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 105767,
-      "sha256": "65197e9b7a6105eb5d25740ae92bdf6ced1ea3eca284e85ed1deec9c574fd0a1"
+      "size": 105940,
+      "sha256": "9aa6464bee3f8fd820cb08fc1678da1588ce4129ff4bae36fa6cd0b3bc2387ff"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -2664,8 +2669,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 107070,
-      "sha256": "c67778a07972f5a227703c0b7ee9e67f13ccba34dc7126e20e368006f36bc611"
+      "size": 107217,
+      "sha256": "300e89ffa44540cc7660a7c6be54289ce0304f15c27938b9d560130f9614e518"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -2824,8 +2829,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 3994,
-      "sha256": "d13193fb57198d5970f837ee6d93b9135902b836cf196cb3d19c7a88f690a902"
+      "size": 4024,
+      "sha256": "1f22409adadaf769deffff9376b42d9dd7eeeaae7d558aff5e8759a93033ebe5"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -2864,13 +2869,13 @@
     },
     {
       "path": "packages/domain/src/services/categoryHierarchy.test.ts",
-      "size": 2069,
-      "sha256": "9fe41f05c0dce575f76881d4a571c64d363c4bb74131986c520714e133b45c47"
+      "size": 2750,
+      "sha256": "5a6e0114347db23d013b07125b209ee7c4ed2fbaa7570628e484e7cbbd27b513"
     },
     {
       "path": "packages/domain/src/services/categoryHierarchy.ts",
-      "size": 1806,
-      "sha256": "a7f3bde4cd65f177cbb11d25e878b52e3d7ec366879e83b26610e252c0db622d"
+      "size": 2365,
+      "sha256": "6b5c893498000cf825f2c3c2041a7c1d178be05dff24e2c849afe2096f63a914"
     },
     {
       "path": "packages/domain/src/services/dataManagement.test.ts",
@@ -3361,6 +3366,11 @@
       "path": "test/e2e/c3-shell-audit.spec.ts",
       "size": 3095,
       "sha256": "5b6a719817caafed18d729fe067a481946f8f0a0b2c383a695c3baaa07b8cdee"
+    },
+    {
+      "path": "test/e2e/c4-classification-search-journal-flow.spec.ts",
+      "size": 18298,
+      "sha256": "2a9a4dcccff33a8d8326464919779764ce47c996ff52c94f41b6016abb417d99"
     },
     {
       "path": "test/e2e/c4-first-start-account-flow.spec.ts",

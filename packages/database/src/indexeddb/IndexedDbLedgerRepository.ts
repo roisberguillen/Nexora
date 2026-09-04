@@ -25,6 +25,7 @@ import {
   validateAccountUpdate,
   validateCategoryMerge,
   validateCategoryHierarchy,
+  validateCategoryUniqueness,
   validateAccountHierarchy,
   sortAccountsParentFirst,
   isSystemCategory,
@@ -316,7 +317,9 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           const current = (await requestResult<unknown[]>(categories.getAll())).map((row) =>
             categoryFromRecord(row as CategoryRecord),
           );
-          validateCategoryHierarchy([...current, category]);
+          const next = [...current, category];
+          validateCategoryHierarchy(next);
+          validateCategoryUniqueness(next);
 
           await requestResult(categories.add(categoryToRecord(category)));
         }),
@@ -387,9 +390,11 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           const current = (await requestResult<unknown[]>(categories.getAll())).map((row) =>
             categoryFromRecord(row as CategoryRecord),
           );
-          validateCategoryHierarchy(
-            current.map((existing) => (existing.id === category.id ? category : existing)),
+          const next = current.map((existing) =>
+            existing.id === category.id ? category : existing,
           );
+          validateCategoryHierarchy(next);
+          validateCategoryUniqueness(next);
           await requestResult(categories.put(categoryToRecord(category)));
         }),
       ),

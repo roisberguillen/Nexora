@@ -59,6 +59,7 @@ export function TransactionDetailsPanel({ item, onClose }: TransactionDetailsPan
       <dl>
         {item.isTransfer ? null : <Detail label="Conto" value={item.accountLabel} />}
         <Detail label="Categoria" value={item.categoryLabel} />
+        <Detail label="Tag" value={item.tagLabels?.join(", ") ?? ""} />
         <Detail label="Data" value={formatDate(item.bookedDate)} />
         <Detail label="Tipo movimento" value={item.kindLabel} />
         <Detail label="Origine" value={sourceLabel(item.source)} />

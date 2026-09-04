@@ -6,6 +6,7 @@ import {
   type CashFlowSummary,
   type Category,
   type Money,
+  type Tag,
   type Transaction,
   type Transfer,
 } from "@nexora/domain";
@@ -48,6 +49,7 @@ export interface TransactionListItem {
   readonly payee?: string;
   readonly statusLabel: string;
   readonly title: string;
+  readonly tagLabels?: readonly string[];
 }
 
 export function buildTransactionsViewModel(data: {
@@ -55,6 +57,7 @@ export function buildTransactionsViewModel(data: {
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
   readonly transfers: readonly Transfer[];
+  readonly transactionTagsByTransactionId?: ReadonlyMap<string, readonly Tag[]>;
 }): TransactionsViewModel {
   const accountById = new Map(data.accounts.map((account) => [account.id, account]));
   const categoryById = new Map(data.categories.map((category) => [category.id, category]));
@@ -69,7 +72,14 @@ export function buildTransactionsViewModel(data: {
   );
   const standalone = data.transactions
     .filter((transaction) => !transferLegIds.has(transaction.id))
-    .map((transaction) => itemForTransaction(transaction, accountById, categoryById));
+    .map((transaction) =>
+      itemForTransaction(
+        transaction,
+        accountById,
+        categoryById,
+        data.transactionTagsByTransactionId,
+      ),
+    );
   const transfers = data.transfers.map((transfer) => {
     const debit = transactionById.get(transfer.debitTransactionId);
     const credit = transactionById.get(transfer.creditTransactionId);
@@ -94,6 +104,7 @@ export function buildTransactionsViewModel(data: {
       payee: "",
       statusLabel: statusLabel(debit.status),
       title: transactionListTitle(debit.description, undefined, "Trasferimento interno"),
+      tagLabels: [],
     } as const;
   });
   const cashFlowByMonth = Object.fromEntries(
@@ -146,6 +157,7 @@ function itemForTransaction(
   transaction: Transaction,
   accountById: ReadonlyMap<string, Account>,
   categoryById: ReadonlyMap<string, Category>,
+  transactionTagsByTransactionId?: ReadonlyMap<string, readonly Tag[]>,
 ): TransactionListItem {
   return Object.freeze({
     accountId: transaction.accountId,
@@ -175,6 +187,9 @@ function itemForTransaction(
       transaction.payee,
       transaction.description,
       kindLabel(transaction.kind),
+    ),
+    tagLabels: Object.freeze(
+      (transactionTagsByTransactionId?.get(transaction.id) ?? []).map((tag) => tag.name),
     ),
   });
 }

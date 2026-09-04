@@ -27,6 +27,7 @@ import {
   isSystemCategory,
   validateCategoryMerge,
   validateCategoryHierarchy,
+  validateCategoryUniqueness,
   validateAccountHierarchy,
   sortAccountsParentFirst,
 } from "@nexora/domain";
@@ -387,7 +388,9 @@ export class SqliteLedgerRepository implements LedgerRepository {
         this.withWriteTransaction(async () => {
           const record = categoryToRecord(category);
           await this.assertNew("categories", category.id, "Category");
-          validateCategoryHierarchy([...(await this.listCategoriesInternal()), category]);
+          const next = [...(await this.listCategoriesInternal()), category];
+          validateCategoryHierarchy(next);
+          validateCategoryUniqueness(next);
 
           await this.database.run(
             `
@@ -444,11 +447,11 @@ export class SqliteLedgerRepository implements LedgerRepository {
             throw new DomainError("invalid_category", "System categories are protected.");
           if ((await this.findCategoryByIdInternal(category.id)) === undefined)
             throw new DomainError("missing_reference", "Category does not exist.");
-          validateCategoryHierarchy(
-            (await this.listCategoriesInternal()).map((current) =>
-              current.id === category.id ? category : current,
-            ),
+          const next = (await this.listCategoriesInternal()).map((current) =>
+            current.id === category.id ? category : current,
           );
+          validateCategoryHierarchy(next);
+          validateCategoryUniqueness(next);
           const record = categoryToRecord(category);
           await this.database.run(
             "UPDATE categories SET name = ?, kind_scope = ?, parent_id = ?, is_archived = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",

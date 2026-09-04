@@ -25,6 +25,7 @@ import {
   isSystemCategory,
   validateCategoryMerge,
   validateCategoryHierarchy,
+  validateCategoryUniqueness,
   validateAccountHierarchy,
   sortAccountsParentFirst,
 } from "@nexora/domain";
@@ -157,7 +158,9 @@ export class InMemoryLedgerRepository implements LedgerRepository {
 
   public async saveCategory(category: Category): Promise<void> {
     this.assertNew(this.categories, category.id, "Category");
-    validateCategoryHierarchy([...this.categories.values(), category]);
+    const next = [...this.categories.values(), category];
+    validateCategoryHierarchy(next);
+    validateCategoryUniqueness(next);
     this.categories.set(category.id, category);
   }
 
@@ -166,11 +169,11 @@ export class InMemoryLedgerRepository implements LedgerRepository {
       throw new DomainError("missing_reference", "Category does not exist.");
     if (isSystemCategory(category.id))
       throw new DomainError("invalid_category", "System categories are protected.");
-    validateCategoryHierarchy(
-      [...this.categories.values()].map((current) =>
-        current.id === category.id ? category : current,
-      ),
+    const next = [...this.categories.values()].map((current) =>
+      current.id === category.id ? category : current,
     );
+    validateCategoryHierarchy(next);
+    validateCategoryUniqueness(next);
     this.categories.set(category.id, category);
   }
 

@@ -92,6 +92,7 @@ export {
   categoryLabel,
   parentAcceptsChildScope,
   validateCategoryHierarchy,
+  validateCategoryUniqueness,
 } from "./services/categoryHierarchy";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
 export { summarizeExpenseBehavior, type ExpenseBehaviorSummary } from "./services/expenseBehavior";

@@ -1144,7 +1144,15 @@ function buildGlobalSearchResults(state: ReadyLedgerState): readonly GlobalSearc
       id: `transaction-${transaction.id}`,
       href: "./#transactions",
       label: transaction.title,
-      detail: `${transaction.kindLabel} · ${transaction.accountLabel} · ${transaction.categoryLabel}`,
+      detail: [
+        transaction.kindLabel,
+        transaction.accountLabel,
+        transaction.categoryLabel,
+        transaction.payee,
+        transaction.description,
+      ]
+        .filter((value): value is string => value !== undefined && value.trim() !== "")
+        .join(" · "),
     })),
     ...state.loans.map((loan) => ({
       id: `loan-${loan.id}`,

@@ -1,4 +1,4 @@
-import { Account, Category, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
+import { Account, Category, LocalDate, Money, Tag, Transaction, Transfer } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import { buildTransactionsViewModel, transactionListTitle } from "./buildTransactionsViewModel";
@@ -134,6 +134,30 @@ describe("buildTransactionsViewModel", () => {
     expect(model.items[0]?.categoryLabel).toBe("Trasporti → Carburante");
     expect(model.categories.map((category) => category.id)).not.toContain(archived.id);
     expect(model.categories[0]?.parentId).toBeUndefined();
+  });
+
+  it("exposes persisted tags in the transaction detail model", () => {
+    const source = account("source", "Conto principale");
+    const transaction = Transaction.create({
+      id: "expense",
+      kind: "expense",
+      status: "booked",
+      accountId: source.id,
+      amount: Money.fromMinor(-8_000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-09-04"),
+    });
+    const recurring = Tag.create({ id: "recurring", name: "Ricorrente" });
+    const archived = Tag.create({ id: "archived", name: "Mensile", isArchived: true });
+
+    const model = buildTransactionsViewModel({
+      accounts: [source],
+      categories: [],
+      transactions: [transaction],
+      transfers: [],
+      transactionTagsByTransactionId: new Map([[transaction.id, [recurring, archived]]]),
+    });
+
+    expect(model.items[0]?.tagLabels).toEqual(["Ricorrente", "Mensile"]);
   });
 });
 

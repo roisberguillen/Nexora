@@ -57,7 +57,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.2-R | complete — 2026-09-03 | E2E zoom navigation regression repaired in the test harness; full E2E green |
 | 12.5.C4.3 | complete — 2026-09-04 | `FLOW_AUDIT_PASS`; trasferimento completo, annullamento atomico, persistenza, offline e report neutrali verificati |
 | 12.5.C4.3-R | complete — 2026-09-04 | `FLOW_AUDIT_PASS`; failure C4.2 a 390 px non riprodotto; regressioni e gate completi verdi |
-| C4 | in progress — C4.0–C4.3 complete; C4.3-R complete; C4.4 next | real complete flows; remaining C4 slices are not started |
+| 12.5.C4.4 | complete — 2026-09-04 | `FLOW_AUDIT_PASS`; categorie, tag, ricerca globale, diario, merge, persistenza e offline verificati |
+| C4 | in progress — C4.0–C4.4 complete; C4.5 bloccata | real complete flows; remaining C4 slices are not started |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
 | E | pending | final gate: READY / NOT READY |

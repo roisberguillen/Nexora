@@ -32,6 +32,7 @@ export interface LedgerSnapshot {
   readonly recurringRules: readonly RecurringRule[];
   readonly tags: readonly Tag[];
   readonly transactions: readonly Transaction[];
+  readonly transactionTagsByTransactionId: ReadonlyMap<string, readonly Tag[]>;
   readonly transactionSplits: readonly TransactionSplit[];
   readonly transfers: readonly Transfer[];
   readonly trashedTransactions: readonly TrashedTransaction[];
@@ -50,6 +51,7 @@ export type LedgerSnapshotRepository = Pick<
   | "listRecurringRules"
   | "listTags"
   | "listTransactions"
+  | "listTransactionTags"
   | "listAllTransactionSplits"
   | "listTransfers"
   | "listTrashedTransactions"
@@ -67,6 +69,7 @@ export type LedgerReadCode =
   | "NX-READ-RECURRING"
   | "NX-READ-TAGS"
   | "NX-READ-TRANSACTIONS"
+  | "NX-READ-TRANSACTION-TAGS"
   | "NX-READ-TRANSACTION-SPLITS"
   | "NX-READ-TRANSFERS"
   | "NX-READ-TRASH";
@@ -132,6 +135,19 @@ export async function readLedgerSnapshot(
       repository.listTrashedTransactions(),
     ),
   ]);
+  const transactionTagsByTransactionId = new Map(
+    await Promise.all(
+      transactions.map(
+        async (transaction) =>
+          [
+            transaction.id,
+            await readLedgerCollection("NX-READ-TRANSACTION-TAGS", "transaction tags", () =>
+              repository.listTransactionTags(transaction.id),
+            ),
+          ] as const,
+      ),
+    ),
+  );
 
   return Object.freeze({
     accounts,
@@ -145,6 +161,7 @@ export async function readLedgerSnapshot(
     recurringRules,
     tags,
     transactions,
+    transactionTagsByTransactionId,
     transactionSplits,
     transfers,
     trashedTransactions,

@@ -1,7 +1,7 @@
 import { Category, DomainError } from "../index";
 import { describe, expect, it } from "vitest";
 
-import { validateCategoryHierarchy } from "./categoryHierarchy";
+import { validateCategoryHierarchy, validateCategoryUniqueness } from "./categoryHierarchy";
 
 const macro = () => Category.create({ id: "macro", name: "Casa", kindScope: "expense" });
 const child = (parentId = "macro") =>
@@ -63,6 +63,28 @@ describe("category hierarchy", () => {
         both,
         Category.create({ id: "income", name: "Entrata", kindScope: "income", parentId: both.id }),
         Category.create({ id: "expense", name: "Spesa", kindScope: "expense", parentId: both.id }),
+      ]),
+    ).not.toThrow();
+  });
+
+  it("rejects duplicate names within the same parent, ignoring case and whitespace", () => {
+    expect(() =>
+      validateCategoryUniqueness([
+        macro(),
+        Category.create({ id: "duplicate", name: " casa ", kindScope: "income" }),
+      ]),
+    ).toThrow(DomainError);
+    expect(() =>
+      validateCategoryUniqueness([
+        macro(),
+        child(),
+        Category.create({
+          id: "other-child",
+          name: "Affitto",
+          kindScope: "expense",
+          parentId: "other-macro",
+        }),
+        Category.create({ id: "other-macro", name: "Altro", kindScope: "expense" }),
       ]),
     ).not.toThrow();
   });

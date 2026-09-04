@@ -70,6 +70,7 @@ export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
     recurringRules,
     tags,
     transactions,
+    transactionTagsByTransactionId,
     transactionSplits,
     transfers,
     trashedTransactions,
@@ -103,6 +104,7 @@ export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
       categories,
       transactions,
       transfers,
+      transactionTagsByTransactionId,
     });
   } catch (cause) {
     throw new AppModelBuildError("transactions", cause);
