@@ -343,6 +343,11 @@
       "sha256": "07e4e80de09b8902ae1b7f7c17e60e4411693c73a11edeb2b80c0c3ee1271753"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-04-c4-3-r-final-gate.md",
+      "size": 1707,
+      "sha256": "9949733c8b7281ad90fc8de2e30e1b8e5365a99105558a92a625dd3b21abc2b0"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-04-c4-3-transfer-flow.md",
       "size": 2024,
       "sha256": "68fd591e8a29037660ca1cd3417f4eb165a7c8344f039c5baaddb5ddfba8c8ec"
@@ -504,8 +509,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 519,
-      "sha256": "ce8308ebfd41c08af725f5edc38850e23f949c74d7c5886bd5a4ff1c25a57c48"
+      "size": 461,
+      "sha256": "f83db12996db0dbbd4a6d7f343fbe6046ccda47df4aabcfa8d5d9680ed1708f9"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -529,13 +534,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 8459,
-      "sha256": "eac04ffc92070a608739c2abe0578f4e021f64adb2fac9e620508f7a000db6f0"
+      "size": 8611,
+      "sha256": "1224122af789b9ca40c635e8c844e755281df518ab6f3fe52e201ba2b3d7d896"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 90923,
-      "sha256": "92e9b1ed1bf500565204fb9999612ffd05ad788763885c91ce350b858dc28c73"
+      "size": 92629,
+      "sha256": "884faa6a68aaa92661d436ff41e4987428028fdb6e435b815034846b1bd4609d"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -544,8 +549,8 @@
     },
     {
       "path": ".codex/state/ui-ux-review.md",
-      "size": 314,
-      "sha256": "fc265f506af4a9c564027c0d0795908967c038dc9cb152428ee937822c96f454"
+      "size": 315,
+      "sha256": "7eb5c70b97c042984fba73f8df046b4fc41fb59fc093f8b4a819c16b2a1623db"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1829,8 +1834,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 46578,
-      "sha256": "23251fb51f13cc63fed9f2b30a6e96c4adcef30b84d6747d879c0b2e7d518c25"
+      "size": 46768,
+      "sha256": "002ece9585435e9f5f02bd4703e2620d1faef043616e9ca49f44951030d41c06"
     },
     {
       "path": "design/mockup/README.md",

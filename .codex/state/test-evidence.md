@@ -1257,3 +1257,22 @@ Keep only the latest relevant evidence per completed phase.
   usato per dichiarare verde C4.3 né ha modificato il codice C4.2. Il gate C4.2-R richiesto resta verde.
 - Review UI/UX: `.codex/reviews/ui-ux/2026-09-04-c4-3-transfer-flow.md`; stato aggiornato in
   `.codex/state/ui-ux-review.md`; P0/P1/P2 = `0/0/0`.
+
+## 12.5.C4.3-R — Chiusura regressioni e gate completi — 2026-09-04
+
+- Controlli iniziali: working tree pulito su `fef97bb`; routing `localized_bug / STANDARD / low`,
+  nessuno switch. C4.3-R impostata temporaneamente `IN_PROGRESS` con C4.4 bloccata.
+- Riproduzione esatta `pnpm exec playwright test test/e2e/c4-income-expense-flow.spec.ts --project=chromium-390 --repeat-each=3 --workers=1`: `6 passed`, `3 skipped`, `0 failed`, durata `30.2s`. Il failure storico a 390 px dopo reopen non si è riprodotto; nessuna correzione applicata e nessun aggiornamento a `known-failures.md`.
+- Regressioni in sequenza: C4.1 zoom `2 passed`, `0 skipped`, `0 failed`, `11.1s`; C4.2 `8 passed`,
+  `10 skipped`, `0 failed`, `49.0s`; C4.3 `8 passed`, `10 skipped`, `0 failed`, `56.4s`; unitari
+  Transfer `9 passed`, `0 skipped`, `0 failed`, `2.87s`. Gli skip sono quelli dichiarati dalle suite.
+- Gate UI/UX: `pnpm test:ui-ux` `4 passed`, `0 failed`; `pnpm quality:ui-ux` review valida.
+- Full E2E: `pnpm test:e2e` `386 passed`, `166 skipped`, `0 failed`, durata `9.5m`; include C4.1,
+  C4.2, C4.3, axe/overflow/runtime, OPFS e IndexedDB 100k.
+- Verify: `pnpm verify` `620 passed`, `4 skipped`, `0 failed`; format, lint, typecheck, unit e build
+  verdi. Warning non bloccante invariato sui chunk Vite oltre 500 kB.
+- Post-gate: `pnpm codex:validate`, `pnpm manifest:update`, `pnpm manifest:check`, `pnpm format:check`
+  e seconda `pnpm codex:validate` da eseguire e registrare prima del commit.
+- Causa confermata: non riproducibilità del failure storico; il precedente errore di porta 4173 era
+  conflitto ambientale transitorio. Stato finale: `C4.3-R COMPLETE`, C4.3 `FLOW_AUDIT_PASS / COMPLETE`,
+  C4.4 `NEXT`.

@@ -16,6 +16,8 @@
 
 - Completata C4.3 con trasferimenti atomici tra conti, annullamento senza alterare entrate/spese,
   persistenza dopo reload/reopen, rilettura offline IndexedDB, report neutrali e verifica zoom 200%.
+- Chiuso il gate C4.3-R: failure C4.2 a 390 px non riprodotto con tre ripetizioni; regressioni mirate,
+  full E2E, verify e controlli UI/UX/manifest completati senza correzioni applicative.
 
 ## 2026-09-02
 
