@@ -755,3 +755,11 @@
 - Suite mirate: web/domain `22 passed`; repository SQLite/IndexedDB `80 passed`. E2E C4.4: profili
   chromium-390 e chromium-1440 `2 passed / 1 skipped` ciascuno. Suite completa Vitest: `622 passed`,
   `4 skipped`; lint, typecheck e build verdi.
+
+## 12.5.C4.4-R — Chiusura coperture e riconciliazione — 2026-09-04
+
+- Corretto il commit atomico IndexedDB offline evitando la chiusura prematura delle transazioni;
+  una macro con figli attivi non può più essere archiviata dalla UI.
+- Aggiunte coperture E2E per diario (periodo invalido, double-submit, annulla edit), riferimenti
+  storici dopo merge/archiviazione, ricerca di elementi archiviati, reload offline e riconciliazione
+  online senza duplicati su 320/375/390/768/1024/1440 px con zoom CDP 200% su desktop.

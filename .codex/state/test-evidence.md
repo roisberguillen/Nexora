@@ -1277,19 +1277,25 @@ Keep only the latest relevant evidence per completed phase.
   conflitto ambientale transitorio. Stato finale: `C4.3-R COMPLETE`, C4.3 `FLOW_AUDIT_PASS / COMPLETE`,
   C4.4 `NEXT`.
 
-## 12.5.C4.4 — 2026-09-04
+## 12.5.C4.4-R — Chiusura coperture e riconciliazione documentale — 2026-09-04
 
-- Routing: `localized_bug / STANDARD / low`; gate C4.3-R iniziale verde su `cb4c320`.
-- Suite mirate: web/domain `8 files, 22 passed`; SQLite/IndexedDB `2 files, 80 passed`.
-- E2E C4.4: chromium-390 `2 passed, 1 skipped`; chromium-1440 `2 passed, 1 skipped`.
-  Verificati classificazione completa, saldo `920,00 EUR`, spesa `80,00 EUR`, netto `-80,00 EUR`,
-  merge e riassegnazione refs, tag persistiti, ricerca globale, diario, reload/reopen, axe/overflow,
-  doppio submit, annullamento e IndexedDB offline.
-- Full Vitest: `140 passed, 1 skipped`; `622 passed, 4 skipped`.
-- `pnpm test:e2e`: `394 passed, 176 skipped, 0 failed`; build, lint, typecheck, manifest, format e
-  `pnpm codex:validate` PASS. C4.4 chiusa con `FLOW_AUDIT_PASS`; C4.5 resta bloccata.
-
-## 12.5.C4.4 — Categorie, sottocategorie, tag, ricerca globale e diario — 2026-09-04
-
-- Gate iniziale C4.3-R: working tree pulito su `cb4c320`; `pnpm manifest:check` PASS; `pnpm codex:validate`
-  PASS (`17 routes`). Stato corrente impostato `IN_PROGRESS`; C4.5 bloccata fino alla chiusura.
+- Gate iniziale: route `localized_bug / STANDARD / low`, C4.3-R verde su `cb4c320`; manifest inizialmente
+  fallito perché `PROJECT_MANIFEST.json` era stale (`pnpm manifest:check`), mentre `pnpm codex:validate`
+  era PASS (`17 routes`). Stato impostato `IN_PROGRESS`, C4.5 non avviata.
+- Correzioni funzionali: validatore IndexedDB importato staticamente per impedire la chiusura prematura
+  della transazione offline; archiviazione macro disabilitata quando esistono figli; annullamento edit
+  del diario e dettaglio ricerca per categorie archiviate. Copertura unitaria aggiunta per la macro con
+  figlio e per l’annullamento del diario.
+- Suite mirate: web/domain `8 files, 23 passed`; SQLite/IndexedDB `2 files, 80 passed`; build PASS.
+- E2E dedicato: `18 casi`, `8 passed`, `10 skipped`, `0 failed`; profili 320/375/390/768/1024/1440,
+  CDP zoom reale 200% su 1024/1440. Flusso principale e offline/reload IndexedDB passano; il ritorno
+  online verifica un solo movimento e un solo diario. Negative gate su 390 passa.
+- Riconciliazione: saldo `920,00 EUR`, spesa `80,00 EUR`, netto `-80,00 EUR`; diario entrate `0,00`,
+  spese `80,00`, risparmio `-80,00`, valutazioni investimento `0,00`; riferimenti storici di categoria
+  e tag preservati dopo merge/archiviazione/reactivazione; P0/P1/P2 = `0/0/0`.
+- Gate UI/UX: `pnpm test:ui-ux` `4 passed`, `0 failed`; `pnpm quality:ui-ux` PASS. Full E2E finale:
+  `394 passed`, `176 skipped`, `0 failed` in `9.3m`; il benchmark IndexedDB 100k ha registrato
+  `100000/100000` record. `pnpm verify`: `623 passed`, `4 skipped`, build/lint/typecheck/format PASS.
+- Post-gate: `pnpm codex:validate` PASS (`17 routes`), `pnpm manifest:update`, `pnpm manifest:check` PASS,
+  `pnpm format:check` PASS e seconda `pnpm codex:validate` PASS. Stato finale: `FLOW_AUDIT_PASS / COMPLETE`,
+  C4.5 NEXT, nessuna fase C4.5 avviata.

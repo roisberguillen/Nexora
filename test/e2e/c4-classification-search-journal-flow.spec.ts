@@ -87,15 +87,19 @@ test.describe("C4.4 classificazione, ricerca globale e diario", () => {
       window.localStorage.setItem("nexora.ledger-storage.v1", "indexeddb"),
     );
     await page.goto("/");
-    await createAccount(page);
-    await createClassification(page);
-    await createTags(page);
-    await createClassifiedExpense(page, false);
     await activateServiceWorker(page);
     await context.setOffline(true);
     try {
+      await createAccount(page);
+      await createClassification(page);
+      await createTags(page);
+      await createClassifiedExpense(page);
       await createAndEditJournal(page);
       await assertTransactionDetails(page, [rootName, sourceCategory, description, payee]);
+      await verifyGlobalSearch(page, [description, sourceCategory, sourceTag]);
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await assertFinancialState(page);
+      await assertTransactionDetails(page, [rootName, sourceCategory, sourceTag, extraTag]);
       await page.goto("/#categories");
       await expect(page.getByRole("tree", { name: "Categorie finanziarie" })).toContainText(
         sourceCategory,
@@ -107,9 +111,14 @@ test.describe("C4.4 classificazione, ricerca globale e diario", () => {
       await assertFinancialState(page);
       await page.goto("/#journal");
       await assertJournal(page);
+      await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(1);
     } finally {
       await context.setOffline(false);
     }
+    await page.goto("/#transactions");
+    await expect(page.locator(".transaction-list-row").filter({ hasText: payee })).toHaveCount(1);
+    await page.goto("/#journal");
+    await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(1);
   });
 
   test("rifiuta duplicati, annullamenti e riferimenti archiviati senza scritture parziali", async ({
@@ -155,7 +164,7 @@ async function createAccount(page: Page): Promise<void> {
   await page.getByLabel("Valuta").fill("EUR");
   await page.getByLabel("Saldo iniziale").fill("1000,00");
   await page.getByRole("button", { name: "Crea conto" }).click();
-  await expect(page.getByRole("status")).toContainText("Conto creato e salvato");
+  await expect(page.locator(".account-feedback")).toContainText("Conto creato e salvato");
 }
 
 async function createClassification(page: Page): Promise<void> {
@@ -292,6 +301,10 @@ async function createAndEditJournal(page: Page): Promise<void> {
     .getByLabel("Obiettivo per il prossimo mese")
     .fill("Controllare il consumo energetico.");
   await page.getByLabel("Percezione di controllo").selectOption("4");
+  await page.getByLabel("Periodo").fill("2026-13");
+  await page.getByRole("button", { name: "Salva diario" }).click();
+  await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(0);
+  await page.getByLabel("Periodo").fill(period);
   await page.getByRole("button", { name: "Salva diario" }).dblclick();
   await expect(page.locator(".account-feedback")).toContainText("Diario mensile salvato");
   await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(1);
@@ -301,6 +314,12 @@ async function createAndEditJournal(page: Page): Promise<void> {
     .fill("La spesa energetica è stata classificata correttamente e verificata.");
   await page.getByRole("button", { name: "Salva diario" }).click();
   await expect(page.locator(".account-feedback")).toContainText("Diario mensile salvato");
+  await page.getByRole("button", { name: "Modifica" }).click();
+  await page.getByLabel("Come è andato il mese?").fill("Modifica annullata");
+  await page.getByRole("button", { name: "Annulla", exact: true }).click();
+  await expect(page.getByLabel("Mesi registrati")).toContainText(
+    "La spesa energetica è stata classificata correttamente e verificata.",
+  );
 }
 
 async function assertJournal(page: Page): Promise<void> {
@@ -316,6 +335,11 @@ async function assertJournal(page: Page): Promise<void> {
   ).toBeVisible();
   await expect(page.getByText("Controllo 4/5")).toBeVisible();
   await expect(page.getByText("80,00").first()).toBeVisible();
+  const summary = page.locator('section[aria-labelledby="journal-summary-title"]');
+  await expect(summary.locator(".metric-card").nth(0)).toContainText("0,00");
+  await expect(summary.locator(".metric-card").nth(1)).toContainText("80,00");
+  await expect(summary.locator(".metric-card").nth(2)).toContainText("-80,00");
+  await expect(summary.locator(".metric-card").nth(3)).toContainText("0,00");
 }
 
 async function mergeCategory(page: Page): Promise<void> {
@@ -333,9 +357,29 @@ async function archiveAndReactivateCategory(page: Page): Promise<void> {
   await target.locator("../..").getByRole("button", { name: "Modifica" }).click();
   await page.locator(".account-editor-panel").getByRole("button", { name: "Archivia" }).click();
   await expect(page.getByRole("tree")).toContainText("Archiviata");
-  await target.locator("../..").getByRole("button", { name: "Modifica" }).click();
+  await assertTransactionDetails(page, [
+    `${rootName} → ${targetCategory}`,
+    targetCategory,
+    sourceTag,
+    extraTag,
+  ]);
+  await assertCategoryUnavailableForNewMovement(page);
+  await page.goto("/#categories");
+  const archivedTarget = page.getByText(targetCategory, { exact: true });
+  await archivedTarget.locator("../..").getByRole("button", { name: "Elimina" }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await assertFinancialState(page);
+  await page.goto("/#categories");
+  const targetToReactivate = page.getByText(targetCategory, { exact: true });
+  await targetToReactivate.locator("../..").getByRole("button", { name: "Modifica" }).click();
   await page.locator(".account-editor-panel").getByRole("button", { name: "Riattiva" }).click();
-  await expect(page.getByRole("tree")).toContainText(targetCategory);
+  await expect(targetToReactivate.locator("../..")).toContainText("Attiva");
+
+  const root = page.getByText(rootName, { exact: true }).locator("../..");
+  await expect(root.getByRole("button", { name: "Modifica" })).toBeDisabled();
+  await expect(root.getByRole("button", { name: "Archivia" })).toBeDisabled();
+  await root.getByRole("button", { name: "Elimina" }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
 }
 
 async function mergeTag(page: Page): Promise<void> {
@@ -355,9 +399,50 @@ async function archiveAndReactivateTag(page: Page): Promise<void> {
   await target.getByRole("button", { name: "Modifica" }).click();
   await page.locator(".account-editor-panel").getByRole("button", { name: "Archivia" }).click();
   await expect(target).toContainText("Archiviato");
-  await target.getByRole("button", { name: "Modifica" }).click();
+  await assertTransactionDetails(page, [targetTag, extraTag]);
+  await verifyGlobalSearchResult(page, targetTag, "Tag archiviato");
+  await assertTagUnavailableForNewMovement(page);
+  await page.goto("/#tags");
+  await target.getByRole("button", { name: "Elimina" }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await assertFinancialState(page);
+  await page.goto("/#tags");
+  const targetToReactivate = page.getByRole("row").filter({ hasText: targetTag });
+  await targetToReactivate.getByRole("button", { name: "Modifica" }).click();
   await page.locator(".account-editor-panel").getByRole("button", { name: "Riattiva" }).click();
-  await expect(target).toContainText("Attivo");
+  await expect(targetToReactivate).toContainText("Attivo");
+}
+
+async function assertCategoryUnavailableForNewMovement(page: Page): Promise<void> {
+  await page.goto("/#transactions");
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByRole("radio", { name: "Uscita", exact: true }).check();
+  await expect(
+    page.locator('select[name="category"] option', { hasText: targetCategory }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Annulla", exact: true }).click();
+}
+
+async function assertTagUnavailableForNewMovement(page: Page): Promise<void> {
+  await page.goto("/#transactions");
+  await page.getByRole("button", { name: "Nuovo movimento" }).click();
+  await page.getByRole("radio", { name: "Uscita", exact: true }).check();
+  await page.getByText("Altri dettagli").click();
+  await expect(page.getByRole("checkbox", { name: targetTag })).toHaveCount(0);
+  await page.getByRole("button", { name: "Annulla", exact: true }).click();
+}
+
+async function verifyGlobalSearchResult(page: Page, term: string, detail: string): Promise<void> {
+  await page.goto("/#overview");
+  const { input } = await openGlobalSearch(page);
+  await input.fill(term);
+  const option = page
+    .getByRole("option")
+    .filter({ hasText: term })
+    .filter({ hasText: detail })
+    .first();
+  await expect(option).toBeVisible();
+  await page.keyboard.press("Escape");
 }
 
 async function navigateToSurface(

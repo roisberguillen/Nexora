@@ -278,6 +278,18 @@ export function JournalPage({
               </select>
             </label>
             <div className="form-actions">
+              <button
+                className="secondary-action"
+                onClick={() => {
+                  setEditingJournalId(undefined);
+                  setSelectedPeriod(selected?.period ?? currentPeriod);
+                  setError(null);
+                  setFeedback(null);
+                }}
+                type="button"
+              >
+                Annulla
+              </button>
               <button className="primary-action" disabled={isSaving} type="submit">
                 {isSaving ? "Salvataggio…" : "Salva diario"}
               </button>

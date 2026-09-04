@@ -354,8 +354,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-04-c4-4-classification-search-journal-flow.md",
-      "size": 2373,
-      "sha256": "73c3087fcedc854ca4cd3a2c149dc2fa1b6ae28ef0552e2faf62bb5607a041bb"
+      "size": 3972,
+      "sha256": "8f802643bbdd225ccd34f6e118404f56004d00b38bfddc41fe0090d3a5b766b7"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -469,8 +469,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 9344,
-      "sha256": "d413dc986db76cfe3263159d72195d3dddd08989e849dcc9ec752743e17d1573"
+      "size": 9449,
+      "sha256": "3558d4a23397785620833c63839f41e78e08157fa90964c50babffa293fefa5d"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -514,8 +514,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 504,
-      "sha256": "54133646bb3485496385d6a56e77fe8f0786dea9165b3f877620cb432ab27257"
+      "size": 479,
+      "sha256": "67b0497e69dc203b0959e7a6448dd607f7e2b85b60761d51517858fdeb5f4f67"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -539,13 +539,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 8740,
-      "sha256": "79ea8a594b7b0901f6687ecba5de8bb2515dd0772b4aff57650cac40d021a8f5"
+      "size": 8905,
+      "sha256": "83b28b96767667c574b0a338b5f463abc2d5b32e541c576013da89bfeeace6a0"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 93714,
-      "sha256": "34fdca3e10a35801d648914f8682b3f05e5eb6c7a28e0d5ce2100b2a991499c1"
+      "size": 94576,
+      "sha256": "1eba8c24d41060a13c36b621f7e5ee2e3d6cab69427fd65a79eda67d8df81276"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -554,8 +554,8 @@
     },
     {
       "path": ".codex/state/ui-ux-review.md",
-      "size": 315,
-      "sha256": "7eb5c70b97c042984fba73f8df046b4fc41fb59fc093f8b4a819c16b2a1623db"
+      "size": 366,
+      "sha256": "4f1a58927834b50049a373f9e20151432a7f8f473953be0aa6ca3cef2a854d3c"
     },
     {
       "path": ".codex/templates/c3-screen-audit.md",
@@ -1059,8 +1059,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 41714,
-      "sha256": "16f9c67ac42b6af68969429663081e21703c9a789a0f3984b9c6f16d51eb6ac6"
+      "size": 41761,
+      "sha256": "90215568eb734126dab25affc2564e1d49e9603efda744cf6c47d74c2fa4768f"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -1124,13 +1124,13 @@
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
-      "size": 1562,
-      "sha256": "fc0707b07bc4fa5971605f2c123fc559d2cf3ff638852d1012737e6f2b0493da"
+      "size": 2022,
+      "sha256": "0ddd37ac99092827d68298bceed88c85f2832f1b002c575fbcae3470a02e3741"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
-      "size": 14444,
-      "sha256": "79f6be70e1686461cf1d2e790ad3ab859c5bd8c13f8a978dd1922c7d428dc742"
+      "size": 14459,
+      "sha256": "bfc54e22b4d187cd8678a223540a881ff405cc5acc1366007071cc9dffff0461"
     },
     {
       "path": "apps/web/src/categories/categoryCommands.test.ts",
@@ -1344,13 +1344,13 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.test.tsx",
-      "size": 3313,
-      "sha256": "890d9b6fe4f556ae922a1ffd99e0df2467b7614c6e027bca6b365dbebadffa4f"
+      "size": 4102,
+      "sha256": "be4cf7f207e0750170dffc10746a0511e48c8bac83f70378257c300855983838"
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 11686,
-      "sha256": "e09e3ce7bae6b1b5015c4ecb73b542945c58e27efeaa9ccb9e4a9e6ee6718c74"
+      "size": 12092,
+      "sha256": "8c31c260901a1a417da642ea23768ec692d0854a19f8b9045f7a8d60b06ea2ff"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -1839,8 +1839,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 47744,
-      "sha256": "52074dc20e08ab5d5c00f8c84035d5a1b4ffb7de7b5a6f7df2647c1ed1bdde83"
+      "size": 48270,
+      "sha256": "1cdd1d0a98fc6ec4283a55df0771d2ec5e94eca38bed7d26b5e2a244c8d532d2"
     },
     {
       "path": "design/mockup/README.md",
@@ -2189,8 +2189,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 7813,
-      "sha256": "ec94888e862bf86cdc33127786f55a1ba83b8a1ccba1246acf071f4a0f9f289c"
+      "size": 7850,
+      "sha256": "d05f06c16e04dec7a5c2f67e6dfa3286e1545719b67b90d8d6d0640e257b56d8"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -2429,8 +2429,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 105940,
-      "sha256": "9aa6464bee3f8fd820cb08fc1678da1588ce4129ff4bae36fa6cd0b3bc2387ff"
+      "size": 105723,
+      "sha256": "afcd559902f2f9925b740b725a1198d77358acf39e6bf2b799d6e1da61b485d5"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -3369,8 +3369,8 @@
     },
     {
       "path": "test/e2e/c4-classification-search-journal-flow.spec.ts",
-      "size": 18298,
-      "sha256": "2a9a4dcccff33a8d8326464919779764ce47c996ff52c94f41b6016abb417d99"
+      "size": 22757,
+      "sha256": "f823cfe8619dfef745a734fb055ad4ccad1c947945837881de6f3b78e3415456"
     },
     {
       "path": "test/e2e/c4-first-start-account-flow.spec.ts",

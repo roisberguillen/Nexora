@@ -1132,7 +1132,7 @@ function buildGlobalSearchResults(state: ReadyLedgerState): readonly GlobalSearc
       id: `category-${category.id}`,
       href: "./#categories",
       label: category.name,
-      detail: "Categoria",
+      detail: category.isArchived ? "Categoria archiviata" : "Categoria",
     })),
     ...state.tags.map((tag) => ({
       id: `tag-${tag.id}`,

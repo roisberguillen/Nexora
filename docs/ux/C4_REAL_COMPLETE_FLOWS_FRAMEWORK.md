@@ -4,9 +4,9 @@
 
 La C4 verifica dalla UI reale i percorsi completi che attraversano più superfici, dal loro
 stato iniziale fino all'effetto persistito e alla sua rilettura. Il focus è su collegamenti,
-persistenza, stati di errore, comportamento offline e correttezza finanziaria. La C4.0 è
-preparatoria e documentale: non modifica comportamento dell'applicazione, dominio, database,
-UI o test funzionali e non dichiara superata alcuna fase C4.1–C4-F.
+persistenza, stati di errore, comportamento offline e correttezza finanziaria. La C4.0 è stata
+preparatoria e documentale: la sua fotografia iniziale non dichiarava superata alcuna fase
+C4.1–C4-F; le fasi successive sono ora aggiornate solo quando supportate dalla propria evidence.
 
 La matrice autorevole è `.codex/state/c4-real-flow-matrix.md`. Una riga descrive un flusso
 verificabile e non una singola schermata. Le evidenze della C3 restano immutate e non vengono
@@ -28,11 +28,11 @@ anticipata da rilievi di coerenza raccolti incidentalmente durante C4.
 | Fase | Flusso da verificare | Stato iniziale |
 | --- | --- | --- |
 | 12.5.C4.0 | Framework e matrice dei flussi reali | COMPLETE |
-| 12.5.C4.1 | Primo avvio, profilo, primo conto, persistenza e riapertura | NEXT |
-| 12.5.C4.2 | Ciclo completo di entrate e spese | PENDING |
-| 12.5.C4.3 | Ciclo completo dei trasferimenti | PENDING |
-| 12.5.C4.4 | Categorie, sottocategorie, tag, ricerca globale e diario | PENDING |
-| 12.5.C4.5 | Budget, ricorrenze, allocazioni e notifiche | PENDING |
+| 12.5.C4.1 | Primo avvio, profilo, primo conto, persistenza e riapertura | COMPLETE |
+| 12.5.C4.2 | Ciclo completo di entrate e spese | COMPLETE |
+| 12.5.C4.3 | Ciclo completo dei trasferimenti | COMPLETE |
+| 12.5.C4.4 | Categorie, sottocategorie, tag, ricerca globale e diario | COMPLETE |
+| 12.5.C4.5 | Budget, ricorrenze, allocazioni e notifiche | NEXT |
 | 12.5.C4.6 | Prestiti, investimenti, Dashboard e Analisi | PENDING |
 | 12.5.C4.7 | Migrazione completa Money Manager XLSX | PENDING |
 | 12.5.C4.8 | Estratti conto, mapping, annullamento ed esportazione | PENDING |

@@ -369,7 +369,7 @@ function CategoryActions({
       </button>
       <button
         className="text-action"
-        disabled={protectedCategory}
+        disabled={protectedCategory || hasChildren}
         onClick={() => void onArchive(category)}
         type="button"
       >

@@ -20,6 +20,7 @@ import {
   LocalDate,
   Money,
   validateImportCommit,
+  validateTransactionSplits,
   type Transfer,
   type TransferBundle,
   validateAccountUpdate,
@@ -1105,7 +1106,6 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           ],
           "readwrite",
           async (idbTransaction) => {
-            const { validateTransactionSplits } = await import("@nexora/domain");
             if (transaction.kind === "transfer")
               throw new DomainError(
                 "invalid_transfer",
@@ -1169,7 +1169,6 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           ["accounts", "categories", "transactions", "transaction_splits"],
           "readwrite",
           async (idbTransaction) => {
-            const { validateTransactionSplits } = await import("@nexora/domain");
             validateTransactionSplits(transaction, splits);
             const transactions = idbTransaction.objectStore("transactions");
             const splitStore = idbTransaction.objectStore("transaction_splits");
@@ -1215,7 +1214,6 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
           ],
           "readwrite",
           async (idbTransaction) => {
-            const { validateTransactionSplits } = await import("@nexora/domain");
             validateTransactionSplits(transaction, splits);
             if (new Set(tagIds).size !== tagIds.length)
               throw new DomainError("duplicate_entity", "Duplicate tag reference.");

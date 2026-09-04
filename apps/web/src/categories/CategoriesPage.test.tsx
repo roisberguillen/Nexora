@@ -1,5 +1,5 @@
 import { Category } from "@nexora/domain";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -29,6 +29,15 @@ describe("CategoriesPage", () => {
     expect(screen.getByRole("tree", { name: "Categorie finanziarie" })).toBeVisible();
     expect(screen.getByRole("treeitem", { name: /Trasporti/ })).toHaveAttribute("aria-level", "1");
     expect(screen.getByText("Carburante")).toBeVisible();
+    const macroItem = screen.getByRole("treeitem", { name: /Trasporti/ });
+    const macroActions = macroItem.querySelector(".category-tree-root > .category-tree-actions");
+    expect(macroActions).not.toBeNull();
+    expect(
+      within(macroActions as HTMLElement).getByRole("button", { name: "Modifica" }),
+    ).toBeDisabled();
+    expect(
+      within(macroActions as HTMLElement).getByRole("button", { name: "Archivia" }),
+    ).toBeDisabled();
     expect(
       screen.getByRole("tree").querySelector('[role="treeitem"][aria-level="2"]'),
     ).toHaveAttribute("aria-level", "2");

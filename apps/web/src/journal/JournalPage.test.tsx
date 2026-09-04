@@ -87,4 +87,27 @@ describe("JournalPage", () => {
     expect(entries[0]).toHaveTextContent("2026-08");
     expect(entries[1]).toHaveTextContent("2026-06");
   });
+
+  it("cancels an edit without changing the saved journal", async () => {
+    const user = userEvent.setup();
+    const journal = MonthlyJournal.create({
+      id: "journal-current",
+      period: "2026-09",
+      note: "Salvata",
+    });
+    render(
+      <JournalPage
+        investments={[]}
+        journals={[journal]}
+        onDelete={async () => undefined}
+        onSave={async () => undefined}
+        transactions={[]}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Modifica" }));
+    await user.click(screen.getByLabelText("Come è andato il mese?"));
+    await user.keyboard(" modifica");
+    await user.click(screen.getByRole("button", { name: "Annulla" }));
+    expect(screen.getByLabelText("Mesi registrati")).toHaveTextContent("Salvata");
+  });
 });
