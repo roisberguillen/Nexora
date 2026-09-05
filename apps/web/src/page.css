@@ -72,10 +72,41 @@
   min-width: 0;
 }
 
+.dashboard-separate-summary {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.5rem;
+}
+.dashboard-separate-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.dashboard-separate-summary-grid > div {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.dashboard-separate-summary-grid span {
+  color: var(--color-on-surface-muted);
+  font-size: 0.8rem;
+}
+.dashboard-separate-summary-grid strong {
+  min-width: 0;
+}
+.dashboard-separate-summary-actions {
+  margin-top: 1.25rem;
+}
+
 @media (min-width: 75.01rem) {
   .dashboard-priority-grid .metric-value,
   .journal-summary-content .metric-value {
     font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+  }
+}
+@media (max-width: 47.99rem) {
+  .dashboard-separate-summary-grid {
+    grid-template-columns: 1fr;
   }
 }
 .dashboard-decision-grid,
@@ -393,7 +424,10 @@
 }
 
 .analytics-period-selector button {
-  min-width: 2.75rem;
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
   padding-inline: 0.75rem;
   font-size: 1.25rem;
 }

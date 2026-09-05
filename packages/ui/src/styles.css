@@ -372,8 +372,8 @@ a {
 
 .icon-button {
   display: inline-grid;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid transparent;
   border-radius: var(--radius-md);

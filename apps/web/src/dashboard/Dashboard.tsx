@@ -77,6 +77,56 @@ export function Dashboard({
               tone={model.savings.amountMinor < 0n ? "negative" : "positive"}
             />
           </section>
+          {model.loanBalance.amountMinor > 0n || model.investmentValue.amountMinor > 0n ? (
+            <section
+              aria-label="Debiti e investimenti"
+              className="data-panel dashboard-separate-summary"
+            >
+              <PanelHeading
+                eyebrow="Posizioni separate"
+                title="Debiti e investimenti"
+                meta="Fuori dai KPI"
+              />
+              <div className="dashboard-separate-summary-grid">
+                <div>
+                  <span>Capitale residuo prestiti</span>
+                  <FinancialAmount
+                    amountMinor={model.loanBalance.amountMinor}
+                    currency={model.loanBalance.currency}
+                  />
+                </div>
+                <div>
+                  <span>Valore corrente investimenti</span>
+                  <FinancialAmount
+                    amountMinor={model.investmentValue.amountMinor}
+                    currency={model.investmentValue.currency}
+                  />
+                </div>
+                <div>
+                  <span>Rendimento investimenti</span>
+                  <strong>
+                    <FinancialAmount
+                      amountMinor={model.investmentGainLoss.amountMinor}
+                      currency={model.investmentGainLoss.currency}
+                      showPositiveSign={model.investmentGainLoss.amountMinor > 0n}
+                      tone={model.investmentGainLoss.amountMinor < 0n ? "negative" : "positive"}
+                    />
+                    {model.investmentGainLossPercent === undefined
+                      ? null
+                      : ` (${formatPercent(model.investmentGainLossPercent, 2, 2)})`}
+                  </strong>
+                </div>
+              </div>
+              <div className="form-actions dashboard-separate-summary-actions">
+                <a className="text-action" href="#loans">
+                  Vedi prestiti
+                </a>
+                <a className="text-action" href="#investments">
+                  Vedi investimenti
+                </a>
+              </div>
+            </section>
+          ) : null}
           <section aria-labelledby="budget-title" className="dashboard-decision-grid">
             <div className="data-panel dashboard-budget-panel">
               <PanelHeading
@@ -363,8 +413,15 @@ function formatMoney(amountMinor: bigint, currency: string): string {
     Number(amountMinor) / 100,
   );
 }
-function formatPercent(value: number): string {
-  return `${new Intl.NumberFormat(DEFAULT_LOCALE, { maximumFractionDigits: 1 }).format(value)}%`;
+function formatPercent(
+  value: number,
+  maximumFractionDigits = 1,
+  minimumFractionDigits = 0,
+): string {
+  return `${new Intl.NumberFormat(DEFAULT_LOCALE, {
+    maximumFractionDigits,
+    minimumFractionDigits,
+  }).format(value)}%`;
 }
 function formatLocalDate(value: string): string {
   const [year, month, day] = value.split("-").map(Number);

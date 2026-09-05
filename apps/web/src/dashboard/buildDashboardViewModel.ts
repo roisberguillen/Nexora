@@ -101,8 +101,10 @@ export interface DashboardViewModel {
   readonly netCashFlow: Money;
   readonly netWorth: Money;
   readonly loanBalance: Money;
+  readonly investmentCostBasis: Money;
   readonly investmentValue: Money;
   readonly investmentGainLoss: Money;
+  readonly investmentGainLossPercent: number | undefined;
   readonly period: string;
   readonly periodLabel: string;
   readonly monthStatus: "IN LINEA" | "ATTENZIONE" | "FUORI PIANO" | "NESSUN BUDGET";
@@ -150,6 +152,12 @@ export function buildDashboardViewModel(
       account.currency === currency &&
       ["checking", "savings", "cash"].includes(account.type),
   );
+  const compatibleInvestments = (data.investmentPositions ?? []).filter(
+    (position) => position.currentValue.currency === currency,
+  );
+  const investmentCostBasis = sum(compatibleInvestments.map((position) => position.costBasis));
+  const investmentValue = sum(compatibleInvestments.map((position) => position.currentValue));
+  const investmentGainLoss = sum(compatibleInvestments.map((position) => position.gainLoss()));
   const savings = cashFlow.net;
   return Object.freeze({
     accounts: Object.freeze(
@@ -189,16 +197,13 @@ export function buildDashboardViewModel(
         .filter((loan) => loan.remainingPrincipal.currency === currency)
         .map((loan) => loan.remainingPrincipal),
     ),
-    investmentValue: sum(
-      (data.investmentPositions ?? [])
-        .filter((position) => position.currentValue.currency === currency)
-        .map((position) => position.currentValue),
-    ),
-    investmentGainLoss: sum(
-      (data.investmentPositions ?? [])
-        .filter((position) => position.currentValue.currency === currency)
-        .map((position) => position.gainLoss()),
-    ),
+    investmentCostBasis,
+    investmentValue,
+    investmentGainLoss,
+    investmentGainLossPercent:
+      investmentCostBasis.amountMinor > 0n
+        ? Number((investmentGainLoss.amountMinor * 10_000n) / investmentCostBasis.amountMinor) / 100
+        : undefined,
     period,
     periodLabel: periodLabel(period),
     monthStatus: monthStatus(progress),

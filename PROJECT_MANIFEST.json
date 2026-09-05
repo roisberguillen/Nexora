@@ -373,6 +373,11 @@
       "sha256": "b8071239310473c5239842c1f4c9e7e79dccbe64add2feda94061e07b112bbe7"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-05-c4-6-loans-investments-dashboard-analytics-flow.md",
+      "size": 3612,
+      "sha256": "e81dccdb74658dcba862756cd7184a9ccec9d4080eea997c151bf37592f9ed6c"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -484,8 +489,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 11339,
-      "sha256": "7e83ce3f8624eb6486323ca4639f299e14e3577f834ae2b4e7dff5b3f93e9ad7"
+      "size": 11724,
+      "sha256": "00937b1cab575cafc840c082b4ad75299fc5fb6c73788b813499eeac828db536"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -529,8 +534,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 491,
-      "sha256": "e24f887feeae08daffd1d08c5e9086a5470593ae51bb855b981d4a3a8c08f482"
+      "size": 446,
+      "sha256": "e4682f55d4f25f62c1e72e11fe92c80f642c2a6c3bcc470ec588fa1c6959e3e5"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -554,13 +559,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 9488,
-      "sha256": "416b5df992aa2dde797ff907fb1bc067a996aecc1ee1b001950ba54c6fb49159"
+      "size": 9669,
+      "sha256": "932ed84878ffaf978851a15a9bd94279dc7e1f782f7b919bc91b3d2c465d6018"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 98378,
-      "sha256": "93611564f4dcda3c2332bad477fc257222d73830998b87ad163ee940f6d2cd82"
+      "size": 100451,
+      "sha256": "356ca0b881d0da35a18939c92324f8980e222f1ca48ce010fa9131642bd3eec0"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1224,23 +1229,23 @@
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.test.ts",
-      "size": 9713,
-      "sha256": "1dcf457129578cb6dcc4bf93c5cb0f6b237dd6eabce63c555b36b0749f6eb64b"
+      "size": 9843,
+      "sha256": "1785a164f9cdfb80f603278fab09b2a65bc9e25ec2b6d7e109fdc98ca64b92ec"
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.ts",
-      "size": 17833,
-      "sha256": "114cb6e869bc564ce10027269909b23da01a80a84803e709e6ae4d3c8a5ae52d"
+      "size": 18227,
+      "sha256": "a53b4aac1fc611b1b2902a86772a37b3943d6f446fc9f4d8eabd3ffa91e71a85"
     },
     {
       "path": "apps/web/src/dashboard/Dashboard.test.tsx",
-      "size": 370,
-      "sha256": "ab064e0c74f3bbdb2ba51029f591cfcffe8475a376ad467e3f04d16f98fb7264"
+      "size": 2853,
+      "sha256": "40428216259de955bcb604f54f11e0b82b4045c9fbb4c3514151104e1337bdaf"
     },
     {
       "path": "apps/web/src/dashboard/Dashboard.tsx",
-      "size": 14719,
-      "sha256": "4e51b2ec2e06e8ecd8a05e25349e8fd6f711dc56e2721e9df0871492c556fa47"
+      "size": 16975,
+      "sha256": "d9de49d180613763bd5e92710f9fa9cff120b27e567a30f416d55d18e8715d74"
     },
     {
       "path": "apps/web/src/dashboard/trendBar.ts",
@@ -1424,8 +1429,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 51309,
-      "sha256": "ea35ea09e4e64df227749ae6d303d2ef5dcf3cdb031ae650a1250225c6fb5da8"
+      "size": 52008,
+      "sha256": "d6c575bc9170bb11264db331245dac1e17ff4d4a6444dcbc2b62b98b96aecb68"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1854,8 +1859,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 48867,
-      "sha256": "31ec7ffdd38389cf9f2a769e12bb71fd1c0998335b7f035673ba03826d2b2831"
+      "size": 49470,
+      "sha256": "48e521730ad9d13326e072528c0ce7d356090b9e75adc6275f9edb7630d3c9d1"
     },
     {
       "path": "design/mockup/README.md",
@@ -2204,8 +2209,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 8074,
-      "sha256": "8e61d78e4758c3f1f0c1b39e74a707e8d54ebf5238f72bf97ea784a900180011"
+      "size": 8072,
+      "sha256": "943f33fd04c7f93849f912e7d58fc2219da0ebda14a09fc27fb36f60e1885f9f"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -3204,8 +3209,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20746,
-      "sha256": "973a241037a8bcdc31834f0cbc6a0d74eda6f7e8755aea3ea48d56953d79b380"
+      "size": 20742,
+      "sha256": "5daf8f532d398d8e380fa5d65363d60bce3f8af1407b967040ecc8287639ff89"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3396,6 +3401,11 @@
       "path": "test/e2e/c4-income-expense-flow.spec.ts",
       "size": 15330,
       "sha256": "6f2844cb8b99e2913e65f39e6c619e1bfd8be5cbebc28239c21e58e2ff83a24e"
+    },
+    {
+      "path": "test/e2e/c4-loans-investments-dashboard-analytics-flow.spec.ts",
+      "size": 14910,
+      "sha256": "af7b59c3430b72d05723b1cdbe6af883f8acaa5cd81f4e767657d1b53e19aad2"
     },
     {
       "path": "test/e2e/c4-recurring-allocation-notifications-flow.spec.ts",

@@ -1340,3 +1340,28 @@ Keep only the latest relevant evidence per completed phase.
 - Gate finali: `pnpm test:ui-ux` `4 passed`; `pnpm quality:ui-ux` PASS; `pnpm codex:test` `8 passed`;
   manifest aggiornato e verificato; `pnpm format:check` e orchestratore `17 route` PASS. Review:
   `.codex/reviews/ui-ux/2026-09-05-c4-5-r2-local-refresh-gate.md`. P0/P1/P2 `0/0/0`.
+
+## 2026-09-05 — C4.6 prestiti, investimenti, Dashboard e Analisi
+
+- Baseline: checkpoint `2da1e149d3fc1b91d599684e3cf8b03b1e9ffd0e`, working tree pulito; routing
+  `localized_bug / STANDARD / low`, manifest e orchestratore (`17 route`) validi.
+- Correzione funzionale: Dashboard espone il pannello condizionale “Debiti e investimenti” fuori dai
+  KPI, con prestiti/investimenti EUR separati, rendimento assoluto/percentuale e link dedicati.
+  I calcoli usano minor units e bigint; disponibilità e cash-flow mantengono le esclusioni approvate.
+- Test mirati: `7 file`, `35 passed`, `0 failed`; build workspace PASS.
+- E2E dedicato `test/e2e/c4-loans-investments-dashboard-analytics-flow.spec.ts`: `8 passed`,
+  `10 skipped`, `0 failed` su 18 casi distribuiti nei profili 320/375/390/768/1024/1440; CDP zoom
+  reale 200% su 1024/1440. Negativo rata zero a 390 PASS; IndexedDB offline a 1440 PASS con
+  creazione, modifica, reload e riapertura senza duplicati.
+- Riconciliazione: operativo `9468`, Directa `60`, prestito `0`, ledger `9528`, disponibilità `9468`;
+  prestito residuo `4828`, investimento `1200`, gain `140 / 13,20%`; settembre `3000/672/2328/77,6%`.
+  Il trasferimento `60` è escluso da entrate, uscite e risparmio. Axe, overflow, focus/target e
+  console/pageerror passano; tastiera/focus e target interattivi espliciti `44×44` passano dopo il
+  passaggio del controllo globale `icon-button` da `40×40` a `44×44`; P0/P1/P2 `0/0/0`.
+- Regressioni correlate: `19 passed`, `0 failed` su Loans, Investments, Dashboard, Analytics e
+  Transactions a 1440 px. `pnpm verify`: `140 file`, `625 passed`, `4 skipped`, `0 failed`; build,
+  lint, typecheck e format verdi. Full E2E: `409 passed`, `191 skipped`, `0 failed` su 600 casi,
+  inclusi OPFS/IndexedDB 100.000 record.
+- Gate finali: `pnpm test:ui-ux` `4 passed`; `pnpm quality:ui-ux` PASS; `pnpm codex:test` `8 passed`;
+  manifest aggiornato/verificato, format check PASS e orchestratore `17 route` PASS. Review:
+  `.codex/reviews/ui-ux/2026-09-05-c4-6-loans-investments-dashboard-analytics-flow.md`.

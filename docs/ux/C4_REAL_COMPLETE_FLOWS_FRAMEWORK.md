@@ -35,8 +35,8 @@ anticipata da rilievi di coerenza raccolti incidentalmente durante C4.
 | 12.5.C4.5 | Budget, ricorrenze, allocazioni e notifiche | COMPLETE |
 | 12.5.C4.5-R | Chiusura offline delle allocazioni e riconciliazione documentale | COMPLETE |
 | 12.5.C4.5-R2 | Refresh locale immediato e chiusura definitiva dei gate | COMPLETE |
-| 12.5.C4.6 | Prestiti, investimenti, Dashboard e Analisi | NEXT |
-| 12.5.C4.7 | Migrazione completa Money Manager XLSX | PENDING |
+| 12.5.C4.6 | Prestiti, investimenti, Dashboard e Analisi | COMPLETE |
+| 12.5.C4.7 | Migrazione completa Money Manager XLSX | NEXT |
 | 12.5.C4.8 | Estratti conto, mapping, annullamento ed esportazione | PENDING |
 | 12.5.C4.9 | Backup manuale, restore, rollback e regressione Google Drive | PENDING |
 | 12.5.C4.10 | App Lock, impostazioni, cestino, reset, startup e recovery | PENDING |
@@ -130,5 +130,5 @@ P0/P1/P2 e stato. I comandi, conteggi, skip e failure sono registrati in
 `C4_FINAL_GATE_PASS` richiede tutte le righe C4.1–C4.10 e C4-F completate con `FLOW_AUDIT_PASS`,
 nessun P0/P1 aperto, P2 tracciati, matrice e test evidence riconciliati, test e quality gate
 richiesti verdi, verifica offline e reload/reopen pertinente, console senza errori rilevanti e
-documentazione aggiornata. Finché queste condizioni non sono dimostrate C4 resta pending; C4.0–C4.5-R2
-sono le sole fasi completate in questo documento, con C4.6 come prossimo flusso.
+documentazione aggiornata. Finché queste condizioni non sono dimostrate C4 resta pending; C4.0–C4.6
+sono le sole fasi completate in questo documento, con C4.7 come prossimo flusso.

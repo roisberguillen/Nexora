@@ -289,7 +289,9 @@ describe("buildDashboardViewModel", () => {
       DASHBOARD_TEST_TODAY,
     );
     expect(dashboard.loanBalance.amountMinor).toBe(200_000n);
+    expect(dashboard.investmentCostBasis.amountMinor).toBe(100_000n);
     expect(dashboard.investmentValue.amountMinor).toBe(112_500n);
     expect(dashboard.investmentGainLoss.amountMinor).toBe(12_500n);
+    expect(dashboard.investmentGainLossPercent).toBe(12.5);
   });
 });

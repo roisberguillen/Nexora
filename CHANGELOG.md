@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-09-05
+
+- Completata C4.6 con pannello Dashboard separato per debiti e investimenti: prestiti e posizioni
+  restano fuori dai KPI e dal cash-flow, con filtro EUR e link accessibili alle superfici dedicate.
+- Aggiunto il flusso E2E completo prestito/rata, investimento/valutazione, trasferimento, Dashboard
+  e Analisi: sei viewport, zoom CDP 200%, negativi, persistenza e creazione/modifica offline IndexedDB.
+- Riconciliazione finale verificata: disponibilità `9.468,00`, ledger `9.528,00`, prestito `4.828,00`,
+  investimento `1.200,00`, rendimento `140,00 / 13,20%`; nessun P0/P1/P2 aperto.
+
 ## 2026-09-03
 
 - Ripristinato il gate E2E dello zoom reale C4.1: la navigazione ora segue il landmark realmente
