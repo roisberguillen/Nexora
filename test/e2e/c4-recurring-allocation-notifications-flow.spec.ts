@@ -137,26 +137,16 @@ test.describe("C4.5 ricorrenza, allocazioni, budget e notifiche", () => {
       await expect(
         page.getByRole("status").filter({ hasText: "Allocazioni stipendio registrate" }),
       ).toBeVisible();
+      await expectAllocationState(page);
       await page.reload({ waitUntil: "domcontentloaded" });
-      await page.goto("/#accounts");
-      await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("2.870,00");
-      await expect(accountRow(page, "Risparmio C4.5")).toContainText("270,00");
-      await expect(accountRow(page, "Investimenti C4.5")).toContainText("110,00");
-      await page.goto("/#budgets");
-      await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "80");
-      await page.goto("/#notifications");
-      await expect(page.getByText("Entrata attesa: Stipendio C4.5")).toHaveCount(0);
-      await expect(page.getByText("Prima soglia budget raggiunta (80%)")).toBeVisible();
+      await expectAllocationState(page);
       await page.reload({ waitUntil: "domcontentloaded" });
-      await expect(page.getByText("Prima soglia budget raggiunta (80%)")).toBeVisible();
-      await page.goto("/#recurring");
-      await expect(page.getByText("Piano sospeso C4.5")).toBeVisible();
+      await expectAllocationState(page);
     } finally {
       await context.setOffline(false);
     }
     await page.reload();
-    await page.goto("/#accounts");
-    await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("2.870,00");
+    await expectAllocationState(page);
     await page.goto("/#transactions");
     await expect(page.getByRole("list", { name: "Movimenti registrati nel ledger" })).toContainText(
       "Datore C4.5",
@@ -168,6 +158,20 @@ test.describe("C4.5 ricorrenza, allocazioni, budget e notifiche", () => {
     ).toHaveCount(4);
   });
 });
+
+async function expectAllocationState(page: Page): Promise<void> {
+  await page.goto("/#accounts");
+  await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("2.870,00");
+  await expect(accountRow(page, "Risparmio C4.5")).toContainText("270,00");
+  await expect(accountRow(page, "Investimenti C4.5")).toContainText("110,00");
+  await page.goto("/#budgets");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "80");
+  await page.goto("/#notifications");
+  await expect(page.getByText("Entrata attesa: Stipendio C4.5")).toHaveCount(0);
+  await expect(page.getByText("Prima soglia budget raggiunta (80%)")).toBeVisible();
+  await page.goto("/#recurring");
+  await expect(page.getByText("Piano sospeso C4.5")).toBeVisible();
+}
 
 async function createAccount(page: Page, name: string, openingBalance: string): Promise<void> {
   await page.goto("/#accounts");

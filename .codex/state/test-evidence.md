@@ -1321,3 +1321,22 @@ Keep only the latest relevant evidence per completed phase.
   Reload offline e riconnessione non producono duplicati; notifica stipendio rimossa e budget mantenuta.
 - Regressioni: unit/web `4 file, 38 passed`; E2E budget/notifiche/ricorrenze/movimenti `20 passed`.
 - Review: `.codex/reviews/ui-ux/2026-09-05-c4-5-r-offline-allocation-reconciliation.md`; P0/P1/P2 `0/0/0`.
+
+## 2026-09-05 — C4.5-R2 refresh locale immediato e gate definitivi
+
+- Controlli iniziali: checkpoint `1d5f35f`, working tree pulito, routing `localized_bug / STANDARD / low`,
+  orchestratore `17 route` valido; `pnpm manifest:check` iniziale fallito perché il manifest era stale.
+- Riproduzione baseline: test offline dedicato `1 passed`, mostrando il percorso persistente; la verifica
+  senza reload è stata aggiunta per rendere osservabile il gap di modelli UI obsoleti.
+- Correzione: rimosso `refresh: false`; dopo ogni mutazione `loadAppModels` rilegge il repository locale
+  e il setter React funzionale aggiorna rawTransactions, Conti, Dashboard, Budget e Notifiche.
+- Prova offline senza reload, reload offline e riconnessione: `1 passed`; saldi `2870/270/110`, patrimonio
+  `3250,00 EUR`, budget `400/500`, due trasferimenti / quattro leg, piano sospeso escluso e notifiche coerenti.
+- Suite mirata: `5 file, 39 passed`; regressioni E2E `20 passed`; build PASS. Un primo `verify` ha avuto
+  un errore infrastrutturale isolato (`Worker exited unexpectedly`), poi il retry è passato con `624 passed`,
+  `4 skipped`, `0 failed` e build/lint/typecheck/format verdi.
+- Full E2E: `401 passed`, `181 skipped`, `0 failed` su 582 casi; benchmark IndexedDB/OPFS 100.000 record
+  e viewport C4.5 320/375/390/768/1024/1440 inclusi.
+- Gate finali: `pnpm test:ui-ux` `4 passed`; `pnpm quality:ui-ux` PASS; `pnpm codex:test` `8 passed`;
+  manifest aggiornato e verificato; `pnpm format:check` e orchestratore `17 route` PASS. Review:
+  `.codex/reviews/ui-ux/2026-09-05-c4-5-r2-local-refresh-gate.md`. P0/P1/P2 `0/0/0`.

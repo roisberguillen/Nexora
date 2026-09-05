@@ -40,6 +40,9 @@
 
 ## [Unreleased]
 
+- Chiuso C4.5-R2: Conti, Budget, Notifiche e riepiloghi si aggiornano immediatamente dal ledger locale
+  dopo le allocazioni offline, senza richiedere un reload.
+
 - Chiuso C4.5-R: il flusso completo di stipendio e allocazioni offline su IndexedDB persiste correttamente
   dopo reload e riconnessione, evita duplicati e non attende il refresh derivato per confermare il comando.
 
