@@ -2,6 +2,11 @@
 
 ## 2026-09-05
 
+- Completata C4.9 con backup manuale `.nexora-backup`, verifica read-only, restore A → B → A,
+  rollback post-write, IndexedDB offline, OPFS/SQLite e regressione Drive opzionale senza credenziali reali.
+- Rafforzato il provider Google Drive: marker Nexora e metadati tecnici di data/dimensione inviati
+  solo insieme all’archivio cifrato già verificato; archivi esterni esclusi dalla lista.
+
 - Completata C4.8 con estratto CSV generico, mapping manuale e profilo persistente, commit atomico,
   deduplica post-undo, export CSV/XLSX filtrati senza movimenti annullati e JSON completo; verificati
   saldi, precisione minor-unit, trasferimento a due gambe, reload/reopen, IndexedDB offline e zoom CDP.

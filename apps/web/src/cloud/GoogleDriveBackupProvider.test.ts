@@ -28,6 +28,7 @@ describe("GoogleDriveBackupProvider", () => {
                 checksumSha256: "a".repeat(64),
                 formatVersion: "1",
                 schemaVersion: "15",
+                nexoraBackup: "1",
               },
             },
           ],
@@ -136,6 +137,34 @@ describe("GoogleDriveBackupProvider", () => {
     expect(await (request.body as Blob).text()).toContain(
       '"backupId":"nexora-v11-test.nexora-backup"',
     );
+    expect(await (request.body as Blob).text()).toContain('"createdAt":"2026-07-29T10:00:00.000Z"');
+    expect(await (request.body as Blob).text()).toContain('"size":"3"');
+  });
+
+  it("ignora metadati che non dichiarano un archivio Nexora", async () => {
+    const fetcher = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          files: [
+            {
+              id: "foreign-backup",
+              name: "foreign.nexora-backup",
+              size: "3",
+              createdTime: "2026-08-02T10:00:00Z",
+              appProperties: {
+                backupId: "foreign.nexora-backup",
+                checksumSha256: "a".repeat(64),
+                formatVersion: "1",
+                schemaVersion: "15",
+              },
+            },
+          ],
+        }),
+        { status: 200 },
+      ),
+    );
+
+    await expect(new GoogleDriveBackupProvider(() => "token", fetcher).list()).resolves.toEqual([]);
   });
 });
 

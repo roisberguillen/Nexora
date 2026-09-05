@@ -43,6 +43,8 @@ export class GoogleDriveBackupProvider implements CloudBackupProvider {
         backupId: metadata.backupId,
         formatVersion: String(metadata.formatVersion),
         schemaVersion: String(metadata.schemaVersion),
+        createdAt: metadata.createdAt,
+        size: String(metadata.size),
         nexoraBackup: "1",
       },
     });
@@ -153,6 +155,7 @@ function parseCloudBackupMetadata(file: {
     file.id.length > 1024 ||
     !backupId.endsWith(".nexora-backup") ||
     !/^[a-f0-9]{64}$/.test(checksumSha256) ||
+    file.appProperties?.nexoraBackup !== "1" ||
     formatVersion !== 1 ||
     !Number.isInteger(schemaVersion) ||
     schemaVersion < 0 ||

@@ -1,5 +1,26 @@
 # Test evidence
 
+## 12.5.C4.9 — Backup manuale, restore, rollback e regressione Google Drive — 2026-09-05
+
+- Baseline: C4.8 `COMPLETE / FLOW_AUDIT_PASS`, commit `5ebcb88` pushato e branch pulito; routing
+  `google_drive / ADVANCED / medium`, manifest e orchestratore validi.
+- Nuovo E2E `test/e2e/c4-backup-restore-drive-flow.spec.ts`: `2 passed`, `0 failed` a 1440 px.
+  Stato A: Operativo `1180,00`, Riserva `300,00`, totale `1480,00`, quattro transazioni e un
+  trasferimento a due gambe. Stato B: Operativo `1100,00`, Riserva `300,00`, Temporaneo `50,00`,
+  totale `1450,00`; verifica errata/read-only e annulla non modificano B; restore torna esattamente ad A.
+- Backup reale: passphrase minima, doppio click protetto, download `.nexora-backup`, payload cifrato
+  senza nomi/importi/passphrase leggibili, ricevuta con file/schema/data/prefisso checksum/conteggi,
+  invalidazione su cambio passphrase/file e cronologia tecnica. AES-256-GCM, PBKDF2 SHA-256 600.000,
+  salt/IV casuali verificati dai test engine; nessun primitivo modificato.
+- Persistenza: UI OPFS/PWA e SQLite fisico coperti da `backup-restore.spec.ts`; UI IndexedDB offline
+  esegue verifica/restore/reload/reopen; rollback post-write e atomicità coperti da engine e adapter.
+- Drive: provider mock 18 test mirati verdi; scope `drive.appdata`, `appDataFolder`, token solo in
+  memoria, marker Nexora, checksum/formato/schema/data/dimensione e upload senza retry automatico;
+  nessuna credenziale reale o richiesta contenente dati finanziari.
+- Matrice regressioni richiesta: `66 passed`, `60 skipped`, `0 failed` sui sei profili; skip motivati
+  da round-trip one-shot desktop/offline/backend. `pnpm verify`: 140 file, `629 passed`, `4 skipped`,
+  `0 failed`; format/lint/typecheck/build verdi. P0/P1/P2: `0/0/0`. Prossimo task: `12.5.C4.10`.
+
 ## 12.5.C4.8 — Estratti conto, mapping, annullamento ed esportazione — 2026-09-05
 
 - Baseline: working tree pulito su `4446404`, C4.7 `COMPLETE / FLOW_AUDIT_PASS`, commit e push

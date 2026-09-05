@@ -388,6 +388,11 @@
       "sha256": "5774ff67d3dc82cad58c093b6f04fdcebb40affd17108255c877b10a97a5ec9e"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-05-c4-9-backup-restore-drive-flow.md",
+      "size": 4060,
+      "sha256": "62aa5ee9d98e7fe0bff6338e15734e2664b3371f16e3b85389d15045852b200c"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -499,8 +504,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 12706,
-      "sha256": "0b73055aba377f601ea5dde16f1f5631128d983d0100c740a3671aca85b30ef9"
+      "size": 12827,
+      "sha256": "adc3cd1f8b3b4fd42b0e04789bfd91f194f023dd65818ced7a76e2df1e47c182"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -544,8 +549,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 552,
-      "sha256": "4ed46766adb51762d89dc5a61bc1e3d356a54bb61c074347e66913fc60590472"
+      "size": 524,
+      "sha256": "bf8ae20a11dc716b6bec68b7442a8efa357d36ef81a4287390cc63cadf0068b2"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -569,13 +574,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 9869,
-      "sha256": "63115c877e198d67e8ebc50c77ad6a5d54fb74cd577385efa8896925e758f229"
+      "size": 9874,
+      "sha256": "268d33a185618574d5cef9182249fe7415bfd6beae1839fd460935a49389dbd0"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 103143,
-      "sha256": "18e01952525450d5f8262aea62f1c2748916f99c0a3b152951bd46efaa3f51da"
+      "size": 104946,
+      "sha256": "9a43f06ffadc0f604c7b4b8b14ffcff95ff653f18e17c797ad35dd4439409dd8"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1124,8 +1129,8 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.test.tsx",
-      "size": 13055,
-      "sha256": "43af66b1a1a44a106a80f659926c07b7f54707be5c4fdbf397cb609fc95e3d4e"
+      "size": 13131,
+      "sha256": "c174c4e95f2bbf3a5625e0e237689f20609b9a19d6097987724907a0feab3167"
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
@@ -1189,13 +1194,13 @@
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.test.ts",
-      "size": 6211,
-      "sha256": "2922edddf246c99f6c61474b7264138e05cb804a4006d40411385f7e94de4990"
+      "size": 7188,
+      "sha256": "2ea1e7694dd97db9e9f4080093bbe3b8ebc583b4d4746756a6b05ca5b0dae00f"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveBackupProvider.ts",
-      "size": 7663,
-      "sha256": "19a8277ce5c8f22f4fc226b9ff9625fba22cf519a8a5bcdaeab3fbfe86155bf5"
+      "size": 7787,
+      "sha256": "aaac140a33bad6a5cd0afad1ce52123a054c002ff2e73dac3030a9dafef54226"
     },
     {
       "path": "apps/web/src/cloud/GoogleDriveSession.tsx",
@@ -1869,8 +1874,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 50399,
-      "sha256": "72467837390e751645ec3170d404845678ac4236c1ac0962122d39b8d61e509c"
+      "size": 50798,
+      "sha256": "3791a90aba82391ae231338a16d1deb23e19412af8f7e8e2de081ef1f4f86893"
     },
     {
       "path": "design/mockup/README.md",
@@ -2224,8 +2229,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 8114,
-      "sha256": "561045bdc663d26e4aafe0101b48a800d9d7f185721404e39963d2234e5662c9"
+      "size": 8139,
+      "sha256": "dc55ebe90f849e901871987d0935bd298667e237d13ae14004dad1d6a4e23ae5"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -3401,6 +3406,11 @@
       "path": "test/e2e/c3-shell-audit.spec.ts",
       "size": 3095,
       "sha256": "5b6a719817caafed18d729fe067a481946f8f0a0b2c383a695c3baaa07b8cdee"
+    },
+    {
+      "path": "test/e2e/c4-backup-restore-drive-flow.spec.ts",
+      "size": 13034,
+      "sha256": "bfe9b57a63a0a278a0700c5fe6164977716d4360e6751c4b4ceb8f8252bfb369"
     },
     {
       "path": "test/e2e/c4-bank-statement-import-export-flow.spec.ts",
