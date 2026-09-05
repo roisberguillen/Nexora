@@ -59,12 +59,13 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.3-R | complete — 2026-09-04 | `FLOW_AUDIT_PASS`; failure C4.2 a 390 px non riprodotto; regressioni e gate completi verdi |
 | 12.5.C4.4 | complete — 2026-09-04 | `FLOW_AUDIT_PASS`; categorie, tag, ricerca globale, diario, merge, persistenza e offline verificati |
 | 12.5.C4.4-R | complete — 2026-09-04 | chiusura coperture, IndexedDB offline/reload, riconciliazione documentale e gate completi |
-| C4 | in progress — C4.0–C4.4 complete; C4.5 NEXT | real complete flows; remaining C4 slices are not started |
+| 12.5.C4.5 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; ricorrenza salary_italy, stipendio, allocazioni idempotenti, budget, notifiche, reload/offline e gate completi |
+| C4 | in progress — C4.0–C4.5 complete; C4.6 next | real complete flows; remaining C4 slices are not started |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
 | E | pending | final gate: READY / NOT READY |
 | F | pending | release freeze |
-| 12.5.C4 | planned | real complete flows |
+| 12.5.C4 | in progress — C4.0–C4.5 complete; C4.6 next | real complete flows |
 | 12.5.C5 | planned | cross-surface consistency |
 | 12.5.D | planned | final independent review |
 | 12.5.E | planned | final gate: READY / NOT READY |
@@ -75,9 +76,9 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
 C3.14, C3.15, C3.16, C3.17, C3.18, C3.19, C3.20 and C3.21 are complete. C4.0–C4.4 are
-complete with their own evidence; C4.5–C4-F remain pending until their own evidence exists.
+complete with their own evidence; C4.6–C4-F remain pending until their own evidence exists.
 Phase 13 must not be treated as next before the 12.5 release freeze. C4.0–C4.4 are complete;
-C4.5 is the next task. C4.5–C4-F, C5, D, E, F and Phase 13 remain pending/not started.
+C4.6 is the next task. C4.6–C4-F, C5, D, E, F and Phase 13 remain pending/not started.
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not
 an approved implementation. The Phase 12.3 work was recovered selectively on

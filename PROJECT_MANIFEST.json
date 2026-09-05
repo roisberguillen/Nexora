@@ -358,6 +358,11 @@
       "sha256": "8f802643bbdd225ccd34f6e118404f56004d00b38bfddc41fe0090d3a5b766b7"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-05-c4-5-recurring-allocation-notifications-flow.md",
+      "size": 2628,
+      "sha256": "b8071239310473c5239842c1f4c9e7e79dccbe64add2feda94061e07b112bbe7"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -469,8 +474,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 9449,
-      "sha256": "3558d4a23397785620833c63839f41e78e08157fa90964c50babffa293fefa5d"
+      "size": 9878,
+      "sha256": "c3f14177b59664ca4ef19c4c0c88177dfe6cc0516937c904664a3f3c0c504bf1"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -514,8 +519,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 479,
-      "sha256": "67b0497e69dc203b0959e7a6448dd607f7e2b85b60761d51517858fdeb5f4f67"
+      "size": 494,
+      "sha256": "38e3493c9f1418b8895620df3db6cd1fb4311125ecd9555cf85f3b6ecb05e108"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -539,13 +544,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 8905,
-      "sha256": "83b28b96767667c574b0a338b5f463abc2d5b32e541c576013da89bfeeace6a0"
+      "size": 9117,
+      "sha256": "f7b47ab36fc5dede737649173a00f05e2aa3198c6f0cd6026cc8fa2066559363"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 94576,
-      "sha256": "1eba8c24d41060a13c36b621f7e5ee2e3d6cab69427fd65a79eda67d8df81276"
+      "size": 95687,
+      "sha256": "90a6acfc80f79dced68c0bc0ec978c40c8fad04c6bb8ad08e7502dace22c2eed"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1059,8 +1064,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 41761,
-      "sha256": "90215568eb734126dab25affc2564e1d49e9603efda744cf6c47d74c2fa4768f"
+      "size": 42377,
+      "sha256": "ace8a086ee7cabcec566d94a76222b910932644da374536ba306eac7496c3b15"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -1839,8 +1844,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 48270,
-      "sha256": "1cdd1d0a98fc6ec4283a55df0771d2ec5e94eca38bed7d26b5e2a244c8d532d2"
+      "size": 48488,
+      "sha256": "e6dbffb4d249f26c7e447dbf9dee2d6684dad96676d03fac514554b5874c7183"
     },
     {
       "path": "design/mockup/README.md",
@@ -2189,8 +2194,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 7850,
-      "sha256": "d05f06c16e04dec7a5c2f67e6dfa3286e1545719b67b90d8d6d0640e257b56d8"
+      "size": 7859,
+      "sha256": "34b8d6633850ab55f09b93fb490daf00910bbefe86528f66022065b05ac637be"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -2779,8 +2784,8 @@
     },
     {
       "path": "packages/domain/src/entities/RecurringRule.test.ts",
-      "size": 4896,
-      "sha256": "c78fff1e84b6ca75411a9453be00830d844147a2d1c40ee3328959360d1e4db2"
+      "size": 5440,
+      "sha256": "5ce29ea80ef5a2061c6bcf42fe7311f056856dad660dcc0c65a00b882369afe2"
     },
     {
       "path": "packages/domain/src/entities/RecurringRule.ts",
@@ -3381,6 +3386,11 @@
       "path": "test/e2e/c4-income-expense-flow.spec.ts",
       "size": 15330,
       "sha256": "6f2844cb8b99e2913e65f39e6c619e1bfd8be5cbebc28239c21e58e2ff83a24e"
+    },
+    {
+      "path": "test/e2e/c4-recurring-allocation-notifications-flow.spec.ts",
+      "size": 10398,
+      "sha256": "0bea6245023caa7febc860cfbb91eef6317944bf74a0e9edc96e9f2c18d38b82"
     },
     {
       "path": "test/e2e/c4-transfer-flow.spec.ts",

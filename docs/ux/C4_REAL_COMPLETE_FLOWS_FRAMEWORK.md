@@ -128,5 +128,5 @@ P0/P1/P2 e stato. I comandi, conteggi, skip e failure sono registrati in
 `C4_FINAL_GATE_PASS` richiede tutte le righe C4.1–C4.10 e C4-F completate con `FLOW_AUDIT_PASS`,
 nessun P0/P1 aperto, P2 tracciati, matrice e test evidence riconciliati, test e quality gate
 richiesti verdi, verifica offline e reload/reopen pertinente, console senza errori rilevanti e
-documentazione aggiornata. Finché queste condizioni non sono dimostrate C4 resta pending; C4.0
-è l'unica fase completata in questo documento.
+documentazione aggiornata. Finché queste condizioni non sono dimostrate C4 resta pending; C4.0–C4.5
+sono le sole fasi completate in questo documento.

@@ -763,3 +763,8 @@
 - Aggiunte coperture E2E per diario (periodo invalido, double-submit, annulla edit), riferimenti
   storici dopo merge/archiviazione, ricerca di elementi archiviati, reload offline e riconciliazione
   online senza duplicati su 320/375/390/768/1024/1440 px con zoom CDP 200% su desktop.
+
+## Unreleased
+
+- C4.5: certificato il flusso UI di ricorrenza stipendio, proposta allocazioni, budget e notifiche;
+  le conferme manuali mantengono la data contabile dello stipendio e l'idempotenza dei trasferimenti.

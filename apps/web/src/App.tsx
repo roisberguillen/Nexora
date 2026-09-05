@@ -622,15 +622,30 @@ function AppContent({
   const executeAllocations = async (planIds: readonly string[], executionId: string) => {
     let receipt: Awaited<ReturnType<typeof executeConfirmedAllocationPlans>> | undefined;
     await mutateLedger(async (ledger) => {
-      const plans = (await ledger.repository.listAllocationPlans()).filter((plan) =>
-        planIds.includes(plan.id),
-      );
-      const bookedDate = new Intl.DateTimeFormat("sv-SE", {
-        day: "2-digit",
-        month: "2-digit",
-        timeZone: "Europe/Rome",
-        year: "numeric",
-      }).format(new Date());
+      const [allPlans, recurringRules, transactions] = await Promise.all([
+        ledger.repository.listAllocationPlans(),
+        ledger.repository.listRecurringRules(),
+        ledger.repository.listTransactions(),
+      ]);
+      const plans = allPlans.filter((plan) => planIds.includes(plan.id));
+      const matchingSalary = transactions
+        .filter((transaction) =>
+          recurringRules.some(
+            (rule) =>
+              rule.weekendPolicy === "salary_italy" && rule.matchesBookedTransaction(transaction),
+          ),
+        )
+        .sort((left, right) =>
+          right.bookedDate.toString().localeCompare(left.bookedDate.toString()),
+        )[0];
+      const bookedDate =
+        matchingSalary?.bookedDate.toString() ??
+        new Intl.DateTimeFormat("sv-SE", {
+          day: "2-digit",
+          month: "2-digit",
+          timeZone: "Europe/Rome",
+          year: "numeric",
+        }).format(new Date());
       receipt = await executeConfirmedAllocationPlans(
         ledger.repository,
         plans,

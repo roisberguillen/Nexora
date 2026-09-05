@@ -1299,3 +1299,11 @@ Keep only the latest relevant evidence per completed phase.
 - Post-gate: `pnpm codex:validate` PASS (`17 routes`), `pnpm manifest:update`, `pnpm manifest:check` PASS,
   `pnpm format:check` PASS e seconda `pnpm codex:validate` PASS. Stato finale: `FLOW_AUDIT_PASS / COMPLETE`,
   C4.5 NEXT, nessuna fase C4.5 avviata.
+## 2026-09-05 — C4.5 ricorrenze, allocazioni e notifiche
+
+- Baseline mirata prima delle modifiche: `pnpm test -- packages/domain/src/services/executeAllocationPlans.test.ts packages/domain/src/entities/RecurringRule.test.ts apps/web/src/recurring/RecurringPage.test.tsx` — 3 file, 25 test pass, 0 fail.
+- Correzione: le allocazioni riusano la data del movimento salary_italy corrispondente, evitando di registrare i trasferimenti sulla data corrente dopo una conferma manuale da `#recurring`.
+- Dominio: policy `salary_italy` verificata per sabato 28/03/2026 → 27/03/2026 e domenica 28/06/2026 → 29/06/2026.
+- Nuovo E2E `test/e2e/c4-recurring-allocation-notifications-flow.spec.ts`: tutti i profili 7 pass/5 skip motivati; offline desktop 1440 pass; suite E2E completa 401 pass/181 skip/0 failure su 582 casi.
+- Gate C4.5: `pnpm verify` pass (140 file Vitest, 624 pass/4 skip); `pnpm quality:ui-ux` pass; `pnpm test:ui-ux` 4 pass; `pnpm codex:test` 8 pass; manifest check e orchestrator validate pass.
+- Evidenza UI/UX: `.codex/reviews/ui-ux/2026-09-05-c4-5-recurring-allocation-notifications-flow.md`.

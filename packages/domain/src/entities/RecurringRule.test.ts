@@ -20,6 +20,21 @@ describe("RecurringRule", () => {
     expect(rule.expectedDateFor(LocalDate.parse("2025-09-01")).toString()).toBe("2025-09-29");
   });
 
+  it("calcola le date italiane richieste dal ciclo C4.5", () => {
+    const rule = RecurringRule.create({
+      id: "salary-c4-5",
+      name: "Stipendio C4.5",
+      kind: "income",
+      accountId: "main",
+      amount: Money.fromMinor(250_000n, "EUR"),
+      nominalDay: 28,
+      weekendPolicy: "salary_italy",
+      nextNominalDate: LocalDate.parse("2026-03-28"),
+    });
+    expect(rule.nextExpectedDate.toString()).toBe("2026-03-27");
+    expect(rule.expectedDateFor(LocalDate.parse("2026-06-01")).toString()).toBe("2026-06-29");
+  });
+
   it("riconosce soltanto la registrazione contabilizzata attesa", () => {
     const rule = RecurringRule.create({
       id: "salary",
