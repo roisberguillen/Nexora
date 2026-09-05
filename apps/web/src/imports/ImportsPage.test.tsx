@@ -60,6 +60,7 @@ describe("ImportsPage", () => {
         onCommit={vi.fn(async () => undefined)}
         onUndo={vi.fn(async () => undefined)}
         transactions={[]}
+        trashedTransactions={[]}
       />,
     );
 
@@ -99,6 +100,7 @@ describe("ImportsPage", () => {
         onCommit={vi.fn(async () => undefined)}
         onUndo={vi.fn(async () => undefined)}
         transactions={[]}
+        trashedTransactions={[]}
       />,
     );
     await user.upload(

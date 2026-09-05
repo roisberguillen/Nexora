@@ -19,6 +19,7 @@ export function filterExportTransactions(
 ): readonly Transaction[] {
   return transactions.filter(
     (transaction) =>
+      transaction.status !== "cancelled" &&
       (filters.accountId === undefined || transaction.accountId === filters.accountId) &&
       (filters.categoryId === undefined || transaction.categoryId === filters.categoryId) &&
       (filters.from === undefined || transaction.bookedDate.toString() >= filters.from) &&

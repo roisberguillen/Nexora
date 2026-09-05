@@ -1,5 +1,28 @@
 # Test evidence
 
+## 12.5.C4.8 — Estratti conto, mapping, annullamento ed esportazione — 2026-09-05
+
+- Baseline: working tree pulito su `4446404`, C4.7 `COMPLETE / FLOW_AUDIT_PASS`, commit e push
+  verificati su origin; routing `localized_bug / STANDARD / low`, manifest e orchestratore validi.
+- Riproduzioni: `filterExportTransactions` includeva movimenti `cancelled`; il dry-run trattava un
+  trasferimento generico già annullato come revisione; CSV/XLSX restavano attivi con risultato vuoto.
+  Correzioni minime, senza migrazioni.
+- Test mirati: 11 file, 120 passati, 0 falliti. Include parser CSV generico, Mediobanca CSV/XLSX,
+  mapping profile, dry-run/deduplica trasferimento annullato, commit/undo, SQLite/IndexedDB ed export.
+- E2E C4.8: 9 passati, 9 skip, 0 falliti su 320/375/390/768/1024/1440; skip motivati per zoom
+  reale e offline non applicabili ai viewport mobili/tablet. Main: 5 righe, 3 pronte/2 revisioni,
+  4 righe importate/5 transazioni ledger, un trasferimento a due gambe, saldi `1664,44/300,00`,
+  totale `1964,44`; dopo undo `500,00/100,00`, totale `600,00`.
+- Export reale: CSV 4 righe con minor `150000,-12555,-20000,-1001`, formula neutralizzata; XLSX
+  `Movimenti`, 4 righe e celle statiche; filtro categoria 2 righe; dopo undo CSV/XLSX vuoti e
+  disabilitati; JSON completo mantiene 2 conti, 5 transazioni, batch `undone` e audit.
+- Reimport: 4 duplicate, 1 revisione, conferma disabilitata, nessun nuovo batch/movimento.
+  Reload/nuova pagina, IndexedDB offline 1440, axe, overflow, target/focus e console/pageerror passano.
+- `pnpm verify`: 140 file Vitest, 628 passati, 4 skip, 0 falliti; build/lint/typecheck/format pass.
+  Full E2E: `429 passed`, `219 skipped`, `0 failed` su 648 casi; benchmark IndexedDB/OPFS 100.000
+  record passato. P0/P1/P2: `0/0/0`. N26 PDF resta verde nei test esistenti; Mediobanca XLSX è coperto nel test
+  mirato esistente. Prossimo task: `12.5.C4.9`.
+
 ## 12.5.C4.7 — Migrazione completa Money Manager XLSX — FLOW_AUDIT_PASS — 2026-09-05
 
 - Unit/repository mirati: 11 file, `122 passed`, `0 failed`; importer preview/semantic/dry-run,

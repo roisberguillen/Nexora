@@ -2,6 +2,12 @@
 
 ## 2026-09-05
 
+- Completata C4.8 con estratto CSV generico, mapping manuale e profilo persistente, commit atomico,
+  deduplica post-undo, export CSV/XLSX filtrati senza movimenti annullati e JSON completo; verificati
+  saldi, precisione minor-unit, trasferimento a due gambe, reload/reopen, IndexedDB offline e zoom CDP.
+- Corrette la deduplica dei trasferimenti già annullati e lo stato vuoto Export: CSV/XLSX ora sono
+  disabilitati senza risultati, mentre il JSON completo resta disponibile.
+
 - Completata C4.7 con migrazione Money Manager XLSX locale: piano semantico, mapping, commit atomico,
   deduplica storica, audit/undo e trasferimenti a due gambe; verifiche su Conti, Categorie, Movimenti,
   Dashboard, Analisi e ricerca. Corretto il riconoscimento `Directa SIM` e la nota dei trasferimenti.

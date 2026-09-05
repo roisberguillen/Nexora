@@ -33,6 +33,7 @@ export function confirmedTransferRowNumbers(
     .filter(
       (row) =>
         row.transferCandidateAccountId !== undefined &&
+        row.status !== "skipped_duplicate" &&
         confirmations[row.preview.sourceRowNumber] === true,
     )
     .map((row) => row.preview.sourceRowNumber);

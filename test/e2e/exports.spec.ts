@@ -50,7 +50,7 @@ test("esporta il CSV filtrato e mantiene le azioni utilizzabili su ogni viewport
   await page.getByLabel("Conto").selectOption({ index: 1 });
 
   const exportPanel = page.locator("#exports");
-  await expect(exportPanel).toContainText("6 movimenti inclusi.");
+  await expect(exportPanel).toContainText("5 movimenti inclusi.");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Scarica CSV movimenti" }).click();
   const download = await downloadPromise;

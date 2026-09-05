@@ -42,4 +42,14 @@ describe("ledger exports", () => {
       filterExportTransactions(data.transactions, { from: "2026-07-28", to: "2026-07-28" }),
     ).toEqual([transaction]);
   });
+  it("esclude i movimenti annullati dagli export filtrati", () => {
+    const cancelled = transaction.cancel();
+
+    expect(
+      filterExportTransactions([transaction, cancelled], {
+        from: "2026-07-28",
+        to: "2026-07-28",
+      }),
+    ).toEqual([transaction]);
+  });
 });

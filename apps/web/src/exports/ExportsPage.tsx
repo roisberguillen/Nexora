@@ -96,7 +96,7 @@ export function ExportsPage({
       <div className="form-actions">
         <button
           className="primary-action"
-          disabled={activeExport !== null}
+          disabled={activeExport !== null || filteredTransactions.length === 0}
           onClick={() =>
             runSyncExport("csv", () =>
               downloadText(
@@ -112,7 +112,7 @@ export function ExportsPage({
         </button>
         <button
           className="secondary-action"
-          disabled={activeExport !== null}
+          disabled={activeExport !== null || filteredTransactions.length === 0}
           onClick={() =>
             runSyncExport("xlsx", () =>
               downloadBytes(

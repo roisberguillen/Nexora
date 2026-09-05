@@ -143,6 +143,17 @@ function dryRunRow(
       normalize(candidate.name) === normalize(preview.payee),
   );
   if (ownCounterparty !== undefined) {
+    if (isDuplicate(transactions, account, preview)) {
+      return {
+        accountId: account.id,
+        categoryId: undefined,
+        kind: undefined,
+        message: "Duplicato rilevato: non verrà importato.",
+        preview,
+        status: "skipped_duplicate",
+        transferCandidateAccountId: ownCounterparty.id,
+      };
+    }
     return {
       accountId: account.id,
       categoryId: undefined,

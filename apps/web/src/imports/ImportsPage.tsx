@@ -21,7 +21,13 @@ import {
   type MoneyManagerSemanticMapping,
   type MoneyManagerSemanticPlan,
 } from "@nexora/importers";
-import type { Account, AccountType, Category, Transaction } from "@nexora/domain";
+import type {
+  Account,
+  AccountType,
+  Category,
+  Transaction,
+  TrashedTransaction,
+} from "@nexora/domain";
 import type { ImportBatch, ImporterType } from "@nexora/domain";
 import { formatMinorUnits } from "@nexora/ui";
 import { useState, type ChangeEvent } from "react";
@@ -59,11 +65,13 @@ export function ImportsPage({
   categories,
   onUndo,
   transactions,
+  trashedTransactions,
   onCommit,
 }: {
   readonly accounts: readonly Account[];
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
+  readonly trashedTransactions: readonly TrashedTransaction[];
   readonly onCommit: (input: {
     readonly filename: string;
     readonly importerType: ImporterType;
@@ -131,7 +139,13 @@ export function ImportsPage({
           semanticMapping,
         )
       : undefined;
-  const dryRun = dryRunMoneyManagerRows(preview, accounts, categories, transactions, semanticPlan);
+  const dryRun = dryRunMoneyManagerRows(
+    preview,
+    accounts,
+    categories,
+    [...transactions, ...trashedTransactions.map((entry) => entry.transaction)],
+    semanticPlan,
+  );
   const readyCount = dryRun.filter((row) => row.status === "ready").length;
   const reviewCount = dryRun.filter((row) => row.status === "needs_review").length;
   const duplicateCount = dryRun.filter((row) => row.status === "skipped_duplicate").length;

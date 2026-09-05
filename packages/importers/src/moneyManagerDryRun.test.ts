@@ -1,4 +1,4 @@
-import { Account, Category } from "@nexora/domain";
+import { Account, Category, LocalDate, Money, Transaction } from "@nexora/domain";
 import { describe, expect, it } from "vitest";
 
 import { dryRunMoneyManagerRows } from "./moneyManagerDryRun";
@@ -78,6 +78,55 @@ describe("Money Manager dry-run", () => {
     );
     expect(result).toMatchObject({ status: "needs_review", kind: undefined });
     expect(result?.message).toContain("Possibile trasferimento");
+  });
+
+  it("riconosce come duplicato un trasferimento già annullato", () => {
+    const source = Account.create({
+      currency: "EUR",
+      id: "source",
+      name: "Conto",
+      type: "checking",
+    });
+    const destination = Account.create({
+      currency: "EUR",
+      id: "destination",
+      name: "Riserva",
+      type: "savings",
+    });
+    const transaction = Transaction.create({
+      id: "transfer-leg",
+      kind: "transfer",
+      status: "cancelled",
+      accountId: source.id,
+      amount: Money.fromMinor(-20000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-07-28"),
+      source: "import",
+      payee: destination.name,
+      importBatchId: "batch-previous",
+      sourceFingerprint: "a".repeat(64),
+    });
+    const [result] = dryRunMoneyManagerRows(
+      [
+        {
+          account: source.name,
+          amountMinor: -20000n,
+          category: undefined,
+          currency: "EUR",
+          date: "2026-07-28",
+          message: "",
+          payee: destination.name,
+          sourceRowNumber: 2,
+          status: "ready",
+        },
+      ],
+      [source, destination],
+      [],
+      [transaction],
+    );
+    expect(result).toMatchObject({
+      status: "skipped_duplicate",
+      transferCandidateAccountId: destination.id,
+    });
   });
 
   it("risolve una sotto-categoria solo sotto la macro Money Manager corrispondente", () => {

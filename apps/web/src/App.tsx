@@ -764,6 +764,7 @@ function AppContent({
                     accounts={ledgerState.rawAccounts}
                     categories={ledgerState.categories}
                     transactions={ledgerState.rawTransactions}
+                    trashedTransactions={ledgerState.trashedTransactions}
                     onCommit={commitImport}
                     onUndo={undoImport}
                     batches={ledgerState.importBatches}

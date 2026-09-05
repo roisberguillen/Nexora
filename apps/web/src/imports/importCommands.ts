@@ -55,6 +55,7 @@ export async function commitMoneyManagerImport(
     const preview = result.preview;
     const isConfirmedTransfer =
       result.transferCandidateAccountId !== undefined &&
+      result.status !== "skipped_duplicate" &&
       (result.kind === "transfer" || confirmedTransfers.has(preview.sourceRowNumber)) &&
       result.accountId !== undefined &&
       preview.amountMinor !== undefined &&

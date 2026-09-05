@@ -383,6 +383,11 @@
       "sha256": "e6f3801778eebc9b32d0b70ca36ef3dbed88a244b50c91bdeb9be4a23e1868bb"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-05-c4-8-bank-statement-import-export-flow.md",
+      "size": 3479,
+      "sha256": "5774ff67d3dc82cad58c093b6f04fdcebb40affd17108255c877b10a97a5ec9e"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -494,8 +499,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 12284,
-      "sha256": "85dafabc8489a15fa1e5178543e2ec50697613d5e44597f00529fd61b40a0be7"
+      "size": 12706,
+      "sha256": "0b73055aba377f601ea5dde16f1f5631128d983d0100c740a3671aca85b30ef9"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -539,8 +544,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 502,
-      "sha256": "fd8d7b0e21eb83ee17df83901ff4c9f6f0c2674d1c778ef9eea690ef28be8f3d"
+      "size": 552,
+      "sha256": "4ed46766adb51762d89dc5a61bc1e3d356a54bb61c074347e66913fc60590472"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -565,12 +570,12 @@
     {
       "path": ".codex/state/roadmap-progress.md",
       "size": 9869,
-      "sha256": "29479adb16bc21d08ca0070eca394270b0a60d3108546cbed72e417263a76b78"
+      "sha256": "63115c877e198d67e8ebc50c77ad6a5d54fb74cd577385efa8896925e758f229"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 101236,
-      "sha256": "39a2243372b0bb91daa262fb21fc84757b92c9a103eadaf18d9438e74083869f"
+      "size": 103143,
+      "sha256": "18e01952525450d5f8262aea62f1c2748916f99c0a3b152951bd46efaa3f51da"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1084,8 +1089,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 42427,
-      "sha256": "d32ec7932292e46ba19bb89bd8ec7d592eff7a165fe17f2ac57070a1df333b80"
+      "size": 42501,
+      "sha256": "22ae392786084b590d235377464c9173b6d1695188f3d79826fe91625bb1b0ba"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -1269,18 +1274,18 @@
     },
     {
       "path": "apps/web/src/exports/exportData.test.ts",
-      "size": 1803,
-      "sha256": "7f561e3719695d4453b85e8c35d988be2f10cb006e8158652197ad58d53802bc"
+      "size": 2087,
+      "sha256": "078f4b693f83bcce6c9ea279d8549143426c811a8e988ff3a605f41dcd2083f2"
     },
     {
       "path": "apps/web/src/exports/exportData.ts",
-      "size": 4149,
-      "sha256": "58c4ecbe9da25ecaed7f6802dbf8bfb0454c33737e20dc37cb469a5641e27533"
+      "size": 4193,
+      "sha256": "c53adfbb3eadce31d42a87546020abd632be281705efda023ed5a2417566be23"
     },
     {
       "path": "apps/web/src/exports/ExportsPage.tsx",
-      "size": 5749,
-      "sha256": "21a447567ca328f91a0d9e9f7c61e8eec513354376bb80fc176cfa002777547b"
+      "size": 5823,
+      "sha256": "c6d7c60f24335adbd96d4dc847f663dd3274f5fff158b038d67427bd0b165e67"
     },
     {
       "path": "apps/web/src/imports/importCommands.test.ts",
@@ -1289,8 +1294,8 @@
     },
     {
       "path": "apps/web/src/imports/importCommands.ts",
-      "size": 9817,
-      "sha256": "b096df24ad307c25faaf15ebe56435aa35403afb0749e580a48910a12e9b647f"
+      "size": 9864,
+      "sha256": "94bf3107a00b80578a8fc971d084bf5e9247d9933580836a8db23acfad7e6d28"
     },
     {
       "path": "apps/web/src/imports/importQualityReport.test.ts",
@@ -1309,18 +1314,18 @@
     },
     {
       "path": "apps/web/src/imports/importReview.ts",
-      "size": 1665,
-      "sha256": "16056a33d4c4c666896d9e273c7fd3234e3a60386aeb79d2dd78f1b8959e9031"
+      "size": 1711,
+      "sha256": "4880dfa346f6e0ab93cd6b3c6cf4f42aa0391a5feb0fca576c4a42a7269d802f"
     },
     {
       "path": "apps/web/src/imports/ImportsPage.test.tsx",
-      "size": 3669,
-      "sha256": "326095b5304e3361b49131dd41af7010bb45f01cfbe46c3c3c4f74b929ce85e5"
+      "size": 3735,
+      "sha256": "40384884354f8ac94cc8c90a714a8556e7905801a81e6cb87a807edd836bc800"
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
-      "size": 33384,
-      "sha256": "fcc1d37afcf05e5c4cf92fcbcc3db18264fdd7025c55a1ec384df79a49cf5bea"
+      "size": 33589,
+      "sha256": "885b7abf7f5f2c9e828c534eea53a1c9473f4b535d1c0afea7b9b0f8a065520c"
     },
     {
       "path": "apps/web/src/imports/mappingProfiles.test.ts",
@@ -1864,8 +1869,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 49917,
-      "sha256": "3360df0ff00f1f82cf890e3a82718a9a16ea62a53df690e32e723b5917aec99c"
+      "size": 50399,
+      "sha256": "72467837390e751645ec3170d404845678ac4236c1ac0962122d39b8d61e509c"
     },
     {
       "path": "design/mockup/README.md",
@@ -2053,6 +2058,11 @@
       "sha256": "2006f54c0917152f5f22f51d1e6d87eaf74d07a20d8a28829c718fe29fc5fab9"
     },
     {
+      "path": "docs/imports/BANK_STATEMENT_IMPORT_EXPORT.md",
+      "size": 1093,
+      "sha256": "84cb2cef8e57e4dcbaf671b2bb4b9942318c42d1641b6c59428d51801641686a"
+    },
+    {
       "path": "docs/imports/MONEY_MANAGER_XLSX.md",
       "size": 1426,
       "sha256": "dd806cf6d6f4a66390766cecb2ad8f67025fa4985de814e227579e1e5ac6f119"
@@ -2214,8 +2224,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 8093,
-      "sha256": "f35d28a0c8d747844a5574dd3a78083b07736933427e042f7a36f1abe0212f68"
+      "size": 8114,
+      "sha256": "561045bdc663d26e4aafe0101b48a800d9d7f185721404e39963d2234e5662c9"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -3074,13 +3084,13 @@
     },
     {
       "path": "packages/importers/src/moneyManagerDryRun.test.ts",
-      "size": 5602,
-      "sha256": "44569515c0c7739118beeb1d7823b5064edcdd54feb6808b70ac7bb6f0110180"
+      "size": 6922,
+      "sha256": "ee2990a4b5ce1ff7aa513da48daed2d4ae78fa31e8c09a822e8790fac8b4032c"
     },
     {
       "path": "packages/importers/src/moneyManagerDryRun.ts",
-      "size": 7819,
-      "sha256": "5de3b95a62e3118a8f4b32004eb62aaaa3a7515a3effb8b0257542795c450280"
+      "size": 8163,
+      "sha256": "4747067ef0f9e3a0ca3a475a4a42cbc69240755d869652739d92a57355085df4"
     },
     {
       "path": "packages/importers/src/moneyManagerPreview.test.ts",
@@ -3393,6 +3403,11 @@
       "sha256": "5b6a719817caafed18d729fe067a481946f8f0a0b2c383a695c3baaa07b8cdee"
     },
     {
+      "path": "test/e2e/c4-bank-statement-import-export-flow.spec.ts",
+      "size": 14037,
+      "sha256": "35e13e633f595436c8fff853d65cf62d9299e514ddfe16c289508feeb57f6924"
+    },
+    {
       "path": "test/e2e/c4-classification-search-journal-flow.spec.ts",
       "size": 22757,
       "sha256": "f823cfe8619dfef745a734fb055ad4ccad1c947945837881de6f3b78e3415456"
@@ -3450,7 +3465,7 @@
     {
       "path": "test/e2e/exports.spec.ts",
       "size": 3588,
-      "sha256": "498fad4b8b18685b6312855f39c06e4552051e42348f6fd3fe0233ba4d505f50"
+      "sha256": "c29603a55c33e2d03f17322e65a1e7c4d4031d6f8a9e5cf495a5c932101a588e"
     },
     {
       "path": "test/e2e/fixtures/atomic-rollback.ts",
