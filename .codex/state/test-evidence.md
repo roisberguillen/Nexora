@@ -1,5 +1,16 @@
 # Test evidence
 
+## 12.5.C4.7 — Migrazione completa Money Manager XLSX — FLOW_AUDIT_PASS — 2026-09-05
+
+- Unit/repository mirati: 11 file, `122 passed`, `0 failed`; importer preview/semantic/dry-run,
+  commit, ImportBatch/ImportRow, SQLite e IndexedDB inclusi.
+- E2E dedicato: `9 passed`, `9 skipped` motivati, `0 failed` sui sei viewport; fixture con fogli
+  `Informazioni`/`Movimenti`, doppio `Conto`, segni da `Guadagni/Spese`, seriale 60, audit raw,
+  commit/undo/reimport, reload/reopen, IndexedDB offline, OPFS/PWA e zoom CDP.
+- La UI visualizza 5 righe perché il trasferimento è aggregato; il ledger conserva 6 transazioni e
+  2 gambe collegate. Nessun P0/P1/P2 residuo; nessun retry.
+- Review: `.codex/reviews/ui-ux/2026-09-05-c4-7-money-manager-xlsx-migration-flow.md`; prossimo C4.8.
+
 ## 12.5.C4.2 — Ciclo completo di entrate e spese — FLOW_AUDIT_PASS — 2026-09-03
 
 - Routing: `pnpm codex:route --task "12.5.C4.2 Ciclo completo di entrate e spese"` — profilo

@@ -36,8 +36,8 @@ anticipata da rilievi di coerenza raccolti incidentalmente durante C4.
 | 12.5.C4.5-R | Chiusura offline delle allocazioni e riconciliazione documentale | COMPLETE |
 | 12.5.C4.5-R2 | Refresh locale immediato e chiusura definitiva dei gate | COMPLETE |
 | 12.5.C4.6 | Prestiti, investimenti, Dashboard e Analisi | COMPLETE |
-| 12.5.C4.7 | Migrazione completa Money Manager XLSX | NEXT |
-| 12.5.C4.8 | Estratti conto, mapping, annullamento ed esportazione | PENDING |
+| 12.5.C4.7 | Migrazione completa Money Manager XLSX | COMPLETE — FLOW_AUDIT_PASS |
+| 12.5.C4.8 | Estratti conto, mapping, annullamento ed esportazione | NEXT |
 | 12.5.C4.9 | Backup manuale, restore, rollback e regressione Google Drive | PENDING |
 | 12.5.C4.10 | App Lock, impostazioni, cestino, reset, startup e recovery | PENDING |
 | 12.5.C4-F | Regressione completa e chiusura C4 | PENDING |

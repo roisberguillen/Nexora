@@ -222,6 +222,7 @@ describe("commitMoneyManagerImport", () => {
           amountMinor: -6000n,
           category: "Broker demo",
           payee: "Trasferimento",
+          note: "Trasferimento",
           sourceRowNumber: 3,
         },
       },
@@ -254,6 +255,11 @@ describe("commitMoneyManagerImport", () => {
     });
     await expect(repository.findCategoryById("groceries")).resolves.toBeDefined();
     expect(await repository.listTransfers()).toHaveLength(1);
+    expect(
+      (await repository.listTransactions()).filter(
+        (transaction) => transaction.note === "Trasferimento",
+      ),
+    ).toHaveLength(2);
     expect(
       (await repository.listTransactions()).filter(
         (transaction) => transaction.kind === "adjustment",

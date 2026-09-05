@@ -59,6 +59,31 @@ describe("Money Manager semantic plan", () => {
     });
   });
 
+  it("recognizes the real Directa SIM institution name as an investment", () => {
+    const plan = buildMoneyManagerSemanticPlan(
+      [
+        row({
+          account: "Directa SIM",
+          sourceRowNumber: 9,
+          sourceType: "Guadagno",
+          category: "Modifica Saldo",
+          sourceCategory: "Modifica Saldo",
+        }),
+      ],
+      [],
+      [],
+      (() => {
+        let id = 0;
+        return () => `directa-${++id}`;
+      })(),
+    );
+    expect(plan.accounts[0]).toMatchObject({
+      sourceName: "Directa SIM",
+      status: "to_create",
+      proposedAccount: { name: "Directa SIM", type: "investment", institution: "Directa SIM" },
+    });
+  });
+
   it("plans a missing hierarchy once and excludes transfer destinations and adjustments", () => {
     const plan = buildMoneyManagerSemanticPlan(
       [

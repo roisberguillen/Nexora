@@ -143,13 +143,13 @@ function planAccount(
     };
   const proposedAccount = Account.create({
     id: `account-import-${idFactory()}`,
-    name: /^diretta sim$/i.test(sourceName.trim()) ? "Directa SIM" : sourceName.trim(),
+    name: /^dire(?:cta|tta) sim$/i.test(sourceName.trim()) ? "Directa SIM" : sourceName.trim(),
     type: accountType,
     currency: currencies[0]!,
     openingBalance: Money.zero(currencies[0]!),
     ...(configured?.institution !== undefined
       ? { institution: configured.institution }
-      : /^diretta sim$/i.test(sourceName.trim())
+      : /^dire(?:cta|tta) sim$/i.test(sourceName.trim())
         ? { institution: "Directa SIM" }
         : {}),
   });
@@ -181,7 +181,7 @@ function knownInstitutionCandidates(
         /mediobanca\s+premier/i.test(`${account.name} ${account.institution ?? ""}`),
     );
   }
-  if (/^diretta sim$/i.test(sourceName.trim())) {
+  if (/^dire(?:cta|tta) sim$/i.test(sourceName.trim())) {
     return accounts.filter(
       (account) =>
         !account.isArchived &&
@@ -193,7 +193,7 @@ function knownInstitutionCandidates(
 }
 
 function approvedAccountType(sourceName: string): AccountType | undefined {
-  return /^diretta sim$/i.test(sourceName.trim()) ? "investment" : undefined;
+  return /^dire(?:cta|tta) sim$/i.test(sourceName.trim()) ? "investment" : undefined;
 }
 
 function planCategory(

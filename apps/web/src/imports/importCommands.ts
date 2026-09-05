@@ -109,6 +109,8 @@ export async function commitMoneyManagerImport(
         importBatchId: batch.id,
         sourceFingerprint: isDebit ? sourceFingerprint : counterpartFingerprint,
         ...(preview.payee === undefined ? {} : { payee: preview.payee }),
+        ...(preview.note === undefined ? {} : { note: preview.note }),
+        ...(preview.note === undefined ? {} : { description: preview.note }),
       });
       const credit = Transaction.create({
         id: `transaction-${idFactory()}`,
@@ -121,6 +123,8 @@ export async function commitMoneyManagerImport(
         importBatchId: batch.id,
         sourceFingerprint: isDebit ? counterpartFingerprint : sourceFingerprint,
         ...(preview.payee === undefined ? {} : { payee: preview.payee }),
+        ...(preview.note === undefined ? {} : { note: preview.note }),
+        ...(preview.note === undefined ? {} : { description: preview.note }),
       });
       const auditTransaction = isDebit ? debit : credit;
       const transfer = Transfer.create({

@@ -63,12 +63,13 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.5-R | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; ciclo stipendio/allocazioni completo offline su IndexedDB, reload/rete senza duplicati, riconciliazione documentale e gate completi |
 | 12.5.C4.5-R2 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; refresh locale immediato verificato prima del reload, offline/reload/rete senza duplicati e gate completi |
 | 12.5.C4.6 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; prestiti, investimenti, Dashboard, Analisi, riconciliazione, sei viewport, zoom 200%, negativi e IndexedDB offline verificati |
-| C4 | in progress — C4.0–C4.6 complete; C4.7 next | real complete flows; remaining C4 slices are not started |
+| 12.5.C4.7 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; Money Manager XLSX reale, piano/mapping, commit atomico, deduplica, undo, reload/reopen, IndexedDB offline, OPFS/PWA e zoom CDP verificati |
+| C4 | in progress — C4.0–C4.7 complete; C4.8 next | real complete flows; remaining C4 slices are not started |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
 | E | pending | final gate: READY / NOT READY |
 | F | pending | release freeze |
-| 12.5.C4 | in progress — C4.0–C4.6 complete; C4.7 next | real complete flows |
+| 12.5.C4 | in progress — C4.0–C4.7 complete; C4.8 next | real complete flows |
 | 12.5.C5 | planned | cross-surface consistency |
 | 12.5.D | planned | final independent review |
 | 12.5.E | planned | final gate: READY / NOT READY |

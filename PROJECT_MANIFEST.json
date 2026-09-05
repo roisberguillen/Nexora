@@ -378,6 +378,11 @@
       "sha256": "e81dccdb74658dcba862756cd7184a9ccec9d4080eea997c151bf37592f9ed6c"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-05-c4-7-money-manager-xlsx-migration-flow.md",
+      "size": 3379,
+      "sha256": "e6f3801778eebc9b32d0b70ca36ef3dbed88a244b50c91bdeb9be4a23e1868bb"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -489,8 +494,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 11724,
-      "sha256": "00937b1cab575cafc840c082b4ad75299fc5fb6c73788b813499eeac828db536"
+      "size": 12284,
+      "sha256": "85dafabc8489a15fa1e5178543e2ec50697613d5e44597f00529fd61b40a0be7"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -534,8 +539,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 446,
-      "sha256": "e4682f55d4f25f62c1e72e11fe92c80f642c2a6c3bcc470ec588fa1c6959e3e5"
+      "size": 502,
+      "sha256": "fd8d7b0e21eb83ee17df83901ff4c9f6f0c2674d1c778ef9eea690ef28be8f3d"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -559,13 +564,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 9669,
-      "sha256": "932ed84878ffaf978851a15a9bd94279dc7e1f782f7b919bc91b3d2c465d6018"
+      "size": 9869,
+      "sha256": "29479adb16bc21d08ca0070eca394270b0a60d3108546cbed72e417263a76b78"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 100451,
-      "sha256": "356ca0b881d0da35a18939c92324f8980e222f1ca48ce010fa9131642bd3eec0"
+      "size": 101236,
+      "sha256": "39a2243372b0bb91daa262fb21fc84757b92c9a103eadaf18d9438e74083869f"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1279,13 +1284,13 @@
     },
     {
       "path": "apps/web/src/imports/importCommands.test.ts",
-      "size": 10570,
-      "sha256": "46e2aa22fc3cf45c6e27a149048ca2969efb8e25d2f48b34c4dbaf091e7b713f"
+      "size": 10762,
+      "sha256": "8289e878e75e97c3bac7b4e137a4f9fe88ac6a4240b1c1aa3bdd75443c39a7d1"
     },
     {
       "path": "apps/web/src/imports/importCommands.ts",
-      "size": 9519,
-      "sha256": "8e90d53e28effd95698947d59b619b9af2311fea6fca0b1ebbbfc7089c70c01e"
+      "size": 9817,
+      "sha256": "b096df24ad307c25faaf15ebe56435aa35403afb0749e580a48910a12e9b647f"
     },
     {
       "path": "apps/web/src/imports/importQualityReport.test.ts",
@@ -1429,8 +1434,8 @@
     },
     {
       "path": "apps/web/src/page.css",
-      "size": 52008,
-      "sha256": "d6c575bc9170bb11264db331245dac1e17ff4d4a6444dcbc2b62b98b96aecb68"
+      "size": 52065,
+      "sha256": "0064f27f4c44822c220f97fa6c7f754f98763e775e95837b1b94efe5749cb42e"
     },
     {
       "path": "apps/web/src/persistence/openPwaLedger.test.ts",
@@ -1859,8 +1864,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 49470,
-      "sha256": "48e521730ad9d13326e072528c0ce7d356090b9e75adc6275f9edb7630d3c9d1"
+      "size": 49917,
+      "sha256": "3360df0ff00f1f82cf890e3a82718a9a16ea62a53df690e32e723b5917aec99c"
     },
     {
       "path": "design/mockup/README.md",
@@ -2209,8 +2214,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 8072,
-      "sha256": "943f33fd04c7f93849f912e7d58fc2219da0ebda14a09fc27fb36f60e1885f9f"
+      "size": 8093,
+      "sha256": "f35d28a0c8d747844a5574dd3a78083b07736933427e042f7a36f1abe0212f68"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -3089,13 +3094,13 @@
     },
     {
       "path": "packages/importers/src/moneyManagerSemanticPlan.test.ts",
-      "size": 5475,
-      "sha256": "945c18e812b337a0eb83d3584562ecb89365df6c5618637102aca7c4ddc8fea8"
+      "size": 6158,
+      "sha256": "4cb1061b902fe9ad33c3c2efd085d49f745b8dfa42e4af4307bd7c57479cbcce"
     },
     {
       "path": "packages/importers/src/moneyManagerSemanticPlan.ts",
-      "size": 11119,
-      "sha256": "3906f9e20ee0b3f58a1e21b4e5e3a027908f731a0759bb7cfcccf83fe1c513c6"
+      "size": 11151,
+      "sha256": "b81c9d1c000b75212dd5e8a0ba26914869baf0a44beb6e6973770ed7f4d5a8f7"
     },
     {
       "path": "packages/importers/tsconfig.json",
@@ -3209,8 +3214,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20742,
-      "sha256": "5daf8f532d398d8e380fa5d65363d60bce3f8af1407b967040ecc8287639ff89"
+      "size": 20762,
+      "sha256": "42325ba3197444fa0a2fca7daeaf3bff55f4abb01d89a472138fba75f1e7d408"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3408,6 +3413,11 @@
       "sha256": "af7b59c3430b72d05723b1cdbe6af883f8acaa5cd81f4e767657d1b53e19aad2"
     },
     {
+      "path": "test/e2e/c4-money-manager-xlsx-migration-flow.spec.ts",
+      "size": 15273,
+      "sha256": "a922aa0fb36a6c7ab1441f75c5b485ea802b503f7007bebb923db5385127a138"
+    },
+    {
       "path": "test/e2e/c4-recurring-allocation-notifications-flow.spec.ts",
       "size": 12842,
       "sha256": "aba5851729e77d36f4610168b2153a4896e69fcafcca02ed484eec3345ded901"
@@ -3435,7 +3445,7 @@
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-win32.png",
       "size": 223345,
-      "sha256": "fddb582e7359b59a1a197c9a4c8ccd2c41420f3fa44dd77628bbde9bd3509927"
+      "sha256": "2ab06d69ac538c600cc7bcd09eaff4b718342043399fc3ca3fb2952fcfdda7c3"
     },
     {
       "path": "test/e2e/exports.spec.ts",

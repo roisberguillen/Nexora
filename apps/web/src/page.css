@@ -1816,7 +1816,10 @@
 .file-picker input,
 .account-form-label input,
 .account-form-label select {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
   min-height: 2.75rem;
   padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-outline);

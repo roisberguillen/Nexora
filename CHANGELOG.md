@@ -2,6 +2,12 @@
 
 ## 2026-09-05
 
+- Completata C4.7 con migrazione Money Manager XLSX locale: piano semantico, mapping, commit atomico,
+  deduplica storica, audit/undo e trasferimenti a due gambe; verifiche su Conti, Categorie, Movimenti,
+  Dashboard, Analisi e ricerca. Corretto il riconoscimento `Directa SIM` e la nota dei trasferimenti.
+- Aggiunti gate E2E deterministici sui sei viewport, negativi, zoom CDP 200%, IndexedDB offline e
+  OPFS/PWA reopen; prossimo flusso C4.8.
+
 - Completata C4.6 con pannello Dashboard separato per debiti e investimenti: prestiti e posizioni
   restano fuori dai KPI e dal cash-flow, con filtro EUR e link accessibili alle superfici dedicate.
 - Aggiunto il flusso E2E completo prestito/rata, investimento/valutazione, trasferimento, Dashboard
