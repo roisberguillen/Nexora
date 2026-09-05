@@ -358,6 +358,11 @@
       "sha256": "8f802643bbdd225ccd34f6e118404f56004d00b38bfddc41fe0090d3a5b766b7"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-05-c4-10-app-lock-settings-recovery-flow.md",
+      "size": 5289,
+      "sha256": "083770004f38e7ab89a439410b74b62a1659e7339f2e7dd9541e64df224388e5"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-05-c4-5-r-offline-allocation-reconciliation.md",
       "size": 2599,
       "sha256": "59673b198ccb70b279e4e4ff1e60a0614b094f7a2751725c5c21f2b3b53add38"
@@ -504,8 +509,8 @@
     },
     {
       "path": ".codex/state/c4-real-flow-matrix.md",
-      "size": 12827,
-      "sha256": "adc3cd1f8b3b4fd42b0e04789bfd91f194f023dd65818ced7a76e2df1e47c182"
+      "size": 13292,
+      "sha256": "ed5ae9710678a0e50f43322542ff50c7110fd7167dc2227de99edf3c26fdbf3a"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -549,8 +554,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 524,
-      "sha256": "bf8ae20a11dc716b6bec68b7442a8efa357d36ef81a4287390cc63cadf0068b2"
+      "size": 518,
+      "sha256": "c74da8c9550187fa14023085d115a56fdde4990cce7f3ffe4ac59a4863044f5b"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -574,13 +579,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 9874,
-      "sha256": "268d33a185618574d5cef9182249fe7415bfd6beae1839fd460935a49389dbd0"
+      "size": 9797,
+      "sha256": "fc1b7b0c4835f10cc2520a1fe141a7ee6b5104d3e3e30192981095e7edc66c1c"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 104946,
-      "sha256": "9a43f06ffadc0f604c7b4b8b14ffcff95ff653f18e17c797ad35dd4439409dd8"
+      "size": 106423,
+      "sha256": "f3a7294254f2885dfd4976637a8c43c6ccb7b67ecacc56798003f3ec937c164c"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1874,8 +1879,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 50798,
-      "sha256": "3791a90aba82391ae231338a16d1deb23e19412af8f7e8e2de081ef1f4f86893"
+      "size": 51087,
+      "sha256": "72308d9430f6e7232bc479eada250a662a2fc6bbfe3db53b48cb63226cd6ca5a"
     },
     {
       "path": "design/mockup/README.md",
@@ -2229,8 +2234,8 @@
     },
     {
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
-      "size": 8139,
-      "sha256": "dc55ebe90f849e901871987d0935bd298667e237d13ae14004dad1d6a4e23ae5"
+      "size": 8113,
+      "sha256": "3b26763dd8b9da02c07e130eed3599c4545ee07dcdd46d4577bfefbd5a19fb30"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -3406,6 +3411,11 @@
       "path": "test/e2e/c3-shell-audit.spec.ts",
       "size": 3095,
       "sha256": "5b6a719817caafed18d729fe067a481946f8f0a0b2c383a695c3baaa07b8cdee"
+    },
+    {
+      "path": "test/e2e/c4-app-lock-settings-recovery-flow.spec.ts",
+      "size": 9252,
+      "sha256": "07fcb516f7a76d264e878d59458956ac26e8b2a7eb11c772dafc4ab9b2e49b94"
     },
     {
       "path": "test/e2e/c4-backup-restore-drive-flow.spec.ts",

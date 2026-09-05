@@ -2,6 +2,9 @@
 
 ## 2026-09-05
 
+- Completata C4.10 con flusso E2E completo App Lock → preferenze → cestino/restore → reset
+  confermato → riapertura vuota → verifica e restore del backup cifrato; snapshot del ledger
+  riconciliato su Chromium 390/1440, con PIN non esposto e lock mantenuto dopo reload/restore.
 - Completata C4.9 con backup manuale `.nexora-backup`, verifica read-only, restore A → B → A,
   rollback post-write, IndexedDB offline, OPFS/SQLite e regressione Drive opzionale senza credenziali reali.
 - Rafforzato il provider Google Drive: marker Nexora e metadati tecnici di data/dimensione inviati

@@ -1420,3 +1420,18 @@ Keep only the latest relevant evidence per completed phase.
 - Gate finali: `pnpm test:ui-ux` `4 passed`; `pnpm quality:ui-ux` PASS; `pnpm codex:test` `8 passed`;
   manifest aggiornato/verificato, format check PASS e orchestratore `17 route` PASS. Review:
   `.codex/reviews/ui-ux/2026-09-05-c4-6-loans-investments-dashboard-analytics-flow.md`.
+## 12.5.C4.10 — App Lock, impostazioni, cestino, reset, startup e recovery — 2026-09-05
+
+- Gate C4.9: `pnpm build` PASS; `test/e2e/c4-backup-restore-drive-flow.spec.ts` `2 passed`, `0 failed` a 1440.
+- Baseline mirato: `pnpm vitest run apps/web/src/security apps/web/src/settings apps/web/src/startup packages/database/src packages/application/src` — 37 file, `236 passed`, `0 failed`.
+- Regressione E2E collegata: Chromium 390/1440, `42 passed`, `4 skipped`, `0 failed`.
+- Nuovo E2E `test/e2e/c4-app-lock-settings-recovery-flow.spec.ts`: `2 passed`, `0 failed` su 390 e 1440.
+- Suite Playwright completa: `433 passed`, `233 skipped`, `0 failed` su 666 test; gli skip restano
+  condizionati da viewport/backend e sono quelli dichiarati nei test, senza retry o failure nascosti.
+- Il flusso usa seed demo sintetico e crea il backup cifrato via UI; verifica preferenze dopo reload,
+  lock fail-closed su navigazione diretta/reload, PIN errato/corretto, trash/restore, annulla reset,
+  frase errata, doppio submit, reset con PIN, startup vuoto dopo reopen, verifica e restore del backup.
+- Snapshot UI di conti e movimenti identico prima del lock e dopo trash/restore e restore post-reset;
+  nessun errore `pageerror` o console error osservato; nessun dato finanziario visibile nella lock screen.
+- Unit/startup controllati coprono storage non disponibile, database non apribile, schema/metadati,
+  bootstrap interrotto, recovery e retry idempotente senza reset silenzioso.
