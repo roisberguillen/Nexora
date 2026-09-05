@@ -60,12 +60,13 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.4 | complete — 2026-09-04 | `FLOW_AUDIT_PASS`; categorie, tag, ricerca globale, diario, merge, persistenza e offline verificati |
 | 12.5.C4.4-R | complete — 2026-09-04 | chiusura coperture, IndexedDB offline/reload, riconciliazione documentale e gate completi |
 | 12.5.C4.5 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; ricorrenza salary_italy, stipendio, allocazioni idempotenti, budget, notifiche, reload/offline e gate completi |
-| C4 | in progress — C4.0–C4.5 complete; C4.6 next | real complete flows; remaining C4 slices are not started |
+| 12.5.C4.5-R | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; ciclo stipendio/allocazioni completo offline su IndexedDB, reload/rete senza duplicati, riconciliazione documentale e gate completi |
+| C4 | in progress — C4.0–C4.5-R complete; C4.6 next | real complete flows; remaining C4 slices are not started |
 | C5 | pending | cross-surface consistency |
 | D | pending | final independent review |
 | E | pending | final gate: READY / NOT READY |
 | F | pending | release freeze |
-| 12.5.C4 | in progress — C4.0–C4.5 complete; C4.6 next | real complete flows |
+| 12.5.C4 | in progress — C4.0–C4.5-R complete; C4.6 next | real complete flows |
 | 12.5.C5 | planned | cross-surface consistency |
 | 12.5.D | planned | final independent review |
 | 12.5.E | planned | final gate: READY / NOT READY |

@@ -321,11 +321,15 @@ function AppContent({
     }
   };
 
-  const mutateLedger = async (operation: (ledger: Ledger) => Promise<void>): Promise<void> => {
+  const mutateLedger = async (
+    operation: (ledger: Ledger) => Promise<void>,
+    options: { readonly refresh?: boolean } = {},
+  ): Promise<void> => {
     if (ledgerState.status !== "ready") {
       return;
     }
     await operation(ledgerState.ledger);
+    if (options.refresh === false) return;
     const models = await loadAppModels(ledgerState.ledger);
     setLedgerState({ ...ledgerState, ...models });
   };
@@ -621,38 +625,41 @@ function AppContent({
     });
   const executeAllocations = async (planIds: readonly string[], executionId: string) => {
     let receipt: Awaited<ReturnType<typeof executeConfirmedAllocationPlans>> | undefined;
-    await mutateLedger(async (ledger) => {
-      const [allPlans, recurringRules, transactions] = await Promise.all([
-        ledger.repository.listAllocationPlans(),
-        ledger.repository.listRecurringRules(),
-        ledger.repository.listTransactions(),
-      ]);
-      const plans = allPlans.filter((plan) => planIds.includes(plan.id));
-      const matchingSalary = transactions
-        .filter((transaction) =>
-          recurringRules.some(
-            (rule) =>
-              rule.weekendPolicy === "salary_italy" && rule.matchesBookedTransaction(transaction),
-          ),
-        )
-        .sort((left, right) =>
-          right.bookedDate.toString().localeCompare(left.bookedDate.toString()),
-        )[0];
-      const bookedDate =
-        matchingSalary?.bookedDate.toString() ??
-        new Intl.DateTimeFormat("sv-SE", {
-          day: "2-digit",
-          month: "2-digit",
-          timeZone: "Europe/Rome",
-          year: "numeric",
-        }).format(new Date());
-      receipt = await executeConfirmedAllocationPlans(
-        ledger.repository,
-        plans,
-        LocalDate.parse(bookedDate),
-        executionId,
-      );
-    });
+    await mutateLedger(
+      async (ledger) => {
+        const [allPlans, recurringRules, transactions] = await Promise.all([
+          ledger.repository.listAllocationPlans(),
+          ledger.repository.listRecurringRules(),
+          ledger.repository.listTransactions(),
+        ]);
+        const plans = allPlans.filter((plan) => planIds.includes(plan.id));
+        const matchingSalary = transactions
+          .filter((transaction) =>
+            recurringRules.some(
+              (rule) =>
+                rule.weekendPolicy === "salary_italy" && rule.matchesBookedTransaction(transaction),
+            ),
+          )
+          .sort((left, right) =>
+            right.bookedDate.toString().localeCompare(left.bookedDate.toString()),
+          )[0];
+        const bookedDate =
+          matchingSalary?.bookedDate.toString() ??
+          new Intl.DateTimeFormat("sv-SE", {
+            day: "2-digit",
+            month: "2-digit",
+            timeZone: "Europe/Rome",
+            year: "numeric",
+          }).format(new Date());
+        receipt = await executeConfirmedAllocationPlans(
+          ledger.repository,
+          plans,
+          LocalDate.parse(bookedDate),
+          executionId,
+        );
+      },
+      { refresh: false },
+    );
     if (receipt === undefined) throw new Error("ledger_not_ready");
     return receipt;
   };

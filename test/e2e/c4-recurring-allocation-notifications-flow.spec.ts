@@ -66,6 +66,7 @@ test.describe("C4.5 ricorrenza, allocazioni, budget e notifiche", () => {
     const recurringDialog = page.getByRole("dialog", { name: "Conferma allocazioni stipendio" });
     await recurringDialog.getByRole("button", { name: "Esegui allocazioni" }).click();
     await expect(page.getByRole("status")).toContainText("2 allocazioni registrate");
+    await page.reload();
 
     await page.goto("/#accounts");
     await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("2.870,00");
@@ -94,33 +95,77 @@ test.describe("C4.5 ricorrenza, allocazioni, budget e notifiche", () => {
       testInfo.project.name !== "chromium-1440",
       "Il gate offline usa il profilo desktop reale.",
     );
-    await page.clock.install({ time: frozenNow });
+    await page.addInitScript(() => {
+      window.localStorage.setItem("nexora.ledger-storage.v1", "indexeddb");
+    });
     await page.goto("/");
-    await createAccount(page, "Offline stipendio C4.5", "1000,00");
-    await createAccount(page, "Offline risparmio C4.5", "100,00");
-    await page.goto("/#transactions");
-    await page.getByRole("button", { name: "Nuovo movimento" }).click();
-    await selectKind(page, "income");
-    await page
-      .locator('select[name="account"]')
-      .selectOption({ label: "Offline stipendio C4.5 · EUR" });
-    await page.getByLabel("Descrizione").fill("Entrata offline C4.5");
-    await page.getByLabel("Controparte").fill("Locale C4.5");
-    await page.getByRole("textbox", { name: "Importo", exact: true }).fill("100,00");
-    await page.getByRole("button", { name: "Salva movimento" }).click();
-    await expect(page.getByRole("status")).toContainText("Movimento salvato");
+    await createAccount(page, "Conto stipendio C4.5", "1000,00");
+    await createAccount(page, "Risparmio C4.5", "100,00");
+    await createAccount(page, "Investimenti C4.5", "50,00");
+    await createExpenseCategory(page);
+    await createBudget(page);
+    await createExpense(page);
+    await createSalaryRule(page);
+    await createAllocationPlans(page);
+    await page.goto("/#notifications");
+    await expect(page.getByText("Entrata attesa: Stipendio C4.5")).toBeVisible();
+    await expect(page.getByText("Prima soglia budget raggiunta (80%)")).toBeVisible();
+    await page.goto("/#accounts");
+    await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("600,00");
+    await expect(accountRow(page, "Risparmio C4.5")).toContainText("100,00");
+    await expect(accountRow(page, "Investimenti C4.5")).toContainText("50,00");
     await page.evaluate(async () => {
       await navigator.serviceWorker.ready;
     });
     await context.setOffline(true);
     try {
       await page.reload({ waitUntil: "domcontentloaded" });
+      await page.goto("/#transactions");
+      await page.getByRole("button", { name: "Nuovo movimento" }).click();
+      await selectKind(page, "income");
+      await page
+        .locator('select[name="account"]')
+        .selectOption({ label: "Conto stipendio C4.5 · EUR" });
+      await page.getByLabel("Descrizione").fill("Stipendio C4.5 offline");
+      await page.getByLabel("Controparte").fill("Datore C4.5");
+      await page.getByRole("textbox", { name: "Importo", exact: true }).fill("2500,00");
+      await page.locator('input[name="bookedDate"]').last().fill("2026-03-27");
+      await page.getByRole("button", { name: "Salva movimento" }).click();
+      const dialog = page.getByRole("dialog", { name: "Conferma allocazioni stipendio" });
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole("button", { name: "Esegui allocazioni" }).click();
       await expect(
-        page.getByRole("list", { name: "Movimenti registrati nel ledger" }),
-      ).toContainText("Locale C4.5");
+        page.getByRole("status").filter({ hasText: "Allocazioni stipendio registrate" }),
+      ).toBeVisible();
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.goto("/#accounts");
+      await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("2.870,00");
+      await expect(accountRow(page, "Risparmio C4.5")).toContainText("270,00");
+      await expect(accountRow(page, "Investimenti C4.5")).toContainText("110,00");
+      await page.goto("/#budgets");
+      await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "80");
+      await page.goto("/#notifications");
+      await expect(page.getByText("Entrata attesa: Stipendio C4.5")).toHaveCount(0);
+      await expect(page.getByText("Prima soglia budget raggiunta (80%)")).toBeVisible();
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await expect(page.getByText("Prima soglia budget raggiunta (80%)")).toBeVisible();
+      await page.goto("/#recurring");
+      await expect(page.getByText("Piano sospeso C4.5")).toBeVisible();
     } finally {
       await context.setOffline(false);
     }
+    await page.reload();
+    await page.goto("/#accounts");
+    await expect(accountRow(page, "Conto stipendio C4.5")).toContainText("2.870,00");
+    await page.goto("/#transactions");
+    await expect(page.getByRole("list", { name: "Movimenti registrati nel ledger" })).toContainText(
+      "Datore C4.5",
+    );
+    await expect(
+      page
+        .getByRole("list", { name: "Movimenti registrati nel ledger" })
+        .locator(".transaction-list-row"),
+    ).toHaveCount(4);
   });
 });
 

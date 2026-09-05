@@ -40,6 +40,9 @@
 
 ## [Unreleased]
 
+- Chiuso C4.5-R: il flusso completo di stipendio e allocazioni offline su IndexedDB persiste correttamente
+  dopo reload e riconnessione, evita duplicati e non attende il refresh derivato per confermare il comando.
+
 ### Documentation
 
 - Migliorata la formattazione desktop dell’elenco Conti: colonne e azioni ora restano leggibili

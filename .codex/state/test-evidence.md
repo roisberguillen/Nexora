@@ -1307,3 +1307,17 @@ Keep only the latest relevant evidence per completed phase.
 - Nuovo E2E `test/e2e/c4-recurring-allocation-notifications-flow.spec.ts`: tutti i profili 7 pass/5 skip motivati; offline desktop 1440 pass; suite E2E completa 401 pass/181 skip/0 failure su 582 casi.
 - Gate C4.5: `pnpm verify` pass (140 file Vitest, 624 pass/4 skip); `pnpm quality:ui-ux` pass; `pnpm test:ui-ux` 4 pass; `pnpm codex:test` 8 pass; manifest check e orchestrator validate pass.
 - Evidenza UI/UX: `.codex/reviews/ui-ux/2026-09-05-c4-5-recurring-allocation-notifications-flow.md`.
+
+## 2026-09-05 — C4.5-R chiusura offline e riconciliazione
+
+- Gap riprodotto: il test offline preparava solo due conti e un’entrata generica; inoltre il comando
+  locale restava in esecuzione mentre attendeva il refresh derivato offline.
+- Correzioni: il test ora prepara dalla UI conti, categoria, budget, spesa, salary_italy e tre piani;
+  `executeAllocations` completa il ledger locale senza bloccare sul refresh derivato e il reload rilegge
+  i dati persistiti.
+- E2E dedicato: `7 passed`, `5 skipped`, `0 failed`; target offline 1440 px `1 passed`, `0 failed`.
+- Percorso offline: stipendio `2500,00 EUR`, saldi finali `2870/270/110`, patrimonio `3250,00 EUR`,
+  budget `400/500`, due trasferimenti visualizzati come quattro leg; piano sospeso escluso.
+  Reload offline e riconnessione non producono duplicati; notifica stipendio rimossa e budget mantenuta.
+- Regressioni: unit/web `4 file, 38 passed`; E2E budget/notifiche/ricorrenze/movimenti `20 passed`.
+- Review: `.codex/reviews/ui-ux/2026-09-05-c4-5-r-offline-allocation-reconciliation.md`; P0/P1/P2 `0/0/0`.
