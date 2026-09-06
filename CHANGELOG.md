@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added the 12.5.C5.0 cross-surface consistency framework, evidence matrix and initial audit.
+
 ## 2026-09-06
 
 - Chiusa C4 con `C4_FINAL_GATE_PASS`: matrice C4.0–C4.10 riconciliata, regressione Playwright

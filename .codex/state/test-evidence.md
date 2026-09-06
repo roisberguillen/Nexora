@@ -1451,3 +1451,20 @@ Keep only the latest relevant evidence per completed phase.
   IndexedDB/OPFS e benchmark 100.000 record inclusi nella suite.
 - Nessun dato reale usato; fixture sintetiche locali, trasferimenti neutrali, nessun errore console
   o `pageerror` rilevante nei percorsi C4 dedicati. Gate finale: `C4_FINAL_GATE_PASS`.
+# 12.5.C5.0 — Cross-surface consistency framework and initial audit — 2026-09-06
+
+- Routing: `localized_bug / STANDARD / low`; no code files changed and no data behavior changed.
+- Browser evidence: local app reached through real hash routes for all main surfaces; responsive
+  viewport checks at 320, 375, 390, 768, 1024 and 1440 CSS px; dashboard `scrollWidth/clientWidth`
+  showed no horizontal overflow. Manual 390 px screenshot captured the MobileHeader notification
+  wrapping issue. Console had no relevant errors in the successful IAB run.
+- `pnpm exec playwright test ... phase-12-surfaces.spec.ts` was attempted but could not start after
+  pnpm recreated dependencies and the sandbox denied registry access (`EACCES`). `pnpm install`
+  was then run with user authorization and completed: 520 packages restored, 0 failures. The first
+  Playwright attempt therefore has no test count and is not reported green.
+- Documentation gates: `pnpm codex:validate` PASS; `pnpm format:check` PASS;
+  `pnpm manifest:update` completed and `pnpm manifest:check` PASS; `pnpm test:ui-ux` PASS
+  (`4 passed`, `0 failed`).
+- Repository gates: `pnpm typecheck` PASS across 9 projects; `pnpm lint` PASS with zero warnings;
+  `pnpm test` PASS (`140` files passed, `1` skipped; `629` tests passed, `4` skipped, `0 failed`);
+  `pnpm build` PASS across 9 projects. Build emitted only the existing chunk-size advisory.

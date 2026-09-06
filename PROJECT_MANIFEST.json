@@ -403,6 +403,11 @@
       "sha256": "f21d7021e373ace1c06c9e0c740a9b7853cd03d57f602f7ff66da5b5ffb529ae"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-c5-0-cross-surface-consistency.md",
+      "size": 3308,
+      "sha256": "d1715ffa79f9d59b2e20459063a02038eb8bfc9d6c90413dcb092302cba18615"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -518,6 +523,11 @@
       "sha256": "1b0cd9bf16cdf6cfddb2919091b4d507e8ec35915f1badec3229739521514125"
     },
     {
+      "path": ".codex/state/c5-consistency-matrix.md",
+      "size": 4832,
+      "sha256": "1d545859554a603e395c3e64083b93bd541f70b50416060ac2885505713fab7d"
+    },
+    {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
       "size": 1266,
       "sha256": "bfd441809b0d4ba66d9cbd7ff15b1287094f64d103bbf12039c1b1260f8ba964"
@@ -559,8 +569,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 400,
-      "sha256": "1d506b0943bbce18063003865abf830c20047df33ad5566c99aba5bd37a0557b"
+      "size": 479,
+      "sha256": "0f57cca071f1d0af295284e231f58ce61013624546414fc874b193b297aad3ed"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -584,13 +594,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10274,
-      "sha256": "dc56e149c97b74f53baca734807a2505d5a8594fb419beac73a489c5473250bb"
+      "size": 10358,
+      "sha256": "442ee7d62d68cf8a4f5afee33214d66bfe57c25807589a775963c87511212159"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 107660,
-      "sha256": "efb7673a3a6be3a1b7a9fbfa3986b3a2a9f8d88c1c7dea3d98a854715d288dda"
+      "size": 109067,
+      "sha256": "2b5f1c203f90181b49a8ee72401d79e47fc73ebc4dfa5c78b07887511de2e324"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1884,8 +1894,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 51417,
-      "sha256": "7e8bb9730c146985d5ff11d94b8baa7e8fce77ca598529a379ad9c3595b622be"
+      "size": 51527,
+      "sha256": "9007c1e31be088adc7f33aa363f34b430bfba526927e80ad626913db5f9ed29c"
     },
     {
       "path": "design/mockup/README.md",
@@ -2241,6 +2251,11 @@
       "path": "docs/ux/C4_REAL_COMPLETE_FLOWS_FRAMEWORK.md",
       "size": 8121,
       "sha256": "29f99df46946aace38c615d65a95c3aabf7bf2e09125c6fee5408d0378f0a55f"
+    },
+    {
+      "path": "docs/ux/C5_CROSS_SURFACE_CONSISTENCY_FRAMEWORK.md",
+      "size": 4058,
+      "sha256": "710a51655661493885bc0979aaeff32d18b727adad2cf532d78b0791060b60ae"
     },
     {
       "path": "docs/ux/DESIGN.md",
