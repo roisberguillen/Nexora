@@ -1,5 +1,22 @@
 # Test evidence
 
+## 12.5.D.3 — Independent Accessibility Review — 2026-09-06
+
+- Routing: `CRITICAL / encryption / medium` secondo il router ufficiale; il brief includeva
+  controlli security-sensitive, ma questa slice ha svolto esclusivamente review accessibilità,
+  senza modifiche a codice, crittografia, dominio o persistenza.
+- Browser/keyboard: IAB accessibility tree su Dashboard e shell; `Tab`/`Shift+Tab`, skip link,
+  focus iniziale e nomi accessibili verificati manualmente. Enter/Space, Escape, frecce applicabili,
+  focus trap/restore di dialog e sheet, form, tabelle, feedback e target mobile sono coperti dai
+  test esistenti e dalla suite dedicata.
+- Viewport e zoom: Playwright sui profili 320/375/390/768/1024/1440; zoom 200% desktop PASS;
+  nessun overflow/clipping critico, target principali almeno 44×44 px.
+- Accessibility gate: `pnpm exec playwright test test/e2e/app-shell.spec.ts test/e2e/dashboard.spec.ts test/e2e/accounts.spec.ts test/e2e/transactions.spec.ts test/e2e/backup-manual-ui.spec.ts test/e2e/google-drive-onboarding.spec.ts test/e2e/c3-shell-audit.spec.ts test/e2e/c3-dashboard-audit.spec.ts test/e2e/c3-accounts-audit.spec.ts test/e2e/c3-notifications-audit.spec.ts test/e2e/c3-profile-audit.spec.ts test/e2e/c3-security-app-lock.spec.ts --workers=1` → `191 passed`, `55 skipped`, `0 failed`; skip condizionati dai profili, nessun failure nascosto, axe-core incluso nei percorsi applicabili.
+- Gate repository: `pnpm verify` → `633 passed`, `4 skipped`, build/lint/typecheck/format PASS; warning noto Vite sui chunk >500 kB. `pnpm manifest:check`, `pnpm codex:validate`, `pnpm format:check` e `pnpm test:ui-ux` PASS.
+- Invarianti: nessun dato reale creato o modificato; importi minor units, segni, EUR/it-IT,
+  entrate/uscite e trasferimenti neutrali invariati. P0/P1/P2 aperti `0/0/0`.
+- Stato: `12.5.D.3 PASS`; prossimo esclusivamente `12.5.D.4`.
+
 ## 12.5.D.2 — Independent UI/UX + Responsive Review — 2026-09-06
 
 - Routing: `localized_bug / STANDARD / low`; review-only scope, nessuna modifica runtime,

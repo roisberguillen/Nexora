@@ -453,6 +453,11 @@
       "sha256": "8570588db36617437200d8b4b87c04315ec146eab4bd9b14469a75bd572d1813"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-d-3-independent-accessibility-review.md",
+      "size": 4029,
+      "sha256": "6b15110d415452fc08fc1336d630fb77ebdf5c19642434e7d4cad8cebfb7559f"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -614,13 +619,13 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 424,
-      "sha256": "838feb42f63cd24d32141c300b846dd4755fc269f53ae38cbf5c97dee86889b8"
+      "size": 426,
+      "sha256": "be8b6e29fa03bc1c1a6a64fa7c8c8e8be85d78dcc04abfc89d34126479d47354"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
-      "size": 2210,
-      "sha256": "cd23f11b79c4ef9ed383bb733a30b2e5e794e3a104b7569d8ff7c5ae06d4798f"
+      "size": 2242,
+      "sha256": "a7dc3af4f6849089f2455434d29ecc294c75b33d3a49f1cb2b66d0ed2c06f432"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -644,13 +649,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10586,
-      "sha256": "75fd37e1d6fc6e7b3de3641bf380b1ca8440e82a71b3a17eeda95acfdcda28e6"
+      "size": 10572,
+      "sha256": "51870516147524512113a33574428c069b95bbc9ff74b8678b902ae4c356a01d"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 121749,
-      "sha256": "e6191aa558f898b03cbb2d87a3e16730bee7594b0b8cdb849d8d3d2cbda0e245"
+      "size": 123631,
+      "sha256": "abdb60505768b6e9b8e9191316abc59f05742dec06dacd751c1986ed76b94d7e"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1944,8 +1949,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 52451,
-      "sha256": "cf1f9e0f78902eb8dd12dffc54a63e97272005b50cff77554b3098a64264d5bb"
+      "size": 52634,
+      "sha256": "4cab050ddbb2fb19f24d7ebcc56e1218829739bb468113e133ea9da95acbb55a"
     },
     {
       "path": "design/mockup/README.md",
