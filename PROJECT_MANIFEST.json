@@ -423,6 +423,11 @@
       "sha256": "9a34611dc8011c00ac8b946a4a8c9ae1b3d569f6d5d9e695e27356676f8b3d6d"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-c5-4-responsive-consistency.md",
+      "size": 4334,
+      "sha256": "ced999764b3c30d3369cb1a75a27454de9ec571a9fc373f7770d1c1d4e01530f"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -539,8 +544,8 @@
     },
     {
       "path": ".codex/state/c5-consistency-matrix.md",
-      "size": 8840,
-      "sha256": "8eb19199002d2870801c48089b368684920b586b5d14e67d151d64ad74c53d50"
+      "size": 10346,
+      "sha256": "fea1327759aac230c27ae056d59f65c886d5776270990679092b9ddff4d87950"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -584,8 +589,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 375,
-      "sha256": "6fa7c29555137a108be4b2827905d810f1f783e2681f1206a7e6d0f57e4baa60"
+      "size": 371,
+      "sha256": "c06ccdad1839696467c2a31a06a18174a9158654e7e3f9ce4fb0d3d68bda3957"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -610,12 +615,12 @@
     {
       "path": ".codex/state/roadmap-progress.md",
       "size": 10434,
-      "sha256": "1fb8a63107c1250a5c764c9f71592964ea9a9f3677ff2bb0a1817b8bd8fd9331"
+      "sha256": "50068322e42f9c860f0669933edc9094829168cb350f07284650569219920e4b"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 113800,
-      "sha256": "8aa7d61c0ba86240584f16b36c94c9b95d93933938d39da5090cbc35a4a92c56"
+      "size": 115343,
+      "sha256": "e4df93aa85ebb32a88fda5a9210a3891223a44b71fcee81daa8e8f1761adf5d7"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1909,8 +1914,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 51855,
-      "sha256": "90867578fa7956fa1123e0eb9e13c520e5bac79609cbac3110fc81609f38504a"
+      "size": 51980,
+      "sha256": "9069c30c1fd8a14bf351e9618863bd83b6a8bb7a24e8f40bc0fec70557280f04"
     },
     {
       "path": "design/mockup/README.md",
@@ -3469,13 +3474,13 @@
     },
     {
       "path": "test/e2e/c4-first-start-account-flow.spec.ts",
-      "size": 10431,
-      "sha256": "c6e07802b3cefdfe8f62553110740b9acd31028716d01d3b88d1ddde33a36704"
+      "size": 10437,
+      "sha256": "4568a2fb6824d8c8827ae0c4ba794083a27b0ec2926f1814624a6e51247e3bc3"
     },
     {
       "path": "test/e2e/c4-income-expense-flow.spec.ts",
-      "size": 15330,
-      "sha256": "6f2844cb8b99e2913e65f39e6c619e1bfd8be5cbebc28239c21e58e2ff83a24e"
+      "size": 15306,
+      "sha256": "f3d0b73842135ab2e4d233d47b3bb990c1a105518b3189c98c059057d2e7c96b"
     },
     {
       "path": "test/e2e/c4-loans-investments-dashboard-analytics-flow.spec.ts",
@@ -3494,8 +3499,8 @@
     },
     {
       "path": "test/e2e/c4-transfer-flow.spec.ts",
-      "size": 16029,
-      "sha256": "c5d1716f7d36ee59c809665240cadd51cb3dd0c6bf553c55c0e1506e8de2d536"
+      "size": 16035,
+      "sha256": "f75c3371651ade99a7eda79434607dde2c75bdf08401215502cfadb56c8ecdde"
     },
     {
       "path": "test/e2e/categories.spec.ts",
@@ -3604,8 +3609,8 @@
     },
     {
       "path": "test/e2e/pilot-ledger-flow.spec.ts",
-      "size": 2038,
-      "sha256": "e22b5b6101898a8cf4417fc43376fd4630bb5b7a9a0a46e83dee5c287cd3b74d"
+      "size": 1987,
+      "sha256": "1a7416f2d92dde4b5de7bc73d76a63dad8628041e25b57b13d10744663b4b31d"
     },
     {
       "path": "test/e2e/pwa-persistence.spec.ts",

@@ -6,6 +6,7 @@
 - Closed C5.1 navigation, page chrome, terminology, navigation iconography and equivalent CTA consistency.
 - Closed C5.2 mutation-form busy states and double-submit protection without changing domain or storage behavior.
 - Closed C5.3 financial data consistency: shared bigint-safe money and locale-aware percentage formatters.
+- Closed C5.4 responsive consistency: six-viewport shell/reflow audit, touch targets, overflow and zoom evidence reconciled.
 
 ## 2026-09-06
 

@@ -203,7 +203,7 @@ async function navigateToSurface(
     }
     const labels = {
       accounts: "Conti",
-      overview: "Home",
+      overview: "Panoramica",
       profile: "Profilo",
       transactions: "Movimenti",
     } as const;

@@ -1519,3 +1519,14 @@ Keep only the latest relevant evidence per completed phase.
 - Repository gates: `pnpm typecheck` PASS across 9 projects; `pnpm lint` PASS with zero warnings;
   `pnpm test` PASS (`140` files passed, `1` skipped; `629` tests passed, `4` skipped, `0 failed`);
   `pnpm build` PASS across 9 projects. Build emitted only the existing chunk-size advisory.
+## 12.5.C5.4 — Responsive cross-surface consistency — 2026-09-06
+
+- Routing: `localized_bug / STANDARD / low`; scope limitato a audit responsive cross-surface e riallineamento di helper E2E obsoleti, senza modifiche al runtime o alle invarianti contabili.
+- Browser reale CUA: verifica a 320, 375, 390, 768, 1024 e 1440 px. A 320–768 px sono presenti mobile header e bottom navigation; a 1024–1440 px il chrome desktop è attivo. `scrollWidth === clientWidth` a tutte le larghezze; minimo touch target calcolato 44 px; console browser senza errori o warning.
+- Route audit reale a 390 px: overview, transactions, accounts, budgets, loans, investments e analytics senza overflow né errori console.
+- Responsive financial E2E: `34 passed`, `20 skipped`, `0 failed` sui progetti 390/768/1024/1440 e sui flussi C4 coperti.
+- Zoom 200% E2E: `12 passed`, `2 skipped`, `0 failed` per shell, dashboard e accounts sui progetti 1024/1440.
+- C5-401: chiuso. Quattro helper E2E conservavano l'etichetta accessibile mobile `Home`; riallineati a `Panoramica` senza cambiare route o comportamento applicativo.
+- C5-402: accettato. Nessun P0/P1/P2 responsive riprodotto; l'overflow orizzontale della tabella densa locale è intenzionale e confinato al contenitore previsto.
+- `pnpm verify`: PASS; format, lint, typecheck, Vitest `140 passed | 1 skipped` / `633 passed | 4 skipped` e build PWA verdi. Build mantiene il warning Vite noto sui chunk >500 kB, senza failure.
+- Stato C5.4: P0/P1/P2 aperti `0/0/0`; prossimo task formalizzato: `12.5.C5.5`.

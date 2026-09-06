@@ -315,7 +315,7 @@ async function navigateToSurface(
     const labels = {
       accounts: "Conti",
       analytics: "Analisi",
-      overview: "Home",
+      overview: "Panoramica",
       transactions: "Movimenti",
     } as const;
     await mobile.getByRole("link", { name: labels[surface], exact: true }).click();

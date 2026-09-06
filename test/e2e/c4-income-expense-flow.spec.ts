@@ -317,7 +317,7 @@ async function navigateToSurface(
   const labels = {
     accounts: "Conti",
     analytics: "Analisi",
-    overview: width <= 768 ? "Home" : "Panoramica",
+    overview: "Panoramica",
     transactions: "Movimenti",
   } as const;
   if (width <= 768) {
