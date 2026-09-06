@@ -433,6 +433,11 @@
       "sha256": "b47ea3d52a56478cb28ca794af9a72fab989ed1cac55e702492484d9031bc786"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-c5-final-gate.md",
+      "size": 4745,
+      "sha256": "c899e2d4af7dc57c3aca52b9ccc87219230db904580cfa4096560b5da5041eed"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -549,8 +554,8 @@
     },
     {
       "path": ".codex/state/c5-consistency-matrix.md",
-      "size": 12151,
-      "sha256": "183634e23f8cb13ca7ab3c9d9895c506a6c76e6e774801bcdc62d63bdced0c93"
+      "size": 12179,
+      "sha256": "9483a845aa165a7dbd610215d4dd004f086f745406fd9cd36c2ea9524b1dfdbc"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -594,8 +599,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 418,
-      "sha256": "966252aae3c44faa9870194546803cee749d624281ee6b7e3045d468f93090cf"
+      "size": 405,
+      "sha256": "f0f0aaeb8a2f0d5e10c97f2abe7ec4fa124bd619bcf6b7c5038cc3b03d30b38d"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -619,13 +624,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10446,
-      "sha256": "7ab0fe246587a701cbf22586a93ada14daef076f2f63cb46b6b1ffa955116bed"
+      "size": 10460,
+      "sha256": "334be1da4d45f2bbc7ecf9c8b93cb12631bdcec7d007d2f5e3fa8a05498adbf5"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 116802,
-      "sha256": "abee5b7bc012e19e36b3cf711336fd00fdffb554723fa5d030e5c450250a9a48"
+      "size": 118885,
+      "sha256": "08d0fdf452573b4b4ffde82f681905e7b276c13b2b96b4cf0c09e09df447bd84"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1919,8 +1924,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 52126,
-      "sha256": "54ccab3490653453d164b088baba22762d26d3ffb4293b2e104abb5eb6597605"
+      "size": 52265,
+      "sha256": "4064eed797f7cb8fbf0dc753742462a684c6a0b2ddbc9ba826b299ff51593e25"
     },
     {
       "path": "design/mockup/README.md",

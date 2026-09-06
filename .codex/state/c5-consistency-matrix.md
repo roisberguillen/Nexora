@@ -29,4 +29,4 @@ Baseline: `12.5.C4-F COMPLETE`, `C4_FINAL_GATE_PASS`, C3/C4 frozen. C5.0 audit d
 
 P0: **0** · P1: **0** · P2: **0 aperti** (C5-001…C5-005, C5-201, C5-202, C5-301…C5-303, C5-401 CLOSED; C5-402, C5-501…C5-503 ACCEPTED) · Accepted: **7**.
 
-C5.0, C5.1, C5.2, C5.3, C5.4 e C5.5 sono complete. Il prossimo task raccomandato è `12.5.C5-F`.
+C5.0, C5.1, C5.2, C5.3, C5.4, C5.5 e C5-F sono complete con `C5_FINAL_GATE_PASS`. Il prossimo task raccomandato è `12.5.D`.

@@ -68,12 +68,12 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.9 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; backup manuale, verifica, restore A → B → A, rollback, IndexedDB offline e Drive opzionale verificati |
 | 12.5.C4.10 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; App Lock, preferenze, cestino/restore, reset confermato, startup e recovery verificati |
 | C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; C4.0–C4.10 e regressione finale chiuse |
-| C5 | in progress | C5.1–C5.5 COMPLETE — navigation/chrome, form/dialog/feedback, financial data, responsive consistency e regression polish; 0 P0, 0 P1, 0 P2 aperti; C5-F next |
+| C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; C5.1–C5.5 e gate finale chiusi; 0 P0, 0 P1, 0 P2 aperti; 12.5.D next |
 | D | pending | final independent review |
 | E | pending | final gate: READY / NOT READY |
 | F | pending | release freeze |
 | 12.5.C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; real complete flows e regressione finale chiusi |
-| 12.5.C5 | in progress | C5.1–C5.5 COMPLETE; next 12.5.C5-F; C5-F not started |
+| 12.5.C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; cross-surface consistency chiusa; prossimo task 12.5.D |
 | 12.5.D | planned | final independent review |
 | 12.5.E | planned | final gate: READY / NOT READY |
 | 12.5.F | planned | release freeze |
@@ -83,8 +83,9 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
 C3.14, C3.15, C3.16, C3.17, C3.18, C3.19, C3.20 and C3.21 are complete. C4.0–C4.10 are
-complete with their own evidence; C4-F is closed with final regression evidence. Phase 13 must not
-be treated as next before the 12.5 release freeze. C5, D, E, F and Phase 13 remain pending/not started.
+complete with their own evidence; C4-F is closed with final regression evidence. C5 is closed with
+`C5_FINAL_GATE_PASS`; Phase 13 must not be treated as next before the 12.5 release freeze. D, E, F
+and Phase 13 remain pending/not started.
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not
 an approved implementation. The Phase 12.3 work was recovered selectively on

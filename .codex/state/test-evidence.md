@@ -1550,3 +1550,30 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm manifest:check`, `pnpm codex:validate`, `pnpm format:check`, `pnpm test:ui-ux`,
   `pnpm quality:ui-ux` e `git diff --check`: PASS.
 - Stato C5.5: P0/P1/P2 aperti `0/0/0`; prossimo task `12.5.C5-F`, non avviato.
+## 12.5.C5-F — Final cross-surface consistency gate — 2026-09-06
+
+- Routing: `localized_bug / STANDARD / low`; gate di verifica senza modifiche runtime, nuove
+  feature, route, migrazioni o refactor.
+- Matrice: tutti i rilievi C5 sono `CLOSED` o `ACCEPTED`; nessun `OPEN`, `PARTIAL` o `DEFERRED`.
+  P0/P1/P2 aperti `0/0/0`; motivazioni ACCEPTED documentate; nessun rilievo riaperto.
+- Browser gate reale: Dashboard, Movimenti, Conti e shell con drawer/focus/route verificati sui
+  progetti 320/375/390/768/1024/1440; audit cross-surface delle 15 superfici C5 senza overflow
+  critico o errori console. Zoom 200% verificato su shell, Dashboard e Conti.
+- Browser E2E finale: `pnpm exec playwright test test/e2e/c3-shell-audit.spec.ts
+  test/e2e/c3-dashboard-audit.spec.ts test/e2e/c3-accounts-audit.spec.ts --workers=1` —
+  `25 passed`, `17 skipped`, `0 failed`; skip condizionati dai progetti/test selettivi.
+- Real-flow evidence C5.5 riconfermata: movimento, trasferimento, conto, budget/analisi,
+  prestito/investimento, import, backup/restore e ricorrenze/allocazioni `11 passed`, `9 skipped`,
+  `0 failed` a 390 px.
+- Accessibility: focus visible/order, landmark, heading, accessible name, form semantics, dialog/
+  Escape, reduced motion, reflow, touch target ≥44 px e zoom coperti senza P0/P1.
+- Financial gate: `FinancialAmount`, `it-IT`, minor units, segni, entrate/uscite, trasferimenti
+  neutrali, saldi, budget, percentuali, prestiti, investimenti, KPI e progress invariati.
+- Security/performance: nessun secret/dato reale/unsafe HTML/permission/dependency introdotto;
+  nessuna regressione evidente di rendering/listener/layout shift. Warning Vite chunk >500 kB noto,
+  non bloccante e documentato.
+- `pnpm verify`: PASS — format, lint, typecheck, Vitest `140 passed | 1 skipped` / `633 passed |
+  4 skipped`, build verde.
+- `pnpm manifest:check`, `pnpm codex:validate`, `pnpm format:check`, `pnpm test:ui-ux`,
+  `pnpm quality:ui-ux` e `git diff --check`: PASS.
+- Decisione: `C5_FINAL_GATE_PASS`; macrofase 12.5.C5 chiusa. Prossimo task `12.5.D`, non avviato.

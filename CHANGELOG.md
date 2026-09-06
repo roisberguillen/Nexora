@@ -8,6 +8,7 @@
 - Closed C5.3 financial data consistency: shared bigint-safe money and locale-aware percentage formatters.
 - Closed C5.4 responsive consistency: six-viewport shell/reflow audit, touch targets, overflow and zoom evidence reconciled.
 - Closed C5.5 cross-surface regression sweep with no new runtime regressions; documented accessibility, security and performance sanity evidence.
+- Closed 12.5.C5 with `C5_FINAL_GATE_PASS`; final browser, accessibility, financial, real-flow, security and performance gates reconciled.
 
 ## 2026-09-06
 
