@@ -1,7 +1,7 @@
 # Current task
 
-- Task: 12.5.D.1 — Audit e riconciliazione dello stato della Fase D
+- Task: 12.5.D.2 — Independent UI/UX + Responsive Review
 - Roadmap phase: Phase 12.5
-- Status: `COMPLETE` — audit documentale D.1 concluso; `12.5.D = IN PROGRESS` perché le review indipendenti D sono mancanti.
-- Evidence: `.codex/state/d-phase-evidence-matrix.md`; `.codex/reviews/phase-12.5-d-1-status-reconciliation.md`.
-- Next task: `12.5.D.2` — Independent UI/UX + Responsive Review.
+- Status: `COMPLETE` — review indipendente UI/UX + responsive PASS; `12.5.D = IN PROGRESS` perché D.3, D.4 e D.F sono ancora mancanti.
+- Evidence: `.codex/state/d-phase-evidence-matrix.md`; `.codex/reviews/ui-ux/2026-09-06-d-2-independent-ui-ux-responsive-review.md`.
+- Next task: `12.5.D.3` — Accessibility Review.

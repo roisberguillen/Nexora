@@ -9,6 +9,7 @@
 - Closed C5.4 responsive consistency: six-viewport shell/reflow audit, touch targets, overflow and zoom evidence reconciled.
 - Closed C5.5 cross-surface regression sweep with no new runtime regressions; documented accessibility, security and performance sanity evidence.
 - Closed 12.5.C5 with `C5_FINAL_GATE_PASS`; final browser, accessibility, financial, real-flow, security and performance gates reconciled.
+- Completed 12.5.D.2 independent UI/UX + responsive review: browser evidence across 320/390/768/1024/1440, representative screenshots, and no P0/P1/P2 findings; D.3 remains next.
 
 ## 2026-09-06
 

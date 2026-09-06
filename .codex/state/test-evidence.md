@@ -1,5 +1,24 @@
 # Test evidence
 
+## 12.5.D.2 — Independent UI/UX + Responsive Review — 2026-09-06
+
+- Routing: `localized_bug / STANDARD / low`; review-only scope, nessuna modifica runtime,
+  nessuna nuova feature e nessuna alterazione a dominio, persistenza o invarianti contabili.
+- Browser reale: IAB su Dashboard `390×844` e Movimenti `1440×1000`, screenshot catturati e
+  ispezionati; shell, header, page header, CTA, empty state, route attiva e navigazione leggibili.
+- Viewport: `320`, `390`, `768`, `1024`, `1440` verificati nella review corrente e `375` nel
+  baseline responsive C5-F. Tastiera: skip link raggiunto al primo `Tab`; target interattivi
+  visibili misurati almeno `44 px`; `scrollWidth === clientWidth` sulle superfici rappresentative.
+- Zoom 200%: evidence E2E responsive C5-F riconciliata; nessuna regressione visuale nuova
+  riprodotta. L’audit approfondito di accessibilità è riservato a D.3.
+- Gate funzionale di riferimento: shell/dashboard/accounts Playwright C5-F `25 passed`,
+  `17 skipped`, `0 failed`; skip condizionati dai profili/progetti previsti, nessun failure
+  nascosto. Nessun dato reale creato o modificato.
+- Esito review: superfici shell, dashboard, movimenti, conti, budget, ricorrenze, allocazioni,
+  prestiti, investimenti, analisi, diario, categorie, tag, import/export, backup, notifiche,
+  profilo, impostazioni, privacy/sicurezza, cestino e reset analizzate; P0/P1/P2 aperti `0/0/0`.
+- Stato: `12.5.D.2 COMPLETE`; prossimo esclusivamente `12.5.D.3`.
+
 ## 12.5.C5.3 — Componenti finanziari e rappresentazione dati — 2026-09-06
 
 - Routing: `ui_component / STANDARD / low`; modifiche limitate a formatter UI condivisi e loro
