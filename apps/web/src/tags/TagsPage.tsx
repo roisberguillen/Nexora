@@ -170,7 +170,7 @@ export function TagsPage({
               {error}
             </p>
           )}
-          <form className="account-form" onSubmit={save}>
+          <form aria-busy={isSaving} className="account-form" onSubmit={save}>
             <label>
               Nome
               <input

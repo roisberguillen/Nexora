@@ -68,12 +68,12 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.9 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; backup manuale, verifica, restore A → B → A, rollback, IndexedDB offline e Drive opzionale verificati |
 | 12.5.C4.10 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; App Lock, preferenze, cestino/restore, reset confermato, startup e recovery verificati |
 | C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; C4.0–C4.10 e regressione finale chiuse |
-| C5 | in progress | C5.1 COMPLETE — navigation/chrome/CTA/terminology; 0 P0, 0 P1, 0 P2 aperti; C5.2 next |
+| C5 | in progress | C5.1 e C5.2 COMPLETE — navigation/chrome/CTA/terminology e form/dialog/feedback/system states; 0 P0, 0 P1, 0 P2 aperti; C5.3 next |
 | D | pending | final independent review |
 | E | pending | final gate: READY / NOT READY |
 | F | pending | release freeze |
 | 12.5.C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; real complete flows e regressione finale chiusi |
-| 12.5.C5 | in progress | C5.1 COMPLETE; next 12.5.C5.2; C5.2–C5-F not started |
+| 12.5.C5 | in progress | C5.1 e C5.2 COMPLETE; next 12.5.C5.3; C5.3–C5-F not started |
 | 12.5.D | planned | final independent review |
 | 12.5.E | planned | final gate: READY / NOT READY |
 | 12.5.F | planned | release freeze |

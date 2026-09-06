@@ -40,7 +40,11 @@ export function AppLockScreen({
   };
   return (
     <main className="app-lock-screen">
-      <form className="data-panel app-lock-card" onSubmit={(event) => void unlock(event)}>
+      <form
+        aria-busy={isVerifying}
+        className="data-panel app-lock-card"
+        onSubmit={(event) => void unlock(event)}
+      >
         <p className="eyebrow">Nexora è bloccata</p>
         <h1>Sblocca l’app</h1>
         <p>Inserisci il PIN o la passphrase configurati su questo browser.</p>

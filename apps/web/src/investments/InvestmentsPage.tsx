@@ -164,6 +164,7 @@ export function InvestmentsPage({
             </p>
           )}
           <form
+            aria-busy={isSaving}
             className="account-form"
             key={editing?.id ?? "new"}
             onSubmit={(event) => void save(event)}

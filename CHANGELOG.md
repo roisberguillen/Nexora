@@ -4,6 +4,7 @@
 
 - Added the 12.5.C5.0 cross-surface consistency framework, evidence matrix and initial audit.
 - Closed C5.1 navigation, page chrome, terminology, navigation iconography and equivalent CTA consistency.
+- Closed C5.2 mutation-form busy states and double-submit protection without changing domain or storage behavior.
 
 ## 2026-09-06
 

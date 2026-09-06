@@ -125,4 +125,35 @@ describe("BudgetsPage", () => {
     await user.click(screen.getByRole("button", { name: "Disattiva budget" }));
     expect(onDelete).toHaveBeenCalledWith("transport-february");
   });
+
+  it("blocks a second budget submit while persistence is pending", async () => {
+    const user = userEvent.setup();
+    let resolveCreate!: () => void;
+    const onCreate = vi.fn(() => new Promise<void>((resolve) => (resolveCreate = resolve)));
+    render(
+      <BudgetsPage
+        budgets={[]}
+        categories={categories}
+        onCreate={onCreate}
+        onDelete={async () => undefined}
+        onUpdate={async () => undefined}
+        transactions={[]}
+        transactionSplits={[]}
+        today={BUDGET_TEST_TODAY}
+      />,
+    );
+
+    await user.selectOptions(screen.getByLabelText("Categoria"), "transport");
+    await user.selectOptions(screen.getByLabelText("Sotto-categoria"), "fuel");
+    await user.type(screen.getByLabelText("Importo"), "80,00");
+    await user.type(screen.getByLabelText("Prima soglia di notifica (%)"), "60");
+    await user.type(screen.getByLabelText("Seconda soglia di notifica (%)"), "90");
+    const submit = screen.getByRole("button", { name: "Salva budget" });
+    await user.click(submit);
+    expect(submit).toBeDisabled();
+    expect(submit.closest("form")).toHaveAttribute("aria-busy", "true");
+    await user.click(submit);
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    resolveCreate();
+  });
 });

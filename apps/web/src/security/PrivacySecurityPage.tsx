@@ -121,7 +121,7 @@ function AppLockSetup({
     }
   };
   return (
-    <form className="app-lock-setup" onSubmit={(event) => void save(event)}>
+    <form aria-busy={isSaving} className="app-lock-setup" onSubmit={(event) => void save(event)}>
       <p className="import-help">
         Configura un PIN o una passphrase di almeno 4 caratteri. Nexora salva soltanto un
         verificatore derivato con PBKDF2.
@@ -217,7 +217,11 @@ function AppLockDisable({
   }
 
   return (
-    <form className="app-lock-disable" onSubmit={(event) => void disable(event)}>
+    <form
+      aria-busy={isSaving}
+      className="app-lock-disable"
+      onSubmit={(event) => void disable(event)}
+    >
       <label className="field-label" htmlFor="disable-app-lock">
         PIN o passphrase attuali
       </label>

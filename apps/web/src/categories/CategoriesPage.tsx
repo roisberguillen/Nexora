@@ -22,6 +22,7 @@ export function CategoriesPage({
   ) => Promise<void>;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [parentId, setParentId] = useState("");
   const [kindScope, setKindScope] = useState<CategoryKindScope>("expense");
@@ -50,18 +51,22 @@ export function CategoriesPage({
   };
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
     const form = new FormData(event.currentTarget);
     const input = {
       name: String(form.get("name") ?? ""),
       kindScope,
       ...(parentId === "" ? {} : { parentId }),
     };
+    setIsSaving(true);
     try {
       if (editing === null) await onCreate(input);
       else await onUpdate(editing.id, { ...input, isArchived: editing.isArchived });
       openEditor(null);
     } catch {
       setError("Impossibile salvare: verifica macro categoria, ambito e stato.");
+    } finally {
+      setIsSaving(false);
     }
   };
   const archive = async (category: Category) => {
@@ -242,7 +247,7 @@ export function CategoriesPage({
               {error}
             </p>
           )}
-          <form className="account-form" onSubmit={save}>
+          <form aria-busy={isSaving} className="account-form" onSubmit={save}>
             <label>
               Nome
               <input
@@ -332,7 +337,7 @@ export function CategoriesPage({
               <button className="secondary-action" onClick={() => openEditor(null)} type="button">
                 Annulla
               </button>
-              <button className="primary-action" type="submit">
+              <button className="primary-action" disabled={isSaving} type="submit">
                 Salva categoria
               </button>
             </div>

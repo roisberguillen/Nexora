@@ -252,7 +252,12 @@ export function RecurringPage({
               {error}
             </p>
           )}
-          <form className="account-form" key={editing?.id ?? "new"} onSubmit={save}>
+          <form
+            aria-busy={isSaving}
+            className="account-form"
+            key={editing?.id ?? "new"}
+            onSubmit={save}
+          >
             <label>
               Nome
               <input defaultValue={editing?.name ?? ""} name="name" required />
@@ -633,6 +638,7 @@ function AllocationPlans({
         );
       })}
       <form
+        aria-busy={isSaving}
         className="account-form allocation-plan-form"
         key={editing?.id ?? "new"}
         onSubmit={(event) => void save(event)}

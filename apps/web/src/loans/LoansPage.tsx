@@ -161,6 +161,7 @@ export function LoansPage({
             </p>
           )}
           <form
+            aria-busy={isSaving}
             className="account-form"
             key={editing?.id ?? "new"}
             onSubmit={(event) => void save(event)}

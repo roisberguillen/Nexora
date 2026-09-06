@@ -72,7 +72,7 @@ export function ProfilePage() {
           <span className="profile-chip">Solo locale</span>
         </div>
         {isEditing ? (
-          <form className="profile-form" onSubmit={save}>
+          <form aria-busy={isSaving} className="profile-form" onSubmit={save}>
             <label className="field-label" htmlFor="profile-display-name">
               Nome visualizzato
             </label>

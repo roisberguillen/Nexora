@@ -39,6 +39,7 @@ export function BudgetsPage({
   const [deleteCandidate, setDeleteCandidate] = useState<Budget>();
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [selectedMacroCategoryId, setSelectedMacroCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState(() => currentBudgetPeriod(today));
@@ -65,8 +66,10 @@ export function BudgetsPage({
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSaving) return;
     const formElement = event.currentTarget;
     const form = new FormData(formElement);
+    setIsSaving(true);
     try {
       const categoryId = selectedSubcategoryId;
       if (categoryId === "") throw new Error("A subcategory is required.");
@@ -104,6 +107,8 @@ export function BudgetsPage({
       setError(
         "Impossibile salvare il budget. Scegli una categoria e una sottocategoria, inserisci importo e due soglie tra 1 e 100 con la prima minore della seconda.",
       );
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -288,6 +293,7 @@ export function BudgetsPage({
             </p>
           )}
           <form
+            aria-busy={isSaving}
             aria-disabled={!isCurrentPeriod}
             className="account-form"
             key={editing?.id ?? "new"}
@@ -377,7 +383,11 @@ export function BudgetsPage({
                   Annulla modifica
                 </button>
               )}
-              <button className="primary-action" type="submit">
+              <button
+                className="primary-action"
+                disabled={!isCurrentPeriod || isSaving}
+                type="submit"
+              >
                 {editing === undefined ? "Salva budget" : "Salva modifiche"}
               </button>
             </div>

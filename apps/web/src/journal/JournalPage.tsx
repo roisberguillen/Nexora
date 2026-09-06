@@ -240,6 +240,7 @@ export function JournalPage({
             </p>
           )}
           <form
+            aria-busy={isSaving}
             className="account-form"
             key={selected?.id ?? selectedPeriod}
             onSubmit={(event) => void save(event)}

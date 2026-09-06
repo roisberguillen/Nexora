@@ -576,7 +576,7 @@ function AccountForm({
           ×
         </button>
       </div>
-      <form className="account-form" onSubmit={onSubmit}>
+      <form aria-busy={isSaving} className="account-form" onSubmit={onSubmit}>
         <label>
           Nome conto
           <input

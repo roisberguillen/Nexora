@@ -44,4 +44,29 @@ describe("CategoriesPage", () => {
     await user.click(screen.getByRole("button", { name: "Aggiungi sottocategoria" }));
     expect(screen.getByLabelText("Macro categoria")).toHaveValue(macro.id);
   });
+
+  it("blocks a second category submit while persistence is pending", async () => {
+    const user = userEvent.setup();
+    let resolveCreate!: () => void;
+    const onCreate = vi.fn(() => new Promise<void>((resolve) => (resolveCreate = resolve)));
+    render(
+      <CategoriesPage
+        categories={[]}
+        onCreate={onCreate}
+        onDeleteUnused={async () => undefined}
+        onInstallDefaults={async () => undefined}
+        onMerge={async () => undefined}
+        onUpdate={async () => undefined}
+      />,
+    );
+
+    await user.type(screen.getByLabelText("Nome"), "Casa");
+    const submit = screen.getByRole("button", { name: "Salva categoria" });
+    await user.click(submit);
+    expect(submit).toBeDisabled();
+    expect(submit.closest("form")).toHaveAttribute("aria-busy", "true");
+    await user.click(submit);
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    resolveCreate();
+  });
 });

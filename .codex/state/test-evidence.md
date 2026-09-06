@@ -1,5 +1,22 @@
 # Test evidence
 
+## 12.5.C5.2 — Form, dialog, feedback e system states — 2026-09-06
+
+- Routing: `ui_component / STANDARD / low`; scope limitato a busy semantics e double-submit dei
+  form UI, senza modifiche a dominio, persistenza, Money, date semantics o recovery architecture.
+- Test mirati: `pnpm vitest run apps/web/src/budgets/BudgetsPage.test.tsx apps/web/src/categories/CategoriesPage.test.tsx apps/web/src/journal/JournalPage.test.tsx apps/web/src/loans/LoansPage.test.tsx apps/web/src/investments/InvestmentsPage.test.tsx packages/ui/src/AppShell.test.tsx` — 6 file, `27 passed`, `0 failed`; inclusi due test double-submit/`aria-busy`.
+- E2E responsive: Budget, Categorie, Tag, Prestiti, Investimenti e Ricorrenze sui sei profili —
+  `63 passed`, `15 skipped`, `0 failed`; gli skip sono condizionati dai profili/progetti già
+  previsti, inclusi i test zoom desktop selettivi.
+- `pnpm verify` finale: format, lint, typecheck (9 progetti), Vitest `140 passed | 1 skipped`,
+  `632 passed | 4 skipped`, build verde; solo warning Vite già noto sui chunk >500 kB. Un primo
+  run completo ha mostrato un failure intermittente di focus in Transactions; il test è passato
+  subito in isolamento e il retry completo è verde.
+- Browser reale: Budget e form shell verificati a 390 px; viewport 320/375/390/768/1024/1440
+  coperti dagli E2E; `scrollWidth === clientWidth`, CTA raggiungibili, busy state presente e
+  console senza errori rilevanti. Zoom 200% desktop coperto dai test Budget/Categorie/Tag.
+- Stato: C5-201/C5-202 CLOSED; invarianti contabili e regressioni C3/C4/C5.1 preservate.
+
 ## 12.5.C5.1 — Navigation, header, page chrome, CTA e terminologia — 2026-09-06
 
 - Routing: `ui_component / STANDARD / low`; modifiche limitate a shell, chrome, label/iconografia,

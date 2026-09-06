@@ -413,6 +413,11 @@
       "sha256": "eab8f07ea4cd431a7928e02214051a92bb350da666a64d5818058d42ab312ab6"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-c5-2-forms-dialog-feedback.md",
+      "size": 3804,
+      "sha256": "69776ea48d94509008f3e070f6db31dad1104bcce5579e0d69a09beb7af75678"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -529,8 +534,8 @@
     },
     {
       "path": ".codex/state/c5-consistency-matrix.md",
-      "size": 5363,
-      "sha256": "61ae599e30ab5b5aab4ad081bcdffff0e0df543dd1ac38a34c1410a3a7427eca"
+      "size": 6857,
+      "sha256": "4baaaf6d8100b54f6cdb641a17171abc4493167ee4929ca87c9c0163c7441e65"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -574,8 +579,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 386,
-      "sha256": "1166390074d54074e35784f52cd8c3155362cd40238f92b4d16fbf7096eece95"
+      "size": 370,
+      "sha256": "dbca88e8b74db62f7881033421b36ed19a8c3941933071832ee970c9f31c408b"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -599,13 +604,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10373,
-      "sha256": "e12de1218ad0dad3c150198fcfdde2d2e26ec38d6c98787c9dd5dd672931ef5f"
+      "size": 10424,
+      "sha256": "915697e9678564fca4a50be3a5bf8a63dc7a048c7be7201103333585ae54e2e6"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 110510,
-      "sha256": "6d0dc5399dfad2c02ec0604b0749a01caa2008a43bd45a3a1a577d38bdc68e2d"
+      "size": 112096,
+      "sha256": "303a48b359ebb8b32261ff5d1e23baa34afdb9e6e850b31f81cc7e1050409f5d"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1079,8 +1084,8 @@
     },
     {
       "path": "apps/web/src/accounts/AccountsPage.tsx",
-      "size": 23801,
-      "sha256": "6d29bcf73b82d5da836326b10d466a3df2400c3fbc58cbbee7224caf9405145e"
+      "size": 23822,
+      "sha256": "a00fd96fb27160286f3a7a25385324e69ee5f9033b49713a0eb2524ffbc18a6f"
     },
     {
       "path": "apps/web/src/accounts/buildAccountsViewModel.test.ts",
@@ -1174,23 +1179,23 @@
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.test.tsx",
-      "size": 4860,
-      "sha256": "95e1a98ff83ff621fee2abe8344dc6c91bf545c67b637605759883e815072932"
+      "size": 6114,
+      "sha256": "d5cf90fb9b0bb3f3fb7a4df5f29f780db0f3fa7d199e9343c526030f1238c524"
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.tsx",
-      "size": 15990,
-      "sha256": "b5312fa6a0ea525b3f59dbccbc23d044ce00452f9940605028a6382166f5fa51"
+      "size": 16268,
+      "sha256": "584b476e6104ddd771b093eaec4b58bbb4a898f5c3a9eb036d5a5e0f4a8c9f5a"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
-      "size": 2022,
-      "sha256": "0ddd37ac99092827d68298bceed88c85f2832f1b002c575fbcae3470a02e3741"
+      "size": 2931,
+      "sha256": "e3b3145835261557b3e05a5ef6df7f5463472cf2c8fe337d479a981e393fcf18"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.tsx",
-      "size": 14459,
-      "sha256": "bfc54e22b4d187cd8678a223540a881ff405cc5acc1366007071cc9dffff0461"
+      "size": 14642,
+      "sha256": "95d6c7e61ac37b108c661c89f4c94552c13e70df0a97d86146a854f0307718c0"
     },
     {
       "path": "apps/web/src/categories/categoryCommands.test.ts",
@@ -1389,8 +1394,8 @@
     },
     {
       "path": "apps/web/src/investments/InvestmentsPage.tsx",
-      "size": 10277,
-      "sha256": "2a6773107039c2e62f37b8b5fdd238df40894469eb55df7ced6b4483783219a6"
+      "size": 10310,
+      "sha256": "26048e447a3045e244d27c7fef9db9614d9c5414b068a40bc22bad52313eda88"
     },
     {
       "path": "apps/web/src/journal/journalCommands.test.ts",
@@ -1409,8 +1414,8 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 12092,
-      "sha256": "8c31c260901a1a417da642ea23768ec692d0854a19f8b9045f7a8d60b06ea2ff"
+      "size": 12125,
+      "sha256": "d21b07e127a279194d98803e8fda8ea80e386b594fb37518a3b9e0c589ee9026"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -1429,8 +1434,8 @@
     },
     {
       "path": "apps/web/src/loans/LoansPage.tsx",
-      "size": 15563,
-      "sha256": "4fb0d2c07e1e6bc2f30594b139dcdf355e36faa972523a6dab0126e70797c824"
+      "size": 15596,
+      "sha256": "3bfcdd4270d0224bd5f3244d1b3b59c22e1d641a9e5aa5826d7d51c892f27a79"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -1489,8 +1494,8 @@
     },
     {
       "path": "apps/web/src/profile/ProfilePage.tsx",
-      "size": 5058,
-      "sha256": "5b32fa528655dd5b1ed9cc03a6f2f2eb8d618f749ab480920a8aaa74c4b5f93c"
+      "size": 5079,
+      "sha256": "72ba4c6a1b277e523c663453e5c9b2577d81e28ef26208e2bdb5cdf72ff2a5ea"
     },
     {
       "path": "apps/web/src/profile/profileStorage.test.ts",
@@ -1539,8 +1544,8 @@
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 33987,
-      "sha256": "c833c2b1ffc96dfc4ed1a1bd7d1665be9e49c09440febc7ac3fbeb2251aa3c96"
+      "size": 34096,
+      "sha256": "0bd691530158cb776ed1281c8db7d49b7c5ed7040d971be4ad9f8ee2d7799bd4"
     },
     {
       "path": "apps/web/src/reset/financialReset.test.ts",
@@ -1589,8 +1594,8 @@
     },
     {
       "path": "apps/web/src/security/AppLockScreen.tsx",
-      "size": 5162,
-      "sha256": "1a87ab4854c1efd3de09cb6a7378c82ddb68037ff3ae6973b49bbb3952e47c6a"
+      "size": 5217,
+      "sha256": "6d454731dd6dd478c30586b4c375882d5d6fa9f84644d9f4a57ef9c1751418cc"
     },
     {
       "path": "apps/web/src/security/PrivacySecurityPage.test.tsx",
@@ -1599,8 +1604,8 @@
     },
     {
       "path": "apps/web/src/security/PrivacySecurityPage.tsx",
-      "size": 8262,
-      "sha256": "45383d523a89cd6b72336eb7f49284e389cf03491cef7ff0e8022276d57165e2"
+      "size": 8327,
+      "sha256": "40b01fc73f1459ad3484f38e6aae5afd7abf9672a7b5aa15c91e0b404f65e864"
     },
     {
       "path": "apps/web/src/settings/AccessibleDialog.tsx",
@@ -1779,8 +1784,8 @@
     },
     {
       "path": "apps/web/src/tags/TagsPage.tsx",
-      "size": 8097,
-      "sha256": "3daa64b82e2236ae8920307d4594b33cd7cb7bc09a2b512843043693c083ed5a"
+      "size": 8118,
+      "sha256": "430c5103e2f78d623f818e162110e64bb6897c6552310e8d9c250eb2cf3d7050"
     },
     {
       "path": "apps/web/src/transactions/buildTransactionsViewModel.test.ts",
@@ -1899,8 +1904,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 51634,
-      "sha256": "b652de78f1f412143092be961860ce5066e18e1716eb7c08e8996cf87f56d977"
+      "size": 51748,
+      "sha256": "ea60d06292f5595740527bf607d2667252ca5ad8bf78e5d33109ea31055d9357"
     },
     {
       "path": "design/mockup/README.md",
