@@ -1530,3 +1530,23 @@ Keep only the latest relevant evidence per completed phase.
 - C5-402: accettato. Nessun P0/P1/P2 responsive riprodotto; l'overflow orizzontale della tabella densa locale è intenzionale e confinato al contenitore previsto.
 - `pnpm verify`: PASS; format, lint, typecheck, Vitest `140 passed | 1 skipped` / `633 passed | 4 skipped` e build PWA verdi. Build mantiene il warning Vite noto sui chunk >500 kB, senza failure.
 - Stato C5.4: P0/P1/P2 aperti `0/0/0`; prossimo task formalizzato: `12.5.C5.5`.
+## 12.5.C5.5 — Rifinitura trasversale e regressioni — 2026-09-06
+
+- Routing: `localized_bug / STANDARD / low`; sweep finale senza modifiche runtime, nuove feature,
+  route, migrazioni o cambi a dominio/persistenza.
+- Rilievi iniziali: C5-001…C5-402 tutti `CLOSED` o `ACCEPTED`; nessun `OPEN`, `PARTIAL` o
+  `DEFERRED`. Aggiunti C5-501/C5-502/C5-503 come decisioni `ACCEPTED` per regression,
+  security e performance sanity.
+- Browser reale: 15 superfici richieste, shell/landmark/H1/accessibility names e console verificati;
+  viewport 320/390/768/1024/1440; nessun overflow critico. Touch target minimo 44 px.
+- Zoom 200%: shell/dashboard/accounts `12 passed`, `2 skipped`, `0 failed`.
+- Smoke/real-flow E2E C4 a 390 px: `11 passed`, `9 skipped`, `0 failed`; coperti movimento,
+  trasferimento, conto, budget/analisi, prestiti/investimenti, import, backup/restore e
+  ricorrenze/allocazioni.
+- Security sanity: nessun secret, dato reale, unsafe HTML, permission o dependency introdotto.
+  Performance sanity: nessuna regressione evidente; solo warning Vite chunk >500 kB già noto.
+- `pnpm verify`: PASS — Vitest `140 passed | 1 skipped` / `633 passed | 4 skipped`, lint,
+  typecheck e build verdi; warning Vite noto non bloccante.
+- `pnpm manifest:check`, `pnpm codex:validate`, `pnpm format:check`, `pnpm test:ui-ux`,
+  `pnpm quality:ui-ux` e `git diff --check`: PASS.
+- Stato C5.5: P0/P1/P2 aperti `0/0/0`; prossimo task `12.5.C5-F`, non avviato.
