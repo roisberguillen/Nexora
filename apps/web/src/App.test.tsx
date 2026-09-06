@@ -246,7 +246,11 @@ describe("Nexora app", () => {
     expect(await screen.findByRole("status")).toHaveTextContent("Conto archiviato");
     expect(within(accountTable).getByText("Archiviato")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("link", { name: "Panoramica" }));
+    await user.click(
+      within(screen.getByRole("navigation", { name: "Navigazione principale" })).getByRole("link", {
+        name: "Panoramica",
+      }),
+    );
     expect(
       await screen.findByRole("heading", { level: 1, name: "Panoramica finanziaria" }),
     ).toBeInTheDocument();

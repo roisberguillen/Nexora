@@ -70,3 +70,14 @@ regressivi, gate di qualità e riconciliazione della matrice. C5.0 non chiude le
 4. **12.5.C5.4** — Responsive cross-surface consistency.
 5. **12.5.C5.5** — Rifinitura trasversale e regressioni.
 6. **12.5.C5-F** — Final consistency gate.
+
+## Convenzione CTA C5.1
+
+- `Nuovo …` apre un editor vuoto dalla superficie elenco.
+- `Crea …` conferma la prima persistenza di una nuova entità.
+- `Aggiungi …` è riservato ad azioni relazionali o a dati predefiniti, come aggiungere una
+  sottocategoria o la tassonomia iniziale.
+- `Salva …` conferma la creazione quando il nome dell’entità è utile nel pulsante; `Salva
+  modifiche` è il nome comune per aggiornare un’entità esistente.
+- `Elimina`, `Archivia`, `Annulla` e `Ripristina` restano verbi distinti perché rappresentano
+  effetti diversi sul ledger o sul ciclo di vita dell’entità.

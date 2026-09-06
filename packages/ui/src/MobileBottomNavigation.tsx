@@ -6,10 +6,10 @@ const mobileItems: readonly {
   readonly label: string;
   readonly route: NavigationRoute;
 }[] = [
-  { icon: "overview", label: "Home", route: "overview" },
+  { icon: "overview", label: "Panoramica", route: "overview" },
   { icon: "transactions", label: "Movimenti", route: "transactions" },
   { icon: "accounts", label: "Conti", route: "accounts" },
-  { icon: "budget", label: "Analisi", route: "analytics" },
+  { icon: "overview", label: "Analisi", route: "analytics" },
   { icon: "profile", label: "Profilo", route: "profile" },
 ];
 

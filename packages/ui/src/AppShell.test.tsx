@@ -130,6 +130,25 @@ describe("AppShell", () => {
     expect(quickActionCount).toBe(1);
   });
 
+  it("mantiene coerenti titolo mobile, label e icona della panoramica e delle analisi", () => {
+    const { container } = render(
+      <AppShell activeRoute="analytics">
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    expect(container.querySelectorAll(".mobile-header .mobile-header-icon")).toHaveLength(3);
+    expect(screen.getByText("Analisi", { selector: ".mobile-header strong" })).toBeVisible();
+    const mobileNavigation = screen.getByRole("navigation", { name: "Navigazione mobile" });
+    expect(mobileNavigation).toHaveTextContent("Panoramica");
+    expect(mobileNavigation).toHaveTextContent("Analisi");
+    expect(
+      mobileNavigation.querySelector('a[href="./#analytics"] svg path')?.getAttribute("d"),
+    ).toBe(
+      container.querySelector('.app-sidebar a[href="./#analytics"] svg path')?.getAttribute("d"),
+    );
+  });
+
   it("apre la ricerca mobile, gestisce clear, risultati e ritorno del focus", async () => {
     const user = userEvent.setup();
     render(

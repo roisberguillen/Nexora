@@ -111,7 +111,7 @@ describe("BudgetsPage", () => {
     expect(screen.getByRole("heading", { name: "Modifica budget" })).toBeVisible();
     expect(screen.getByRole("option", { name: "Carburante" })).toBeInTheDocument();
     await user.selectOptions(screen.getByLabelText("Sotto-categoria"), "fuel");
-    await user.click(screen.getByRole("button", { name: "Aggiorna budget" }));
+    await user.click(screen.getByRole("button", { name: "Salva modifiche" }));
     expect(onUpdate).toHaveBeenCalledWith(
       "transport-february",
       expect.objectContaining({

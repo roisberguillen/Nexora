@@ -291,7 +291,7 @@ export function LoansPage({
                   ? "Salvataggio…"
                   : editing === null
                     ? "Salva prestito"
-                    : "Aggiorna prestito"}
+                    : "Salva modifiche"}
               </button>
             </div>
           </form>

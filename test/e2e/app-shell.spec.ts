@@ -12,7 +12,7 @@ test("la shell è accessibile e non produce overflow", async ({ page }) => {
   if (viewport && viewport.width < 900) {
     const mobileNavigation = page.getByRole("navigation", { name: "Navigazione mobile" });
     await expect(mobileNavigation).toBeVisible();
-    await expect(mobileNavigation.getByRole("link", { name: "Home" })).toHaveAttribute(
+    await expect(mobileNavigation.getByRole("link", { name: "Panoramica" })).toHaveAttribute(
       "aria-current",
       "page",
     );

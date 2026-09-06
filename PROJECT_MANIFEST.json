@@ -408,6 +408,11 @@
       "sha256": "d1715ffa79f9d59b2e20459063a02038eb8bfc9d6c90413dcb092302cba18615"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-c5-1-navigation-chrome-terminology.md",
+      "size": 3471,
+      "sha256": "eab8f07ea4cd431a7928e02214051a92bb350da666a64d5818058d42ab312ab6"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -524,8 +529,8 @@
     },
     {
       "path": ".codex/state/c5-consistency-matrix.md",
-      "size": 4832,
-      "sha256": "1d545859554a603e395c3e64083b93bd541f70b50416060ac2885505713fab7d"
+      "size": 5363,
+      "sha256": "61ae599e30ab5b5aab4ad081bcdffff0e0df543dd1ac38a34c1410a3a7427eca"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -569,8 +574,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 479,
-      "sha256": "0f57cca071f1d0af295284e231f58ce61013624546414fc874b193b297aad3ed"
+      "size": 386,
+      "sha256": "1166390074d54074e35784f52cd8c3155362cd40238f92b4d16fbf7096eece95"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -594,13 +599,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10358,
-      "sha256": "442ee7d62d68cf8a4f5afee33214d66bfe57c25807589a775963c87511212159"
+      "size": 10373,
+      "sha256": "e12de1218ad0dad3c150198fcfdde2d2e26ec38d6c98787c9dd5dd672931ef5f"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 109067,
-      "sha256": "2b5f1c203f90181b49a8ee72401d79e47fc73ebc4dfa5c78b07887511de2e324"
+      "size": 110510,
+      "sha256": "6d0dc5399dfad2c02ec0604b0749a01caa2008a43bd45a3a1a577d38bdc68e2d"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1109,8 +1114,8 @@
     },
     {
       "path": "apps/web/src/App.test.tsx",
-      "size": 11088,
-      "sha256": "95019a186a92957ad4bd7b0e792ea6b103836b6595ed4936b62216072ceea3a7"
+      "size": 11184,
+      "sha256": "b56ddf49605acf784df11d4653f77ef14504fd06285daa8c83b31187f1f3761b"
     },
     {
       "path": "apps/web/src/App.tsx",
@@ -1170,12 +1175,12 @@
     {
       "path": "apps/web/src/budgets/BudgetsPage.test.tsx",
       "size": 4860,
-      "sha256": "ce31043ad78c9d86b14de646496b1f47b3e62d0ad9af58a8f9da9a703ed3a6fe"
+      "sha256": "95e1a98ff83ff621fee2abe8344dc6c91bf545c67b637605759883e815072932"
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.tsx",
       "size": 15990,
-      "sha256": "d45bbd1271b3744e6629522de4d556f7331ec554932e09ce0250b6b4d1b1d930"
+      "sha256": "b5312fa6a0ea525b3f59dbccbc23d044ce00452f9940605028a6382166f5fa51"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
@@ -1379,13 +1384,13 @@
     },
     {
       "path": "apps/web/src/investments/InvestmentsPage.test.tsx",
-      "size": 3900,
-      "sha256": "040af182e1e6f7a41400d806332135bf05fe4cbb7245100ce42dcd099533a7bd"
+      "size": 3897,
+      "sha256": "d2fd8652eef0449db6a8e2c33b34f63ad4821189769677668af06d8c815ac8dd"
     },
     {
       "path": "apps/web/src/investments/InvestmentsPage.tsx",
-      "size": 10280,
-      "sha256": "632819f95a86cc91cb0402799b8d2fba6273feffc2de874197dec75d227e01d0"
+      "size": 10277,
+      "sha256": "2a6773107039c2e62f37b8b5fdd238df40894469eb55df7ced6b4483783219a6"
     },
     {
       "path": "apps/web/src/journal/journalCommands.test.ts",
@@ -1419,13 +1424,13 @@
     },
     {
       "path": "apps/web/src/loans/LoansPage.test.tsx",
-      "size": 4784,
-      "sha256": "4dd6fd2bb15b47cf69ee02fe37ec95fa84e0a288d9c6a649136f913ae074c732"
+      "size": 4780,
+      "sha256": "299164a9bf032dff010b7948d4ccc97016d50923a6da3a2277adb595689ea922"
     },
     {
       "path": "apps/web/src/loans/LoansPage.tsx",
-      "size": 15565,
-      "sha256": "b45d118110661c3b741cee53253412d816b2da848103ac436ed9d4e473d2c688"
+      "size": 15563,
+      "sha256": "4fb0d2c07e1e6bc2f30594b139dcdf355e36faa972523a6dab0126e70797c824"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -1534,8 +1539,8 @@
     },
     {
       "path": "apps/web/src/recurring/RecurringPage.tsx",
-      "size": 33972,
-      "sha256": "988cb8a6311eb59cca0751f78a64d4e0e137bd4ec913e40c1f28cf1b81a4f680"
+      "size": 33987,
+      "sha256": "c833c2b1ffc96dfc4ed1a1bd7d1665be9e49c09440febc7ac3fbeb2251aa3c96"
     },
     {
       "path": "apps/web/src/reset/financialReset.test.ts",
@@ -1894,8 +1899,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 51527,
-      "sha256": "9007c1e31be088adc7f33aa363f34b430bfba526927e80ad626913db5f9ed29c"
+      "size": 51634,
+      "sha256": "b652de78f1f412143092be961860ce5066e18e1716eb7c08e8996cf87f56d977"
     },
     {
       "path": "design/mockup/README.md",
@@ -2254,8 +2259,8 @@
     },
     {
       "path": "docs/ux/C5_CROSS_SURFACE_CONSISTENCY_FRAMEWORK.md",
-      "size": 4058,
-      "sha256": "710a51655661493885bc0979aaeff32d18b727adad2cf532d78b0791060b60ae"
+      "size": 4672,
+      "sha256": "0a169c6da812b8eb89a8671020a16bdda7f2367753ade30fc64d1fa6817c5d4b"
     },
     {
       "path": "docs/ux/DESIGN.md",
@@ -3159,8 +3164,8 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 7219,
-      "sha256": "e035b468ea0aac855df25ef9fcd50493b84d9c099da5302abb8a1d8b8d42e00d"
+      "size": 8083,
+      "sha256": "11f4f37c236498312622f3bee6c66ee3e00c1146a5cc1dd2d5d4676606cb7372"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
@@ -3214,13 +3219,13 @@
     },
     {
       "path": "packages/ui/src/MobileBottomNavigation.tsx",
-      "size": 1578,
-      "sha256": "737781c025fcc44551b677f5f5812244a133548c59b0506a3d716121d9d657b9"
+      "size": 1586,
+      "sha256": "4f8c0b0e454c075021aff1c7d7a28d23eda84aff83195a6f9001235e16b2269e"
     },
     {
       "path": "packages/ui/src/MobileHeader.tsx",
-      "size": 1178,
-      "sha256": "c01275b3e896d971b22223dfec3217acaded4bb2bf0618ef2e9089ce8427e838"
+      "size": 1569,
+      "sha256": "d4013f722df8c4aaf8dbc300ebc9d02eee16a1e9ff660fa67103467c741b496c"
     },
     {
       "path": "packages/ui/src/NavIcon.test.tsx",
@@ -3254,8 +3259,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20762,
-      "sha256": "42325ba3197444fa0a2fca7daeaf3bff55f4abb01d89a472138fba75f1e7d408"
+      "size": 20781,
+      "sha256": "d3c64d0f5d250245892f53ac6a73951eb1f1f3f3be05bc069f3820fbe2ff1a77"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3379,8 +3384,8 @@
     },
     {
       "path": "test/e2e/app-shell.spec.ts",
-      "size": 3969,
-      "sha256": "d020f7a665ef8ea577ccc3b5c262fbd3d3bf3b77d00f8be772df6ecb828f60fd"
+      "size": 3975,
+      "sha256": "096b3067a3f225b27bbed17e56293090edbea351a561eb88d45bbfa3d1860d32"
     },
     {
       "path": "test/e2e/atomic-rollback.spec.ts",
@@ -3400,7 +3405,7 @@
     {
       "path": "test/e2e/budgets.spec.ts",
       "size": 3294,
-      "sha256": "a80a455e78ce677c074de19c703a8299143db49203294c5f30f7ca81e5ee6fea"
+      "sha256": "cfafa854bc06045c2f9440deee1dde3d82e271b20de43df16c01140b7d11d196"
     },
     {
       "path": "test/e2e/c3-accounts-audit.spec.ts",
@@ -3464,8 +3469,8 @@
     },
     {
       "path": "test/e2e/c4-loans-investments-dashboard-analytics-flow.spec.ts",
-      "size": 14910,
-      "sha256": "af7b59c3430b72d05723b1cdbe6af883f8acaa5cd81f4e767657d1b53e19aad2"
+      "size": 14900,
+      "sha256": "ea5513d7200fc5810ae7f80db87c29b8093817adaba0ce556076bf7a6562d305"
     },
     {
       "path": "test/e2e/c4-money-manager-xlsx-migration-flow.spec.ts",
@@ -3569,8 +3574,8 @@
     },
     {
       "path": "test/e2e/loans.spec.ts",
-      "size": 2283,
-      "sha256": "3383a66dd554845c82aeceb412c2a6cd20375ae61af936121d98ec225ed8ea15"
+      "size": 2281,
+      "sha256": "fcf7138f28ac455f391577cbe70860eea8a1e62927c9ea7d13b82f991c186381"
     },
     {
       "path": "test/e2e/opfs-performance.spec.ts",
@@ -3599,8 +3604,8 @@
     },
     {
       "path": "test/e2e/recurring.spec.ts",
-      "size": 7213,
-      "sha256": "352f375a5b3799d2d8c7218657810231800e8b9a341fad27c70c049c211453d8"
+      "size": 7228,
+      "sha256": "aff1aa386839163b2ad1f4c5b77c5df94cbe2f33e4bee07ec5addebd062c3a22"
     },
     {
       "path": "test/e2e/startup-multitab.spec.ts",
@@ -3619,8 +3624,8 @@
     },
     {
       "path": "test/e2e/startup.spec.ts",
-      "size": 1242,
-      "sha256": "5e21f018bf8fad0641ff95a416568772d6f09abc2c351dffc1ab8f720a23c2e8"
+      "size": 1248,
+      "sha256": "804913e6a73cd76350d9ef34c629de49863b644f5fd4407f9d9adb3c085ced67"
     },
     {
       "path": "test/e2e/tags.spec.ts",

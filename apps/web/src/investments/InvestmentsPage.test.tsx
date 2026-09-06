@@ -52,7 +52,7 @@ describe("InvestmentsPage", () => {
     await user.click(screen.getByRole("button", { name: "Modifica" }));
     expect(screen.getByRole("heading", { name: "Modifica posizione" })).toBeVisible();
     expect(screen.getByLabelText("Capitale investito")).toHaveValue("1000,00");
-    await user.click(screen.getByRole("button", { name: "Aggiorna posizione" }));
+    await user.click(screen.getByRole("button", { name: "Salva modifiche" }));
     expect(onUpdate).toHaveBeenCalledWith(
       position.id,
       expect.objectContaining({

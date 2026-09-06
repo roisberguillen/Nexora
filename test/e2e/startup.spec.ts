@@ -11,7 +11,7 @@ test("l'avvio iniziale e il reload mostrano la shell senza errori runtime", asyn
   await expect(page.getByRole("main")).toBeVisible();
   if ((testInfo.project.use.viewport?.width ?? 0) <= 768) {
     await expect(page.getByRole("navigation", { name: "Navigazione mobile" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Panoramica" })).toBeVisible();
   } else {
     await expect(page.getByRole("navigation", { name: "Navigazione principale" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Panoramica" })).toBeVisible();

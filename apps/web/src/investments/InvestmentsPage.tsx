@@ -242,7 +242,7 @@ export function InvestmentsPage({
                   ? "Salvataggio…"
                   : editing === null
                     ? "Salva posizione"
-                    : "Aggiorna posizione"}
+                    : "Salva modifiche"}
               </button>
             </div>
           </form>

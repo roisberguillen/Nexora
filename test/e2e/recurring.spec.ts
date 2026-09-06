@@ -5,7 +5,7 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await expect(page.getByRole("heading", { name: "Movimenti recenti" })).toBeVisible();
   await page.goto("/#recurring");
-  await expect(page.getByRole("heading", { name: "Ricorrenze" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Ricorrenze e allocazioni" })).toBeVisible();
   const category = page.locator('select[name="categoryId"]');
   const incomeCategoryIds = await category
     .locator("option")
@@ -56,7 +56,7 @@ test("le ricorrenze creano e modificano una proposta senza overflow", async ({ p
     .getByRole("button", { name: "Modifica" })
     .click();
   await page.getByLabel("Nome piano").fill("Risparmio aggiornato");
-  await page.getByRole("button", { name: "Aggiorna piano" }).click();
+  await page.getByRole("button", { name: "Salva modifiche" }).click();
   await expect(allocations.getByText("Risparmio aggiornato")).toHaveCount(1);
   await allocations.getByRole("button", { name: "Metti in pausa" }).click();
   await expect(allocations.getByRole("button", { name: "Riattiva" })).toBeVisible();

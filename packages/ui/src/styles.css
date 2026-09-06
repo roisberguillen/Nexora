@@ -940,7 +940,7 @@ a {
   .mobile-header {
     display: grid;
     min-height: 4rem;
-    grid-template-columns: 2.75rem 1fr 2.75rem;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem 2.75rem;
     align-items: center;
     padding: max(0.5rem, env(safe-area-inset-top)) 1rem 0.5rem;
     border-bottom: 1px solid var(--color-outline);

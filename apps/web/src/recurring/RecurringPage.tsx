@@ -143,7 +143,7 @@ export function RecurringPage({
       <header className="accounts-heading">
         <div>
           <p className="eyebrow">Pianificazione locale</p>
-          <h1>Ricorrenze</h1>
+          <h1>Ricorrenze e allocazioni</h1>
           <p>
             Le date previste non cambiano il saldo. Registra sempre un movimento solo dopo conferma.
           </p>
@@ -708,7 +708,7 @@ function AllocationPlans({
             </button>
           )}
           <button className="primary-action" disabled={isSaving} type="submit">
-            {isSaving ? "Salvataggio…" : editing === null ? "Salva piano" : "Aggiorna piano"}
+            {isSaving ? "Salvataggio…" : editing === null ? "Salva piano" : "Salva modifiche"}
           </button>
         </div>
       </form>

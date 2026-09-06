@@ -378,7 +378,7 @@ export function BudgetsPage({
                 </button>
               )}
               <button className="primary-action" type="submit">
-                {editing === undefined ? "Salva budget" : "Aggiorna budget"}
+                {editing === undefined ? "Salva budget" : "Salva modifiche"}
               </button>
             </div>
           </form>

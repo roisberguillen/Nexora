@@ -112,7 +112,7 @@ test.describe("C4.6 prestiti, investimenti, Dashboard e Analisi", () => {
       await page.getByRole("button", { name: "Modifica" }).click();
       await page.getByLabel("Capitale investito").fill("1060,00");
       await page.getByLabel("Valore corrente").fill("1200,00");
-      await page.getByRole("button", { name: "Aggiorna posizione" }).click();
+      await page.getByRole("button", { name: "Salva modifiche" }).click();
       await expect(page.getByText(/Rendimento 140,00/)).toBeVisible();
       await page.reload({ waitUntil: "domcontentloaded" });
       await expect(page.getByText(/Rendimento 140,00/)).toBeVisible();
@@ -216,7 +216,7 @@ async function updateLoan(page: Page) {
   await page.getByLabel("Rate pagate").fill("30");
   await page.getByLabel("Rate rimanenti").fill("29");
   await page.getByLabel("Prossima scadenza").fill("2026-10-10");
-  await page.getByRole("button", { name: "Aggiorna prestito" }).click();
+  await page.getByRole("button", { name: "Salva modifiche" }).click();
   await expect(page.getByText("Progresso 52%")).toBeVisible();
 }
 
@@ -226,7 +226,7 @@ async function updateLoanOffline(page: Page) {
   await page.getByLabel("Rate pagate").fill("30");
   await page.getByLabel("Rate rimanenti").fill("29");
   await page.getByLabel("Prossima scadenza").fill("2026-10-10");
-  await page.getByRole("button", { name: "Aggiorna prestito" }).click();
+  await page.getByRole("button", { name: "Salva modifiche" }).click();
   await expect(page.getByText("Progresso 52%")).toBeVisible();
 }
 
@@ -252,7 +252,7 @@ async function updateInvestment(page: Page) {
   await page.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Capitale investito").fill("1060,00");
   await page.getByLabel("Valore corrente").fill("1200,00");
-  await page.getByRole("button", { name: "Aggiorna posizione" }).click();
+  await page.getByRole("button", { name: "Salva modifiche" }).click();
   await expect(page.getByText(/Rendimento 140,00/)).toBeVisible();
 }
 

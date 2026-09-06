@@ -44,7 +44,7 @@ describe("LoansPage", () => {
     expect(screen.getByRole("heading", { name: "Modifica prestito" })).toBeVisible();
     await user.clear(screen.getByLabelText("Finanziaria"));
     await user.type(screen.getByLabelText("Finanziaria"), "Istituto demo");
-    await user.click(screen.getByRole("button", { name: "Aggiorna prestito" }));
+    await user.click(screen.getByRole("button", { name: "Salva modifiche" }));
     expect(onUpdate).toHaveBeenCalledWith(
       loan.id,
       expect.objectContaining({
@@ -97,7 +97,7 @@ describe("LoansPage", () => {
     );
     await user.click(screen.getByRole("button", { name: "Modifica" }));
     expect(screen.getByLabelText("Rata mensile")).toHaveValue("90071992547409,93");
-    await user.click(screen.getByRole("button", { name: "Aggiorna prestito" }));
+    await user.click(screen.getByRole("button", { name: "Salva modifiche" }));
     expect(onUpdate).toHaveBeenCalledWith(
       large.id,
       expect.objectContaining({

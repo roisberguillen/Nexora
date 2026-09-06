@@ -27,7 +27,7 @@ test("la pagina Budget crea, modifica ed elimina un limite mensile senza overflo
   await page.getByLabel("Importo").fill("90,00");
   await page.getByLabel("Prima soglia di notifica (%)").fill("65");
   await page.getByLabel("Seconda soglia di notifica (%)").fill("95");
-  await page.getByRole("button", { name: "Aggiorna budget" }).click();
+  await page.getByRole("button", { name: "Salva modifiche" }).click();
   await expect(budgetList.getByText("90,00 €", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Disattiva" }).click();
   await expect(page.getByRole("dialog")).toContainText("I movimenti non verranno cancellati.");

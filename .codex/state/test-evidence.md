@@ -1,5 +1,21 @@
 # Test evidence
 
+## 12.5.C5.1 — Navigation, header, page chrome, CTA e terminologia — 2026-09-06
+
+- Routing: `ui_component / STANDARD / low`; modifiche limitate a shell, chrome, label/iconografia,
+  CTA equivalenti e test; nessuna modifica a dominio, persistenza o invarianti finanziarie.
+- Test mirati: `pnpm vitest run packages/ui/src/AppShell.test.tsx apps/web/src/recurring/RecurringPage.test.tsx apps/web/src/budgets/BudgetsPage.test.tsx apps/web/src/loans/LoansPage.test.tsx apps/web/src/investments/InvestmentsPage.test.tsx` — 5 file, `27 passed`, `0 failed`.
+- E2E responsive: shell/budget/prestiti/ricorrenze sui sei profili — `28 passed`, `14 skipped`,
+  `0 failed`; investimenti + C4 loans/investments/analytics — `14 passed`, `10 skipped`, `0 failed`.
+  Skip condizionati già previsti dai test/backend; nessun failure nascosto.
+- Qualità: `pnpm verify` PASS — format, lint, typecheck (9 progetti), Vitest (`140 passed`, `1 skipped`,
+  `630 passed`, `4 skipped`, `0 failed`) e build verdi; il build segnala soltanto l’avviso già noto
+  sui chunk Vite >500 kB. La prima prova E2E ha fallito perché il preview serviva `dist` precedente
+  alla patch; dopo rebuild la prova corretta è verde, senza failure nascosti.
+- Browser: 320/375/390/768/1024/1440 verificati; MobileHeader a riga singola, no overflow,
+  route attiva, label, icone, CTA e pagina Ricorrenze e allocazioni coerenti. Console senza errori
+  rilevanti nei run verdi.
+
 ## 12.5.C4.9 — Backup manuale, restore, rollback e regressione Google Drive — 2026-09-05
 
 - Baseline: C4.8 `COMPLETE / FLOW_AUDIT_PASS`, commit `5ebcb88` pushato e branch pulito; routing

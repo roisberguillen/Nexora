@@ -23,7 +23,7 @@ test("i prestiti registrano rata, residuo e scadenza senza overflow", async ({ p
   await page.getByRole("button", { name: "Chiudi" }).click();
   await page.getByRole("button", { name: "Modifica" }).click();
   await page.getByLabel("Finanziaria").fill("Agos");
-  await page.getByRole("button", { name: "Aggiorna prestito" }).click();
+  await page.getByRole("button", { name: "Salva modifiche" }).click();
   await expect(page.getByText("Agos", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Elimina…" }).click();
   await expect(page.getByRole("dialog", { name: "Eliminare questo prestito?" })).toBeVisible();

@@ -5,8 +5,22 @@ import type { NavigationRoute } from "./SidebarNavigation";
 
 const labels: Partial<Record<NavigationRoute, string>> = {
   analytics: "Analisi",
-  overview: "Nexora",
+  overview: "Panoramica",
+  accounts: "Conti",
+  backup: "Backup",
+  budgets: "Budget",
+  categories: "Categorie",
+  exports: "Esporta",
+  imports: "Importa",
+  investments: "Investimenti",
+  journal: "Diario finanziario",
+  loans: "Prestiti",
+  notifications: "Notifiche",
+  "privacy-security": "Privacy e sicurezza",
   profile: "Profilo",
+  recurring: "Ricorrenze e allocazioni",
+  settings: "Impostazioni e cestino",
+  tags: "Tag",
   transactions: "Movimenti",
 };
 

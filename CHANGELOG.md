@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added the 12.5.C5.0 cross-surface consistency framework, evidence matrix and initial audit.
+- Closed C5.1 navigation, page chrome, terminology, navigation iconography and equivalent CTA consistency.
 
 ## 2026-09-06
 
