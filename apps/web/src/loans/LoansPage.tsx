@@ -1,5 +1,5 @@
 import type { Account, Loan } from "@nexora/domain";
-import { FinancialAmount, formatMinorUnits } from "@nexora/ui";
+import { FinancialAmount, formatMinorUnits, formatPercentage } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
@@ -111,7 +111,7 @@ export function LoansPage({
                       )}
                       {loan.progressPercent() === undefined
                         ? ""
-                        : ` · Progresso ${loan.progressPercent()!.toFixed(0)}%`}
+                        : ` · Progresso ${formatPercentage(loan.progressPercent()!, 0)}`}
                     </small>
                     <div className="form-actions">
                       <button
@@ -367,7 +367,7 @@ function LoanDetail({
         <dd>
           {loan.progressPercent() === undefined
             ? "Non disponibile"
-            : `${loan.progressPercent()!.toFixed(0)}%`}
+            : formatPercentage(loan.progressPercent()!, 0)}
         </dd>
         <dt>Prossima scadenza</dt>
         <dd>{loan.nextDueDate?.toString() ?? "Non impostata"}</dd>

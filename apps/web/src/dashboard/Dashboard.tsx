@@ -1,5 +1,5 @@
 import { DEFAULT_LOCALE } from "@nexora/config";
-import { FinancialAmount, MetricCard } from "@nexora/ui";
+import { FinancialAmount, formatMinorUnits, formatPercentage, MetricCard } from "@nexora/ui";
 import type { DashboardActivityItem, DashboardViewModel } from "./buildDashboardViewModel";
 import type { TotalResetReport } from "../reset/totalReset";
 import { barSize } from "./trendBar";
@@ -72,7 +72,7 @@ export function Dashboard({
               supportingText={
                 model.savingRatePercent === undefined
                   ? "Tasso non disponibile senza entrate"
-                  : `Tasso di risparmio ${formatPercent(model.savingRatePercent)}`
+                  : `Tasso di risparmio ${formatPercentage(model.savingRatePercent)}`
               }
               tone={model.savings.amountMinor < 0n ? "negative" : "positive"}
             />
@@ -113,7 +113,7 @@ export function Dashboard({
                     />
                     {model.investmentGainLossPercent === undefined
                       ? null
-                      : ` (${formatPercent(model.investmentGainLossPercent, 2, 2)})`}
+                      : ` (${formatPercentage(model.investmentGainLossPercent, 2, 2)})`}
                   </strong>
                 </div>
               </div>
@@ -147,7 +147,7 @@ export function Dashboard({
                         <li key={item.id}>
                           <span>{item.label}</span>
                           <strong>
-                            {formatPercent(item.percentage)} · {item.status}
+                            {formatPercentage(item.percentage)} · {item.status}
                           </strong>
                         </li>
                       ))}
@@ -207,7 +207,7 @@ export function Dashboard({
                 meta={
                   model.expenseTrend.differencePercent === undefined
                     ? "Base non disponibile"
-                    : `${formatPercent(Math.abs(model.expenseTrend.differencePercent))}`
+                    : `${formatPercentage(Math.abs(model.expenseTrend.differencePercent))}`
                 }
               />
               <p className="trend-copy">{trendText(model)}</p>
@@ -251,7 +251,7 @@ export function Dashboard({
                           currency={item.amount.currency}
                           tone="negative"
                         />
-                        <small>{formatPercent(item.percentageOfExpenses)}</small>
+                        <small>{formatPercentage(item.percentageOfExpenses)}</small>
                       </strong>
                     </li>
                   ))}
@@ -398,7 +398,7 @@ function EmptyDashboard({
 function trendText(model: DashboardViewModel): string {
   const amount = model.expenseTrend.difference.amountMinor;
   if (amount === 0n) return "Hai speso quanto il mese scorso.";
-  const formatted = formatMoney(
+  const formatted = formatMinorUnits(
     model.expenseTrend.difference.amountMinor < 0n
       ? -model.expenseTrend.difference.amountMinor
       : model.expenseTrend.difference.amountMinor,
@@ -407,21 +407,6 @@ function trendText(model: DashboardViewModel): string {
   return amount < 0n
     ? `Hai speso ${formatted} meno del mese scorso.`
     : `Hai speso ${formatted} in più rispetto al mese scorso.`;
-}
-function formatMoney(amountMinor: bigint, currency: string): string {
-  return new Intl.NumberFormat(DEFAULT_LOCALE, { style: "currency", currency }).format(
-    Number(amountMinor) / 100,
-  );
-}
-function formatPercent(
-  value: number,
-  maximumFractionDigits = 1,
-  minimumFractionDigits = 0,
-): string {
-  return `${new Intl.NumberFormat(DEFAULT_LOCALE, {
-    maximumFractionDigits,
-    minimumFractionDigits,
-  }).format(value)}%`;
 }
 function formatLocalDate(value: string): string {
   const [year, month, day] = value.split("-").map(Number);

@@ -414,8 +414,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-06-c5-2-forms-dialog-feedback.md",
-      "size": 3804,
-      "sha256": "69776ea48d94509008f3e070f6db31dad1104bcce5579e0d69a09beb7af75678"
+      "size": 4195,
+      "sha256": "63c9f2108b469c71b1b276f236b1480c43e780be57831c0d86a82ae5c90e02d8"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-06-c5-3-financial-data-consistency.md",
+      "size": 4457,
+      "sha256": "9a34611dc8011c00ac8b946a4a8c9ae1b3d569f6d5d9e695e27356676f8b3d6d"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -534,8 +539,8 @@
     },
     {
       "path": ".codex/state/c5-consistency-matrix.md",
-      "size": 6857,
-      "sha256": "4baaaf6d8100b54f6cdb641a17171abc4493167ee4929ca87c9c0163c7441e65"
+      "size": 8840,
+      "sha256": "8eb19199002d2870801c48089b368684920b586b5d14e67d151d64ad74c53d50"
     },
     {
       "path": ".codex/state/checkpoints/2026-08-02-phase-11-google-drive-onboarding.md",
@@ -579,8 +584,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 370,
-      "sha256": "dbca88e8b74db62f7881033421b36ed19a8c3941933071832ee970c9f31c408b"
+      "size": 375,
+      "sha256": "6fa7c29555137a108be4b2827905d810f1f783e2681f1206a7e6d0f57e4baa60"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -604,13 +609,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10424,
-      "sha256": "915697e9678564fca4a50be3a5bf8a63dc7a048c7be7201103333585ae54e2e6"
+      "size": 10434,
+      "sha256": "1fb8a63107c1250a5c764c9f71592964ea9a9f3677ff2bb0a1817b8bd8fd9331"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 112096,
-      "sha256": "303a48b359ebb8b32261ff5d1e23baa34afdb9e6e850b31f81cc7e1050409f5d"
+      "size": 113800,
+      "sha256": "8aa7d61c0ba86240584f16b36c94c9b95d93933938d39da5090cbc35a4a92c56"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1104,8 +1109,8 @@
     },
     {
       "path": "apps/web/src/analytics/AnalyticsPage.tsx",
-      "size": 16478,
-      "sha256": "f381d2d256be7e41a9618750ffee74787f3980149feedbfcad49d1bbc624111a"
+      "size": 16552,
+      "sha256": "4b5046e69bfce4cf6fef62e351c9bc9e2b025f39db8d9b6efd355e737c63eec0"
     },
     {
       "path": "apps/web/src/analytics/buildAnalyticsViewModel.test.ts",
@@ -1184,8 +1189,8 @@
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.tsx",
-      "size": 16268,
-      "sha256": "584b476e6104ddd771b093eaec4b58bbb4a898f5c3a9eb036d5a5e0f4a8c9f5a"
+      "size": 16325,
+      "sha256": "bf6373459e16ddaad4c0eff8c981afe5eb7fc620673f25e811707c08a521aef7"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
@@ -1289,8 +1294,8 @@
     },
     {
       "path": "apps/web/src/dashboard/Dashboard.tsx",
-      "size": 16975,
-      "sha256": "d9de49d180613763bd5e92710f9fa9cff120b27e567a30f416d55d18e8715d74"
+      "size": 16593,
+      "sha256": "7c3c548c4129498f3b239c8e544e7a72eada8c988c6431a60d43f24d3e11c394"
     },
     {
       "path": "apps/web/src/dashboard/trendBar.ts",
@@ -1359,8 +1364,8 @@
     },
     {
       "path": "apps/web/src/imports/ImportsPage.tsx",
-      "size": 33589,
-      "sha256": "885b7abf7f5f2c9e828c534eea53a1c9473f4b535d1c0afea7b9b0f8a065520c"
+      "size": 33562,
+      "sha256": "df003600a284a4d69f3cbb746c56a7ddfc11314bdbf19c0764987fa54dd7843c"
     },
     {
       "path": "apps/web/src/imports/mappingProfiles.test.ts",
@@ -1394,8 +1399,8 @@
     },
     {
       "path": "apps/web/src/investments/InvestmentsPage.tsx",
-      "size": 10310,
-      "sha256": "26048e447a3045e244d27c7fef9db9614d9c5414b068a40bc22bad52313eda88"
+      "size": 10340,
+      "sha256": "26db83b56881adef542483f83399e7b40fd5ee6c91967c0bd45137e638771790"
     },
     {
       "path": "apps/web/src/journal/journalCommands.test.ts",
@@ -1434,8 +1439,8 @@
     },
     {
       "path": "apps/web/src/loans/LoansPage.tsx",
-      "size": 15596,
-      "sha256": "3bfcdd4270d0224bd5f3244d1b3b59c22e1d641a9e5aa5826d7d51c892f27a79"
+      "size": 15627,
+      "sha256": "c0e8b31ee7b12eb8a1a658ed844fac43dedf10724454e3089080197181e36f3a"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -1904,8 +1909,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 51748,
-      "sha256": "ea60d06292f5595740527bf607d2667252ca5ad8bf78e5d33109ea31055d9357"
+      "size": 51855,
+      "sha256": "90867578fa7956fa1123e0eb9e13c520e5bac79609cbac3110fc81609f38504a"
     },
     {
       "path": "design/mockup/README.md",
@@ -3189,13 +3194,13 @@
     },
     {
       "path": "packages/ui/src/FinancialAmount.test.tsx",
-      "size": 1122,
-      "sha256": "d635b0522539247d8180ac361ceda3fb9d366a920c4946f76fbd04cbb6799d52"
+      "size": 1379,
+      "sha256": "176284dfbfca9304af420135b84d2f372312928b2267146aa4d912220a5aa9b1"
     },
     {
       "path": "packages/ui/src/FinancialAmount.tsx",
-      "size": 2259,
-      "sha256": "563210e15f13bb302873db6231cecf0c06ee9e367619f32bffc8b2de7fe2fc08"
+      "size": 2524,
+      "sha256": "bfba856b9a7a37451657ce71afc2637bfcbff9335a7bd6b7236fb6c0ca3f9584"
     },
     {
       "path": "packages/ui/src/GlobalSearch.test.ts",
@@ -3214,8 +3219,8 @@
     },
     {
       "path": "packages/ui/src/index.ts",
-      "size": 939,
-      "sha256": "409c274603258435ad655d8e58afef30e56c4892f4bc7f49769126eae115e654"
+      "size": 959,
+      "sha256": "8b941d86e85a6a6a8597bc99d66fbc2d27a589c25c4c8927c25b1187e218abec"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -3575,7 +3580,7 @@
     {
       "path": "test/e2e/investments.spec.ts",
       "size": 1441,
-      "sha256": "930e651c311b7f28eee43b2278b2006079e9b8907c395825b973fb925a2b32e5"
+      "sha256": "d7bf5cd39e9545b8f57293fb8fdef6e40cc396f4ce52c2d9e812dacbb51e9a9c"
     },
     {
       "path": "test/e2e/loans.spec.ts",

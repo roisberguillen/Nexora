@@ -16,7 +16,7 @@ test("gli investimenti registrano valore e rendimento senza overflow", async ({ 
   await page.getByLabel("Data valutazione").fill("2026-08-01");
   await page.getByRole("button", { name: "Salva posizione" }).click();
   await expect(page.getByText("ETF globale", { exact: true })).toBeVisible();
-  await expect(page.getByText("Rendimento 125,00 € (12.50%)")).toBeVisible();
+  await expect(page.getByText("Rendimento 125,00 € (12,50%)")).toBeVisible();
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,

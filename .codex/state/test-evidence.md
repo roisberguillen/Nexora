@@ -1,5 +1,23 @@
 # Test evidence
 
+## 12.5.C5.3 — Componenti finanziari e rappresentazione dati — 2026-09-06
+
+- Routing: `ui_component / STANDARD / low`; modifiche limitate a formatter UI condivisi e loro
+  consumers, senza modifiche a dominio, persistenza, command layer o invarianti contabili.
+- Test mirati: `pnpm vitest run packages/ui/src/FinancialAmount.test.tsx apps/web/src/dashboard/Dashboard.test.tsx apps/web/src/analytics/AnalyticsPage.test.tsx apps/web/src/budgets/BudgetsPage.test.tsx apps/web/src/loans/LoansPage.test.tsx apps/web/src/investments/InvestmentsPage.test.tsx apps/web/src/imports/ImportsPage.test.tsx apps/web/src/transactions/TransactionsPage.test.tsx` — 8 file, `37 passed`, `0 failed`.
+- E2E finanziari: Budget, Categorie, Tag, Prestiti, Investimenti e Ricorrenze sui sei profili —
+  `63 passed`, `15 skipped`, `0 failed`; skip condizionati già previsti dai progetti.
+- `pnpm verify`: format, lint, typecheck (9 progetti), Vitest `140 passed | 1 skipped`, `633 passed |
+  4 skipped`, build verde; solo warning Vite noto sui chunk >500 kB.
+- Browser reale: Dashboard, Movimenti, Conti, Budget, Prestiti, Investimenti e Analisi raggiunti
+  a 390 px; H1, importi/KPI, empty state e route verificati, `scrollWidth === clientWidth`, console
+  senza errori rilevanti. E2E copre 320/375/390/768/1024/1440; zoom 200% desktop coperto dai test
+  finanziari esistenti.
+- Correzioni: Dashboard ora usa `formatMinorUnits` bigint-safe; `formatPercentage` condiviso in
+  `packages/ui` per locale `it-IT`, segno/simbolo e precisione contestuale; wrapper Import rimosso.
+  Invarianti trasferimenti, entrate/uscite, minor units e formule KPI invariate.
+- Stato: C5-301/C5-302/C5-303 CLOSED; P0/P1/P2 aperti `0/0/0`.
+
 ## 12.5.C5.2 — Form, dialog, feedback e system states — 2026-09-06
 
 - Routing: `ui_component / STANDARD / low`; scope limitato a busy semantics e double-submit dei

@@ -9,7 +9,7 @@ import {
   type Transaction,
   type TransactionSplit,
 } from "@nexora/domain";
-import { FinancialAmount, formatMinorUnits } from "@nexora/ui";
+import { FinancialAmount, formatMinorUnits, formatPercentage } from "@nexora/ui";
 import { useState, type CSSProperties, type FormEvent } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
@@ -216,7 +216,8 @@ export function BudgetsPage({
                     <div className="account-copy">
                       <strong>{category}</strong>
                       <small>
-                        {selectedPeriod} · {status} · {progress.percentage.toFixed(0)}% utilizzato
+                        {selectedPeriod} · {status} · {formatPercentage(progress.percentage, 0)}{" "}
+                        utilizzato
                       </small>
                       {progress.scope.includesDescendants ? (
                         <small>
@@ -227,7 +228,7 @@ export function BudgetsPage({
                         <small>Categoria archiviata: budget storico</small>
                       ) : null}
                       <div
-                        aria-label={`Consumo budget ${category}: ${progress.percentage.toFixed(0)} percento`}
+                        aria-label={`Consumo budget ${category}: ${formatPercentage(progress.percentage, 0)}`}
                         aria-valuemax={100}
                         aria-valuemin={0}
                         aria-valuenow={visiblePercentage}

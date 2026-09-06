@@ -1,5 +1,5 @@
 import type { Account, InvestmentPosition } from "@nexora/domain";
-import { FinancialAmount, formatMinorUnits } from "@nexora/ui";
+import { FinancialAmount, formatMinorUnits, formatPercentage } from "@nexora/ui";
 import { useState, type FormEvent } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
@@ -126,7 +126,7 @@ export function InvestmentsPage({
                       )}
                       {position.gainLossPercent() === undefined
                         ? ""
-                        : ` (${position.gainLossPercent()!.toFixed(2)}%)`}
+                        : ` (${formatPercentage(position.gainLossPercent()!, 2, 2)})`}
                     </small>
                     <div className="form-actions">
                       <button

@@ -72,3 +72,15 @@ export function formatMinorUnits(
 
   return showPositiveSign && amountMinor > 0n ? `+${formatted}` : formatted;
 }
+
+export function formatPercentage(
+  value: number,
+  maximumFractionDigits = 1,
+  minimumFractionDigits = 0,
+  locale = "it-IT",
+): string {
+  return `${new Intl.NumberFormat(locale, {
+    maximumFractionDigits,
+    minimumFractionDigits,
+  }).format(value)}%`;
+}

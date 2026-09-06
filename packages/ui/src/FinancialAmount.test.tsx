@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { FinancialAmount, formatMinorUnits } from "./FinancialAmount";
+import { FinancialAmount, formatMinorUnits, formatPercentage } from "./FinancialAmount";
 
 describe("FinancialAmount", () => {
   it("formatta EUR con locale italiano senza convertire bigint in number", () => {
@@ -24,5 +24,11 @@ describe("FinancialAmount", () => {
     const amount = container.querySelector(".financial-amount");
     expect(amount).toHaveTextContent("-12,50 €");
     expect(amount).toHaveClass("financial-amount", "is-negative");
+  });
+
+  it("formatta percentuali con locale e precisione condivisi", () => {
+    expect(formatPercentage(12.5)).toBe("12,5%");
+    expect(formatPercentage(-3.456, 2, 2)).toBe("-3,46%");
+    expect(formatPercentage(0, 1, 1)).toBe("0,0%");
   });
 });

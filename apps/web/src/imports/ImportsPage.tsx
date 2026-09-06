@@ -625,7 +625,10 @@ export function ImportsPage({
                       <td data-label="Importo">
                         {row.preview.amountMinor === undefined
                           ? "—"
-                          : formatMinor(row.preview.amountMinor, row.preview.currency ?? "EUR")}
+                          : formatMinorUnits(
+                              row.preview.amountMinor,
+                              row.preview.currency ?? "EUR",
+                            )}
                       </td>
                       <td data-label="Stato">
                         <span className={`import-status is-${row.status}`}>
@@ -768,10 +771,6 @@ function semanticMappingFromPlan(plan: MoneyManagerSemanticPlan): MoneyManagerSe
 async function sha256(bytes: ArrayBuffer): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-function formatMinor(amountMinor: bigint, currency: string): string {
-  return formatMinorUnits(amountMinor, currency);
 }
 
 function updateMapping(

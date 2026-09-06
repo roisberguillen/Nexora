@@ -7,6 +7,7 @@ export { GlobalSearchDialog } from "./GlobalSearchDialog";
 export {
   FinancialAmount,
   formatMinorUnits,
+  formatPercentage,
   type FinancialAmountProps,
   type FinancialAmountTone,
 } from "./FinancialAmount";

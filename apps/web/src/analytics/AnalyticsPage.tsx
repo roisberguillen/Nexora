@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
-import { FinancialAmount } from "@nexora/ui";
+import { FinancialAmount, formatPercentage } from "@nexora/ui";
 import type { Category, Transaction, TransactionSplit } from "@nexora/domain";
 import {
   buildAnalyticsViewModel,
@@ -89,7 +89,7 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
               <strong className="metric-value">
                 {model.savingRatePercent === undefined
                   ? "—"
-                  : `${model.savingRatePercent.toLocaleString("it-IT")} %`}
+                  : formatPercentage(model.savingRatePercent)}
               </strong>
               <small>
                 {model.savingRatePercent === undefined
@@ -223,7 +223,7 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
                   <div>
                     <strong>{category.label}</strong>
                     <span>
-                      {category.percentage.toLocaleString("it-IT", { maximumFractionDigits: 2 })}%
+                      {formatPercentage(category.percentage, 2)}
                       del totale
                     </span>
                   </div>
@@ -322,7 +322,11 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
                     <td data-label="Tasso">
                       {trend.income.isZero()
                         ? "—"
-                        : `${(Number((trend.savings.amountMinor * 10_000n) / trend.income.amountMinor) / 100).toLocaleString("it-IT")} %`}
+                        : formatPercentage(
+                            Number(
+                              (trend.savings.amountMinor * 10_000n) / trend.income.amountMinor,
+                            ) / 100,
+                          )}
                     </td>
                   </tr>
                 ))}
