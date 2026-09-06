@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-06
+
+- Chiusa C4 con `C4_FINAL_GATE_PASS`: matrice C4.0–C4.10 riconciliata, regressione Playwright
+  completa eseguita due volte (secondo run seriale isolato), gate unit/lint/typecheck/build,
+  offline/reload/reopen, responsive e zoom CDP verificati; `433 passed`, `233 skipped` dichiarati,
+  `0 failed` su 666 test.
+
 ## 2026-09-05
 
 - Completata C4.10 con flusso E2E completo App Lock → preferenze → cestino/restore → reset

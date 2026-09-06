@@ -1435,3 +1435,19 @@ Keep only the latest relevant evidence per completed phase.
   nessun errore `pageerror` o console error osservato; nessun dato finanziario visibile nella lock screen.
 - Unit/startup controllati coprono storage non disponibile, database non apribile, schema/metadati,
   bootstrap interrotto, recovery e retry idempotente senza reset silenzioso.
+
+## 2026-09-06 — C4-F regressione completa e chiusura
+
+- Reconciliata la matrice completa C4.0–C4.10: ogni riga ha report UI/UX, test E2E dedicato o
+  correlato, invarianti finanziarie, negativi, persistenza/offline e P0/P1/P2 `0/0/0`.
+- Primo full E2E già registrato dal gate C4.10: `666` test, `433 passed`, `233 skipped`, `0 failed`.
+- Secondo full E2E eseguito in isolamento seriale (`pnpm exec playwright test --workers=1`):
+  `666` test, `433 passed`, `233 skipped`, `0 failed`, durata `23.4m`. Gli skip sono quelli
+  condizionati da viewport/backend dichiarati dalla suite; nessun nuovo skip introdotto.
+- Il run parallelo diagnostico ha evidenziato contesa del server/browser condiviso; i flussi C4
+  falliti nel run concorrente sono passati isolati e non costituiscono failure funzionale.
+- Viewport Playwright coperti: `320×800`, `375×812`, `390×844`, `768×1024`, `1024×900`,
+  `1440×1000`; CDP zoom reale 200% sui profili desktop previsti. Offline/reload/reopen,
+  IndexedDB/OPFS e benchmark 100.000 record inclusi nella suite.
+- Nessun dato reale usato; fixture sintetiche locali, trasferimenti neutrali, nessun errore console
+  o `pageerror` rilevante nei percorsi C4 dedicati. Gate finale: `C4_FINAL_GATE_PASS`.
