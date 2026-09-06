@@ -69,12 +69,12 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4.10 | complete — 2026-09-05 | `FLOW_AUDIT_PASS`; App Lock, preferenze, cestino/restore, reset confermato, startup e recovery verificati |
 | C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; C4.0–C4.10 e regressione finale chiuse |
 | C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; C5.1–C5.5 e gate finale chiusi; 0 P0, 0 P1, 0 P2 aperti; 12.5.D next |
-| D | pending | final independent review |
+| D | in progress — 2026-09-06 | D.1 status reconciliation complete; D.2 UI/UX + responsive, D.3 accessibility, D.4 security and D.F final gate missing |
 | E | pending | final gate: READY / NOT READY |
 | F | pending | release freeze |
 | 12.5.C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; real complete flows e regressione finale chiusi |
 | 12.5.C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; cross-surface consistency chiusa; prossimo task 12.5.D |
-| 12.5.D | planned | final independent review |
+| 12.5.D | in progress — 2026-09-06 | D.1 complete as status audit; next 12.5.D.2; D.2/D.3/D.4/D.F not started |
 | 12.5.E | planned | final gate: READY / NOT READY |
 | 12.5.F | planned | release freeze |
 | 13 | pending | desktop delivery only after 12.5.F; not started |

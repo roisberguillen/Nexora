@@ -338,8 +338,8 @@
   superseded by the enforced manifest gate.
 - Added the mandatory `nexora-ui-ux-mobile-desktop/v1` change manifest, review template and
   staged-commit gate. Every modification now needs a recorded PASS/N.A. review without open P0.
-- Completed Phase 12.5.D: independent UI, responsive, accessibility and security review. No P0/P1
-  findings remain; the full Playwright matrix passed on the isolated local preview.
+- Reconciled Phase 12.5.D status: a historical completion note lacked a dedicated independent
+  review/evidence; D is therefore `IN PROGRESS`, with D.2 UI/UX + responsive as the next task.
 
 - Completed the read-only Phase 12.5.1 mapping checkpoint for the user-provided financial sources.
   It documents explicit date, account, currency, category and transfer review rules without

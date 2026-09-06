@@ -93,6 +93,11 @@
       "sha256": "c2c0ca95f5af05fa6f1f448b7fe684a8791c8a15808e0f655d82ccdbd70d3833"
     },
     {
+      "path": ".codex/reviews/phase-12.5-d-1-status-reconciliation.md",
+      "size": 2637,
+      "sha256": "cbcc2fa3cf55b9fc59718178cc0decfc07e488c66b6e5561b1f9b5a278e3284f"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-08-22-integrate-ui-ux-manifest.md",
       "size": 1579,
       "sha256": "f40f7b321f8916c62622a112108aedcaf3885f93b53f952b57a880d51b75ccb4"
@@ -438,6 +443,11 @@
       "sha256": "c899e2d4af7dc57c3aca52b9ccc87219230db904580cfa4096560b5da5041eed"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-06-d-1-status-reconciliation.md",
+      "size": 2061,
+      "sha256": "c51a5b7567986068e2ff1efd456f0980b7333a5a9eb3ce84693a9d536a6ceae8"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -599,8 +609,13 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 405,
-      "sha256": "f0f0aaeb8a2f0d5e10c97f2abe7ec4fa124bd619bcf6b7c5038cc3b03d30b38d"
+      "size": 422,
+      "sha256": "03f9464e9c37cb8280f3acd5804a973590286dc34ac8cde93d241fdf98d6e5c2"
+    },
+    {
+      "path": ".codex/state/d-phase-evidence-matrix.md",
+      "size": 2262,
+      "sha256": "34ce566a3671ffb70f7e59b3915587bec4632039bf5374278fe5f96fe05e57a1"
     },
     {
       "path": ".codex/state/decisions-index.md",
@@ -624,13 +639,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10460,
-      "sha256": "334be1da4d45f2bbc7ecf9c8b93cb12631bdcec7d007d2f5e3fa8a05498adbf5"
+      "size": 10640,
+      "sha256": "01bf95f6e61b2e6c5015c0172487f21a20a6893ea4834fcad15389edb276e432"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 118885,
-      "sha256": "08d0fdf452573b4b4ffde82f681905e7b276c13b2b96b4cf0c09e09df447bd84"
+      "size": 120270,
+      "sha256": "8e6464da4eb31fdd918bda37392d294aafab71e6045594dfb72878437d68f905"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1924,8 +1939,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 52265,
-      "sha256": "4064eed797f7cb8fbf0dc753742462a684c6a0b2ddbc9ba826b299ff51593e25"
+      "size": 52272,
+      "sha256": "4be6552ae366f7f7a10c9f05acac31941bb170b17f74de5ade9320b865c75c53"
     },
     {
       "path": "design/mockup/README.md",

@@ -1577,3 +1577,20 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm manifest:check`, `pnpm codex:validate`, `pnpm format:check`, `pnpm test:ui-ux`,
   `pnpm quality:ui-ux` e `git diff --check`: PASS.
 - Decisione: `C5_FINAL_GATE_PASS`; macrofase 12.5.C5 chiusa. Prossimo task `12.5.D`, non avviato.
+## 12.5.D.1 — Audit e riconciliazione dello stato della Fase D — 2026-09-06
+
+- Routing: `localized_bug / STANDARD / low`; attività esclusivamente documentale, senza nuove
+  feature, modifiche runtime o riapertura di C3/C4/C5.
+- Audit repository: `CHANGELOG.md` conteneva una dichiarazione D COMPLETE, ma non è stata trovata
+  una review/matrice/evidence indipendente D. `current-task.md` e `roadmap-progress.md` erano
+  invece pending/planned. Incoerenza riconciliata: `12.5.D = IN PROGRESS`.
+- Matrice creata: `.codex/state/d-phase-evidence-matrix.md`; UI, UX, responsive, accessibility,
+  security e browser verification D sono `MISSING`; automated tests sono `PASS (baseline)` e non
+  sostituiscono le review D. P0/P1 aperti: `NO`, con baseline C5 P0/P1/P2 `0/0/0`.
+- Evidenze baseline verificate: `pnpm verify` C5-F `633 passed`, `4 skipped`; Playwright C5-F
+  `25 passed`, `17 skipped`, `0 failed`. Nessuna nuova suite E2E eseguita perché D.1 è un audit
+  documentale e la review D mancante non può essere inventata retroattivamente.
+- Controlli D.1: `pnpm manifest:check`, `pnpm codex:validate` e `pnpm format:check` eseguiti dopo
+  la riconciliazione; review dedicata e matrice registrano evidence/gap senza dichiarare D PASS.
+- Decisione: `12.5.D.1 RESULT: PASS`; `12.5.D = IN PROGRESS`; prossimo task esclusivo
+  `12.5.D.2 — Independent UI/UX + Responsive Review`.
