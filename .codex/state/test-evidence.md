@@ -1,5 +1,16 @@
 # Test evidence
 
+## 13.0 — Desktop Delivery Foundation — 2026-09-07
+
+- Routing: `tauri_desktop / ADVANCED / low`; scope foundation only, no new feature/schema change.
+- `pnpm test -- packages/database-tauri/src` → 2 file, `5 passed`, `0 failed`.
+- `cargo check --locked` in `apps/web/src-tauri` → PASS.
+- `pnpm --filter @nexora/web tauri:build` → PASS; web build and Tauri Windows no-bundle release
+  executable produced at `apps/web/src-tauri/target/release/nexora.exe`.
+- Desktop startup smoke → PASS: executable remained alive for 5 seconds and was then stopped;
+  no signing credentials or new permissions were required.
+- No P0/P1/P2; no runtime/source modifications or user data access. Next `13.1` not started.
+
 ## 12.5.F — Release Freeze — 2026-09-07
 
 - Routing: `database_query / STANDARD / low`; freeze documentale, nessun runtime/schema change.

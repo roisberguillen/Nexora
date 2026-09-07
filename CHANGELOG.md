@@ -18,6 +18,7 @@
 - Completed 12.5.E.3 Data Integrity & Recovery Final Gate: encrypted round-trip, checksum/tamper rejection, rollback, restore and cross-adapter parity passed; 12.5.E.F remains next.
 - Closed Phase 12.5.E with `12.5.E COMPLETE / PASS`: E.1–E.3 and final quality reconciliation passed; 12.5.F Release Freeze remains next.
 - Closed `12.5.F COMPLETE / PASS`: the 12.5 release candidate is frozen after full quality, real-flow, integrity and recovery gates; Phase 13 is authorized but not started.
+- Completed 13.0 Desktop Delivery Foundation: Tauri 2 native SQLite adapter, locked Rust check, Windows no-bundle build and startup smoke passed; 13.1 remains next.
 
 ## 2026-09-06
 
