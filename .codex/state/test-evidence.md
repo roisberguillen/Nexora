@@ -9,7 +9,8 @@
   on the Windows host in `objc2-exception-helper`.
 - `cargo check --target aarch64-apple-darwin --locked` → BLOCKED for the same missing Apple
   compiler/SDK prerequisite on Windows.
-- Added `.github/workflows/ci.yml` `desktop-macos` matrix for `macos-13` and `macos-14`, with
+- Added `.github/workflows/ci.yml` `desktop-macos` matrix for `macos-15-intel` (x64) and
+  `macos-15` (arm64), with
   locked check and Tauri bundle; workflow now runs on `codex/**` for remote verification.
 - Open finding: `P13.3-01` P1, CI run pending; 0 P0, 1 P1, 0 P2.
 - 13.3 is not complete. Await the remote macOS matrix before any subsequent phase.

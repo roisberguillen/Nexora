@@ -24,7 +24,7 @@ schema, migration, ledger behavior or UI redesign is in scope.
 libraries are available; it does not provide Apple clang, SDKs or signing infrastructure.
 
 To remove the environment dependency, `.github/workflows/ci.yml` now contains a `desktop-macos`
-matrix on `macos-13` and `macos-14`, with locked Cargo check and Tauri bundle steps. The workflow
+matrix on `macos-15-intel` (x64) and `macos-15` (arm64), with locked Cargo check and Tauri bundle steps. The workflow
 also runs on `codex/**` branches so this change can be verified remotely before closure.
 
 ## Finding

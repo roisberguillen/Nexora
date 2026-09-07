@@ -144,8 +144,8 @@
     },
     {
       "path": ".codex/reviews/phase-13-3-cross-platform-release-matrix.md",
-      "size": 2418,
-      "sha256": "4ac4c2bb4ced062ba1b9b02ac46757a88a649fb84247acfe99228888e6cbd792"
+      "size": 2438,
+      "sha256": "9c3ba06f7ef09d68b6eb33014d0b05dd97e17ce0be014c3daf7e8c1353758693"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -529,8 +529,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-13-3-cross-platform-ui-scope.md",
-      "size": 1487,
-      "sha256": "562abc09ba619e324df152229fc09f2fadb3ce0def07e09b5153305ca401650b"
+      "size": 1525,
+      "sha256": "29a6f31b5f8b6d62de261c410b02c64c698262a7177608068aab19f00d3db315"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
@@ -774,8 +774,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 135624,
-      "sha256": "d2b48f32d8d072a420e98f45751cdbf39884d95e8c28adf42dfca056197749d6"
+      "size": 135646,
+      "sha256": "03e88cf7c599fce0b65e1c98c1c2621e4e49c7e782d10b5e437343e5e849c5e4"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -829,8 +829,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 1317,
-      "sha256": "12a9deb83fae0cac8affc040d6da7cc1d45965145d2e5159afd4c049aac5b88e"
+      "size": 1323,
+      "sha256": "996deecc93472b003056020851f89c09c86961d2665023fc549360d49f37485a"
     },
     {
       "path": ".gitignore",
