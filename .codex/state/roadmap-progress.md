@@ -88,7 +88,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 13.3 | complete — 2026-09-07 | macOS x64/arm64 matrix and full verify PASS in CI 34156198571; Linux baselines/root overflow hardened; 0/0/0; next 13.4 |
 | 13.4 | complete — 2026-09-07 | Native backup/restore tests 68/68, locked check, Windows MSI/NSIS build and full verify 633 passed/4 skipped; 0/0/0; prossimo 13.F |
 | 13.F | complete — 2026-09-07 | Windows/macOS, native persistence, packaging, backup/restore and regression evidence reconciled; 0/0/0; prossimo 14.0 |
-| 14.0 | planned | Tauri Android initialization and reproducible native project/build baseline |
+| 14.0 | complete — 2026-09-07 | Tauri Android initialized; Rust aarch64 target compiled; Gradle arm64 debug APK packaging PASS; full Tauri symlink command limitation recorded; 0/0/0; prossimo 14.1 |
 | 14.1 | planned | Android SQLite native adapter, shared schema and migration parity |
 | 14.2 | planned | Android persistence, lifecycle, startup and recovery behavior |
 | 14.3 | planned | Responsive mobile UI plus least-privilege file/document picker workflows |

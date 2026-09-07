@@ -26,6 +26,7 @@
 - Registered the remaining atomic roadmap from 13.4 through 17.F; no new task is marked complete and 13.4 is the next authorized task.
 - Completed 13.4 Desktop final gate: native backup/restore evidence, locked check, Windows MSI/NSIS build and full verify passed; 13.F remains next.
 - Closed Phase 13 with `13.F COMPLETE / PASS`; desktop evidence is reconciled and 14.0 Android initialization is next.
+- Completed 14.0 Android initialization: Tauri project generation, Rust arm64 compilation and Gradle debug APK packaging passed; 14.1 remains next.
 
 ## 2026-09-06
 

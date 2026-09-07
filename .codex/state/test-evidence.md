@@ -1,5 +1,16 @@
 # Test evidence
 
+## 14.0 — Tauri Android initialization — 2026-09-07 — COMPLETE / PASS
+
+- `tauri android init --ci --skip-targets-install` → PASS; generated Android project under ignored
+  `apps/web/src-tauri/gen/android`.
+- `rustup target add aarch64-linux-android` and Rust Android compilation → PASS.
+- `gradlew.bat assembleArm64Debug -x rustBuildArm64Debug --no-daemon` → BUILD SUCCESSFUL; arm64
+  debug APK produced. The full Tauri command separately hit Windows symlink privilege and Kotlin
+  cross-drive incremental-cache diagnostics; this is recorded, not hidden.
+- No schema, migration, ledger or financial invariant changed; P0/P1/P2 = 0/0/0.
+- Review: `.codex/reviews/phase-14-0-android-initialization.md`; next `14.1`.
+
 ## 13.F — Final Desktop gate — 2026-09-07 — COMPLETE / PASS
 
 - Reconciled 13.0–13.4 evidence: Windows native foundation/persistence/packaging, macOS x64/arm64
