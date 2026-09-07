@@ -1069,8 +1069,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 11845,
-      "sha256": "b4b493a0b6dfb6c51777a8fac220241714e0d6c2ed8bdd07f30782d1b8ec83a2"
+      "size": 11849,
+      "sha256": "f46bc73faf45adda2b9f849fd0f6d7f14326edc627928726140faeed7326cc8f"
     },
     {
       "path": "apps/web/index.html",

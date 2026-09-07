@@ -26,3 +26,5 @@ Esito: PASS
 P0 aperti: Nessuno
 
 Gate result: PASS.
+
+Manifest refreshed after Rust source formatting; no UI surface changed.
