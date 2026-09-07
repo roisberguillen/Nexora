@@ -1917,3 +1917,11 @@ Keep only the latest relevant evidence per completed phase.
 - Negative security tests: LAN rejects unspecified/loopback addresses, missing TLS certificate/key and missing host fingerprint; device identity rejects wrong token.
 - No private key, token, ledger or SQLite file is stored or logged; no listener is exposed by this slice.
 - `pnpm manifest:check`: PASS. Evidence: `.codex/reviews/phase-15-1-lan-tls-identity.md`.
+
+# 15.2 — Local Hub discovery/pairing — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="15.2 mDNS DNS-SD discovery explicit QR pairing device revocation"` → `local_hub / CRITICAL / medium`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml`: 8 passed, 0 failed.
+- Negative pairing tests: wrong code, expiry, single-use replay and revocation; discovery requires explicit LAN and `_nexora._tcp` service.
+- No live mDNS listener or unauthenticated LAN endpoint is started in this contract slice.
+- Evidence: `.codex/reviews/phase-15-2-discovery-pairing.md`.

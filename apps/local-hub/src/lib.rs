@@ -6,6 +6,7 @@
 
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::collections::HashMap;
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
@@ -148,6 +149,108 @@ pub struct DeviceIdentity {
     token_digest: [u8; 32],
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DiscoveryAdvertisement {
+    pub service_name: String,
+    pub service_type: String,
+    pub host_fingerprint: String,
+    pub port: u16,
+    pub lan_enabled: bool,
+}
+
+impl DiscoveryAdvertisement {
+    pub fn validate(&self) -> bool {
+        self.lan_enabled
+            && self.service_type == "_nexora._tcp"
+            && !self.service_name.is_empty()
+            && !self.host_fingerprint.is_empty()
+            && self.port != 0
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PairingError {
+    InvalidCode,
+    Expired,
+    AlreadyUsed,
+    Revoked,
+}
+
+#[derive(Clone, Debug)]
+struct PairingGrant {
+    code_digest: [u8; 32],
+    _host_fingerprint: String,
+    expires_at_ms: u64,
+    used: bool,
+}
+
+#[derive(Default)]
+pub struct PairingRegistry {
+    grants: HashMap<String, PairingGrant>,
+    devices: HashMap<String, DeviceIdentity>,
+}
+
+impl PairingRegistry {
+    pub fn add_qr_grant(
+        &mut self,
+        grant_id: impl Into<String>,
+        code: &str,
+        host_fingerprint: impl Into<String>,
+        expires_at_ms: u64,
+    ) {
+        self.grants.insert(
+            grant_id.into(),
+            PairingGrant {
+                code_digest: digest(code),
+                _host_fingerprint: host_fingerprint.into(),
+                expires_at_ms,
+                used: false,
+            },
+        );
+    }
+
+    pub fn redeem(
+        &mut self,
+        grant_id: &str,
+        code: &str,
+        device_id: impl Into<String>,
+        now_ms: u64,
+    ) -> Result<(), PairingError> {
+        let grant = self
+            .grants
+            .get_mut(grant_id)
+            .ok_or(PairingError::InvalidCode)?;
+        if grant.used {
+            return Err(PairingError::AlreadyUsed);
+        }
+        if now_ms >= grant.expires_at_ms {
+            return Err(PairingError::Expired);
+        }
+        if digest(code) != grant.code_digest {
+            return Err(PairingError::InvalidCode);
+        }
+        grant.used = true;
+        let device_id = device_id.into();
+        self.devices.insert(
+            device_id.clone(),
+            DeviceIdentity::from_token(device_id, code),
+        );
+        Ok(())
+    }
+
+    pub fn revoke(&mut self, device_id: &str) -> bool {
+        self.devices.remove(device_id).is_some()
+    }
+
+    pub fn is_paired(&self, device_id: &str) -> bool {
+        self.devices.contains_key(device_id)
+    }
+}
+
+fn digest(value: &str) -> [u8; 32] {
+    Sha256::digest(value.as_bytes()).into()
+}
+
 impl DeviceIdentity {
     pub fn from_token(device_id: impl Into<String>, token: &str) -> Self {
         let mut digest = Sha256::new();
@@ -234,6 +337,45 @@ mod tests {
         let identity = DeviceIdentity::from_token("device-1", "synthetic-token");
         assert!(identity.verifies("synthetic-token"));
         assert!(!identity.verifies("wrong-token"));
+    }
+
+    #[test]
+    fn discovery_advertisement_requires_explicit_lan_and_nexora_service() {
+        let advertisement = DiscoveryAdvertisement {
+            service_name: "nexora-host".to_owned(),
+            service_type: "_nexora._tcp".to_owned(),
+            host_fingerprint: "sha256:host".to_owned(),
+            port: DEFAULT_PORT,
+            lan_enabled: true,
+        };
+        assert!(advertisement.validate());
+    }
+
+    #[test]
+    fn qr_pairing_is_expiring_single_use_and_revocable() {
+        let mut registry = PairingRegistry::default();
+        registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
+        assert_eq!(
+            registry.redeem("grant-1", "one-time-code", "phone-1", 1_000),
+            Ok(())
+        );
+        assert_eq!(
+            registry.redeem("grant-1", "one-time-code", "phone-2", 1_100),
+            Err(PairingError::AlreadyUsed)
+        );
+        assert!(registry.is_paired("phone-1"));
+        assert!(registry.revoke("phone-1"));
+        assert!(!registry.is_paired("phone-1"));
+    }
+
+    #[test]
+    fn expired_qr_grant_cannot_pair() {
+        let mut registry = PairingRegistry::default();
+        registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
+        assert_eq!(
+            registry.redeem("grant-1", "one-time-code", "phone-1", 2_000),
+            Err(PairingError::Expired)
+        );
     }
 
     #[test]
