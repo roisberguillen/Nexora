@@ -1,5 +1,17 @@
 # Test evidence
 
+## 13.3 — Cross-platform desktop release matrix — 2026-09-07 — IN PROGRESS
+
+- Routing: `ui_component / STANDARD / low`; validation only, no runtime/schema/data change.
+- Windows x64: previous MSI/NSIS build, locked native check and startup smoke PASS.
+- `rustup target add x86_64-apple-darwin aarch64-apple-darwin` → PASS.
+- `cargo check --target x86_64-apple-darwin --locked` → BLOCKED: `cc`/Apple compiler unavailable
+  on the Windows host in `objc2-exception-helper`.
+- `cargo check --target aarch64-apple-darwin --locked` → BLOCKED for the same missing Apple
+  compiler/SDK prerequisite.
+- Open finding: `P13.3-01` P1, external environment blocker; 0 P0, 1 P1, 0 P2.
+- 13.3 is not complete. Resume on a macOS host/runner before any subsequent phase.
+
 ## 13.2 — Desktop packaging and distribution readiness — 2026-09-07
 
 - Routing: `tauri_desktop / ADVANCED / low`; packaging metadata only, no runtime/schema/data behavior change.
