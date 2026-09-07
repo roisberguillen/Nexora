@@ -93,7 +93,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 14.2 | complete — 2026-09-07 | Tauri lifecycle delegation and shared startup/persistence/recovery: 18 files/72 tests and typechecks PASS; 0/0/0; prossimo 14.3 |
 | 14.3 | complete — 2026-09-07 | Import/Backup picker and responsive browser verification: 45 passed/9 skipped on six viewports; no extra permissions; 0/0/0; prossimo 14.4 |
 | 14.4 | complete — 2026-09-07 | App Lock, encrypted backup/restore, recovery and Android permission boundary: 9 files/43 tests PASS; Keystore/biometric not required by current secret contract; 0/0/0; prossimo 14.5 |
-| 14.5 | planned | APK/AAB packaging and emulator/device verification |
+| 14.5 | complete — 2026-09-07 | Arm64 Rust release, unsigned APK and AAB Gradle packaging PASS; ADB device verification N/A (no device/emulator); 0/0/0; prossimo 14.F |
 | 14.F | planned | Final Android gate and release evidence |
 | 15.0 | planned | Local Hub Rust service foundation and authoritative API contract |
 | 15.1 | planned | Opt-in LAN binding, TLS and device identity |

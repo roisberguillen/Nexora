@@ -1,5 +1,14 @@
 # Test evidence
 
+## 14.5 — Android APK/AAB packaging — 2026-09-07 — COMPLETE / PASS (device N/A)
+
+- `cargo build --target aarch64-linux-android --release --locked` → PASS with NDK clang/linker.
+- `gradlew.bat assembleArm64Release bundleArm64Release -x rustBuildArm64Release --no-daemon` →
+  BUILD SUCCESSFUL; unsigned arm64 APK and AAB produced.
+- `adb devices -l` → no emulator/device attached; no device runtime PASS claimed.
+- No production signing key used or fabricated. No ledger, schema, migration or accounting
+  invariant changed; P0/P1/P2 = 0/0/0. Next: 14.F.
+
 ## 14.4 — Android backup/restore and security boundary — 2026-09-07 — COMPLETE / PASS
 
 - `pnpm test -- apps/web/src/security packages/database/src/backup apps/web/src/backup apps/web/src/startup/RecoveryBackupVerification.ts`
