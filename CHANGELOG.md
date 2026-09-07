@@ -20,6 +20,7 @@
 - Closed `12.5.F COMPLETE / PASS`: the 12.5 release candidate is frozen after full quality, real-flow, integrity and recovery gates; Phase 13 is authorized but not started.
 - Completed 13.0 Desktop Delivery Foundation: Tauri 2 native SQLite adapter, locked Rust check, Windows no-bundle build and startup smoke passed; 13.1 remains next.
 - Completed 13.1 Desktop Shell and Native Persistence Parity: adapter/migration/SQLite tests, locked native check, Tauri build and desktop startup smoke passed; 13.2 remains next.
+- Completed 13.2 Desktop packaging and distribution readiness: Windows MSI/NSIS bundles, native metadata/icon wiring, locked check, full verify and startup smoke passed; 13.3 remains next.
 
 ## 2026-09-06
 

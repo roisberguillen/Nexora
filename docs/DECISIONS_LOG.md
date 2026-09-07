@@ -466,3 +466,13 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   movimento manuale, rompere l’idempotenza del batch o modificare una sola gamba di un trasferimento.
 - Impatto: l’identità del movimento e i metadati di provenienza restano auditabili; le invarianti
   di segno, valuta, minor units e neutralità dei trasferimenti non cambiano.
+
+## 2026-09-07 — Phase 13.2: Windows native bundle version metadata
+
+- Decisione: il bundle Tauri usa la versione nativa `0.5.0-1`, mentre la versione workspace resta
+  `0.5.0-rc.1`.
+- Motivazione: il target MSI/WiX accetta prerelease identifier numerici; `rc.1` impediva la
+  generazione degli installer. La scelta è limitata ai metadati del pacchetto nativo e non cambia
+  il comportamento dell’app, il ledger o il versionamento dello schema.
+- Impatto: gli installer Windows MSI/NSIS sono generabili; eventuali release future devono
+  mantenere la sincronizzazione dei metadati nativi con i vincoli del target distributivo.

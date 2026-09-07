@@ -138,6 +138,11 @@
       "sha256": "233232ae94d15c7ecdf60494251f47e9789c8d71749488f340903605fc33a202"
     },
     {
+      "path": ".codex/reviews/phase-13-2-desktop-packaging-readiness.md",
+      "size": 2275,
+      "sha256": "88572cf43ae9fa7f9e3b7a1284df509bebb2fb6b8eac07305f05567f68004636"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -513,6 +518,11 @@
       "sha256": "de8af4fc42f0113365e12c4c11542ac5a005c8ef3161d1356a46e5479d862dd3"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-13-2-desktop-packaging-ui-scope.md",
+      "size": 719,
+      "sha256": "6aed65f21de0c153ef99ccc46b0adcafd91f597583893cc23d701f3e745bca8a"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
       "size": 1517,
       "sha256": "b21c75a02840cef4152897f8e7adcd26b032e15659983afa335b2c80c184f497"
@@ -719,8 +729,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 447,
-      "sha256": "d69a0988c3382d2148c3352c285f4570708bb49fa2fb62298a826f6d08728c7e"
+      "size": 427,
+      "sha256": "7c2f7ae7dd64e1898aee726244f05e57461955887293ce27f549ecb0fdf2e210"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -749,13 +759,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 11661,
-      "sha256": "451eefe2bb5ef9e1cbd8ed467e988231806f1b5fe88acb8836666655aa33c4ea"
+      "size": 11800,
+      "sha256": "453bdea1db699d4df38bcb73f6de9ff41bec31d996e31643ee3bc83443a6f3b3"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 133569,
-      "sha256": "1015c22eb70ace51dddd5e5b9315c129c9f92fcfcbd354734d2555432d5d5fb4"
+      "size": 134676,
+      "sha256": "6c7b7c6b41a718a06f76828ac6c4331faaa2a5b1cb18156fcece37c4f79681a2"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -934,13 +944,13 @@
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 131573,
-      "sha256": "28c9ec096fe0832b8861024e9ed405942dc610885b36ef652ac11a4ce49e1b54"
+      "size": 131570,
+      "sha256": "f609f34bbb4dba6a60a77358910f1e0ebbab18d842551680a0e2f60db8e85024"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 456,
-      "sha256": "12b507e3a13386dbddbc20137e55b02aee4631182a353c8aba1d5cc888062760"
+      "size": 453,
+      "sha256": "cf5dc0945ea24cef55ec86a9fcdc447e3eb4c15f9afd01febae5ff5524c8bb86"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -1214,8 +1224,8 @@
     },
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
-      "size": 913,
-      "sha256": "19fc818135a74e5f99fa110d45ce0f48b9a234387a2b1ed89ec483c5c57fce13"
+      "size": 1005,
+      "sha256": "92daefa0ce0a2514ddb2b6562e7d9ee330e8ee7f47c10ba1768ab4a07758b0dc"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -2049,8 +2059,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 54397,
-      "sha256": "05cbd994b201db3dec9eae8afcf191b23e7110d91b243a027ad2c5c6b5fa50bd"
+      "size": 54586,
+      "sha256": "6dcd7e0b4436854639d08c1824e055cff20ed6ad3c5e91bdb6da442e0bf1123b"
     },
     {
       "path": "design/mockup/README.md",
@@ -2229,8 +2239,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 30797,
-      "sha256": "c0c16d1f0f7ccef1ae99f6430d61ef8beab61ca597b2dc23d666536319c2f3d2"
+      "size": 31429,
+      "sha256": "4f6c26d0e691d8f5c09db3c9c6ccee7492af8fca7200abfaaf7a488a3166f37c"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
@@ -2354,8 +2364,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 17728,
-      "sha256": "5d7cc9600781c5372b76babb7962fabaf02dffbbf00cfc913e6e1cff3ce5eda8"
+      "size": 18282,
+      "sha256": "10ea1d7595f229dde7a049e7631fc006732b152a17b6af2803dac59bfde66bb3"
     },
     {
       "path": "docs/ROADMAP.md",

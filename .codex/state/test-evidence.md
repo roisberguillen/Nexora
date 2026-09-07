@@ -1,5 +1,20 @@
 # Test evidence
 
+## 13.2 — Desktop packaging and distribution readiness — 2026-09-07
+
+- Routing: `tauri_desktop / ADVANCED / low`; packaging metadata only, no runtime/schema/data behavior change.
+- Initial packaging audit found `bundle.active=false`; after enabling bundling, WiX required numeric
+  native prerelease metadata and explicit existing icons. The minimal correction is limited to the
+  Tauri config/Cargo package metadata; workspace version remains `0.5.0-rc.1`.
+- `cargo check --locked` in `apps/web/src-tauri` → PASS.
+- `pnpm --filter @nexora/web tauri build` → PASS; MSI and NSIS installers generated.
+- Artifacts: `Nexora_0.5.0-1_x64_en-US.msi` (5,906,432 bytes) and
+  `Nexora_0.5.0-1_x64-setup.exe` (4,634,714 bytes).
+- Desktop startup smoke → PASS: `nexora.exe` alive after 5 seconds and stopped cleanly.
+- `pnpm verify` → PASS; 633 passed, 4 skipped; format/lint/typecheck/build green. The first verify
+  attempt failed only on Prettier for the changed config, then passed after formatting.
+- No P0/P1/P2 open; no financial invariant or persistence behavior changed. Next `13.3` not started.
+
 ## 13.1 — Desktop Shell and Native Persistence Parity — 2026-09-07
 
 - Routing: `native_sqlite / ADVANCED / medium`; no schema/path/runtime behavior change.

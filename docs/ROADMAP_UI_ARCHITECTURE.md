@@ -19,7 +19,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
 | 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
-| 13 | Applicazione Windows e macOS | in progress — 13.0/13.1 PASS; prossimo 13.2 |
+| 13 | Applicazione Windows e macOS | in progress — 13.0–13.2 PASS; prossimo 13.3 |
 | 14 | Applicazione Android | successiva alla Fase 13 |
 | 15 | Nexora Local Hub | successiva alla Fase 14 |
 | 16 | Sincronizzazione offline-first | successiva alla Fase 15 |
@@ -263,3 +263,13 @@ Commit e push su `origin/main`.
   volatili; nessuna credenziale è incorporata nel repository.
 - [x] Corretto il restore SQLite/OPFS per ledger con alberi di conti o categorie: i vincoli esterni
   sono differiti nella sostituzione atomica e verificati al commit; il rollback resta operativo.
+
+## Evidenze Fase 13
+
+- [x] 13.0 ha verificato la fondazione Tauri, l'adapter SQLite nativo, il controllo Rust locked,
+  il build Windows e lo startup smoke.
+- [x] 13.1 ha verificato la parità tra shell desktop, migrazioni e persistenza nativa senza cambiare
+  schema o invarianti contabili.
+- [x] 13.2 ha abilitato il bundle distributivo, dichiarato i formati MSI/NSIS e gli asset icona
+  esistenti, e prodotto entrambi gli installer Windows con `pnpm verify` e startup smoke verdi.
+- [ ] 13.3 Cross-platform desktop release matrix — non iniziata.
