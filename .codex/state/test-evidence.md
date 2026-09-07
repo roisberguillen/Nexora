@@ -1,5 +1,17 @@
 # Test evidence
 
+## 12.5.E.3 — Data Integrity & Recovery Final Gate — 2026-09-07
+
+- Routing: `manual_backup / ADVANCED / medium`; prerequisiti D, E.1 ed E.2 PASS confermati.
+- Targeted integrity suite: `pnpm test -- packages/database/src/backup apps/web/src/backup packages/database/src/sqlite packages/database/src/indexeddb packages/database/src/opfs` → 9 file, `120 passed`, `0 failed`.
+- Targeted recovery E2E: backup/restore, manual backup, atomic rollback, App Lock recovery e
+  C4.9 → `13 passed`, `29 skipped`, `0 failed` su 42; skip condizionali espliciti del harness.
+- Native parity: `cargo check` in `apps/web/src-tauri` → PASS.
+- Verificati round-trip cifrato, manifest/schema, checksum/tamper, passphrase errata, restore
+  rollback, atomicità, OPFS/SQLite, IndexedDB, adapter parity, minor units e neutralità transfer.
+- Nessuna corruzione, perdita dati o failure nascosta; nessun dato reale usato.
+- Result: `12.5.E.3 = PASS`; next `12.5.E.F — Final Phase E Gate`, non iniziato.
+
 # ROADMAP AUTOPILOT integration — 2026-09-07
 
 - Targeted: `pnpm codex:test` → 12 passed; `node --test scripts/codex-finalize.test.mjs` → 7 passed.

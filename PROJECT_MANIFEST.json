@@ -113,6 +113,11 @@
       "sha256": "fbccb0783d8aa1ec27aef52d11d92623f186ef8223ce314221e5a65ea05fec52"
     },
     {
+      "path": ".codex/reviews/phase-12.5-e-3-data-integrity-recovery.md",
+      "size": 2633,
+      "sha256": "ff023f91cbfffea4e39a57f484ba02e717b317bb700b2945e1cfd535b326ba83"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -498,6 +503,11 @@
       "sha256": "8b26428209bce49df80f14d80601608dabcf3bf99d2da8c0f053907ff56b699f"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-e-3-integrity-ui-scope.md",
+      "size": 1374,
+      "sha256": "5d85c25c07203d123afc16f2363086f5d816c8c740c81306d80c299f0f93b022"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-07-roadmap-autopilot.md",
       "size": 1581,
       "sha256": "7664751a2e1d83e4ea63e0e7e35cf1de7c1ef09f7163d829444f39df1adacab3"
@@ -669,8 +679,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 408,
-      "sha256": "60220ca2f2064507e5ccd80f892a4a3e938622e05b9b1c082646dc00eaad8e65"
+      "size": 416,
+      "sha256": "08a21fcf2e11d3ee0810b897c87d5441337fc7d157ca9221441bbba6d4d48af1"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -699,13 +709,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 11012,
-      "sha256": "fc06b0783715c5b2724420a0162c5073459412a4175ad95be640d71562a273ec"
+      "size": 11175,
+      "sha256": "26f0b8dffc165debf51c0079673e8b20832353f0414ac70a308dd67fad98c74d"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 129698,
-      "sha256": "fe5328ed6bdf8a2980c76001f690aa54fedd940aa13d1fd213b8e8b17e2aef67"
+      "size": 130690,
+      "sha256": "56703c7db0a4fb1e17e68da47c829e0686b871e9ce913e00e72b49b048061e4f"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1999,8 +2009,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 53557,
-      "sha256": "fab9801aeccf11c0d18f84133ff3b731ea110b817bc3788e15ed146447fe73f8"
+      "size": 53739,
+      "sha256": "4aaabe634b54055066cb3a4334d3eb50c5c04880b627461b6f92bf2efc456eb0"
     },
     {
       "path": "design/mockup/README.md",
