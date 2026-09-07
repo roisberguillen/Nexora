@@ -1,5 +1,15 @@
 # Test evidence
 
+## 13.1 — Desktop Shell and Native Persistence Parity — 2026-09-07
+
+- Routing: `native_sqlite / ADVANCED / medium`; no schema/path/runtime behavior change.
+- `pnpm test -- packages/database-tauri/src packages/database/src/migrations packages/database/src/sqlite` → 11 file, `76 passed`, `0 failed`.
+- `cargo check --locked` in `apps/web/src-tauri` → PASS.
+- `pnpm --filter @nexora/web tauri:build` → PASS; Windows no-bundle executable produced.
+- Desktop persistence shell smoke → PASS: `nexora.exe` alive after 5 seconds and then stopped.
+- Shared migration catalog, SQLite repository, native path boundary and financial invariants
+  preserved. No real ledger/user data involved; no P0/P1/P2. Next `13.2` not started.
+
 ## 13.0 — Desktop Delivery Foundation — 2026-09-07
 
 - Routing: `tauri_desktop / ADVANCED / low`; scope foundation only, no new feature/schema change.
