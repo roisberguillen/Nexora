@@ -254,8 +254,8 @@
     },
     {
       "path": ".codex/reviews/phase-17-1-storage-recovery.md",
-      "size": 907,
-      "sha256": "12f2181bbdc0b86397f7a204e5e6b035a7f10fc4c07c77acf1f37f6ee4b3afae"
+      "size": 903,
+      "sha256": "26a4d4d66fffb97530ae9de2d285af7f4cacd092b0247ccdd23cf3496404ffe1"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -1051,6 +1051,11 @@
       "path": ".codex/state/checkpoints/2026-09-07-17-1.md",
       "size": 839,
       "sha256": "5febfc831fc6239e393c795eb8f6d20e10bdda95e934b3708e67b7876facd839"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-09-07-17-2.md",
+      "size": 506,
+      "sha256": "33a4364ca8e8f6cfacd337ad9afd191ddaf89acf68115458edb3f34f818bb70e"
     },
     {
       "path": ".codex/state/current-task.md",

@@ -26,3 +26,5 @@ Esito: PASS
 P0 aperti: Nessuno
 
 Gate result: PASS.
+
+Follow-up: quota utility is read-only and introduces no visual surface change.

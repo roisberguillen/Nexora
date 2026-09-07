@@ -6,8 +6,8 @@
 
 ## Findings
 
-P0: None.  
-P1: None.  
+P0: None.
+P1: None.
 P2: None.
 
 ## Evidence
