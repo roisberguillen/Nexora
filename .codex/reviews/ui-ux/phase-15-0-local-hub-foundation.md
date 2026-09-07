@@ -48,3 +48,5 @@ P0 aperti: Nessuno
 `SCREEN_AUDIT_PASS` — UI invariata.
 
 Task closure evidence: Rust-only change; no UI surface was staged without this companion review.
+
+Gate result: PASS.
