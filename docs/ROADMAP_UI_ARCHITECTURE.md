@@ -19,7 +19,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
 | 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
-| 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; prossimo 13.4 |
+| 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; prossimo task da registrare |
 | 14 | Applicazione Android | successiva alla Fase 13 |
 | 15 | Nexora Local Hub | successiva alla Fase 14 |
 | 16 | Sincronizzazione offline-first | successiva alla Fase 15 |
@@ -272,4 +272,4 @@ Commit e push su `origin/main`.
   schema o invarianti contabili.
 - [x] 13.2 ha abilitato il bundle distributivo, dichiarato i formati MSI/NSIS e gli asset icona
   esistenti, e prodotto entrambi gli installer Windows con `pnpm verify` e startup smoke verdi.
-- [x] 13.3 Cross-platform desktop release matrix — PASS; macOS x64/arm64 `cargo check --locked` and Tauri bundles plus full verify (`433 passed`, `233 skipped`) green in CI run `34156198571`; next 13.4.
+- [x] 13.3 Cross-platform desktop release matrix — PASS; macOS x64/arm64 `cargo check --locked` and Tauri bundles plus full verify (`433 passed`, `233 skipped`) green in CI run `34156198571`; next task requires roadmap registration.

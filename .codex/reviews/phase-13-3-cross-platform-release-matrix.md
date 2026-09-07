@@ -55,5 +55,5 @@ build evidence.
 
 ## Next action
 
-13.3 is closed. The next authorized task is 13.4 — Desktop release artifact and signing readiness;
-it is not started by this task.
+13.3 is closed. The candidate 13.4 task is not present in authoritative roadmap progress, so no
+subsequent task is authorized or started by this task.

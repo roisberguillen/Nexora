@@ -23,7 +23,7 @@
 - Post-fix CI run `34156198571` → PASS: `433 passed`, `233 skipped`, `0 failed` in full Playwright; `pnpm verify`, manifest and macOS x64/arm64 jobs all green.
 - macOS x64 (`macos-15-intel`) → `cargo check --locked` and Tauri build PASS; produced `Nexora.app` and `Nexora_0.5.0-1_x64.dmg`.
 - macOS arm64 (`macos-15`) → `cargo check --locked` and Tauri build PASS; produced `Nexora.app` and `Nexora_0.5.0-1_aarch64.dmg`.
-- No ledger, schema, migration or financial invariant changed; no P0/P1/P2 remain. Next `13.4 — Desktop release artifact and signing readiness`, not started.
+- No ledger, schema, migration or financial invariant changed; no P0/P1/P2 remain. No subsequent task is authorized until it is registered in roadmap progress.
 
 ## 13.2 — Desktop packaging and distribution readiness — 2026-09-07
 

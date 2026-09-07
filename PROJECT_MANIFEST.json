@@ -144,8 +144,8 @@
     },
     {
       "path": ".codex/reviews/phase-13-3-cross-platform-release-matrix.md",
-      "size": 3596,
-      "sha256": "ac0a66e9c16721c374fc6751d5063b4f92cebd6c728cfe753440a173ac25dcd6"
+      "size": 3614,
+      "sha256": "e23367efed267b93a9f049844325a55ec0ffafd60c1bb355d76451e41d0dd3fe"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -529,8 +529,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-13-3-cross-platform-ui-scope.md",
-      "size": 2010,
-      "sha256": "7f6ba5e5d9ec8d6c387b0961d31f937e45db5eb4764f8c8fcfae5dd6bc9eb939"
+      "size": 2208,
+      "sha256": "75fff4cfa009e8616eb80486cf3fda4d43e56659fcdb373997974d35401badcf"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
@@ -739,8 +739,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 461,
-      "sha256": "08f8049a297ec98f4b6bc324305830c217181b4be5c4b77ec332bb78ad58ec24"
+      "size": 505,
+      "sha256": "9221dc363d19167165324abe40c7a02fea6a26bbd36baeca63f6679992caa026"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -769,13 +769,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 11961,
-      "sha256": "f19dc9d1c34ac409e7cf6c4dba2eb8357c0e7623dad5e48d02e5139c064447eb"
+      "size": 12013,
+      "sha256": "f16af008c24eb9b8b6a589f47445c96f347d94e38723d79d3a514b53424f0087"
     },
     {
       "path": ".codex/state/test-evidence.md",
       "size": 137190,
-      "sha256": "3e96ad0363557d353d224e42e90de919d3aa5803c4bf3835f69dbedb7ce4d1bc"
+      "sha256": "6f15612b41cb273d03ff7e1823e6b147a3ca9e24932d3494f92c111f1f335319"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2069,8 +2069,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 54983,
-      "sha256": "c8da7d1b0b44cd5f7537f607d714edce967a56f6c5ebd6838c6f87b19c29d295"
+      "size": 55009,
+      "sha256": "eaed10e0e3cd8b7dd5e3a0a707b695d31be0881c12b6b401c118a575500733e7"
     },
     {
       "path": "design/mockup/README.md",
@@ -2374,8 +2374,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 18420,
-      "sha256": "6d0e8ab3baa7ca828eb5914fb1e62dd128ca2bdb3e241d9c4dce7eb8aa45b998"
+      "size": 18464,
+      "sha256": "201a536007b37b5fa0ce738619964ba21a8571f9dcaffae4c87d9afd3183e437"
     },
     {
       "path": "docs/ROADMAP.md",
