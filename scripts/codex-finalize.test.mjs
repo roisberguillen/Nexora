@@ -8,6 +8,7 @@ import {
   readTaskStatus,
   validateCommitMessage,
   validateScope,
+  validateTaskId,
 } from "./codex-finalize.mjs";
 
 test("reads COMPLETE, BLOCKED and IN_PROGRESS task states", () => {
@@ -46,4 +47,11 @@ test("accepts comma- or space-separated explicit scopes", () => {
     "b.mjs",
   ]);
   assert.deepEqual(parseArguments(["--files", "a.mjs b.mjs"]).files, ["a.mjs", "b.mjs"]);
+});
+
+test("requires a verifiable roadmap task identifier", () => {
+  assert.equal(validateTaskId("12.5.E.3"), true);
+  assert.equal(validateTaskId("roadmap-autopilot"), true);
+  assert.equal(validateTaskId(""), false);
+  assert.equal(validateTaskId("12/5"), false);
 });

@@ -12,5 +12,11 @@ For every atomic roadmap task:
 8. Commit the completed slice separately and push only after the required gates pass.
 9. Route the next incomplete atomic task.
 
+In ROADMAP AUTOPILOT mode, completing a task does not end the Codex run. After verified finalization
+and push, immediately route and execute the next authorized incomplete roadmap task. Never advance on
+a local-only completion. The resolver must use `pnpm codex:next` and the hard gate must report
+`DO NOT ADVANCE` for any missing test, evidence, documentation, commit, push, SHA verification,
+clean-tree or blocker condition.
+
 Never delete local user data, silently choose between ledgers, weaken financial invariants or claim
 a partially verified phase is complete.

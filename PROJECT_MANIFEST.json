@@ -44,8 +44,8 @@
     },
     {
       "path": ".codex/orchestration/execution-protocol.md",
-      "size": 825,
-      "sha256": "dafe9203d0b97ccceabdfbe8a18b2a29e1fe0760a70dd4278602d447f6348952"
+      "size": 1253,
+      "sha256": "6e22ef93aea0dd78c2eb21fea68d345d509fa797e4582a05db3ef1ca1f0329a1"
     },
     {
       "path": ".codex/orchestration/model-profiles.example.yaml",
@@ -109,8 +109,8 @@
     },
     {
       "path": ".codex/reviews/phase-12.5-e-2-real-flow-regression.md",
-      "size": 4228,
-      "sha256": "4b10347b41f5f0f1d199c248c50910360cf962aa0b3f78d60b9e45727894fa5c"
+      "size": 4224,
+      "sha256": "fbccb0783d8aa1ec27aef52d11d92623f186ef8223ce314221e5a65ea05fec52"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -493,6 +493,11 @@
       "sha256": "c1ba36dd2ccf289f07db55370929aecbfba5e89f2947eab705e82c43b1340819"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-e-2-real-flow-ui-scope.md",
+      "size": 1434,
+      "sha256": "8b26428209bce49df80f14d80601608dabcf3bf99d2da8c0f053907ff56b699f"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -689,13 +694,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10866,
-      "sha256": "a6bdd84840a74ed54fe5410af7ccd6796af30e8b253498e53d910a56db9d9d3a"
+      "size": 11012,
+      "sha256": "fc06b0783715c5b2724420a0162c5073459412a4175ad95be640d71562a273ec"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 128964,
-      "sha256": "74a6f1837806e8dc0084e1d134ca92a901f53d6507b096357c4ac2a81f74649c"
+      "size": 129698,
+      "sha256": "fe5328ed6bdf8a2980c76001f690aa54fedd940aa13d1fd213b8e8b17e2aef67"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -784,8 +789,8 @@
     },
     {
       "path": "AGENTS.md",
-      "size": 3251,
-      "sha256": "e2e5d81f64f5dadb9599e6b45418644566c3717983ef61b3b267fca6e56812d5"
+      "size": 3891,
+      "sha256": "b8dba9188ccd45833c7d12a0dd6ad2da5b9c0071b6b3252f31832b9b91f570f5"
     },
     {
       "path": "apps/local-host/package.json",
@@ -1989,8 +1994,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 53366,
-      "sha256": "5ee9ec4b0fe14dc84238a9d68316661ccca99144bc81bb7a66469195cec145e3"
+      "size": 53557,
+      "sha256": "fab9801aeccf11c0d18f84133ff3b731ea110b817bc3788e15ed146447fe73f8"
     },
     {
       "path": "design/mockup/README.md",
@@ -2404,8 +2409,8 @@
     },
     {
       "path": "package.json",
-      "size": 2183,
-      "sha256": "896491ac87f146fdd124a1c1545f7b52a0424a3c787c64573138b1dc688f75b3"
+      "size": 2464,
+      "sha256": "8e70f0843c03e4bc0109edb2f25e8713ae1612e71531f30c6e3e8f635db15299"
     },
     {
       "path": "packages/application/package.json",
@@ -3404,23 +3409,23 @@
     },
     {
       "path": "scripts/codex-finalize.mjs",
-      "size": 6822,
-      "sha256": "ecb39e31ef499e5f71c2afadc3918d1b8c3ba37219409bca598e6a7002fd23d8"
+      "size": 7258,
+      "sha256": "2464c60a233f6e057e38a46557da5be06ad4340f3fe4e85d9c7efef0dfb0bf11"
     },
     {
       "path": "scripts/codex-finalize.test.mjs",
-      "size": 1829,
-      "sha256": "7180bd39085279c0843d89203f3949aa2618640e8ee0b3573c9e734a1f94eb46"
+      "size": 2113,
+      "sha256": "009a069cd6bc15eabcc43ef55299c869eedfdb81180ed272c8673ed86501857e"
     },
     {
       "path": "scripts/codex-orchestrator.mjs",
-      "size": 15342,
-      "sha256": "ed14ccee0ca8d91f7c67526c2d6312c5cb506cb819fde0cd0c1dde89676855c9"
+      "size": 21179,
+      "sha256": "7e8fea828a09f466bf71df2fe532ce5482099333149889b720a85271e69761b0"
     },
     {
       "path": "scripts/codex-orchestrator.test.mjs",
-      "size": 3374,
-      "sha256": "b9458cba08def319cb0789b94e080dce9a9d82afaa3c6f23a30f49af05c8f082"
+      "size": 5086,
+      "sha256": "259fb36241d0be040418d3ebb2c9be8e0fc95f1d9774ab1332232a560ffea3e7"
     },
     {
       "path": "scripts/doctor.mjs",

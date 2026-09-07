@@ -826,3 +826,7 @@
 
 - C4.5: certificato il flusso UI di ricorrenza stipendio, proposta allocazioni, budget e notifiche;
   le conferme manuali mantengono la data contabile dello stipendio e l'idempotenza dei trasferimenti.
+
+# Unreleased
+
+- Added strict ROADMAP AUTOPILOT orchestration with deterministic next-task resolution, hard advancement checks, full-gate finalization, and verified commit/push requirements.

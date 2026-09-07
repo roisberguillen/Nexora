@@ -53,6 +53,13 @@ export function validateCommitMessage(message) {
   return COMMIT_PATTERN.test(String(message ?? "").trim());
 }
 
+export function validateTaskId(taskId) {
+  return (
+    /^[0-9]+(?:\.[A-Za-z0-9-]+)+$/.test(String(taskId ?? "")) ||
+    /^[A-Za-z0-9-]+$/.test(String(taskId ?? ""))
+  );
+}
+
 export function validateScope(changedPaths, requestedFiles) {
   const requested = new Set(requestedFiles.map((file) => file.replaceAll("\\", "/")));
   if (requested.size === 0)
@@ -62,12 +69,13 @@ export function validateScope(changedPaths, requestedFiles) {
 }
 
 function defaultExec(command, args, options = {}) {
-  return execFileSync(command, args, {
+  const output = execFileSync(command, args, {
     cwd: options.cwd,
     encoding: "utf8",
     stdio: options.stdio ?? "pipe",
     shell: options.shell ?? false,
-  }).trimEnd();
+  });
+  return output == null ? "" : output.trimEnd();
 }
 
 function runGate(root, command, args) {
@@ -124,6 +132,8 @@ export async function finalize({
     if (sensitiveError) throw new Error(sensitiveError);
     if (!validateCommitMessage(args.message))
       throw new Error("A valid Conventional Commit --message is required.");
+    if (!validateTaskId(args.taskId))
+      throw new Error("A valid --task-id is required for verifiable roadmap advancement.");
     if (args.main === "false" && branch === "main")
       throw new Error("Direct push to main is not authorized by this invocation.");
     if (!git(["remote", "get-url", "origin"])) throw new Error("Remote origin is not configured.");
@@ -131,17 +141,19 @@ export async function finalize({
     if (runGates) {
       for (const [command, gateArgs] of [
         ["pnpm", ["verify"]],
+        ["pnpm", ["test:e2e"]],
+        ["pnpm", ["manifest:update"]],
         ["pnpm", ["manifest:check"]],
         ["pnpm", ["codex:validate"]],
+        ["pnpm", ["quality:ui-ux"]],
       ])
         runGate(root, command, gateArgs);
     }
 
     git(["add", "--", ...(args.files ?? [])], { stdio: "inherit" });
     staged = true;
-    if (runGates) runGate(root, "pnpm", ["quality:ui-ux"]);
     git(["diff", "--cached", "--check"], { stdio: "inherit" });
-    git(["commit", "-m", args.message], { stdio: "inherit" });
+    git(["commit", "-m", args.message, "-m", `Nexora-Task: ${args.taskId}`], { stdio: "inherit" });
     committed = true;
     const sha = git(["rev-parse", "HEAD"]);
     git(["push", "--set-upstream", "origin", branch], { stdio: "inherit" });

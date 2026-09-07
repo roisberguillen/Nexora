@@ -78,6 +78,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.E | in progress — 2026-09-07 | E.1 ed E.2 PASS; E.3/E.F non iniziate |
 | 12.5.E.1 | complete — 2026-09-07 | Final Quality Gate PASS; verify, full E2E, manifest e state green; prossimo 12.5.E.2 |
 | 12.5.E.2 | complete — 2026-09-07 | Real-Flow Full Regression Gate PASS; 83 targeted + 433 full E2E passed; prossimo 12.5.E.3 |
+| 12.5.E.3 | pending | Data Integrity & Recovery Final Gate; non iniziata |
+| 12.5.E.F | planned | 12.5.E final gate; autorizzata solo dopo E.3 |
 | 12.5.F | planned | release freeze |
 | 13 | pending | desktop delivery only after 12.5.F; not started |
 | 14–17 | planned | no completion claim |

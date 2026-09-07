@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -76,6 +77,100 @@ export function parseYamlSubset(source, label = "configuration") {
 
 export function findNextRoadmapPhase(roadmap) {
   return roadmap.match(/^\|\s*(\d+)\s*\|.*\|\s*pianificata\s*\|$/m)?.[1];
+}
+
+export function parseRoadmapTasks(progress) {
+  return [
+    ...String(progress).matchAll(/^\|\s*([0-9]+(?:\.[A-Za-z0-9-]+)*)\s*\|\s*([^|]+)\|/gm),
+  ].map(([, id, description]) => ({
+    id,
+    description: description.trim(),
+    complete: /^complete\b/i.test(description.trim()),
+  }));
+}
+
+export function extractTaskId(value) {
+  return String(value).match(/\b\d+(?:\.\d+|\.[A-Za-z0-9-]+)+\b/)?.[0] ?? null;
+}
+
+export function resolveNextTask({ progress, currentTask }) {
+  const currentStatus = String(currentTask).match(/^[-*]?\s*Status:\s*([^\r\n]+)/im)?.[1] ?? "";
+  if (!/\bCOMPLETE\b/i.test(currentStatus))
+    return { canAdvance: false, reason: "Current task is not COMPLETE." };
+  const nextLine = String(currentTask).match(/^[-*]?\s*Next task:\s*`?([^`\r\n]+)`?/im)?.[1] ?? "";
+  const nextId = extractTaskId(nextLine);
+  if (!nextId) {
+    const remaining = parseRoadmapTasks(progress).find((task) => !task.complete);
+    return remaining
+      ? { canAdvance: false, reason: "Current task does not declare the next task." }
+      : { canAdvance: true, task: "ROADMAP_COMPLETE" };
+  }
+  const task = parseRoadmapTasks(progress).find((candidate) => candidate.id === nextId);
+  if (!task)
+    return { canAdvance: false, reason: `Next task ${nextId} is not present in roadmap progress.` };
+  if (task.complete)
+    return { canAdvance: false, reason: `Next task ${nextId} is already complete.` };
+  const currentId = extractTaskId(
+    String(currentTask).match(/^[-*]?\s*Task:\s*([^\r\n]+)/im)?.[1] ?? "",
+  );
+  const tasks = parseRoadmapTasks(progress);
+  const currentIndex = currentId ? tasks.findIndex((candidate) => candidate.id === currentId) : -1;
+  const nextAtomic = tasks
+    .slice(currentIndex + 1)
+    .find((candidate) => !candidate.complete && /(?:\.\d+|\.F)$/i.test(candidate.id));
+  if (nextAtomic && nextAtomic.id !== nextId)
+    return {
+      canAdvance: false,
+      reason: `Skipping authorized task ${nextAtomic.id} is not allowed.`,
+    };
+  return { canAdvance: true, task: { id: task.id, description: task.description } };
+}
+
+export function canAdvance(checks) {
+  const failures = Object.entries(checks)
+    .filter(([, value]) => value !== true)
+    .map(([name]) => name);
+  return { canAdvance: failures.length === 0, failures };
+}
+
+function gitValue(root, args) {
+  return execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+}
+
+export async function inspectAdvanceState(root = process.cwd()) {
+  const currentTaskPath = path.join(root, ".codex", "state", "current-task.md");
+  const currentTask = await readFile(currentTaskPath, "utf8");
+  const progress = await readFile(
+    path.join(root, ".codex", "state", "roadmap-progress.md"),
+    "utf8",
+  );
+  const status = (currentTask.match(/^[-*]?\s*Status:\s*([^\r\n]+)/im)?.[1] ?? "").replaceAll(
+    "`",
+    "",
+  );
+  const taskId = extractTaskId(currentTask.match(/^[-*]?\s*Task:\s*([^\r\n]+)/im)?.[1] ?? "");
+  const evidencePath = currentTask.match(/^[-*]?\s*Evidence:\s*([^;\r\n]+)/im)?.[1]?.trim();
+  const evidence = evidencePath ? await readIfPresent(path.resolve(root, evidencePath)) : "";
+  const head = gitValue(root, ["rev-parse", "HEAD"]);
+  const branch = gitValue(root, ["branch", "--show-current"]);
+  const remote = branch ? gitValue(root, ["rev-parse", `origin/${branch}`]) : "";
+  const commitBody = gitValue(root, ["show", "-s", "--format=%B", "HEAD"]);
+  const treeClean = gitValue(root, ["status", "--porcelain", "--untracked-files=all"]) === "";
+  const blockers = /P[012]\s*\/\s*[1-9]|security blocker|recovery blocker/i.test(
+    `${currentTask}\n${evidence}`,
+  );
+  return canAdvance({
+    statusComplete: /^COMPLETE\b/i.test(status),
+    gatesPass: /\bPASS\b/i.test(evidence) && !/\bFAIL(?:ED|URE)?\b/i.test(evidence),
+    evidencePresent: Boolean(evidencePath && evidence),
+    documentationPresent: parseRoadmapTasks(progress).some(
+      (task) => task.id === taskId && task.complete,
+    ),
+    commitPresent: Boolean(taskId && commitBody.includes(`Nexora-Task: ${taskId}`)),
+    pushVerified: Boolean(head && head === remote),
+    treeClean,
+    noBlockers: !blockers,
+  });
 }
 
 export async function loadPolicy(root = process.cwd()) {
@@ -378,6 +473,21 @@ async function showStatus(root) {
   process.stdout.write(`${current.trim()}\n\n${progress.trim()}\n`);
 }
 
+async function showAutopilotStatus(root) {
+  const currentTask = await readFile(path.join(root, ".codex", "state", "current-task.md"), "utf8");
+  const progress = await readFile(
+    path.join(root, ".codex", "state", "roadmap-progress.md"),
+    "utf8",
+  );
+  const resolution = resolveNextTask({ progress, currentTask });
+  const hardGate = await inspectAdvanceState(root);
+  process.stdout.write(
+    resolution.task === "ROADMAP_COMPLETE"
+      ? "ROADMAP_COMPLETE\n"
+      : `${resolution.canAdvance && hardGate.canAdvance ? "READY" : "DO NOT ADVANCE"}\n${JSON.stringify({ resolution, hardGate })}\n`,
+  );
+}
+
 async function main() {
   const [, , command, ...argumentTokens] = process.argv;
   const root = process.cwd();
@@ -409,8 +519,40 @@ async function main() {
     process.stdout.write(`${await createCheckpoint(root, args)}\n`);
     return;
   }
+  if (command === "next") {
+    const currentTask = await readFile(
+      path.join(root, ".codex", "state", "current-task.md"),
+      "utf8",
+    );
+    const progress = await readFile(
+      path.join(root, ".codex", "state", "roadmap-progress.md"),
+      "utf8",
+    );
+    const result = resolveNextTask({ progress, currentTask });
+    if (!result.canAdvance) {
+      process.stderr.write(`DO NOT ADVANCE: ${result.reason}\n`);
+      process.exitCode = 1;
+      return;
+    }
+    process.stdout.write(
+      `${typeof result.task === "string" ? result.task : `${result.task.id} — ${result.task.description}`}\n`,
+    );
+    return;
+  }
+  if (command === "can-advance") {
+    const result = await inspectAdvanceState(root);
+    process.stdout.write(
+      `${result.canAdvance ? "ADVANCE" : "DO NOT ADVANCE"}\n${JSON.stringify(result)}\n`,
+    );
+    if (!result.canAdvance) process.exitCode = 1;
+    return;
+  }
+  if (command === "autopilot-status") {
+    await showAutopilotStatus(root);
+    return;
+  }
   process.stderr.write(
-    "Usage: codex-orchestrator.mjs route|validate|status|checkpoint [options]\n",
+    "Usage: codex-orchestrator.mjs route|validate|status|checkpoint|next|can-advance|autopilot-status [options]\n",
   );
   process.exitCode = 2;
 }

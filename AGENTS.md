@@ -3,6 +3,14 @@
 ## Missione
 Costruire Nexora come applicazione finanziaria personale affidabile, installabile, offline-first e manutenibile.
 
+## ROADMAP AUTOPILOT
+Quando l'utente richiede `ESEGUI ROADMAP COMPLETA`, eseguire la roadmap in continuità: per ogni task
+atomico usare il router, implementare, eseguire test mirati e gate completi, aggiornare stato/evidenze,
+finalizzare con commit Conventional Commit e push, verificare SHA remoto e working tree pulito, quindi
+instradare immediatamente il solo task successivo autorizzato. Un completamento locale non autorizza mai
+l'avanzamento. Se un test o un gate fallisce, correggere entro il budget del profilo; esaurito il budget,
+marcare il task BLOCKED e fermare l'autopilot. Fermarsi anche per le stop condition della policy.
+
 ## Routing e ordine di lettura obbligatorio
 1. Prima di ogni fase o task usare `.codex/skills/nexora-router` e pubblicare l'intestazione di
    classificazione prodotta da `pnpm codex:route`.

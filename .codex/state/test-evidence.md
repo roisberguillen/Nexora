@@ -1,5 +1,14 @@
 # Test evidence
 
+# ROADMAP AUTOPILOT integration — 2026-09-07
+
+- Targeted: `pnpm codex:test` → 12 passed; `node --test scripts/codex-finalize.test.mjs` → 7 passed.
+- Repository: `pnpm verify` → format, lint, typecheck, 633 passed / 4 documented skips, build PASS.
+- Full E2E: `pnpm test:e2e` → 433 passed, 233 documented skips, 0 failed / 666.
+- Manifest and orchestration: `pnpm manifest:check`, `pnpm codex:validate`, `pnpm quality:ui-ux` → PASS.
+- One transient Vitest focus failure was rerun successfully in the scoped test; no application file was changed for it.
+- Resolver: `pnpm codex:next` → `12.5.E.3 — pending`; `can-advance` correctly remains `DO NOT ADVANCE` until the current task has a verifiable finalization receipt.
+
 ## 12.5.E.2 — Real-Flow Full Regression Gate — 2026-09-07
 
 - Routing: `localized_bug / STANDARD / low`; prerequisiti D PASS ed E.1 PASS confermati.
