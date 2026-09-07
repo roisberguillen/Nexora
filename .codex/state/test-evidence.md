@@ -2011,3 +2011,10 @@ Keep only the latest relevant evidence per completed phase.
 - `estimateStorageQuota` reports usage/quota when available and fails closed when unavailable; no storage is mutated by the estimate.
 - Existing atomic rollback, import preview/commit and encrypted restore paths remain covered; no SQLite migration, float amount or accounting invariant changed.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-1-storage-recovery.md`.
+
+# 17.2 — Service Worker and backup regression — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.2 Service Worker A to B update cross-platform backup restore regression"` → `manual_backup / ADVANCED / medium`.
+- `pnpm exec vitest run apps/web/src/pwa/PwaUpdateNotice.test.tsx packages/database/src/backup/EncryptedSqliteBackup.test.ts packages/database/src/backup/PortableBackupEngine.test.ts packages/database/src/backup/LocalSqliteBackupService.test.ts`: 34 passed, 0 failed.
+- PWA update requires an explicit service-worker-ready signal and user action; backup verification covers checksum failure, rollback and cross-adapter restore.
+- P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-2-pwa-backup-regression.md`.
