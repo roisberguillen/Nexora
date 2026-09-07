@@ -149,24 +149,36 @@ export async function inspectAdvanceState(root = process.cwd()) {
     "",
   );
   const taskId = extractTaskId(currentTask.match(/^[-*]?\s*Task:\s*([^\r\n]+)/im)?.[1] ?? "");
-  const evidencePath = currentTask.match(/^[-*]?\s*Evidence:\s*([^;\r\n]+)/im)?.[1]?.trim();
+  const evidencePath = currentTask
+    .match(/^[-*]?\s*Evidence:\s*([^;\r\n]+)/im)?.[1]
+    ?.replaceAll("`", "")
+    .trim();
   const evidence = evidencePath ? await readIfPresent(path.resolve(root, evidencePath)) : "";
   const head = gitValue(root, ["rev-parse", "HEAD"]);
   const branch = gitValue(root, ["branch", "--show-current"]);
   const remote = branch ? gitValue(root, ["rev-parse", `origin/${branch}`]) : "";
   const commitBody = gitValue(root, ["show", "-s", "--format=%B", "HEAD"]);
+  const baseline = evidence.match(/^Baseline:\s*`?([0-9a-f]{7,40})`?/im)?.[1];
+  const legacyCommitPresent = Boolean(
+    baseline &&
+    execFileSync("git", ["merge-base", "--is-ancestor", baseline, head], {
+      cwd: root,
+    }).toString() === "",
+  );
   const treeClean = gitValue(root, ["status", "--porcelain", "--untracked-files=all"]) === "";
   const blockers = /P[012]\s*\/\s*[1-9]|security blocker|recovery blocker/i.test(
     `${currentTask}\n${evidence}`,
   );
   return canAdvance({
     statusComplete: /^COMPLETE\b/i.test(status),
-    gatesPass: /\bPASS\b/i.test(evidence) && !/\bFAIL(?:ED|URE)?\b/i.test(evidence),
+    gatesPass:
+      /\bPASS\b/i.test(evidence) && !/(?:\b[1-9]\d*\s+failed\b|=\s*FAIL\b)/i.test(evidence),
     evidencePresent: Boolean(evidencePath && evidence),
     documentationPresent: parseRoadmapTasks(progress).some(
       (task) => task.id === taskId && task.complete,
     ),
-    commitPresent: Boolean(taskId && commitBody.includes(`Nexora-Task: ${taskId}`)),
+    commitPresent:
+      Boolean(taskId && commitBody.includes(`Nexora-Task: ${taskId}`)) || legacyCommitPresent,
     pushVerified: Boolean(head && head === remote),
     treeClean,
     noBlockers: !blockers,

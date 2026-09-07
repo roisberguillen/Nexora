@@ -7,7 +7,7 @@ Route: N/A — nessuna route applicativa modificata
 Flusso principale: N/A — modifica limitata a tooling, stato e protocollo
 Reviewer/fase: Codex / roadmap-autopilot infrastructure
 Modifiche: nessuna superficie UI, colore, font, layout o flusso applicativo modificata.
-Verifica finale: gate repository completo eseguito; nessun impatto visivo rilevato.
+Verifica finale: gate repository completo eseguito; nessun impatto visivo rilevato; stato verificato.
 
 | Area | Verifica | Esito | Evidenza |
 |---|---|---|---|
