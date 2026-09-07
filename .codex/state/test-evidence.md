@@ -12,6 +12,8 @@
 - Added `.github/workflows/ci.yml` `desktop-macos` matrix for `macos-15-intel` (x64) and
   `macos-15` (arm64), with
   locked check and Tauri bundle; workflow now runs on `codex/**` for remote verification.
+- Hardened only the flaky focus assertion in `TransactionsPage.test.tsx` with `waitFor`; targeted
+  test `12 passed` and local `pnpm verify` `633 passed, 4 skipped`.
 - Open finding: `P13.3-01` P1, CI run pending; 0 P0, 1 P1, 0 P2.
 - 13.3 is not complete. Await the remote macOS matrix before any subsequent phase.
 

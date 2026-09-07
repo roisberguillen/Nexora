@@ -1,5 +1,5 @@
 import { Account, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -66,7 +66,7 @@ describe("TransactionsPage", () => {
 
     await user.keyboard("{Escape}");
     expect(screen.queryByText("Dettaglio movimento")).toBeNull();
-    expect(rowControl).toHaveFocus();
+    await waitFor(() => expect(rowControl).toHaveFocus());
   });
 
   it("opens the standalone editor when navigation changes to a new transaction", () => {

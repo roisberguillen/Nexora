@@ -27,6 +27,10 @@ To remove the environment dependency, `.github/workflows/ci.yml` now contains a 
 matrix on `macos-15-intel` (x64) and `macos-15` (arm64), with locked Cargo check and Tauri bundle steps. The workflow
 also runs on `codex/**` branches so this change can be verified remotely before closure.
 
+The full repository run exposed a timing-sensitive focus assertion in `TransactionsPage.test.tsx`.
+The test now waits for the existing `requestAnimationFrame` focus restoration; application code is
+unchanged. Local targeted and full verification both pass after this test-only hardening.
+
 ## Finding
 
 | ID | Surface/reference | Category | Viewport | Current behavior | Expected behavior | Severity | Required correction | State |

@@ -144,8 +144,8 @@
     },
     {
       "path": ".codex/reviews/phase-13-3-cross-platform-release-matrix.md",
-      "size": 2438,
-      "sha256": "9c3ba06f7ef09d68b6eb33014d0b05dd97e17ce0be014c3daf7e8c1353758693"
+      "size": 2727,
+      "sha256": "bb5780654e0c728d8523dff28517ffbcb7927d66c32f87fc4d9d9419ea3766b8"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -529,8 +529,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-13-3-cross-platform-ui-scope.md",
-      "size": 1525,
-      "sha256": "29a6f31b5f8b6d62de261c410b02c64c698262a7177608068aab19f00d3db315"
+      "size": 1637,
+      "sha256": "6c73975c90b78acde5089643b0d7b6e104a1da15d815343d7aec89151ad70225"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
@@ -774,8 +774,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 135646,
-      "sha256": "03e88cf7c599fce0b65e1c98c1c2621e4e49c7e782d10b5e437343e5e849c5e4"
+      "size": 135812,
+      "sha256": "b8f98e3b273698b2c6adf9c9946f9c6770a6ea4a8a389a303ea3a8d31f8dc132"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2024,8 +2024,8 @@
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.test.tsx",
-      "size": 12798,
-      "sha256": "79beb9fe5b0807511202871120bd993cb65808ad12cd2fb35c103d532485b703"
+      "size": 12828,
+      "sha256": "3132c62d239a97177a31ad7dd1b3278aefa353dd68bc640cdce673b22fd9c635"
     },
     {
       "path": "apps/web/src/transactions/TransactionsPage.tsx",

@@ -8,7 +8,7 @@ Route: `N/A — platform validation`
 Data: 2026-09-07
 Reviewer/fase: Codex — cross-platform release matrix, 13.3
 Flusso principale: shared React UI → Tauri Windows/macOS shell → native persistence
-Modifiche: none to UI; CI-only macOS packaging validation matrix uses current x64/arm64 runner labels.
+Modifiche: none to UI; CI-only macOS packaging validation matrix uses current x64/arm64 runner labels; one focus assertion was synchronized with the existing UI requestAnimationFrame.
 Esito: IN PROGRESS
 
 | Area | ID | Esito | Evidence |
