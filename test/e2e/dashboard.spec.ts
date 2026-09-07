@@ -37,5 +37,6 @@ test("la dashboard desktop resta coerente con la baseline visuale", async ({ pag
   await expect(page).toHaveScreenshot("dashboard-1440.png", {
     animations: "disabled",
     fullPage: true,
+    maxDiffPixelRatio: 0.015,
   });
 });

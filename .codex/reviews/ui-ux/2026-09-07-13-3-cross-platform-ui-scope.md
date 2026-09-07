@@ -8,7 +8,7 @@ Route: `N/A — platform validation`
 Data: 2026-09-07
 Reviewer/fase: Codex — cross-platform release matrix, 13.3
 Flusso principale: shared React UI → Tauri Windows/macOS shell → native persistence
-Modifiche: CI-only macOS packaging validation matrix uses current x64/arm64 runner labels and a 45-minute verification timeout; one focus assertion was synchronized with the existing UI requestAnimationFrame; root horizontal overflow is clipped without changing layout or interaction behavior, and Linux visual baselines are aligned with the already-approved desktop surface.
+Modifiche: CI-only macOS packaging validation matrix uses current x64/arm64 runner labels and a 45-minute verification timeout; one focus assertion was synchronized with the existing UI requestAnimationFrame; root horizontal overflow is clipped without changing layout or interaction behavior, Linux visual baselines are aligned with the already-approved desktop surface, and visual assertions use a documented cross-renderer pixel-ratio tolerance.
 Esito: IN PROGRESS
 
 | Area | ID | Esito | Evidence |

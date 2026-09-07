@@ -144,8 +144,8 @@
     },
     {
       "path": ".codex/reviews/phase-13-3-cross-platform-release-matrix.md",
-      "size": 3587,
-      "sha256": "2f58f206e7ef833d3f809e0186764f83c07e164bf21edcfb14928b5ecd880918"
+      "size": 3666,
+      "sha256": "0e02b7dbcf813a9125e59b5bc469ec91f4bd9c3fb049d58dacb3d6d2e3b0ede2"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -529,8 +529,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-13-3-cross-platform-ui-scope.md",
-      "size": 1958,
-      "sha256": "f5106d99107a9bebce9cd5715a29713c5657187e82622d6155ee638ff434dd1c"
+      "size": 2031,
+      "sha256": "9c464ffd70bc14e7127894169ef7bb5424d4c79912d0c345b194195fc29fb29c"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
@@ -774,8 +774,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 136483,
-      "sha256": "e793080f3a6ee7bf0178fc55bd78817e2b0159820b7e106ad4db138dba63e3c5"
+      "size": 136668,
+      "sha256": "f37a816d2e65d7b421179703cd9fb28477f7df20c1fc19dda6a2b40dbeafec61"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -3429,8 +3429,8 @@
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20801,
-      "sha256": "d08ff5ef4fe1805cbbc71aa24b13463fbfa19f98fdd8918699d82713a64ca6e1"
+      "size": 20821,
+      "sha256": "6511144067d2e0e02c1222c3a7d2c4ba7e9b313ce95eccf881bcfce64aa708c2"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
@@ -3539,8 +3539,8 @@
     },
     {
       "path": "test/e2e/accounts.spec.ts",
-      "size": 4615,
-      "sha256": "a6840b674ff9ede1cb1d3e6e19ee83f4c424bdcf26c214b2e5be92270bf60136"
+      "size": 4621,
+      "sha256": "03f127164b074a1c6a73a7e30334d7a3f0529cad9bd38ceb156211e94582d8b1"
     },
     {
       "path": "test/e2e/accounts.spec.ts-snapshots/accounts-1440-chromium-1440-linux.png",
@@ -3664,8 +3664,8 @@
     },
     {
       "path": "test/e2e/dashboard.spec.ts",
-      "size": 1734,
-      "sha256": "24a78b32bb67c676939328e1a210fd8072102c29f924a3563653ed572d7f5c55"
+      "size": 1764,
+      "sha256": "ed51efc5788c852f05cc06e5b48efaf06b58077620e19fbf3c3ed20a64fcf6f6"
     },
     {
       "path": "test/e2e/dashboard.spec.ts-snapshots/dashboard-1440-chromium-1440-linux.png",

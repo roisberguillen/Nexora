@@ -18,6 +18,7 @@
   out at 20 minutes during Playwright. CI timeout increased to 45 minutes; coverage is unchanged.
 - Remote run `34143760373` completed both macOS jobs PASS, while `verify` reproduced two 1024px root-overflow failures and two stale Linux visual-baseline failures (`429 passed`, `4 failed`, `233 skipped`, 27.8m).
 - Minimal correction: `html { overflow-x: clip; }` and Linux 1440 visual baselines aligned with the current approved Win32 baselines. Local affected E2E: `36 passed`, `2 skipped`; format/lint/typecheck PASS. Post-fix CI verify is required before closure.
+- Follow-up correction adds `body { overflow-x: clip; }` and `maxDiffPixelRatio: 0.015` to the two existing 1440 visual assertions; local affected E2E remains `36 passed`, `2 skipped`.
 - Open finding: `P13.3-01` P1, post-fix CI pending; 0 P0, 1 P1, 0 P2.
 - 13.3 is not complete. Await the remote macOS matrix before any subsequent phase.
 

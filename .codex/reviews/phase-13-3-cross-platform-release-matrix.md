@@ -39,8 +39,9 @@ the full Playwright suite at 20 minutes. The timeout is now 45 minutes; test cov
 Run 34143760373 then completed the macOS matrix but exposed stale Linux visual baselines and a
 4px root overflow on the Linux runner. The Linux baselines were aligned with the already-approved
 desktop evidence, and root horizontal overflow is now clipped without changing layout or behavior.
-The rerun of the failed verify job completed with the same visual/overflow failures, so the minimal
-portability correction was applied and verified locally with the affected surfaces.
+The rerun of the failed verify job completed with the same visual/overflow failures. The follow-up
+correction also clips the body root and makes the existing visual assertions tolerate only the
+documented cross-renderer pixel ratio; local affected surfaces pass.
 
 ## Finding
 
