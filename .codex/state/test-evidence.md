@@ -1,5 +1,27 @@
 # Test evidence
 
+## 12.5.D.4 — Independent Security Review — 2026-09-07
+
+- Routing: `CRITICAL / encryption / medium` secondo il router ufficiale; scope security review,
+  senza modifiche runtime, nuove feature, crittografia, dominio, database o sync.
+- Threat model: asset, trust boundary e misuse case per ledger, browser storage, file, backup,
+  restore, App Lock, OAuth, Tauri, PWA, Local Host e operation log registrati nel report D.4.
+- Secret/log scan: nessuna credenziale reale, private key, token, backup o dato personale tracciato;
+  logging allowlisted/redacted senza importi, transazioni, PIN, passphrase o payload.
+- Security unit tests: 16 file, `70 passed`, `0 failed` su backup, App Lock, OAuth, Local Host,
+  operation log, recovery e invarianti correlate.
+- Security E2E: `26 passed`, `28 skipped`, `0 failed` su App Lock, backup/restore, import/export,
+  offline, tamper/recovery e zoom; skip condizionati da profilo/backend, nessun failure nascosto.
+- Dependency/native gates: `pnpm audit --prod --audit-level=high` → nessuna vulnerabilità nota;
+  `cargo check --manifest-path apps/web/src-tauri/Cargo.toml` → PASS.
+- Repository gate: `pnpm verify` → PASS, 633 passed, 4 skipped; `pnpm manifest:check`,
+  `pnpm codex:validate`, `pnpm format:check` e `pnpm test:ui-ux` → PASS.
+- Boundary documentato: App Lock protegge la sessione browser ma non cifra il ledger a riposo;
+  backup cifrati e restore verificato restano il controllo di portabilità/recovery.
+- Invarianti: nessun dato reale creato o modificato; minor units, segni, entrate/uscite,
+  trasferimenti e atomicità ledger invariati. P0/P1/P2 aperti `0/0/0`.
+- Stato: `12.5.D.4 PASS`; prossimo esclusivamente `12.5.D.F`.
+
 ## 12.5.D.3 — Independent Accessibility Review — 2026-09-06
 
 - Routing: `CRITICAL / encryption / medium` secondo il router ufficiale; il brief includeva
