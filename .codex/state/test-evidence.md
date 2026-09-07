@@ -2003,3 +2003,11 @@ Keep only the latest relevant evidence per completed phase.
 - Existing transaction pagination caps rendered rows at 100 and normalizes out-of-range pages; no repository/query or accounting invariant changed.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-0-large-dataset-performance.md`.
 - Orchestrator follow-up: added an explicit standalone `PASS` marker and corrected the current task phase to Phase 17 after the gate parser rejected the underscored token.
+
+# 17.1 — Storage quota and interruption recovery — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.1 storage quota interrupted writes import backup recovery"` → `repository_refactor / ADVANCED / medium`.
+- `pnpm --filter @nexora/web typecheck`: PASS; focused Vitest for quota, OPFS restore, encrypted/portable backup and import rollback: 7 files, 32 passed, 0 failed.
+- `estimateStorageQuota` reports usage/quota when available and fails closed when unavailable; no storage is mutated by the estimate.
+- Existing atomic rollback, import preview/commit and encrypted restore paths remain covered; no SQLite migration, float amount or accounting invariant changed.
+- P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-1-storage-recovery.md`.

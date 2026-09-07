@@ -298,5 +298,6 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 16.F — gate finale sync offline-first: log, trasporto, conflitti, recovery, revoca e multi-device.
   code offline/retry, conflitti espliciti e UI, recovery/revoca/multi-device e gate finale.
 - [x] 17.0 — performance dataset grandi, paginazione e verifica 100k+.
-- [ ] 17.1–17.5, 17.F — quota/interruzioni/recovery, update Service Worker,
+- [x] 17.1 — quota storage, interruzioni atomiche di scrittura/import/backup e recovery.
+- [ ] 17.2–17.5, 17.F — update Service Worker,
   regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.

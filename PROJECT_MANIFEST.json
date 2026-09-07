@@ -249,8 +249,13 @@
     },
     {
       "path": ".codex/reviews/phase-17-0-large-dataset-performance.md",
-      "size": 950,
-      "sha256": "b1b261c1497fb899bc75e4ec7a4d915a270c187de8a7a472ecf624893d24a5fd"
+      "size": 970,
+      "sha256": "c1fc4b71ff1af6e318306de7c183d2b3eb84a3c173b7da2109f868abb407671a"
+    },
+    {
+      "path": ".codex/reviews/phase-17-1-storage-recovery.md",
+      "size": 907,
+      "sha256": "12f2181bbdc0b86397f7a204e5e6b035a7f10fc4c07c77acf1f37f6ee4b3afae"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -798,9 +803,19 @@
       "sha256": "ab53fb65de3e8f15709b89b3c21c4fa665430d1476421ccdc0dda461de84d75a"
     },
     {
+      "path": ".codex/reviews/ui-ux/phase-17-0-gate-parser-correction.md",
+      "size": 1124,
+      "sha256": "ec94ff627a262c2318377ba7b71becbb823f47e0998635616a99d07938b45bd8"
+    },
+    {
       "path": ".codex/reviews/ui-ux/phase-17-0-large-dataset-performance.md",
       "size": 1091,
       "sha256": "029071f93fd9b9604c73807e3bb2659f9a9586617c66dfadbd9c34a486a261c2"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/phase-17-1-storage-recovery.md",
+      "size": 1111,
+      "sha256": "c01e21b0f87564b48ae76930e269fd15dcc11b9e2ab0523bd8ce6df45c536660"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -1033,9 +1048,14 @@
       "sha256": "4ff39c9bea3790fd5acc8abb643c17459c7106555cc47d3e3705bedded97a5d5"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-17-1.md",
+      "size": 839,
+      "sha256": "5febfc831fc6239e393c795eb8f6d20e10bdda95e934b3708e67b7876facd839"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 506,
-      "sha256": "d81430ee81e1b2566b2be90a1b11c7e5e2d9fc88eab1fdce96c277a2c3e9fff0"
+      "size": 507,
+      "sha256": "1f28917faac8b6fdd2e2e18ceab05f183ac6be8df32e8c579ad740b671e48721"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1064,13 +1084,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 16494,
-      "sha256": "c6564a6251440a215a86864813c338576d2195125f55b8f0188515dae2fcbe32"
+      "size": 16579,
+      "sha256": "cffd47cf80a8f1ac6d55660ad639ed93bf55830c1fcfe63913f1d958d371137e"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 153204,
-      "sha256": "5b283a2fa25ef4ba211fee2cdce3058e54351073a98adf53a54f7653d2dc7820"
+      "size": 154134,
+      "sha256": "c868d5b547e3695600ae8762627fe2a26ac7a40beece496cb5eda709a9c7d1ce"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2243,6 +2263,16 @@
       "sha256": "471a443d7f4f6257e4cd106736e55a77773bb9ae5853e75107335fdd0e557c53"
     },
     {
+      "path": "apps/web/src/startup/storageQuota.test.ts",
+      "size": 769,
+      "sha256": "568ffebf8d6bdb7fb22f7b12b9f30fd1730e89a7f83a373a6824404b6bbee49e"
+    },
+    {
+      "path": "apps/web/src/startup/storageQuota.ts",
+      "size": 1057,
+      "sha256": "db987bd3072a8890e604e25f7faabe604ea079322c71219d4fc4943651fe1089"
+    },
+    {
       "path": "apps/web/src/startup/StorageSelection.test.ts",
       "size": 3625,
       "sha256": "b7de0cd206dd7c3b788d099e3db9b8a0b816931972b91dd36abd7fa3a39f637d"
@@ -2384,8 +2414,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 58689,
-      "sha256": "9f933a62f00f6a7eff976c3e802cabe0446ea0ace2ea1d5966b25e56348a08b3"
+      "size": 58791,
+      "sha256": "5ce7ed97bd7ceffc46cea4c1f7aeb1afe28506931ab769519b6e9d2c2b5b9eb9"
     },
     {
       "path": "design/mockup/README.md",
@@ -2689,8 +2719,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 20666,
-      "sha256": "bdcbac60507c47fa4199e633127322d588e991b21597f2960e21ec3bfc87c95e"
+      "size": 20728,
+      "sha256": "1b6f915fd09cb8f743ffea17da07caf5fccf1f0034caa1b107fa5e6cde3e1d1c"
     },
     {
       "path": "docs/ROADMAP.md",
