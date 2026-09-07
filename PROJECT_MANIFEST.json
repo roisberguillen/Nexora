@@ -498,6 +498,11 @@
       "sha256": "8b26428209bce49df80f14d80601608dabcf3bf99d2da8c0f053907ff56b699f"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-roadmap-autopilot.md",
+      "size": 1563,
+      "sha256": "04e7f706a7dd7dabb3468c7598281a375d1ef2d0dc991f00198d45c773ca99d8"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
