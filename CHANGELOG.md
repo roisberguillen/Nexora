@@ -867,3 +867,4 @@
 - 17.0: verified existing 100-row transaction pagination and synthetic 100k-record aggregation/hardening performance coverage.
 - 17.1: added fail-closed storage quota estimation and verified interruption/rollback recovery paths.
 - 17.2: verified Service Worker update/apply signaling and backup checksum/rollback regressions.
+- 17.3: completed production dependency audit and repository secret-pattern scan.

@@ -300,5 +300,6 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 17.0 — performance dataset grandi, paginazione e verifica 100k+.
 - [x] 17.1 — quota storage, interruzioni atomiche di scrittura/import/backup e recovery.
 - [x] 17.2 — update Service Worker A→B e regressione backup/restore cross-platform.
-- [ ] 17.3–17.5, 17.F — sicurezza,
+- [x] 17.3 — security review, supply-chain audit, secret scan e dependency audit.
+- [ ] 17.4–17.5, 17.F — sicurezza,
   regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.

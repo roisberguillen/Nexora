@@ -2018,3 +2018,11 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm exec vitest run apps/web/src/pwa/PwaUpdateNotice.test.tsx packages/database/src/backup/EncryptedSqliteBackup.test.ts packages/database/src/backup/PortableBackupEngine.test.ts packages/database/src/backup/LocalSqliteBackupService.test.ts`: 34 passed, 0 failed.
 - PWA update requires an explicit service-worker-ready signal and user action; backup verification covers checksum failure, rollback and cross-adapter restore.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-2-pwa-backup-regression.md`.
+
+# 17.3 — Security, supply-chain and secret audit — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.3 final security supply chain secret scan dependency audit"` → `security_review / CRITICAL / low`.
+- `pnpm audit --prod --audit-level high`: PASS — No known vulnerabilities found.
+- Secret-pattern scan with `rg` over tracked source (excluding generated dependencies/build output): no credential/key matches; exit 1 indicates no matches, not a hidden failure.
+- Existing Local Hub negative/security tests remain part of the validated baseline; no secrets, credentials or ledger data were accessed.
+- P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-3-security-supply-chain.md`.

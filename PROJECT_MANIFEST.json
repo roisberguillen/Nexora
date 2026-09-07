@@ -263,6 +263,11 @@
       "sha256": "b5ee2249422518ec0ecd891ca96ac40ea822a67425d4a5a8b19bc1c2efbbe7b8"
     },
     {
+      "path": ".codex/reviews/phase-17-3-security-supply-chain.md",
+      "size": 665,
+      "sha256": "d174c523c37696443d182d8c2ee6ccfce1c6b9237a57cd270a7dcfd7fa2e1f99"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -828,6 +833,11 @@
       "sha256": "c802c239d262928ff96512505a788525c6fb2e0757ec67387854639a648e9f15"
     },
     {
+      "path": ".codex/reviews/ui-ux/phase-17-3-security-supply-chain.md",
+      "size": 857,
+      "sha256": "e97f8f8bca925396a0e46eec7c2513cfaab7a3f1476712cedcd1ed61e9f40580"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -1068,9 +1078,14 @@
       "sha256": "2065b2ca8f4163b19111fcedb3242829975ed88bbc8325865c60c1b587002b09"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-17-3.md",
+      "size": 783,
+      "sha256": "75ae036176693dc915d4feb9e024e288d165cb365494d267b387494671b2345c"
+    },
+    {
       "path": ".codex/state/current-task.md",
       "size": 505,
-      "sha256": "6b304dc5657ed95edcc643d633df2319a1903475aa611557ce4d826bc3db1245"
+      "sha256": "0401f66c1c4b98f945bb79bdb7cf735ffacac63e9fe0b8cb48b97482f72c5cb1"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1099,13 +1114,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 16648,
-      "sha256": "18fe0a50b8a14b8e1f6d4ceb9df4be9918b4c0d4275b65919f8ebade584ab40f"
+      "size": 16729,
+      "sha256": "efe01ae6a83cc9a35b9fb7a2a305b5876e752638d33a917e99e0b8c6e5e66cb2"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 154871,
-      "sha256": "3168ce462488a63f599161d17df1176f24441419e01cfed4f2722514448225dc"
+      "size": 155569,
+      "sha256": "a6912d695c83adada028172bd089136a3260175bb740fc1511879723207d067a"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2429,8 +2444,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 58888,
-      "sha256": "7a53760bb9e797051cc425e248a7108083d62f80ae4dabf3987902185a8e430e"
+      "size": 58970,
+      "sha256": "0b25590d437f4a34ed1b6ffe34b9cff985d74a34aa0203be5387ffae01f2e5c2"
     },
     {
       "path": "design/mockup/README.md",
@@ -2734,8 +2749,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 20804,
-      "sha256": "135ef561af1065cb62c74e4c6f699f19595b86cf9b798a3b8a5592e6b1c80aa5"
+      "size": 20888,
+      "sha256": "7259d94fe95542d51e6f8f77a070b3c58fbbc92eb29518bc038d9671c7171e11"
     },
     {
       "path": "docs/ROADMAP.md",

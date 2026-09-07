@@ -110,7 +110,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 17.0 | complete — 2026-09-08 | Existing 100-row transaction pagination plus 1k/10k/100k synthetic aggregation and hardening benchmarks verified; 6 focused + 4 benchmark tests; 0/0/0; prossimo 17.1 |
 | 17.1 | complete — 2026-09-08 | Storage quota status utility fails closed; atomic write/import/backup interruption and recovery tests 32/32; 0/0/0; prossimo 17.2 |
 | 17.2 | complete — 2026-09-08 | PWA update notice/apply path plus backup checksum, rollback and cross-adapter regression: focused 34/34; 0/0/0; prossimo 17.3 |
-| 17.3 | planned | Final security, supply-chain, secret scan and dependency audit |
+| 17.3 | complete — 2026-09-08 | `pnpm audit --prod` no known vulnerabilities; secret-pattern scan clean; security contract tests retained; 0/0/0; prossimo 17.4 |
 | 17.4 | planned | Bundle/startup performance, platform regressions and full E2E |
 | 17.5 | planned | Release candidate evidence and operational readiness reconciliation |
 | 17.F | planned | Final READY/NOT READY gate for Nexora 1.0 |
