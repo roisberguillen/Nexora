@@ -22,7 +22,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; 13.4 e 13.F pending |
 | 14 | Applicazione Android | planned — 14.0–14.5 e 14.F pending |
 | 15 | Nexora Local Hub | completata — 15.0–15.3 e 15.F PASS |
-| 16 | Sincronizzazione offline-first | planned — 16.0–16.4 e 16.F pending |
+| 16 | Sincronizzazione offline-first | in corso — 16.0 PASS; 16.1–16.4 e 16.F pending |
 | 17 | Hardening finale | planned — 17.0–17.5 e 17.F pending |
 
 Ogni fase si chiude solo con test proporzionati, aggiornamento documentale, commit Conventional
@@ -290,7 +290,8 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 15.3 — Paired-device authorization, per-device rate limiting, redacted audit metadata and negative tests.
 - [x] 15.F — Local Hub Rust final gate PASS; independent security review attached; next 16.0.
   autenticazione/rate limiting/audit/test negativi e gate finale.
-- [ ] 16.0–16.4, 16.F — operation log replicabile, push/pull e cursori, idempotenza/replay,
+- [x] 16.0 — operation schema replicabile, payload/tombstone, log append-only, revisioni e cursori.
+- [ ] 16.1–16.4, 16.F — push/pull e cursori, idempotenza/replay,
   code offline/retry, conflitti espliciti e UI, recovery/revoca/multi-device e gate finale.
 - [ ] 17.0–17.5, 17.F — performance 100k+, quota/interruzioni/recovery, update Service Worker,
   regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.

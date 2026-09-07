@@ -24,6 +24,7 @@
 - 15.F Local Hub final gate blocked: typed contracts are present, but live Axum/Tokio + mDNS transport and independent network-security review evidence are still required; Phase 16 remains unauthorized.
 - 15.F blocker progress: added live Axum/Tokio runtime boundary and `mdns-sd` provider integration; independent network-security review remains the sole open P1.
 - Closed Phase 15 Local Hub with `15.F PASS`: runtime/TLS/discovery/pairing/authentication evidence and independent security review reconciled; 16.0 is next.
+- Completed 16.0 sync operation schema: payload/tombstone metadata, append-only revision/cursor log, idempotency and stale-write rejection; 16.1 remains next.
 - Closed `12.5.F COMPLETE / PASS`: the 12.5 release candidate is frozen after full quality, real-flow, integrity and recovery gates; Phase 13 is authorized but not started.
 - Completed 13.0 Desktop Delivery Foundation: Tauri 2 native SQLite adapter, locked Rust check, Windows no-bundle build and startup smoke passed; 13.1 remains next.
 - Completed 13.1 Desktop Shell and Native Persistence Parity: adapter/migration/SQLite tests, locked native check, Tauri build and desktop startup smoke passed; 13.2 remains next.

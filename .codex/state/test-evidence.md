@@ -1944,3 +1944,11 @@ Keep only the latest relevant evidence per completed phase.
 - Final runtime hardening: LAN TLS configuration is validated before any socket bind and rate limiting returns `429`; `cargo clippy --manifest-path apps/local-hub/Cargo.toml --locked -- -D warnings`: PASS.
 - Constant-time hardening: device token digest comparison uses `subtle::ConstantTimeEq`; `cargo test` 14/14 and `cargo clippy -D warnings` remain PASS.
 - Independent security review: `.codex/reviews/security/2026-09-08-15-f-independent-security-review.md`, P0/P1/P2 `0/0/0`; `15.F PASS`, next `16.0`.
+
+# 16.0 — Replicable operation schema/log — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="16.0 Replicable operation schema append-only log payload revisions cursors"` → `database_migration / ADVANCED / low`; `nexora-sync` and `nexora-database` applied.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 16 passed, 0 failed.
+- Coverage: payload and tombstone preservation, deterministic revision/cursor assignment, duplicate idempotency and stale-revision conflict rejection.
+- No SQLite migration, ledger data, float amount or accounting invariant changed; no open P0/P1/P2.
+- Evidence: `.codex/reviews/phase-16-0-operation-schema.md`.

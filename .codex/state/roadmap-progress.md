@@ -100,7 +100,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 15.2 | complete — 2026-09-08 | Explicit `_nexora._tcp` advertisement contract, single-use expiring QR grant and device revocation; cargo test 8/8; 0/0/0; prossimo 15.3 |
 | 15.3 | complete — 2026-09-08 | Paired-device authorization, per-device rate limiting, redacted audit metadata and negative security tests; cargo test 11/11; 0/0/0; prossimo 15.F |
 | 15.F | complete — 2026-09-08 | Final Local Hub gate PASS; runtime/TLS/mdns-sd/pairing/auth controls and independent security review reconciled; 0/0/0; prossimo 16.0 |
-| 16.0 | planned | Replicable operation schema, append-only log, payloads, revisions and cursors |
+| 16 | current | Phase 16 sync in corso; 16.0 complete, 16.1 next |
+| 16.0 | complete — 2026-09-08 | Rust replicable operation schema with payload/tombstone, append-only log, deterministic revision/cursor and stale-write rejection; cargo test 16/16; 0/0/0; prossimo 16.1 |
 | 16.1 | planned | Push/pull transport, idempotency, replay protection and durable checkpoints |
 | 16.2 | planned | Offline queue, retry, partial/duplicate delivery and reconciliation |
 | 16.3 | planned | Explicit conflict detection, deterministic policy and conflict UI |

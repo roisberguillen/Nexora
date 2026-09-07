@@ -484,6 +484,74 @@ pub struct OperationEnvelope {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ReplicableOperation {
+    pub idempotency_key: String,
+    pub device_id: String,
+    pub entity_id: String,
+    pub base_revision: u64,
+    pub revision: u64,
+    pub payload_digest: String,
+    pub payload: String,
+    pub tombstone: bool,
+    pub created_at: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum OperationApplyResult {
+    Applied { cursor: u64, revision: u64 },
+    Duplicate { cursor: u64, revision: u64 },
+    Conflict { current_revision: u64 },
+}
+
+#[derive(Default)]
+pub struct AppendOnlyOperationLog {
+    operations: Vec<ReplicableOperation>,
+    idempotency: HashMap<String, (u64, u64)>,
+    revisions: HashMap<String, u64>,
+}
+
+impl AppendOnlyOperationLog {
+    pub fn apply(&mut self, mut operation: ReplicableOperation) -> OperationApplyResult {
+        if let Some((cursor, revision)) = self.idempotency.get(&operation.idempotency_key) {
+            return OperationApplyResult::Duplicate {
+                cursor: *cursor,
+                revision: *revision,
+            };
+        }
+        let current = self
+            .revisions
+            .get(&operation.entity_id)
+            .copied()
+            .unwrap_or(0);
+        if operation.base_revision != current {
+            return OperationApplyResult::Conflict {
+                current_revision: current,
+            };
+        }
+        let revision = current + 1;
+        let cursor = self.operations.len() as u64 + 1;
+        operation.revision = revision;
+        self.revisions.insert(operation.entity_id.clone(), revision);
+        self.idempotency
+            .insert(operation.idempotency_key.clone(), (cursor, revision));
+        self.operations.push(operation);
+        OperationApplyResult::Applied { cursor, revision }
+    }
+
+    pub fn after(&self, cursor: u64) -> impl Iterator<Item = (u64, &ReplicableOperation)> {
+        self.operations
+            .iter()
+            .enumerate()
+            .skip(cursor as usize)
+            .map(|(index, operation)| (index as u64 + 1, operation))
+    }
+
+    pub fn revision(&self, entity_id: &str) -> u64 {
+        self.revisions.get(entity_id).copied().unwrap_or(0)
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct CursorQuery {
     pub after: u64,
 }
@@ -738,5 +806,75 @@ mod tests {
             serde_json::from_str::<OperationEnvelope>(&json).unwrap(),
             operation
         );
+    }
+
+    #[test]
+    fn append_only_log_assigns_revision_and_cursor_without_overwriting() {
+        let mut log = AppendOnlyOperationLog::default();
+        let operation = ReplicableOperation {
+            idempotency_key: "op-1".to_owned(),
+            device_id: "phone-1".to_owned(),
+            entity_id: "movement-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:payload".to_owned(),
+            payload: "{\"amountMinor\":100}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-08T00:00:00Z".to_owned(),
+        };
+        assert_eq!(
+            log.apply(operation.clone()),
+            OperationApplyResult::Applied {
+                cursor: 1,
+                revision: 1
+            }
+        );
+        assert_eq!(
+            log.apply(operation),
+            OperationApplyResult::Duplicate {
+                cursor: 1,
+                revision: 1
+            }
+        );
+        assert_eq!(log.revision("movement-1"), 1);
+        assert_eq!(log.after(0).count(), 1);
+    }
+
+    #[test]
+    fn append_only_log_keeps_tombstones_and_rejects_stale_revisions() {
+        let mut log = AppendOnlyOperationLog::default();
+        let tombstone = ReplicableOperation {
+            idempotency_key: "delete-1".to_owned(),
+            device_id: "phone-1".to_owned(),
+            entity_id: "movement-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:empty".to_owned(),
+            payload: "{}".to_owned(),
+            tombstone: true,
+            created_at: "2026-09-08T00:00:00Z".to_owned(),
+        };
+        assert!(matches!(
+            log.apply(tombstone),
+            OperationApplyResult::Applied { .. }
+        ));
+        let stale = ReplicableOperation {
+            idempotency_key: "stale-1".to_owned(),
+            device_id: "phone-2".to_owned(),
+            entity_id: "movement-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:other".to_owned(),
+            payload: "{}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-08T00:00:01Z".to_owned(),
+        };
+        assert_eq!(
+            log.apply(stale),
+            OperationApplyResult::Conflict {
+                current_revision: 1
+            }
+        );
+        assert!(log.after(0).next().unwrap().1.tombstone);
     }
 }
