@@ -176,6 +176,12 @@ pub enum PairingError {
     Revoked,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum AuthError {
+    UnknownDevice,
+    InvalidToken,
+}
+
 #[derive(Clone, Debug)]
 struct PairingGrant {
     code_digest: [u8; 32],
@@ -244,6 +250,64 @@ impl PairingRegistry {
 
     pub fn is_paired(&self, device_id: &str) -> bool {
         self.devices.contains_key(device_id)
+    }
+
+    pub fn authorize(&self, device_id: &str, token: &str) -> Result<(), AuthError> {
+        let identity = self
+            .devices
+            .get(device_id)
+            .ok_or(AuthError::UnknownDevice)?;
+        if identity.verifies(token) {
+            Ok(())
+        } else {
+            Err(AuthError::InvalidToken)
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RateLimiter {
+    limit: u32,
+    window_ms: u64,
+    buckets: HashMap<String, (u32, u64)>,
+}
+
+impl RateLimiter {
+    pub fn new(limit: u32, window_ms: u64) -> Self {
+        Self {
+            limit,
+            window_ms,
+            buckets: HashMap::new(),
+        }
+    }
+
+    pub fn allow(&mut self, device_id: &str, now_ms: u64) -> bool {
+        let bucket = self
+            .buckets
+            .entry(device_id.to_owned())
+            .or_insert((0, now_ms));
+        if now_ms.saturating_sub(bucket.1) >= self.window_ms {
+            *bucket = (0, now_ms);
+        }
+        bucket.0 = bucket.0.saturating_add(1);
+        bucket.0 <= self.limit
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AuditEvent {
+    pub device_id: String,
+    pub action: String,
+    pub outcome: String,
+}
+
+impl AuditEvent {
+    pub fn request(device_id: &str, action: &str, outcome: &str) -> Self {
+        Self {
+            device_id: device_id.to_owned(),
+            action: action.to_owned(),
+            outcome: outcome.to_owned(),
+        }
     }
 }
 
@@ -376,6 +440,41 @@ mod tests {
             registry.redeem("grant-1", "one-time-code", "phone-1", 2_000),
             Err(PairingError::Expired)
         );
+    }
+
+    #[test]
+    fn paired_device_authorization_rejects_unknown_and_wrong_tokens() {
+        let mut registry = PairingRegistry::default();
+        registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
+        registry
+            .redeem("grant-1", "one-time-code", "phone-1", 1_000)
+            .unwrap();
+        assert_eq!(
+            registry.authorize("unknown", "one-time-code"),
+            Err(AuthError::UnknownDevice)
+        );
+        assert_eq!(
+            registry.authorize("phone-1", "wrong"),
+            Err(AuthError::InvalidToken)
+        );
+        assert_eq!(registry.authorize("phone-1", "one-time-code"), Ok(()));
+    }
+
+    #[test]
+    fn rate_limit_is_per_device_and_windowed() {
+        let mut limiter = RateLimiter::new(2, 1_000);
+        assert!(limiter.allow("phone-1", 0));
+        assert!(limiter.allow("phone-1", 1));
+        assert!(!limiter.allow("phone-1", 2));
+        assert!(limiter.allow("phone-2", 2));
+        assert!(limiter.allow("phone-1", 1_000));
+    }
+
+    #[test]
+    fn audit_event_contains_metadata_but_no_secret() {
+        let event = AuditEvent::request("phone-1", "pull", "denied");
+        assert_eq!(event.outcome, "denied");
+        assert!(!format!("{event:?}").contains("one-time-code"));
     }
 
     #[test]

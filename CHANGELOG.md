@@ -20,6 +20,7 @@
 - Completed 15.0 Local Hub Rust foundation: authoritative loopback-safe binding and incremental operation contract; 15.1 remains next.
 - Completed 15.1 Local Hub LAN/TLS/identity gate: explicit opt-in, specific-address binding, TLS material/fingerprint requirements and SHA-256 device token digests; 15.2 remains next.
 - Completed 15.2 Local Hub discovery/pairing contract: explicit `_nexora._tcp` advertisement, expiring single-use QR grant and device revocation; 15.3 remains next.
+- Completed 15.3 Local Hub authorization controls: paired-device token verification, per-device rate limiting, redacted audit metadata and negative security tests; 15.F remains next.
 - Closed `12.5.F COMPLETE / PASS`: the 12.5 release candidate is frozen after full quality, real-flow, integrity and recovery gates; Phase 13 is authorized but not started.
 - Completed 13.0 Desktop Delivery Foundation: Tauri 2 native SQLite adapter, locked Rust check, Windows no-bundle build and startup smoke passed; 13.1 remains next.
 - Completed 13.1 Desktop Shell and Native Persistence Parity: adapter/migration/SQLite tests, locked native check, Tauri build and desktop startup smoke passed; 13.2 remains next.

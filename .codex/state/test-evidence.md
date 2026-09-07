@@ -1925,3 +1925,10 @@ Keep only the latest relevant evidence per completed phase.
 - Negative pairing tests: wrong code, expiry, single-use replay and revocation; discovery requires explicit LAN and `_nexora._tcp` service.
 - No live mDNS listener or unauthenticated LAN endpoint is started in this contract slice.
 - Evidence: `.codex/reviews/phase-15-2-discovery-pairing.md`.
+
+# 15.3 — Local Hub authorization/rate/audit — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="15.3 Authenticated operations rate limiting audit negative security tests"` → `security_review / CRITICAL / low`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml`: 11 passed, 0 failed.
+- Negative security tests: unknown device, wrong token, per-device limit/window, and audit redaction; no token or secret appears in audit metadata.
+- Evidence: `.codex/reviews/phase-15-3-auth-rate-audit.md`.
