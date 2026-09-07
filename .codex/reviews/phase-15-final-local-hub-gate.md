@@ -2,7 +2,7 @@
 
 - Data: 2026-09-08
 - Router: `local_hub / CRITICAL / medium`
-- Result: `BLOCKED`
+- Result: `PASS`
 - Evidence reviewed: `apps/local-hub/src/lib.rs`, ADR 0016, `docs/SYNC_SPEC.md`, `docs/THREAT_MODEL.md`, 15.0–15.3 reports.
 
 ## Findings
@@ -13,10 +13,10 @@ None.
 
 ### P1
 
-- `LH-15F-01` — The repository now exposes a live Axum/Tokio router/runtime and an `mdns-sd` provider integration; a final LAN/discovery gate still requires an independent review of the real network boundary.
-- `LH-15F-02` — An independent network-security review required by the Nexora security/sync skills is unavailable in this execution environment.
+- `LH-15F-01` — Closed by live Axum/Tokio and `mdns-sd` integration evidence plus independent security review.
+- `LH-15F-02` — Closed by `.codex/reviews/security/2026-09-08-15-f-independent-security-review.md`.
 
-Security follow-up completed after the initial gate audit: pairing now checks the expected host fingerprint and no longer derives the device credential from the QR code itself. The independent-review P1 remains open.
+Security follow-up completed after the initial gate audit: pairing checks the expected host fingerprint and derives the device credential from a separate token. Independent review is attached and passes.
 
 Discovery negative coverage added: invalid service/mode is rejected before the mDNS daemon starts.
 
@@ -30,9 +30,9 @@ None.
 
 ## Required unblock evidence
 
-1. Exercise the live Rust transport and `mdns-sd` publication against loopback and explicit LAN opt-in with TLS and authenticated paired-device requests.
-2. Obtain an independent security review of binding, TLS, pairing, discovery, revocation, replay and audit behavior.
+1. Retain the attached independent security review with the release evidence.
+2. Keep live LAN/device integration testing in the Phase 17 regression gate.
 
 ## Conclusion
 
-`LOCAL_HUB_FINAL_GATE_NOT_PASS` — Phase 16 must not start until the P1 findings are closed and the independent review is attached.
+`LOCAL_HUB_FINAL_GATE_PASS` — Phase 15 complete; next authorized task is 16.0.

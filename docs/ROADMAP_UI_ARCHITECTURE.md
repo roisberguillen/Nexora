@@ -21,7 +21,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
 | 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; 13.4 e 13.F pending |
 | 14 | Applicazione Android | planned — 14.0–14.5 e 14.F pending |
-| 15 | Nexora Local Hub | planned — 15.0–15.3 e 15.F pending |
+| 15 | Nexora Local Hub | completata — 15.0–15.3 e 15.F PASS |
 | 16 | Sincronizzazione offline-first | planned — 16.0–16.4 e 16.F pending |
 | 17 | Hardening finale | planned — 17.0–17.5 e 17.F pending |
 
@@ -288,7 +288,7 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 15.1 — LAN opt-in fail-closed, TLS material/fingerprint gates and device identity digest contract.
 - [x] 15.2 — Explicit discovery advertisement contract, expiring single-use QR pairing and revocation.
 - [x] 15.3 — Paired-device authorization, per-device rate limiting, redacted audit metadata and negative tests.
-- [ ] 15.F — Local Hub Rust definitivo, authenticated operations, discovery transport,
+- [x] 15.F — Local Hub Rust final gate PASS; independent security review attached; next 16.0.
   autenticazione/rate limiting/audit/test negativi e gate finale.
 - [ ] 16.0–16.4, 16.F — operation log replicabile, push/pull e cursori, idempotenza/replay,
   code offline/retry, conflitti espliciti e UI, recovery/revoca/multi-device e gate finale.

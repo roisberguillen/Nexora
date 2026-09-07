@@ -40,3 +40,5 @@ Runtime hardening review completed; no UI surface changed.
 Manifest cleanup after removal of generated untracked Android artifact; no UI surface changed.
 
 Constant-time security hardening; no UI surface changed.
+
+Independent security review attached; no UI surface changed.
