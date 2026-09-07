@@ -1,5 +1,16 @@
 # Test evidence
 
+## 12.5.E.F — Final Phase E Gate — 2026-09-07
+
+- Routing: `localized_bug / STANDARD / low`; E.1, E.2 ed E.3 PASS verificati prima della chiusura.
+- Reconciliation: E.1 full E2E `433 passed/233 skipped/0 failed`; E.2 targeted `83/91/0` e full
+  E2E `433/233/0`; E.3 integrity `120 passed` e recovery E2E `13/29/0`.
+- Final `pnpm verify`: PASS — format/lint/typecheck/build e Vitest `633 passed`, `4 skipped`.
+  `pnpm manifest:check` e `pnpm codex:validate` PASS.
+- Nessuna modifica runtime, feature, schema, migration, token visuale o comportamento congelato;
+  P0/P1/P2 `0/0/0`; warning solo jsdom `scrollTo()` e advisory chunk Vite.
+- Result: `12.5.E = COMPLETE / PASS`; next `12.5.F — Release Freeze`, non iniziato.
+
 ## 12.5.E.3 — Data Integrity & Recovery Final Gate — 2026-09-07
 
 - Routing: `manual_backup / ADVANCED / medium`; prerequisiti D, E.1 ed E.2 PASS confermati.

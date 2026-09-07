@@ -75,12 +75,11 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; real complete flows e regressione finale chiusi |
 | 12.5.C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; cross-surface consistency chiusa; prossimo task 12.5.D |
 | 12.5.D | complete — 2026-09-07 | `12.5.D COMPLETE / PASS`; D.1/D.2/D.3/D.4/D.F chiuse; prossimo 12.5.E.1 |
-| 12.5.E | in progress — 2026-09-07 | E.1/E.2/E.3 PASS; E.F non iniziata |
+| 12.5.E | complete — 2026-09-07 | `12.5.E COMPLETE / PASS`; E.1–E.3 ed E.F riconciliate; prossimo 12.5.F |
 | 12.5.E.1 | complete — 2026-09-07 | Final Quality Gate PASS; verify, full E2E, manifest e state green; prossimo 12.5.E.2 |
 | 12.5.E.2 | complete — 2026-09-07 | Real-Flow Full Regression Gate PASS; 83 targeted + 433 full E2E passed; prossimo 12.5.E.3 |
 | 12.5.E.3 | complete — 2026-09-07 | Data Integrity & Recovery Final Gate PASS; round-trip, checksum, rollback, restore e adapter parity verdi; prossimo 12.5.E.F |
-| 12.5.E.3 | pending | Data Integrity & Recovery Final Gate; non iniziata |
-| 12.5.E.F | planned | 12.5.E final gate; autorizzata solo dopo E.3 |
+| 12.5.E.F | complete — 2026-09-07 | Final Phase E Gate PASS; E.1–E.3, verify, manifest e state riconciliati; prossimo 12.5.F |
 | 12.5.F | planned | release freeze |
 | 13 | pending | desktop delivery only after 12.5.F; not started |
 | 14–17 | planned | no completion claim |
