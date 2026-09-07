@@ -7,6 +7,7 @@ test-results/
 *.tsbuildinfo
 apps/web/src-tauri/target/
 apps/web/src-tauri/gen/
+apps/local-hub/target/
 .env
 .env.*
 !.env.example

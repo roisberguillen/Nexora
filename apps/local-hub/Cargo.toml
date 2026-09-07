@@ -1,0 +1,12 @@
+[package]
+name = "nexora-local-hub"
+version = "0.1.0"
+edition = "2024"
+description = "Nexora Local Hub transport and synchronization contract foundation"
+license = "UNLICENSED"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+serde_json = "1"

@@ -284,7 +284,8 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [ ] 13.F — Final Desktop gate.
 - [ ] 14.0–14.5, 14.F — inizializzazione Android Tauri, SQLite/migrazioni, lifecycle, UI/picker,
   backup/restore e sicurezza, packaging APK/AAB, verifica emulator/device e gate finale.
-- [ ] 15.0–15.3, 15.F — Local Hub Rust definitivo, LAN opt-in/TLS/identità, discovery/pairing/revoca,
+- [x] 15.0 — Local Hub Rust contract foundation; loopback default and LAN fail-closed guard verified.
+- [ ] 15.1–15.3, 15.F — Local Hub Rust definitivo, LAN opt-in/TLS/identità, discovery/pairing/revoca,
   autenticazione/rate limiting/audit/test negativi e gate finale.
 - [ ] 16.0–16.4, 16.F — operation log replicabile, push/pull e cursori, idempotenza/replay,
   code offline/retry, conflitti espliciti e UI, recovery/revoca/multi-device e gate finale.

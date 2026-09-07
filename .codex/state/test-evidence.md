@@ -1902,3 +1902,10 @@ Keep only the latest relevant evidence per completed phase.
   la riconciliazione; review dedicata e matrice registrano evidence/gap senza dichiarare D PASS.
 - Decisione: `12.5.D.1 RESULT: PASS`; `12.5.D = IN PROGRESS`; prossimo task esclusivo
   `12.5.D.2 — Independent UI/UX + Responsive Review`.
+# 15.0 — Local Hub Rust foundation — 2026-09-07
+
+- Router: `pnpm codex:route -- --task="15.0 Local Hub Rust service foundation and API contract"` → `local_hub / CRITICAL / medium`.
+- `cargo test --manifest-path apps/local-hub/Cargo.toml`: 3 passed, 0 failed; generated and committed `apps/local-hub/Cargo.lock`.
+- Negative security tests: LAN binding rejected before TLS/pairing; operation envelope round-trip excludes SQLite payload.
+- No browser test: no UI/listener changed. No accounting/storage behavior changed.
+- Evidence: `.codex/reviews/phase-15-0-local-hub-foundation.md`.

@@ -193,6 +193,11 @@
       "sha256": "679af794a78b4a308af0965bfc8a926ebb89cbafebbb0c006842f61bb62cfba3"
     },
     {
+      "path": ".codex/reviews/phase-15-0-local-hub-foundation.md",
+      "size": 1236,
+      "sha256": "fac0425ec43119fa9a7087160431675e29d287a4b1a50b49062256a054eae27c"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -673,6 +678,11 @@
       "sha256": "7664751a2e1d83e4ea63e0e7e35cf1de7c1ef09f7163d829444f39df1adacab3"
     },
     {
+      "path": ".codex/reviews/ui-ux/phase-15-0-local-hub-foundation.md",
+      "size": 1181,
+      "sha256": "7143d729b6855d416112eec6859cf6bf91522d9564d6366f435ead6aed730ccf"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -843,9 +853,14 @@
       "sha256": "a55d919e9710cbc6ba88fa2efcede3c8ad1652d3babded3f82d10e73b627b5fe"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-15-0.md",
+      "size": 906,
+      "sha256": "d88bf7330e3144cc8e8c7c30ff3feec66df4314571fd2d7b6948f27acb10691b"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 508,
-      "sha256": "be443cefab9cc3085c23b309cb105250dcd5418c1a6354f18eb0eaa28ff48966"
+      "size": 479,
+      "sha256": "1b83e0c9b373c509c2d3a9a6c13ec4adf8512f382045460c6a2cd8b7f11602b9"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -874,13 +889,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 15096,
-      "sha256": "667a1d071c94a170637515c40e900c107685dc10cadbd1ab9a6fae9d832ecc1e"
+      "size": 15196,
+      "sha256": "d909a09b877972909fb32c52bf5369dbf4250b0cbc3a2a77c1b6556c6e59c751"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 143657,
-      "sha256": "2945e0c502d9b0b29cb4cacf0698e94be84580ee426059de524e8b8cf2caff1f"
+      "size": 144246,
+      "sha256": "d91a54f4ca6fbbb2b834b2ba63de8cc4dc5f6ddca8b8968a30c09bac5bff1ba1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -939,8 +954,8 @@
     },
     {
       "path": ".gitignore",
-      "size": 499,
-      "sha256": "6b9ed2dd8f54ece89dfb9b3bcb5cc7dbbbb04c81a5b6757439fa58981c4cc2d4"
+      "size": 522,
+      "sha256": "c1cebfafc5dddb2ce2d3199dd2ef789b195230a8f7a833810bb0441a3a079625"
     },
     {
       "path": ".node-version",
@@ -1006,6 +1021,26 @@
       "path": "apps/local-host/tsconfig.json",
       "size": 118,
       "sha256": "71283cc3c8caea1b7750a4bbd315951a4794833a2ff08489244a49c1680d06f3"
+    },
+    {
+      "path": "apps/local-hub/Cargo.lock",
+      "size": 2673,
+      "sha256": "d3f8d3e21b3d49b65af2528137fd1da07c1810b9dd5cb98dcda88645561abcaf"
+    },
+    {
+      "path": "apps/local-hub/Cargo.toml",
+      "size": 279,
+      "sha256": "b8382f01f2bdc00a08235b190f00ef735f41a0d6280364c31b46288f0014652f"
+    },
+    {
+      "path": "apps/local-hub/README.md",
+      "size": 355,
+      "sha256": "7d598ca787ca9d261b415e9d6ad77af3ff90e909a0b7b1ce8d2e02c1bd5b04e6"
+    },
+    {
+      "path": "apps/local-hub/src/lib.rs",
+      "size": 3375,
+      "sha256": "4670d6fe4225ef7d44228150be08002bd8ff0b5dab21c5611439e428c8e0eac6"
     },
     {
       "path": "apps/web/index.html",
@@ -2174,8 +2209,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 56477,
-      "sha256": "f3040a435db459907809c8447cfa0e1a4c4f8ba187bd76880724d88b2589017c"
+      "size": 56612,
+      "sha256": "a2776b6d6a414517934a6f58a234a8fd32f2c7cfa816f1311938a8b832bc5ea2"
     },
     {
       "path": "design/mockup/README.md",
@@ -2479,8 +2514,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 19690,
-      "sha256": "655434a4878a9d1c6c12bb8a9a9911bdc1a86180baadc0daf43cea6c8faa3bdf"
+      "size": 19794,
+      "sha256": "b1b9005e3e92c940d18debc34a9176d65972d9c5d06dba405d080c4f0719b7a3"
     },
     {
       "path": "docs/ROADMAP.md",

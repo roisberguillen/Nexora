@@ -17,6 +17,7 @@
 - Completed 12.5.E.2 Real-Flow Full Regression Gate: critical financial/operational flows, persistence, import idempotency, undo and backup/restore passed; 12.5.E.3 remains next.
 - Completed 12.5.E.3 Data Integrity & Recovery Final Gate: encrypted round-trip, checksum/tamper rejection, rollback, restore and cross-adapter parity passed; 12.5.E.F remains next.
 - Closed Phase 12.5.E with `12.5.E COMPLETE / PASS`: E.1–E.3 and final quality reconciliation passed; 12.5.F Release Freeze remains next.
+- Completed 15.0 Local Hub Rust foundation: authoritative loopback-safe binding and incremental operation contract; 15.1 remains next.
 - Closed `12.5.F COMPLETE / PASS`: the 12.5 release candidate is frozen after full quality, real-flow, integrity and recovery gates; Phase 13 is authorized but not started.
 - Completed 13.0 Desktop Delivery Foundation: Tauri 2 native SQLite adapter, locked Rust check, Windows no-bundle build and startup smoke passed; 13.1 remains next.
 - Completed 13.1 Desktop Shell and Native Persistence Parity: adapter/migration/SQLite tests, locked native check, Tauri build and desktop startup smoke passed; 13.2 remains next.
