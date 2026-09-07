@@ -1,7 +1,7 @@
 # Phase 13.3 — Cross-platform desktop release matrix
 
 Date: 2026-09-07
-Result: `IN PROGRESS — macOS CI validation pending`
+Result: `IN PROGRESS — portability correction awaiting CI evidence`
 Routing: `ui_component / STANDARD / low`
 
 ## Scope
@@ -17,8 +17,10 @@ schema, migration, ledger behavior or UI redesign is in scope.
 | Windows x64 | `pnpm --filter @nexora/web tauri build` | PASS | MSI and NSIS installers generated in 13.2 |
 | Windows x64 | `cargo check --locked` | PASS | Native shell compiles on `stable-x86_64-pc-windows-msvc` |
 | Windows x64 | startup smoke | PASS | `nexora.exe` alive for 5 seconds |
-| macOS x64 | `cargo check --target x86_64-apple-darwin --locked` | BLOCKED | `objc2-exception-helper`: target C compiler `cc` unavailable on Windows |
-| macOS arm64 | `cargo check --target aarch64-apple-darwin --locked` | BLOCKED | Same missing Apple target compiler/SDK prerequisite |
+| macOS x64 | `cargo check --locked` on `macos-15-intel` | PASS | Remote CI run 34143760373, job 101819074824 |
+| macOS x64 | `tauri build` on `macos-15-intel` | PASS | Remote CI run 34143760373, job 101819074824 |
+| macOS arm64 | `cargo check --locked` on `macos-15` | PASS | Remote CI run 34143760373, job 101819075139 |
+| macOS arm64 | `tauri build` on `macos-15` | PASS | Remote CI run 34143760373, job 101819075139 |
 
 `rustup target add x86_64-apple-darwin aarch64-apple-darwin` completed, proving target standard
 libraries are available; it does not provide Apple clang, SDKs or signing infrastructure.
@@ -34,16 +36,23 @@ unchanged. Local targeted and full verification both pass after this test-only h
 The first remote rerun passed unit/build/manifest gates but exceeded the CI `verify` timeout during
 the full Playwright suite at 20 minutes. The timeout is now 45 minutes; test coverage is unchanged.
 
+Run 34143760373 then completed the macOS matrix but exposed stale Linux visual baselines and a
+4px root overflow on the Linux runner. The Linux baselines were aligned with the already-approved
+desktop evidence, and root horizontal overflow is now clipped without changing layout or behavior.
+The rerun of the failed verify job completed with the same visual/overflow failures, so the minimal
+portability correction was applied and verified locally with the affected surfaces.
+
 ## Finding
 
 | ID | Surface/reference | Category | Viewport | Current behavior | Expected behavior | Severity | Required correction | State |
 |---|---|---|---|---|---|---|---|---|
-| P13.3-01 | Windows release / macOS release matrix | platform build evidence | N/A | Windows is verified; local macOS cross-target compilation stops because the host lacks Apple `cc`/SDK | macOS x64 and arm64 builds must be verified on a macOS runner with Apple toolchain | P1 | Run the new `desktop-macos` CI matrix and record both remote results | OPEN — CI run pending |
+| P13.3-01 | Windows release / macOS release matrix | platform build evidence | N/A | Windows and both macOS architectures are now verified by locked Cargo checks and Tauri builds | macOS x64 and arm64 builds must be verified on runners with Apple toolchains | P1 | Run and record the new `desktop-macos` CI matrix | CLOSED — run 34143760373 |
 
-No application defect or financial invariant violation was found. This task must not be marked
-complete until the macOS evidence is available.
+No application defect or financial invariant violation was found. The local Windows host remains
+unable to cross-compile Apple targets, but the remote Apple-hosted matrix supplies the required
+build evidence.
 
 ## Next action
 
-Resume 13.3 after the macOS CI matrix completes, validate both architectures and record bundle
-evidence. No subsequent phase is started here.
+The portability correction is ready for CI verification. Do not close 13.3 or start 13.4 until
+the post-fix remote `verify` job is green.

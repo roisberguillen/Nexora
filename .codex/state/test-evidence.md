@@ -16,7 +16,9 @@
   test `12 passed` and local `pnpm verify` `633 passed, 4 skipped`.
 - Remote run `34142035555`: both macOS jobs PASS; `verify` passed through build/manifest but timed
   out at 20 minutes during Playwright. CI timeout increased to 45 minutes; coverage is unchanged.
-- Open finding: `P13.3-01` P1, CI run pending; 0 P0, 1 P1, 0 P2.
+- Remote run `34143760373` completed both macOS jobs PASS, while `verify` reproduced two 1024px root-overflow failures and two stale Linux visual-baseline failures (`429 passed`, `4 failed`, `233 skipped`, 27.8m).
+- Minimal correction: `html { overflow-x: clip; }` and Linux 1440 visual baselines aligned with the current approved Win32 baselines. Local affected E2E: `36 passed`, `2 skipped`; format/lint/typecheck PASS. Post-fix CI verify is required before closure.
+- Open finding: `P13.3-01` P1, post-fix CI pending; 0 P0, 1 P1, 0 P2.
 - 13.3 is not complete. Await the remote macOS matrix before any subsequent phase.
 
 ## 13.2 — Desktop packaging and distribution readiness — 2026-09-07

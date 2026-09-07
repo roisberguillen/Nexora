@@ -8,7 +8,7 @@ Route: `N/A — platform validation`
 Data: 2026-09-07
 Reviewer/fase: Codex — cross-platform release matrix, 13.3
 Flusso principale: shared React UI → Tauri Windows/macOS shell → native persistence
-Modifiche: none to UI; CI-only macOS packaging validation matrix uses current x64/arm64 runner labels and a 45-minute verification timeout; one focus assertion was synchronized with the existing UI requestAnimationFrame.
+Modifiche: CI-only macOS packaging validation matrix uses current x64/arm64 runner labels and a 45-minute verification timeout; one focus assertion was synchronized with the existing UI requestAnimationFrame; root horizontal overflow is clipped without changing layout or interaction behavior, and Linux visual baselines are aligned with the already-approved desktop surface.
 Esito: IN PROGRESS
 
 | Area | ID | Esito | Evidence |
@@ -17,7 +17,7 @@ Esito: IN PROGRESS
 | Mobile | P13.3-M-01 | PASS | No mobile source or behavior change. |
 | Desktop | P13.3-D-01 | PASS | Shared desktop shell unchanged; macOS packaging blocker is tracked as P13.3-01 in the technical review. |
 | Tablet | P13.3-T-01 | PASS | Shared layout constraints unchanged. |
-| Visuale | P13.3-V-01 | PASS | No visual token or style change. |
+| Visuale | P13.3-V-01 | PASS | Root overflow hardening does not alter the approved layout; Linux baselines now match the current approved desktop surface already represented by Win32 evidence. |
 | Ricerca | P13.3-R-01 | PASS | No search behavior change. |
 | Form | P13.3-F-01 | PASS | No form behavior change. |
 | Feedback | P13.3-FB-01 | PASS | No feedback behavior change. |

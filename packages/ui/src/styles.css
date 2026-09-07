@@ -58,6 +58,7 @@
 
 html {
   min-width: 0;
+  overflow-x: clip;
   background: var(--color-surface);
 }
 
