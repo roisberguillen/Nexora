@@ -62,8 +62,11 @@ async fn authorize(State(state): State<LocalHubState>, headers: HeaderMap) -> im
         Some(value) => value.strip_prefix("Bearer ").unwrap_or(""),
         None => "",
     };
-    if bearer.is_empty() || !state.rate_limiter.lock().await.allow(device_id, now_ms()) {
+    if bearer.is_empty() {
         return StatusCode::UNAUTHORIZED.into_response();
+    }
+    if !state.rate_limiter.lock().await.allow(device_id, now_ms()) {
+        return StatusCode::TOO_MANY_REQUESTS.into_response();
     }
     match state.pairing.read().await.authorize(device_id, bearer) {
         Ok(()) => StatusCode::NO_CONTENT.into_response(),
@@ -77,14 +80,13 @@ pub async fn serve(
 ) -> Result<(), RuntimeError> {
     let address = config.bind_addr().map_err(RuntimeError::Binding)?;
     let app = router(state);
-    let listener = tokio::net::TcpListener::bind(address)
-        .await
-        .map_err(RuntimeError::Io)?;
     if config.binding == BindingMode::Loopback {
+        let listener = tokio::net::TcpListener::bind(address)
+            .await
+            .map_err(RuntimeError::Io)?;
         return axum::serve(listener, app).await.map_err(RuntimeError::Io);
     }
     let tls = config.server_config().map_err(RuntimeError::Tls)?;
-    drop(listener);
     axum_server::bind_rustls(
         address,
         axum_server::tls_rustls::RustlsConfig::from_config(Arc::new(tls)),

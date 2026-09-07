@@ -20,6 +20,8 @@ Security follow-up completed after the initial gate audit: pairing now checks th
 
 Discovery negative coverage added: invalid service/mode is rejected before the mDNS daemon starts.
 
+Runtime hardening review: TLS configuration is validated before LAN socket binding; rate-limit exhaustion returns `429`; clippy is clean. No new P0/P1/P2 finding was introduced.
+
 ### P2
 
 None.
