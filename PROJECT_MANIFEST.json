@@ -238,6 +238,11 @@
       "sha256": "2614d4aacfe652815b428f4bedc00efb76a5a47bb468e80e9ed8033c30f2d75f"
     },
     {
+      "path": ".codex/reviews/phase-16-4-recovery-revocation-multidevice.md",
+      "size": 1082,
+      "sha256": "646d56f488df9df662a91729c36dc5f3e23381a52f1a6208e3fd19ca76ed0f64"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -983,9 +988,14 @@
       "sha256": "6557c14ccd253bb529f2c85e226371193eaaaf6d215110326681fba08d59e631"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-16-4.md",
+      "size": 969,
+      "sha256": "cc731da77d8c18814fae4dd45b4f34faf260688989b3d67ffe8e38ea0ff24705"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 596,
-      "sha256": "40c7463b281b1b781579edb7aafea2bf89f2ac126a654d29d0335210726ddda1"
+      "size": 516,
+      "sha256": "8b9fa5d9ac18697e7439ced3f3c8f04e10935620cef7ba8f0fc4dfe30fac92c0"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1014,13 +1024,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 16035,
-      "sha256": "9e9443fda8cb59cb6f874b845f1ae6e9cee8f9a1cdf8e61a5859abf03e3030bf"
+      "size": 16154,
+      "sha256": "30dfff5517924c72d9365517278180adc5349df38664c9de232949eaf6c29bf5"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 150735,
-      "sha256": "dfa19ec2bd2a96e2f59f3a9313860b70d36fb30a29dfce46a39d8ae1cf7b71f5"
+      "size": 151490,
+      "sha256": "181abab3de69bada5ae88ac2c7b7ab9b8030f4cdf512e0433189113179b2d5e2"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1164,8 +1174,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 33965,
-      "sha256": "7022058d4e89865023eb94090e4a7ddd47e6287a13862bf3ebf61cc6f9bd7167"
+      "size": 37940,
+      "sha256": "c882475d21be70306a86320fee7c72cd818965992c7de6faf4d9ae84ca1405a8"
     },
     {
       "path": "apps/web/index.html",
@@ -2334,8 +2344,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 58315,
-      "sha256": "608b9282b7f96f5f8d80fa04da673c2a064642e83194b93d4213323cb1ba1981"
+      "size": 58431,
+      "sha256": "ac65d2340882171dd02aba83f4d58f19556effdc9fc0f7976901b5d322448ac7"
     },
     {
       "path": "design/mockup/README.md",
@@ -2639,8 +2649,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 20468,
-      "sha256": "19b02039911374f4c608f4275ce11e05377e74b38e10953b93c806a4f72d969b"
+      "size": 20542,
+      "sha256": "c23c18674fb6653761418336c92459c42c787c87be95e902d97af243e1cacf3c"
     },
     {
       "path": "docs/ROADMAP.md",

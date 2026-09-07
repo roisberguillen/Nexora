@@ -1977,3 +1977,11 @@ Keep only the latest relevant evidence per completed phase.
 - Coverage: explicit conflict record, deterministic manual policy, visible “Esamina” action and no automatic overwrite/merge or silent last-write-wins.
 - No SQLite migration, real ledger access, float amount or accounting invariant changed; P0/P1/P2 open 0/0/0.
 - Evidence: `.codex/reviews/phase-16-3-conflict-policy-ui.md`; `.codex/reviews/ui-ux/phase-16-3-conflict-policy-ui.md`.
+
+# 16.4 — Recovery, revocation and multi-device verification — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="16.4 sync recovery device revocation multi-device verification"` → `synchronization / CRITICAL / medium`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 22 passed, 0 failed.
+- Coverage: recovery restores bounded checkpoint and pending deliveries without dropping data; authorized push rejects revoked devices; two paired devices produce an explicit stale-revision conflict.
+- No SQLite migration, real ledger access, float amount or accounting invariant changed; P0/P1/P2 open 0/0/0.
+- Evidence: `.codex/reviews/phase-16-4-recovery-revocation-multidevice.md`.

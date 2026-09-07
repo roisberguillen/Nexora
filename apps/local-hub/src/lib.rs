@@ -543,6 +543,20 @@ pub struct SyncTransport {
 }
 
 impl SyncTransport {
+    pub fn push_authorized(
+        &mut self,
+        registry: &PairingRegistry,
+        device_id: &str,
+        token: &str,
+        delivery_id: &str,
+        operations: impl IntoIterator<Item = ReplicableOperation>,
+    ) -> Result<Vec<OperationApplyResult>, TransportError> {
+        registry
+            .authorize(device_id, token)
+            .map_err(|_| TransportError::UnauthorizedDevice)?;
+        self.push(delivery_id, operations)
+    }
+
     pub fn push(
         &mut self,
         delivery_id: &str,
@@ -578,6 +592,7 @@ impl SyncTransport {
 pub enum TransportError {
     ReplayDetected,
     CursorAhead,
+    UnauthorizedDevice,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -626,6 +641,30 @@ impl OfflineQueue {
     pub fn pending_count(&self) -> usize {
         self.pending.len()
     }
+
+    pub fn snapshot(&self) -> Vec<QueuedDelivery> {
+        self.pending.iter().cloned().collect()
+    }
+
+    pub fn restore(&mut self, deliveries: Vec<QueuedDelivery>) {
+        self.pending = deliveries.into_iter().collect();
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SyncRecoverySnapshot {
+    pub checkpoint: SyncCheckpoint,
+    pub pending_deliveries: Vec<QueuedDelivery>,
+}
+
+pub fn recover_sync_state(
+    transport: &mut SyncTransport,
+    queue: &mut OfflineQueue,
+    snapshot: SyncRecoverySnapshot,
+) -> Result<(), TransportError> {
+    transport.acknowledge(snapshot.checkpoint.cursor)?;
+    queue.restore(snapshot.pending_deliveries);
+    Ok(())
 }
 
 pub fn reconcile_delivery(
@@ -1116,5 +1155,80 @@ mod tests {
             }]
         ));
         assert_eq!(queue.pending_count(), 0);
+    }
+
+    #[test]
+    fn recovery_restores_checkpoint_and_pending_delivery_without_data_loss() {
+        let mut transport = SyncTransport::default();
+        let mut queue = OfflineQueue::default();
+        queue.enqueue("recovery-delivery", Vec::new());
+        let snapshot = SyncRecoverySnapshot {
+            checkpoint: SyncCheckpoint { cursor: 0 },
+            pending_deliveries: queue.snapshot(),
+        };
+        let mut recovered_queue = OfflineQueue::default();
+        recover_sync_state(&mut transport, &mut recovered_queue, snapshot).unwrap();
+        assert_eq!(transport.checkpoint(), SyncCheckpoint { cursor: 0 });
+        assert_eq!(recovered_queue.pending_count(), 1);
+    }
+
+    #[test]
+    fn revoked_device_cannot_push_and_second_device_conflict_is_explicit() {
+        let mut registry = PairingRegistry::default();
+        registry.add_qr_grant("grant-a", "code-a", "sha256:host", 2_000);
+        registry
+            .redeem(
+                "grant-a",
+                "code-a",
+                "phone-a",
+                "token-a",
+                "sha256:host",
+                1_000,
+            )
+            .unwrap();
+        registry.add_qr_grant("grant-b", "code-b", "sha256:host", 2_000);
+        registry
+            .redeem(
+                "grant-b",
+                "code-b",
+                "phone-b",
+                "token-b",
+                "sha256:host",
+                1_000,
+            )
+            .unwrap();
+        let operation = |device_id: &str, key: &str| ReplicableOperation {
+            idempotency_key: key.to_owned(),
+            device_id: device_id.to_owned(),
+            entity_id: "movement-shared".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: format!("sha256:{key}"),
+            payload: "{\"amountMinor\":100}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-08T00:00:00Z".to_owned(),
+        };
+        let mut transport = SyncTransport::default();
+        assert!(matches!(
+            transport.push_authorized(&registry, "phone-a", "token-a", "delivery-a", [operation("phone-a", "op-a")]),
+            Ok(results) if results == vec![OperationApplyResult::Applied { cursor: 1, revision: 1 }]
+        ));
+        assert_eq!(
+            transport.push_authorized(
+                &registry,
+                "phone-b",
+                "token-b",
+                "delivery-b",
+                [operation("phone-b", "op-b")]
+            ),
+            Ok(vec![OperationApplyResult::Conflict {
+                current_revision: 1
+            }])
+        );
+        registry.revoke("phone-a");
+        assert_eq!(
+            transport.push_authorized(&registry, "phone-a", "token-a", "delivery-revoked", []),
+            Err(TransportError::UnauthorizedDevice)
+        );
     }
 }

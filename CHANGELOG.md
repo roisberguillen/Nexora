@@ -862,3 +862,4 @@
 # Unreleased
 
 - 16.3: added explicit sync conflict records, deterministic manual resolution policy and accessible review banner without automatic overwrite.
+- 16.4: added non-destructive sync recovery, revocation-aware authorization and multi-device conflict verification.

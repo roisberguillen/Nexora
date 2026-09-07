@@ -105,7 +105,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 16.1 | complete — 2026-09-08 | Incremental push/pull, delivery replay rejection, cursor checkpoint bounds and operation idempotency; cargo test 17/17; 0/0/0; prossimo 16.2 |
 | 16.2 | complete — 2026-09-08 | Offline queue, retry attempt tracking, partial/duplicate delivery and explicit reconciliation; cargo test 19/19; 0/0/0; prossimo 16.3 |
 | 16.3 | complete — 2026-09-08 | Explicit conflict records, deterministic manual policy and accessible review UI without automatic overwrite/merge; cargo test 20/20, focused UI 2/2; 0/0/0; prossimo 16.4 |
-| 16.4 | planned | Recovery, device revocation and multi-device verification |
+| 16.4 | complete — 2026-09-08 | Non-destructive checkpoint/pending-delivery recovery, revoked-device push rejection and two-device conflict verification; cargo test 22/22; 0/0/0; prossimo 16.F |
 | 16.F | planned | Final offline-first sync gate |
 | 17.0 | planned | Large-dataset performance, pagination/query strategy and 100k+ records |
 | 17.1 | planned | Storage quota, interrupted writes/import/backup and recovery |
