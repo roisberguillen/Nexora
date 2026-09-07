@@ -300,6 +300,7 @@ impl DiscoveryAdvertisement {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum PairingError {
     InvalidCode,
+    InvalidHostFingerprint,
     Expired,
     AlreadyUsed,
     Revoked,
@@ -349,6 +350,8 @@ impl PairingRegistry {
         grant_id: &str,
         code: &str,
         device_id: impl Into<String>,
+        device_token: &str,
+        host_fingerprint: &str,
         now_ms: u64,
     ) -> Result<(), PairingError> {
         let grant = self
@@ -361,6 +364,9 @@ impl PairingRegistry {
         if now_ms >= grant.expires_at_ms {
             return Err(PairingError::Expired);
         }
+        if grant._host_fingerprint != host_fingerprint {
+            return Err(PairingError::InvalidHostFingerprint);
+        }
         if digest(code) != grant.code_digest {
             return Err(PairingError::InvalidCode);
         }
@@ -368,7 +374,7 @@ impl PairingRegistry {
         let device_id = device_id.into();
         self.devices.insert(
             device_id.clone(),
-            DeviceIdentity::from_token(device_id, code),
+            DeviceIdentity::from_token(device_id, device_token),
         );
         Ok(())
     }
@@ -552,11 +558,25 @@ mod tests {
         let mut registry = PairingRegistry::default();
         registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
         assert_eq!(
-            registry.redeem("grant-1", "one-time-code", "phone-1", 1_000),
+            registry.redeem(
+                "grant-1",
+                "one-time-code",
+                "phone-1",
+                "device-token",
+                "sha256:host",
+                1_000
+            ),
             Ok(())
         );
         assert_eq!(
-            registry.redeem("grant-1", "one-time-code", "phone-2", 1_100),
+            registry.redeem(
+                "grant-1",
+                "one-time-code",
+                "phone-2",
+                "device-token-2",
+                "sha256:host",
+                1_100
+            ),
             Err(PairingError::AlreadyUsed)
         );
         assert!(registry.is_paired("phone-1"));
@@ -569,7 +589,14 @@ mod tests {
         let mut registry = PairingRegistry::default();
         registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
         assert_eq!(
-            registry.redeem("grant-1", "one-time-code", "phone-1", 2_000),
+            registry.redeem(
+                "grant-1",
+                "one-time-code",
+                "phone-1",
+                "device-token",
+                "sha256:host",
+                2_000
+            ),
             Err(PairingError::Expired)
         );
     }
@@ -579,7 +606,14 @@ mod tests {
         let mut registry = PairingRegistry::default();
         registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
         registry
-            .redeem("grant-1", "one-time-code", "phone-1", 1_000)
+            .redeem(
+                "grant-1",
+                "one-time-code",
+                "phone-1",
+                "device-token",
+                "sha256:host",
+                1_000,
+            )
             .unwrap();
         assert_eq!(
             registry.authorize("unknown", "one-time-code"),
@@ -589,7 +623,39 @@ mod tests {
             registry.authorize("phone-1", "wrong"),
             Err(AuthError::InvalidToken)
         );
-        assert_eq!(registry.authorize("phone-1", "one-time-code"), Ok(()));
+        assert_eq!(registry.authorize("phone-1", "device-token"), Ok(()));
+    }
+
+    #[test]
+    fn pairing_rejects_wrong_host_and_does_not_reuse_qr_code_as_device_token() {
+        let mut registry = PairingRegistry::default();
+        registry.add_qr_grant("grant-1", "one-time-code", "sha256:host", 2_000);
+        assert_eq!(
+            registry.redeem(
+                "grant-1",
+                "one-time-code",
+                "phone-1",
+                "device-token",
+                "wrong-host",
+                1_000
+            ),
+            Err(PairingError::InvalidHostFingerprint)
+        );
+        assert_eq!(
+            registry.redeem(
+                "grant-1",
+                "one-time-code",
+                "phone-1",
+                "device-token",
+                "sha256:host",
+                1_000
+            ),
+            Ok(())
+        );
+        assert_eq!(
+            registry.authorize("phone-1", "one-time-code"),
+            Err(AuthError::InvalidToken)
+        );
     }
 
     #[test]

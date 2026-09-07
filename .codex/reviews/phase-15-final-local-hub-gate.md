@@ -16,6 +16,8 @@ None.
 - `LH-15F-01` — The repository now exposes a live Axum/Tokio router/runtime and an `mdns-sd` provider integration; a final LAN/discovery gate still requires an independent review of the real network boundary.
 - `LH-15F-02` — An independent network-security review required by the Nexora security/sync skills is unavailable in this execution environment.
 
+Security follow-up completed after the initial gate audit: pairing now checks the expected host fingerprint and no longer derives the device credential from the QR code itself. The independent-review P1 remains open.
+
 ### P2
 
 None.

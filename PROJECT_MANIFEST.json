@@ -214,8 +214,8 @@
     },
     {
       "path": ".codex/reviews/phase-15-final-local-hub-gate.md",
-      "size": 1101,
-      "sha256": "0b0159f95e309afdb1dc84cb25fd7e1a84f7ac4c933666b88dcc3bd962761130"
+      "size": 1319,
+      "sha256": "1ccb873ecb07fd51c6ebd7fb87d72e67fabd0456ffe04910cb2a08cbc7dfb16a"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -719,8 +719,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/phase-15-final-local-hub-gate.md",
-      "size": 1266,
-      "sha256": "4af2d3c4e1e227b0bb06a3ecc9396bcf3b5c5e2027e5b8b5040ea901da451a3e"
+      "size": 1337,
+      "sha256": "86ae6b30dca1cde04b5f2aa1180905e2687704bc777b39bcf7bff20df6dd008e"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -954,8 +954,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 146967,
-      "sha256": "f92b69d5812b5ad38c8ebf14897556ca744f6b48e33efb2cc4efc267c9f312c4"
+      "size": 147186,
+      "sha256": "c193940ad5ae038c37aa59547aee2092276104032b95a5a60615bf0b7b8be5c1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1099,8 +1099,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 19444,
-      "sha256": "35fde947b4496d4ea97351b68296b9fee0cd5f38ec0ffebbd79303621a4e49b2"
+      "size": 21169,
+      "sha256": "f64621e64568c1bce3d14fd5026be3acc3c8b3c30f62db6fae76a3544c421633"
     },
     {
       "path": "apps/web/index.html",
