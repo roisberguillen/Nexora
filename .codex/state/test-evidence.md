@@ -1932,3 +1932,11 @@ Keep only the latest relevant evidence per completed phase.
 - `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml`: 11 passed, 0 failed.
 - Negative security tests: unknown device, wrong token, per-device limit/window, and audit redaction; no token or secret appears in audit metadata.
 - Evidence: `.codex/reviews/phase-15-3-auth-rate-audit.md`.
+
+# 15.F — Final Local Hub gate — 2026-09-08 — BLOCKED
+
+- `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 11 passed, 0 failed.
+- `pnpm codex:validate`: PASS. `pnpm manifest:check`: stale only because the new checkpoint must be included; no application failure.
+- Gate result: NOT PASS. The implementation contains contracts only; no live Axum/Tokio listener or mDNS/DNS-SD adapter is present, so LAN integration cannot be evidenced.
+- Security policy blocker: `nexora-sync` and `nexora-security` require independent review for network exposure; no independent reviewer capability is available in this run.
+- P0/P1/P2: 0/1/0. No subsequent Phase 16 task is authorized until 15.F is resolved.

@@ -213,6 +213,11 @@
       "sha256": "8bb25228936ba7c1b623e7c0be933a39353be568e29bb6103a2ef49305d63ded"
     },
     {
+      "path": ".codex/reviews/phase-15-final-local-hub-gate.md",
+      "size": 1206,
+      "sha256": "f1de7fc89f38454df2a6116b8750863bf8968da2a5494ec7e4239639d8bea5ef"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -713,6 +718,11 @@
       "sha256": "aa6734e173abbef18d5a2c8e01cf09f84e0c164bfe3b792143b4976253276368"
     },
     {
+      "path": ".codex/reviews/ui-ux/phase-15-final-local-hub-gate.md",
+      "size": 1106,
+      "sha256": "e0b3c768d4ef47dafdfefbdd30b069aca2bf9d52b9a0360500c87d9a00a1b9b9"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -903,9 +913,14 @@
       "sha256": "789d58acc26adbb937f3df0dc3b6d117ff6d951645928e48c6e4fbc37f056672"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-15-f.md",
+      "size": 794,
+      "sha256": "473b05563274bfdb153586f23213dd9e2abc384b895dca8b7fcf9a8fe24892b5"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 539,
-      "sha256": "1d0f642c21f3ae629eaa9d97f0d59f4c8ae6c4c84839b4f9c0d874cb8fecf4cb"
+      "size": 583,
+      "sha256": "8e6a42ddefe5346dbe121bda14177d21d828e8cf395383fe62d6cf1f8bb07996"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -934,13 +949,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 15484,
-      "sha256": "67a5d6166614e8d60c9041da8d6846cba4c15f9e8befc8d53c953fc4ac13f652"
+      "size": 15588,
+      "sha256": "9f819471746d222e508a351a33a36e5662e6ec1662cf188a98891d6b44d17f92"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 146164,
-      "sha256": "10ebe3f4eaf6d75fde21e3dbb740998f5a9c7256f5bb95be0787aebc0afa2b50"
+      "size": 146877,
+      "sha256": "04f51d226b92ebc0c33a69ec6b8a8bbad88521fc70647bd7d8eefe4d7855866e"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2254,8 +2269,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 57144,
-      "sha256": "75cb27d7248ed45c9ceb59cee4a310140ee29f23837fedffd50771c5f6ee9dee"
+      "size": 57347,
+      "sha256": "4b924d7048d17ba2a9eea2eacb3dc57042f41e51ce4ed10f1a65209e3a3b6f05"
     },
     {
       "path": "design/mockup/README.md",
