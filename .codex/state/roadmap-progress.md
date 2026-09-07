@@ -102,7 +102,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 15.F | complete — 2026-09-08 | Final Local Hub gate PASS; runtime/TLS/mdns-sd/pairing/auth controls and independent security review reconciled; 0/0/0; prossimo 16.0 |
 | 16 | current | Phase 16 sync in corso; 16.0 complete, 16.1 next |
 | 16.0 | complete — 2026-09-08 | Rust replicable operation schema with payload/tombstone, append-only log, deterministic revision/cursor and stale-write rejection; cargo test 16/16; 0/0/0; prossimo 16.1 |
-| 16.1 | planned | Push/pull transport, idempotency, replay protection and durable checkpoints |
+| 16.1 | complete — 2026-09-08 | Incremental push/pull, delivery replay rejection, cursor checkpoint bounds and operation idempotency; cargo test 17/17; 0/0/0; prossimo 16.2 |
 | 16.2 | planned | Offline queue, retry, partial/duplicate delivery and reconciliation |
 | 16.3 | planned | Explicit conflict detection, deterministic policy and conflict UI |
 | 16.4 | planned | Recovery, device revocation and multi-device verification |

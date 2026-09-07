@@ -1952,3 +1952,11 @@ Keep only the latest relevant evidence per completed phase.
 - Coverage: payload and tombstone preservation, deterministic revision/cursor assignment, duplicate idempotency and stale-revision conflict rejection.
 - No SQLite migration, ledger data, float amount or accounting invariant changed; no open P0/P1/P2.
 - Evidence: `.codex/reviews/phase-16-0-operation-schema.md`.
+
+# 16.1 — Push/pull transport and checkpoints — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="16.1 offline-first synchronization push pull transport idempotency replay protection durable checkpoints"` → `synchronization / CRITICAL / medium`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 17 passed, 0 failed.
+- Coverage: batch push, duplicate delivery ID replay rejection, incremental pull, bounded acknowledgement and operation-level idempotency.
+- No database migration or real ledger access; no open P0/P1/P2.
+- Evidence: `.codex/reviews/phase-16-1-push-pull-transport.md`.

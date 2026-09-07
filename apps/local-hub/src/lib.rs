@@ -12,7 +12,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::sync::Arc;
@@ -510,6 +510,56 @@ pub struct AppendOnlyOperationLog {
     revisions: HashMap<String, u64>,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct SyncCheckpoint {
+    pub cursor: u64,
+}
+
+#[derive(Default)]
+pub struct SyncTransport {
+    pub log: AppendOnlyOperationLog,
+    delivered_ids: HashSet<String>,
+    checkpoint: SyncCheckpoint,
+}
+
+impl SyncTransport {
+    pub fn push(
+        &mut self,
+        delivery_id: &str,
+        operations: impl IntoIterator<Item = ReplicableOperation>,
+    ) -> Result<Vec<OperationApplyResult>, TransportError> {
+        if !self.delivered_ids.insert(delivery_id.to_owned()) {
+            return Err(TransportError::ReplayDetected);
+        }
+        Ok(operations
+            .into_iter()
+            .map(|operation| self.log.apply(operation))
+            .collect())
+    }
+
+    pub fn pull(&self, after: u64) -> impl Iterator<Item = (u64, &ReplicableOperation)> {
+        self.log.after(after)
+    }
+
+    pub fn acknowledge(&mut self, cursor: u64) -> Result<SyncCheckpoint, TransportError> {
+        if cursor > self.log.operations.len() as u64 {
+            return Err(TransportError::CursorAhead);
+        }
+        self.checkpoint = SyncCheckpoint { cursor };
+        Ok(self.checkpoint)
+    }
+
+    pub fn checkpoint(&self) -> SyncCheckpoint {
+        self.checkpoint
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum TransportError {
+    ReplayDetected,
+    CursorAhead,
+}
+
 impl AppendOnlyOperationLog {
     pub fn apply(&mut self, mut operation: ReplicableOperation) -> OperationApplyResult {
         if let Some((cursor, revision)) = self.idempotency.get(&operation.idempotency_key) {
@@ -876,5 +926,32 @@ mod tests {
             }
         );
         assert!(log.after(0).next().unwrap().1.tombstone);
+    }
+
+    #[test]
+    fn sync_transport_rejects_duplicate_delivery_and_advances_checkpoint() {
+        let mut transport = SyncTransport::default();
+        let operation = ReplicableOperation {
+            idempotency_key: "op-transport-1".to_owned(),
+            device_id: "phone-1".to_owned(),
+            entity_id: "movement-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:payload".to_owned(),
+            payload: "{\"amountMinor\":200}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-08T00:00:00Z".to_owned(),
+        };
+        assert!(matches!(
+            transport.push("delivery-1", vec![operation]),
+            Ok(results) if results == vec![OperationApplyResult::Applied { cursor: 1, revision: 1 }]
+        ));
+        assert_eq!(
+            transport.push("delivery-1", Vec::new()),
+            Err(TransportError::ReplayDetected)
+        );
+        assert_eq!(transport.acknowledge(1), Ok(SyncCheckpoint { cursor: 1 }));
+        assert_eq!(transport.checkpoint(), SyncCheckpoint { cursor: 1 });
+        assert_eq!(transport.acknowledge(2), Err(TransportError::CursorAhead));
     }
 }

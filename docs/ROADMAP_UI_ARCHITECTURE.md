@@ -291,7 +291,8 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 15.F — Local Hub Rust final gate PASS; independent security review attached; next 16.0.
   autenticazione/rate limiting/audit/test negativi e gate finale.
 - [x] 16.0 — operation schema replicabile, payload/tombstone, log append-only, revisioni e cursori.
-- [ ] 16.1–16.4, 16.F — push/pull e cursori, idempotenza/replay,
+- [x] 16.1 — push/pull incrementale, replay protection tramite delivery ID e checkpoint di cursore.
+- [ ] 16.2–16.4, 16.F — code offline/retry, idempotenza avanzata,
   code offline/retry, conflitti espliciti e UI, recovery/revoca/multi-device e gate finale.
 - [ ] 17.0–17.5, 17.F — performance 100k+, quota/interruzioni/recovery, update Service Worker,
   regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.
