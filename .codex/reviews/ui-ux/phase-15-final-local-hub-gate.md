@@ -36,3 +36,5 @@ Security follow-up: pairing contract hardened; no UI surface changed.
 Discovery negative coverage added; no UI surface changed.
 
 Runtime hardening review completed; no UI surface changed.
+
+Manifest cleanup after removal of generated untracked Android artifact; no UI surface changed.

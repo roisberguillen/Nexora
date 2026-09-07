@@ -2683,11 +2683,6 @@
       "sha256": "121faaaa842348c3a7eced9c220e8cd523ffc8443589a62ba2ff39b80119042d"
     },
     {
-      "path": "Nexora-arm64-debug.apk",
-      "size": 169882664,
-      "sha256": "227eb1f83e37ff93388ff7a4fd959691f633f1839fbbca32aaa50751ee9586d8"
-    },
-    {
       "path": "package.json",
       "size": 2464,
       "sha256": "8e70f0843c03e4bc0109edb2f25e8713ae1612e71531f30c6e3e8f635db15299"
