@@ -26,3 +26,5 @@ Esito: PASS
 P0 aperti: Nessuno
 
 Gate result: PASS.
+
+Runtime update: backend listener/router evidence changed; no UI surface changed.

@@ -13,7 +13,7 @@ None.
 
 ### P1
 
-- `LH-15F-01` — The repository currently exposes typed Rust contracts and negative unit tests, but not a live Axum/Tokio Local Hub listener or mDNS/DNS-SD transport. A final LAN/authentication gate cannot be passed without exercising the real network boundary.
+- `LH-15F-01` — The repository now exposes a live Axum/Tokio router/runtime and in-process authorization tests, but the mDNS/DNS-SD provider adapter is still absent. A final LAN/discovery gate cannot be passed without exercising the real discovery boundary.
 - `LH-15F-02` — An independent network-security review required by the Nexora security/sync skills is unavailable in this execution environment.
 
 ### P2
@@ -22,8 +22,8 @@ None.
 
 ## Required unblock evidence
 
-1. Implement and test the live Rust transport against loopback and explicit LAN opt-in, with TLS and authenticated paired-device requests.
-2. Add mDNS/DNS-SD integration tests and verify no unauthenticated LAN access.
+1. Add the mDNS/DNS-SD provider adapter and integration tests, verifying no unauthenticated LAN access.
+2. Exercise the live Rust transport against loopback and explicit LAN opt-in with TLS and authenticated paired-device requests.
 3. Obtain an independent security review of binding, TLS, pairing, revocation, replay and audit behavior.
 
 ## Conclusion

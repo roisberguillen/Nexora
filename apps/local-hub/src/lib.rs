@@ -4,14 +4,110 @@
 //! the safe binding defaults and the wire-level operation metadata so later
 //! transport work cannot accidentally expose a database or an unauthenticated LAN port.
 
+use axum::{
+    Json, Router,
+    extract::State,
+    http::{HeaderMap, StatusCode, header},
+    response::IntoResponse,
+    routing::get,
+};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::sync::Arc;
+use tokio::sync::{Mutex, RwLock};
 
 pub const API_VERSION: u16 = 1;
 pub const DEFAULT_PORT: u16 = 43_173;
+
+#[derive(Clone)]
+pub struct LocalHubState {
+    pub pairing: Arc<RwLock<PairingRegistry>>,
+    pub rate_limiter: Arc<Mutex<RateLimiter>>,
+}
+
+impl Default for LocalHubState {
+    fn default() -> Self {
+        Self {
+            pairing: Arc::new(RwLock::new(PairingRegistry::default())),
+            rate_limiter: Arc::new(Mutex::new(RateLimiter::new(60, 60_000))),
+        }
+    }
+}
+
+pub fn router(state: LocalHubState) -> Router {
+    Router::new()
+        .route("/v1/health", get(health))
+        .route("/v1/authorize", get(authorize))
+        .with_state(state)
+}
+
+async fn health() -> impl IntoResponse {
+    (StatusCode::OK, Json(health_response()))
+}
+
+async fn authorize(State(state): State<LocalHubState>, headers: HeaderMap) -> impl IntoResponse {
+    let device_id = match headers
+        .get("x-nexora-device-id")
+        .and_then(|v| v.to_str().ok())
+    {
+        Some(value) if !value.is_empty() => value,
+        _ => return StatusCode::UNAUTHORIZED.into_response(),
+    };
+    let bearer = match headers
+        .get(header::AUTHORIZATION)
+        .and_then(|v| v.to_str().ok())
+    {
+        Some(value) => value.strip_prefix("Bearer ").unwrap_or(""),
+        None => "",
+    };
+    if bearer.is_empty() || !state.rate_limiter.lock().await.allow(device_id, now_ms()) {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
+    match state.pairing.read().await.authorize(device_id, bearer) {
+        Ok(()) => StatusCode::NO_CONTENT.into_response(),
+        Err(_) => StatusCode::FORBIDDEN.into_response(),
+    }
+}
+
+pub async fn serve(
+    config: TransportSecurityConfig,
+    state: LocalHubState,
+) -> Result<(), RuntimeError> {
+    let address = config.bind_addr().map_err(RuntimeError::Binding)?;
+    let app = router(state);
+    let listener = tokio::net::TcpListener::bind(address)
+        .await
+        .map_err(RuntimeError::Io)?;
+    if config.binding == BindingMode::Loopback {
+        return axum::serve(listener, app).await.map_err(RuntimeError::Io);
+    }
+    let tls = config.server_config().map_err(RuntimeError::Tls)?;
+    drop(listener);
+    axum_server::bind_rustls(
+        address,
+        axum_server::tls_rustls::RustlsConfig::from_config(Arc::new(tls)),
+    )
+    .serve(app.into_make_service())
+    .await
+    .map_err(RuntimeError::Io)
+}
+
+#[derive(Debug)]
+pub enum RuntimeError {
+    Binding(ConfigError),
+    Tls(TlsConfigError),
+    Io(std::io::Error),
+}
+
+fn now_ms() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64
+}
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -363,6 +459,9 @@ pub fn health_response() -> HealthResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use axum::body::Body;
+    use http::Request;
+    use tower::ServiceExt;
 
     #[test]
     fn defaults_to_loopback_and_authoritative_port() {
@@ -475,6 +574,32 @@ mod tests {
         let event = AuditEvent::request("phone-1", "pull", "denied");
         assert_eq!(event.outcome, "denied");
         assert!(!format!("{event:?}").contains("one-time-code"));
+    }
+
+    #[tokio::test]
+    async fn runtime_health_is_public_but_authorized_route_is_fail_closed() {
+        let app = router(LocalHubState::default());
+        let health = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/v1/health")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(health.status(), StatusCode::OK);
+        let unauthorized = app
+            .oneshot(
+                Request::builder()
+                    .uri("/v1/authorize")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(unauthorized.status(), StatusCode::UNAUTHORIZED);
     }
 
     #[test]

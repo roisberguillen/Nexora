@@ -1935,8 +1935,8 @@ Keep only the latest relevant evidence per completed phase.
 
 # 15.F — Final Local Hub gate — 2026-09-08 — BLOCKED
 
-- `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 11 passed, 0 failed.
+- `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 12 passed, 0 failed, including in-process HTTP health/authorization checks.
 - `pnpm codex:validate`: PASS. `pnpm manifest:check`: stale only because the new checkpoint must be included; no application failure.
-- Gate result: NOT PASS. The implementation contains contracts only; no live Axum/Tokio listener or mDNS/DNS-SD adapter is present, so LAN integration cannot be evidenced.
+- Gate result: NOT PASS. A live Axum/Tokio router/runtime is now present and in-process HTTP tested; the mDNS/DNS-SD provider adapter is still absent, so complete LAN discovery cannot be evidenced.
 - Security policy blocker: `nexora-sync` and `nexora-security` require independent review for network exposure; no independent reviewer capability is available in this run.
 - P0/P1/P2: 0/1/0. No subsequent Phase 16 task is authorized until 15.F is resolved.
