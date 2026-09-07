@@ -27,6 +27,7 @@ None.
 - `cargo test --manifest-path apps/local-hub/Cargo.toml`: 3 passed, 0 failed.
 - Negative checks: LAN binding rejected before security gates; operation JSON contains no SQLite payload.
 - Browser verification: N/A; this slice has no UI or listener.
+- Completion commit: task trailer `Nexora-Task: 15.0` is recorded on the closing commit.
 
 ## Conclusion
 
