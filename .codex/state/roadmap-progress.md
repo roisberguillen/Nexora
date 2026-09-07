@@ -81,12 +81,38 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.E.3 | complete — 2026-09-07 | Data Integrity & Recovery Final Gate PASS; round-trip, checksum, rollback, restore e adapter parity verdi; prossimo 12.5.E.F |
 | 12.5.E.F | complete — 2026-09-07 | Final Phase E Gate PASS; E.1–E.3, verify, manifest e state riconciliati; prossimo 12.5.F |
 | 12.5.F | complete — 2026-09-07 | Release Freeze PASS; baseline 12.5 congelata; prossimo 13.0 |
-| 13 | in progress — 2026-09-07 | 13.0–13.3 PASS; next task requires roadmap registration |
+| 13 | in progress — 2026-09-07 | 13.0–13.3 PASS; 13.4 and 13.F registered as pending |
 | 13.0 | complete — 2026-09-07 | Tauri build, native adapter, cargo locked check e desktop startup smoke PASS; prossimo 13.1 |
 | 13.1 | complete — 2026-09-07 | Desktop shell/native persistence parity PASS; 76 tests, cargo locked check, build e startup smoke; prossimo 13.2 |
 | 13.2 | complete — 2026-09-07 | Desktop packaging readiness PASS; MSI/NSIS, cargo locked check, verify e startup smoke; prossimo 13.3 |
-| 13.3 | complete — 2026-09-07 | macOS x64/arm64 matrix and full verify PASS in CI 34156198571; Linux baselines/root overflow hardened; 0/0/0; next task requires roadmap registration |
-| 14–17 | planned | no completion claim |
+| 13.3 | complete — 2026-09-07 | macOS x64/arm64 matrix and full verify PASS in CI 34156198571; Linux baselines/root overflow hardened; 0/0/0; next 13.4 |
+| 13.4 | planned | Desktop final gate: installer/artifact sanity, native backup/restore evidence and release documentation without duplicating 13.0–13.3 |
+| 13.F | planned | Final Desktop gate: Windows/macOS acceptance, evidence, manifest and regression closure |
+| 14.0 | planned | Tauri Android initialization and reproducible native project/build baseline |
+| 14.1 | planned | Android SQLite native adapter, shared schema and migration parity |
+| 14.2 | planned | Android persistence, lifecycle, startup and recovery behavior |
+| 14.3 | planned | Responsive mobile UI plus least-privilege file/document picker workflows |
+| 14.4 | planned | Android backup/restore, App Lock, Keystore/biometric boundary and permissions |
+| 14.5 | planned | APK/AAB packaging and emulator/device verification |
+| 14.F | planned | Final Android gate and release evidence |
+| 15.0 | planned | Local Hub Rust service foundation and authoritative API contract |
+| 15.1 | planned | Opt-in LAN binding, TLS and device identity |
+| 15.2 | planned | mDNS/DNS-SD discovery, explicit/QR pairing and device revocation |
+| 15.3 | planned | Authenticated operations, rate limiting, audit and negative security tests |
+| 15.F | planned | Final Local Hub gate; no open LAN/authentication findings |
+| 16.0 | planned | Replicable operation schema, append-only log, payloads, revisions and cursors |
+| 16.1 | planned | Push/pull transport, idempotency, replay protection and durable checkpoints |
+| 16.2 | planned | Offline queue, retry, partial/duplicate delivery and reconciliation |
+| 16.3 | planned | Explicit conflict detection, deterministic policy and conflict UI |
+| 16.4 | planned | Recovery, device revocation and multi-device verification |
+| 16.F | planned | Final offline-first sync gate |
+| 17.0 | planned | Large-dataset performance, pagination/query strategy and 100k+ records |
+| 17.1 | planned | Storage quota, interrupted writes/import/backup and recovery |
+| 17.2 | planned | Service Worker A→B update and cross-platform backup/restore regression |
+| 17.3 | planned | Final security, supply-chain, secret scan and dependency audit |
+| 17.4 | planned | Bundle/startup performance, platform regressions and full E2E |
+| 17.5 | planned | Release candidate evidence and operational readiness reconciliation |
+| 17.F | planned | Final READY/NOT READY gate for Nexora 1.0 |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

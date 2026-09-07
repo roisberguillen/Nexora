@@ -568,6 +568,11 @@
       "sha256": "9dbc1e5726a0610832850d356265554647b2ff9447ae52c1e194f74f083f224a"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-roadmap-13-17-registration.md",
+      "size": 1926,
+      "sha256": "8b1a0c60d104d01c0ee175e3988057a5d5784dfe39a685d54ea14e6296c21be8"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-07-roadmap-autopilot.md",
       "size": 1581,
       "sha256": "7664751a2e1d83e4ea63e0e7e35cf1de7c1ef09f7163d829444f39df1adacab3"
@@ -739,8 +744,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 505,
-      "sha256": "9221dc363d19167165324abe40c7a02fea6a26bbd36baeca63f6679992caa026"
+      "size": 455,
+      "sha256": "c823411d465ee83c25a332937e699ea425ce92dc62f175b327c8d959732438c4"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -769,13 +774,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 12013,
-      "sha256": "f16af008c24eb9b8b6a589f47445c96f347d94e38723d79d3a514b53424f0087"
+      "size": 14295,
+      "sha256": "c3e76124ce0a9816a6d1ac714225f8a3b641ba94c90bc6485d3fa64d141dc4b7"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 137190,
-      "sha256": "6f15612b41cb273d03ff7e1823e6b147a3ca9e24932d3494f92c111f1f335319"
+      "size": 137899,
+      "sha256": "53451c073e5f130102cf60ae0d556cfa8ce647db755340ceb63446f82f3fb751"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2069,8 +2074,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 55009,
-      "sha256": "eaed10e0e3cd8b7dd5e3a0a707b695d31be0881c12b6b401c118a575500733e7"
+      "size": 55144,
+      "sha256": "6cf711206cc112f70cf3320297348fd8b6374854ec8de9024cf287959e4a7d26"
     },
     {
       "path": "design/mockup/README.md",
@@ -2374,8 +2379,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 18464,
-      "sha256": "201a536007b37b5fa0ce738619964ba21a8571f9dcaffae4c87d9afd3183e437"
+      "size": 19690,
+      "sha256": "655434a4878a9d1c6c12bb8a9a9911bdc1a86180baadc0daf43cea6c8faa3bdf"
     },
     {
       "path": "docs/ROADMAP.md",

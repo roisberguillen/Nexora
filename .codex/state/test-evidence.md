@@ -1,5 +1,16 @@
 # Test evidence
 
+## Roadmap registration Phase 13–17 — 2026-09-07
+
+- Reconciled authoritative docs, ADR 0016–0019, repository map, code inventory and 13.0–13.3
+  reports. No new task was marked complete; 13.4 is the first pending atomic task.
+- Existing evidence confirms 13.0–13.3 only; Android has no initialized application target and
+  Local Hub/sync currently expose contracts/prototype storage rather than the final Rust/LAN and
+  multi-device implementation.
+- No ledger, schema, migration or financial invariant changed during registration.
+- Validation commands are recorded after this entry: `codex:validate`, `codex:next`,
+  `codex:can-advance`, `codex:autopilot-status`, `codex:test`, `manifest:check`.
+
 ## 13.3 — Cross-platform desktop release matrix — 2026-09-07 — COMPLETE / PASS
 
 - Routing: `ui_component / STANDARD / low`; validation only, no runtime/schema/data change.

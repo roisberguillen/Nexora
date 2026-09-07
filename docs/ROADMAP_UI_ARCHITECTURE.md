@@ -19,11 +19,11 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
 | 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
-| 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; prossimo task da registrare |
-| 14 | Applicazione Android | successiva alla Fase 13 |
-| 15 | Nexora Local Hub | successiva alla Fase 14 |
-| 16 | Sincronizzazione offline-first | successiva alla Fase 15 |
-| 17 | Hardening finale | successiva alla Fase 16 |
+| 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; 13.4 e 13.F pending |
+| 14 | Applicazione Android | planned — 14.0–14.5 e 14.F pending |
+| 15 | Nexora Local Hub | planned — 15.0–15.3 e 15.F pending |
+| 16 | Sincronizzazione offline-first | planned — 16.0–16.4 e 16.F pending |
+| 17 | Hardening finale | planned — 17.0–17.5 e 17.F pending |
 
 Ogni fase si chiude solo con test proporzionati, aggiornamento documentale, commit Conventional
 Commit e push su `origin/main`.
@@ -273,3 +273,20 @@ Commit e push su `origin/main`.
 - [x] 13.2 ha abilitato il bundle distributivo, dichiarato i formati MSI/NSIS e gli asset icona
   esistenti, e prodotto entrambi gli installer Windows con `pnpm verify` e startup smoke verdi.
 - [x] 13.3 Cross-platform desktop release matrix — PASS; macOS x64/arm64 `cargo check --locked` and Tauri bundles plus full verify (`433 passed`, `233 skipped`) green in CI run `34156198571`; next task requires roadmap registration.
+
+### Roadmap atomica restante registrata — 2026-09-07
+
+La ricognizione dopo 13.3 distingue le verifiche desktop già chiuse dai lavori non ancora
+implementati. Le righe seguenti sono pianificate e non costituiscono una dichiarazione di PASS.
+
+- [ ] 13.4 — Desktop final gate: sanity di installer/artifact, evidenza backup/restore nativo e
+  riconciliazione release senza ripetere 13.0–13.3.
+- [ ] 13.F — Final Desktop gate.
+- [ ] 14.0–14.5, 14.F — inizializzazione Android Tauri, SQLite/migrazioni, lifecycle, UI/picker,
+  backup/restore e sicurezza, packaging APK/AAB, verifica emulator/device e gate finale.
+- [ ] 15.0–15.3, 15.F — Local Hub Rust definitivo, LAN opt-in/TLS/identità, discovery/pairing/revoca,
+  autenticazione/rate limiting/audit/test negativi e gate finale.
+- [ ] 16.0–16.4, 16.F — operation log replicabile, push/pull e cursori, idempotenza/replay,
+  code offline/retry, conflitti espliciti e UI, recovery/revoca/multi-device e gate finale.
+- [ ] 17.0–17.5, 17.F — performance 100k+, quota/interruzioni/recovery, update Service Worker,
+  regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.
