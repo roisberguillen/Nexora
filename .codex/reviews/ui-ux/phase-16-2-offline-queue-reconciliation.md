@@ -26,3 +26,5 @@ Esito: PASS
 P0 aperti: Nessuno
 
 Gate result: PASS.
+
+Checkpoint 16.2 recorded after validation; no UI surface changed.
