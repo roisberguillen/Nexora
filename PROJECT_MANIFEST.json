@@ -529,8 +529,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-13-3-cross-platform-ui-scope.md",
-      "size": 2032,
-      "sha256": "230e1a3e27cfc2ca1cc6864c1b80c4f70b1aeb5c6f680df08d92ca42afc3ab48"
+      "size": 2010,
+      "sha256": "7f6ba5e5d9ec8d6c387b0961d31f937e45db5eb4764f8c8fcfae5dd6bc9eb939"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
@@ -769,8 +769,8 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 11988,
-      "sha256": "0d8fac117cc38d74ffe002efac188966b6307ebdafb74db3ded65a96182ccf5f"
+      "size": 11961,
+      "sha256": "f19dc9d1c34ac409e7cf6c4dba2eb8357c0e7623dad5e48d02e5139c064447eb"
     },
     {
       "path": ".codex/state/test-evidence.md",
@@ -2375,7 +2375,7 @@
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
       "size": 18420,
-      "sha256": "6497dca3d0665cbc381a4cdaf8bbe1391211902343dd03e53df5dae370599856"
+      "sha256": "6d0e8ab3baa7ca828eb5914fb1e62dd128ca2bdb3e241d9c4dce7eb8aa45b998"
     },
     {
       "path": "docs/ROADMAP.md",

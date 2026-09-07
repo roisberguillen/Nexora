@@ -29,3 +29,6 @@ P0 aperti: Nessuno
 P1 aperti: Nessuno
 P2 aperti: Nessuno
 Esito: PASS
+
+Final evidence: CI run `34156198571` verified the shared UI on Linux Playwright and Tauri bundles
+on both macOS architectures; next 13.4 is not started.
