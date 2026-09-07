@@ -1985,3 +1985,11 @@ Keep only the latest relevant evidence per completed phase.
 - Coverage: recovery restores bounded checkpoint and pending deliveries without dropping data; authorized push rejects revoked devices; two paired devices produce an explicit stale-revision conflict.
 - No SQLite migration, real ledger access, float amount or accounting invariant changed; P0/P1/P2 open 0/0/0.
 - Evidence: `.codex/reviews/phase-16-4-recovery-revocation-multidevice.md`.
+
+# 16.F — Final offline-first sync gate — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="16.F final offline-first synchronization gate operation log transport queue conflicts recovery revocation"` → `synchronization / CRITICAL / medium`.
+- Reconciled task evidence: 16.0 cargo 16/16, 16.1 cargo 17/17, 16.2 cargo 19/19, 16.3 cargo 20/20 plus UI 2/2, 16.4 cargo 22/22.
+- Final repository gate: `pnpm verify` PASS — 141 files passed, 1 skipped; 635 tests passed, 4 skipped; build PASS. `pnpm test:ui-ux` 4/4; `pnpm codex:test` 12/12; manifest current; orchestrator valid.
+- Accounting invariants: no SQLite migration, real ledger access, float amount or silent conflict resolution; P0/P1/P2 open 0/0/0.
+- Evidence: `.codex/reviews/phase-16-f-final-sync-gate.md`.

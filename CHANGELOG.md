@@ -863,3 +863,4 @@
 
 - 16.3: added explicit sync conflict records, deterministic manual resolution policy and accessible review banner without automatic overwrite.
 - 16.4: added non-destructive sync recovery, revocation-aware authorization and multi-device conflict verification.
+- 16.F: closed the offline-first synchronization gate with reconciled operation, transport, queue, conflict and recovery evidence.

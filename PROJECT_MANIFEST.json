@@ -243,6 +243,11 @@
       "sha256": "646d56f488df9df662a91729c36dc5f3e23381a52f1a6208e3fd19ca76ed0f64"
     },
     {
+      "path": ".codex/reviews/phase-16-f-final-sync-gate.md",
+      "size": 1199,
+      "sha256": "8fdb1721d6c2f02fa8f99882a8586c3e13113fef190d875b238bb4106d9dc91a"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -773,6 +778,16 @@
       "sha256": "bc2d38cfb0e66a851205361ed0fcd05495e6ebb8b9fdc750d21bf25d17bc3be9"
     },
     {
+      "path": ".codex/reviews/ui-ux/phase-16-4-recovery-revocation-multidevice.md",
+      "size": 1160,
+      "sha256": "eb483f964b7ffb74a10be9d79b9a48cd618ee7a8341400b3cae89ed992dbaedc"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/phase-16-f-final-sync-gate.md",
+      "size": 1033,
+      "sha256": "fc6551df790b5d4be264313e04e03379d718b28d3c2de3644d7566f9af9d8cfa"
+    },
+    {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
       "size": 229,
       "sha256": "46dd020feb3d6cd5b135f9b06b3a6113db62ec6d5ad54e624d2dc108fb4f0b67"
@@ -993,9 +1008,14 @@
       "sha256": "cc731da77d8c18814fae4dd45b4f34faf260688989b3d67ffe8e38ea0ff24705"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-16-f.md",
+      "size": 843,
+      "sha256": "a2902aa6b52195ebcbfa7b0e47ed4b2dda549665a8f980c0f0ed314437db2bdf"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 516,
-      "sha256": "8b9fa5d9ac18697e7439ced3f3c8f04e10935620cef7ba8f0fc4dfe30fac92c0"
+      "size": 514,
+      "sha256": "8800869caa449d4b16363811015acafcd82bbd4acbabf558bddaa222775d35b9"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1024,13 +1044,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 16154,
-      "sha256": "30dfff5517924c72d9365517278180adc5349df38664c9de232949eaf6c29bf5"
+      "size": 16399,
+      "sha256": "d3a8a5eb2143ee4d516699c0f55ace0aa6f0608f8f223460257f2ef03ebc5dc1"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 151490,
-      "sha256": "181abab3de69bada5ae88ac2c7b7ab9b8030f4cdf512e0433189113179b2d5e2"
+      "size": 152263,
+      "sha256": "2ec8a0ac4e63576b46da9c3809f6e63e1247672a54964641e09287384410fade"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2344,8 +2364,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 58431,
-      "sha256": "ac65d2340882171dd02aba83f4d58f19556effdc9fc0f7976901b5d322448ac7"
+      "size": 58562,
+      "sha256": "43268e43cecf8486d46ec129b9b5959fce9190fd43cfb31b7f5e9d168ec10e34"
     },
     {
       "path": "design/mockup/README.md",
@@ -2649,8 +2669,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 20542,
-      "sha256": "c23c18674fb6653761418336c92459c42c787c87be95e902d97af243e1cacf3c"
+      "size": 20612,
+      "sha256": "ffd510754cef0db0747f45d2a68c89bc026152d9ca9a2cf88f0ed5f11cd95361"
     },
     {
       "path": "docs/ROADMAP.md",

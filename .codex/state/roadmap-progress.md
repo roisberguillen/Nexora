@@ -100,13 +100,13 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 15.2 | complete — 2026-09-08 | Explicit `_nexora._tcp` advertisement contract, single-use expiring QR grant and device revocation; cargo test 8/8; 0/0/0; prossimo 15.3 |
 | 15.3 | complete — 2026-09-08 | Paired-device authorization, per-device rate limiting, redacted audit metadata and negative security tests; cargo test 11/11; 0/0/0; prossimo 15.F |
 | 15.F | complete — 2026-09-08 | Final Local Hub gate PASS; runtime/TLS/mdns-sd/pairing/auth controls and independent security review reconciled; 0/0/0; prossimo 16.0 |
-| 16 | current | Phase 16 sync in corso; 16.0 complete, 16.1 next |
+| 16 | complete — 2026-09-08 | `16.F COMPLETE / PASS`; offline-first sync evidence reconciled; prossimo 17.0 |
 | 16.0 | complete — 2026-09-08 | Rust replicable operation schema with payload/tombstone, append-only log, deterministic revision/cursor and stale-write rejection; cargo test 16/16; 0/0/0; prossimo 16.1 |
 | 16.1 | complete — 2026-09-08 | Incremental push/pull, delivery replay rejection, cursor checkpoint bounds and operation idempotency; cargo test 17/17; 0/0/0; prossimo 16.2 |
 | 16.2 | complete — 2026-09-08 | Offline queue, retry attempt tracking, partial/duplicate delivery and explicit reconciliation; cargo test 19/19; 0/0/0; prossimo 16.3 |
 | 16.3 | complete — 2026-09-08 | Explicit conflict records, deterministic manual policy and accessible review UI without automatic overwrite/merge; cargo test 20/20, focused UI 2/2; 0/0/0; prossimo 16.4 |
 | 16.4 | complete — 2026-09-08 | Non-destructive checkpoint/pending-delivery recovery, revoked-device push rejection and two-device conflict verification; cargo test 22/22; 0/0/0; prossimo 16.F |
-| 16.F | planned | Final offline-first sync gate |
+| 16.F | complete — 2026-09-08 | Final sync gate: append-only operations, push/pull replay protection, offline reconciliation, explicit conflicts, recovery, revocation and multi-device tests; cargo 22/22, full verify 635/639; 0/0/0; prossimo 17.0 |
 | 17.0 | planned | Large-dataset performance, pagination/query strategy and 100k+ records |
 | 17.1 | planned | Storage quota, interrupted writes/import/backup and recovery |
 | 17.2 | planned | Service Worker A→B update and cross-platform backup/restore regression |
