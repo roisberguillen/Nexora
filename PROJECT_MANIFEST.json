@@ -104,8 +104,13 @@
     },
     {
       "path": ".codex/reviews/phase-12.5-e-1-final-quality-gate.md",
-      "size": 2700,
-      "sha256": "97297643abbb8eb1033eaf1cafd59b80b3ad5ff539c986ad02a7d8caabb7a0da"
+      "size": 2696,
+      "sha256": "a990405de763ef2d06e779e9e32459a0fc32ebafeba87c83360c8271a7543951"
+    },
+    {
+      "path": ".codex/reviews/phase-12.5-e-2-real-flow-regression.md",
+      "size": 4228,
+      "sha256": "4b10347b41f5f0f1d199c248c50910360cf962aa0b3f78d60b9e45727894fa5c"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -654,8 +659,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 380,
-      "sha256": "a3f03dda9a891e74b56e72fea271fbd46b7094e711bbb62e7eb8b683df1ee41e"
+      "size": 408,
+      "sha256": "60220ca2f2064507e5ccd80f892a4a3e938622e05b9b1c082646dc00eaad8e65"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -684,13 +689,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 10747,
-      "sha256": "9e87ba0ed812316a2f34927994c2273a1e263a160f4c224fd76019d743df20cc"
+      "size": 10866,
+      "sha256": "a6bdd84840a74ed54fe5410af7ccd6796af30e8b253498e53d910a56db9d9d3a"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 127793,
-      "sha256": "efb7bb91f563fedba8f712b7d4ff316d6262cd7eda51cc877db04e525400a688"
+      "size": 128964,
+      "sha256": "74a6f1837806e8dc0084e1d134ca92a901f53d6507b096357c4ac2a81f74649c"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1984,8 +1989,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 53187,
-      "sha256": "ed8b52e98a9e797460373edf96c76ddc6bc0c22f1147be9660d03a5de8e9599f"
+      "size": 53366,
+      "sha256": "5ee9ec4b0fe14dc84238a9d68316661ccca99144bc81bb7a66469195cec145e3"
     },
     {
       "path": "design/mockup/README.md",

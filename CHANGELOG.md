@@ -14,6 +14,7 @@
 - Completed 12.5.D.4 independent security review: threat model, secret/log scan, backup/restore, App Lock, import/export, CSP, Tauri, PWA, Local Host and supply-chain gates passed with no P0/P1/P2 findings; D.F remains next.
 - Closed Phase 12.5.D with `12.5.D COMPLETE / PASS`: D.1–D.4 evidence reconciled, fresh verify/manifest gates green, and no P0/P1/P2 findings; 12.5.E.1 remains next and not started.
 - Completed 12.5.E.1 Final Quality Gate: frozen install, verify, full 666-test E2E, manifest and state validation green; 12.5.E.2 remains next.
+- Completed 12.5.E.2 Real-Flow Full Regression Gate: critical financial/operational flows, persistence, import idempotency, undo and backup/restore passed; 12.5.E.3 remains next.
 
 ## 2026-09-06
 

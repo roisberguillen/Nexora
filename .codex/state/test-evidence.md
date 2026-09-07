@@ -1,5 +1,20 @@
 # Test evidence
 
+## 12.5.E.2 — Real-Flow Full Regression Gate — 2026-09-07
+
+- Routing: `localized_bug / STANDARD / low`; prerequisiti D PASS ed E.1 PASS confermati.
+- Targeted real-flow suite: dieci spec C4 eseguite con browser reale, persistenza prevista e
+  command layer: `83 passed`, `91 skipped`, `0 failed`.
+- Full E2E: `pnpm test:e2e` → `433 passed`, `233 skipped`, `0 failed` su 666; coperti startup,
+  conti, entrate/uscite, trasferimenti, budget, ricorrenze, allocazioni, prestiti, investimenti,
+  analytics, diario, categorie, tag, import Money Manager, reimport/deduplica, undo, export,
+  backup/restore, notifiche, preferenze, App Lock, offline/reload/reopen e viewport 320/768/1440.
+- Quality gate: `pnpm verify` → format/lint/typecheck/build PASS; Vitest `633 passed`, `4 skipped`.
+  `pnpm manifest:check` PASS. Warning non bloccanti: `scrollTo()` jsdom e chunk-size advisory Vite.
+- Invarianti: trasferimenti neutrali e bilanciati; import idempotente; undo limitato al batch;
+  restore coerente con dataset A; nessuna perdita/corruzione dati o failure nascosta.
+- Result: `12.5.E.2 = PASS`; next `12.5.E.3 — Data Integrity & Recovery Final Gate`, non iniziato.
+
 ## 12.5.E.1 — Final Quality Gate — 2026-09-07
 
 - Routing: `localized_bug / STANDARD / low`; gate finale, nessuna modifica runtime/UI o nuova
