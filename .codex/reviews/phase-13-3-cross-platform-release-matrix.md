@@ -31,6 +31,9 @@ The full repository run exposed a timing-sensitive focus assertion in `Transacti
 The test now waits for the existing `requestAnimationFrame` focus restoration; application code is
 unchanged. Local targeted and full verification both pass after this test-only hardening.
 
+The first remote rerun passed unit/build/manifest gates but exceeded the CI `verify` timeout during
+the full Playwright suite at 20 minutes. The timeout is now 45 minutes; test coverage is unchanged.
+
 ## Finding
 
 | ID | Surface/reference | Category | Viewport | Current behavior | Expected behavior | Severity | Required correction | State |
