@@ -33,3 +33,5 @@ None.
 ## Conclusion
 
 `LARGE_DATASET_PERFORMANCE_PASS` — 17.0 complete; next authorized task is 17.1.
+
+Gate result: PASS.

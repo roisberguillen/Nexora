@@ -2002,3 +2002,4 @@ Keep only the latest relevant evidence per completed phase.
 - `$env:NEXORA_HARDENING_BENCHMARK="1"; pnpm exec vitest run test/benchmarks/hardeningBenchmark.test.ts`: 1 file, 4 tests passed, including 100k synthetic records.
 - Existing transaction pagination caps rendered rows at 100 and normalizes out-of-range pages; no repository/query or accounting invariant changed.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-0-large-dataset-performance.md`.
+- Orchestrator follow-up: added an explicit standalone `PASS` marker and corrected the current task phase to Phase 17 after the gate parser rejected the underscored token.
