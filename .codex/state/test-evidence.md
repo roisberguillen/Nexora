@@ -1,5 +1,14 @@
 # Test evidence
 
+## 13.4 — Desktop final gate — 2026-09-07 — COMPLETE / PASS
+
+- `pnpm test -- packages/database-tauri/src packages/database/src/backup packages/database/src/sqlite` → 7 files, 68 passed, 0 failed.
+- `pnpm --filter @nexora/database-tauri typecheck` → PASS; `cargo check --locked` → PASS.
+- `pnpm --filter @nexora/web tauri build` → PASS; Windows MSI and NSIS artifacts produced.
+- `pnpm verify` → PASS: 633 passed, 4 skipped, format/lint/typecheck/build green.
+- No code, schema, migration, ledger or financial invariant changed; P0/P1/P2 = 0/0/0.
+- Review: `.codex/reviews/phase-13-4-desktop-final-gate.md`; next `13.F`.
+
 ## Roadmap registration Phase 13–17 — 2026-09-07
 
 - Reconciled authoritative docs, ADR 0016–0019, repository map, code inventory and 13.0–13.3

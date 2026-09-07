@@ -148,6 +148,11 @@
       "sha256": "e23367efed267b93a9f049844325a55ec0ffafd60c1bb355d76451e41d0dd3fe"
     },
     {
+      "path": ".codex/reviews/phase-13-4-desktop-final-gate.md",
+      "size": 1657,
+      "sha256": "91713b6bb210db08f9cc5d2a35f5b61f9df84fbce9e4ca3f62ec4c8a9c2ab968"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -533,6 +538,11 @@
       "sha256": "75fff4cfa009e8616eb80486cf3fda4d43e56659fcdb373997974d35401badcf"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-13-4-desktop-final-gate.md",
+      "size": 1621,
+      "sha256": "4031a7eeed4bf8b2c4d96accde642c3875193302b6117609b1d7a0cb266bf60d"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
       "size": 1517,
       "sha256": "b21c75a02840cef4152897f8e7adcd26b032e15659983afa335b2c80c184f497"
@@ -744,8 +754,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 455,
-      "sha256": "c823411d465ee83c25a332937e699ea425ce92dc62f175b327c8d959732438c4"
+      "size": 417,
+      "sha256": "87206f866d96b60250599698113992267144dce71c3c7672b4c05d8113adc2ca"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -774,13 +784,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 14295,
-      "sha256": "c3e76124ce0a9816a6d1ac714225f8a3b641ba94c90bc6485d3fa64d141dc4b7"
+      "size": 14306,
+      "sha256": "ac348fbcffb182669ffb2cf744540f7296b2c5d807642d4769e605792ef16134"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 137899,
-      "sha256": "53451c073e5f130102cf60ae0d556cfa8ce647db755340ceb63446f82f3fb751"
+      "size": 138536,
+      "sha256": "c5356bf31cb78ac132f593886bc49154c2f350b74cf899f2954c0a4d5e9b119e"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2074,8 +2084,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 55144,
-      "sha256": "6cf711206cc112f70cf3320297348fd8b6374854ec8de9024cf287959e4a7d26"
+      "size": 55293,
+      "sha256": "3372a3df10873bcf7735b374f379ab7e676954b573c6f4ae79f2b10a8e692674"
     },
     {
       "path": "design/mockup/README.md",

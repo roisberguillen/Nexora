@@ -86,7 +86,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 13.1 | complete — 2026-09-07 | Desktop shell/native persistence parity PASS; 76 tests, cargo locked check, build e startup smoke; prossimo 13.2 |
 | 13.2 | complete — 2026-09-07 | Desktop packaging readiness PASS; MSI/NSIS, cargo locked check, verify e startup smoke; prossimo 13.3 |
 | 13.3 | complete — 2026-09-07 | macOS x64/arm64 matrix and full verify PASS in CI 34156198571; Linux baselines/root overflow hardened; 0/0/0; next 13.4 |
-| 13.4 | planned | Desktop final gate: installer/artifact sanity, native backup/restore evidence and release documentation without duplicating 13.0–13.3 |
+| 13.4 | complete — 2026-09-07 | Native backup/restore tests 68/68, locked check, Windows MSI/NSIS build and full verify 633 passed/4 skipped; 0/0/0; prossimo 13.F |
 | 13.F | planned | Final Desktop gate: Windows/macOS acceptance, evidence, manifest and regression closure |
 | 14.0 | planned | Tauri Android initialization and reproducible native project/build baseline |
 | 14.1 | planned | Android SQLite native adapter, shared schema and migration parity |
