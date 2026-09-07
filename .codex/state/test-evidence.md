@@ -1960,3 +1960,11 @@ Keep only the latest relevant evidence per completed phase.
 - Coverage: batch push, duplicate delivery ID replay rejection, incremental pull, bounded acknowledgement and operation-level idempotency.
 - No database migration or real ledger access; no open P0/P1/P2.
 - Evidence: `.codex/reviews/phase-16-1-push-pull-transport.md`.
+
+# 16.2 — Offline queue and reconciliation — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="16.2 offline-first synchronization queue retry partial duplicate delivery reconciliation"` → `synchronization / CRITICAL / medium`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 19 passed, 0 failed.
+- Coverage: partial delivery retention, retry attempt increment, complete Applied acknowledgement, Duplicate acknowledgement and Conflict retention.
+- No silent conflict deletion, SQLite migration or real ledger access; no open P0/P1/P2.
+- Evidence: `.codex/reviews/phase-16-2-offline-queue-reconciliation.md`.

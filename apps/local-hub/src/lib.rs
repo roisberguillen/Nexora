@@ -12,7 +12,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::sync::Arc;
@@ -560,6 +560,72 @@ pub enum TransportError {
     CursorAhead,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct QueuedDelivery {
+    pub delivery_id: String,
+    pub operations: Vec<ReplicableOperation>,
+    pub attempts: u32,
+}
+
+#[derive(Default)]
+pub struct OfflineQueue {
+    pending: VecDeque<QueuedDelivery>,
+}
+
+impl OfflineQueue {
+    pub fn enqueue(
+        &mut self,
+        delivery_id: impl Into<String>,
+        operations: Vec<ReplicableOperation>,
+    ) {
+        self.pending.push_back(QueuedDelivery {
+            delivery_id: delivery_id.into(),
+            operations,
+            attempts: 0,
+        });
+    }
+
+    pub fn next(&mut self, max_deliveries: usize) -> Vec<QueuedDelivery> {
+        self.pending
+            .iter_mut()
+            .take(max_deliveries)
+            .map(|delivery| {
+                delivery.attempts = delivery.attempts.saturating_add(1);
+                delivery.clone()
+            })
+            .collect()
+    }
+
+    pub fn acknowledge(&mut self, delivery_id: &str) -> bool {
+        let before = self.pending.len();
+        self.pending
+            .retain(|delivery| delivery.delivery_id != delivery_id);
+        before != self.pending.len()
+    }
+
+    pub fn pending_count(&self) -> usize {
+        self.pending.len()
+    }
+}
+
+pub fn reconcile_delivery(
+    queue: &mut OfflineQueue,
+    delivery: &QueuedDelivery,
+    results: &[OperationApplyResult],
+) -> bool {
+    let complete = results.len() == delivery.operations.len()
+        && results.iter().all(|result| {
+            matches!(
+                result,
+                OperationApplyResult::Applied { .. } | OperationApplyResult::Duplicate { .. }
+            )
+        });
+    if complete {
+        queue.acknowledge(&delivery.delivery_id);
+    }
+    complete
+}
+
 impl AppendOnlyOperationLog {
     pub fn apply(&mut self, mut operation: ReplicableOperation) -> OperationApplyResult {
         if let Some((cursor, revision)) = self.idempotency.get(&operation.idempotency_key) {
@@ -953,5 +1019,71 @@ mod tests {
         assert_eq!(transport.acknowledge(1), Ok(SyncCheckpoint { cursor: 1 }));
         assert_eq!(transport.checkpoint(), SyncCheckpoint { cursor: 1 });
         assert_eq!(transport.acknowledge(2), Err(TransportError::CursorAhead));
+    }
+
+    #[test]
+    fn offline_queue_retries_partial_delivery_without_dropping_operations() {
+        let operation = ReplicableOperation {
+            idempotency_key: "op-queue-1".to_owned(),
+            device_id: "phone-1".to_owned(),
+            entity_id: "movement-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:payload".to_owned(),
+            payload: "{\"amountMinor\":300}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-08T00:00:00Z".to_owned(),
+        };
+        let mut queue = OfflineQueue::default();
+        queue.enqueue("delivery-queue-1", vec![operation]);
+        let first = queue.next(1).pop().unwrap();
+        assert_eq!(first.attempts, 1);
+        assert!(!reconcile_delivery(&mut queue, &first, &[]));
+        assert_eq!(queue.pending_count(), 1);
+        let retry = queue.next(1).pop().unwrap();
+        assert_eq!(retry.attempts, 2);
+        assert!(reconcile_delivery(
+            &mut queue,
+            &retry,
+            &[OperationApplyResult::Applied {
+                cursor: 1,
+                revision: 1
+            }]
+        ));
+        assert_eq!(queue.pending_count(), 0);
+    }
+
+    #[test]
+    fn reconciliation_accepts_duplicate_delivery_results_but_not_conflicts() {
+        let mut queue = OfflineQueue::default();
+        let operation = ReplicableOperation {
+            idempotency_key: "op-queue-2".to_owned(),
+            device_id: "phone-1".to_owned(),
+            entity_id: "movement-2".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:payload".to_owned(),
+            payload: "{}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-08T00:00:00Z".to_owned(),
+        };
+        queue.enqueue("delivery-queue-2", vec![operation]);
+        let delivery = queue.next(1).pop().unwrap();
+        assert!(!reconcile_delivery(
+            &mut queue,
+            &delivery,
+            &[OperationApplyResult::Conflict {
+                current_revision: 1
+            }]
+        ));
+        assert!(reconcile_delivery(
+            &mut queue,
+            &delivery,
+            &[OperationApplyResult::Duplicate {
+                cursor: 1,
+                revision: 1
+            }]
+        ));
+        assert_eq!(queue.pending_count(), 0);
     }
 }
