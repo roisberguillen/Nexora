@@ -16,6 +16,7 @@ use std::collections::HashMap;
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::sync::Arc;
+use subtle::ConstantTimeEq;
 use tokio::sync::{Mutex, RwLock};
 
 pub const API_VERSION: u16 = 1;
@@ -464,7 +465,11 @@ impl DeviceIdentity {
     pub fn verifies(&self, token: &str) -> bool {
         let mut digest = Sha256::new();
         digest.update(token.as_bytes());
-        digest.finalize().as_slice() == self.token_digest
+        digest
+            .finalize()
+            .as_slice()
+            .ct_eq(&self.token_digest)
+            .into()
     }
 }
 

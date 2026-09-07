@@ -214,8 +214,8 @@
     },
     {
       "path": ".codex/reviews/phase-15-final-local-hub-gate.md",
-      "size": 1598,
-      "sha256": "8c4194217125f0008591637d8d494747de92b01c282d977bbea17d431f3ac05b"
+      "size": 1722,
+      "sha256": "7edee257f9710c1d733b21b1f5b84afe23c4b2ff4468f46c0917eedbccca7e05"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -719,8 +719,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/phase-15-final-local-hub-gate.md",
-      "size": 1456,
-      "sha256": "1ba04ffb38fc4b7133ec96f6359fbd1b97b1620aaa64e8ceb7f47557d1a946d8"
+      "size": 1610,
+      "sha256": "e909855cba7a05bf49036faf6f99556f1519e73951cdb56b421f9e5bf4df78fc"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -954,8 +954,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 147468,
-      "sha256": "43554c26078275d5fdc5437ca8f51735717be152b796c7c8f6e25af7d6d44b6a"
+      "size": 147620,
+      "sha256": "8fd64fce8f0c06d3077828c0cde1f21cbc6fcca489db21dca4bec3608d72d258"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1084,13 +1084,13 @@
     },
     {
       "path": "apps/local-hub/Cargo.lock",
-      "size": 26970,
-      "sha256": "70727eb46eb92f9ccb4ae2a2903ca1449a899db54fb75f2ecdf2da9b5bf47850"
+      "size": 26981,
+      "sha256": "b0dc0b9a8b39b2eb004d5ede8485eed95db020f2a03a4c0bcaf9d863a02b9f7f"
     },
     {
       "path": "apps/local-hub/Cargo.toml",
-      "size": 529,
-      "sha256": "159aed5cf5d3acfecb30cc414bc67f21a6b5a5979bd61f371b08ef2a925d9890"
+      "size": 542,
+      "sha256": "6b38de35bb296b0c8a2a517e2bf58c81d1e409f1317fee02fe61e347d35823a5"
     },
     {
       "path": "apps/local-hub/README.md",
@@ -1099,8 +1099,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 21738,
-      "sha256": "b081bed903b4d522eb0df902b1a1d79957d9fb8e61b88bfd2cfb7de97d625a06"
+      "size": 21830,
+      "sha256": "caf3781675aed6252b80ae761f48cbbe92f04bc9c30985a873a24d2cd13aef9e"
     },
     {
       "path": "apps/web/index.html",

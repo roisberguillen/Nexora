@@ -22,6 +22,8 @@ Discovery negative coverage added: invalid service/mode is rejected before the m
 
 Runtime hardening review: TLS configuration is validated before LAN socket binding; rate-limit exhaustion returns `429`; clippy is clean. No new P0/P1/P2 finding was introduced.
 
+Constant-time review: device token digest comparison now uses `subtle::ConstantTimeEq`; no secret is logged or serialized.
+
 ### P2
 
 None.

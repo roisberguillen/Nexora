@@ -1942,3 +1942,4 @@ Keep only the latest relevant evidence per completed phase.
 - P0/P1/P2: 0/1/0. No subsequent Phase 16 task is authorized until 15.F is resolved.
 - Follow-up security hardening: pairing now validates the host fingerprint and derives device identity from a separate device token; discovery provider rejects unapproved advertisements before daemon startup; `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 14 passed, 0 failed.
 - Final runtime hardening: LAN TLS configuration is validated before any socket bind and rate limiting returns `429`; `cargo clippy --manifest-path apps/local-hub/Cargo.toml --locked -- -D warnings`: PASS.
+- Constant-time hardening: device token digest comparison uses `subtle::ConstantTimeEq`; `cargo test` 14/14 and `cargo clippy -D warnings` remain PASS.
