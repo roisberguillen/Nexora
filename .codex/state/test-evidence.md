@@ -1,5 +1,15 @@
 # Test evidence
 
+## 14.4 — Android backup/restore and security boundary — 2026-09-07 — COMPLETE / PASS
+
+- `pnpm test -- apps/web/src/security packages/database/src/backup apps/web/src/backup apps/web/src/startup/RecoveryBackupVerification.ts`
+  → 9 files, 43 passed, 0 failed.
+- Generated Android manifest declares `INTERNET` only; no broad storage permission. App Lock stores
+  only a PBKDF2 verifier; OAuth remains volatile; encrypted backup integrity and rollback tests pass.
+- Keystore/biometric integration is explicitly not added because the current persisted-secret
+  contract does not require it; no silent trust-boundary expansion.
+- No ledger, schema, migration or accounting invariant changed; P0/P1/P2 = 0/0/0. Next: 14.5.
+
 ## 14.3 — Android responsive UI and document pickers — 2026-09-07 — COMPLETE / PASS
 
 - `pnpm exec playwright test test/e2e/backup-manual-ui.spec.ts test/e2e/imports.spec.ts` → 45

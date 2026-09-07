@@ -178,6 +178,11 @@
       "sha256": "2701278f1c6f901ddc6376843407642ac918f8f339e5d88b5b172087601e66c1"
     },
     {
+      "path": ".codex/reviews/phase-14-4-android-security-backup.md",
+      "size": 1504,
+      "sha256": "5ddb1a812e93ab60e62aaa9377c6e49a17a25442220c61b953afe8241b0e0ee8"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -593,6 +598,11 @@
       "sha256": "1f8899f6d1bd1d055a7bc24ead9ed08efc94a23201551e757997b7951654e672"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-07-14-4-android-security.md",
+      "size": 1499,
+      "sha256": "39ab242c51e129334d33a6eb2c3ec049e94a0cf28c34b73aa36959dbf390aace"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
       "size": 1517,
       "sha256": "b21c75a02840cef4152897f8e7adcd26b032e15659983afa335b2c80c184f497"
@@ -803,9 +813,14 @@
       "sha256": "121a5c534bccc0fdeda27b3cbdb4a9ec93031eb5170b53cb38c1247f4b436408"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-14-4.md",
+      "size": 506,
+      "sha256": "a55d919e9710cbc6ba88fa2efcede3c8ad1652d3babded3f82d10e73b627b5fe"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 526,
-      "sha256": "187c11234eb7e85027592a32189f00d1d968236de118f53ff377326d6fcb386f"
+      "size": 474,
+      "sha256": "ab3a2c70f5a6336d66244c26a5c059d4538e601065ed477e80a1fb09488d333b"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -834,13 +849,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 14704,
-      "sha256": "6481859357e892ceffde59e3e1fd985dd32aa5e601b9810c85108733c16c6ece"
+      "size": 14824,
+      "sha256": "907a8b08ad32ab28d8cac5ed230ac60f65979a4ac2f1165f2cc6fa6009cb6a97"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 141590,
-      "sha256": "1831751664f5ed0b9abbc92e255eadf9219a6e27e7409e877d4943990bc9ca3d"
+      "size": 142317,
+      "sha256": "144f552df0ad8442724468a026d88a908e6ae4d5dabfbe2a77a715991c62188d"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2134,8 +2149,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 56008,
-      "sha256": "1b2effc230a9ada01a5842a6b490330425fa1f9b7075ec13d3acd2466f723fed"
+      "size": 56164,
+      "sha256": "908cde54d5a17e86ffd30e1cf6768d2471fa57222c380599c8ef371722e8477c"
     },
     {
       "path": "design/mockup/README.md",

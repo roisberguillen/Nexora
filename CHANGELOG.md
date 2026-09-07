@@ -30,6 +30,7 @@
 - Completed 14.1 Android SQLite parity audit: shared adapter, migration catalog and repository tests/typechecks passed; 14.2 remains next.
 - Completed 14.2 Android lifecycle audit: Tauri activity delegation and shared startup/persistence/recovery tests passed; 14.3 remains next.
 - Completed 14.3 Android responsive/picker audit: Import and Backup document workflows passed across six viewports with least-privilege file inputs; 14.4 remains next.
+- Completed 14.4 Android security/backup audit: App Lock, encrypted backup/restore, recovery and least-privilege manifest checks passed; 14.5 remains next.
 
 ## 2026-09-06
 
