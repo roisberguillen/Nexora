@@ -89,7 +89,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 13.4 | complete — 2026-09-07 | Native backup/restore tests 68/68, locked check, Windows MSI/NSIS build and full verify 633 passed/4 skipped; 0/0/0; prossimo 13.F |
 | 13.F | complete — 2026-09-07 | Windows/macOS, native persistence, packaging, backup/restore and regression evidence reconciled; 0/0/0; prossimo 14.0 |
 | 14.0 | complete — 2026-09-07 | Tauri Android initialized; Rust aarch64 target compiled; Gradle arm64 debug APK packaging PASS; full Tauri symlink command limitation recorded; 0/0/0; prossimo 14.1 |
-| 14.1 | planned | Android SQLite native adapter, shared schema and migration parity |
+| 14.1 | complete — 2026-09-07 | Shared Tauri adapter, migration catalog and repository parity: 11 files/76 tests and typechecks PASS; 0/0/0; prossimo 14.2 |
 | 14.2 | planned | Android persistence, lifecycle, startup and recovery behavior |
 | 14.3 | planned | Responsive mobile UI plus least-privilege file/document picker workflows |
 | 14.4 | planned | Android backup/restore, App Lock, Keystore/biometric boundary and permissions |

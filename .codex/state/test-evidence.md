@@ -1,5 +1,15 @@
 # Test evidence
 
+## 14.1 — Android SQLite native adapter and migration parity — 2026-09-07 — COMPLETE / PASS
+
+- `pnpm test -- packages/database-tauri/src packages/database/src/migrations packages/database/src/sqlite`
+  → 11 files, 76 passed, 0 failed.
+- `pnpm --filter @nexora/database-tauri typecheck` and `pnpm --filter @nexora/database typecheck`
+  → PASS.
+- ADR 0017 contract confirmed: Android/Tauri uses the shared SQLite adapter, migration catalog and
+  repository; no duplicate schema or adapter introduced.
+- No ledger, schema, migration or accounting invariant changed; P0/P1/P2 = 0/0/0. Next: 14.2.
+
 ## 14.0 — Tauri Android initialization — 2026-09-07 — COMPLETE / PASS
 
 - `tauri android init --ci --skip-targets-install` → PASS; generated Android project under ignored
