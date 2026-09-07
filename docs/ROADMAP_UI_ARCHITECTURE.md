@@ -272,4 +272,4 @@ Commit e push su `origin/main`.
   schema o invarianti contabili.
 - [x] 13.2 ha abilitato il bundle distributivo, dichiarato i formati MSI/NSIS e gli asset icona
   esistenti, e prodotto entrambi gli installer Windows con `pnpm verify` e startup smoke verdi.
-- [ ] 13.3 Cross-platform desktop release matrix — in progress; macOS x64/arm64 remote build matrix PASS, post-failure Linux baseline/root-overflow correction awaiting CI verify.
+- [x] 13.3 Cross-platform desktop release matrix — PASS; macOS x64/arm64 `cargo check --locked` and Tauri bundles plus full verify (`433 passed`, `233 skipped`) green in CI run `34156198571`; next 13.4.

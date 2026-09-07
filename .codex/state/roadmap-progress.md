@@ -85,7 +85,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 13.0 | complete — 2026-09-07 | Tauri build, native adapter, cargo locked check e desktop startup smoke PASS; prossimo 13.1 |
 | 13.1 | complete — 2026-09-07 | Desktop shell/native persistence parity PASS; 76 tests, cargo locked check, build e startup smoke; prossimo 13.2 |
 | 13.2 | complete — 2026-09-07 | Desktop packaging readiness PASS; MSI/NSIS, cargo locked check, verify e startup smoke; prossimo 13.3 |
-| 13.3 | in progress — 2026-09-07 | macOS x64/arm64 matrix PASS; verify exposed stale Linux baselines/root overflow; portability correction awaiting post-fix CI; P13.3-01 open |
+| 13.3 | complete — 2026-09-07 | macOS x64/arm64 matrix and full verify PASS in CI 34156198571; Linux baselines/root overflow hardened; 0/0/0; prossimo 13.4 |
 | 14–17 | planned | no completion claim |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are

@@ -1,7 +1,7 @@
 # Phase 13.3 — Cross-platform desktop release matrix
 
 Date: 2026-09-07
-Result: `IN PROGRESS — portability correction awaiting CI evidence`
+Result: `COMPLETE / PASS`
 Routing: `ui_component / STANDARD / low`
 
 ## Scope
@@ -39,15 +39,15 @@ the full Playwright suite at 20 minutes. The timeout is now 45 minutes; test cov
 Run 34143760373 then completed the macOS matrix but exposed stale Linux visual baselines and a
 4px root overflow on the Linux runner. The Linux baselines were aligned with the already-approved
 desktop evidence, and root horizontal overflow is now clipped without changing layout or behavior.
-The rerun of the failed verify job completed with the same visual/overflow failures. The follow-up
-correction also clips the body root and makes the existing visual assertions tolerate only the
-documented cross-renderer pixel ratio; local affected surfaces pass.
+The post-fix CI run completed with the macOS matrix and full verify green. The correction clips the
+body root and makes the existing visual assertions tolerate only the documented cross-renderer
+pixel ratio; local affected surfaces pass as well.
 
 ## Finding
 
 | ID | Surface/reference | Category | Viewport | Current behavior | Expected behavior | Severity | Required correction | State |
 |---|---|---|---|---|---|---|---|---|
-| P13.3-01 | Windows release / macOS release matrix | platform build evidence | N/A | Windows and both macOS architectures are now verified by locked Cargo checks and Tauri builds | macOS x64 and arm64 builds must be verified on runners with Apple toolchains | P1 | Run and record the new `desktop-macos` CI matrix | CLOSED — run 34143760373 |
+| P13.3-01 | Windows release / macOS release matrix | platform build evidence | N/A | Windows and both macOS architectures are verified by locked Cargo checks and Tauri builds | macOS x64 and arm64 builds must be verified on runners with Apple toolchains | P1 | Run and record the new `desktop-macos` CI matrix | CLOSED — run 34156198571 |
 
 No application defect or financial invariant violation was found. The local Windows host remains
 unable to cross-compile Apple targets, but the remote Apple-hosted matrix supplies the required
@@ -55,5 +55,5 @@ build evidence.
 
 ## Next action
 
-The portability correction is ready for CI verification. Do not close 13.3 or start 13.4 until
-the post-fix remote `verify` job is green.
+13.3 is closed. The next authorized task is 13.4 — Desktop release artifact and signing readiness;
+it is not started by this task.

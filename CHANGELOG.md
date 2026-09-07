@@ -22,6 +22,7 @@
 - Completed 13.1 Desktop Shell and Native Persistence Parity: adapter/migration/SQLite tests, locked native check, Tauri build and desktop startup smoke passed; 13.2 remains next.
 - Completed 13.2 Desktop packaging and distribution readiness: Windows MSI/NSIS bundles, native metadata/icon wiring, locked check, full verify and startup smoke passed; 13.3 remains next.
 - Started 13.3 portability hardening after remote matrix evidence: aligned stale Linux visual baselines and clipped a 4px Linux root overflow; post-fix CI verification remains open.
+- Closed 13.3 Cross-platform Desktop Release Matrix: macOS x64/arm64 Tauri bundles, locked checks and full verify passed in CI; Linux visual baselines and root overflow portability were hardened; 13.4 remains next.
 
 ## 2026-09-06
 

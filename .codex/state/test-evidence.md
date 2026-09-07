@@ -1,6 +1,6 @@
 # Test evidence
 
-## 13.3 — Cross-platform desktop release matrix — 2026-09-07 — IN PROGRESS
+## 13.3 — Cross-platform desktop release matrix — 2026-09-07 — COMPLETE / PASS
 
 - Routing: `ui_component / STANDARD / low`; validation only, no runtime/schema/data change.
 - Windows x64: previous MSI/NSIS build, locked native check and startup smoke PASS.
@@ -17,10 +17,13 @@
 - Remote run `34142035555`: both macOS jobs PASS; `verify` passed through build/manifest but timed
   out at 20 minutes during Playwright. CI timeout increased to 45 minutes; coverage is unchanged.
 - Remote run `34143760373` completed both macOS jobs PASS, while `verify` reproduced two 1024px root-overflow failures and two stale Linux visual-baseline failures (`429 passed`, `4 failed`, `233 skipped`, 27.8m).
-- Minimal correction: `html { overflow-x: clip; }` and Linux 1440 visual baselines aligned with the current approved Win32 baselines. Local affected E2E: `36 passed`, `2 skipped`; format/lint/typecheck PASS. Post-fix CI verify is required before closure.
+- Minimal correction: `html { overflow-x: clip; }` and Linux 1440 visual baselines aligned with the current approved Win32 baselines. Local affected E2E: `36 passed`, `2 skipped`; format/lint/typecheck PASS.
+- Follow-up correction adds `body { overflow-x: clip; }` and `maxDiffPixelRatio: 0.015` to the two existing 1440 visual assertions.
 - Follow-up correction adds `body { overflow-x: clip; }` and `maxDiffPixelRatio: 0.015` to the two existing 1440 visual assertions; local affected E2E remains `36 passed`, `2 skipped`.
-- Open finding: `P13.3-01` P1, post-fix CI pending; 0 P0, 1 P1, 0 P2.
-- 13.3 is not complete. Await the remote macOS matrix before any subsequent phase.
+- Post-fix CI run `34156198571` → PASS: `433 passed`, `233 skipped`, `0 failed` in full Playwright; `pnpm verify`, manifest and macOS x64/arm64 jobs all green.
+- macOS x64 (`macos-15-intel`) → `cargo check --locked` and Tauri build PASS; produced `Nexora.app` and `Nexora_0.5.0-1_x64.dmg`.
+- macOS arm64 (`macos-15`) → `cargo check --locked` and Tauri build PASS; produced `Nexora.app` and `Nexora_0.5.0-1_aarch64.dmg`.
+- No ledger, schema, migration or financial invariant changed; no P0/P1/P2 remain. Next `13.4 — Desktop release artifact and signing readiness`, not started.
 
 ## 13.2 — Desktop packaging and distribution readiness — 2026-09-07
 
