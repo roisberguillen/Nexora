@@ -1994,3 +1994,11 @@ Keep only the latest relevant evidence per completed phase.
 - Accounting invariants: no SQLite migration, real ledger access, float amount or silent conflict resolution; P0/P1/P2 open 0/0/0.
 - Evidence: `.codex/reviews/phase-16-f-final-sync-gate.md`.
 - Orchestrator follow-up: the first final-gate validation exposed the required `current` marker for the active macrophase; roadmap state was corrected and validation rerun before Phase 17.
+
+# 17.0 — Large-dataset performance — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.0 large dataset performance pagination query strategy 100k records"` → `ui_component / STANDARD / low`.
+- `pnpm exec vitest run apps/web/src/transactions/pagination.test.ts packages/domain/src/services/monthlyTrends.test.ts`: 2 files, 6 tests passed.
+- `$env:NEXORA_HARDENING_BENCHMARK="1"; pnpm exec vitest run test/benchmarks/hardeningBenchmark.test.ts`: 1 file, 4 tests passed, including 100k synthetic records.
+- Existing transaction pagination caps rendered rows at 100 and normalizes out-of-range pages; no repository/query or accounting invariant changed.
+- P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-0-large-dataset-performance.md`.

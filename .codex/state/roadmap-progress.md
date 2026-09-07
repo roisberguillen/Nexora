@@ -107,7 +107,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 16.3 | complete — 2026-09-08 | Explicit conflict records, deterministic manual policy and accessible review UI without automatic overwrite/merge; cargo test 20/20, focused UI 2/2; 0/0/0; prossimo 16.4 |
 | 16.4 | complete — 2026-09-08 | Non-destructive checkpoint/pending-delivery recovery, revoked-device push rejection and two-device conflict verification; cargo test 22/22; 0/0/0; prossimo 16.F |
 | 16.F | complete — 2026-09-08 | Final sync gate: append-only operations, push/pull replay protection, offline reconciliation, explicit conflicts, recovery, revocation and multi-device tests; cargo 22/22, full verify 635/639; 0/0/0; prossimo 17.0 |
-| 17.0 | planned | Large-dataset performance, pagination/query strategy and 100k+ records |
+| 17.0 | complete — 2026-09-08 | Existing 100-row transaction pagination plus 1k/10k/100k synthetic aggregation and hardening benchmarks verified; 6 focused + 4 benchmark tests; 0/0/0; prossimo 17.1 |
 | 17.1 | planned | Storage quota, interrupted writes/import/backup and recovery |
 | 17.2 | planned | Service Worker A→B update and cross-platform backup/restore regression |
 | 17.3 | planned | Final security, supply-chain, secret scan and dependency audit |
