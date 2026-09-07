@@ -144,8 +144,8 @@
     },
     {
       "path": ".codex/reviews/phase-13-3-cross-platform-release-matrix.md",
-      "size": 2222,
-      "sha256": "9b05bc2abee3aebbd87a6c428e0f7b5945eaef67084300a76fb3fdd51b7ac9b2"
+      "size": 2418,
+      "sha256": "4ac4c2bb4ced062ba1b9b02ac46757a88a649fb84247acfe99228888e6cbd792"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -529,8 +529,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-13-3-cross-platform-ui-scope.md",
-      "size": 1424,
-      "sha256": "042487ed1c241b0760b8b264125a8b66caef8571b4e3467680a8ed5fbaa09900"
+      "size": 1487,
+      "sha256": "562abc09ba619e324df152229fc09f2fadb3ce0def07e09b5153305ca401650b"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-09-07-d-4-security-review-ui-scope.md",
@@ -739,8 +739,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 459,
-      "sha256": "07771dbc3aad80475f9f930336b32ad3cc9b7b000cc3f1e5f0eee65a16b68a53"
+      "size": 453,
+      "sha256": "5bf5d2b36c323608ebe2f323029963f59d497d01545cbb3bfb285586a76211c3"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -769,13 +769,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 11964,
-      "sha256": "d1edd41a5b3a9981350d568dda176500e0d8ad697288eba60f6fe324d371574a"
+      "size": 11960,
+      "sha256": "12b479d465e8b0e78fde95b1542fadde0f14cd4b266c109f26d5c5b5229b839d"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 135443,
-      "sha256": "7052476fcb1b6dbff0f9354c5927b8b2966eaef063030346dc5a1d2ac2d407ac"
+      "size": 135624,
+      "sha256": "d2b48f32d8d072a420e98f45751cdbf39884d95e8c28adf42dfca056197749d6"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -829,8 +829,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 746,
-      "sha256": "bdb9d55d28f18c1f3a2e3423dc73a200d8822e2b85bd64b7df1aef70d638696f"
+      "size": 1317,
+      "sha256": "12a9deb83fae0cac8affc040d6da7cc1d45965145d2e5159afd4c049aac5b88e"
     },
     {
       "path": ".gitignore",

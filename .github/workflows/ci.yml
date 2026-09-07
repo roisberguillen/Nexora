@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
 
 permissions:
   contents: read
@@ -33,3 +33,23 @@ jobs:
       - run: pnpm manifest:check
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm exec playwright test
+
+  desktop-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-14]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: pnpm install --frozen-lockfile
+      - run: cargo check --locked
+        working-directory: apps/web/src-tauri
+      - run: pnpm --filter @nexora/web tauri build

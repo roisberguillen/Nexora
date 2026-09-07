@@ -8,7 +8,7 @@ Route: `N/A — platform validation`
 Data: 2026-09-07
 Reviewer/fase: Codex — cross-platform release matrix, 13.3
 Flusso principale: shared React UI → Tauri Windows/macOS shell → native persistence
-Modifiche: none; validation only.
+Modifiche: none to UI; added CI-only macOS packaging validation matrix.
 Esito: IN PROGRESS
 
 | Area | ID | Esito | Evidence |

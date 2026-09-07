@@ -1,7 +1,7 @@
 # Phase 13.3 — Cross-platform desktop release matrix
 
 Date: 2026-09-07
-Result: `IN PROGRESS — macOS validation blocked by host toolchain`
+Result: `IN PROGRESS — macOS CI validation pending`
 Routing: `ui_component / STANDARD / low`
 
 ## Scope
@@ -23,16 +23,20 @@ schema, migration, ledger behavior or UI redesign is in scope.
 `rustup target add x86_64-apple-darwin aarch64-apple-darwin` completed, proving target standard
 libraries are available; it does not provide Apple clang, SDKs or signing infrastructure.
 
+To remove the environment dependency, `.github/workflows/ci.yml` now contains a `desktop-macos`
+matrix on `macos-13` and `macos-14`, with locked Cargo check and Tauri bundle steps. The workflow
+also runs on `codex/**` branches so this change can be verified remotely before closure.
+
 ## Finding
 
 | ID | Surface/reference | Category | Viewport | Current behavior | Expected behavior | Severity | Required correction | State |
 |---|---|---|---|---|---|---|---|---|
-| P13.3-01 | Windows release / macOS release matrix | platform build evidence | N/A | Windows is verified; macOS cross-target compilation stops because the host lacks Apple `cc`/SDK | macOS x64 and arm64 builds must be verified on a macOS runner with Apple toolchain | P1 | Provide a macOS build runner/host, then run locked checks and signed/unsigned bundle smoke | OPEN — external environment |
+| P13.3-01 | Windows release / macOS release matrix | platform build evidence | N/A | Windows is verified; local macOS cross-target compilation stops because the host lacks Apple `cc`/SDK | macOS x64 and arm64 builds must be verified on a macOS runner with Apple toolchain | P1 | Run the new `desktop-macos` CI matrix and record both remote results | OPEN — CI run pending |
 
 No application defect or financial invariant violation was found. This task must not be marked
 complete until the macOS evidence is available.
 
 ## Next action
 
-Resume 13.3 on a macOS CI/host, validate both architectures and record bundle/startup evidence.
-After that, continue with the next authorized roadmap task. No subsequent phase is started here.
+Resume 13.3 after the macOS CI matrix completes, validate both architectures and record bundle
+evidence. No subsequent phase is started here.
