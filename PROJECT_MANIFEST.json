@@ -194,8 +194,13 @@
     },
     {
       "path": ".codex/reviews/phase-15-0-local-hub-foundation.md",
-      "size": 1236,
-      "sha256": "fac0425ec43119fa9a7087160431675e29d287a4b1a50b49062256a054eae27c"
+      "size": 1346,
+      "sha256": "87b99e8abec743b63baf47b1034c45d58e67c9bdc950df7f8abf93f9d7383c94"
+    },
+    {
+      "path": ".codex/reviews/phase-15-1-lan-tls-identity.md",
+      "size": 1268,
+      "sha256": "feae752d2a563b311be2955d2983dabbfed34c24e13521acb1c461573b37d666"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -679,8 +684,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/phase-15-0-local-hub-foundation.md",
-      "size": 1181,
-      "sha256": "7143d729b6855d416112eec6859cf6bf91522d9564d6366f435ead6aed730ccf"
+      "size": 1433,
+      "sha256": "60ea4ec6ca967979236eb88d36482678b1120569cc1f81858a8264f1fc8acbee"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/phase-15-1-lan-tls-identity.md",
+      "size": 1226,
+      "sha256": "02670adf3b15847b5772e5e84cd2495047e8abd70cfb7f3c784071cf87f91b04"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -858,9 +868,14 @@
       "sha256": "d88bf7330e3144cc8e8c7c30ff3feec66df4314571fd2d7b6948f27acb10691b"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-15-1.md",
+      "size": 795,
+      "sha256": "27bb4773125e734a91680d658e347f04d092080e3fc9aa78cf574bea9c7fba80"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 479,
-      "sha256": "1b83e0c9b373c509c2d3a9a6c13ec4adf8512f382045460c6a2cd8b7f11602b9"
+      "size": 510,
+      "sha256": "e7522defecb448912a3e8f7472222d36f2123388fa336069d0a71960e18c322b"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -889,13 +904,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 15196,
-      "sha256": "d909a09b877972909fb32c52bf5369dbf4250b0cbc3a2a77c1b6556c6e59c751"
+      "size": 15308,
+      "sha256": "29bdb0834003174f546c45c44e75f920c3d89e60839ecc73b0e9db534bdfb1a5"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 144246,
-      "sha256": "d91a54f4ca6fbbb2b834b2ba63de8cc4dc5f6ddca8b8968a30c09bac5bff1ba1"
+      "size": 144979,
+      "sha256": "41b7bf4398ec6a17275ae64f567faa67968826f1ad6ed58e8e28662b5c81b7f3"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1024,13 +1039,13 @@
     },
     {
       "path": "apps/local-hub/Cargo.lock",
-      "size": 2673,
-      "sha256": "d3f8d3e21b3d49b65af2528137fd1da07c1810b9dd5cb98dcda88645561abcaf"
+      "size": 12581,
+      "sha256": "89a7797bd14521ce71a2116818331656fef080cbd7c2e43a1158484b0c021d1f"
     },
     {
       "path": "apps/local-hub/Cargo.toml",
-      "size": 279,
-      "sha256": "b8382f01f2bdc00a08235b190f00ef735f41a0d6280364c31b46288f0014652f"
+      "size": 330,
+      "sha256": "cff71fa19a40ae9311bae5dbb7f48021d4ddccb9df6571b4a1330c369ceca95f"
     },
     {
       "path": "apps/local-hub/README.md",
@@ -1039,8 +1054,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 3375,
-      "sha256": "4670d6fe4225ef7d44228150be08002bd8ff0b5dab21c5611439e428c8e0eac6"
+      "size": 7906,
+      "sha256": "45e996f94f8f08c0b3eac5b1b36ce86784323548e6a8d76dc2f9a130d5401a75"
     },
     {
       "path": "apps/web/index.html",
@@ -2209,8 +2224,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 56612,
-      "sha256": "a2776b6d6a414517934a6f58a234a8fd32f2c7cfa816f1311938a8b832bc5ea2"
+      "size": 56796,
+      "sha256": "4758221efdef8cd64194fea157294aaf30e638e4dc2fb2df802aea12ac4ef30e"
     },
     {
       "path": "design/mockup/README.md",
@@ -2514,8 +2529,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 19794,
-      "sha256": "b1b9005e3e92c940d18debc34a9176d65972d9c5d06dba405d080c4f0719b7a3"
+      "size": 19875,
+      "sha256": "7b0cae6887457432c4d0979cdb63f6b0d8866d1cf0b1390c3fa4feb42612794e"
     },
     {
       "path": "docs/ROADMAP.md",

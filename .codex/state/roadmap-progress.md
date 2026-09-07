@@ -96,7 +96,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 14.5 | complete — 2026-09-07 | Arm64 Rust release, unsigned APK and AAB Gradle packaging PASS; ADB device verification N/A (no device/emulator); 0/0/0; prossimo 14.F |
 | 14.F | complete — 2026-09-07 | Phase 14 Android evidence reconciled: init, shared SQLite, lifecycle, responsive picker, security, arm64 APK/AAB and full verify PASS; device/signing N/A explicitly recorded; 0/0/0; prossimo 15.0 |
 | 15.0 | complete — 2026-09-07 | Rust Local Hub contract foundation; loopback default, LAN fail-closed guard and incremental operation metadata; cargo test 3/3; 0/0/0; prossimo 15.1 |
-| 15.1 | planned | Opt-in LAN binding, TLS and device identity |
+| 15.1 | complete — 2026-09-07 | LAN opt-in fail-closed config, specific address/TLS/fingerprint gates and SHA-256 device token digest; cargo test 5/5; 0/0/0; prossimo 15.2 |
 | 15.2 | planned | mDNS/DNS-SD discovery, explicit/QR pairing and device revocation |
 | 15.3 | planned | Authenticated operations, rate limiting, audit and negative security tests |
 | 15.F | planned | Final Local Hub gate; no open LAN/authentication findings |

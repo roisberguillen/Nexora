@@ -1909,3 +1909,11 @@ Keep only the latest relevant evidence per completed phase.
 - Negative security tests: LAN binding rejected before TLS/pairing; operation envelope round-trip excludes SQLite payload.
 - No browser test: no UI/listener changed. No accounting/storage behavior changed.
 - Evidence: `.codex/reviews/phase-15-0-local-hub-foundation.md`.
+
+# 15.1 — Local Hub LAN/TLS/identity — 2026-09-07
+
+- Router: `pnpm codex:route -- --task="15.1 Opt-in LAN binding, TLS and device identity"` → `local_hub / CRITICAL / low`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml`: 5 passed, 0 failed; rustls server configuration and PEM parser compile-tested.
+- Negative security tests: LAN rejects unspecified/loopback addresses, missing TLS certificate/key and missing host fingerprint; device identity rejects wrong token.
+- No private key, token, ledger or SQLite file is stored or logged; no listener is exposed by this slice.
+- `pnpm manifest:check`: PASS. Evidence: `.codex/reviews/phase-15-1-lan-tls-identity.md`.
