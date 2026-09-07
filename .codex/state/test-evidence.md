@@ -1,5 +1,24 @@
 # Test evidence
 
+## 12.5.E.1 — Final Quality Gate — 2026-09-07
+
+- Routing: `localized_bug / STANDARD / low`; gate finale, nessuna modifica runtime/UI o nuova
+  feature.
+- Environment: Node `v24.15.0`, pnpm `11.9.0`, TypeScript `6.0.3`, Rust/Cargo `1.97.1`,
+  Playwright `1.62.0`; `pnpm install --frozen-lockfile` PASS.
+- Fresh repository gate: `pnpm verify` PASS — format/lint/typecheck/build verdi, Vitest
+  `633 passed`, `4 skipped`, `0 failed`; advisory Vite noto sui chunk >500 kB.
+- Full browser gate: `pnpm test:e2e` PASS — `433 passed`, `233 skipped`, `0 failed` su 666;
+  skip condizionali per backend/provider opzionali, persistence isolata o viewport specifici.
+  Eseguiti percorsi responsive, zoom 200%, offline/reload/reopen, recovery, accessibilità,
+  import/export e invarianti finanziarie.
+- Documentation/state gates: `pnpm manifest:check`, `pnpm codex:validate`, `pnpm format:check`,
+  `pnpm test:ui-ux` e `pnpm quality:ui-ux` PASS dopo l'aggiornamento documentale.
+- Hygiene: nessun secret, dato reale, database, backup o log tracciato; fixture CSV presente
+  soltanto come dato sintetico. Nessun P0/P1/P2 aperto e nessun failure nascosto.
+- Result: `12.5.E.1 COMPLETE — PASS`; next `12.5.E.2 — Real-Flow Full Regression Gate`,
+  non iniziato.
+
 ## 12.5.D.F — Final Phase D Gate — 2026-09-07
 
 - Routing: `localized_bug / STANDARD / low`; final evidence reconciliation only, senza modifiche
