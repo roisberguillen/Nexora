@@ -1044,13 +1044,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 16399,
-      "sha256": "d3a8a5eb2143ee4d516699c0f55ace0aa6f0608f8f223460257f2ef03ebc5dc1"
+      "size": 16383,
+      "sha256": "70dd4bcdc5eae99546cd04fe3f13bee27d94f5fbf45b3bbf3f915f5c9d8b332f"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 152263,
-      "sha256": "2ec8a0ac4e63576b46da9c3809f6e63e1247672a54964641e09287384410fade"
+      "size": 152452,
+      "sha256": "0e293b7d4fb7cd2dab23815937abf112a5efc6cf1b765d8b92dae5f445ddc38f"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",

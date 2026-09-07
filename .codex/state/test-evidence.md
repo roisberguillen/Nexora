@@ -1993,3 +1993,4 @@ Keep only the latest relevant evidence per completed phase.
 - Final repository gate: `pnpm verify` PASS — 141 files passed, 1 skipped; 635 tests passed, 4 skipped; build PASS. `pnpm test:ui-ux` 4/4; `pnpm codex:test` 12/12; manifest current; orchestrator valid.
 - Accounting invariants: no SQLite migration, real ledger access, float amount or silent conflict resolution; P0/P1/P2 open 0/0/0.
 - Evidence: `.codex/reviews/phase-16-f-final-sync-gate.md`.
+- Orchestrator follow-up: the first final-gate validation exposed the required `current` marker for the active macrophase; roadmap state was corrected and validation rerun before Phase 17.
