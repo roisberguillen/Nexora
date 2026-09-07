@@ -28,6 +28,7 @@
 - Closed Phase 13 with `13.F COMPLETE / PASS`; desktop evidence is reconciled and 14.0 Android initialization is next.
 - Completed 14.0 Android initialization: Tauri project generation, Rust arm64 compilation and Gradle debug APK packaging passed; 14.1 remains next.
 - Completed 14.1 Android SQLite parity audit: shared adapter, migration catalog and repository tests/typechecks passed; 14.2 remains next.
+- Completed 14.2 Android lifecycle audit: Tauri activity delegation and shared startup/persistence/recovery tests passed; 14.3 remains next.
 
 ## 2026-09-06
 

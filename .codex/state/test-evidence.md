@@ -1,5 +1,14 @@
 # Test evidence
 
+## 14.2 — Android persistence, lifecycle, startup and recovery — 2026-09-07 — COMPLETE / PASS
+
+- `pnpm test -- apps/web/src/startup apps/web/src/persistence apps/web/src/reset packages/database-tauri/src`
+  → 18 files, 72 passed, 0 failed.
+- Web and database-tauri typechecks → PASS.
+- Generated MainActivity delegates to TauriActivity; shared bootstrap selects native SQLite under
+  startup lock and preserves recovery/close behavior. No Android-specific divergent handler added.
+- No ledger, schema, migration or accounting invariant changed; P0/P1/P2 = 0/0/0. Next: 14.3.
+
 ## 14.1 — Android SQLite native adapter and migration parity — 2026-09-07 — COMPLETE / PASS
 
 - `pnpm test -- packages/database-tauri/src packages/database/src/migrations packages/database/src/sqlite`
