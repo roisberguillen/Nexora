@@ -1,7 +1,7 @@
 # Current task
 
-- Task: 12.5.D.4 — Independent Security Review
+- Task: 12.5.D.F — Final Phase D Gate
 - Roadmap phase: Phase 12.5
-- Status: `COMPLETE` — independent security review PASS; `12.5.D = IN PROGRESS` perché D.F è ancora mancante.
-- Evidence: `.codex/state/d-phase-evidence-matrix.md`; `.codex/reviews/security/2026-09-07-d-4-independent-security-review.md`.
-- Next task: `12.5.D.F` — Final Phase D Gate.
+- Status: `COMPLETE` — `12.5.D = COMPLETE / PASS`; D.1–D.4 riconciliate, P0/P1/P2 aperti 0/0/0.
+- Evidence: `.codex/state/d-phase-evidence-matrix.md`; `.codex/reviews/phase-12.5-d-f-final-gate.md`.
+- Next task: `12.5.E.1` — Final Quality Gate.

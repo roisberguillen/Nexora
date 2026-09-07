@@ -1,5 +1,21 @@
 # Test evidence
 
+## 12.5.D.F — Final Phase D Gate — 2026-09-07
+
+- Routing: `localized_bug / STANDARD / low`; final evidence reconciliation only, senza modifiche
+  runtime, nuove feature, refactoring o alterazioni di dominio/persistenza.
+- Evidence: D.1, D.2, D.3 e D.4 report presenti, coerenti e riconciliati; browser, responsive,
+  accessibility, security, recovery e invarianti finanziarie coperti senza P0/P1/P2 aperti.
+- Fresh repository gate: `pnpm verify` → format/lint/typecheck/build PASS, Vitest `140 file`
+  con `633 passed`, `4 skipped`, `0 failed`; warning noto Vite sui chunk >500 kB.
+- Phase D tests: D.3 accessibility `191 passed`, `55 skipped`, `0 failed`; D.4 security/recovery
+  `26 passed`, `28 skipped`, `0 failed`; test mirati security `70 passed`, `0 failed`.
+- Manifest/state: `pnpm manifest:check` e `pnpm codex:validate` PASS; skip condizionati da
+  viewport/backend/profilo o test desktop-only, motivati nei report e non bloccanti.
+- Git hygiene: nessun file temporaneo, screenshot casuale, backup reale, `.env`, log, secret o
+  modifica non pertinente nel diff finale; invarianti contabili preservate.
+- Decisione: `12.5.D COMPLETE / PASS`; prossimo esclusivamente `12.5.E.1`, non avviato.
+
 ## 12.5.D.4 — Independent Security Review — 2026-09-07
 
 - Routing: `CRITICAL / encryption / medium` secondo il router ufficiale; scope security review,
