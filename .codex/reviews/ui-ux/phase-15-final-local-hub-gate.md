@@ -32,3 +32,5 @@ Runtime update: backend listener/router evidence changed; no UI surface changed.
 Discovery update: mdns-sd provider integration added; no UI surface changed.
 
 Security follow-up: pairing contract hardened; no UI surface changed.
+
+Discovery negative coverage added; no UI surface changed.

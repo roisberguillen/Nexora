@@ -18,6 +18,8 @@ None.
 
 Security follow-up completed after the initial gate audit: pairing now checks the expected host fingerprint and no longer derives the device credential from the QR code itself. The independent-review P1 remains open.
 
+Discovery negative coverage added: invalid service/mode is rejected before the mDNS daemon starts.
+
 ### P2
 
 None.

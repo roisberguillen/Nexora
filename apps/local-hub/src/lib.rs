@@ -1,8 +1,7 @@
 //! Contract foundation for the Nexora Local Hub.
 //!
-//! The service is intentionally not started by this crate yet.  This slice fixes
-//! the safe binding defaults and the wire-level operation metadata so later
-//! transport work cannot accidentally expose a database or an unauthenticated LAN port.
+//! The service runtime is deliberately fail-closed: loopback is the default and
+//! LAN publication requires validated TLS, identity, pairing and authorization.
 
 use axum::{
     Json, Router,
@@ -134,7 +133,7 @@ impl Default for LocalHubConfig {
 
 impl LocalHubConfig {
     /// Returns the address that the transport may bind to for this config.
-    /// LAN binding is rejected until the TLS/pairing gate is implemented.
+    /// The legacy contract remains loopback-only; LAN uses `TransportSecurityConfig`.
     pub fn bind_addr(&self) -> Result<SocketAddr, ConfigError> {
         match self.binding {
             BindingMode::Loopback => {
@@ -551,6 +550,21 @@ mod tests {
             lan_enabled: true,
         };
         assert!(advertisement.validate());
+    }
+
+    #[test]
+    fn discovery_provider_rejects_unapproved_advertisement_before_starting_daemon() {
+        let advertisement = DiscoveryAdvertisement {
+            service_name: "nexora-host".to_owned(),
+            service_type: "_http._tcp".to_owned(),
+            host_fingerprint: "sha256:host".to_owned(),
+            port: DEFAULT_PORT,
+            lan_enabled: false,
+        };
+        assert!(matches!(
+            publish_discovery(&advertisement, "192.0.2.10".parse().unwrap(), "nexora-host"),
+            Err(DiscoveryError::InvalidAdvertisement)
+        ));
     }
 
     #[test]
