@@ -29,6 +29,7 @@
 - Completed 14.0 Android initialization: Tauri project generation, Rust arm64 compilation and Gradle debug APK packaging passed; 14.1 remains next.
 - Completed 14.1 Android SQLite parity audit: shared adapter, migration catalog and repository tests/typechecks passed; 14.2 remains next.
 - Completed 14.2 Android lifecycle audit: Tauri activity delegation and shared startup/persistence/recovery tests passed; 14.3 remains next.
+- Completed 14.3 Android responsive/picker audit: Import and Backup document workflows passed across six viewports with least-privilege file inputs; 14.4 remains next.
 
 ## 2026-09-06
 

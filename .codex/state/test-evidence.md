@@ -1,5 +1,13 @@
 # Test evidence
 
+## 14.3 — Android responsive UI and document pickers — 2026-09-07 — COMPLETE / PASS
+
+- `pnpm exec playwright test test/e2e/backup-manual-ui.spec.ts test/e2e/imports.spec.ts` → 45
+  passed, 9 documented skips, 0 failures across 320/375/390/768/1024/1440.
+- Existing semantic file inputs remain the least-privilege WebView document picker for Import and
+  Backup/Restore; no broad Android storage permission or native filesystem API added.
+- No ledger, schema, migration or accounting invariant changed; P0/P1/P2 = 0/0/0. Next: 14.4.
+
 ## 14.2 — Android persistence, lifecycle, startup and recovery — 2026-09-07 — COMPLETE / PASS
 
 - `pnpm test -- apps/web/src/startup apps/web/src/persistence apps/web/src/reset packages/database-tauri/src`

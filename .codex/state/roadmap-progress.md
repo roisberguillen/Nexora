@@ -91,7 +91,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 14.0 | complete — 2026-09-07 | Tauri Android initialized; Rust aarch64 target compiled; Gradle arm64 debug APK packaging PASS; full Tauri symlink command limitation recorded; 0/0/0; prossimo 14.1 |
 | 14.1 | complete — 2026-09-07 | Shared Tauri adapter, migration catalog and repository parity: 11 files/76 tests and typechecks PASS; 0/0/0; prossimo 14.2 |
 | 14.2 | complete — 2026-09-07 | Tauri lifecycle delegation and shared startup/persistence/recovery: 18 files/72 tests and typechecks PASS; 0/0/0; prossimo 14.3 |
-| 14.3 | planned | Responsive mobile UI plus least-privilege file/document picker workflows |
+| 14.3 | complete — 2026-09-07 | Import/Backup picker and responsive browser verification: 45 passed/9 skipped on six viewports; no extra permissions; 0/0/0; prossimo 14.4 |
 | 14.4 | planned | Android backup/restore, App Lock, Keystore/biometric boundary and permissions |
 | 14.5 | planned | APK/AAB packaging and emulator/device verification |
 | 14.F | planned | Final Android gate and release evidence |
