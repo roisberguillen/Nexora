@@ -1,5 +1,15 @@
 # Test evidence
 
+## 12.5.F — Release Freeze — 2026-09-07
+
+- Routing: `database_query / STANDARD / low`; freeze documentale, nessun runtime/schema change.
+- Reconciled prerequisites: E.1/E.2/E.3/E.F PASS; full E2E `433 passed`, `233 skipped`, `0 failed`;
+  targeted integrity/recovery `120 passed` e recovery E2E `13 passed`, `29 skipped`.
+- Latest `pnpm verify`: format/lint/typecheck/build PASS; Vitest `633 passed`, `4 skipped`.
+- `pnpm manifest:check`, `pnpm codex:validate`, UI/UX quality and secret/artifact hygiene PASS.
+- Freeze: nessun P0/P1/P2, nessuna feature o modifica runtime; working tree pulito dopo push.
+- Result: `12.5.F = COMPLETE / PASS`; next `13.0 — Desktop delivery foundation`, non iniziato.
+
 ## 12.5.E.F — Final Phase E Gate — 2026-09-07
 
 - Routing: `localized_bug / STANDARD / low`; E.1, E.2 ed E.3 PASS verificati prima della chiusura.

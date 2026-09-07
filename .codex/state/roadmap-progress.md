@@ -70,8 +70,8 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; C4.0–C4.10 e regressione finale chiuse |
 | C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; C5.1–C5.5 e gate finale chiusi; 0 P0, 0 P1, 0 P2 aperti; 12.5.D next |
 | D | complete — 2026-09-07 | `12.5.D COMPLETE / PASS`; D.1–D.4 e D.F chiuse; prossimo 12.5.E.1 |
-| E | pending | final gate: READY / NOT READY |
-| F | pending | release freeze |
+| E | complete — 2026-09-07 | `12.5.E COMPLETE / PASS`; E.1–E.3 ed E.F riconciliate |
+| F | complete — 2026-09-07 | `12.5.F COMPLETE / PASS`; release freeze chiuso; prossimo 13.0 |
 | 12.5.C4 | complete — 2026-09-06 | `C4_FINAL_GATE_PASS`; real complete flows e regressione finale chiusi |
 | 12.5.C5 | complete — 2026-09-06 | `C5_FINAL_GATE_PASS`; cross-surface consistency chiusa; prossimo task 12.5.D |
 | 12.5.D | complete — 2026-09-07 | `12.5.D COMPLETE / PASS`; D.1/D.2/D.3/D.4/D.F chiuse; prossimo 12.5.E.1 |
@@ -80,16 +80,16 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.E.2 | complete — 2026-09-07 | Real-Flow Full Regression Gate PASS; 83 targeted + 433 full E2E passed; prossimo 12.5.E.3 |
 | 12.5.E.3 | complete — 2026-09-07 | Data Integrity & Recovery Final Gate PASS; round-trip, checksum, rollback, restore e adapter parity verdi; prossimo 12.5.E.F |
 | 12.5.E.F | complete — 2026-09-07 | Final Phase E Gate PASS; E.1–E.3, verify, manifest e state riconciliati; prossimo 12.5.F |
-| 12.5.F | planned | release freeze |
-| 13 | pending | desktop delivery only after 12.5.F; not started |
+| 12.5.F | complete — 2026-09-07 | Release Freeze PASS; baseline 12.5 congelata; prossimo 13.0 |
+| 13 | authorized — 2026-09-07 | desktop delivery autorizzata dopo 12.5.F; non iniziata |
 | 14–17 | planned | no completion claim |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
 C3.14, C3.15, C3.16, C3.17, C3.18, C3.19, C3.20 and C3.21 are complete. C4.0–C4.10 are
 complete with their own evidence; C4-F is closed with final regression evidence. C5 is closed with
-`C5_FINAL_GATE_PASS`; Phase 13 must not be treated as next before the 12.5 release freeze. D, E, F
-and Phase 13 remain pending/not started.
+`C5_FINAL_GATE_PASS`; Phase 13 is authorized only after the completed 12.5 release freeze. D, E
+and F are complete; Phase 13 is authorized but not started.
 
 Recovery checkpoint: `backup/pre-phase-12.3-worktree-20260809` at `862c2a7` is frozen and is not
 an approved implementation. The Phase 12.3 work was recovered selectively on

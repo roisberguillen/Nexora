@@ -19,7 +19,7 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
 | 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
-| 13 | Applicazione Windows e macOS | vincolata al freeze 12.5.F |
+| 13 | Applicazione Windows e macOS | autorizzata dopo `12.5.F COMPLETE / PASS` — non iniziata |
 | 14 | Applicazione Android | successiva alla Fase 13 |
 | 15 | Nexora Local Hub | successiva alla Fase 14 |
 | 16 | Sincronizzazione offline-first | successiva alla Fase 15 |
