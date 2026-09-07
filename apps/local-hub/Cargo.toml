@@ -8,6 +8,7 @@ license = "UNLICENSED"
 [dependencies]
 axum = "0.8"
 axum-server = { version = "0.7", features = ["tls-rustls"] }
+mdns-sd = "0.13"
 serde = { version = "1", features = ["derive"] }
 sha2 = "0.10"
 rustls = "0.23"

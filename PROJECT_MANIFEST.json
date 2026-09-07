@@ -214,8 +214,8 @@
     },
     {
       "path": ".codex/reviews/phase-15-final-local-hub-gate.md",
-      "size": 1217,
-      "sha256": "58ce9d595f041d35f66971ca9b565665ec26e8df3e6970079547e7555e676ab4"
+      "size": 1101,
+      "sha256": "0b0159f95e309afdb1dc84cb25fd7e1a84f7ac4c933666b88dcc3bd962761130"
     },
     {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
@@ -719,8 +719,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/phase-15-final-local-hub-gate.md",
-      "size": 1188,
-      "sha256": "1d8fc12a7731ba92ad8b4b9409253eee24226a03a6ed1ede529782355d3f3c9e"
+      "size": 1266,
+      "sha256": "4af2d3c4e1e227b0bb06a3ecc9396bcf3b5c5e2027e5b8b5040ea901da451a3e"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -914,13 +914,13 @@
     },
     {
       "path": ".codex/state/checkpoints/2026-09-07-15-f.md",
-      "size": 794,
-      "sha256": "473b05563274bfdb153586f23213dd9e2abc384b895dca8b7fcf9a8fe24892b5"
+      "size": 791,
+      "sha256": "f22824e0eb5bf02966c179c8230e4e5e7671a1cdb7e48ed1e385c75d516c7ba6"
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 605,
-      "sha256": "aaaac581a97915bcd43671e0b21840c09881d034dc8cc6583bd5740e50b14612"
+      "size": 595,
+      "sha256": "a516b721cf9c138bc63de2310767d0231b037fb199175fac7db47cb56404b2b0"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -954,8 +954,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 146958,
-      "sha256": "8aace18f8f0728f164383d5a1ac26402d5abeab6705aa99b989b5f4f15aa094f"
+      "size": 146967,
+      "sha256": "f92b69d5812b5ad38c8ebf14897556ca744f6b48e33efb2cc4efc267c9f312c4"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1084,13 +1084,13 @@
     },
     {
       "path": "apps/local-hub/Cargo.lock",
-      "size": 24854,
-      "sha256": "d893d308d6641df3eb2d191d32edb3347fd65708d2c12234bbc5c8a1add07905"
+      "size": 26970,
+      "sha256": "70727eb46eb92f9ccb4ae2a2903ca1449a899db54fb75f2ecdf2da9b5bf47850"
     },
     {
       "path": "apps/local-hub/Cargo.toml",
-      "size": 512,
-      "sha256": "cd38a4b4208eb0334e972973cbab94343133771a80a52dfde8e40269b47b487c"
+      "size": 529,
+      "sha256": "159aed5cf5d3acfecb30cc414bc67f21a6b5a5979bd61f371b08ef2a925d9890"
     },
     {
       "path": "apps/local-hub/README.md",
@@ -1099,8 +1099,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 18336,
-      "sha256": "9bd7e7b7eca5ff82e5e7fc08440c2327d7b6cea87547c7e90223462219a8be89"
+      "size": 19444,
+      "sha256": "35fde947b4496d4ea97351b68296b9fee0cd5f38ec0ffebbd79303621a4e49b2"
     },
     {
       "path": "apps/web/index.html",
@@ -2269,8 +2269,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 57347,
-      "sha256": "4b924d7048d17ba2a9eea2eacb3dc57042f41e51ce4ed10f1a65209e3a3b6f05"
+      "size": 57509,
+      "sha256": "b19b183664a500619123619123c669b4880aa259274ea3e86c5c9c1bab4cb14e"
     },
     {
       "path": "design/mockup/README.md",

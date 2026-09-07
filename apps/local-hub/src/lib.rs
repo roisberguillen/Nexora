@@ -254,6 +254,39 @@ pub struct DiscoveryAdvertisement {
     pub lan_enabled: bool,
 }
 
+/// Publishes the Local Hub advertisement only after the caller has explicitly
+/// enabled LAN mode and supplied a validated host identity.
+pub fn publish_discovery(
+    advertisement: &DiscoveryAdvertisement,
+    host_ip: IpAddr,
+    hostname: &str,
+) -> Result<mdns_sd::ServiceDaemon, DiscoveryError> {
+    if !advertisement.validate() {
+        return Err(DiscoveryError::InvalidAdvertisement);
+    }
+    let daemon = mdns_sd::ServiceDaemon::new().map_err(|_| DiscoveryError::DaemonUnavailable)?;
+    let properties = [("host-fingerprint", advertisement.host_fingerprint.as_str())];
+    let service = mdns_sd::ServiceInfo::new(
+        "_nexora._tcp.local.",
+        &advertisement.service_name,
+        &format!("{hostname}.local."),
+        host_ip,
+        advertisement.port,
+        &properties[..],
+    )
+    .map_err(|_| DiscoveryError::InvalidAdvertisement)?;
+    daemon
+        .register(service)
+        .map_err(|_| DiscoveryError::DaemonUnavailable)?;
+    Ok(daemon)
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DiscoveryError {
+    InvalidAdvertisement,
+    DaemonUnavailable,
+}
+
 impl DiscoveryAdvertisement {
     pub fn validate(&self) -> bool {
         self.lan_enabled

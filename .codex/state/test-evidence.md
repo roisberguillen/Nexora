@@ -1937,6 +1937,6 @@ Keep only the latest relevant evidence per completed phase.
 
 - `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 12 passed, 0 failed, including in-process HTTP health/authorization checks.
 - `pnpm codex:validate`: PASS. `pnpm manifest:check`: stale only because the new checkpoint must be included; no application failure.
-- Gate result: NOT PASS. A live Axum/Tokio router/runtime is now present and in-process HTTP tested; the mDNS/DNS-SD provider adapter is still absent, so complete LAN discovery cannot be evidenced.
+- Gate result: NOT PASS. Axum/Tokio runtime and mdns-sd provider integration are now present; unit/in-process tests verify fail-closed behavior, but an independent network-security review is still required.
 - Security policy blocker: `nexora-sync` and `nexora-security` require independent review for network exposure; no independent reviewer capability is available in this run.
 - P0/P1/P2: 0/1/0. No subsequent Phase 16 task is authorized until 15.F is resolved.
