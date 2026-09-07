@@ -1968,3 +1968,12 @@ Keep only the latest relevant evidence per completed phase.
 - Coverage: partial delivery retention, retry attempt increment, complete Applied acknowledgement, Duplicate acknowledgement and Conflict retention.
 - No silent conflict deletion, SQLite migration or real ledger access; no open P0/P1/P2.
 - Evidence: `.codex/reviews/phase-16-2-offline-queue-reconciliation.md`.
+
+# 16.3 — Explicit conflicts and review UI — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="16.3 offline-first synchronization explicit conflicts deterministic policy conflict UI"` → `synchronization / CRITICAL / medium`.
+- `cargo fmt --manifest-path apps/local-hub/Cargo.toml`; `cargo test --manifest-path apps/local-hub/Cargo.toml --locked`: 20 passed, 0 failed.
+- `pnpm --filter @nexora/ui typecheck`: PASS; `pnpm exec vitest run packages/ui/src/SyncConflictBanner.test.tsx`: 2 passed, 0 failed.
+- Coverage: explicit conflict record, deterministic manual policy, visible “Esamina” action and no automatic overwrite/merge or silent last-write-wins.
+- No SQLite migration, real ledger access, float amount or accounting invariant changed; P0/P1/P2 open 0/0/0.
+- Evidence: `.codex/reviews/phase-16-3-conflict-policy-ui.md`; `.codex/reviews/ui-ux/phase-16-3-conflict-policy-ui.md`.

@@ -503,6 +503,26 @@ pub enum OperationApplyResult {
     Conflict { current_revision: u64 },
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum ConflictPolicy {
+    #[default]
+    Manual,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ConflictRecord {
+    pub entity_id: String,
+    pub local_revision: u64,
+    pub incoming_base_revision: u64,
+    pub incoming_payload_digest: String,
+}
+
+impl ConflictRecord {
+    pub fn requires_explicit_resolution(&self, policy: ConflictPolicy) -> bool {
+        policy == ConflictPolicy::Manual
+    }
+}
+
 #[derive(Default)]
 pub struct AppendOnlyOperationLog {
     operations: Vec<ReplicableOperation>,
@@ -1051,6 +1071,17 @@ mod tests {
             }]
         ));
         assert_eq!(queue.pending_count(), 0);
+    }
+
+    #[test]
+    fn conflicts_use_manual_policy_and_cannot_be_auto_resolved() {
+        let conflict = ConflictRecord {
+            entity_id: "movement-1".to_owned(),
+            local_revision: 3,
+            incoming_base_revision: 2,
+            incoming_payload_digest: "sha256:incoming".to_owned(),
+        };
+        assert!(conflict.requires_explicit_resolution(ConflictPolicy::Manual));
     }
 
     #[test]

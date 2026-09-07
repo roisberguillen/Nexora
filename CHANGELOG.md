@@ -858,3 +858,7 @@
 # Unreleased
 
 - Added strict ROADMAP AUTOPILOT orchestration with deterministic next-task resolution, hard advancement checks, full-gate finalization, and verified commit/push requirements.
+
+# Unreleased
+
+- 16.3: added explicit sync conflict records, deterministic manual resolution policy and accessible review banner without automatic overwrite.

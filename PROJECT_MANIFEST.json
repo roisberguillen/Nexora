@@ -233,6 +233,11 @@
       "sha256": "32d5a279da3edad42f49a31c4538c80385078ef0e9ac44bfcb4401a05ece9dc7"
     },
     {
+      "path": ".codex/reviews/phase-16-3-conflict-policy-ui.md",
+      "size": 1178,
+      "sha256": "2614d4aacfe652815b428f4bedc00efb76a5a47bb468e80e9ed8033c30f2d75f"
+    },
+    {
       "path": ".codex/reviews/security/2026-09-07-d-4-independent-security-review.md",
       "size": 5555,
       "sha256": "109db50e6e315a573c7ff5149ed9b2bcfb73b7107b51438244b1fb9a4c9e74e6"
@@ -754,8 +759,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/phase-16-2-offline-queue-reconciliation.md",
-      "size": 1140,
-      "sha256": "6233c848e67dac0dc4a6290f394f32ed283d74a9bee9f6036cbf7b885f230f8d"
+      "size": 1207,
+      "sha256": "208fd0348f8081801f8904aae6697312f2ba17437ac0e44136b5f98562ff0cfc"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/phase-16-3-conflict-policy-ui.md",
+      "size": 1313,
+      "sha256": "bc2d38cfb0e66a851205361ed0fcd05495e6ebb8b9fdc750d21bf25d17bc3be9"
     },
     {
       "path": ".codex/skills/commit-and-push/agents/openai.yaml",
@@ -968,9 +978,14 @@
       "sha256": "18bbc8ed742dd542f32cc93a3104d68bed596a03d3adb1a57418344fc36eb388"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-07-16-3.md",
+      "size": 991,
+      "sha256": "6557c14ccd253bb529f2c85e226371193eaaaf6d215110326681fba08d59e631"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 606,
-      "sha256": "2bc261b83adca901a4eab30867e5ad4464c33f10cebf50d34836835cb249a415"
+      "size": 596,
+      "sha256": "40c7463b281b1b781579edb7aafea2bf89f2ac126a654d29d0335210726ddda1"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -999,13 +1014,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 15915,
-      "sha256": "7aa691ddf7c44006cf2c77f2f9b3525ed906861019b43b22d3f740bc9edc2e53"
+      "size": 16035,
+      "sha256": "9e9443fda8cb59cb6f874b845f1ae6e9cee8f9a1cdf8e61a5859abf03e3030bf"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 149840,
-      "sha256": "76863e1cdd0ed53ee26b26b271d470240d8c875ec943331999739e86df43d0df"
+      "size": 150735,
+      "sha256": "dfa19ec2bd2a96e2f59f3a9313860b70d36fb30a29dfce46a39d8ae1cf7b71f5"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1149,8 +1164,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 33096,
-      "sha256": "4f749af05e80f23a865a623361e226d7d52e08e6449cb17ef0dd6bd961104e1c"
+      "size": 33965,
+      "sha256": "7022058d4e89865023eb94090e4a7ddd47e6287a13862bf3ebf61cc6f9bd7167"
     },
     {
       "path": "apps/web/index.html",
@@ -2319,8 +2334,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 58157,
-      "sha256": "80c10fcefab3d706d74ab9c32aa8ab4f7a105b4066c5468d97050fd59cc00b58"
+      "size": 58315,
+      "sha256": "608b9282b7f96f5f8d80fa04da673c2a064642e83194b93d4213323cb1ba1981"
     },
     {
       "path": "design/mockup/README.md",
@@ -2624,8 +2639,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 20389,
-      "sha256": "cdc87c17d9c0a32cdf18fd0395ef3034d06989ec467ef7150ca8c6e48d67100a"
+      "size": 20468,
+      "sha256": "19b02039911374f4c608f4275ce11e05377e74b38e10953b93c806a4f72d969b"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -3629,8 +3644,8 @@
     },
     {
       "path": "packages/ui/src/index.ts",
-      "size": 959,
-      "sha256": "8b941d86e85a6a6a8597bc99d66fbc2d27a589c25c4c8927c25b1187e218abec"
+      "size": 1081,
+      "sha256": "b25ce04361d55a26bd5010caa4d2fb0c2e0aa67ee1d6b963914ad450b1840b50"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -3681,6 +3696,16 @@
       "path": "packages/ui/src/styles.css",
       "size": 20821,
       "sha256": "6511144067d2e0e02c1222c3a7d2c4ba7e9b313ce95eccf881bcfce64aa708c2"
+    },
+    {
+      "path": "packages/ui/src/SyncConflictBanner.test.tsx",
+      "size": 907,
+      "sha256": "d41b625b941f45a0a84c92e377d73651c647c3a39e7b482fa9ddd5909328e2ac"
+    },
+    {
+      "path": "packages/ui/src/SyncConflictBanner.tsx",
+      "size": 1165,
+      "sha256": "cc8da4a80d8f0ae0576bfd7c31aad647168228758be3cbbe7734bcf4a59b35fc"
     },
     {
       "path": "packages/ui/src/tokens.test.ts",
