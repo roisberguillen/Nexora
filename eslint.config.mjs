@@ -11,6 +11,7 @@ export default tseslint.config(
       "**/coverage/**",
       "**/node_modules/**",
       "**/src-tauri/target/**",
+      ".codex/tools/**",
       "design/mockup/stitch/code.html",
       "playwright-report/**",
       "test-results/**",

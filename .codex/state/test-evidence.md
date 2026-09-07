@@ -1,5 +1,16 @@
 # Test evidence
 
+## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
+
+- Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
+  responsive pickers, security/backup, arm64 Rust and APK/AAB artifacts.
+- `pnpm verify` → PASS: format/lint/typecheck/build green; 140 files, 633 tests passed, 4
+  documented skips. The local SDK exclusion prevents third-party tool files entering lint/manifest.
+- `adb devices -l` found no device/emulator; production signing key absent; neither is falsely
+  reported as PASS. Full Tauri Android command's Windows symlink/Kotlin cache limitation remains
+  documented with underlying Gradle/Rust verification.
+- No ledger, schema, migration or accounting invariant changed; P0/P1/P2 = 0/0/0. Next: 15.0.
+
 ## 14.5 — Android APK/AAB packaging — 2026-09-07 — COMPLETE / PASS (device N/A)
 
 - `cargo build --target aarch64-linux-android --release --locked` → PASS with NDK clang/linker.
