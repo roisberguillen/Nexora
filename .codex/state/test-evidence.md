@@ -1,5 +1,14 @@
 # Test evidence
 
+## 13.F — Final Desktop gate — 2026-09-07 — COMPLETE / PASS
+
+- Reconciled 13.0–13.4 evidence: Windows native foundation/persistence/packaging, macOS x64/arm64
+  bundles and full CI run `34156198571`, plus local 13.4 backup/restore and verify gates.
+- `pnpm verify` at 13.4: 633 passed, 4 documented skips, 0 failures; `cargo check --locked`,
+  native adapter typecheck and Windows MSI/NSIS bundle all PASS.
+- `pnpm codex:validate`, `pnpm manifest:check` and `pnpm test:ui-ux` PASS; P0/P1/P2 = 0/0/0.
+- No code, schema, migration, ledger or accounting invariant changed. Next task: 14.0.
+
 ## 13.4 — Desktop final gate — 2026-09-07 — COMPLETE / PASS
 
 - `pnpm test -- packages/database-tauri/src packages/database/src/backup packages/database/src/sqlite` → 7 files, 68 passed, 0 failed.

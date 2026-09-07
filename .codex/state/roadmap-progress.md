@@ -81,13 +81,13 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 12.5.E.3 | complete — 2026-09-07 | Data Integrity & Recovery Final Gate PASS; round-trip, checksum, rollback, restore e adapter parity verdi; prossimo 12.5.E.F |
 | 12.5.E.F | complete — 2026-09-07 | Final Phase E Gate PASS; E.1–E.3, verify, manifest e state riconciliati; prossimo 12.5.F |
 | 12.5.F | complete — 2026-09-07 | Release Freeze PASS; baseline 12.5 congelata; prossimo 13.0 |
-| 13 | in progress — 2026-09-07 | 13.0–13.3 PASS; 13.4 and 13.F registered as pending |
+| 13 | complete — 2026-09-07 | `13.F COMPLETE / PASS`; desktop evidence reconciled; prossimo 14.0 |
 | 13.0 | complete — 2026-09-07 | Tauri build, native adapter, cargo locked check e desktop startup smoke PASS; prossimo 13.1 |
 | 13.1 | complete — 2026-09-07 | Desktop shell/native persistence parity PASS; 76 tests, cargo locked check, build e startup smoke; prossimo 13.2 |
 | 13.2 | complete — 2026-09-07 | Desktop packaging readiness PASS; MSI/NSIS, cargo locked check, verify e startup smoke; prossimo 13.3 |
 | 13.3 | complete — 2026-09-07 | macOS x64/arm64 matrix and full verify PASS in CI 34156198571; Linux baselines/root overflow hardened; 0/0/0; next 13.4 |
 | 13.4 | complete — 2026-09-07 | Native backup/restore tests 68/68, locked check, Windows MSI/NSIS build and full verify 633 passed/4 skipped; 0/0/0; prossimo 13.F |
-| 13.F | planned | Final Desktop gate: Windows/macOS acceptance, evidence, manifest and regression closure |
+| 13.F | complete — 2026-09-07 | Windows/macOS, native persistence, packaging, backup/restore and regression evidence reconciled; 0/0/0; prossimo 14.0 |
 | 14.0 | planned | Tauri Android initialization and reproducible native project/build baseline |
 | 14.1 | planned | Android SQLite native adapter, shared schema and migration parity |
 | 14.2 | planned | Android persistence, lifecycle, startup and recovery behavior |
