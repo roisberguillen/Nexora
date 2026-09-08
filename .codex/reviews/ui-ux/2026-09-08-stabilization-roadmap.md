@@ -76,8 +76,8 @@ da ogni claim UI/release.
 Il job CI Android arm64 è stato aggiunto su runner Linux per verificare la pipeline Tauri completa;
 finché il runner remoto non restituisce un artefatto e log PASS, la fase resta bloccata.
 
-Il run remoto `34223431609` è terminato prima degli step con runner assente; nessun artefatto
-Android o evidenza UI è quindi disponibile e non viene dichiarato alcun PASS.
+I run remoti `34223431609` e `34223591561` sono terminati prima degli step con runner assente;
+nessun artefatto Android o evidenza UI è quindi disponibile e non viene dichiarato alcun PASS.
 
 ## FIX.9 signing blocker
 

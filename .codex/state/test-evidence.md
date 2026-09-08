@@ -103,7 +103,7 @@
 - APK diagnostico unsigned: `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,708,692 byte, SHA-256 `F4C34B4C962779BC6E85C4895B6C76C3683C462A407C452F001C6711B97F787B`; `apksigner verify` lo rifiuta come unsigned.
 - Gate bloccato: serve Developer Mode/privilegio symlink sul runner Windows o un workaround di pipeline approvato che non ometta la compilazione Rust. FIX.9–FIX.12 non sono autorizzate.
 - È stato aggiunto `.github/workflows/ci.yml` con job `android-arm64-pipeline` su `ubuntu-latest`: toolchain JDK/Rust/Android, `tauri android build --apk --target aarch64 --ci` e upload dell’APK unsigned. Il job è configurato ma non è evidenza PASS finché non viene eseguito dal runner remoto.
-- Il run GitHub Actions `34223431609` sul commit `4021732` è terminato `failure` prima degli step: job `android-arm64-pipeline` `102051715964`, `runner_name` vuoto, `steps: []`, nessun log disponibile; anche i job CI esistenti hanno lo stesso arresto pre-run. Il runner remoto/infrastruttura GitHub è quindi indisponibile per questo gate.
+- I run GitHub Actions `34223431609` sul commit `4021732` e `34223591561` sul commit `4216376` sono terminati `failure` prima degli step: in entrambi il job `android-arm64-pipeline` ha `runner_name` vuoto e `steps: []`, senza log disponibile; anche i job CI esistenti hanno lo stesso arresto pre-run. Il runner remoto/infrastruttura GitHub è quindi indisponibile per questo gate.
 
 ## FIX.9 — Firma e verifica APK — 2026-09-08 — BLOCKED
 
