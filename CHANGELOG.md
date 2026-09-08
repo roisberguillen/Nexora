@@ -34,6 +34,7 @@
 - Started 13.3 portability hardening after remote matrix evidence: aligned stale Linux visual baselines and clipped a 4px Linux root overflow; post-fix CI verification remains open.
 - Closed 13.3 Cross-platform Desktop Release Matrix: macOS x64/arm64 Tauri bundles, locked checks and full verify passed in CI; Linux visual baselines and root overflow portability were hardened; the next task requires roadmap registration.
 - Completed 17.4 bundle/startup and platform regression gate: full Playwright suite reconciled at 420 parallel passes plus 13/13 serial retries, with 233 expected skips; 17.5 remains next.
+- Completed 17.5 release-candidate readiness reconciliation: verify green with 637 tests passed/4 skipped, production PWA build generated, manifest current and no open P0/P1/P2; 17.F remains next.
 - Registered the remaining atomic roadmap from 13.4 through 17.F; no new task is marked complete and 13.4 is the next authorized task.
 - Completed 13.4 Desktop final gate: native backup/restore evidence, locked check, Windows MSI/NSIS build and full verify passed; 13.F remains next.
 - Closed Phase 13 with `13.F COMPLETE / PASS`; desktop evidence is reconciled and 14.0 Android initialization is next.

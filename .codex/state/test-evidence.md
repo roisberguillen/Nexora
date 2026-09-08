@@ -2034,3 +2034,11 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm exec playwright test --last-failed --workers=1`: 13 passed, 0 failed, confirming the failures were parallel resource contention rather than reproducible product regressions.
 - The existing production preview bundle served successfully; startup, offline reload, responsive viewports and 200% zoom scenarios are covered by the suite. No code or accounting invariant changed.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-4-bundle-startup-e2e.md`.
+
+# 17.5 — Release candidate evidence and operational readiness — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.5 release candidate evidence operational readiness reconciliation"` → `final_release / CRITICAL / low`.
+- `pnpm verify`: format check, lint, all workspace typechecks, 142 Vitest files with 637 passed/4 skipped, and production PWA build passed.
+- Production build generated the service worker and precache manifest with 33 entries; large-chunk output is an existing advisory, not a failure.
+- `pnpm manifest:check`: current. No code, ledger, schema or accounting invariant changed.
+- P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-5-release-readiness.md`.

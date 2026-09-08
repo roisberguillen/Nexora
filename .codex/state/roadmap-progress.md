@@ -112,7 +112,7 @@ Authoritative roadmap: `docs/ROADMAP_UI_ARCHITECTURE.md`.
 | 17.2 | complete — 2026-09-08 | PWA update notice/apply path plus backup checksum, rollback and cross-adapter regression: focused 34/34; 0/0/0; prossimo 17.3 |
 | 17.3 | complete — 2026-09-08 | `pnpm audit --prod` no known vulnerabilities; secret-pattern scan clean; security contract tests retained; 0/0/0; prossimo 17.4 |
 | 17.4 | complete — 2026-09-08 | Bundle/startup performance and platform regression evidence; parallel E2E 420 passed/13 contention timeouts/233 skipped, serial retry 13/13 passed; 0/0/0; prossimo 17.5 |
-| 17.5 | planned | Release candidate evidence and operational readiness reconciliation |
+| 17.5 | complete — 2026-09-08 | Release candidate readiness: format/lint/typecheck, 637/4 Vitest, production build/PWA precache and manifest reconciled; 0/0/0; prossimo 17.F |
 | 17.F | planned | Final READY/NOT READY gate for Nexora 1.0 |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are

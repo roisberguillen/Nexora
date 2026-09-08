@@ -302,5 +302,6 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 17.2 — update Service Worker A→B e regressione backup/restore cross-platform.
 - [x] 17.3 — security review, supply-chain audit, secret scan e dependency audit.
 - [x] 17.4 — Bundle/startup performance and platform regression evidence; full E2E reconciled with serial retry of contention timeouts.
-- [ ] 17.5, 17.F — sicurezza,
+- [x] 17.5 — Release candidate evidence and operational readiness reconciliation; quality, build, PWA and manifest gates green.
+- [ ] 17.F — sicurezza,
   regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.
