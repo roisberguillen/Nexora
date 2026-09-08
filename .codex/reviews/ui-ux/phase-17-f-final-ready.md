@@ -30,3 +30,5 @@ Gate result: PASS.
 State reconciliation: authoritative roadmap now marks Phases 13–17 complete; no UI implementation changed.
 
 Final orchestrator verification: `ROADMAP_COMPLETE`.
+
+Manifest verification follows the final state reconciliation.
