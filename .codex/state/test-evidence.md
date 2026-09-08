@@ -102,6 +102,13 @@
 - `assembleArm64Release` PASS; APK `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,708,692 byte, SHA-256 `F4C34B4C962779BC6E85C4895B6C76C3683C462A407C452F001C6711B97F787B`.
 - `apksigner verify --verbose` conferma che la release è unsigned; nessuna dichiarazione di installabilità o release readiness. Firma, fingerprint, installazione e device gate restano FIX.9–FIX.10.
 
+## FIX.9 — Firma e verifica APK — 2026-09-08 — BLOCKED
+
+- Router: `encryption / CRITICAL / rischio dati medium`.
+- Check di repository e ambiente: nessuna `.jks`, `.keystore`, `.p12`, `keystore.properties`, secret binding o signing config di release disponibile.
+- È presente solo `C:\Users\Roi23\.android\debug.keystore`, con fingerprint diagnostico `06:03:31:C7:90:EB:A6:74:69:A1:43:FB:AB:D5:55:96:80:0A:67:F6:13:72:42:6F:6F:48:A1:88:9D:23:03:C7`; non viene usata per la release.
+- Blocco di sicurezza: non generare o scegliere autonomamente una nuova identità di firma. Servono keystore di release, alias/password gestiti fuori dal repository e decisione owner su CI/backup/rotazione. FIX.10 e FIX.12 non sono autorizzate finché la firma non è risolta.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,

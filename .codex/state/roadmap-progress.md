@@ -125,6 +125,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | FIX.6 | complete — 2026-09-08 | Import regression PASS: Vitest 68/68, Playwright 47/13 skipped across six viewports; preview, mapping, deduplica, conferma, undo e offline; prossimo FIX.7 |
 | FIX.7 | complete — 2026-09-08 | Backup/restore/reset regression PASS: Vitest 83/83, typecheck workspace PASS, Playwright 18/30 skipped across six viewports; cifratura, integrità, rollback, Drive opzionale e reset; prossimo FIX.8 |
 | FIX.8 | complete — 2026-09-08 | Android pipeline PASS: Tauri/Gradle arm64 release compilata; APK unsigned 17,708,692 byte, SHA256 F4C34B4C…; symlink workaround confinato a gen/android; firma/installazione restano FIX.9–FIX.10 |
+| FIX.9 | blocked — 2026-09-08 | Nessuna keystore release autorizzata o secret binding disponibile; solo debug.keystore locale (fingerprint diagnostico 06:03:31:C7:90:EB:A6:74:69:A1:43:FB:AB:D5:55:96:80:0A:67:F6:13:72:42:6F:6F:48:A1:88:9D:23:03:C7), non valida per produzione; richiede input owner |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

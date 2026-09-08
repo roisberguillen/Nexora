@@ -72,6 +72,11 @@ Nessun redesign UI. La build web/mobile mantiene i gate responsive già verifica
 arm64 è generato ma unsigned. Firma, installazione e verifica su device non sono coperte da questa
 fase e restano esplicitamente fuori da ogni claim UI/release.
 
+## FIX.9 signing blocker
+
+Nessuna modifica UI. La firma release è bloccata dall’assenza di una keystore autorizzata; non viene
+usata la debug key locale e non si dichiara alcun APK distribuibile.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.
