@@ -69,8 +69,9 @@ verifica archivio, rollback, recovery e Drive opzionale restano espliciti e acce
 ## FIX.8 Android packaging
 
 Nessun redesign UI. La build web/mobile mantiene i gate responsive già verificati; l’APK release
-arm64 è generato ma unsigned. Firma, installazione e verifica su device non sono coperte da questa
-fase e restano esplicitamente fuori da ogni claim UI/release.
+arm64 è generato solo tramite il workaround diagnostico con Rust task escluso; la pipeline Tauri
+end-to-end è bloccata dal symlink Windows. Firma, installazione e verifica su device restano fuori
+da ogni claim UI/release.
 
 ## FIX.9 signing blocker
 

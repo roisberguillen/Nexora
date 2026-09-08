@@ -94,13 +94,14 @@
 - Verificati archivio `.nexora-backup`, cifratura e passphrase minima, checksum/manifest/schema, tampering e passphrase errata, restore isolato, rollback, interrupted/recovery behavior, conferma distruttiva, Drive `appDataFolder` opzionale e token solo in memoria.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.8.
 
-## FIX.8 — Pipeline Android e APK — 2026-09-08 — COMPLETE / PASS (build only)
+## FIX.8 — Pipeline Android e APK — 2026-09-08 — BLOCKED
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.
 - Toolchain locale: JDK 17, Android SDK/NDK 29.0.13846066 e Gradle 8.14.3 disponibili dopo configurazione scoped al processo.
-- `pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci` ha completato frontend e Rust release; su Windows il symlink Tauri è stato sostituito solo nell’albero generato `gen/android` con copia dell’artefatto già compilato.
-- `assembleArm64Release` PASS; APK `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,708,692 byte, SHA-256 `F4C34B4C962779BC6E85C4895B6C76C3683C462A407C452F001C6711B97F787B`.
-- `apksigner verify --verbose` conferma che la release è unsigned; nessuna dichiarazione di installabilità o release readiness. Firma, fingerprint, installazione e device gate restano FIX.9–FIX.10.
+- `pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci` completa frontend e Rust release ma fallisce quando Tauri tenta il symlink della `.so` in `gen/android`: Windows nega `Creation symbolic link is not allowed for this system`.
+- Il workaround manuale copia la `.so` solo nell’albero generato e completa `assembleArm64Release`, ma usa `-x :app:rustBuildArm64Release`; è evidenza diagnostica, non un PASS della pipeline richiesta.
+- APK diagnostico unsigned: `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,708,692 byte, SHA-256 `F4C34B4C962779BC6E85C4895B6C76C3683C462A407C452F001C6711B97F787B`; `apksigner verify` lo rifiuta come unsigned.
+- Gate bloccato: serve Developer Mode/privilegio symlink sul runner Windows o un workaround di pipeline approvato che non ometta la compilazione Rust. FIX.9–FIX.12 non sono autorizzate.
 
 ## FIX.9 — Firma e verifica APK — 2026-09-08 — BLOCKED
 
