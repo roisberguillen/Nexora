@@ -61,6 +61,11 @@ coerenti e senza overflow.
 Nessun redesign UI. Vitest `68/68` e Playwright `47/13 skipped` PASS su sei viewport; preview,
 mapping, conferma, deduplica, undo, export e stati offline dell’import restano leggibili e coerenti.
 
+## FIX.7 backup and reset
+
+Nessun redesign UI. Vitest `83/83` e Playwright `18/30 skipped` PASS; conferme distruttive,
+verifica archivio, rollback, recovery e Drive opzionale restano espliciti e accessibili.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

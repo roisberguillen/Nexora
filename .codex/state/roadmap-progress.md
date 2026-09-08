@@ -123,6 +123,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | FIX.4 | complete — 2026-09-08 | Movimenti/trasferimenti regression PASS: repository/UI 59/59, Playwright transactions + C4 transfer 92/10 skipped across six viewports; prossimo FIX.5 |
 | FIX.5 | complete — 2026-09-08 | Moduli finanziari regression PASS: Vitest 82/82, Playwright 92/40 skipped across six viewports; prossimo FIX.6 |
 | FIX.6 | complete — 2026-09-08 | Import regression PASS: Vitest 68/68, Playwright 47/13 skipped across six viewports; preview, mapping, deduplica, conferma, undo e offline; prossimo FIX.7 |
+| FIX.7 | complete — 2026-09-08 | Backup/restore/reset regression PASS: Vitest 83/83, typecheck workspace PASS, Playwright 18/30 skipped across six viewports; cifratura, integrità, rollback, Drive opzionale e reset; prossimo FIX.8 |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

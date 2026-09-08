@@ -86,6 +86,14 @@
 - Verificati dry-run senza scritture premature, preview e mapping CSV, rilevamento Mediobanca, deduplica, trasferimenti interni, conferma esplicita, undo, export e riapertura offline; nessuna scrittura parziale emersa.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.7.
 
+## FIX.7 — Backup, restore e reset — 2026-09-08 — COMPLETE / PASS
+
+- Router: `google_drive / ADVANCED / rischio dati medium`; checkpoint security: `.codex/state/checkpoints/2026-09-08-fix-7-backup-restore-reset-security-review-before-validation.md`.
+- Backup database, cloud, reset, recovery e notifiche: `83 passed / 0 failed` su 15 file Vitest; typecheck workspace PASS.
+- Playwright backup/reset/Drive/App Lock: `18 passed / 30 skipped / 0 failed`, sei viewport da 320 a 1440 px.
+- Verificati archivio `.nexora-backup`, cifratura e passphrase minima, checksum/manifest/schema, tampering e passphrase errata, restore isolato, rollback, interrupted/recovery behavior, conferma distruttiva, Drive `appDataFolder` opzionale e token solo in memoria.
+- Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.8.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
