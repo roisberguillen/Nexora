@@ -2051,3 +2051,15 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm audit --prod --audit-level high`: no known vulnerabilities. `pnpm manifest:check`, `pnpm codex:validate`, `pnpm codex:test` and `pnpm test:ui-ux`: PASS.
 - Accounting invariants, schema, backup/restore, Local Hub and offline-first sync evidence remain unchanged and reconciled; P0/P1/P2 open 0/0/0.
 - Final result: `Nexora 1.0 READY`. Evidence: `.codex/reviews/phase-17-f-final-ready.md`.
+## 2026-09-08 — Native CRUD persistence regression
+
+- Route: `tauri_android / ADVANCED`, data risk `low`.
+- `pnpm exec vitest run packages/database-tauri/src/TauriSqliteDatabase.test.ts packages/database-tauri/src/openTauriLedger.test.ts packages/database/src/sqlite/SqliteLedgerRepository.test.ts` — PASS, 46 tests.
+- `pnpm exec tsc -p packages/database-tauri/tsconfig.json --noEmit` — PASS.
+- `pnpm exec tsc -p packages/database/tsconfig.json --noEmit` — PASS.
+- `pnpm exec prettier --check ...` — PASS.
+- `pnpm lint -- --quiet` — PASS.
+- `pnpm build` — PASS; PWA precache generated. Vite emitted existing chunk-size warnings only.
+- `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked` — PASS.
+- `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked --target aarch64-linux-android` — BLOCKED by environment: `aarch64-linux-android-clang`/`clang.exe` is not installed; compilation reached `libsqlite3-sys` before the toolchain failure.
+- Android device/emulator smoke — not available in this environment; no device was connected.

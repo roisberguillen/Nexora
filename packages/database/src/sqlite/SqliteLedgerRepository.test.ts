@@ -41,9 +41,15 @@ import type { SqliteLedgerRepository } from "./SqliteLedgerRepository";
 
 const bookedDate = LocalDate.parse("2026-07-27");
 
-function nodeSqliteDatabase(database: DatabaseSync): SqliteDatabase {
+function nodeSqliteDatabase(
+  database: DatabaseSync,
+  supportsMultiCallTransactions = true,
+  executedSql?: string[],
+): SqliteDatabase {
   return {
+    supportsMultiCallTransactions,
     async execute(sql: string): Promise<void> {
+      executedSql?.push(sql);
       database.exec(sql);
     },
     async query<Row extends object>(
@@ -88,6 +94,22 @@ describe("SqliteLedgerRepository", () => {
       database: nodeSqliteDatabase(sqlite),
       now: () => new Date("2026-07-27T10:00:00.000Z"),
     }));
+  });
+
+  it("keeps native standalone creates outside pooled multi-call transactions", async () => {
+    const nativeSqlite = new DatabaseSync(":memory:");
+    const executedSql: string[] = [];
+    const { repository: nativeRepository } = await initializeSqliteLedger({
+      database: nodeSqliteDatabase(nativeSqlite, false, executedSql),
+      now: () => new Date("2026-07-27T10:00:00.000Z"),
+    });
+    executedSql.length = 0;
+
+    await nativeRepository.saveAccount(account("native-account"));
+
+    expect(executedSql).not.toContain("BEGIN IMMEDIATE;");
+    await expect(nativeRepository.findAccountById("native-account")).resolves.toBeDefined();
+    nativeSqlite.close();
   });
 
   afterEach(() => {

@@ -14,6 +14,7 @@ export interface TauriSqlClient {
 /** Adapts Tauri's native SQL plugin to Nexora's platform-neutral SQLite port. */
 export class TauriSqliteDatabase implements CloseableSqliteDatabase {
   public readonly storageKind = "native-sqlite" as const;
+  public readonly supportsMultiCallTransactions = false as const;
   private isClosed = false;
 
   public constructor(private readonly client: TauriSqlClient) {}

@@ -467,6 +467,18 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
 - Impatto: l’identità del movimento e i metadati di provenienza restano auditabili; le invarianti
   di segno, valuta, minor units e neutralità dei trasferimenti non cambiano.
 
+## 2026-09-08 — Native single-statement writes with Tauri SQL pooling
+
+- Decision: account, category, budget and other standalone entity creates use their validation
+  reads followed by one autocommit write when running through the Tauri SQL adapter. Native
+  multi-call transactions are not claimed because `@tauri-apps/plugin-sql` dispatches each IPC
+  call through a SQLx pool and does not expose a transaction-bound connection to the frontend.
+- Scope: transfer bundles, imports, resets, merges and other multi-write workflows keep the shared
+  transaction path; the browser SQLite adapters keep their existing behavior.
+- Rationale: this restores native CRUD without weakening the atomicity contract of workflows that
+  can partially change more than one record. A future native transaction API can remove this
+  adapter capability flag and re-enable the common transaction wrapper.
+
 ## 2026-09-07 — Phase 13.2: Windows native bundle version metadata
 
 - Decisione: il bundle Tauri usa la versione nativa `0.5.0-1`, mentre la versione workspace resta

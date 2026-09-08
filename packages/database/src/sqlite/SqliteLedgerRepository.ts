@@ -263,7 +263,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveAccount(account: Account): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           const record = accountToRecord(account);
           await this.assertNew("accounts", account.id, "Account");
           if (account.parentAccountId !== undefined) {
@@ -385,7 +385,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveCategory(category: Category): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           const record = categoryToRecord(category);
           await this.assertNew("categories", category.id, "Category");
           const next = [...(await this.listCategoriesInternal()), category];
@@ -465,7 +465,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveTag(tag: Tag): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           const found = await this.database.query<{ readonly id: string }>(
             "SELECT id FROM tags WHERE id = ?",
             [tag.id],
@@ -647,7 +647,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveRecurringRule(rule: RecurringRule): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           await this.assertNew("recurring_rules", rule.id, "Recurring rule");
           await this.validateRecurringRuleReferences(rule);
           await this.insertRecurringRule(rule);
@@ -701,7 +701,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveAllocationPlan(plan: AllocationPlan): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           await this.assertNew("allocation_plans", plan.id, "Allocation plan");
           await this.validateAllocationPlanReferences(plan);
           await this.insertAllocationPlan(plan);
@@ -741,7 +741,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveBudget(budget: Budget): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           await this.assertNew("budgets", budget.id, "Budget");
           await this.validateBudgetReferences(budget);
           await this.insertBudget(budget);
@@ -807,7 +807,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveLoan(loan: Loan): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           await this.assertNew("loans", loan.id, "Loan");
           await this.validateLoanReferences(loan);
           await this.insertLoan(loan);
@@ -851,7 +851,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveInvestmentPosition(position: InvestmentPosition): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           await this.assertNew("investment_positions", position.id, "Investment position");
           await this.validateInvestmentPositionReferences(position);
           await this.insertInvestmentPosition(position);
@@ -892,7 +892,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveMonthlyJournal(journal: MonthlyJournal): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           await this.assertNew("monthly_journals", journal.id, "Monthly journal");
           await this.insertMonthlyJournal(journal);
         }),
@@ -1213,7 +1213,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public saveTransaction(transaction: Transaction): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           if (transaction.kind === "transfer") {
             throw new DomainError(
               "invalid_transfer",
@@ -1945,6 +1945,11 @@ export class SqliteLedgerRepository implements LedgerRepository {
       }
       throw cause;
     }
+  }
+
+  private withSingleStatementWrite<Result>(operation: () => Promise<Result>): Promise<Result> {
+    if (this.database.supportsMultiCallTransactions === false) return operation();
+    return this.withWriteTransaction(operation);
   }
 
   private async assertNew(table: EntityTable, id: string, label: string): Promise<void> {

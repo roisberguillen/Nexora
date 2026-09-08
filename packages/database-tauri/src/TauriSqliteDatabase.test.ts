@@ -15,6 +15,12 @@ function client(): TauriSqlClient & {
 }
 
 describe("TauriSqliteDatabase", () => {
+  it("advertises that transactions cannot span pooled IPC calls", () => {
+    const database = new TauriSqliteDatabase(client());
+
+    expect(database.supportsMultiCallTransactions).toBe(false);
+  });
+
   it("forwards batches, queries and normalized native parameters", async () => {
     const native = client();
     const database = new TauriSqliteDatabase(native);
