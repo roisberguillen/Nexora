@@ -2074,3 +2074,12 @@ Keep only the latest relevant evidence per completed phase.
 - Size: `165304700` bytes. SHA-256:
   `A29D70C28DCCB057571C1C7D0B1519EA6FC230665D733116F3834D4A8D2C544D`.
 - Signing: not claimed; artifact is explicitly unsigned. Device/emulator: N/A.
+
+## 2026-09-08 — Windows executable rebuild after native CRUD fix
+
+- `pnpm --filter @nexora/web tauri build --no-bundle` — PASS; release Rust build completed in
+  2m 40s and produced `apps/web/src-tauri/target/release/nexora.exe`.
+- Delivered executable: `Nexora-desktop.exe`, 13,531,648 bytes.
+- SHA-256: `FE810D80749AA66BA9ECD5FB0ED81726B5980D6A02D936C1CA637AC699ACF0CB`.
+- Startup smoke: PASS; process started and responded, then was closed after verification.
+- MSI/NSIS bundling was not requested in this step; this artifact is the standalone executable.
