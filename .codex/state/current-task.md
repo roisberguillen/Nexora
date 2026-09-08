@@ -1,7 +1,7 @@
 # Current task
 
-- Task: FIX.9 — Firma e verifica APK
-- Roadmap phase: FIX.9
-- Status: `COMPLETE` — APK release firmato e verificato con keystore v2 fuori dal repository.
-- Evidence: `.codex/state/test-evidence.md`; `docs/ROADMAP_STABILIZATION.md`; `docs/ANDROID_SIGNING.md`.
-- Next task: `FIX.10 — Pixel 9`.
+- Task: FIX.10 — Device Gate Pixel 9
+- Roadmap phase: FIX.10
+- Status: `BLOCKED` — nessun device ADB disponibile; l’AVD API 35 richiede installazione amministrativa dell’Android Emulator Hypervisor Driver.
+- Evidence: `.codex/state/test-evidence.md`; `docs/ROADMAP_STABILIZATION.md`.
+- Next task: riprendere FIX.10 dopo driver Hypervisor installato come amministratore o device Android collegato con Debug USB.

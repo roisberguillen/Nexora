@@ -1,6 +1,6 @@
 # Nexora — Roadmap correttiva di stabilizzazione
 
-Stato: **FIX.1–FIX.9 completate, FIX.10 da eseguire** — 2026-09-08. Questa roadmap viene prima di nuove
+Stato: **FIX.1–FIX.9 completate, FIX.10 bloccata** — 2026-09-08. Questa roadmap viene prima di nuove
 funzionalità e sospende ogni dichiarazione `NEXORA READY`, `RELEASE READY` o `ANDROID PASS`
 finché il gate FIX.12 non è PASS.
 
@@ -160,6 +160,10 @@ prima del fix e passa dopo. Un test o gate fallito blocca la fase e impedisce la
 - **Dipendenze:** FIX.8.
 
 ## FIX.10 — Device Gate Pixel 9
+
+**Stato corrente: BLOCKED — 2026-09-08.** APK firmato disponibile, ma nessun device ADB è
+connesso e l’AVD `nexora-pixel9-api35` non può avviarsi perché manca l’Android Emulator
+Hypervisor Driver. L’installer SDK richiede privilegi amministrativi; il gate non è PASS.
 
 - **Obiettivo:** validare il prodotto Android su Pixel 9 o device Android equivalente dichiarato.
 - **Problemi da correggere:** installazione/avvio reale, crash, SQLite native, force-stop/restart,

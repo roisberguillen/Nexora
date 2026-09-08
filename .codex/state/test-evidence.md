@@ -116,6 +116,15 @@
 - `apksigner verify --verbose --print-certs` PASS: APK Signature Scheme v2 `true`, 1 signer, DN `CN=nexora, OU=nexora, O=nexora, L=varedo, ST=MB, C=IT`, RSA 4096; certificato SHA-256 `4b3c398bc04710c0065cb10825bf9d5a7ff19f370768f2a6cc908c261fd450fb`.
 - Nessuna password, keystore o `keystore.properties` è stata committata. FIX.10 resta il prossimo gate e richiede device/emulatore autorizzato.
 
+## FIX.10 — Device Gate Pixel 9 — 2026-09-08 — BLOCKED
+
+- AVD `nexora-pixel9-api35` creato con immagine `system-images;android-35;google_apis;x86_64` e profilo `pixel_9`.
+- `adb devices -l`: nessun device/emulatore.
+- Avvio AVD con SDK root corretto: fallisce perché `Android Emulator Hypervisor Driver is not installed on this machine`; x86_64 emulation richiede hardware acceleration.
+- `silent_install.bat` del pacchetto SDK richiede privilegi amministrativi per installare il driver kernel; il contesto corrente non dispone di tali privilegi.
+- Nessun test di installazione, launch, CRUD, trasferimento, import, backup/restore, force-stop/restart o offline è stato dichiarato PASS.
+- Ripresa autorizzata dopo installazione amministrativa del driver e riavvio Windows, oppure collegamento di un device Android con Debug USB.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
