@@ -19,11 +19,11 @@ le invarianti finanziarie e le migrazioni già verificate restano vincolanti.
 | 10 | Backup manuale | completata |
 | 11 | Google Drive | completata |
 | 12 | Feature finanziarie con nuova UI | completata — 2026-08-14; Fase 13 non avviata |
-| 13 | Applicazione Windows e macOS | in progress — 13.0–13.3 PASS; 13.4 e 13.F pending |
-| 14 | Applicazione Android | planned — 14.0–14.5 e 14.F pending |
+| 13 | Applicazione Windows e macOS | completata — 13.0–13.F PASS |
+| 14 | Applicazione Android | completata — 14.0–14.5 e 14.F PASS |
 | 15 | Nexora Local Hub | completata — 15.0–15.3 e 15.F PASS |
-| 16 | Sincronizzazione offline-first | in corso — 16.0 PASS; 16.1–16.4 e 16.F pending |
-| 17 | Hardening finale | planned — 17.0–17.5 e 17.F pending |
+| 16 | Sincronizzazione offline-first | completata — 16.0–16.F PASS |
+| 17 | Hardening finale | completata — 17.0–17.F PASS; `Nexora 1.0 READY` |
 
 Ogni fase si chiude solo con test proporzionati, aggiornamento documentale, commit Conventional
 Commit e push su `origin/main`.

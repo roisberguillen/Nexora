@@ -1159,8 +1159,8 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 17055,
-      "sha256": "9d58578d0ed6d93823520bce12c891ef8b024d151282966c442dbc47968182f2"
+      "size": 17158,
+      "sha256": "52e2e78cfec16c06a22d5a16406cd67f2eaf40f261eeb2a37501c3ec1b0496c6"
     },
     {
       "path": ".codex/state/test-evidence.md",
@@ -2794,8 +2794,8 @@
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
-      "size": 21249,
-      "sha256": "2746162367e73217a81866c3187dbe2e3595ce8cf8e89fb71b6c6cbb0a5c92c4"
+      "size": 21221,
+      "sha256": "3181fb29eaf2c5d690bf8311a52c96bfd929fe5580fce0e17ec757a7aecfc407"
     },
     {
       "path": "docs/ROADMAP.md",
