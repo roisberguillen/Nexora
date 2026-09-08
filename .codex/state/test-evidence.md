@@ -2042,3 +2042,12 @@ Keep only the latest relevant evidence per completed phase.
 - Production build generated the service worker and precache manifest with 33 entries; large-chunk output is an existing advisory, not a failure.
 - `pnpm manifest:check`: current. No code, ledger, schema or accounting invariant changed.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-5-release-readiness.md`.
+
+# 17.F — Final READY/NOT READY gate — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.F final READY NOT READY gate Nexora 1.0"` → `localized_bug / STANDARD / low` (repository router result recorded verbatim).
+- `pnpm verify` from 17.5: format/lint/typecheck PASS, 637 tests passed/4 skipped, production PWA build PASS.
+- Full E2E from 17.4: 420 parallel passes, 233 expected skips; all 13 contention timeouts passed on serial retry.
+- `pnpm audit --prod --audit-level high`: no known vulnerabilities. `pnpm manifest:check`, `pnpm codex:validate`, `pnpm codex:test` and `pnpm test:ui-ux`: PASS.
+- Accounting invariants, schema, backup/restore, Local Hub and offline-first sync evidence remain unchanged and reconciled; P0/P1/P2 open 0/0/0.
+- Final result: `Nexora 1.0 READY`. Evidence: `.codex/reviews/phase-17-f-final-ready.md`.

@@ -303,5 +303,5 @@ implementati. Le righe seguenti sono pianificate e non costituiscono una dichiar
 - [x] 17.3 — security review, supply-chain audit, secret scan e dependency audit.
 - [x] 17.4 — Bundle/startup performance and platform regression evidence; full E2E reconciled with serial retry of contention timeouts.
 - [x] 17.5 — Release candidate evidence and operational readiness reconciliation; quality, build, PWA and manifest gates green.
-- [ ] 17.F — sicurezza,
+- [x] 17.F — Final READY gate: all Phase 17 quality, E2E, security, manifest and release evidence reconciled; `Nexora 1.0 READY`.
   regressioni cross-platform, sicurezza/supply-chain, E2E e gate finale `Nexora 1.0 READY`.
