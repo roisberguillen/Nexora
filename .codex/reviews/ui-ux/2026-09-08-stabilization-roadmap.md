@@ -45,6 +45,11 @@ Le superfici Conti non sono state ridisegnate. Regression repository/commands `5
 `27/9 skipped` PASS su sei viewport; create, update, archive, delete vuoto e delete protetto restano
 accessibili e coerenti.
 
+## FIX.4 transactions and transfers
+
+Nessun redesign UI. Repository/commands `59/59` e Playwright `92/10 skipped` PASS su sei viewport;
+split, tag, trasferimenti, annullamento, cestino/restore e stati responsive sono coperti.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

@@ -58,6 +58,18 @@
   contenuto con movimenti.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.4.
 
+## FIX.4 — Movimenti e Trasferimenti — 2026-09-08 — COMPLETE / PASS
+
+- Router: `localized_bug / STANDARD / rischio dati low`.
+- Repository SQLite, transaction commands e Transactions UI: `59 passed / 0 failed`.
+- Playwright `transactions.spec.ts` + `c4-transfer-flow.spec.ts`: `92 passed / 10 skipped`, sei
+  viewport; verificati CRUD, split, tag, trasferimento completo, annullamento, neutralità KPI,
+  cestino/restore, reset e stati responsive.
+- I workflow multi-write usano il bridge transaction-bound di FIX.2 nel runtime nativo; browser
+  OPFS/IndexedDB mantengono la loro transazione nativa. Nessun trasferimento è classificato come
+  entrata o spesa e nessuna scrittura parziale è emersa.
+- Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.5.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
