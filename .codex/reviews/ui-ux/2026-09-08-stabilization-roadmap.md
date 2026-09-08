@@ -73,6 +73,9 @@ arm64 è generato solo tramite il workaround diagnostico con Rust task escluso; 
 end-to-end è bloccata dal symlink Windows. Firma, installazione e verifica su device restano fuori
 da ogni claim UI/release.
 
+Il job CI Android arm64 è stato aggiunto su runner Linux per verificare la pipeline Tauri completa;
+finché il runner remoto non restituisce un artefatto e log PASS, la fase resta bloccata.
+
 ## FIX.9 signing blocker
 
 Nessuna modifica UI. La firma release è bloccata dall’assenza di una keystore autorizzata; non viene
