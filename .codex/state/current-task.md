@@ -1,8 +1,8 @@
 # Current task
 
-- Task: FIX.2 — Architettura SQLite/Tauri e atomicità
-- Roadmap phase: FIX.2
-- Status: `COMPLETE / PASS` — bridge transaction-bound nativo implementato e verificato; signing/device
-  gates restano esplicitamente pendenti nelle fasi FIX.8–FIX.10.
+- Task: FIX.3 — CRUD Conti
+- Roadmap phase: FIX.3
+- Status: `COMPLETE / PASS` — create/update/archive/delete verificati su repository, commands e UI;
+  native device persistence resta nel gate FIX.10.
 - Evidence: `.codex/state/test-evidence.md`; `docs/ROADMAP_STABILIZATION.md`.
-- Next task: `FIX.3 — CRUD Conti`.
+- Next task: `FIX.4 — Movimenti e Trasferimenti`.

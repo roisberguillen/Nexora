@@ -39,6 +39,12 @@ gate dedicati FIX.9/FIX.10.
 Nessuna superficie UI modificata. Il bridge Rust/Tauri aggiunge solo il confine di persistenza
 transaction-bound; full Vitest `642/4 skipped`, typecheck/build e cargo fmt/check PASS.
 
+## FIX.3 account CRUD
+
+Le superfici Conti non sono state ridisegnate. Regression repository/commands `50/50` e Playwright
+`27/9 skipped` PASS su sei viewport; create, update, archive, delete vuoto e delete protetto restano
+accessibili e coerenti.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

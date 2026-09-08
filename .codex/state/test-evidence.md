@@ -47,6 +47,17 @@
 - Nessuna migrazione, reset dati reali o modifica di invarianti contabili. Prossimo task autorizzato:
   FIX.3.
 
+## FIX.3 — CRUD Conti — 2026-09-08 — COMPLETE / PASS
+
+- Router: `localized_bug / STANDARD / rischio dati low`.
+- Il bridge FIX.2 chiude la causa nativa; non è stato introdotto un secondo percorso CRUD o un
+  fallback che possa divergere dagli adapter condivisi.
+- Repository SQLite, database-tauri e account commands: `50 passed / 0 failed`.
+- Playwright `accounts.spec.ts` + `c3-accounts-audit.spec.ts`: `27 passed / 9 skipped`, sei viewport
+  320/375/390/768/1024/1440; verificati create, update, archive, delete vuoto, delete protetto e
+  contenuto con movimenti.
+- Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.4.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
