@@ -2065,6 +2065,18 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm audit --prod --audit-level high`: no known vulnerabilities. `pnpm manifest:check`, `pnpm codex:validate`, `pnpm codex:test` and `pnpm test:ui-ux`: PASS.
 - Accounting invariants, schema, backup/restore, Local Hub and offline-first sync evidence remain unchanged and reconciled; P0/P1/P2 open 0/0/0.
 - Final result: `Nexora 1.0 READY`. Evidence: `.codex/reviews/phase-17-f-final-ready.md`.
+
+## 2026-09-08 — Native account deletion regression
+
+- Route: `tauri_android / ADVANCED`, data risk `low`.
+- `pnpm exec vitest run packages/database/src/sqlite/SqliteLedgerRepository.test.ts apps/web/src/App.test.tsx` — PASS, 53 tests.
+- `pnpm exec tsc -p apps/web/tsconfig.json --noEmit` and `pnpm exec tsc -p packages/database/tsconfig.json --noEmit` — PASS.
+- `pnpm lint -- --quiet`, `pnpm build` and `git diff --check` — PASS; Vite emitted existing chunk-size warnings only.
+- `pnpm --filter @nexora/web tauri build --no-bundle` — PASS; Windows startup smoke PASS.
+- `gradlew.bat assembleArm64Release -x rustBuildArm64Release --no-daemon --rerun-tasks` — PASS, 90 tasks, after native Rust compilation and manual JNI library copy required by Windows symlink policy.
+- APK: `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,587,844 bytes, SHA-256 `0F053A22C61EDC5F17CEED435D80EA4025972D6E9983D431523AE0330BAF6C37`.
+- Windows executable: `Nexora-desktop.exe`, 13,532,160 bytes, SHA-256 `68665612B043BD39ECE42180235139DDBAEB92B3FA915A46D5604733537D720D`.
+- APK signing and device/emulator smoke: not claimed; artifact is unsigned and no device was connected.
 ## 2026-09-08 — Native CRUD persistence regression
 
 - Route: `tauri_android / ADVANCED`, data risk `low`.

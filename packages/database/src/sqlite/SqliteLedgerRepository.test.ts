@@ -309,6 +309,24 @@ describe("SqliteLedgerRepository", () => {
     });
   });
 
+  it("elimina un conto vuoto senza una transazione multi-call nel runtime nativo", async () => {
+    const nativeSqlite = new DatabaseSync(":memory:");
+    const executedSql: string[] = [];
+    const { repository: nativeRepository } = await initializeSqliteLedger({
+      database: nodeSqliteDatabase(nativeSqlite, false, executedSql),
+      now: () => new Date("2026-07-27T10:00:00.000Z"),
+    });
+    const nativeAccount = account("native-delete");
+    await nativeRepository.saveAccount(nativeAccount);
+    executedSql.length = 0;
+
+    await nativeRepository.deleteUnusedAccount(nativeAccount.id);
+
+    expect(executedSql).not.toContain("BEGIN IMMEDIATE;");
+    await expect(nativeRepository.findAccountById(nativeAccount.id)).resolves.toBeUndefined();
+    nativeSqlite.close();
+  });
+
   it("azzera atomicamente tutti i dati finanziari", async () => {
     const main = account("account-reset");
     await repository.saveAccount(main);

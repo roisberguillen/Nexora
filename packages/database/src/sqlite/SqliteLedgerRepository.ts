@@ -413,7 +413,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
   public deleteUnusedAccount(id: string): Promise<void> {
     return this.enqueue(() =>
       this.performDatabaseOperation(() =>
-        this.withWriteTransaction(async () => {
+        this.withSingleStatementWrite(async () => {
           if ((await this.findAccountByIdInternal(id)) === undefined)
             throw new DomainError("missing_reference", "Account does not exist.");
           const references = await this.database.query<{ readonly found: number }>(

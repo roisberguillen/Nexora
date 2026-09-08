@@ -152,7 +152,7 @@ export function AccountsPage({
       }
       setEditor(null);
     } catch (error) {
-      setErrorMessage(accountErrorMessage(error));
+      setErrorMessage(accountErrorMessage(error, "save"));
     } finally {
       setIsSaving(false);
     }
@@ -171,7 +171,7 @@ export function AccountsPage({
         setEditor(null);
       }
     } catch (error) {
-      setErrorMessage(accountErrorMessage(error));
+      setErrorMessage(accountErrorMessage(error, "save"));
     } finally {
       setIsSaving(false);
     }
@@ -185,7 +185,7 @@ export function AccountsPage({
       await onDeleteUnused(account.id);
       setFeedback("Conto vuoto eliminato definitivamente.");
     } catch (error) {
-      setErrorMessage(accountErrorMessage(error));
+      setErrorMessage(accountErrorMessage(error, "delete"));
     } finally {
       setIsSaving(false);
     }
@@ -201,7 +201,7 @@ export function AccountsPage({
       setEmptyPhrase("");
       setEmptyPin("");
     } catch (error) {
-      setErrorMessage(accountErrorMessage(error));
+      setErrorMessage(accountErrorMessage(error, "empty"));
     } finally {
       setIsSaving(false);
     }
@@ -694,8 +694,12 @@ function AccountForm({
   );
 }
 
-function accountErrorMessage(error: unknown): string {
+function accountErrorMessage(error: unknown, operation: "delete" | "empty" | "save"): string {
   if (!(error instanceof DomainError)) {
+    if (operation === "delete")
+      return "Il conto non è stato eliminato. I dati esistenti non sono stati modificati.";
+    if (operation === "empty")
+      return "Il conto non è stato svuotato. I dati esistenti non sono stati modificati.";
     return "Il conto non è stato salvato. I dati esistenti non sono stati modificati.";
   }
   if (error.code === "invalid_money") {
@@ -706,6 +710,9 @@ function accountErrorMessage(error: unknown): string {
   }
   if (error.code === "missing_reference") {
     return "Il conto o il conto padre non è più disponibile. Ricarica la pagina.";
+  }
+  if (error.code === "invalid_account" && operation === "delete") {
+    return "Il conto non può essere eliminato perché contiene movimenti o riferimenti finanziari. Archivialo oppure svuotalo prima.";
   }
   if (error.code === "invalid_currency") {
     return "Inserisci un codice valuta ISO valido di tre lettere.";

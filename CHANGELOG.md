@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed native account deletion: empty accounts now delete without unsupported multi-call transactions, while referenced accounts remain protected with an actionable archive/empty message.
 - Added the 12.5.C5.0 cross-surface consistency framework, evidence matrix and initial audit.
 - Closed C5.1 navigation, page chrome, terminology, navigation iconography and equivalent CTA consistency.
 - Closed C5.2 mutation-form busy states and double-submit protection without changing domain or storage behavior.
