@@ -1,5 +1,19 @@
 # Test evidence
 
+## Stabilization roadmap analysis — 2026-09-08 — ROADMAP CREATED / NOT STARTED
+
+- Router: `tauri_android / ADVANCED / rischio dati low`; no application fix or functional test was
+  implemented in this analysis.
+- Confirmed evidence: Tauri SQL adapter declares `supportsMultiCallTransactions = false`; the
+  shared SQLite repository still contains broad `withWriteTransaction`/`BEGIN`/`COMMIT`/`ROLLBACK`
+  usage; the local working tree contains only a targeted `deleteUnusedAccount` change.
+- Android evidence: current release artifact is `app-arm64-release-unsigned.apk`, 165,304,700 bytes;
+  signing and device verification are explicitly N/A. Historical evidence recorded 17,230,860 bytes,
+  so the size delta is unresolved.
+- State reconciliation: prior 17.F `Nexora 1.0 READY` is not accepted for this corrective track;
+  13.1–13.F, 14.1–14.F and 17.F are reopened as audit gates. Next authorized task is FIX.1.
+- Evidence/roadmap: `docs/ROADMAP_STABILIZATION.md`.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
