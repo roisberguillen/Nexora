@@ -78,6 +78,14 @@
 - Verificati invarianti del ledger, merge/archiviazione, allocazioni, notifiche, dashboard/analisi, journal e persistenza offline dove previsto; nessuna scrittura parziale o regressione responsive emersa.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.6.
 
+## FIX.6 — Import CSV/OFX/QIF — 2026-09-08 — COMPLETE / PASS
+
+- Router: `localized_bug / STANDARD / rischio dati low`.
+- Importer, import commands/UI, entità e migrazioni: `68 passed / 0 failed` su 17 file Vitest.
+- Playwright `imports.spec.ts` + `c4-bank-statement-import-export-flow.spec.ts`: `47 passed / 13 skipped / 0 failed`, sei viewport da 320 a 1440 px.
+- Verificati dry-run senza scritture premature, preview e mapping CSV, rilevamento Mediobanca, deduplica, trasferimenti interni, conferma esplicita, undo, export e riapertura offline; nessuna scrittura parziale emersa.
+- Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.7.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,

@@ -56,6 +56,11 @@ Nessun redesign UI. Vitest `82/82` e Playwright `92/40 skipped` PASS su sei view
 tag, budget, ricorrenze, allocazioni, prestiti, investimenti, journal e superfici analitiche restano
 coerenti e senza overflow.
 
+## FIX.6 import
+
+Nessun redesign UI. Vitest `68/68` e Playwright `47/13 skipped` PASS su sei viewport; preview,
+mapping, conferma, deduplica, undo, export e stati offline dell’import restano leggibili e coerenti.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

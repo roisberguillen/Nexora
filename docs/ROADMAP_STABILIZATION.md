@@ -1,6 +1,6 @@
 # Nexora — Roadmap correttiva di stabilizzazione
 
-Stato: **FIX.1–FIX.5 completate, FIX.6 pronta** — 2026-09-08. Questa roadmap viene prima di nuove
+Stato: **FIX.1–FIX.6 completate, FIX.7 pronta** — 2026-09-08. Questa roadmap viene prima di nuove
 funzionalità e sospende ogni dichiarazione `NEXORA READY`, `RELEASE READY` o `ANDROID PASS`
 finché il gate FIX.12 non è PASS.
 
