@@ -66,6 +66,12 @@ mapping, conferma, deduplica, undo, export e stati offline dell’import restano
 Nessun redesign UI. Vitest `83/83` e Playwright `18/30 skipped` PASS; conferme distruttive,
 verifica archivio, rollback, recovery e Drive opzionale restano espliciti e accessibili.
 
+## FIX.8 Android packaging
+
+Nessun redesign UI. La build web/mobile mantiene i gate responsive già verificati; l’APK release
+arm64 è generato ma unsigned. Firma, installazione e verifica su device non sono coperte da questa
+fase e restano esplicitamente fuori da ogni claim UI/release.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

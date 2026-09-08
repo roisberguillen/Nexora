@@ -94,6 +94,14 @@
 - Verificati archivio `.nexora-backup`, cifratura e passphrase minima, checksum/manifest/schema, tampering e passphrase errata, restore isolato, rollback, interrupted/recovery behavior, conferma distruttiva, Drive `appDataFolder` opzionale e token solo in memoria.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.8.
 
+## FIX.8 — Pipeline Android e APK — 2026-09-08 — COMPLETE / PASS (build only)
+
+- Router: `tauri_android / ADVANCED / rischio dati low`.
+- Toolchain locale: JDK 17, Android SDK/NDK 29.0.13846066 e Gradle 8.14.3 disponibili dopo configurazione scoped al processo.
+- `pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci` ha completato frontend e Rust release; su Windows il symlink Tauri è stato sostituito solo nell’albero generato `gen/android` con copia dell’artefatto già compilato.
+- `assembleArm64Release` PASS; APK `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,708,692 byte, SHA-256 `F4C34B4C962779BC6E85C4895B6C76C3683C462A407C452F001C6711B97F787B`.
+- `apksigner verify --verbose` conferma che la release è unsigned; nessuna dichiarazione di installabilità o release readiness. Firma, fingerprint, installazione e device gate restano FIX.9–FIX.10.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
