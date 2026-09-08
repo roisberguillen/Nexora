@@ -30,6 +30,23 @@
   limitata dall'ambiente Windows e differenza APK 17.230.860 → 165.304.700 byte ancora aperta.
 - Nessun fix applicativo in FIX.1. Prossimo task autorizzato: FIX.2.
 
+## FIX.2 — Architettura SQLite/Tauri e atomicità — 2026-09-08 — COMPLETE / PASS
+
+- Router: `native_sqlite / ADVANCED / rischio dati medium`.
+- Il contratto `SqliteDatabase` supporta ora `runInTransaction`; `SqliteLedgerRepository` instrada
+  i workflow multi-write sul database transaction-bound quando disponibile e conserva il percorso
+  `BEGIN/COMMIT/ROLLBACK` per gli adapter che lo supportano direttamente.
+- Tauri espone un bridge Rust con connessione SQLite dedicata per transaction id: begin, query,
+  execute, commit e rollback. `@tauri-apps/plugin-sql` resta usato per il percorso normale; la
+  transazione multi-call non dipende dal connection pool IPC.
+- Regression adapter: `packages/database-tauri/src/TauriSqliteDatabase.test.ts` e repository
+  mirati → `46/46 PASS`, inclusi commit e rollback del bridge simulato.
+- `cargo fmt --check`, `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked`,
+  typecheck database/database-tauri, full Vitest seriale `642 passed / 4 skipped`, lint, format,
+  typecheck workspace e build PWA → PASS. Restano solo advisory chunk-size Vite.
+- Nessuna migrazione, reset dati reali o modifica di invarianti contabili. Prossimo task autorizzato:
+  FIX.3.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,

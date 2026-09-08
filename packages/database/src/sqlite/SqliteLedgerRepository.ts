@@ -116,8 +116,11 @@ const transferColumns = `
 
 export class SqliteLedgerRepository implements LedgerRepository {
   private operationTail: Promise<void> = Promise.resolve();
+  private database: SqliteDatabase;
 
-  public constructor(private readonly database: SqliteDatabase) {}
+  public constructor(database: SqliteDatabase) {
+    this.database = database;
+  }
 
   public runAtomically<Result>(operation: () => Promise<Result>): Promise<Result> {
     return this.enqueue(() =>
@@ -1932,6 +1935,17 @@ export class SqliteLedgerRepository implements LedgerRepository {
   }
 
   private async withWriteTransaction<Result>(operation: () => Promise<Result>): Promise<Result> {
+    if (this.database.runInTransaction !== undefined) {
+      const previousDatabase = this.database;
+      return this.database.runInTransaction(async (transactionDatabase) => {
+        this.database = transactionDatabase;
+        try {
+          return await operation();
+        } finally {
+          this.database = previousDatabase;
+        }
+      });
+    }
     await this.database.execute("BEGIN IMMEDIATE;");
     try {
       const result = await operation();

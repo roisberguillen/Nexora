@@ -76,7 +76,20 @@ export async function openTauriLedger(options: OpenTauriLedgerOptions = {}): Pro
 async function loadNativeDatabase(databaseUrl: string): Promise<TauriSqlClient> {
   try {
     const { default: Database } = await import("@tauri-apps/plugin-sql");
-    return (await Database.load(databaseUrl)) as TauriSqlClient;
+    const database = (await Database.load(databaseUrl)) as TauriSqlClient;
+    const { invoke } = await import("@tauri-apps/api/core");
+    return {
+      ...database,
+      beginTransaction: () => invoke<string>("nexora_sql_begin_transaction", { databaseUrl }),
+      transactionExecute: (transactionId, sql, parameters = []) =>
+        invoke("nexora_sql_transaction_execute", { transactionId, sql, parameters }),
+      transactionSelect: (transactionId, sql, parameters = []) =>
+        invoke("nexora_sql_transaction_select", { transactionId, sql, parameters }),
+      commitTransaction: (transactionId) =>
+        invoke("nexora_sql_commit_transaction", { transactionId }),
+      rollbackTransaction: (transactionId) =>
+        invoke("nexora_sql_rollback_transaction", { transactionId }),
+    };
   } catch (cause) {
     throw new PersistenceError(
       "native_sqlite_unavailable",

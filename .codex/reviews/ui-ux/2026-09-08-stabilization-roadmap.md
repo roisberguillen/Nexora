@@ -34,6 +34,11 @@ La baseline non ha modificato superfici UI. Formato, lint, typecheck, build, Vit
 stati riconciliati come contention e passano isolati. Android signing e Pixel 9 restano N/A per i
 gate dedicati FIX.9/FIX.10.
 
+## FIX.2 transaction bridge
+
+Nessuna superficie UI modificata. Il bridge Rust/Tauri aggiunge solo il confine di persistenza
+transaction-bound; full Vitest `642/4 skipped`, typecheck/build e cargo fmt/check PASS.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

@@ -118,6 +118,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | 17.F | complete — 2026-09-08 | Final READY gate: full verify, E2E reconciliation, security audit, manifest and orchestrator gates green; P0/P1/P2 0/0/0; ROADMAP_COMPLETE |
 | FIX.1–FIX.12 | registered — 2026-09-08 | `docs/ROADMAP_STABILIZATION.md`; corrective stabilization and Android/Desktop validation track; FIX.1 not started |
 | FIX.1 | complete — 2026-09-08 | Baseline quality gate PASS: serial Vitest 640/4 skipped, serial Playwright 433/233 skipped, build/lint/typecheck PASS; parallel timeout contention reconciled; native signing/device pending FIX.8–FIX.10 |
+| FIX.2 | complete — 2026-09-08 | Transaction-bound native SQLite bridge via Rust/Tauri transaction id; adapter/repository 46/46, full Vitest 642/4 skipped, cargo fmt/check, typecheck and build PASS; prossimo FIX.3 |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

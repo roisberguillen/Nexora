@@ -13,6 +13,10 @@ export interface SqliteDatabase {
     parameters?: readonly SqliteValue[],
   ): Promise<readonly Row[]>;
   run(sql: string, parameters?: readonly SqliteValue[]): Promise<void>;
+  /** Runs the callback on one connection-bound transaction when the adapter supports it. */
+  runInTransaction?<Result>(
+    operation: (database: SqliteDatabase) => Promise<Result>,
+  ): Promise<Result>;
 }
 
 export interface CloseableSqliteDatabase extends SqliteDatabase {
