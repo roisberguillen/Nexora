@@ -50,6 +50,12 @@ accessibili e coerenti.
 Nessun redesign UI. Repository/commands `59/59` e Playwright `92/10 skipped` PASS su sei viewport;
 split, tag, trasferimenti, annullamento, cestino/restore e stati responsive sono coperti.
 
+## FIX.5 financial modules
+
+Nessun redesign UI. Vitest `82/82` e Playwright `92/40 skipped` PASS su sei viewport; categorie,
+tag, budget, ricorrenze, allocazioni, prestiti, investimenti, journal e superfici analitiche restano
+coerenti e senza overflow.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.

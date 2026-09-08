@@ -70,6 +70,14 @@
   entrata o spesa e nessuna scrittura parziale è emersa.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.5.
 
+## FIX.5 — Moduli finanziari — 2026-09-08 — COMPLETE / PASS
+
+- Router: `localized_bug / STANDARD / rischio dati low`.
+- Categorie, tag, budget, ricorrenze, allocazioni, prestiti, investimenti e journal: `82 passed / 0 failed` su 14 file Vitest.
+- Playwright mirato (`categories`, `tags`, `budgets`, `recurring`, `loans`, `investments`, superfici 12, C4.4, C4.5 e C4.6): `92 passed / 40 skipped / 0 failed`, sei viewport da 320 a 1440 px.
+- Verificati invarianti del ledger, merge/archiviazione, allocazioni, notifiche, dashboard/analisi, journal e persistenza offline dove previsto; nessuna scrittura parziale o regressione responsive emersa.
+- Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.6.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,
