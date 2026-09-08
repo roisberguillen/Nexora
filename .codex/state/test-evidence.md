@@ -2026,3 +2026,11 @@ Keep only the latest relevant evidence per completed phase.
 - Secret-pattern scan with `rg` over tracked source (excluding generated dependencies/build output): no credential/key matches; exit 1 indicates no matches, not a hidden failure.
 - Existing Local Hub negative/security tests remain part of the validated baseline; no secrets, credentials or ledger data were accessed.
 - P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-3-security-supply-chain.md`.
+
+# 17.4 — Bundle/startup performance, platform regressions and full E2E — 2026-09-08
+
+- Router: `pnpm codex:route -- --task="17.4 bundle startup performance platform regressions full E2E"` → `ui_component / ADVANCED / low`.
+- `pnpm exec playwright test --workers=8`: 420 passed, 233 skipped and 13 contention-related 30s timeouts under parallel load; no failure was accepted as green.
+- `pnpm exec playwright test --last-failed --workers=1`: 13 passed, 0 failed, confirming the failures were parallel resource contention rather than reproducible product regressions.
+- The existing production preview bundle served successfully; startup, offline reload, responsive viewports and 200% zoom scenarios are covered by the suite. No code or accounting invariant changed.
+- P0/P1/P2 open 0/0/0. Evidence: `.codex/reviews/phase-17-4-bundle-startup-e2e.md`.
