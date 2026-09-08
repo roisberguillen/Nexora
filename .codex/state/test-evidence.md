@@ -94,14 +94,15 @@
 - Verificati archivio `.nexora-backup`, cifratura e passphrase minima, checksum/manifest/schema, tampering e passphrase errata, restore isolato, rollback, interrupted/recovery behavior, conferma distruttiva, Drive `appDataFolder` opzionale e token solo in memoria.
 - Nessun dato reale, schema o migrazione modificato. Prossimo task autorizzato: FIX.8.
 
-## FIX.8 — Pipeline Android e APK — 2026-09-08 — BLOCKED
+## FIX.8 — Pipeline Android e APK — 2026-09-08 — COMPLETE / PASS
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.
 - Toolchain locale: JDK 17, Android SDK/NDK 29.0.13846066 e Gradle 8.14.3 disponibili dopo configurazione scoped al processo.
-- `pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci` completa frontend e Rust release ma fallisce quando Tauri tenta il symlink della `.so` in `gen/android`: Windows nega `Creation symbolic link is not allowed for this system`.
-- Il workaround manuale copia la `.so` solo nell’albero generato e completa `assembleArm64Release`, ma usa `-x :app:rustBuildArm64Release`; è evidenza diagnostica, non un PASS della pipeline richiesta.
-- APK diagnostico unsigned: `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`, 17,708,692 byte, SHA-256 `F4C34B4C962779BC6E85C4895B6C76C3683C462A407C452F001C6711B97F787B`; `apksigner verify` lo rifiuta come unsigned.
-- Gate bloccato: serve Developer Mode/privilegio symlink sul runner Windows o un workaround di pipeline approvato che non ometta la compilazione Rust. FIX.9–FIX.12 non sono autorizzate.
+- Developer Mode Windows verificato con `AllowDevelopmentWithoutDevLicense=0x1`.
+- `pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci` PASS end-to-end: frontend, Rust release arm64, symlink Tauri, `android-studio-script` e Gradle hanno completato senza `-x rustBuild`.
+- APK: `apps/web/src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk`, 17,710,048 byte, SHA-256 `802FA09D49EAD5C0D254DAC991F76A756432AF7E7ACDC8E1654EBBD660AD1026`.
+- Contenuto verificato: `lib/arm64-v8a/libnexora_lib.so`, `AndroidManifest.xml`, `classes.dex`; symlink `gen/android/app/src/main/jniLibs/arm64-v8a/libnexora_lib.so` presente. `apksigner` correttamente rifiuta l’artefatto unsigned; firma e device gate restano FIX.9–FIX.10.
+- I precedenti fallimenti Windows/CI restano evidenze diagnostiche storiche; il gate è ora PASS dopo l’azione ambientale dell’utente.
 - È stato aggiunto `.github/workflows/ci.yml` con job `android-arm64-pipeline` su `ubuntu-latest`: toolchain JDK/Rust/Android, `tauri android build --apk --target aarch64 --ci` e upload dell’APK unsigned. Il job è configurato ma non è evidenza PASS finché non viene eseguito dal runner remoto.
 - I run GitHub Actions `34223431609` sul commit `4021732` e `34223591561` sul commit `4216376` sono terminati `failure` prima degli step: in entrambi il job `android-arm64-pipeline` ha `runner_name` vuoto e `steps: []`, senza log disponibile; anche i job CI esistenti hanno lo stesso arresto pre-run. Il runner remoto/infrastruttura GitHub è quindi indisponibile per questo gate.
 

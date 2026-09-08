@@ -124,8 +124,8 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | FIX.5 | complete — 2026-09-08 | Moduli finanziari regression PASS: Vitest 82/82, Playwright 92/40 skipped across six viewports; prossimo FIX.6 |
 | FIX.6 | complete — 2026-09-08 | Import regression PASS: Vitest 68/68, Playwright 47/13 skipped across six viewports; preview, mapping, deduplica, conferma, undo e offline; prossimo FIX.7 |
 | FIX.7 | complete — 2026-09-08 | Backup/restore/reset regression PASS: Vitest 83/83, typecheck workspace PASS, Playwright 18/30 skipped across six viewports; cifratura, integrità, rollback, Drive opzionale e reset; prossimo FIX.8 |
-| FIX.8 | blocked — 2026-09-08 | Tauri end-to-end compila Rust ma fallisce sul symlink Windows; il successivo Gradle packaging usa `-x rustBuild`; job CI Linux aggiunto, run 34223431609 e 34223591561 falliti prima degli step con runner vuoto; richiede runner remoto operativo o Developer Mode/privilegio equivalente |
-| FIX.9 | blocked by FIX.8 — 2026-09-08 | Nessuna keystore release autorizzata o secret binding disponibile; solo debug.keystore locale, non valida per produzione; non autorizzata finché FIX.8 non passa |
+| FIX.8 | complete — 2026-09-08 | Tauri Android end-to-end PASS dopo Developer Mode: frontend, Rust arm64, symlink, android-studio-script e Gradle; APK universal release unsigned 17,710,048 byte, SHA256 802FA09D…; firma/device restano FIX.9–FIX.10 |
+| FIX.9 | blocked — 2026-09-08 | FIX.8 sbloccata; nessuna keystore release autorizzata o secret binding disponibile; solo debug.keystore locale, non valida per produzione |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

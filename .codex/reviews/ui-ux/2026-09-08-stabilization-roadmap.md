@@ -69,12 +69,12 @@ verifica archivio, rollback, recovery e Drive opzionale restano espliciti e acce
 ## FIX.8 Android packaging
 
 Nessun redesign UI. La build web/mobile mantiene i gate responsive già verificati; l’APK release
-arm64 è generato solo tramite il workaround diagnostico con Rust task escluso; la pipeline Tauri
-end-to-end è bloccata dal symlink Windows. Firma, installazione e verifica su device restano fuori
-da ogni claim UI/release.
+arm64 è stato generato dalla pipeline Tauri end-to-end dopo l’attivazione di Developer Mode;
+frontend, Rust, symlink e Gradle sono PASS. L’APK resta unsigned: firma, installazione e verifica
+su device restano fuori da ogni claim UI/release.
 
-Il job CI Android arm64 è stato aggiunto su runner Linux per verificare la pipeline Tauri completa;
-finché il runner remoto non restituisce un artefatto e log PASS, la fase resta bloccata.
+Il job CI Android arm64 resta disponibile come percorso remoto, ma il gate locale è ora verificato
+end-to-end; i run CI precedenti si sono arrestati prima degli step per assenza di runner.
 
 I run remoti `34223431609` e `34223591561` sono terminati prima degli step con runner assente;
 nessun artefatto Android o evidenza UI è quindi disponibile e non viene dichiarato alcun PASS.
