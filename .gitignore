@@ -12,6 +12,10 @@ apps/local-hub/target/
 .env.*
 !.env.example
 *.log
+*.jks
+*.keystore
+keystore.properties
+signing.properties
 .DS_Store
 *.sqlite
 *.sqlite-wal

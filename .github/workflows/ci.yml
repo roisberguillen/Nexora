@@ -81,3 +81,60 @@ jobs:
           name: nexora-android-arm64-unsigned
           path: apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/*-unsigned.apk
           if-no-files-found: error
+
+  android-arm64-signed:
+    if: ${{ vars.NEXORA_ANDROID_SIGNING_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - uses: android-actions/setup-android@v3
+      - name: Install Android build dependencies
+        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
+      - run: pnpm install --frozen-lockfile
+      - name: Initialize Android project
+        run: pnpm --filter @nexora/web tauri android init --ci --skip-targets-install
+      - name: Materialize temporary release signing inputs
+        env:
+          ANDROID_KEY_BASE64: ${{ secrets.ANDROID_KEY_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${ANDROID_KEY_BASE64:?ANDROID_KEY_BASE64 is required}"
+          : "${ANDROID_KEY_ALIAS:?ANDROID_KEY_ALIAS is required}"
+          : "${ANDROID_KEY_PASSWORD:?ANDROID_KEY_PASSWORD is required}"
+          : "${ANDROID_STORE_PASSWORD:?ANDROID_STORE_PASSWORD is required}"
+          signing_dir="$RUNNER_TEMP/nexora-signing"
+          mkdir -m 700 -p "$signing_dir"
+          printf '%s' "$ANDROID_KEY_BASE64" | base64 --decode > "$signing_dir/nexora-release.jks"
+          cat > apps/web/src-tauri/gen/android/app/keystore.properties <<EOF
+          storeFile=$signing_dir/nexora-release.jks
+          storePassword=$ANDROID_STORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+      - name: Configure generated Gradle signing
+        run: pnpm android:configure-signing
+      - run: pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nexora-android-arm64-signed
+          path: apps/web/src-tauri/gen/android/app/build/outputs/apk/**/release/*.apk
+          if-no-files-found: error
+      - name: Remove temporary release signing inputs
+        if: ${{ always() }}
+        run: rm -f "$RUNNER_TEMP/nexora-signing/nexora-release.jks" apps/web/src-tauri/gen/android/app/keystore.properties

@@ -106,12 +106,15 @@
 - È stato aggiunto `.github/workflows/ci.yml` con job `android-arm64-pipeline` su `ubuntu-latest`: toolchain JDK/Rust/Android, `tauri android build --apk --target aarch64 --ci` e upload dell’APK unsigned. Il job è configurato ma non è evidenza PASS finché non viene eseguito dal runner remoto.
 - I run GitHub Actions `34223431609` sul commit `4021732` e `34223591561` sul commit `4216376` sono terminati `failure` prima degli step: in entrambi il job `android-arm64-pipeline` ha `runner_name` vuoto e `steps: []`, senza log disponibile; anche i job CI esistenti hanno lo stesso arresto pre-run. Il runner remoto/infrastruttura GitHub è quindi indisponibile per questo gate.
 
-## FIX.9 — Firma e verifica APK — 2026-09-08 — BLOCKED
+## FIX.9 — Firma e verifica APK — 2026-09-08 — COMPLETE / PASS
 
 - Router: `encryption / CRITICAL / rischio dati medium`.
-- Check di repository e ambiente: nessuna `.jks`, `.keystore`, `.p12`, `keystore.properties`, secret binding o signing config di release disponibile.
-- È presente solo `C:\Users\Roi23\.android\debug.keystore`, con fingerprint diagnostico `06:03:31:C7:90:EB:A6:74:69:A1:43:FB:AB:D5:55:96:80:0A:67:F6:13:72:42:6F:6F:48:A1:88:9D:23:03:C7`; non viene usata per la release.
-- Blocco di sicurezza: non generare o scegliere autonomamente una nuova identità di firma. Servono keystore di release, alias/password gestiti fuori dal repository e decisione owner su CI/backup/rotazione. FIX.10 e FIX.12 non sono autorizzate finché la firma non è risolta.
+- Keystore v2 generata fuori repo: `C:\Users\Roi23\.nexora\signing\nexora-release-v2.jks`; alias `nexora-release`; RSA 4096; validità 10.000 giorni; nessun segreto registrato.
+- Signing config persistente in `scripts/configure-android-signing.mjs`, con password preferibilmente da variabili temporanee `NEXORA_ANDROID_STORE_PASSWORD` / `NEXORA_ANDROID_KEY_PASSWORD`; file locale escluso da Git.
+- Build completa PASS: frontend, Rust arm64, symlink, `android-studio-script` e Gradle senza skip.
+- APK: `apps/web/src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk`, 17,718,240 byte, SHA-256 `B965385462EEC34C554B0FFAF280DF0CF7766498AF730FA874DAE762C784D657`.
+- `apksigner verify --verbose --print-certs` PASS: APK Signature Scheme v2 `true`, 1 signer, DN `CN=nexora, OU=nexora, O=nexora, L=varedo, ST=MB, C=IT`, RSA 4096; certificato SHA-256 `4b3c398bc04710c0065cb10825bf9d5a7ff19f370768f2a6cc908c261fd450fb`.
+- Nessuna password, keystore o `keystore.properties` è stata committata. FIX.10 resta il prossimo gate e richiede device/emulatore autorizzato.
 
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 

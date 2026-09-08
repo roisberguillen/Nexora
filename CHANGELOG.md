@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Completed FIX.9 Android release signing with an external RSA-4096 keystore, reproducible Gradle/CI bindings, and verified arm64 APK signature.
+
 - Fixed native account deletion: empty accounts now delete without unsupported multi-call transactions, while referenced accounts remain protected with an actionable archive/empty message.
 - Added the 12.5.C5.0 cross-surface consistency framework, evidence matrix and initial audit.
 - Closed C5.1 navigation, page chrome, terminology, navigation iconography and equivalent CTA consistency.
