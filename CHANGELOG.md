@@ -876,3 +876,4 @@
 
 - Fix native Tauri CRUD saves for accounts, categories, budgets and other standalone records when
   the SQL plugin pool cannot keep a frontend transaction across IPC calls.
+- Rebuilt the unsigned arm64 Android APK with the native CRUD persistence fix.

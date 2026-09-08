@@ -2063,3 +2063,14 @@ Keep only the latest relevant evidence per completed phase.
 - `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked` — PASS.
 - `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked --target aarch64-linux-android` — BLOCKED by environment: `aarch64-linux-android-clang`/`clang.exe` is not installed; compilation reached `libsqlite3-sys` before the toolchain failure.
 - Android device/emulator smoke — not available in this environment; no device was connected.
+
+## 2026-09-08 — Android APK rebuild after native CRUD fix
+
+- `pnpm build` — PASS; updated web assets generated.
+- `gradlew.bat assembleArm64Release -x rustBuildArm64Release --no-daemon` — PASS, 90 tasks; the
+  full Tauri Rust task was intentionally skipped because it requires the missing temporary dev
+  server address file and native Rust code was unchanged.
+- APK: `apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/app-arm64-release-unsigned.apk`.
+- Size: `165304700` bytes. SHA-256:
+  `A29D70C28DCCB057571C1C7D0B1519EA6FC230665D733116F3834D4A8D2C544D`.
+- Signing: not claimed; artifact is explicitly unsigned. Device/emulator: N/A.
