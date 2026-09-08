@@ -14,6 +14,22 @@
   13.1–13.F, 14.1–14.F and 17.F are reopened as audit gates. Next authorized task is FIX.1.
 - Evidence/roadmap: `docs/ROADMAP_STABILIZATION.md`.
 
+## FIX.1 — Baseline e riproduzione bug — 2026-09-08 — COMPLETE / PASS
+
+- Router: `final_release / CRITICAL / rischio dati medium`; checkpoint:
+  `.codex/state/checkpoints/2026-09-08-fix-1-baseline-and-reproduction-before-corrective-roadmap.md`.
+- `pnpm format:check`, `pnpm lint`, `pnpm typecheck` e `pnpm build` → PASS. Build PWA generata con
+  service worker/precache; solo advisory di chunk size Vite.
+- `pnpm test` parallelo iniziale: 638 passed, 4 skipped, 2 timeout da contention (`project-privacy`
+  e reset protetto Settings). Entrambi passano isolati; retry seriale
+  `pnpm exec vitest run --maxWorkers=1` → 640 passed, 4 skipped, 0 failed.
+- `pnpm exec playwright test --workers=1` → 433 passed, 233 skipped, 0 failed su 666 test e
+  viewport 320/375/390/768/1024/1440. I test skip sono quelli condizionati da backend/zoom/offline
+  già esplicitamente dichiarati dal test harness.
+- Baseline riprodotta: Tauri release APK unsigned, firma/device N/A, pipeline Android completa
+  limitata dall'ambiente Windows e differenza APK 17.230.860 → 165.304.700 byte ancora aperta.
+- Nessun fix applicativo in FIX.1. Prossimo task autorizzato: FIX.2.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,

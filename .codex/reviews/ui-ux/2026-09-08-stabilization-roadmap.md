@@ -27,6 +27,13 @@ P0 aperti: Nessuno
 P1/P2 aperti: Nessuno
 Esito: PASS
 
+## FIX.1 baseline
+
+La baseline non ha modificato superfici UI. Formato, lint, typecheck, build, Vitest seriale
+`640/4 skipped` e Playwright seriale `433/233 skipped` sono PASS; i due timeout paralleli sono
+stati riconciliati come contention e passano isolati. Android signing e Pixel 9 restano N/A per i
+gate dedicati FIX.9/FIX.10.
+
 ## Verifiche documentali
 
 - Router: `tauri_android / ADVANCED / rischio dati low`.
