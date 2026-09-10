@@ -15,10 +15,7 @@ struct NativeTransactionState {
 }
 
 fn database_path(app: &tauri::AppHandle, database_url: &str) -> Result<PathBuf, String> {
-    let filename = database_url
-        .strip_prefix("sqlite:")
-        .filter(|value| !value.is_empty() && !value.contains(['/', '\\', '.']))
-        .ok_or_else(|| "Invalid native SQLite database URL".to_string())?;
+    let filename = validate_database_filename(database_url)?;
     let directory = app
         .path()
         .app_data_dir()
@@ -26,6 +23,25 @@ fn database_path(app: &tauri::AppHandle, database_url: &str) -> Result<PathBuf, 
     fs::create_dir_all(&directory)
         .map_err(|error| format!("Could not create native app data directory: {error}"))?;
     Ok(directory.join(filename))
+}
+
+fn validate_database_filename(database_url: &str) -> Result<&str, String> {
+    let filename = database_url
+        .strip_prefix("sqlite:")
+        .ok_or_else(|| "Invalid native SQLite database URL".to_string())?;
+    let mut characters = filename.chars();
+    let first = characters
+        .next()
+        .filter(|character| character.is_ascii_alphanumeric())
+        .ok_or_else(|| "Invalid native SQLite database URL".to_string())?;
+    let valid_length = filename.len() <= 128;
+    let valid_characters = characters
+        .all(|character| character.is_ascii_alphanumeric() || matches!(character, '.' | '_' | '-'));
+    if valid_length && (first.is_ascii_alphanumeric()) && valid_characters {
+        Ok(filename)
+    } else {
+        Err("Invalid native SQLite database URL".to_string())
+    }
 }
 
 fn parameter(value: JsonValue) -> Result<Value, String> {
@@ -200,4 +216,34 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::default().build())
         .run(tauri::generate_context!())
         .expect("Nexora native runtime failed to start");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::validate_database_filename;
+
+    #[test]
+    fn accepts_the_default_relative_sqlite_filename() {
+        assert_eq!(
+            validate_database_filename("sqlite:nexora.db"),
+            Ok("nexora.db")
+        );
+    }
+
+    #[test]
+    fn rejects_paths_and_invalid_filenames() {
+        for database_url in [
+            "sqlite:",
+            "sqlite:../other.db",
+            "sqlite:folder/other.db",
+            "sqlite:\\other.db",
+            "sqlite:.hidden.db",
+            "sqlite:other db",
+        ] {
+            assert!(
+                validate_database_filename(database_url).is_err(),
+                "{database_url}"
+            );
+        }
+    }
 }
