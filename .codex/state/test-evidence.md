@@ -125,6 +125,21 @@
 - Nessun test di installazione, launch, CRUD, trasferimento, import, backup/restore, force-stop/restart o offline è stato dichiarato PASS.
 - Ripresa autorizzata dopo installazione amministrativa del driver e riavvio Windows, oppure collegamento di un device Android con Debug USB.
 
+### FIX.10 correction checkpoint — 2026-09-10 — implementation PASS / device gate BLOCKED
+
+- Router: `native_sqlite / ADVANCED / rischio dati medium`.
+- Causa corretta in `apps/web/src-tauri/src/lib.rs`: il validatore Rust rifiutava il punto del
+  filename e quindi rifiutava il contratto ufficiale `sqlite:nexora.db`. Il validatore ora accetta
+  solo filename locali ASCII bounded, mantenendo il rifiuto di path, traversal, slash e nomi non validi.
+- Test Rust: `cargo test --manifest-path apps/web/src-tauri/Cargo.toml --locked` → 2/2 passati.
+- `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked` → PASS.
+- Adapter Tauri: `TauriSqliteDatabase.test.ts` 5/5 e `openTauriLedger.test.ts` 3/3 passati; typecheck
+  `@nexora/database-tauri` → PASS.
+- Commit/push: `89840ccedd74c6ac99688d57f846b9923beaab26` su `origin/codex/phase-12-5-0-checkpoint`.
+- Tentativo rebuild firmato: frontend e Rust arm64 PASS, Gradle ha rifiutato la password del keystore;
+  nessun APK firmato nuovo è stato dichiarato disponibile.
+- Stato device: `adb devices -l` senza device; installazione e flussi Android restano da eseguire.
+
 ## 14.F — Final Android gate — 2026-09-07 — COMPLETE / PASS
 
 - Phase 14 evidence reconciled across 14.0–14.5: Tauri init, shared SQLite/migrations, lifecycle,

@@ -2,6 +2,6 @@
 
 - Task: FIX.10 — Device Gate Pixel 9
 - Roadmap phase: FIX.10
-- Status: `BLOCKED` — nessun device ADB disponibile; l’AVD API 35 richiede installazione amministrativa dell’Android Emulator Hypervisor Driver.
+- Status: `BLOCKED` — correzione del bridge SQLite nativo implementata e testata; per il gate reale servono APK firmato con password keystore valida e device ADB collegato.
 - Evidence: `.codex/state/test-evidence.md`; `docs/ROADMAP_STABILIZATION.md`.
-- Next task: riprendere FIX.10 dopo driver Hypervisor installato come amministratore o device Android collegato con Debug USB.
+- Next task: eseguire la build firmata, reinstallare in aggiornamento sul Pixel 9 e completare i flussi reali senza cancellare dati.
