@@ -2263,7 +2263,14 @@ Keep only the latest relevant evidence per completed phase.
 ## 2026-09-11 — FIX.10 Android portable backup export correction
 
 - Added Tauri filesystem and dialog plugins. Native export now opens the Android Save dialog and writes only after the user selects a destination; browser export remains Blob-based.
-- Targeted tests: `apps/web/src/backup/BackupPage.test.tsx` — 8/8 PASS; web typecheck PASS; `cargo fmt --check` and `cargo check` PASS.
+- Targeted tests: `apps/web/src/backup/downloadBackup.test.ts` + `apps/web/src/backup/BackupPage.test.tsx` — 10/10 PASS; web typecheck PASS; `cargo fmt --check` and `cargo check` PASS.
 - Pixel 9 debug package `com.rgpictures.nexora.debug`: Save dialog displayed `File memorizzati in Download`; selected public file `nexora-portable-46238f4d-76f9-47c2-9972-944635bbeb3d.nexora-backup` appeared in `/storage/emulated/0/Download`.
 - Restore drill: file selected from Android picker, checksum/schema/integrity report PASS, confirmation created rollback checkpoint, history recorded `restore · native-sqlite · riuscito`, and selected file was cleared after completion. Only synthetic debug data was used.
 - Android debug build compiled successfully with `tauri-plugin-fs` and `tauri-plugin-dialog`; release rebuild is still required because the current release APK predates this export correction and signing credentials are not present in this shell.
+
+## 2026-09-11 — FIX.10 Android import and offline smoke
+
+- Pixel 9 debug: Android DocumentsUI selected synthetic `android-import-undo-smoke.csv`; import preview detected the CSV, mapped `Data valuta`, resolved the local synthetic account `Conto Import Smoke`, and reported `1 pronte` / `Riga pronta per il commit atomico del batch`.
+- The subsequent commit attempt reported `Duplicata` and did not save a row; this is recorded as a deduplication guard PASS, not as commit/undo PASS. No real data was used.
+- Offline smoke: Wi-Fi was disabled (`wifi_on=0`), local dashboard navigation remained available, then Wi-Fi was re-enabled and reported enabled. No account reset, uninstall, or data clear was performed.
+- Commit/undo import and signed release rebuild with the export fix remain open; FIX.10 is not complete.
