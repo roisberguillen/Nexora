@@ -2249,3 +2249,13 @@ Keep only the latest relevant evidence per completed phase.
 - Commit: `85f8fd8` pushed to `origin/codex/phase-12-5-0-checkpoint`.
 - Release signed APK and mandatory persistence/import/backup/restore/offline device flows remain
   pending; FIX.10 is not yet complete.
+
+## 2026-09-11 — FIX.10 signed release and synthetic Pixel 9 flows
+
+- Signed release build: `pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci` — PASS.
+- APK: `apps/web/src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk`; SHA-256 `ECCD3C84DD34A04993A288818BEC4989A4C5F447687C04104A7BD987B4337254`.
+- `apksigner` — v2 PASS; certificate SHA-256 `4b3c398bc04710c0065cb10825bf9d5a7ff19f370768f2a6cc908c261fd450fb`; RSA 4096.
+- Pixel 9 `46060DLAQ002XQ`: release installed with `adb install -r`; startup/restart normal, no recovery/bootstrap/TypeError/FATAL logcat markers.
+- Synthetic dataset: demo load, account create/update/delete and persistence after restart PASS; no real user data was used or reset.
+- Synthetic movement save PASS (`Movimento salvato nel ledger locale.`); transfer save PASS (`Trasferimento salvato con due gambe collegate.`), with dashboard explicitly reporting transfers excluded from income/expense totals.
+- Encrypted backup creation PASS: history reports `native-sqlite · riuscito` and checksum receipt. Android file picker did not expose a downloaded `.nexora-backup`, so restore-from-file is not claimed; import/undo and offline device evidence remain pending.
