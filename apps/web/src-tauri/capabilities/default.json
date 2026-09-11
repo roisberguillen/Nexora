@@ -3,5 +3,11 @@
   "identifier": "default",
   "description": "Minimum permissions for the Nexora native ledger window.",
   "windows": ["main"],
-  "permissions": ["core:default", "sql:default", "sql:allow-execute"]
+  "permissions": [
+    "core:default",
+    "sql:default",
+    "sql:allow-execute",
+    "fs:allow-write-file",
+    "dialog:allow-save"
+  ]
 }

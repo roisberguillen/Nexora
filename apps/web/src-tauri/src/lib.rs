@@ -213,6 +213,8 @@ pub fn run() {
             nexora_sql_commit_transaction,
             nexora_sql_rollback_transaction
         ])
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_sql::Builder::default().build())
         .run(tauri::generate_context!())
         .expect("Nexora native runtime failed to start");

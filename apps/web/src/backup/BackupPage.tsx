@@ -5,6 +5,7 @@ import { useGoogleDriveSession } from "../cloud/GoogleDriveSessionContext";
 import type { CloudBackupMetadata } from "../cloud/cloudTypes";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import { appendBackupHistory, readBackupHistory } from "./backupHistory";
+import { downloadBackupArchive } from "./downloadBackup";
 
 function errorCode(error: unknown): string | undefined {
   return error instanceof Error ? error.message : undefined;
@@ -109,16 +110,9 @@ export function BackupPage({ ledger }: { readonly ledger: Ledger }) {
     setOperationError(null);
     try {
       const backup = await ledger.createEncryptedBackupArchive({ passphrase });
-      const anchor = document.createElement("a");
       const archiveBytes = new Uint8Array(backup.archive.byteLength);
       archiveBytes.set(backup.archive);
-      const archiveUrl = URL.createObjectURL(
-        new Blob([archiveBytes.buffer], { type: "application/octet-stream" }),
-      );
-      anchor.href = archiveUrl;
-      anchor.download = backup.id;
-      anchor.click();
-      URL.revokeObjectURL(archiveUrl);
+      await downloadBackupArchive(backup.id, archiveBytes);
       appendBackupHistory({
         operation: "manual_backup",
         storageKind: ledger.storageKind,

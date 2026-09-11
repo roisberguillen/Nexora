@@ -7,7 +7,7 @@ Route: tauri_android / ADVANCED
 Flusso principale: smoke Pixel 9 su APK release firmato
 Reviewer/fase: Codex — FIX.10
 
-Modifiche: verifica visuale e interattiva delle superfici Android interessate; nessun cambio a colori o font approvati.
+Modifiche: verifica visuale e interattiva delle superfici Android interessate; aggiunto dialogo nativo Salva con nome per l’export `.nexora-backup`; nessun cambio a colori o font approvati.
 
 | Area | ID | Esito | Evidenza / N.A. |
 | --- | --- | --- | --- |
@@ -17,12 +17,12 @@ Modifiche: verifica visuale e interattiva delle superfici Android interessate; n
 | Tablet | T-01 | N/A | Nessuna modifica tablet; gate responsive esistente. |
 | Visuale | V-01 | PASS | Colori/font approvati invariati. |
 | Ricerca | R-01 | N/A | Non coinvolta nel flusso. |
-| Form | F-01 | PASS | Conto, movimento, trasferimento e passphrase inviati. |
-| Feedback | FB-01 | PASS | Feedback di salvataggio, trasferimento e backup visibili. |
+| Form | F-01 | PASS | Conto, movimento, trasferimento, passphrase e destinazione backup inviati. |
+| Feedback | FB-01 | PASS | Feedback di salvataggio, trasferimento, backup e restore visibili. |
 | Accessibilità | A-01 | PASS | UI dump con etichette per le azioni testate; gate WCAG completo nei test repository. |
 | Finanza | FIN-01 | PASS | Trasferimento a due gambe escluso da entrate/uscite. |
 | Performance | P-01 | PASS | Bootstrap release senza errori fatal/recovery. |
 
 P0 aperti: Nessuno
-P1/P2 aperti: Restore da file, import/undo e toggle offline non completati in questo pass.
+P1/P2 aperti: import/undo e toggle offline non completati in questo pass.
 Esito: PASS

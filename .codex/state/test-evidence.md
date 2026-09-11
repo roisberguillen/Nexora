@@ -2259,3 +2259,11 @@ Keep only the latest relevant evidence per completed phase.
 - Synthetic dataset: demo load, account create/update/delete and persistence after restart PASS; no real user data was used or reset.
 - Synthetic movement save PASS (`Movimento salvato nel ledger locale.`); transfer save PASS (`Trasferimento salvato con due gambe collegate.`), with dashboard explicitly reporting transfers excluded from income/expense totals.
 - Encrypted backup creation PASS: history reports `native-sqlite · riuscito` and checksum receipt. Android file picker did not expose a downloaded `.nexora-backup`, so restore-from-file is not claimed; import/undo and offline device evidence remain pending.
+
+## 2026-09-11 — FIX.10 Android portable backup export correction
+
+- Added Tauri filesystem and dialog plugins. Native export now opens the Android Save dialog and writes only after the user selects a destination; browser export remains Blob-based.
+- Targeted tests: `apps/web/src/backup/BackupPage.test.tsx` — 8/8 PASS; web typecheck PASS; `cargo fmt --check` and `cargo check` PASS.
+- Pixel 9 debug package `com.rgpictures.nexora.debug`: Save dialog displayed `File memorizzati in Download`; selected public file `nexora-portable-46238f4d-76f9-47c2-9972-944635bbeb3d.nexora-backup` appeared in `/storage/emulated/0/Download`.
+- Restore drill: file selected from Android picker, checksum/schema/integrity report PASS, confirmation created rollback checkpoint, history recorded `restore · native-sqlite · riuscito`, and selected file was cleared after completion. Only synthetic debug data was used.
+- Android debug build compiled successfully with `tauri-plugin-fs` and `tauri-plugin-dialog`; release rebuild is still required because the current release APK predates this export correction and signing credentials are not present in this shell.

@@ -2,6 +2,6 @@
 
 - Task: FIX.10 — Device Gate Pixel 9
 - Roadmap phase: FIX.10
-- Status: `IN PROGRESS` — build release firmata e installata; startup, persistenza, CRUD account, movimento e trasferimento verificati con dataset sintetico. Backup cifrato creato e registrato; ripristino da file/import undo/offline device matrix restano da chiudere.
+- Status: `IN PROGRESS` — export nativo Android corretto con dialogo Salva con nome e filesystem Tauri; debug Pixel 9 ha creato un file pubblico, verificato checksum e completato restore con checkpoint. Import/undo e offline device matrix restano da chiudere.
 - Evidence: `.codex/state/test-evidence.md`; `docs/ROADMAP_STABILIZATION.md`.
-- Next task: completare i flussi import/undo, ripristino da file e verifica offline sul Pixel 9 senza cancellare dati.
+- Next task: completare i flussi import/undo e verifica offline sul Pixel 9 senza cancellare dati, poi rifare la release signed con le credenziali locali.
