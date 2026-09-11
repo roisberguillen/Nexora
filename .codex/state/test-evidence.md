@@ -2278,4 +2278,4 @@ Keep only the latest relevant evidence per completed phase.
 ## 2026-09-11 — FIX.10 repository quality gate after native export fix
 
 - `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.
-- The remaining FIX.10 gate is external: rebuild/install the signed Android release after the native export change, then obtain a stable import commit/undo device trace. The current shell has no keystore password environment variables.
+- The signed rebuild is now complete after the native export change. APK SHA-256 is `6A0735A5DCA66294C7BFBB595B31644859B0E3DD95D825D87F43BE6613311E8A`; `apksigner` v2 is true with the expected certificate fingerprint `4b3c398bc04710c0065cb10825bf9d5a7ff19f370768f2a6cc908c261fd450fb`. The remaining FIX.10 gate is external: `adb devices` currently reports no device, so post-fix install/launch and a stable import commit/undo device trace remain pending. No release credential was recorded.

@@ -165,7 +165,10 @@ prima del fix e passa dopo. Un test o gate fallito blocca la fase e impedisce la
 predefinito `sqlite:nexora.db` e l’adapter TypeScript ora preserva i metodi definiti sul prototype
 della connessione Tauri SQL; la correzione è pubblicata in `85f8fd8`, con test mirati 9/9 e
 typecheck/prettier verdi. La variante debug avvia il Pixel 9 senza il precedente errore di bootstrap.
-Il gate release e i flussi reali completi non sono ancora PASS.
+La release firmata post-correzione è stata ricostruita e verificata con `apksigner` (v2 PASS,
+certificato atteso, APK SHA-256 `6A0735A5DCA66294C7BFBB595B31644859B0E3DD95D825D87F43BE6613311E8A`).
+Il gate device resta aperto: al controllo del 2026-09-11 `adb devices` non rileva il Pixel 9,
+quindi installazione/launch post-fix e commit/undo import non sono ancora evidenza completa.
 
 - **Obiettivo:** validare il prodotto Android su Pixel 9 o device Android equivalente dichiarato.
 - **Problemi da correggere:** installazione/avvio reale, crash, SQLite native, force-stop/restart,
