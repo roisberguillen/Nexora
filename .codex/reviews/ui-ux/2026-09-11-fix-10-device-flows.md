@@ -21,7 +21,7 @@ Modifiche: verifica visuale e interattiva delle superfici Android interessate; a
 | Feedback | FB-01 | PASS | Feedback di salvataggio, trasferimento, backup, restore e deduplica import visibili. |
 | Accessibilità | A-01 | PASS | UI dump con etichette per le azioni testate; gate WCAG completo nei test repository. |
 | Finanza | FIN-01 | PASS | Trasferimento a due gambe escluso da entrate/uscite. |
-| Performance | P-01 | PASS | Bootstrap release senza errori fatal/recovery. |
+| Performance | P-01 | PASS | Bootstrap release senza errori fatal/recovery; quality gate repository `pnpm verify` PASS. |
 
 P0 aperti: Nessuno
 P1/P2 aperti: commit/undo import e release signed post-fix non completati in questo pass; offline locale PASS.

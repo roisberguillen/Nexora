@@ -2274,3 +2274,8 @@ Keep only the latest relevant evidence per completed phase.
 - The subsequent commit attempt reported `Duplicata` and did not save a row; this is recorded as a deduplication guard PASS, not as commit/undo PASS. No real data was used.
 - Offline smoke: Wi-Fi was disabled (`wifi_on=0`), local dashboard navigation remained available, then Wi-Fi was re-enabled and reported enabled. No account reset, uninstall, or data clear was performed.
 - Commit/undo import and signed release rebuild with the export fix remain open; FIX.10 is not complete.
+
+## 2026-09-11 — FIX.10 repository quality gate after native export fix
+
+- `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.
+- The remaining FIX.10 gate is external: rebuild/install the signed Android release after the native export change, then obtain a stable import commit/undo device trace. The current shell has no keystore password environment variables.
