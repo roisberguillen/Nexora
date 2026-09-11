@@ -169,8 +169,9 @@ La release firmata post-correzione è stata ricostruita e verificata con `apksig
 certificato atteso, APK SHA-256 `6A0735A5DCA66294C7BFBB595B31644859B0E3DD95D825D87F43BE6613311E8A`).
 Il Pixel 9 è stato rilevato e la release è stata installata con `adb install -r` (`Success`);
 `MainActivity` è rimasta in primo piano dopo il rilancio e il logcat non mostra crash, errori di
-bootstrap o `TypeError`. Il gate import resta aperto: il flusso commit/undo non è ancora una
-traccia device affidabile.
+bootstrap o `TypeError`. Sul build debug separato, un batch sintetico in stato `committed` è stato
+annullato e l’interfaccia ha mostrato `undone`, senza dati reali. Il device si è poi disconnesso
+prima di una nuova importazione con commit e verifica finale del ledger; il gate import resta aperto.
 
 - **Obiettivo:** validare il prodotto Android su Pixel 9 o device Android equivalente dichiarato.
 - **Problemi da correggere:** installazione/avvio reale, crash, SQLite native, force-stop/restart,
