@@ -5,7 +5,7 @@ import {
 } from "@nexora/database";
 import { describe, expect, it, vi } from "vitest";
 
-import { openTauriLedger } from "./openTauriLedger";
+import { adaptTauriDatabase, openTauriLedger } from "./openTauriLedger";
 import type { TauriSqlClient } from "./TauriSqliteDatabase";
 
 function nativeClient(): TauriSqlClient {
@@ -17,6 +17,35 @@ function nativeClient(): TauriSqlClient {
 }
 
 describe("openTauriLedger", () => {
+  it("preserves SQL plugin prototype methods when adapting a loaded connection", async () => {
+    class PrototypeDatabase {
+      public calls: string[] = [];
+
+      public execute(sql: string): Promise<unknown> {
+        this.calls.push(`execute:${sql}`);
+        return Promise.resolve({});
+      }
+
+      public select<Row extends object>(sql: string): Promise<readonly Row[]> {
+        this.calls.push(`select:${sql}`);
+        return Promise.resolve([]);
+      }
+
+      public close(): Promise<unknown> {
+        this.calls.push("close");
+        return Promise.resolve(true);
+      }
+    }
+
+    const database = new PrototypeDatabase();
+    const client = adaptTauriDatabase(database);
+    await client.execute("SELECT 1");
+    await client.select("SELECT 1");
+    await client.close();
+
+    expect(database.calls).toEqual(["execute:SELECT 1", "select:SELECT 1", "close"]);
+  });
+
   it("opens the native database, initializes the shared schema and exposes a ledger", async () => {
     const repository = new InMemoryLedgerRepository() as unknown as SqliteLedgerRepository;
     const loadDatabase = vi.fn().mockResolvedValue(nativeClient());

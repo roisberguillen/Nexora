@@ -78,8 +78,9 @@ async function loadNativeDatabase(databaseUrl: string): Promise<TauriSqlClient> 
     const { default: Database } = await import("@tauri-apps/plugin-sql");
     const database = (await Database.load(databaseUrl)) as TauriSqlClient;
     const { invoke } = await import("@tauri-apps/api/core");
+    const client = adaptTauriDatabase(database);
     return {
-      ...database,
+      ...client,
       beginTransaction: () => invoke<string>("nexora_sql_begin_transaction", { databaseUrl }),
       transactionExecute: (transactionId, sql, parameters = []) =>
         invoke("nexora_sql_transaction_execute", { transactionId, sql, parameters }),
@@ -97,4 +98,13 @@ async function loadNativeDatabase(databaseUrl: string): Promise<TauriSqlClient> 
       cause,
     );
   }
+}
+
+/** Preserve methods defined on the SQL plugin instance prototype when adapting it across IPC. */
+export function adaptTauriDatabase(database: TauriSqlClient): TauriSqlClient {
+  return {
+    execute: (sql, parameters) => database.execute(sql, parameters),
+    select: (sql, parameters) => database.select(sql, parameters),
+    close: () => database.close(),
+  };
 }

@@ -3,4 +3,9 @@ export {
   type TauriSqlBindValue,
   type TauriSqlClient,
 } from "./TauriSqliteDatabase";
-export { openTauriLedger, type NativeLedger, type OpenTauriLedgerOptions } from "./openTauriLedger";
+export {
+  adaptTauriDatabase,
+  openTauriLedger,
+  type NativeLedger,
+  type OpenTauriLedgerOptions,
+} from "./openTauriLedger";
