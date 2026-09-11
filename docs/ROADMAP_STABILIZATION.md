@@ -167,8 +167,10 @@ della connessione Tauri SQL; la correzione è pubblicata in `85f8fd8`, con test 
 typecheck/prettier verdi. La variante debug avvia il Pixel 9 senza il precedente errore di bootstrap.
 La release firmata post-correzione è stata ricostruita e verificata con `apksigner` (v2 PASS,
 certificato atteso, APK SHA-256 `6A0735A5DCA66294C7BFBB595B31644859B0E3DD95D825D87F43BE6613311E8A`).
-Il gate device resta aperto: al controllo del 2026-09-11 `adb devices` non rileva il Pixel 9,
-quindi installazione/launch post-fix e commit/undo import non sono ancora evidenza completa.
+Il Pixel 9 è stato rilevato e la release è stata installata con `adb install -r` (`Success`);
+`MainActivity` è rimasta in primo piano dopo il rilancio e il logcat non mostra crash, errori di
+bootstrap o `TypeError`. Il gate import resta aperto: il flusso commit/undo non è ancora una
+traccia device affidabile.
 
 - **Obiettivo:** validare il prodotto Android su Pixel 9 o device Android equivalente dichiarato.
 - **Problemi da correggere:** installazione/avvio reale, crash, SQLite native, force-stop/restart,
