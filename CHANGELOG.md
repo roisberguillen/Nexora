@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
+  operation, import preview/deduplication, synthetic import commit, ledger verification and
+  non-destructive undo verified on Pixel 9.
+
 - Completed FIX.9 Android release signing with an external RSA-4096 keystore, reproducible Gradle/CI bindings, and verified arm64 APK signature.
 
 - Fixed native account deletion: empty accounts now delete without unsupported multi-call transactions, while referenced accounts remain protected with an actionable archive/empty message.

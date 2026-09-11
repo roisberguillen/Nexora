@@ -2275,6 +2275,19 @@ Keep only the latest relevant evidence per completed phase.
 - Offline smoke: Wi-Fi was disabled (`wifi_on=0`), local dashboard navigation remained available, then Wi-Fi was re-enabled and reported enabled. No account reset, uninstall, or data clear was performed.
 - Commit/undo import and signed release rebuild with the export fix remain open; FIX.10 is not complete.
 
+## 2026-09-11 — FIX.10 final Android import commit and undo gate
+
+- Pixel 9 `46060DLAQ002XQ`, debug package `com.rgpictures.nexora.debug`: selected synthetic
+  `android-import-unique-smoke.csv` through Android DocumentsUI.
+- Mapping resolved the synthetic local account `Conto Import Smoke`; category intentionally left
+  unavailable; preview reported `1 pronte`, `0 da revisionare`, `0 duplicate`.
+- Commit succeeded: audit reported `android-import-unique-smoke.csv — 1 importate — committed`.
+- Ledger verification succeeded in `#transactions`: `Android unique commit 20260912`, `+987,65 €`,
+  account `Conto Import Smoke`.
+- Undo succeeded: audit changed to `undone`; the ledger retained the movement as
+  `Annullato · Importato`, proving the non-destructive correction path.
+- Only synthetic data was used; no uninstall, reset, or data clear was performed. FIX.10 import gate PASS.
+
 ## 2026-09-11 — FIX.10 repository quality gate after native export fix
 
 - `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.

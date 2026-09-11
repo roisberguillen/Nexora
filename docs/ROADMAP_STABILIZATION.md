@@ -1,6 +1,6 @@
 # Nexora — Roadmap correttiva di stabilizzazione
 
-Stato: **FIX.1–FIX.9 completate, FIX.10 bloccata** — 2026-09-10. Questa roadmap viene prima di nuove
+Stato: **FIX.1–FIX.10 completate, FIX.11–FIX.12 aperte** — 2026-09-11. Questa roadmap viene prima di nuove
 funzionalità e sospende ogni dichiarazione `NEXORA READY`, `RELEASE READY` o `ANDROID PASS`
 finché il gate FIX.12 non è PASS.
 
@@ -161,7 +161,7 @@ prima del fix e passa dopo. Un test o gate fallito blocca la fase e impedisce la
 
 ## FIX.10 — Device Gate Pixel 9
 
-**Stato corrente: IN PROGRESS — 2026-09-11.** Il bridge Rust accetta correttamente il database
+**Stato corrente: COMPLETE / PASS — 2026-09-11.** Il bridge Rust accetta correttamente il database
 predefinito `sqlite:nexora.db` e l’adapter TypeScript ora preserva i metodi definiti sul prototype
 della connessione Tauri SQL; la correzione è pubblicata in `85f8fd8`, con test mirati 9/9 e
 typecheck/prettier verdi. La variante debug avvia il Pixel 9 senza il precedente errore di bootstrap.
@@ -171,7 +171,13 @@ Il Pixel 9 è stato rilevato e la release è stata installata con `adb install -
 `MainActivity` è rimasta in primo piano dopo il rilancio e il logcat non mostra crash, errori di
 bootstrap o `TypeError`. Sul build debug separato, un batch sintetico in stato `committed` è stato
 annullato e l’interfaccia ha mostrato `undone`, senza dati reali. Il device si è poi disconnesso
-prima di una nuova importazione con commit e verifica finale del ledger; il gate import resta aperto.
+prima di una nuova importazione con commit e verifica finale del ledger; quella evidenza preliminare
+è stata superata dalla traccia finale descritta sotto.
+
+Aggiornamento finale FIX.10: il Pixel 9 ha eseguito una nuova importazione sintetica con `1 pronta`,
+commit riuscito e verifica della riga nei Movimenti; il batch è stato poi annullato. L’audit ha mostrato
+`undone` e il movimento è rimasto come `Annullato · Importato`, senza cancellazione fisica e senza dati reali.
+FIX.10 è chiusa con PASS.
 
 - **Obiettivo:** validare il prodotto Android su Pixel 9 o device Android equivalente dichiarato.
 - **Problemi da correggere:** installazione/avvio reale, crash, SQLite native, force-stop/restart,
