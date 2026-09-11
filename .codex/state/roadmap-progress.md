@@ -126,7 +126,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | FIX.7 | complete — 2026-09-08 | Backup/restore/reset regression PASS: Vitest 83/83, typecheck workspace PASS, Playwright 18/30 skipped across six viewports; cifratura, integrità, rollback, Drive opzionale e reset; prossimo FIX.8 |
 | FIX.8 | complete — 2026-09-08 | Tauri Android end-to-end PASS dopo Developer Mode: frontend, Rust arm64, symlink, android-studio-script e Gradle; APK universal release unsigned 17,710,048 byte, SHA256 802FA09D…; firma/device restano FIX.9–FIX.10 |
 | FIX.9 | complete — 2026-09-08 | Keystore v2 RSA 4096 fuori repo; alias `nexora-release`; APK universal release firmato; `apksigner` v2 PASS; cert SHA-256 `4b3c398b…`; SHA-256 APK `B9653854…`; prossimo FIX.10 |
-| FIX.10 | blocked — 2026-09-10 | Bridge Rust ora accetta il contratto `sqlite:nexora.db`, test Rust/adapters verdi e fix pubblicato in `89840cc`; build firmata fallita per password keystore non accettata e nessun device ADB attualmente collegato; gate reale ancora non eseguito |
+| FIX.10 | in progress — 2026-09-11 | Corretto anche l’adapter TypeScript: i metodi prototype della connessione Tauri SQL sono preservati (`85f8fd8`); test mirati 9/9, typecheck e Prettier PASS; variante debug avviata su Pixel 9 senza recovery/bootstrap error; release signed APK e flussi CRUD/import/backup/restore/offline ancora da completare |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

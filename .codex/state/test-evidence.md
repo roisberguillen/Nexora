@@ -2235,3 +2235,17 @@ Keep only the latest relevant evidence per completed phase.
 - SHA-256: `FE810D80749AA66BA9ECD5FB0ED81726B5980D6A02D936C1CA637AC699ACF0CB`.
 - Startup smoke: PASS; process started and responded, then was closed after verification.
 - MSI/NSIS bundling was not requested in this step; this artifact is the standalone executable.
+
+## 2026-09-11 — FIX.10 native SQL prototype adapter correction
+
+- Route: `tauri_android / ADVANCED`, data risk `low`.
+- Root cause confirmed on the debug Android variant: spreading the loaded SQL plugin object dropped
+  prototype methods, producing `TypeError: this.client.execute is not a function` during migrations.
+- Correction: `adaptTauriDatabase` delegates `execute`, `select` and `close` through the original
+  instance; regression coverage verifies prototype methods and preserves `this` binding.
+- Targeted Vitest: 2 files, 9/9 tests PASS; package typecheck and Prettier PASS.
+- Pixel 9 (`46060DLAQ002XQ`) debug smoke: package `com.rgpictures.nexora.debug` installed and
+  launched; no `startup-recovery` or database bootstrap error in the post-fix logcat sample.
+- Commit: `85f8fd8` pushed to `origin/codex/phase-12-5-0-checkpoint`.
+- Release signed APK and mandatory persistence/import/backup/restore/offline device flows remain
+  pending; FIX.10 is not yet complete.

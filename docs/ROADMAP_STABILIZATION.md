@@ -161,10 +161,11 @@ prima del fix e passa dopo. Un test o gate fallito blocca la fase e impedisce la
 
 ## FIX.10 — Device Gate Pixel 9
 
-**Stato corrente: BLOCKED — 2026-09-10.** Il bridge Rust ora accetta correttamente il database
-predefinito `sqlite:nexora.db` e il fix è pubblicato in `89840cc`, con test Rust e adapter verdi.
-La ricostruzione dell’APK firmato è però fallita perché Gradle non ha accettato la password del
-keystore; inoltre nessun device ADB è attualmente connesso. Il gate reale non è PASS.
+**Stato corrente: IN PROGRESS — 2026-09-11.** Il bridge Rust accetta correttamente il database
+predefinito `sqlite:nexora.db` e l’adapter TypeScript ora preserva i metodi definiti sul prototype
+della connessione Tauri SQL; la correzione è pubblicata in `85f8fd8`, con test mirati 9/9 e
+typecheck/prettier verdi. La variante debug avvia il Pixel 9 senza il precedente errore di bootstrap.
+Il gate release e i flussi reali completi non sono ancora PASS.
 
 - **Obiettivo:** validare il prodotto Android su Pixel 9 o device Android equivalente dichiarato.
 - **Problemi da correggere:** installazione/avvio reale, crash, SQLite native, force-stop/restart,
