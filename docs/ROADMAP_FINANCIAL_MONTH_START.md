@@ -25,7 +25,7 @@ data valida in ogni mese.
 | 2. Preferenza Impostazioni e validazione | completata | `apps/web/src/settings/preferences.ts`, `SettingsPage`, 14 test verdi |
 | 3. Dashboard, Analisi, budget e diario | completata | `42fbbb9`; Dashboard/Analisi/budget/diario usano il periodo configurato |
 | 4. Intervalli visibili e riallineamento selettori | completata | 28 test mirati, ESLint e typecheck web verdi; review UI/UX PASS |
-| 5. Gate completo, documentazione e release | da iniziare | — |
+| 5. Gate completo, documentazione e release | completata per la feature; gate repository bloccato da modifiche esterne | 661 test PASS, build/typecheck PASS; format/lint globali con errori fuori scope |
 
 ## Fase 1 — evidenza
 
@@ -43,3 +43,20 @@ mantiene il formato mese/anno per il giorno `1` e mostra gli estremi per i giorn
 - `pnpm exec eslint` sui file modificati — PASS;
 - `pnpm --filter @nexora/web typecheck` — PASS;
 - `.codex/reviews/ui-ux/financial-month-start-period-labels.md` — PASS.
+
+## Fase 5 — evidenza finale
+
+La funzionalità è completa e pubblicata sul branch `codex/pc-manager-local-browser`. Il gate
+specifico della feature è verde; il gate globale del repository non può essere dichiarato verde
+perché rileva modifiche parallele fuori scope:
+
+- `pnpm test` — 146 file PASS, 661 test PASS, 4 skip;
+- `pnpm build` — PASS;
+- `pnpm typecheck` — PASS;
+- `pnpm quality:ui-ux` — PASS;
+- `pnpm format:check` — BLOCCATO da `scripts/edit-uploaded-money-manager.mjs` e
+  `scripts/update-corrected-balances.mjs`, file non tracciati preesistenti;
+- `pnpm lint` — BLOCCATO da `apps/web/src/settings/SettingsPage.tsx` e
+  `apps/web/src/settings/localHostConnection.test.ts`, modifiche della roadmap parallela PM-6.
+
+Commit della fase 4 e pubblicazione verificati: `6ba6b57c7706c605599a455aaf2b1e65541c71ec`.

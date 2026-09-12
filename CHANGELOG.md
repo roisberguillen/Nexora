@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
+- Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and
