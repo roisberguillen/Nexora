@@ -35,6 +35,7 @@ pub struct LocalHubState {
     /// Root directory for the versioned local browser build, if published.
     pub browser_root: Option<PathBuf>,
     pub sync: Arc<Mutex<SyncTransport>>,
+    pub sync_status: Arc<RwLock<SyncRuntimeStatus>>,
 }
 
 impl Default for LocalHubState {
@@ -46,6 +47,7 @@ impl Default for LocalHubState {
             app_url: None,
             browser_root: None,
             sync: Arc::new(Mutex::new(SyncTransport::default())),
+            sync_status: Arc::new(RwLock::new(SyncRuntimeStatus::default())),
         }
     }
 }
@@ -111,11 +113,13 @@ async fn browser_asset(State(state): State<LocalHubState>, uri: Uri) -> Response
 
 async fn health(State(state): State<LocalHubState>) -> impl IntoResponse {
     let runtime = state.runtime.read().await.clone();
+    let sync = state.sync_status.read().await.clone();
     (
         StatusCode::OK,
-        Json(health_response_with_runtime(
+        Json(health_response_with_runtime_and_sync(
             state.app_url.as_deref(),
             &runtime,
+            &sync,
         )),
     )
 }
@@ -158,6 +162,23 @@ pub struct PullOperationsResponse {
     pub operations: Vec<(u64, ReplicableOperation)>,
 }
 
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SyncRuntimeState {
+    #[default]
+    Idle,
+    Syncing,
+    Conflict,
+    Offline,
+    Error,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct SyncRuntimeStatus {
+    pub state: SyncRuntimeState,
+    pub cursor: u64,
+}
+
 async fn push_operations(
     State(state): State<LocalHubState>,
     headers: HeaderMap,
@@ -175,6 +196,7 @@ async fn push_operations(
         .and_then(|value| value.to_str().ok())
         .and_then(|value| value.strip_prefix("Bearer "))
         .unwrap_or_default();
+    state.sync_status.write().await.state = SyncRuntimeState::Syncing;
     let pairing = state.pairing.read().await;
     let result = state.sync.lock().await.push_authorized(
         &pairing,
@@ -184,7 +206,21 @@ async fn push_operations(
         request.operations,
     );
     match result {
-        Ok(results) => (StatusCode::OK, Json(results)).into_response(),
+        Ok(results) => {
+            let conflict = results
+                .iter()
+                .any(|result| matches!(result, OperationApplyResult::Conflict { .. }));
+            let mut status = state.sync_status.write().await;
+            status.state = if conflict {
+                SyncRuntimeState::Conflict
+            } else {
+                SyncRuntimeState::Idle
+            };
+            if let Some(cursor) = results.iter().filter_map(operation_cursor).max() {
+                status.cursor = status.cursor.max(cursor);
+            }
+            (StatusCode::OK, Json(results)).into_response()
+        }
         Err(TransportError::ReplayDetected) => (
             StatusCode::CONFLICT,
             Json(serde_json::json!({"error":"replay_detected"})),
@@ -207,14 +243,30 @@ async fn pull_operations(
         )
             .into_response();
     }
-    let operations = state
+    state.sync_status.write().await.state = SyncRuntimeState::Syncing;
+    let operations: Vec<(u64, ReplicableOperation)> = state
         .sync
         .lock()
         .await
         .pull(query.after)
         .map(|(cursor, operation)| (cursor, operation.clone()))
         .collect();
+    let cursor = operations
+        .last()
+        .map(|operation| operation.0)
+        .unwrap_or(query.after);
+    let mut status = state.sync_status.write().await;
+    status.state = SyncRuntimeState::Idle;
+    status.cursor = status.cursor.max(cursor);
     (StatusCode::OK, Json(PullOperationsResponse { operations })).into_response()
+}
+
+fn operation_cursor(result: &OperationApplyResult) -> Option<u64> {
+    match result {
+        OperationApplyResult::Applied { cursor, .. }
+        | OperationApplyResult::Duplicate { cursor, .. } => Some(*cursor),
+        OperationApplyResult::Conflict { .. } => None,
+    }
 }
 
 async fn authorized_device<'a>(state: &LocalHubState, headers: &'a HeaderMap) -> Option<&'a str> {
@@ -1108,6 +1160,8 @@ pub struct HealthResponse {
     pub binding: BindingMode,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<SocketAddr>,
+    pub sync_state: SyncRuntimeState,
+    pub sync_cursor: u64,
 }
 
 pub fn health_response(app_url: Option<&str>) -> HealthResponse {
@@ -1118,6 +1172,14 @@ pub fn health_response_with_runtime(
     app_url: Option<&str>,
     runtime: &HubRuntimeStatus,
 ) -> HealthResponse {
+    health_response_with_runtime_and_sync(app_url, runtime, &SyncRuntimeStatus::default())
+}
+
+pub fn health_response_with_runtime_and_sync(
+    app_url: Option<&str>,
+    runtime: &HubRuntimeStatus,
+    sync: &SyncRuntimeStatus,
+) -> HealthResponse {
     HealthResponse {
         api_version: API_VERSION,
         status: "ok".to_owned(),
@@ -1125,6 +1187,8 @@ pub fn health_response_with_runtime(
         runtime_state: runtime.state.as_str().to_owned(),
         binding: runtime.binding,
         address: runtime.address,
+        sync_state: sync.state.clone(),
+        sync_cursor: sync.cursor,
     }
 }
 

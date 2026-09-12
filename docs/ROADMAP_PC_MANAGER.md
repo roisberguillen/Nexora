@@ -195,6 +195,10 @@ revoca durante sync e recovery dopo crash.
 rate limit, delivery replay protection, cursor e risultati `Applied`/`Duplicate`/`Conflict`.
 Il gate completo resta aperto per heartbeat, stato UI, coda browser e recovery visuale.
 
+**Slice PM-5.2:** health e operation endpoints mantengono `SyncRuntimeStatus` con stato `idle`,
+`syncing` o `conflict` e cursor monotono. La UI di connessione deve ancora esporre polling,
+offline e coda locale.
+
 ### PM-6 — Passcode, sessioni e recovery UX
 
 **Obiettivo:** rendere sicuro e comprensibile l'uso quotidiano.
