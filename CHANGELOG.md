@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
+
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and
   non-destructive undo verified on Pixel 9.

@@ -10,11 +10,12 @@ import {
   type TransactionSplit,
 } from "@nexora/domain";
 import { FinancialAmount, formatMinorUnits, formatPercentage } from "@nexora/ui";
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 
 import { formatEditableAmountMinor, parseLocalizedAmountMinor } from "../accounts/accountCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import { currentBudgetPeriod, type BudgetInput } from "./budgetCommands";
+import { formatFinancialPeriod } from "../date/financialPeriodPresentation";
 
 export function BudgetsPage({
   budgets,
@@ -48,6 +49,9 @@ export function BudgetsPage({
     currentBudgetPeriod(today, financialMonthStartDay),
   );
   const isCurrentPeriod = selectedPeriod === currentBudgetPeriod(today, financialMonthStartDay);
+  useEffect(() => {
+    setSelectedPeriod(currentBudgetPeriod(today, financialMonthStartDay));
+  }, [financialMonthStartDay, today]);
   const visibleBudgets = resolveActiveBudgetsForPeriod(budgets, selectedPeriod);
   const activeMacroCategories = categories.filter(
     (category) =>
@@ -151,7 +155,9 @@ export function BudgetsPage({
           >
             ←
           </button>
-          <output aria-live="polite">{selectedPeriod}</output>
+          <output aria-live="polite">
+            {formatFinancialPeriod(selectedPeriod, financialMonthStartDay)}
+          </output>
           <button
             aria-label="Mese successivo"
             className="secondary-action"
@@ -221,8 +227,8 @@ export function BudgetsPage({
                     <div className="account-copy">
                       <strong>{category}</strong>
                       <small>
-                        {selectedPeriod} · {status} · {formatPercentage(progress.percentage, 0)}{" "}
-                        utilizzato
+                        {formatFinancialPeriod(selectedPeriod, financialMonthStartDay)} · {status} ·{" "}
+                        {formatPercentage(progress.percentage, 0)} utilizzato
                       </small>
                       {progress.scope.includesDescendants ? (
                         <small>

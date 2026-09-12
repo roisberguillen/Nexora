@@ -28,7 +28,7 @@ describe("AnalyticsPage", () => {
         transactionSplits={[]}
       />,
     );
-    expect(screen.getByRole("heading", { name: "Rispetto a luglio 2026" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Rispetto a Luglio 2026" })).toBeVisible();
     expect(
       container
         .querySelector(".analytics-section .analytics-summary-grid")

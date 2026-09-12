@@ -9,6 +9,7 @@ import {
   type Transaction,
   type TransactionSplit,
 } from "@nexora/domain";
+import { formatFinancialPeriod } from "../date/financialPeriodPresentation";
 
 const defaultCurrency = "EUR";
 
@@ -122,9 +123,9 @@ export function buildAnalyticsViewModel(
 
   return Object.freeze({
     selectedPeriod,
-    selectedPeriodLabel: periodLabel(selectedPeriod),
+    selectedPeriodLabel: periodLabel(selectedPeriod, financialMonthStartDay),
     previousPeriod,
-    previousPeriodLabel: periodLabel(previousPeriod),
+    previousPeriodLabel: periodLabel(previousPeriod, financialMonthStartDay),
     currency,
     monthlySummary,
     previousSummary,
@@ -169,12 +170,8 @@ export function shiftMonth(period: string, delta: number): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
-export function periodLabel(period: string): string {
-  const year = Number(period.slice(0, 4));
-  const month = Number(period.slice(5, 7));
-  return new Intl.DateTimeFormat("it-IT", { month: "long", year: "numeric" }).format(
-    new Date(year, month - 1, 1),
-  );
+export function periodLabel(period: string, startDay = 1): string {
+  return formatFinancialPeriod(period, startDay);
 }
 
 function monthRange(endPeriod: string, count: number): readonly string[] {

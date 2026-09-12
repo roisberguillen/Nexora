@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { FinancialAmount, formatPercentage } from "@nexora/ui";
 import type { Category, Transaction, TransactionSplit } from "@nexora/domain";
@@ -27,6 +27,9 @@ export function AnalyticsPage({
     currentAnalyticsPeriod(transactions, new Date(), financialMonthStartDay),
   );
   const [trendWindow, setTrendWindow] = useState<AnalyticsTrendWindow>(6);
+  useEffect(() => {
+    setSelectedPeriod(currentAnalyticsPeriod(transactions, new Date(), financialMonthStartDay));
+  }, [financialMonthStartDay, transactions]);
   const model = useMemo(
     () =>
       buildAnalyticsViewModel(
@@ -56,7 +59,7 @@ export function AnalyticsPage({
           <p>Leggi il mese, confrontalo con il precedente e individua dove cambia la spesa.</p>
           <div aria-label="Selezione mese" className="analytics-period-selector">
             <button
-              aria-label={`Mese precedente: ${periodLabel(model.previousPeriod)}`}
+              aria-label={`Mese precedente: ${periodLabel(model.previousPeriod, financialMonthStartDay)}`}
               className="secondary-action"
               onClick={() => moveMonth(-1)}
               type="button"
@@ -65,7 +68,7 @@ export function AnalyticsPage({
             </button>
             <span aria-live="polite">{model.selectedPeriodLabel}</span>
             <button
-              aria-label={`Mese successivo: ${periodLabel(shiftMonth(selectedPeriod, 1))}`}
+              aria-label={`Mese successivo: ${periodLabel(shiftMonth(selectedPeriod, 1), financialMonthStartDay)}`}
               className="secondary-action"
               onClick={() => moveMonth(1)}
               type="button"

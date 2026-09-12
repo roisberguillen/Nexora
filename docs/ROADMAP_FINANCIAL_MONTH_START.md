@@ -24,7 +24,7 @@ data valida in ogni mese.
 | 1. Contratto dominio e confini calendario | completata | `packages/domain/src/services/financialPeriods.ts`, 9 test verdi |
 | 2. Preferenza Impostazioni e validazione | completata | `apps/web/src/settings/preferences.ts`, `SettingsPage`, 14 test verdi |
 | 3. Dashboard, Analisi, budget e diario | completata | `42fbbb9`; Dashboard/Analisi/budget/diario usano il periodo configurato |
-| 4. Ricorrenze, allocazioni e selettori periodo | da iniziare | — |
+| 4. Intervalli visibili e riallineamento selettori | completata | 28 test mirati, ESLint e typecheck web verdi; review UI/UX PASS |
 | 5. Gate completo, documentazione e release | da iniziare | — |
 
 ## Fase 1 — evidenza
@@ -32,3 +32,14 @@ data valida in ogni mese.
 Il dominio espone validazione, risoluzione del periodo, estremi inclusivi/esclusivi e controllo di
 appartenenza. Sono coperti default compatibile, giorno personalizzato, attraversamento dell’anno,
 limiti di febbraio e rifiuto di valori non interi o fuori dall’intervallo `1–28`.
+
+## Fase 4 — evidenza
+
+Dashboard, Analisi, Budget e Diario mostrano ora l’intervallo civile del periodo finanziario e
+resettano la selezione al periodo corrente quando cambia il giorno iniziale. Il formatter condiviso
+mantiene il formato mese/anno per il giorno `1` e mostra gli estremi per i giorni personalizzati.
+
+- `pnpm exec vitest run apps/web/src/date/financialPeriodPresentation.test.ts apps/web/src/dashboard/buildDashboardViewModel.test.ts apps/web/src/analytics/buildAnalyticsViewModel.test.ts apps/web/src/budgets/BudgetsPage.test.tsx apps/web/src/journal/JournalPage.test.tsx` — 5 file, 28 test PASS;
+- `pnpm exec eslint` sui file modificati — PASS;
+- `pnpm --filter @nexora/web typecheck` — PASS;
+- `.codex/reviews/ui-ux/financial-month-start-period-labels.md` — PASS.

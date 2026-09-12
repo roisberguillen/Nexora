@@ -20,6 +20,7 @@ import {
   type TransactionStatus,
   type Transfer,
 } from "@nexora/domain";
+import { formatFinancialPeriod } from "../date/financialPeriodPresentation";
 
 const defaultCurrency = "EUR";
 const recentActivityLimit = 5;
@@ -216,7 +217,7 @@ export function buildDashboardViewModel(
         ? Number((investmentGainLoss.amountMinor * 10_000n) / investmentCostBasis.amountMinor) / 100
         : undefined,
     period,
-    periodLabel: periodLabel(period),
+    periodLabel: formatFinancialPeriod(period, financialMonthStartDay),
     monthStatus: monthStatus(progress),
     availableBalance: sum(
       liquidAccounts.map((account) => calculateAccountBalance(account, data.transactions)),
@@ -267,14 +268,6 @@ function previousMonth(period: string): string {
   const year = rawYear ?? 1970;
   const month = rawMonth ?? 1;
   return month === 1 ? `${year - 1}-12` : `${year}-${String(month - 1).padStart(2, "0")}`;
-}
-function periodLabel(period: string): string {
-  const [rawYear, rawMonth] = period.split("-").map(Number);
-  const year = rawYear ?? 1970;
-  const month = rawMonth ?? 1;
-  return new Intl.DateTimeFormat("it-IT", { month: "long", year: "numeric", timeZone: "UTC" })
-    .format(new Date(Date.UTC(year, month - 1, 1)))
-    .replace(/^./, (letter) => letter.toUpperCase());
 }
 function transactionsForPeriod(
   transactions: readonly Transaction[],

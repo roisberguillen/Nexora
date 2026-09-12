@@ -7,11 +7,12 @@ import {
   type Transaction,
 } from "@nexora/domain";
 import { FinancialAmount } from "@nexora/ui";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import type { MonthlyJournalInput } from "./journalCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
 import { localCivilDate } from "../date/localCivilDate";
+import { formatFinancialPeriod } from "../date/financialPeriodPresentation";
 
 export function JournalPage({
   journals,
@@ -36,6 +37,10 @@ export function JournalPage({
   const [editingJournalId, setEditingJournalId] = useState<string | undefined>(
     () => journals.find((journal) => journal.period === currentPeriod)?.id,
   );
+  useEffect(() => {
+    setSelectedPeriod(currentPeriod);
+    setEditingJournalId(journals.find((journal) => journal.period === currentPeriod)?.id);
+  }, [currentPeriod, journals]);
   const selected = journals.find((journal) => journal.id === editingJournalId);
   const orderedJournals = [...journals].sort((left, right) =>
     right.period.localeCompare(left.period),
@@ -130,7 +135,9 @@ export function JournalPage({
         <div className="panel-heading">
           <div>
             <p className="eyebrow">Sintesi automatica</p>
-            <h2 id="journal-summary-title">{selectedPeriod}</h2>
+            <h2 id="journal-summary-title">
+              {formatFinancialPeriod(selectedPeriod, financialMonthStartDay)}
+            </h2>
           </div>
         </div>
         <div className="journal-summary-content">
@@ -200,7 +207,7 @@ export function JournalPage({
               {orderedJournals.map((journal) => (
                 <li key={journal.id}>
                   <div className="account-copy">
-                    <strong>{journal.period}</strong>
+                    <strong>{formatFinancialPeriod(journal.period, financialMonthStartDay)}</strong>
                     <small>{journal.note ?? "Nessuna nota"}</small>
                     <small>
                       {journal.nextMonthGoals ?? "Nessun obiettivo"}

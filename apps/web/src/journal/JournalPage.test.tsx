@@ -84,8 +84,8 @@ describe("JournalPage", () => {
       />,
     );
     const entries = screen.getAllByRole("listitem");
-    expect(entries[0]).toHaveTextContent("2026-08");
-    expect(entries[1]).toHaveTextContent("2026-06");
+    expect(entries[0]).toHaveTextContent("Ag\u006fsto 2026");
+    expect(entries[1]).toHaveTextContent("Giugno 2026");
   });
 
   it("cancels an edit without changing the saved journal", async () => {
