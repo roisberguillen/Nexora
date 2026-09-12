@@ -230,6 +230,11 @@ sessione autorizzata, pull/apply esplicito e recovery visuale delle consegne par
 **Gate:** session expiry, lock, logout, revoca, recovery, certificato cambiato, rate limit e
 secret scan.
 
+**Slice PM-6.1:** il Local Hub possiede un registro fail-closed per passcode e sessioni: il
+passcode viene derivato con salt e iterazioni, le sessioni conservano solo digest, gli errori
+sono rate-limited e logout/revoca rimuovono le sessioni. Il contratto è testato ma resta da
+esporre via endpoint e UI prima del gate PM-6.
+
 ### PM-7 — Packaging e avvio operativo
 
 **Obiettivo:** eliminare i passaggi tecnici per l'utente.

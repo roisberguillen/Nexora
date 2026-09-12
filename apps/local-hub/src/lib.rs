@@ -733,6 +733,136 @@ pub enum AuthError {
     InvalidToken,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SessionError {
+    NotConfigured,
+    UnknownDevice,
+    InvalidPasscode,
+    RateLimited,
+    InvalidSession,
+    Expired,
+}
+
+#[derive(Clone, Debug)]
+struct SessionRecord {
+    device_id: String,
+    token_digest: [u8; 32],
+    expires_at_ms: u64,
+}
+
+/// In-memory passcode/session contract. Secrets are never retained in plaintext.
+#[derive(Clone, Debug)]
+pub struct PasscodeSessionRegistry {
+    passcode_digest: Option<[u8; 32]>,
+    passcode_salt: Vec<u8>,
+    sessions: HashMap<String, SessionRecord>,
+    failed_attempts: HashMap<String, (u32, u64)>,
+    max_attempts: u32,
+    window_ms: u64,
+}
+
+impl Default for PasscodeSessionRegistry {
+    fn default() -> Self {
+        Self {
+            passcode_digest: None,
+            passcode_salt: Vec::new(),
+            sessions: HashMap::new(),
+            failed_attempts: HashMap::new(),
+            max_attempts: 5,
+            window_ms: 60_000,
+        }
+    }
+}
+
+impl PasscodeSessionRegistry {
+    pub fn configure(
+        &mut self,
+        passcode: &str,
+        salt: &[u8],
+        max_attempts: u32,
+        window_ms: u64,
+    ) -> Result<(), SessionError> {
+        if passcode.len() < 4 || salt.is_empty() || max_attempts == 0 || window_ms == 0 {
+            return Err(SessionError::InvalidPasscode);
+        }
+        self.passcode_digest = Some(derive_passcode(passcode, salt));
+        self.passcode_salt = salt.to_vec();
+        self.max_attempts = max_attempts;
+        self.window_ms = window_ms;
+        self.sessions.clear();
+        self.failed_attempts.clear();
+        Ok(())
+    }
+
+    pub fn unlock(
+        &mut self,
+        device_id: &str,
+        passcode: &str,
+        session_token: &str,
+        now_ms: u64,
+        ttl_ms: u64,
+    ) -> Result<(), SessionError> {
+        let expected = self.passcode_digest.ok_or(SessionError::NotConfigured)?;
+        let attempts = self
+            .failed_attempts
+            .entry(device_id.to_owned())
+            .or_insert((0, now_ms));
+        if now_ms.saturating_sub(attempts.1) >= self.window_ms {
+            *attempts = (0, now_ms);
+        }
+        if attempts.0 >= self.max_attempts {
+            return Err(SessionError::RateLimited);
+        }
+        if !constant_time_digest_eq(&expected, &derive_passcode(passcode, &self.passcode_salt)) {
+            attempts.0 = attempts.0.saturating_add(1);
+            return Err(SessionError::InvalidPasscode);
+        }
+        if session_token.len() < 24 || ttl_ms == 0 {
+            return Err(SessionError::InvalidSession);
+        }
+        self.failed_attempts.remove(device_id);
+        self.sessions.insert(
+            session_token.to_owned(),
+            SessionRecord {
+                device_id: device_id.to_owned(),
+                token_digest: digest(session_token),
+                expires_at_ms: now_ms.saturating_add(ttl_ms),
+            },
+        );
+        Ok(())
+    }
+
+    pub fn authenticate(
+        &mut self,
+        device_id: &str,
+        session_token: &str,
+        now_ms: u64,
+    ) -> Result<(), SessionError> {
+        let record = self
+            .sessions
+            .get(session_token)
+            .ok_or(SessionError::InvalidSession)?;
+        if record.device_id != device_id || record.token_digest != digest(session_token) {
+            return Err(SessionError::InvalidSession);
+        }
+        if now_ms >= record.expires_at_ms {
+            self.sessions.remove(session_token);
+            return Err(SessionError::Expired);
+        }
+        Ok(())
+    }
+
+    pub fn logout(&mut self, session_token: &str) -> bool {
+        self.sessions.remove(session_token).is_some()
+    }
+
+    pub fn revoke_device(&mut self, device_id: &str) {
+        self.sessions
+            .retain(|_, session| session.device_id != device_id);
+        self.failed_attempts.remove(device_id);
+    }
+}
+
 #[derive(Clone, Debug)]
 struct PairingGrant {
     code_digest: [u8; 32],
@@ -869,6 +999,25 @@ impl AuditEvent {
 
 fn digest(value: &str) -> [u8; 32] {
     Sha256::digest(value.as_bytes()).into()
+}
+
+fn derive_passcode(passcode: &str, salt: &[u8]) -> [u8; 32] {
+    let mut state = Sha256::new();
+    state.update(salt);
+    state.update(passcode.as_bytes());
+    let mut derived: [u8; 32] = state.finalize().into();
+    for _ in 0..100_000 {
+        let mut round = Sha256::new();
+        round.update(salt);
+        round.update(derived);
+        round.update(passcode.as_bytes());
+        derived = round.finalize().into();
+    }
+    derived
+}
+
+fn constant_time_digest_eq(left: &[u8; 32], right: &[u8; 32]) -> bool {
+    left.ct_eq(right).into()
 }
 
 impl DeviceIdentity {
@@ -1195,6 +1344,57 @@ pub fn health_response_with_runtime_and_sync(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn passcode_sessions_are_expiring_rate_limited_and_revocable() {
+        let mut registry = PasscodeSessionRegistry::default();
+        registry.configure("4937", b"host-salt", 2, 1_000).unwrap();
+        assert_eq!(
+            registry.unlock("device-1", "0000", "session-token-000000000000", 10, 5_000),
+            Err(SessionError::InvalidPasscode)
+        );
+        assert_eq!(
+            registry.unlock("device-1", "0000", "session-token-000000000000", 11, 5_000),
+            Err(SessionError::InvalidPasscode)
+        );
+        assert_eq!(
+            registry.unlock("device-1", "4937", "session-token-000000000000", 12, 5_000),
+            Err(SessionError::RateLimited)
+        );
+        assert_eq!(
+            registry.unlock(
+                "device-1",
+                "4937",
+                "session-token-000000000000",
+                1_100,
+                5_000
+            ),
+            Ok(())
+        );
+        assert_eq!(
+            registry.authenticate("device-1", "session-token-000000000000", 1_101),
+            Ok(())
+        );
+        assert_eq!(
+            registry.authenticate("device-1", "session-token-000000000000", 6_101),
+            Err(SessionError::Expired)
+        );
+        assert!(!registry.logout("session-token-000000000000"));
+    }
+
+    #[test]
+    fn passcode_session_revocation_removes_device_sessions() {
+        let mut registry = PasscodeSessionRegistry::default();
+        registry.configure("4937", b"host-salt", 5, 1_000).unwrap();
+        registry
+            .unlock("device-1", "4937", "session-token-000000000000", 1, 5_000)
+            .unwrap();
+        registry.revoke_device("device-1");
+        assert_eq!(
+            registry.authenticate("device-1", "session-token-000000000000", 2),
+            Err(SessionError::InvalidSession)
+        );
+    }
     use axum::body::{Body, to_bytes};
     use http::Request;
     use tokio::io::{AsyncReadExt, AsyncWriteExt};
