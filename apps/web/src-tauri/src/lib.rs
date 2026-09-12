@@ -23,16 +23,23 @@ struct LocalHubDesktopState {
 
 #[tauri::command]
 async fn pc_manager_start(
+    app: tauri::AppHandle,
     state: State<'_, LocalHubDesktopState>,
 ) -> Result<HubRuntimeStatus, String> {
     let mut runtime = state.runtime.lock().await;
     if let Some(current) = runtime.as_ref() {
         return Ok(current.status().await);
     }
-    let started =
-        LocalHubRuntime::start(TransportSecurityConfig::default(), LocalHubState::default())
-            .await
-            .map_err(|error| format!("Local Hub start failed: {error:?}"))?;
+    let mut hub_state = LocalHubState::default();
+    hub_state.app_url = Some("http://127.0.0.1:43173".to_owned());
+    hub_state.browser_root = app
+        .path()
+        .resource_dir()
+        .ok()
+        .map(|directory| directory.join("browser"));
+    let started = LocalHubRuntime::start(TransportSecurityConfig::default(), hub_state)
+        .await
+        .map_err(|error| format!("Local Hub start failed: {error:?}"))?;
     let status = started.status().await;
     *runtime = Some(started);
     Ok(status)

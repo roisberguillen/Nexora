@@ -275,6 +275,11 @@ non raggiungibile e version mismatch.
 registra la dipendenza path e `cargo check --locked` passa. Asset browser, pairing controller,
 LAN/firewall e installer restano aperti.
 
+**Slice PM-7.2:** `dist` viene incluso nel bundle Tauri come resource `browser` e il comando start
+configura `browser_root` dalla resource directory con `appUrl` loopback. `tauri build --debug
+--no-bundle` ha prodotto `apps/web/src-tauri/target/debug/nexora.exe`; pairing/LAN/firewall e
+installer restano aperti.
+
 ### PM-8 — Gate finale su Pixel 9 e desktop
 
 **Obiettivo:** dimostrare il flusso reale completo.
