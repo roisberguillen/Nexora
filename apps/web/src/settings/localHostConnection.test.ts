@@ -4,7 +4,9 @@ import {
   configureLocalHostPasscode,
   logoutLocalHostSession,
   probeLocalHost,
+  redeemLocalHostPairing,
   readLocalHostConnection,
+  revokeLocalHostDevice,
   unlockLocalHostSession,
   writeLocalHostConnection,
 } from "./localHostConnection";
@@ -114,6 +116,39 @@ describe("local host connection", () => {
     );
     expect(request).toHaveBeenCalledTimes(3);
     expect(JSON.stringify([...request.mock.calls])).toContain("device-token-123456789");
+    expect(localStorage.getItem("nexora.local-host-connection.v1")).toBeNull();
+  });
+
+  it("redeems pairing without persisting secrets and can revoke a device", async () => {
+    const request = vi.fn(async () => new Response(null, { status: 204 }));
+    const pairing = {
+      grantId: "grant-1",
+      code: "qr-code-1",
+      deviceId: "browser-1",
+      deviceToken: "device-token-123456789",
+      hostFingerprint: "sha256:host",
+    };
+    await expect(redeemLocalHostPairing("https://host.home/", pairing, request)).resolves.toEqual({
+      deviceId: "browser-1",
+      deviceToken: "device-token-123456789",
+    });
+    await revokeLocalHostDevice(
+      "https://host.home/",
+      { deviceId: "browser-1", deviceToken: "device-token-123456789" },
+      "browser-1",
+      request,
+    );
+    expect(request).toHaveBeenNthCalledWith(
+      1,
+      "https://host.home/v1/pairing/redeem",
+      expect.objectContaining({ method: "POST" }),
+    );
+    expect(request).toHaveBeenNthCalledWith(
+      2,
+      "https://host.home/v1/pairing/revoke",
+      expect.objectContaining({ method: "POST" }),
+    );
+    expect(JSON.stringify([...request.mock.calls])).toContain("sha256:host");
     expect(localStorage.getItem("nexora.local-host-connection.v1")).toBeNull();
   });
 });

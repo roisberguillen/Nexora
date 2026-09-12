@@ -24,8 +24,59 @@ export interface LocalHostCredentials {
   readonly deviceToken: string;
 }
 
+export interface LocalHostPairingRequest {
+  readonly grantId: string;
+  readonly code: string;
+  readonly deviceId: string;
+  readonly deviceToken: string;
+  readonly hostFingerprint: string;
+}
+
 export interface LocalHostSessionRequest {
   (input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+}
+
+export async function redeemLocalHostPairing(
+  endpoint: string,
+  pairing: LocalHostPairingRequest,
+  request: LocalHostSessionRequest = fetch,
+): Promise<LocalHostCredentials> {
+  const response = await request(`${trimEndpoint(endpoint)}/v1/pairing/redeem`, {
+    method: "POST",
+    cache: "no-store",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      grant_id: pairing.grantId,
+      code: pairing.code,
+      device_id: pairing.deviceId,
+      device_token: pairing.deviceToken,
+      host_fingerprint: pairing.hostFingerprint,
+    }),
+  });
+  if (!response.ok) throw new Error(`host_pairing_failed_${response.status}`);
+  return Object.freeze({
+    deviceId: pairing.deviceId,
+    deviceToken: pairing.deviceToken,
+  });
+}
+
+export async function revokeLocalHostDevice(
+  endpoint: string,
+  credentials: LocalHostCredentials,
+  targetDeviceId: string,
+  request: LocalHostSessionRequest = fetch,
+): Promise<void> {
+  const response = await request(`${trimEndpoint(endpoint)}/v1/pairing/revoke`, {
+    method: "POST",
+    cache: "no-store",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      requester_device_id: credentials.deviceId,
+      requester_device_token: credentials.deviceToken,
+      target_device_id: targetDeviceId,
+    }),
+  });
+  if (!response.ok) throw new Error(`host_device_revoke_failed_${response.status}`);
 }
 
 const storageKey = "nexora.local-host-connection.v1";

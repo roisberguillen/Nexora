@@ -4,9 +4,9 @@ Manifest: nexora-ui-ux-mobile-desktop/v1
 Data: 2026-09-12
 Schermata: PC Manager software final gate
 Route: App Shell, Settings, Local Hub and Tauri build
-Flusso principale: workspace verify → web build → Tauri/browser artefacts → device gate
+Flusso principale: workspace verify → pairing typed → web build → Tauri/browser artefacts → device gate
 Reviewer/fase: Codex — PM-8 software gate
-Modifiche: registrata la verifica completa del workspace; nessuna modifica runtime in questo slice.
+Modifiche: registrata la verifica completa del workspace e aggiunto il client typed per redeem QR e revoca device; il gate fisico resta separato.
 
 ## Verifiche
 
@@ -18,7 +18,7 @@ Modifiche: registrata la verifica completa del workspace; nessuna modifica runti
 | Tablet | T-01 | N/A | Nessun device collegato. |
 | Visuale | V-01 | PASS | Build UI completa; smoke runtime reale ancora aperto. |
 | Ricerca | R-01 | PASS | Test workspace completo verde. |
-| Form | F-01 | PASS | Test workspace completo verde. |
+| Form | F-01 | PASS | Pairing/revoca usano POST tipizzati, errori espliciti e non persistono segreti; test mirati verdi. |
 | Feedback | FB-01 | PASS | Stati e errori software verificati dai test. |
 | Accessibilità | A-01 | N/A | Gate dispositivo/browser reale ancora aperto. |
 | Finanza | FN-01 | PASS | Typecheck, test e build verdi; sync reale non eseguito. |
