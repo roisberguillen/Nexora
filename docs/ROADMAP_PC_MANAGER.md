@@ -204,6 +204,11 @@ il timer alla disattivazione/unmount e mostra runtime, sync state e cursor; se i
 passa a `offline` senza cancellare il ledger locale. Il gate finale resta aperto per la coda
 offline client e il recovery di consegne parziali.
 
+**Slice PM-5.4:** `LocalHostSyncClient` implementa coda persistente, deduplica per idempotency key,
+flush push, mantenimento su conflitto/offline e pull cursor-based con credenziali volatile. Il
+gate finale resta aperto fino al collegamento dei command finanziari all'adapter sync e al recovery
+di consegne parziali nel flusso completo.
+
 ### PM-6 — Passcode, sessioni e recovery UX
 
 **Obiettivo:** rendere sicuro e comprensibile l'uso quotidiano.

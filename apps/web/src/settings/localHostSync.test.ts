@@ -1,0 +1,92 @@
+import { describe, expect, it, vi } from "vitest";
+
+import { LocalHostSyncClient, type LocalSyncOperation } from "./localHostSync";
+
+const operation: LocalSyncOperation = {
+  idempotencyKey: "op-1",
+  deviceId: "browser-1",
+  entityId: "transaction-1",
+  baseRevision: 0,
+  revision: 0,
+  payloadDigest: "sha256:payload",
+  payload: "synthetic-payload",
+  tombstone: false,
+  createdAt: "2026-09-12T00:00:00Z",
+};
+
+function storage() {
+  const values = new Map<string, string>();
+  return {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+  };
+}
+
+describe("local host sync client", () => {
+  it("deduplicates queued operations and flushes them with volatile credentials", async () => {
+    const request = vi.fn(
+      async () =>
+        new Response(JSON.stringify([{ Applied: { cursor: 1, revision: 1 } }]), { status: 200 }),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home/",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: storage(),
+      request,
+      deliveryId: () => "delivery-1",
+    });
+    client.enqueue(operation);
+    client.enqueue(operation);
+    expect(client.pending()).toHaveLength(1);
+    await expect(client.flush()).resolves.toEqual({ status: "applied", pendingCount: 0 });
+    expect(client.pending()).toEqual([]);
+    expect(request).toHaveBeenCalledWith(
+      "https://host.home/v1/operations",
+      expect.objectContaining({
+        method: "POST",
+        body: expect.stringContaining("delivery-1"),
+        headers: expect.objectContaining({ authorization: "Bearer volatile-token" }),
+      }),
+    );
+  });
+
+  it("keeps the queue on network failure or conflict for a later retry", async () => {
+    const values = storage();
+    const request = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: "conflict" }), { status: 409 }))
+      .mockRejectedValueOnce(new Error("offline"));
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: values,
+      request,
+      deliveryId: () => "delivery-1",
+    });
+    client.enqueue(operation);
+    await expect(client.flush()).resolves.toEqual({ status: "conflict", pendingCount: 1 });
+    expect(client.pending()).toHaveLength(1);
+    await expect(client.flush()).rejects.toThrow("offline");
+    expect(client.pending()).toHaveLength(1);
+  });
+
+  it("pulls only validated cursors and sends the paired headers", async () => {
+    const request = vi.fn(
+      async () => new Response(JSON.stringify({ operations: [[1, operation]] }), { status: 200 }),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: storage(),
+      request,
+    });
+    await expect(client.pull(0)).resolves.toEqual({ operations: [[1, operation]] });
+    await expect(client.pull(-1)).rejects.toThrow("invalid_sync_cursor");
+    expect(request).toHaveBeenCalledWith(
+      "https://host.home/v1/operations?after=0",
+      expect.objectContaining({
+        headers: expect.objectContaining({ "x-nexora-device-id": "browser-1" }),
+      }),
+    );
+  });
+});
