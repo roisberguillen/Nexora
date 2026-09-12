@@ -26,6 +26,8 @@ pub const DEFAULT_PORT: u16 = 43_173;
 pub struct LocalHubState {
     pub pairing: Arc<RwLock<PairingRegistry>>,
     pub rate_limiter: Arc<Mutex<RateLimiter>>,
+    /// Optional browser entry point published only after explicit host setup.
+    pub app_url: Option<String>,
 }
 
 impl Default for LocalHubState {
@@ -33,6 +35,7 @@ impl Default for LocalHubState {
         Self {
             pairing: Arc::new(RwLock::new(PairingRegistry::default())),
             rate_limiter: Arc::new(Mutex::new(RateLimiter::new(60, 60_000))),
+            app_url: None,
         }
     }
 }
@@ -44,8 +47,11 @@ pub fn router(state: LocalHubState) -> Router {
         .with_state(state)
 }
 
-async fn health() -> impl IntoResponse {
-    (StatusCode::OK, Json(health_response()))
+async fn health(State(state): State<LocalHubState>) -> impl IntoResponse {
+    (
+        StatusCode::OK,
+        Json(health_response(state.app_url.as_deref())),
+    )
 }
 
 async fn authorize(State(state): State<LocalHubState>, headers: HeaderMap) -> impl IntoResponse {
@@ -735,19 +741,22 @@ pub struct CursorQuery {
 pub struct HealthResponse {
     pub api_version: u16,
     pub status: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub app_url: Option<String>,
 }
 
-pub fn health_response() -> HealthResponse {
+pub fn health_response(app_url: Option<&str>) -> HealthResponse {
     HealthResponse {
         api_version: API_VERSION,
         status: "ok".to_owned(),
+        app_url: app_url.map(str::to_owned),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::body::Body;
+    use axum::body::{Body, to_bytes};
     use http::Request;
     use tower::ServiceExt;
 
@@ -963,6 +972,27 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(unauthorized.status(), StatusCode::UNAUTHORIZED);
+    }
+
+    #[tokio::test]
+    async fn health_advertises_only_the_explicit_browser_entry_point() {
+        let app = router(LocalHubState {
+            app_url: Some("https://nexora.home".to_owned()),
+            ..LocalHubState::default()
+        });
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/v1/health")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+        let health: HealthResponse = serde_json::from_slice(&body).unwrap();
+        assert_eq!(health.app_url.as_deref(), Some("https://nexora.home"));
     }
 
     #[test]

@@ -488,3 +488,12 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   il comportamento dell’app, il ledger o il versionamento dello schema.
 - Impatto: gli installer Windows MSI/NSIS sono generabili; eventuali release future devono
   mantenere la sincronizzazione dei metadati nativi con i vincoli del target distributivo.
+## 2026-09-12 — PC Manager browser locale tramite Local Hub
+
+- **Contesto:** Money Manager offre un accesso PC/browser sulla rete locale; Nexora aveva già il
+  contratto Local Hub ma la UI non esponeva l'eventuale superficie browser pubblicata dall'host.
+- **Scelta:** il Local Hub può annunciare un `appUrl` opzionale nel solo endpoint health. La UI
+  abilita il link esclusivamente dopo health positivo e conserva soltanto endpoint e URL, mai token
+  o credenziali. Nessun listener LAN, pairing o origine autorizzata viene creato automaticamente.
+- **Conseguenze:** l'accesso browser è disponibile come superficie esplicita dell'host configurato,
+  mentre loopback, TLS, fingerprint, pairing, revoca e token restano obbligatori per i dati.

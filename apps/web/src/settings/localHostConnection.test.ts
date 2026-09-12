@@ -38,4 +38,11 @@ describe("local host connection", () => {
     });
     expect(request).toHaveBeenCalledWith("https://host.home/v1/health", { cache: "no-store" });
   });
+
+  it("does not persist an app URL until the host health response advertises it", async () => {
+    const request = vi.fn(
+      async () => new Response(JSON.stringify({ status: "ok", apiVersion: 1 }), { status: 200 }),
+    );
+    await expect(probeLocalHost("https://host.home", request)).resolves.toEqual({ apiVersion: 1 });
+  });
 });

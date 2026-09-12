@@ -240,6 +240,22 @@ export function SettingsPage({
               {hostMessage}
             </p>
           )}
+          {hostConnection.enabled && hostConnection.appUrl !== undefined ? (
+            <div className="settings-actions">
+              <a
+                className="secondary-action"
+                href={hostConnection.appUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Apri Nexora nel browser locale
+              </a>
+              <small>
+                Apri la superficie browser pubblicata dall’host già verificato. Il collegamento non
+                salva credenziali nel browser.
+              </small>
+            </div>
+          ) : null}
         </SettingsGroup>
         {onRestoreTransaction === undefined ? null : (
           <SettingsGroup title="Cestino">

@@ -238,9 +238,14 @@ describe("SettingsPage destructive flows", () => {
       "Apri Nexora da: https://nexora.home",
     );
     expect(screen.getByText("Host collegato")).toBeVisible();
+    const browserLink = screen.getByRole("link", { name: "Apri Nexora nel browser locale" });
+    expect(browserLink).toHaveAttribute("href", "https://nexora.home");
+    expect(browserLink).toHaveAttribute("target", "_blank");
+    expect(browserLink).toHaveAttribute("rel", "noopener noreferrer");
     await user.click(screen.getByRole("button", { name: "Disattiva host" }));
     expect(await screen.findByRole("status")).toHaveTextContent(
       "Host disattivato in questo browser",
     );
+    expect(screen.queryByRole("link", { name: "Apri Nexora nel browser locale" })).toBeNull();
   });
 });

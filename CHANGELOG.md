@@ -11,6 +11,9 @@
   `RELEASE READY` and `ANDROID PASS`.
 - Added desktop distribution: Windows MSI/NSIS installers and CI artifacts for Windows, macOS Intel
   and macOS Apple Silicon, with direct launch from Start Menu/Finder and no terminal command.
+- Added the Local Hub browser entry point: a verified host may advertise `appUrl`, and Settings now
+  exposes a protected “Apri Nexora nel browser locale” link without persisting credentials or
+  weakening LAN pairing/TLS requirements.
 
 - Completed FIX.9 Android release signing with an external RSA-4096 keystore, reproducible Gradle/CI bindings, and verified arm64 APK signature.
 

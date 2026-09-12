@@ -2325,6 +2325,19 @@ Keep only the latest relevant evidence per completed phase.
   signing/notarization remains an external Apple credential step and is documented; unsigned CI
   artifacts may show the operating system security warning.
 
+## 2026-09-12 — PC Manager browser locale integration slice
+
+- Router: `local_hub / CRITICAL / medium`; implementation kept Local Hub loopback/LAN pairing and TLS
+  gates unchanged. The browser entry point is advertised only as an explicit optional `appUrl` in
+  `/v1/health`; no token or credential is persisted by the web UI.
+- Rust Local Hub: `cargo fmt --manifest-path apps/local-hub/Cargo.toml` and
+  `cargo test --manifest-path apps/local-hub/Cargo.toml --locked` — `23 passed / 0 failed`.
+- Web: focused Settings/local-host suite — `2 files, 14 passed / 0 failed`; web and local-host
+  typechecks — PASS; `pnpm codex:validate` — PASS; `git diff --check` — PASS.
+- Browser UX: after a successful host health check, Settings exposes a new-tab link to the explicit
+  browser URL with `noopener noreferrer`; disabling the host removes the link. No ledger mutation,
+  LAN listener, pairing grant or real credential was created during verification.
+
 ## 2026-09-11 — FIX.10 repository quality gate after native export fix
 
 - `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.
