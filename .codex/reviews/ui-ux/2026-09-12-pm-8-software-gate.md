@@ -14,7 +14,7 @@ Modifiche: registrata la verifica completa del workspace; nessuna modifica runti
 | --- | --- | --- | --- |
 | Universale | U-01 | PASS | `pnpm verify`: format, lint, typecheck, 665 test passati e build verdi. |
 | Mobile | M-01 | N/A | ADB senza device: test Pixel non eseguibile. |
-| Desktop | D-01 | PASS | Tauri build e installer già verificati. |
+| Desktop | D-01 | PASS | Tauri build/installer verificati e resource staging confermato con `target/debug/browser/index.html`. |
 | Tablet | T-01 | N/A | Nessun device collegato. |
 | Visuale | V-01 | PASS | Build UI completa; smoke runtime reale ancora aperto. |
 | Ricerca | R-01 | PASS | Test workspace completo verde. |

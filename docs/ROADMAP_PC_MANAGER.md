@@ -314,6 +314,12 @@ working tree pulito e documentazione/stato aggiornati.
 non è dichiarato completato: `adb devices -l` resta vuoto dopo riavvio del server ADB, quindi
 installazione/launch e flusso reale Pixel 9 non sono verificati.
 
+**Avanzamento PM-8:** il gate software deterministico copre anche il serving dell'asset reale
+`apps/web/src-tauri/target/debug/browser/index.html`; il test Local Hub resta verde con 33 casi,
+inclusi shell browser, pairing monouso, sessione passcode, sync HTTP, replay/cursor e revoca.
+Questa evidenza non sostituisce la prova su dispositivo fisico, rete LAN reale, TLS e browser
+desktop post-install.
+
 ## Matrice di test minima
 
 | Area | Casi obbligatori |
