@@ -199,6 +199,11 @@ Il gate completo resta aperto per heartbeat, stato UI, coda browser e recovery v
 `syncing` o `conflict` e cursor monotono. La UI di connessione deve ancora esporre polling,
 offline e coda locale.
 
+**Slice PM-5.3:** Settings esegue health polling ogni 5 secondi solo per un host attivo, annulla
+il timer alla disattivazione/unmount e mostra runtime, sync state e cursor; se il probe fallisce
+passa a `offline` senza cancellare il ledger locale. Il gate finale resta aperto per la coda
+offline client e il recovery di consegne parziali.
+
 ### PM-6 — Passcode, sessioni e recovery UX
 
 **Obiettivo:** rendere sicuro e comprensibile l'uso quotidiano.

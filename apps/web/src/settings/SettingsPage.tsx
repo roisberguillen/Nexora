@@ -68,6 +68,8 @@ export function SettingsPage({
         enabled: true,
         endpoint: hostConnection.endpoint,
         runtimeState: health.runtimeState,
+        ...(health.syncState === undefined ? {} : { syncState: health.syncState }),
+        ...(health.syncCursor === undefined ? {} : { syncCursor: health.syncCursor }),
         ...(health.appUrl === undefined ? {} : { appUrl: health.appUrl }),
       };
       writeLocalHostConnection(next);
@@ -85,6 +87,37 @@ export function SettingsPage({
       setIsCheckingHost(false);
     }
   };
+  useEffect(() => {
+    if (!hostConnection.enabled) return undefined;
+    let cancelled = false;
+    const refresh = async () => {
+      try {
+        const health = await onProbeLocalHost(hostConnection.endpoint);
+        if (cancelled) return;
+        const next = {
+          ...hostConnection,
+          enabled: true,
+          runtimeState: health.runtimeState,
+          ...(health.syncState === undefined ? {} : { syncState: health.syncState }),
+          ...(health.syncCursor === undefined ? {} : { syncCursor: health.syncCursor }),
+          ...(health.appUrl === undefined ? {} : { appUrl: health.appUrl }),
+        };
+        writeLocalHostConnection(next);
+        setHostConnection(next);
+      } catch {
+        if (cancelled) return;
+        const next = { ...hostConnection, runtimeState: "offline" as const };
+        writeLocalHostConnection(next);
+        setHostConnection(next);
+        setHostMessage("Host non raggiungibile: Nexora continua in modalità locale.");
+      }
+    };
+    const timer = window.setInterval(() => void refresh(), 5_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [hostConnection.enabled, hostConnection.endpoint, onProbeLocalHost]);
   const deactivateHost = () => {
     const next = { enabled: false, endpoint: hostConnection.endpoint };
     writeLocalHostConnection(next);
@@ -201,7 +234,20 @@ export function SettingsPage({
             value={hostConnection.enabled ? "Host collegato" : "Solo locale"}
           />
           {hostConnection.enabled ? (
-            <SettingsRow label="Runtime host" value={hostConnection.runtimeState ?? "Verificato"} />
+            <>
+              <SettingsRow
+                label="Runtime host"
+                value={hostConnection.runtimeState ?? "Verificato"}
+              />
+              <SettingsRow
+                label="Stato sincronizzazione"
+                value={hostConnection.syncState ?? "idle"}
+              />
+              <SettingsRow
+                label="Cursor sincronizzazione"
+                value={String(hostConnection.syncCursor ?? 0)}
+              />
+            </>
           ) : null}
           <SettingsRow label="Origine dati" value="Archivio di questo browser" />
           <label className="settings-row">

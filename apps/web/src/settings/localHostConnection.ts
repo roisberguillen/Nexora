@@ -2,7 +2,9 @@ export interface LocalHostConnection {
   readonly enabled: boolean;
   readonly endpoint: string;
   readonly appUrl?: string;
-  readonly runtimeState?: "running";
+  readonly runtimeState?: "running" | "offline" | "error";
+  readonly syncState?: "idle" | "syncing" | "conflict" | "offline" | "error";
+  readonly syncCursor?: number;
 }
 
 export interface LocalHostHealth {
@@ -11,6 +13,8 @@ export interface LocalHostHealth {
   readonly runtimeState: "running";
   readonly binding: "loopback" | "lan";
   readonly address?: string;
+  readonly syncState?: "idle" | "syncing" | "conflict" | "offline" | "error";
+  readonly syncCursor?: number;
 }
 
 const storageKey = "nexora.local-host-connection.v1";
@@ -31,6 +35,12 @@ export function readLocalHostConnection(
       endpoint: validUrl(candidate.endpoint) ? candidate.endpoint : defaults.endpoint,
       ...(validUrl(candidate.appUrl) ? { appUrl: candidate.appUrl } : {}),
       ...(candidate.runtimeState === "running" ? { runtimeState: "running" as const } : {}),
+      ...(validSyncState(candidate.syncState) ? { syncState: candidate.syncState } : {}),
+      ...(typeof candidate.syncCursor === "number" &&
+      Number.isSafeInteger(candidate.syncCursor) &&
+      candidate.syncCursor >= 0
+        ? { syncCursor: candidate.syncCursor }
+        : {}),
     });
   } catch {
     return defaults;
@@ -67,6 +77,12 @@ export async function probeLocalHost(
     runtimeState: "running",
     binding: body.binding,
     ...(validAddress(body.address) ? { address: body.address } : {}),
+    ...(validSyncState(body.syncState) ? { syncState: body.syncState } : {}),
+    ...(typeof body.syncCursor === "number" &&
+    Number.isSafeInteger(body.syncCursor) &&
+    body.syncCursor >= 0
+      ? { syncCursor: body.syncCursor }
+      : {}),
     ...(validUrl(body.appUrl) ? { appUrl: body.appUrl } : {}),
   });
 }
@@ -84,5 +100,15 @@ function validUrl(value: unknown): value is string {
 function validAddress(value: unknown): value is string {
   return (
     typeof value === "string" && value.length > 0 && value.length <= 253 && !/[\s/]/.test(value)
+  );
+}
+
+function validSyncState(value: unknown): value is NonNullable<LocalHostConnection["syncState"]> {
+  return (
+    value === "idle" ||
+    value === "syncing" ||
+    value === "conflict" ||
+    value === "offline" ||
+    value === "error"
   );
 }
