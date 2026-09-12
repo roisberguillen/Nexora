@@ -100,7 +100,7 @@ test di crash/restart e collisione porta.
 --check`, `cargo test --locked` e `cargo check --locked` PASS. LAN resta bloccata dal lifecycle
 controller fino alle fasi pairing/TLS successive.
 
-### PM-2 — Verifica stessa rete e discovery
+### PM-2 — Verifica stessa rete e discovery — COMPLETE
 
 **Obiettivo:** guidare l'utente verso il computer corretto senza affidarsi alla sola presenza di
 `localhost`.
@@ -116,6 +116,10 @@ controller fino alle fasi pairing/TLS successive.
 
 **Gate:** stessa rete verificata o errore spiegato; discovery non espone il ledger; nessun accesso
 possibile prima del pairing.
+
+**Evidence:** `apps/local-hub/src/lib.rs` implementa `NetworkAssessment`,
+`assess_same_network` e discovery `_nexora._tcp`; test Rust verificano stessa/differente subnet,
+loopback e prefisso invalido. La discovery resta solo un hint e non sostituisce TLS/pairing.
 
 ### PM-3 — Pairing QR e autorizzazione dispositivo
 

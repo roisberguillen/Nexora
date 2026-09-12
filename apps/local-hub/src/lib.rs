@@ -386,6 +386,62 @@ pub struct DiscoveryAdvertisement {
     pub lan_enabled: bool,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NetworkAssessment {
+    SameLocalNetwork,
+    DifferentNetwork,
+    LoopbackOnly,
+    UnsupportedAddressFamily,
+    InvalidPrefix,
+}
+
+/// Performs a deterministic preflight check for the LAN UX. This is only a
+/// network hint: TLS, fingerprint and pairing remain mandatory afterwards.
+pub fn assess_same_network(
+    host_ip: IpAddr,
+    client_ip: IpAddr,
+    prefix_length: u8,
+) -> NetworkAssessment {
+    if host_ip.is_loopback() || client_ip.is_loopback() {
+        return NetworkAssessment::LoopbackOnly;
+    }
+    match (host_ip, client_ip) {
+        (IpAddr::V4(host), IpAddr::V4(client)) if prefix_length <= 32 => {
+            let host = u32::from(host);
+            let client = u32::from(client);
+            let mask = if prefix_length == 0 {
+                0
+            } else {
+                u32::MAX << (32 - prefix_length)
+            };
+            if host & mask == client & mask {
+                NetworkAssessment::SameLocalNetwork
+            } else {
+                NetworkAssessment::DifferentNetwork
+            }
+        }
+        (IpAddr::V6(host), IpAddr::V6(client)) if prefix_length <= 128 => {
+            let host = host.octets();
+            let client = client.octets();
+            let full_bytes = usize::from(prefix_length / 8);
+            let remainder = prefix_length % 8;
+            let same_full = host[..full_bytes] == client[..full_bytes];
+            let same_partial = remainder == 0
+                || (host[full_bytes] >> (8 - remainder))
+                    == (client[full_bytes] >> (8 - remainder));
+            if same_full && same_partial {
+                NetworkAssessment::SameLocalNetwork
+            } else {
+                NetworkAssessment::DifferentNetwork
+            }
+        }
+        (IpAddr::V4(_), IpAddr::V4(_)) | (IpAddr::V6(_), IpAddr::V6(_)) => {
+            NetworkAssessment::InvalidPrefix
+        }
+        _ => NetworkAssessment::UnsupportedAddressFamily,
+    }
+}
+
 /// Publishes the Local Hub advertisement only after the caller has explicitly
 /// enabled LAN mode and supplied a validated host identity.
 pub fn publish_discovery(
@@ -963,6 +1019,42 @@ mod tests {
             publish_discovery(&advertisement, "192.0.2.10".parse().unwrap(), "nexora-host"),
             Err(DiscoveryError::InvalidAdvertisement)
         ));
+    }
+
+    #[test]
+    fn network_assessment_is_only_a_hint_and_handles_lan_boundaries() {
+        assert_eq!(
+            assess_same_network(
+                "192.168.1.20".parse().unwrap(),
+                "192.168.1.42".parse().unwrap(),
+                24
+            ),
+            NetworkAssessment::SameLocalNetwork
+        );
+        assert_eq!(
+            assess_same_network(
+                "192.168.1.20".parse().unwrap(),
+                "192.168.2.42".parse().unwrap(),
+                24
+            ),
+            NetworkAssessment::DifferentNetwork
+        );
+        assert_eq!(
+            assess_same_network(
+                "127.0.0.1".parse().unwrap(),
+                "192.168.1.42".parse().unwrap(),
+                24
+            ),
+            NetworkAssessment::LoopbackOnly
+        );
+        assert_eq!(
+            assess_same_network(
+                "192.168.1.20".parse().unwrap(),
+                "192.168.1.42".parse().unwrap(),
+                33
+            ),
+            NetworkAssessment::InvalidPrefix
+        );
     }
 
     #[test]

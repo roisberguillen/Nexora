@@ -131,6 +131,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | FIX.12 | complete — 2026-09-12 | Final release gate PASS: quality/regression, security/recovery, signed APK v2, Pixel 9, native persistence, CRUD, transfers, import/undo, backup/restore/offline, desktop packaging/startup, manifest and state all reconciled; `NEXORA READY` / `RELEASE READY` / `ANDROID PASS` |
 | PM-0 | complete — 2026-09-12 | PC Manager trust model, stati, ruoli, grant/sessione/passcode/revoca/TLS/offline e misuse cases definiti; evidence `docs/PC_MANAGER_THREAT_MODEL.md`; PM-1 next |
 | PM-1 | complete — 2026-09-12 | LocalHubRuntime start/stop/restart/status, loopback runtime health, graceful shutdown e LAN fail-closed; 25 Rust tests, cargo fmt/check/test locked PASS; PM-2 next |
+| PM-2 | complete — 2026-09-12 | `_nexora._tcp` discovery contract e `assess_same_network` con same/different subnet, loopback e prefisso invalido; test Rust PASS; PM-3 next |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
