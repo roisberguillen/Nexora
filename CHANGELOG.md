@@ -878,6 +878,8 @@
 
 - Fase 1 del mese finanziario configurabile: aggiunto il contratto dominio per scegliere il giorno
   di apertura del periodo mensile, con intervalli civili, validazione `1–28` e test sui confini.
+- Fase 2 del mese finanziario configurabile: aggiunta la preferenza locale nelle Impostazioni,
+  con default sicuro, compatibilità con valori legacy e descrizione accessibile del comportamento.
 
 - Added strict ROADMAP AUTOPILOT orchestration with deterministic next-task resolution, hard advancement checks, full-gate finalization, and verified commit/push requirements.
 

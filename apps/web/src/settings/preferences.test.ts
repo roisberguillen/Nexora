@@ -10,13 +10,20 @@ describe("app preferences", () => {
       setItem: (key: string, value: string) => values.set(key, value),
     };
     writeAppPreferences(
-      { reduceMotion: true, theme: "dark", textScale: "large", trashRetentionDays: 90 },
+      {
+        reduceMotion: true,
+        theme: "dark",
+        textScale: "large",
+        financialMonthStartDay: 15,
+        trashRetentionDays: 90,
+      },
       storage,
     );
     expect(readAppPreferences(storage)).toEqual({
       reduceMotion: true,
       theme: "dark",
       textScale: "large",
+      financialMonthStartDay: 15,
       trashRetentionDays: 90,
     });
   });
@@ -28,6 +35,7 @@ describe("app preferences", () => {
       reduceMotion: false,
       theme: "light",
       textScale: "medium",
+      financialMonthStartDay: 1,
       trashRetentionDays: 30,
     });
   });
@@ -37,6 +45,7 @@ describe("app preferences", () => {
       reduceMotion: false,
       theme: "dark",
       textScale: "medium",
+      financialMonthStartDay: 1,
       trashRetentionDays: 30,
     });
 

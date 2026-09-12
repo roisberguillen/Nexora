@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import type { TrashedTransaction } from "@nexora/domain";
+import {
+  MAX_FINANCIAL_MONTH_START_DAY,
+  MIN_FINANCIAL_MONTH_START_DAY,
+  type TrashedTransaction,
+} from "@nexora/domain";
 
 import { appVersion } from "../appVersion";
 import type { FinancialResetPreview } from "../reset/financialReset";
@@ -212,6 +216,25 @@ export function SettingsPage({
             checked={preferences.reduceMotion}
             onChange={(reduceMotion) => update({ reduceMotion })}
           />
+        </SettingsGroup>
+        <SettingsGroup title="Calendario finanziario">
+          <SettingsSelect
+            label="Giorno di inizio del mese finanziario"
+            value={String(preferences.financialMonthStartDay)}
+            onChange={(value) => update({ financialMonthStartDay: Number(value) })}
+            options={Array.from(
+              { length: MAX_FINANCIAL_MONTH_START_DAY - MIN_FINANCIAL_MONTH_START_DAY + 1 },
+              (_, index) => {
+                const day = index + MIN_FINANCIAL_MONTH_START_DAY;
+                return [String(day), `Giorno ${day}`] as const;
+              },
+            )}
+          />
+          <p className="import-help">
+            Il periodo scelto va dal giorno selezionato al giorno precedente del mese successivo. La
+            modifica cambia i riepiloghi, non le date dei movimenti. Questa preferenza resta salvata
+            solo su questo dispositivo.
+          </p>
         </SettingsGroup>
         <SettingsGroup title="Gestione dati">
           <p>
@@ -733,9 +756,8 @@ export function SettingsPage({
         )}
         <SettingsGroup title="Applicazione">
           <p className="import-help">
-            Valuta principale, formato data e giorno iniziale del mese finanziario non sono ancora
-            configurabili: per evitare impostazioni solo apparenti, Nexora usa EUR, formato italiano
-            e mese civile finché non sarà disponibile una migrazione dati sicura.
+            Nexora usa EUR e formato italiano. Il calendario finanziario configurabile non modifica
+            i dati registrati e resta locale a questo dispositivo.
           </p>
           <SettingsRow label="Versione app" value={appVersion} />
           <SettingsLink label="Privacy e sicurezza" href="./#privacy-security" />

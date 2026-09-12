@@ -215,11 +215,17 @@ describe("SettingsPage destructive flows", () => {
     expect(trigger).toHaveFocus();
   });
 
-  it("non mostra preferenze finanziarie non operative come se fossero modificabili", () => {
+  it("rende modificabile il giorno di inizio del mese finanziario", async () => {
+    const user = userEvent.setup();
     render(<SettingsPage />);
 
     expect(screen.queryByLabelText("Valuta principale")).toBeNull();
-    expect(screen.getByText(/non sono ancora configurabili/i)).toBeVisible();
+    const select = screen.getByLabelText("Giorno di inizio del mese finanziario");
+    expect(select).toHaveValue("1");
+    await user.selectOptions(select, "15");
+    expect(select).toHaveValue("15");
+    expect(screen.getByText(/La modifica cambia i riepiloghi/i)).toBeVisible();
+    expect(screen.getByRole("region", { name: "Calendario finanziario" })).toBeVisible();
     expect(screen.getByRole("region", { name: "Gestione dati" })).toBeVisible();
   });
 

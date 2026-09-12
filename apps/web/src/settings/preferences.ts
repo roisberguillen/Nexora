@@ -4,6 +4,7 @@ export interface AppPreferences {
   readonly reduceMotion: boolean;
   readonly theme: AppTheme;
   readonly textScale: "medium" | "large";
+  readonly financialMonthStartDay: number;
   /** Local display policy only: expiry never triggers background deletion. */
   readonly trashRetentionDays: 7 | 30 | 90;
 }
@@ -13,6 +14,7 @@ const defaults: AppPreferences = Object.freeze({
   reduceMotion: false,
   theme: "light",
   textScale: "medium",
+  financialMonthStartDay: 1,
   trashRetentionDays: 30,
 });
 
@@ -27,6 +29,7 @@ export function readAppPreferences(
       reduceMotion: candidate.reduceMotion === true,
       theme: candidate.theme === "dark" || candidate.theme === "system" ? candidate.theme : "light",
       textScale: candidate.textScale === "large" ? "large" : "medium",
+      financialMonthStartDay: normalizeFinancialMonthStartDay(candidate.financialMonthStartDay),
       trashRetentionDays:
         candidate.trashRetentionDays === 7 || candidate.trashRetentionDays === 90
           ? candidate.trashRetentionDays
@@ -35,6 +38,12 @@ export function readAppPreferences(
   } catch {
     return defaults;
   }
+}
+
+function normalizeFinancialMonthStartDay(value: unknown): number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 28
+    ? value
+    : 1;
 }
 
 export function writeAppPreferences(

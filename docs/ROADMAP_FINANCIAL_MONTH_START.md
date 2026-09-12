@@ -22,7 +22,7 @@ data valida in ogni mese.
 | Fase | Stato | Evidenza |
 |---|---|---|
 | 1. Contratto dominio e confini calendario | completata | `packages/domain/src/services/financialPeriods.ts`, 9 test verdi |
-| 2. Preferenza Impostazioni e validazione | da iniziare | — |
+| 2. Preferenza Impostazioni e validazione | completata | `apps/web/src/settings/preferences.ts`, `SettingsPage`, 14 test verdi |
 | 3. Dashboard, Analisi, budget e diario | da iniziare | — |
 | 4. Ricorrenze, allocazioni e selettori periodo | da iniziare | — |
 | 5. Gate completo, documentazione e release | da iniziare | — |
