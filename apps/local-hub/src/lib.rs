@@ -36,6 +36,7 @@ pub struct LocalHubState {
     pub browser_root: Option<PathBuf>,
     pub sync: Arc<Mutex<SyncTransport>>,
     pub sync_status: Arc<RwLock<SyncRuntimeStatus>>,
+    pub sessions: Arc<Mutex<PasscodeSessionRegistry>>,
 }
 
 impl Default for LocalHubState {
@@ -48,6 +49,7 @@ impl Default for LocalHubState {
             browser_root: None,
             sync: Arc::new(Mutex::new(SyncTransport::default())),
             sync_status: Arc::new(RwLock::new(SyncRuntimeStatus::default())),
+            sessions: Arc::new(Mutex::new(PasscodeSessionRegistry::default())),
         }
     }
 }
@@ -57,12 +59,103 @@ pub fn router(state: LocalHubState) -> Router {
         .route("/v1/health", get(health))
         .route("/v1/pairing/redeem", axum::routing::post(redeem_pairing))
         .route("/v1/authorize", get(authorize))
+        .route("/v1/session/unlock", axum::routing::post(unlock_session))
+        .route("/v1/session/logout", axum::routing::post(logout_session))
         .route(
             "/v1/operations",
             axum::routing::get(pull_operations).post(push_operations),
         )
         .fallback(browser_asset)
         .with_state(state)
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+pub struct SessionUnlockRequest {
+    pub device_id: String,
+    pub device_token: String,
+    pub passcode: String,
+    pub session_token: String,
+    pub now_ms: u64,
+    pub ttl_ms: u64,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+pub struct SessionLogoutRequest {
+    pub device_id: String,
+    pub session_token: String,
+    pub now_ms: u64,
+}
+
+async fn unlock_session(
+    State(state): State<LocalHubState>,
+    Json(request): Json<SessionUnlockRequest>,
+) -> impl IntoResponse {
+    if state
+        .pairing
+        .read()
+        .await
+        .authorize(&request.device_id, &request.device_token)
+        .is_err()
+    {
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({ "error": "unauthorized" })),
+        );
+    }
+    let result = state.sessions.lock().await.unlock(
+        &request.device_id,
+        &request.passcode,
+        &request.session_token,
+        request.now_ms,
+        request.ttl_ms,
+    );
+    match result {
+        Ok(()) => (
+            StatusCode::OK,
+            Json(serde_json::json!({ "status": "unlocked" })),
+        ),
+        Err(SessionError::NotConfigured) => (
+            StatusCode::CONFLICT,
+            Json(serde_json::json!({ "error": "passcode_not_configured" })),
+        ),
+        Err(SessionError::RateLimited) => (
+            StatusCode::TOO_MANY_REQUESTS,
+            Json(serde_json::json!({ "error": "rate_limited" })),
+        ),
+        Err(SessionError::InvalidPasscode) => (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({ "error": "invalid_passcode" })),
+        ),
+        Err(SessionError::InvalidSession) => (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({ "error": "invalid_session" })),
+        ),
+        Err(SessionError::UnknownDevice | SessionError::Expired) => (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({ "error": "unauthorized" })),
+        ),
+    }
+}
+
+async fn logout_session(
+    State(state): State<LocalHubState>,
+    Json(request): Json<SessionLogoutRequest>,
+) -> impl IntoResponse {
+    let mut sessions = state.sessions.lock().await;
+    if sessions
+        .authenticate(&request.device_id, &request.session_token, request.now_ms)
+        .is_err()
+    {
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({ "error": "unauthorized" })),
+        );
+    }
+    sessions.logout(&request.session_token);
+    (
+        StatusCode::OK,
+        Json(serde_json::json!({ "status": "logged_out" })),
+    )
 }
 
 async fn browser_asset(State(state): State<LocalHubState>, uri: Uri) -> Response {

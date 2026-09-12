@@ -235,6 +235,10 @@ passcode viene derivato con salt e iterazioni, le sessioni conservano solo diges
 sono rate-limited e logout/revoca rimuovono le sessioni. Il contratto è testato ma resta da
 esporre via endpoint e UI prima del gate PM-6.
 
+**Slice PM-6.2:** aggiunti `/v1/session/unlock` e `/v1/session/logout`. L’unlock richiede un
+device già paired e restituisce solo uno stato; il logout richiede device/sessione validi. La
+configurazione passcode dal telefono e l’obbligo sessione sulle API ledger/sync restano aperti.
+
 ### PM-7 — Packaging e avvio operativo
 
 **Obiettivo:** eliminare i passaggi tecnici per l'utente.
