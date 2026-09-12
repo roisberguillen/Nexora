@@ -1,6 +1,6 @@
 # Nexora — Roadmap correttiva di stabilizzazione
 
-Stato: **FIX.1–FIX.10 completate, FIX.11–FIX.12 aperte** — 2026-09-11. Questa roadmap viene prima di nuove
+Stato: **FIX.1–FIX.12 completate — RELEASE GATE PASS** — 2026-09-12. Questa roadmap viene prima di nuove
 funzionalità e sospende ogni dichiarazione `NEXORA READY`, `RELEASE READY` o `ANDROID PASS`
 finché il gate FIX.12 non è PASS.
 
@@ -209,6 +209,15 @@ ritentati serialmente con esito PASS. Recovery, performance, adapter/native/devi
 - **Dipendenze:** FIX.5, FIX.6, FIX.7, FIX.10.
 
 ## FIX.12 — Release Gate finale
+
+**Stato corrente: COMPLETE / PASS — 2026-09-12.** La quality suite, la regressione E2E riconciliata,
+le evidenze di sicurezza/recovery, il manifest, la firma APK v2, l’installazione/avvio sul Pixel 9,
+la persistenza nativa, i flussi CRUD/trasferimento/import/undo/backup-restore/offline e il packaging/
+startup desktop sono tutti PASS. Non risultano P0/P1 aperti; gli skip E2E sono espliciti e condizionati
+dal backend o dal prerequisito del test. I controlli finali `pnpm verify`, `pnpm manifest:check`,
+`pnpm codex:validate`, `pnpm codex:test`, `pnpm test:ui-ux` e `pnpm quality:ui-ux` sono verdi.
+
+Risultato: `NEXORA READY`, `RELEASE READY`, `ANDROID PASS`.
 
 - **Obiettivo:** autorizzare una release soltanto con evidenze complete e working tree coerente.
 - **Problemi da correggere:** qualsiasi gate aperto, stato contraddittorio, manifest stale o release

@@ -2301,6 +2301,19 @@ Keep only the latest relevant evidence per completed phase.
   explicitly excluded from the pass count and does not alter the prior complete evidence.
 - FIX.11 gate PASS; no P0/P1 findings.
 
+## 2026-09-12 — FIX.12 final release gate
+
+- Quality and regression: `pnpm verify` PASS; full E2E reconciled at `433 passed / 233 skipped / 0 failed`
+  across 666 tests, with prior serial retry of parallel contention timeouts.
+- Native/device: signed universal release APK verified with `apksigner` v2 and expected RSA-4096
+  certificate; Pixel 9 install/launch PASS; native persistence, CRUD, transfers, import/undo,
+  backup/restore and offline evidence PASS.
+- Desktop: packaging/startup evidence PASS; recovery, security, performance and adapter/native matrix
+  evidence PASS in the recorded final reviews.
+- Final repository gates: `pnpm manifest:check`, `pnpm codex:validate`, `pnpm codex:test`,
+  `pnpm test:ui-ux` and `pnpm quality:ui-ux` PASS; no P0/P1 open. `NEXORA READY`, `RELEASE READY`
+  and `ANDROID PASS` are authorized.
+
 ## 2026-09-11 — FIX.10 repository quality gate after native export fix
 
 - `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.

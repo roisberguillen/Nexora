@@ -853,6 +853,11 @@
       "sha256": "1025801ac04b6ab8d9adf32538b6b217c4cd52a83bb36d657c0edc30c7e512be"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-12-fix-12-final-release-gate.md",
+      "size": 1328,
+      "sha256": "1eb26d08e0042d1017e8b2caf58695d4145bdb2b3e6262f76f03c60b497a87db"
+    },
+    {
       "path": ".codex/reviews/ui-ux/phase-15-0-local-hub-foundation.md",
       "size": 1433,
       "sha256": "60ea4ec6ca967979236eb88d36482678b1120569cc1f81858a8264f1fc8acbee"
@@ -1229,8 +1234,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 623,
-      "sha256": "727c3d3583859940d93411c49bcb0e81f4ed4559ea972efc2be69d5b7b847a2e"
+      "size": 554,
+      "sha256": "cf6075812aff38df313a77efe266f5fa062c39ecfe9cfd689fe53b7781104e8b"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1259,13 +1264,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 20077,
-      "sha256": "f86bd835d812b7403420be3acecef9760724b039b06c852545ef0009898e147c"
+      "size": 20390,
+      "sha256": "0c2b3bf5440faa8bc346ea67dbf19d6a2ac2c7d8a2525fb9356ad7864aaf9902"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 180645,
-      "sha256": "a39c7295b707aa236ebd7ba2e1ab67b6dbfae51cd3b9613ad0e5ca520362293e"
+      "size": 181485,
+      "sha256": "e58bf25812f92483fedaec72dc7cdd5128a5d63fc932d860f52ec2ad217b4296"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2599,8 +2604,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 60621,
-      "sha256": "47626599e15d1f1fa8fbbb1895888c8a00b6dc1402674447bc17a0026beecdf2"
+      "size": 60765,
+      "sha256": "f72d74294411d9fe00e6324863374d954c132fc012b29733e52b7858cbe43dab"
     },
     {
       "path": "design/mockup/README.md",
@@ -2909,8 +2914,8 @@
     },
     {
       "path": "docs/ROADMAP_STABILIZATION.md",
-      "size": 14768,
-      "sha256": "97ba42dc6cea8585e51c98edc2e8a833c8c24de649860184ab4982e97337a497"
+      "size": 15432,
+      "sha256": "613690a2d372387576bf84674060bf78ec9268181ec4fd7ee43473f67a8a3d3d"
     },
     {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
