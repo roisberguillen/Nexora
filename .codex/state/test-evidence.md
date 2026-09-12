@@ -2358,4 +2358,5 @@ Keep only the latest relevant evidence per completed phase.
 - 2026-09-12 — PM-6.4 client session contract: `localHostConnection.test.ts` 4/4 PASS, web typecheck PASS e Prettier PASS; configure/unlock/logout usano credenziali volatile e non persistono il session token.
 - 2026-09-12 — PM-6.5 browser session controller: 9 test client PASS, web typecheck e Prettier PASS; session token volatile, header sync condizionale e purge garantito su logout fallito.
 - 2026-09-12 — PM-6.6 revocation: `pairing_revoke_invalidates_target_device_and_session` PASS; revoca device invalida pairing e sessioni associate.
+- 2026-09-12 — PM-7.1 Tauri Local Hub lifecycle: lockfile aggiornato, `cargo check --manifest-path apps/web/src-tauri/Cargo.toml --locked` PASS e `cargo fmt --check` PASS; comandi Desktop start/status/stop collegati al runtime loopback.
 - 2026-09-12 — Financial month start Phase 1: `pnpm --filter @nexora/domain typecheck` PASS; `pnpm exec vitest run packages/domain/src/services/financialPeriods.test.ts` — 9 passed / 0 failed; Prettier check PASS after formatting. Coperti default day 1, custom day 15, year boundary, interval membership and invalid days.

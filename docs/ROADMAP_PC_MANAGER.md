@@ -270,6 +270,11 @@ telefono/browser e da completare la recovery con nuovo pairing.
 **Gate:** installer pulito, startup senza terminale, upgrade/restart, firewall rifiutato, host
 non raggiungibile e version mismatch.
 
+**Slice PM-7.1:** il Tauri Desktop espone comandi `pc_manager_start/status/stop` collegati al
+`LocalHubRuntime` Rust reale. L’avvio usa loopback e `LocalHubState` isolato; il lockfile Tauri
+registra la dipendenza path e `cargo check --locked` passa. Asset browser, pairing controller,
+LAN/firewall e installer restano aperti.
+
 ### PM-8 — Gate finale su Pixel 9 e desktop
 
 **Obiettivo:** dimostrare il flusso reale completo.
