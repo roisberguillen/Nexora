@@ -1,6 +1,8 @@
 import {
   calculateAccountBalance,
   calculateBudgetProgress,
+  financialPeriodForDate,
+  LocalDate,
   resolveActiveBudgetsForPeriod,
   type Account,
   type Budget,
@@ -10,6 +12,7 @@ import {
   type Transaction,
   type TransactionSplit,
 } from "@nexora/domain";
+import { localCivilDate } from "../date/localCivilDate";
 import { readBackupHistory, type BackupHistoryEntry } from "../backup/backupHistory";
 
 export type LocalNotificationKind =
@@ -53,6 +56,7 @@ export function deriveLocalNotifications(input: {
   readonly transactionSplits?: readonly TransactionSplit[];
   readonly backupHistory?: readonly BackupHistoryEntry[];
   readonly lowBalanceThresholdMinor?: bigint;
+  readonly financialMonthStartDay?: number;
 }): readonly LocalNotification[] {
   const {
     accounts = [],
@@ -64,12 +68,12 @@ export function deriveLocalNotifications(input: {
     transactions,
     transactionSplits = [],
     today = new Date(),
+    financialMonthStartDay = 1,
   } = input;
-  const currentPeriod = new Intl.DateTimeFormat("sv-SE", {
-    month: "2-digit",
-    timeZone: "Europe/Rome",
-    year: "numeric",
-  }).format(today);
+  const currentPeriod = financialPeriodForDate(
+    LocalDate.parse(localCivilDate(today)),
+    financialMonthStartDay,
+  );
   const notifications: LocalNotification[] = [];
   const history = input.backupHistory ?? readBackupHistory();
   const lastBackup = history.find(
@@ -118,6 +122,7 @@ export function deriveLocalNotifications(input: {
       categories,
       splits: transactionSplits,
       transactions,
+      financialMonthStartDay,
     }).percentage;
     if (
       budget.firstAlertPercentage !== undefined &&

@@ -29,6 +29,7 @@ export function NotificationsPage({
   recurringRules,
   transactions,
   transactionSplits,
+  financialMonthStartDay = 1,
 }: {
   readonly accounts: readonly Account[];
   readonly budgets: readonly Budget[];
@@ -37,6 +38,7 @@ export function NotificationsPage({
   readonly recurringRules: readonly RecurringRule[];
   readonly transactions: readonly Transaction[];
   readonly transactionSplits: readonly TransactionSplit[];
+  readonly financialMonthStartDay?: number;
 }) {
   const [preferences, setPreferences] = useState<LocalNotificationPreferences>(() =>
     readLocalNotificationPreferences(),
@@ -59,6 +61,7 @@ export function NotificationsPage({
         recurringRules,
         transactions,
         transactionSplits,
+        financialMonthStartDay,
       }),
     [
       accounts,
@@ -69,6 +72,7 @@ export function NotificationsPage({
       recurringRules,
       transactions,
       transactionSplits,
+      financialMonthStartDay,
     ],
   );
   const [states, setStates] = useState<LocalNotificationStates>(() =>

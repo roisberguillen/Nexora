@@ -136,6 +136,10 @@ interface AppProps {
   readonly startupBootstrap?: Pick<StartupBootstrap, "getFailure" | "getProgress" | "subscribe">;
   readonly startupDiagnostics?: () => StartupDiagnosticsContext;
   readonly seedLedger?: typeof seedDemoLedger;
+  /** Optional paired Local Hub bridge. Network failures never block local ledger writes. */
+  readonly localLedgerSyncSink?: {
+    recordSnapshot(payload: Uint8Array): Promise<void>;
+  };
 }
 
 export interface StartupDiagnosticsContext {
@@ -159,6 +163,7 @@ function AppContent({
   seedLedger = seedDemoLedger,
   startupBootstrap,
   startupDiagnostics,
+  localLedgerSyncSink,
 }: AppProps) {
   const googleDriveSession = useGoogleDriveSession();
   const route = useAppRoute();
@@ -333,6 +338,18 @@ function AppContent({
       return;
     }
     await operation(ledgerState.ledger);
+    if (localLedgerSyncSink !== undefined) {
+      try {
+        const snapshot = await capturePortableLedgerSnapshot(ledgerState.ledger.repository);
+        await localLedgerSyncSink.recordSnapshot(encodePortableLedgerSnapshot(snapshot));
+      } catch (error) {
+        logger.warn("sync.snapshot-deferred", {
+          component: "local-sync",
+          status: "deferred",
+          errorName: classifyErrorName(error),
+        });
+      }
+    }
     const models = await loadAppModels(ledgerState.ledger, financialMonthStartDay);
     setLedgerState((current) => (current.status === "ready" ? { ...current, ...models } : current));
   };
@@ -852,6 +869,7 @@ function AppContent({
                   recurringRules={ledgerState.recurringRules}
                   transactions={ledgerState.rawTransactions}
                   transactionSplits={ledgerState.transactionSplits}
+                  financialMonthStartDay={financialMonthStartDay}
                 />
               ) : route === "profile" ? (
                 <ProfilePage />

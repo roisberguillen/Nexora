@@ -23,7 +23,7 @@ data valida in ogni mese.
 |---|---|---|
 | 1. Contratto dominio e confini calendario | completata | `packages/domain/src/services/financialPeriods.ts`, 9 test verdi |
 | 2. Preferenza Impostazioni e validazione | completata | `apps/web/src/settings/preferences.ts`, `SettingsPage`, 14 test verdi |
-| 3. Dashboard, Analisi, budget e diario | da iniziare | — |
+| 3. Dashboard, Analisi, budget e diario | completata | `42fbbb9`; Dashboard/Analisi/budget/diario usano il periodo configurato |
 | 4. Ricorrenze, allocazioni e selettori periodo | da iniziare | — |
 | 5. Gate completo, documentazione e release | da iniziare | — |
 

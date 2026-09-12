@@ -50,7 +50,10 @@ export function JournalPage({
     (item) => item.month === selectedPeriod,
   );
   const invested = investments
-    .filter((item) => item.valuationDate.toString().startsWith(selectedPeriod))
+    .filter(
+      (item) =>
+        financialPeriodForDate(item.valuationDate, financialMonthStartDay) === selectedPeriod,
+    )
     .reduce((sum, item) => sum + item.currentValue.amountMinor, 0n);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
