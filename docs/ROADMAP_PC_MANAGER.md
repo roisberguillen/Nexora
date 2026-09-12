@@ -1,0 +1,256 @@
+# Roadmap PC Manager Nexora — Local Hub e interfaccia desktop browser
+
+## Obiettivo
+
+Permettere all'utente di avviare il Local Hub dal Pixel 9, autorizzare un computer sulla
+stessa rete locale e aprire nel browser del computer la stessa interfaccia desktop Nexora già
+definita dal mockup Stitch. Il browser non deve visualizzare una pagina tecnica separata: deve
+caricare l'App Shell desktop reale, con il ledger dell'host e lo stato di connessione visibile.
+
+Questa roadmap estende il contratto già definito in `docs/SYNC_SPEC.md` e nell'ADR 0016. Il
+Local Hub resta distinto dal backup, ascolta in loopback per default, richiede consenso esplicito
+per la LAN e trasferisce soltanto operation log incrementale; non viene mai condiviso un file
+SQLite aperto.
+
+## Risultato utente previsto
+
+1. Sul Pixel 9 l'utente apre `Impostazioni > Connessione dispositivi > PC Manager`.
+2. Nexora mostra lo stato della rete, il nome della rete, l'indirizzo locale e un avviso di
+   sicurezza.
+3. L'utente abilita esplicitamente il Local Hub e conferma l'esposizione LAN.
+4. Il telefono genera un pairing QR temporaneo, monouso e associato all'host.
+5. Sul computer l'utente apre l'indirizzo locale o scansiona il QR.
+6. Il browser verifica HTTPS/TLS, fingerprint dell'host e origine autorizzata.
+7. L'utente conferma il nuovo dispositivo sul telefono e imposta o inserisce il passcode.
+8. Il browser apre la vera App Shell desktop Nexora: sidebar persistente, header, dashboard,
+   movimenti, conti, budget, analisi e le altre superfici già disegnate.
+9. Telefono e browser mostrano uno stato di connessione coerente: offline, in attesa,
+   pairing, connesso, sincronizzazione, conflitto, revocato o errore.
+10. Le modifiche passano tramite operation log con idempotency key, cursori, retry e revisione
+    dei conflitti; il browser continua a funzionare offline secondo il modello Nexora.
+
+## Vincoli non negoziabili
+
+- Binding loopback di default; nessuna pubblicazione LAN implicita.
+- Nessun endpoint ledger senza device id, token a scadenza, fingerprint, origine autorizzata e
+  controllo di revoca.
+- TLS obbligatorio prima di un listener LAN; niente HTTP in chiaro per la superficie condivisa.
+- Pairing fuori banda tramite QR temporaneo e monouso; il QR non contiene dati finanziari.
+- Passcode mai nei log, URL, QR, fixture o repository; rate limiting e revoca per dispositivo.
+- Il Local Hub non è una destinazione di backup.
+- Nessun last-write-wins silenzioso e nessuna sovrascrittura automatica dei movimenti finanziari.
+- L'interfaccia desktop deve riusare `AppShell`, token e componenti Nexora; non deve servire il
+  prototipo `code.html` direttamente e non deve creare una seconda UI parallela.
+- Tutti gli stati devono essere accessibili da tastiera, leggibili con screen reader e verificati
+  a 320, 390, 768, 1024 e 1440 px, con zoom 200%.
+
+## Stato di partenza verificato
+
+- `apps/local-host/src/LocalSyncHost.ts` espone health, ledger e operation log, ma l'avvio LAN
+  resta volutamente bloccato finché non esiste la configurazione TLS.
+- `apps/web/src/settings/SettingsPage.tsx` possiede già un collegamento host manuale tramite
+  `/v1/health` e può aprire `appUrl` in una nuova scheda.
+- `apps/web/src/settings/localHostConnection.ts` persiste endpoint e stato locale, ma non è
+  ancora un workflow di pairing, rete, passcode e stato live end-to-end.
+- `docs/SYNC_SPEC.md` definisce `appUrl`, pairing, fingerprint, device id, token a scadenza,
+  operation log e conflitti espliciti.
+- `packages/ui/src/AppShell.tsx` e i token UI sono il punto di riuso per la visualizzazione
+  desktop.
+
+## Fasi della roadmap
+
+### PM-0 — Contratto prodotto e threat model
+
+**Obiettivo:** congelare il comportamento prima del codice.
+
+- Definire gli stati e le transizioni del PC Manager: `solo-locale`, `hub-in-avvio`,
+  `rete-non-idonea`, `in-attesa-pairing`, `pairing-richiesto`, `pairing-confermato`,
+  `connesso`, `sincronizzazione`, `offline`, `conflitto`, `revocato`, `errore`.
+- Definire i ruoli: telefono come controller/pairing authority; Local Hub come host del ledger;
+  browser desktop come client autorizzato.
+- Definire asset, confini di fiducia, minacce Wi-Fi condiviso, QR fotografato, replay, host
+  sostituito, origine contraffatta, passcode errato e revoca.
+- Registrare decisioni su durata grant, timeout inattività, numero tentativi passcode, revoca,
+  rinnovo certificato e comportamento quando il telefono è offline.
+
+**Gate:** threat model approvato, nessuna ambiguità su trust model, revoca e recovery.
+
+### PM-1 — Contratto Local Hub runtime
+
+**Obiettivo:** rendere l'host avviabile in modo esplicito e osservabile.
+
+- Introdurre un controller di lifecycle: `start`, `stop`, `restart`, `status`.
+- Avviare loopback senza rete; richiedere un comando esplicito per LAN.
+- Generare/caricare il materiale TLS tramite primitive di piattaforma già approvate e pubblicare
+  fingerprint verificabile.
+- Definire porte, binding, cleanup, crash recovery e lock per evitare due hub concorrenti.
+- Estendere health con versione protocollo, stato, capability browser, fingerprint non segreto e
+  stato di pairing; mai token o passcode.
+- Rendere l'host avviabile dal runtime desktop e dal flusso autorizzato Android senza permessi
+  Android superflui.
+
+**Gate:** startup/shutdown deterministico, loopback default, LAN fail-closed, health senza segreti,
+test di crash/restart e collisione porta.
+
+### PM-2 — Verifica stessa rete e discovery
+
+**Obiettivo:** guidare l'utente verso il computer corretto senza affidarsi alla sola presenza di
+`localhost`.
+
+- Rilevare con API di piattaforma la disponibilità della rete locale senza registrare SSID o
+  indirizzi oltre il necessario.
+- Pubblicare il servizio solo dopo consenso LAN, usando il contratto `_nexora._tcp` già definito.
+- Presentare indirizzo, porta, nome leggibile del dispositivo e fingerprint abbreviato.
+- Gestire rete assente, VPN, captive portal, reti isolate/AP isolation, cambio Wi-Fi e indirizzo
+  IP cambiato.
+- Consentire inserimento manuale dell'indirizzo come fallback, mantenendo le stesse verifiche TLS,
+  origine, fingerprint e pairing.
+
+**Gate:** stessa rete verificata o errore spiegato; discovery non espone il ledger; nessun accesso
+possibile prima del pairing.
+
+### PM-3 — Pairing QR e autorizzazione dispositivo
+
+**Obiettivo:** associare il browser a uno specifico host e a uno specifico device.
+
+- Generare un grant QR breve, monouso, limitato a scopo, host fingerprint e scadenza.
+- Mostrare QR e codice di confronto sul Pixel 9; non includere dati finanziari.
+- Dal browser avviare una richiesta di pairing senza ottenere ancora accesso al ledger.
+- Sul telefono mostrare nome/origine/fingerprint del browser e richiedere conferma esplicita.
+- Creare device id e credenziale per dispositivo a durata limitata; memorizzare il segreto solo
+  nello storage sicuro disponibile sul client.
+- Implementare rinnovo, logout, revoca singola, revoca globale e lista dispositivi autorizzati.
+- Proteggere passcode con rate limiting, timeout, messaggi non rivelatori e blocco progressivo.
+
+**Gate:** test QR scaduto/riusato, token errato, device errato, fingerprint errato, origine
+errata, replay, passcode errato, revoca e rinnovo.
+
+### PM-4 — Browser locale e caricamento della Desktop App Shell
+
+**Obiettivo:** quando l'utente avvia il Local Hub dal cellulare, vedere nel PC l'interfaccia
+desktop Nexora disegnata, non una schermata di servizio.
+
+- Pubblicare una build browser locale versionata dell'app tramite `appUrl`.
+- Definire bootstrap del browser: health → verifica TLS/fingerprint → pairing → sessione →
+  apertura ledger host.
+- Separare chiaramente la pagina di pairing dalla superficie autenticata; nessun ledger nel DOM
+  prima della sessione autorizzata.
+- Riutilizzare `AppShell`, `SidebarNavigation`, `TopHeader`, metriche, tabelle e componenti
+  accessibili del package UI.
+- Mantenere la gerarchia del mockup Stitch: sidebar desktop persistente e collassabile, superficie
+  centrale fluida, metriche prima dei dettagli, tabelle dense e responsive.
+- Mostrare nel top header: nome dispositivo, stato connessione, ultimo sync, conflitti e azione
+  disconnetti/revoca.
+- Usare dati reali del ledger host solo dopo autorizzazione; usare dati sintetici esclusivamente
+  nei test e negli stati vuoti.
+- Gestire refresh, nuova scheda, deep link, sessione scaduta e chiusura del telefono senza
+  distruggere i dati locali del browser.
+
+**Gate:** il PC apre tutte le route desktop esistenti con lo stesso App Shell; zero duplicazione
+di layout; test screenshot, accessibilità, tastiera, zoom 200% e sei viewport.
+
+### PM-5 — Sincronizzazione live e stato connessione
+
+**Obiettivo:** rendere prevedibile la relazione telefono/host/browser.
+
+- Implementare push/pull incrementale con cursori e operation log già definiti.
+- Aggiungere heartbeat/health polling con backoff e timeout; evitare polling aggressivo.
+- Derivare lo stato visuale da eventi verificabili, non da un semplice booleano `enabled`.
+- Mostrare coda locale, ultimo cursor, operazioni in attesa, retry e motivo dell'errore senza
+  esporre payload finanziari nei log.
+- Gestire offline del PC, offline del telefono, riavvio host, consegna parziale, duplicati e
+  ripresa dal checkpoint.
+- Presentare i conflitti in una superficie accessibile con decisione esplicita dell'utente; mai
+  risolverli tramite sovrascrittura implicita.
+
+**Gate:** test a due client, offline/reload, retry, duplicate delivery, cursor stale, conflitto,
+revoca durante sync e recovery dopo crash.
+
+### PM-6 — Passcode, sessioni e recovery UX
+
+**Obiettivo:** rendere sicuro e comprensibile l'uso quotidiano.
+
+- Consentire la configurazione del passcode dal telefono prima della pubblicazione LAN.
+- Non usare il passcode come sostituto del pairing: il passcode protegge la sessione, il pairing
+  autorizza il dispositivo.
+- Definire durata sessione, blocco automatico, logout manuale e revoca remota.
+- Fornire recovery tramite revoca e nuovo pairing; non mostrare o esportare segreti in chiaro.
+- Rendere espliciti i rischi di reti pubbliche e il comportamento quando il certificato cambia.
+- Registrare audit metadata redatti: evento, device id hashato, esito, timestamp; mai token,
+  passcode, contenuti del ledger o URL con credenziali.
+
+**Gate:** session expiry, lock, logout, revoca, recovery, certificato cambiato, rate limit e
+secret scan.
+
+### PM-7 — Packaging e avvio operativo
+
+**Obiettivo:** eliminare i passaggi tecnici per l'utente.
+
+- Includere Local Hub e asset browser nel packaging Tauri Desktop per Windows/macOS.
+- Definire l'avvio dal menu dell'app desktop e l'avvio autorizzato dall'app Android.
+- Mostrare al telefono istruzioni minime: “Apri questo indirizzo” oppure QR; nessun requisito
+  Node/terminal per l'utente finale.
+- Gestire aggiornamento protocollo e incompatibilità tra client/host con messaggio operativo.
+- Definire firewall/permesso LAN con richiesta stretta e spiegata, senza capability ampie.
+
+**Gate:** installer pulito, startup senza terminale, upgrade/restart, firewall rifiutato, host
+non raggiungibile e version mismatch.
+
+### PM-8 — Gate finale su Pixel 9 e desktop
+
+**Obiettivo:** dimostrare il flusso reale completo.
+
+- Pixel 9 release/debug autorizzato: avvio hub, rete, QR, conferma, passcode, stato e revoca.
+- Windows e macOS: browser supportato, nuova scheda, refresh, deep link, desktop layout e
+  chiusura host.
+- Test LAN reale su rete privata controllata; nessun dato reale nei fixture o nei log di test.
+- Verificare importo/saldo/trasferimento prima e dopo sync, assicurando che i trasferimenti restino
+  neutrali.
+- Eseguire threat-model tests, pairing negative tests, TLS tests, LAN integration tests, full
+  unit/typecheck/build/E2E, recovery e performance.
+- Allegare evidenze screenshot del mockup desktop, log redatti, risultati test e matrice
+  dispositivo/browser/OS.
+
+**Gate finale:** `PC_MANAGER_FINAL_GATE_PASS`, 0 P0/P1/P2 aperti, review di sicurezza indipendente,
+working tree pulito e documentazione/stato aggiornati.
+
+## Matrice di test minima
+
+| Area | Casi obbligatori |
+|---|---|
+| Lifecycle | start, stop, restart, crash, porta occupata, loopback default |
+| Rete | Wi-Fi assente, stessa rete, reti diverse, cambio IP, VPN, rete isolata |
+| TLS | certificato valido, fingerprint cambiato, hostname errato, downgrade HTTP rifiutato |
+| Pairing | QR scaduto, QR riusato, origin errata, device errato, token errato, replay |
+| Passcode | configurazione, errore, rate limit, lock, logout, sessione scaduta, recovery |
+| Sync | push/pull, cursor, retry, duplicato, consegna parziale, offline, conflitto, revoca |
+| UI desktop | mockup, App Shell, route, sidebar, header status, focus, tastiera, WCAG, zoom 200% |
+| Dati | trasferimenti neutrali, precisione monetaria, nessun overwrite, restore/recovery |
+| Packaging | Windows/macOS, Android Pixel 9, avvio senza terminale, firewall, version mismatch |
+| Privacy | secret scan, log redatti, QR senza dati finanziari, nessuna credenziale in URL |
+
+## Criteri di completamento
+
+- Un utente può partire dal Pixel 9 e arrivare alla Desktop App Shell nel browser senza terminale.
+- Il PC non vede il ledger prima del pairing confermato.
+- Una rete diversa, un fingerprint diverso, un token scaduto o un device revocato non ottengono
+  accesso.
+- La UI del browser è quella desktop Nexora già disegnata e riusa i componenti reali.
+- Il browser resta offline-capable e recupera senza duplicare operazioni.
+- Conflitti e stati di connessione sono visibili e comprensibili.
+- Nessun trasferimento interno viene classificato come entrata o spesa.
+- Le evidenze di sicurezza, test, responsive UI, packaging e recovery sono archiviate.
+
+## Decisioni ancora necessarie prima dell'implementazione
+
+1. Il Local Hub viene avviato dal runtime Android come host temporaneo oppure il telefono comanda
+   sempre un host desktop separato? La roadmap assume: telefono come controller di pairing e PC
+   come host del ledger/browser, coerente con l'attuale contratto Local Hub.
+2. Quali browser desktop supportare nella prima release: Chromium/Edge/Chrome e Safari macOS,
+   oppure solo Chromium-based?
+3. Durata esatta di grant, sessione e passcode lockout.
+4. Modalità di provisioning TLS per sviluppo, produzione e rete domestica.
+5. Se l'apertura browser deve essere automatica tramite intent/deep link o manuale tramite URL/QR.
+
+Le decisioni sopra non autorizzano ancora una modifica architetturale: vanno chiuse in un ADR o
+nel decision log prima di PM-1/PM-3.
