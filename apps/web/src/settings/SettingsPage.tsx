@@ -24,6 +24,13 @@ import {
   writeLocalHostConnection,
   type LocalHostHealth,
 } from "./localHostConnection";
+import {
+  getDesktopLocalHubStatus,
+  isDesktopRuntime,
+  startDesktopLocalHub,
+  stopDesktopLocalHub,
+  type DesktopHubStatus,
+} from "./pcManagerDesktop";
 
 export function SettingsPage({
   onResetFinancialData,
@@ -65,6 +72,34 @@ export function SettingsPage({
   const [hostConnection, setHostConnection] = useState(() => readLocalHostConnection());
   const [hostMessage, setHostMessage] = useState<string | null>(null);
   const [isCheckingHost, setIsCheckingHost] = useState(false);
+  const [desktopHubStatus, setDesktopHubStatus] = useState<DesktopHubStatus | null>(null);
+  const [isManagingDesktopHub, setIsManagingDesktopHub] = useState(false);
+  const desktopRuntime = isDesktopRuntime();
+  const manageDesktopHub = async () => {
+    setIsManagingDesktopHub(true);
+    try {
+      const next =
+        desktopHubStatus?.state === "running"
+          ? (await stopDesktopLocalHub(), null)
+          : await startDesktopLocalHub();
+      setDesktopHubStatus(next);
+      setHostMessage(
+        next === null ? "Local Hub desktop arrestato." : "Local Hub desktop avviato in loopback.",
+      );
+    } catch {
+      setHostMessage(
+        "Impossibile gestire il Local Hub desktop. Nessun dato locale è stato modificato.",
+      );
+    } finally {
+      setIsManagingDesktopHub(false);
+    }
+  };
+  useEffect(() => {
+    if (!desktopRuntime) return;
+    void getDesktopLocalHubStatus()
+      .then(setDesktopHubStatus)
+      .catch(() => undefined);
+  }, [desktopRuntime]);
   const activateHost = async () => {
     setIsCheckingHost(true);
     setHostMessage(null);
@@ -279,6 +314,24 @@ export function SettingsPage({
             </>
           ) : null}
           <SettingsRow label="Origine dati" value="Archivio di questo browser" />
+          {desktopRuntime ? (
+            <div className="settings-actions">
+              <button
+                className="primary-action"
+                disabled={isManagingDesktopHub}
+                onClick={() => void manageDesktopHub()}
+                type="button"
+              >
+                {desktopHubStatus?.state === "running"
+                  ? "Arresta Local Hub desktop"
+                  : "Avvia Local Hub desktop"}
+              </button>
+              <small>
+                Il Local Hub desktop parte in loopback. La pubblicazione LAN richiede pairing e
+                consenso esplicito.
+              </small>
+            </div>
+          ) : null}
           <label className="settings-row">
             <span>Indirizzo host</span>
             <input

@@ -280,6 +280,10 @@ configura `browser_root` dalla resource directory con `appUrl` loopback. `tauri 
 --no-bundle` ha prodotto `apps/web/src-tauri/target/debug/nexora.exe`; pairing/LAN/firewall e
 installer restano aperti.
 
+**Slice PM-7.3:** Settings espone in Tauri il controllo start/stop/status del Local Hub desktop e
+nasconde la capability nella PWA. Il feedback chiarisce loopback e consenso LAN; pairing, apertura
+browser automatica, firewall e installer restano aperti.
+
 ### PM-8 — Gate finale su Pixel 9 e desktop
 
 **Obiettivo:** dimostrare il flusso reale completo.
