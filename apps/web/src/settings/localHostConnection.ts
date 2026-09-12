@@ -17,6 +17,15 @@ export interface LocalHostHealth {
   readonly syncCursor?: number;
 }
 
+export interface LocalHostCredentials {
+  readonly deviceId: string;
+  readonly deviceToken: string;
+}
+
+export interface LocalHostSessionRequest {
+  (input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+}
+
 const storageKey = "nexora.local-host-connection.v1";
 const defaults: LocalHostConnection = Object.freeze({
   enabled: false,
@@ -87,6 +96,67 @@ export async function probeLocalHost(
   });
 }
 
+export async function configureLocalHostPasscode(
+  endpoint: string,
+  credentials: LocalHostCredentials,
+  passcode: string,
+  salt: Uint8Array,
+  request: LocalHostSessionRequest = fetch,
+): Promise<void> {
+  const response = await request(`${trimEndpoint(endpoint)}/v1/session/configure`, {
+    method: "POST",
+    cache: "no-store",
+    headers: sessionHeaders(credentials),
+    body: JSON.stringify({
+      device_id: credentials.deviceId,
+      device_token: credentials.deviceToken,
+      passcode,
+      salt: [...salt],
+    }),
+  });
+  if (!response.ok) throw new Error(`host_session_configure_failed_${response.status}`);
+}
+
+export async function unlockLocalHostSession(
+  endpoint: string,
+  credentials: LocalHostCredentials,
+  passcode: string,
+  sessionToken: string,
+  ttlMs = 15 * 60 * 1000,
+  request: LocalHostSessionRequest = fetch,
+): Promise<string> {
+  const response = await request(`${trimEndpoint(endpoint)}/v1/session/unlock`, {
+    method: "POST",
+    cache: "no-store",
+    headers: sessionHeaders(credentials),
+    body: JSON.stringify({
+      device_id: credentials.deviceId,
+      device_token: credentials.deviceToken,
+      passcode,
+      session_token: sessionToken,
+      now_ms: 0,
+      ttl_ms: ttlMs,
+    }),
+  });
+  if (!response.ok) throw new Error(`host_session_unlock_failed_${response.status}`);
+  return sessionToken;
+}
+
+export async function logoutLocalHostSession(
+  endpoint: string,
+  deviceId: string,
+  sessionToken: string,
+  request: LocalHostSessionRequest = fetch,
+): Promise<void> {
+  const response = await request(`${trimEndpoint(endpoint)}/v1/session/logout`, {
+    method: "POST",
+    cache: "no-store",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ device_id: deviceId, session_token: sessionToken, now_ms: 0 }),
+  });
+  if (!response.ok) throw new Error(`host_session_logout_failed_${response.status}`);
+}
+
 function validUrl(value: unknown): value is string {
   if (typeof value !== "string") return false;
   try {
@@ -95,6 +165,18 @@ function validUrl(value: unknown): value is string {
   } catch {
     return false;
   }
+}
+
+function trimEndpoint(endpoint: string): string {
+  return endpoint.replace(/\/$/, "");
+}
+
+function sessionHeaders(credentials: LocalHostCredentials): HeadersInit {
+  return {
+    authorization: `Bearer ${credentials.deviceToken}`,
+    "x-nexora-device-id": credentials.deviceId,
+    "content-type": "application/json",
+  };
 }
 
 function validAddress(value: unknown): value is string {

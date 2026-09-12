@@ -1,8 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  configureLocalHostPasscode,
+  logoutLocalHostSession,
   probeLocalHost,
   readLocalHostConnection,
+  unlockLocalHostSession,
   writeLocalHostConnection,
 } from "./localHostConnection";
 
@@ -66,5 +69,39 @@ describe("local host connection", () => {
     await expect(probeLocalHost("https://host.home", request)).rejects.toThrow(
       "invalid_host_response",
     );
+  });
+
+  it("sends session credentials ephemerally and never stores the session token", async () => {
+    const request = vi.fn(
+      async (_input: RequestInfo | URL, _init?: RequestInit) =>
+        new Response(JSON.stringify({ status: "ok" }), { status: 200 }),
+    );
+    const credentials = { deviceId: "browser-1", deviceToken: "device-token-123456789" };
+    await configureLocalHostPasscode(
+      "https://host.home/",
+      credentials,
+      "4937",
+      new Uint8Array([1, 2, 3]),
+      request,
+    );
+    await expect(
+      unlockLocalHostSession(
+        "https://host.home/",
+        credentials,
+        "4937",
+        "session-token-123456789",
+        60_000,
+        request,
+      ),
+    ).resolves.toBe("session-token-123456789");
+    await logoutLocalHostSession(
+      "https://host.home/",
+      credentials.deviceId,
+      "session-token-123456789",
+      request,
+    );
+    expect(request).toHaveBeenCalledTimes(3);
+    expect(JSON.stringify([...request.mock.calls])).toContain("device-token-123456789");
+    expect(localStorage.getItem("nexora.local-host-connection.v1")).toBeNull();
   });
 });

@@ -244,6 +244,10 @@ configurato, `/v1/operations` richiede anche `x-nexora-session-token`. I timesta
 non controllano più expiry/rate limit lato server. Test HTTP copre configure → unlock → sync → logout.
 Restano UI telefono, gestione sessione browser e recovery/certificato cambiato.
 
+**Slice PM-6.4:** il client web espone configure/unlock/logout typed con credenziali volatili; il
+token sessione non entra nella connessione persistita. Restano da collegare il pairing UI, il
+session state browser e la recovery esplicita.
+
 ### PM-7 — Packaging e avvio operativo
 
 **Obiettivo:** eliminare i passaggi tecnici per l'utente.
