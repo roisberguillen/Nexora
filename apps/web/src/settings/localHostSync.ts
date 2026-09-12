@@ -32,6 +32,10 @@ export interface LocalSyncClientOptions {
   readonly deliveryId?: () => string;
 }
 
+export interface LocalLedgerSyncSink {
+  recordSnapshot(payload: Uint8Array): Promise<void>;
+}
+
 export interface LocalSyncPullResult {
   readonly operations: readonly [number, LocalSyncOperation][];
 }

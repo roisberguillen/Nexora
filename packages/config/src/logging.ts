@@ -5,11 +5,13 @@ export type SafeLogEvent =
   | "persistence.opened"
   | "persistence.failed"
   | "persistence.demo-seed"
+  | "sync.snapshot-deferred"
   | "pwa.offline"
   | "pwa.online"
   | "pwa.update";
-export type SafeLogComponent = "app" | "error-boundary" | "persistence" | "service-worker";
-export type SafeLogStatus = "started" | "completed" | "failed" | "online" | "offline";
+export type SafeLogComponent =
+  "app" | "error-boundary" | "persistence" | "service-worker" | "local-sync";
+export type SafeLogStatus = "started" | "completed" | "failed" | "online" | "offline" | "deferred";
 export type SafeStorageKind = "indexeddb" | "opfs" | "native-sqlite";
 export type SafeErrorName =
   "Error" | "RangeError" | "ReferenceError" | "SyntaxError" | "TypeError" | "UnknownError";
