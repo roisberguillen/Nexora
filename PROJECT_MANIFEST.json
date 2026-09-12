@@ -768,6 +768,91 @@
       "sha256": "7664751a2e1d83e4ea63e0e7e35cf1de7c1ef09f7163d829444f39df1adacab3"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-08-account-deletion-fix.md",
+      "size": 1706,
+      "sha256": "d82e91a6dc931c9cbf1844185640abf0968b04b6eadf8fe13bbd84292452c524"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-08-android-apk-rebuild.md",
+      "size": 1479,
+      "sha256": "ea2cbfdcd9b7e20ca07b450f81cda40c62be3d1aac43b0da10a02fd0fc8485b2"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-08-fix-10-device-gate.md",
+      "size": 1222,
+      "sha256": "0534f02aee14ba9ce5130dddc512b79f05527e460e9dcd9cdd9cc4bacd83ae47"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-08-fix-9-android-signing.md",
+      "size": 1183,
+      "sha256": "cbfd97fc7c733b626a52f20d1df73aeb198e90a69fab217da5b4dd39c0b5905c"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-08-native-crud-persistence.md",
+      "size": 1812,
+      "sha256": "dabe0e0fbc102ee693a21b68f15fa47fae79195919a19d8c604fb92ec4a73513"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-08-stabilization-roadmap.md",
+      "size": 4345,
+      "sha256": "ba9717219a0f062fc6e3f35fd1461d17fed4626af2c25b3d3a487068103f09ea"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-08-windows-exe-rebuild.md",
+      "size": 1474,
+      "sha256": "a3c1e6a2b3385f223721f6883b1290d26526da1f2680080f6b0d505cc2c81771"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-10-fix-10-docs.md",
+      "size": 1237,
+      "sha256": "28aa83192bca893915744b3aa86395c149bc65f9e429ec30849b0327b39a563b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-10-fix-10-native-sqlite-filename.md",
+      "size": 1225,
+      "sha256": "7ba9ca3f8490a622e374bc3f849b10991362d96962202c1e46c90e742da453db"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-device-flows.md",
+      "size": 1665,
+      "sha256": "b320f27ce5bb59d967f119b412f9658d0a08dad882c59f364f01954df9fd80af"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-device-gate.md",
+      "size": 1325,
+      "sha256": "7dfa65eb46e7a47729293901d56e72da561098fe4d8c28d56fab58d6da23229a"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-docs.md",
+      "size": 1252,
+      "sha256": "32d8f65c656ef8140c0653e1bf08f2c50eb8d634046c6c5dc74c171d981fa19d"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-import-undo.md",
+      "size": 1351,
+      "sha256": "33738e616b03bd27663510aedb47d38b127824e72a1151965e42c3a7650923a8"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-native-sql-adapter.md",
+      "size": 1322,
+      "sha256": "13ef5d6a0114e0d8c6017305647f4ad05edb698b6c8b50497163eb03bf3a939b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-release-install.md",
+      "size": 1424,
+      "sha256": "cab250f9568e87ef6122c5990771b78948b001ba898870dc4393c83f0bb8e5e4"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-11-fix-10-signed-release-evidence.md",
+      "size": 1416,
+      "sha256": "37395cf176ea852af1bfc02842162c5053a5f85c4f055b6d116e18a6757a6d88"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-fix-11-regression-gate.md",
+      "size": 1297,
+      "sha256": "1025801ac04b6ab8d9adf32538b6b217c4cd52a83bb36d657c0edc30c7e512be"
+    },
+    {
       "path": ".codex/reviews/ui-ux/phase-15-0-local-hub-foundation.md",
       "size": 1433,
       "sha256": "60ea4ec6ca967979236eb88d36482678b1120569cc1f81858a8264f1fc8acbee"
@@ -1128,9 +1213,24 @@
       "sha256": "d7791432c53d531b8f924011149c6816ef81339f1284a8a0cc2bae0d24edaa8d"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-08-fix-1-baseline-and-reproduction-before-corrective-roadmap.md",
+      "size": 572,
+      "sha256": "7813b72606a9aeef5b26aa8c41cb813bd1108aa28fcaad3605f6c87c255520b8"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-09-08-fix-7-backup-restore-reset-security-review-before-validation.md",
+      "size": 575,
+      "sha256": "7876fdb325bffaa44f5e82bbfd31002f84fff8d7c6241adafab51da4916cb849"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-09-08-fix-9-new-android-release-signing-identity-before-generation.md",
+      "size": 575,
+      "sha256": "a354b91d8dd8d283b81f97535be2a8ac9e0c076fa4b3fe36a7c50a17b47ba418"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 325,
-      "sha256": "f47d6b64e6925aaceedd794a9ea6ea04fc8a4436d4abe61a97cbfd436b8969e4"
+      "size": 623,
+      "sha256": "727c3d3583859940d93411c49bcb0e81f4ed4559ea972efc2be69d5b7b847a2e"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1159,13 +1259,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 17158,
-      "sha256": "52e2e78cfec16c06a22d5a16406cd67f2eaf40f261eeb2a37501c3ec1b0496c6"
+      "size": 20077,
+      "sha256": "f86bd835d812b7403420be3acecef9760724b039b06c852545ef0009898e147c"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 157956,
-      "sha256": "bf28d9378e09bd256267b5b8d892e829fb3cc75028b1e3718360d33ab28814cd"
+      "size": 180645,
+      "sha256": "a39c7295b707aa236ebd7ba2e1ab67b6dbfae51cd3b9613ad0e5ca520362293e"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1219,13 +1319,13 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 1323,
-      "sha256": "4032258b7c317a8287628e62438b78ba8694c053c23ad7dbd33cfa394b2899aa"
+      "size": 4996,
+      "sha256": "29f0a0a4958c475bea8522608df179f809cd11b986555e3e8d6a96a50061ee24"
     },
     {
       "path": ".gitignore",
-      "size": 522,
-      "sha256": "c1cebfafc5dddb2ce2d3199dd2ef789b195230a8f7a833810bb0441a3a079625"
+      "size": 578,
+      "sha256": "b2ffef1aeb79d8de88da3ccec7c09cbfb31cd6ae6116410a459788ec2ac0930a"
     },
     {
       "path": ".node-version",
@@ -1319,8 +1419,8 @@
     },
     {
       "path": "apps/web/package.json",
-      "size": 913,
-      "sha256": "713d55d369a519fbac2525341af3ebd3554a5db788fcf2ef0dc64dfb36c8a354"
+      "size": 993,
+      "sha256": "5794f3effb92edd8dee52836ff9fd56643308f9a2f7ecb66db294c591a20a1fd"
     },
     {
       "path": "apps/web/public/google-drive-oauth-bridge.html",
@@ -1359,18 +1459,18 @@
     },
     {
       "path": "apps/web/src-tauri/capabilities/default.json",
-      "size": 252,
-      "sha256": "90056fca1187ef3c33e0421f53d2c52bd005971be2251bcf3f82d7cfde285a3c"
+      "size": 320,
+      "sha256": "085baa7729d9013e866182979c71303403bb1aebec575eea74dbbeb779030790"
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 131570,
-      "sha256": "f609f34bbb4dba6a60a77358910f1e0ebbab18d842551680a0e2f60db8e85024"
+      "size": 136785,
+      "sha256": "acd0d78a523a04261cc78133eae4a000c96438385d4b5bd1fba75ab5218102f6"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 453,
-      "sha256": "cf5dc0945ea24cef55ec86a9fcdc447e3eb4c15f9afd01febae5ff5524c8bb86"
+      "size": 565,
+      "sha256": "09a19f8521b586a9e25e1bade157765661974b81c3e75ae7d8b93abb98bdb139"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -1634,8 +1734,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 255,
-      "sha256": "72b7c05e73302adbc4d4593d89426c1fa465e61271bc060dc4f46972fb6d6edc"
+      "size": 8619,
+      "sha256": "7005d1d5ddb0ea9632777be9f2ffaa8dcb8987134e8b2c81353efd3279d9fb0a"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -1659,8 +1759,8 @@
     },
     {
       "path": "apps/web/src/accounts/AccountsPage.tsx",
-      "size": 23822,
-      "sha256": "a00fd96fb27160286f3a7a25385324e69ee5f9033b49713a0eb2524ffbc18a6f"
+      "size": 24353,
+      "sha256": "974bb56836449f89d8b3102b438e89340f3be5e5e7a94d39efb066ad10a1fa79"
     },
     {
       "path": "apps/web/src/accounts/buildAccountsViewModel.test.ts",
@@ -1739,8 +1839,18 @@
     },
     {
       "path": "apps/web/src/backup/BackupPage.tsx",
-      "size": 28806,
-      "sha256": "7a3e2013e70f20e37cbac0297cdb87492618a3e7f8cea1eba94149c66c6c1709"
+      "size": 28612,
+      "sha256": "35015f47f8a83a895ccd7417de62a01a35cbdb65134f8a14841a75b2a3a19b33"
+    },
+    {
+      "path": "apps/web/src/backup/downloadBackup.test.ts",
+      "size": 1576,
+      "sha256": "01f359f8ecc58c14e267606ecd1ffca1a18782b7ef1fb642ae594328b46f1bb7"
+    },
+    {
+      "path": "apps/web/src/backup/downloadBackup.ts",
+      "size": 905,
+      "sha256": "c2e9c3493d2c5655141bacb395e01365593de5afcd1263cd37d439f8ae12d1ea"
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.test.ts",
@@ -2489,8 +2599,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 59519,
-      "sha256": "8512008aa30e1e1fcdb71ffa5e55044c0d032ecbe1a4fea3caa85fa793b4591c"
+      "size": 60621,
+      "sha256": "47626599e15d1f1fa8fbbb1895888c8a00b6dc1402674447bc17a0026beecdf2"
     },
     {
       "path": "design/mockup/README.md",
@@ -2628,6 +2738,11 @@
       "sha256": "4a42b028c5847de413905e79f30aabdd2056eb2490aa830430e0a90561053f97"
     },
     {
+      "path": "docs/ANDROID_SIGNING.md",
+      "size": 2418,
+      "sha256": "e85eeb6c1c5280abbfa9462d59b8e3084a14396ec47fd1c1277a2a52af54cc71"
+    },
+    {
       "path": "docs/APPLICATION_LAYER.md",
       "size": 1192,
       "sha256": "50d19ef69e1895e91d29d8b5240aa8473bbd403d356043f92df8eaeb385edeb2"
@@ -2654,8 +2769,8 @@
     },
     {
       "path": "docs/CURRENT_SOURCES.md",
-      "size": 1247,
-      "sha256": "35c2e484fe61ced309627fabd4f04b387758c6c109281478db38f8122a42049e"
+      "size": 1307,
+      "sha256": "3c916ebe26aed0667812cd42674d582870d5287ec37f4ead6b192b488d54b6b7"
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
@@ -2669,8 +2784,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 31429,
-      "sha256": "4f6c26d0e691d8f5c09db3c9c6ccee7492af8fca7200abfaaf7a488a3166f37c"
+      "size": 32320,
+      "sha256": "698eabbf533d145f3a20dba82512c8ef1b8cf7de4fd1b2179254df9bbbb79e87"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
@@ -2793,6 +2908,11 @@
       "sha256": "ec0d95f1749f4ebcd2d14c6eeba4a491318e6a93248ada945770ed8cfc852022"
     },
     {
+      "path": "docs/ROADMAP_STABILIZATION.md",
+      "size": 14768,
+      "sha256": "97ba42dc6cea8585e51c98edc2e8a833c8c24de649860184ab4982e97337a497"
+    },
+    {
       "path": "docs/ROADMAP_UI_ARCHITECTURE.md",
       "size": 21221,
       "sha256": "3181fb29eaf2c5d690bf8311a52c96bfd929fe5580fce0e17ec757a7aecfc407"
@@ -2904,8 +3024,8 @@
     },
     {
       "path": "package.json",
-      "size": 2464,
-      "sha256": "8e70f0843c03e4bc0109edb2f25e8713ae1612e71531f30c6e3e8f635db15299"
+      "size": 2543,
+      "sha256": "03d329c15f7a3fd5facddfb092609dcc3bf085571edd313780bbf76424c51021"
     },
     {
       "path": "packages/application/package.json",
@@ -2964,33 +3084,33 @@
     },
     {
       "path": "packages/database-tauri/package.json",
-      "size": 367,
-      "sha256": "3f64ba60e134b4ab829330ca100f531f9f8f0521ab4622af43f9deecbe8f975d"
+      "size": 400,
+      "sha256": "3628d8361587469442750a732e1ed8b8cfad7b3b0d9058dbc48546e898824483"
     },
     {
       "path": "packages/database-tauri/src/index.ts",
-      "size": 214,
-      "sha256": "e409db0d9193b4ecdabb3d0f01a521a1d1cd2e566775723b8c0bb8bbe0fde22c"
+      "size": 243,
+      "sha256": "f3a19dd68dc36c51a8c518d4a8ab3235240ee54bf4deb24de33537250bbed7d2"
     },
     {
       "path": "packages/database-tauri/src/openTauriLedger.test.ts",
-      "size": 2001,
-      "sha256": "317f672efcd63f4d6f555afdf0719666b92ea8fd17d525a57ad6783d90e27fae"
+      "size": 2909,
+      "sha256": "7fa2dc6df782c5e9bb459754d076227efae0ddcdbea7a20d14f2d120730d9add"
     },
     {
       "path": "packages/database-tauri/src/openTauriLedger.ts",
-      "size": 2988,
-      "sha256": "d22187f37ff6cdcaf21646151c7a2b6657084d512eb5c5eb80687e51c129be55"
+      "size": 4139,
+      "sha256": "24f63ab2c91306b2dfbff0a6260fe2e55f744f781b210d15a80d5c36cdd8e673"
     },
     {
       "path": "packages/database-tauri/src/TauriSqliteDatabase.test.ts",
-      "size": 1681,
-      "sha256": "96e7226388334fc24c652b8a8053bc425fe443c8113208ffacea788b012f49fb"
+      "size": 3836,
+      "sha256": "6aff3a1e4dc8f1463b20882e30a0d7a5d77d97d6fba69b6e98f7e07cc9b53f26"
     },
     {
       "path": "packages/database-tauri/src/TauriSqliteDatabase.ts",
-      "size": 1873,
-      "sha256": "ba1ff68086cf63b193ef4eaf6c0079ca9328b7b5b884edec0bcdd8c62291027f"
+      "size": 4244,
+      "sha256": "a31d295724268a034a63e26e60e451a023c84d2949573644fd5827a9a9b522fc"
     },
     {
       "path": "packages/database-tauri/tsconfig.json",
@@ -3319,18 +3439,18 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteDatabase.ts",
-      "size": 684,
-      "sha256": "48f2a287c53202402562a96bfb2025447ec806fb25fe4b2c9c1e2c5ccc3fcab6"
+      "size": 1194,
+      "sha256": "13e6419fe5a2fce62927f91a0338a06fbf62a8b683bdec2dcf4f539a77c2217b"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.test.ts",
-      "size": 41265,
-      "sha256": "8885f855e247651e20ce120c20e9de0c3b11a2b12906f391f3a33aa7a6bda6e7"
+      "size": 42867,
+      "sha256": "3551169e66de41c1fdab5d9abc046eb8ce34d8956381225b27cb9c9f61873b85"
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 107217,
-      "sha256": "300e89ffa44540cc7660a7c6be54289ce0304f15c27938b9d560130f9614e518"
+      "size": 107910,
+      "sha256": "b33404b15511ca89fe6087cfa124b858167a43d60e503749231acc1f3333634f"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -3889,8 +4009,8 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "size": 204917,
-      "sha256": "74d460bcec7da214050becdd2faa6f7beddd05b802656aa040a8fdb24a0173ba"
+      "size": 205648,
+      "sha256": "4e6615fb213eebdb07afb031647bdf4348ec2cb313999b7684e7a5b1ed163d1d"
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -3933,14 +4053,19 @@
       "sha256": "259fb36241d0be040418d3ebb2c9be8e0fc95f1d9774ab1332232a560ffea3e7"
     },
     {
+      "path": "scripts/configure-android-signing.mjs",
+      "size": 3480,
+      "sha256": "e6c9a1681eb9eee9401937ab02f028d7c72790170e287e4d7585921400f7460c"
+    },
+    {
       "path": "scripts/doctor.mjs",
       "size": 2344,
       "sha256": "9302edea84af16114e24bcf09d5da5da7a92d538f543aa23a490d83f7f353c06"
     },
     {
       "path": "scripts/project-manifest.mjs",
-      "size": 3014,
-      "sha256": "5121396f7a092feef8de7d8166f0691ea782a54ae3812c0b6434614f52867762"
+      "size": 3051,
+      "sha256": "904be7a861ac0c1362a4d4671146e780ad9780dfc59a2b1ace6c990db336c0ae"
     },
     {
       "path": "scripts/setup-git-hooks.mjs",

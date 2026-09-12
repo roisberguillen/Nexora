@@ -5,6 +5,8 @@
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and
   non-destructive undo verified on Pixel 9.
+- Closed FIX.11 regression suite gate: verify, full E2E reconciliation, recovery/performance evidence,
+  native/device matrix, orchestrator, manifest and UI/UX validation all PASS.
 
 - Completed FIX.9 Android release signing with an external RSA-4096 keystore, reproducible Gradle/CI bindings, and verified arm64 APK signature.
 

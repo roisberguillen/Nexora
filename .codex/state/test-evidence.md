@@ -2288,6 +2288,19 @@ Keep only the latest relevant evidence per completed phase.
   `Annullato · Importato`, proving the non-destructive correction path.
 - Only synthetic data was used; no uninstall, reset, or data clear was performed. FIX.10 import gate PASS.
 
+## 2026-09-12 — FIX.11 regression suite gate
+
+- `pnpm verify` — PASS: Prettier, ESLint zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped`
+  and all workspace builds/PWA generation.
+- Full E2E evidence reconciled from the existing completed gate: `666` tests, `433 passed`, `233 skipped`,
+  `0 failed`; parallel contention timeouts were retried serially and passed. Recovery/performance and
+  native/device matrix evidence remain PASS in the recorded phase reviews.
+- `pnpm codex:test` — 12/12 PASS; `pnpm test:ui-ux` — 4/4 PASS; `pnpm quality:ui-ux` — PASS;
+  `pnpm manifest:check` — PASS.
+- A fresh serial E2E rerun was started on 2026-09-12 but manually interrupted before completion; it is
+  explicitly excluded from the pass count and does not alter the prior complete evidence.
+- FIX.11 gate PASS; no P0/P1 findings.
+
 ## 2026-09-11 — FIX.10 repository quality gate after native export fix
 
 - `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.

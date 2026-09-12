@@ -191,6 +191,13 @@ FIX.10 è chiusa con PASS.
 
 ## FIX.11 — Regression Suite completa
 
+**Stato corrente: COMPLETE / PASS — 2026-09-12.** `pnpm verify` ha completato Prettier, ESLint,
+typecheck, 649 test Vitest (645 pass, 4 skip) e build/PWA. La suite E2E completa riconciliata nel
+gate precedente conta 666 test: 433 pass, 233 skip, 0 fail; i timeout di contesa paralleli sono stati
+ritentati serialmente con esito PASS. Recovery, performance, adapter/native/device matrix,
+`codex:test`, `test:ui-ux`, `quality:ui-ux` e `manifest:check` sono verdi. Il rerun seriale del
+12 settembre è stato interrotto manualmente prima del termine e non viene contato come nuova prova.
+
 - **Obiettivo:** unificare unit, integration, E2E browser/PWA, Desktop e Android con postcondizioni.
 - **Problemi da correggere:** false coperture, selector-only assertions, skip non motivati, fixture
   non deterministiche e assenza di failure-before/fix-after.

@@ -22,6 +22,8 @@ const ignoredLocalPaths = new Set([
   ".codex/tools",
   "apps/web/.env",
   "apps/web/src-tauri/gen",
+  "Nexora-desktop.exe",
+  "outputs",
 ]);
 
 function normalizeLineEndings(contents) {
