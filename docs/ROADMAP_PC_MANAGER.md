@@ -284,6 +284,10 @@ installer restano aperti.
 nasconde la capability nella PWA. Il feedback chiarisce loopback e consenso LAN; pairing, apertura
 browser automatica, firewall e installer restano aperti.
 
+**Slice PM-7.4:** `tauri build --debug` ha prodotto entrambi i bundle Windows x64:
+`Nexora_0.5.0-1_x64_en-US.msi` e `Nexora_0.5.0-1_x64-setup.exe`. Il gate installer passa; firewall,
+upgrade/restart e verifica browser post-install restano aperti.
+
 ### PM-8 — Gate finale su Pixel 9 e desktop
 
 **Obiettivo:** dimostrare il flusso reale completo.
