@@ -170,6 +170,10 @@ solo quando il runtime dichiara `running` e un binding valido; Settings mostra l
 Il gate completo PM-4 resta aperto fino alla pubblicazione/serving della build locale, pairing
 browser e verifica visuale desktop end-to-end.
 
+**Slice PM-4.2:** il Local Hub può servire `browser_root` con fallback SPA, MIME essenziali,
+cache `no-store` e protezione traversal. Il gate completo resta aperto: gli asset pubblici non
+concedono accesso ledger e devono essere collegati a sessione/pairing nel seguito.
+
 ### PM-5 — Sincronizzazione live e stato connessione
 
 **Obiettivo:** rendere prevedibile la relazione telefono/host/browser.

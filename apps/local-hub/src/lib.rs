@@ -6,8 +6,9 @@
 use axum::{
     Json, Router,
     extract::State,
-    http::{HeaderMap, StatusCode, header},
+    http::{HeaderMap, StatusCode, Uri, header},
     response::IntoResponse,
+    response::Response,
     routing::get,
 };
 use serde::{Deserialize, Serialize};
@@ -15,6 +16,7 @@ use sha2::{Digest, Sha256};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use std::path::PathBuf;
 use std::sync::Arc;
 use subtle::ConstantTimeEq;
 use tokio::sync::{Mutex, RwLock, oneshot};
@@ -30,6 +32,8 @@ pub struct LocalHubState {
     pub runtime: Arc<RwLock<HubRuntimeStatus>>,
     /// Optional browser entry point published only after explicit host setup.
     pub app_url: Option<String>,
+    /// Root directory for the versioned local browser build, if published.
+    pub browser_root: Option<PathBuf>,
 }
 
 impl Default for LocalHubState {
@@ -39,6 +43,7 @@ impl Default for LocalHubState {
             rate_limiter: Arc::new(Mutex::new(RateLimiter::new(60, 60_000))),
             runtime: Arc::new(RwLock::new(HubRuntimeStatus::default())),
             app_url: None,
+            browser_root: None,
         }
     }
 }
@@ -48,7 +53,54 @@ pub fn router(state: LocalHubState) -> Router {
         .route("/v1/health", get(health))
         .route("/v1/pairing/redeem", axum::routing::post(redeem_pairing))
         .route("/v1/authorize", get(authorize))
+        .fallback(browser_asset)
         .with_state(state)
+}
+
+async fn browser_asset(State(state): State<LocalHubState>, uri: Uri) -> Response {
+    let Some(root) = state.browser_root else {
+        return StatusCode::NOT_FOUND.into_response();
+    };
+    let requested = uri.path().trim_start_matches('/');
+    let requested = if requested.is_empty() {
+        "index.html"
+    } else {
+        requested
+    };
+    if requested
+        .split('/')
+        .any(|segment| segment == ".." || segment.is_empty())
+    {
+        return StatusCode::BAD_REQUEST.into_response();
+    }
+    let candidate = root.join(requested);
+    let bytes = match tokio::fs::read(&candidate).await {
+        Ok(bytes) => bytes,
+        Err(_) if !requested.contains('.') => {
+            match tokio::fs::read(root.join("index.html")).await {
+                Ok(bytes) => bytes,
+                Err(_) => return StatusCode::NOT_FOUND.into_response(),
+            }
+        }
+        Err(_) => return StatusCode::NOT_FOUND.into_response(),
+    };
+    let content_type = match candidate
+        .extension()
+        .and_then(|extension| extension.to_str())
+    {
+        Some("html") => "text/html; charset=utf-8",
+        Some("js") => "text/javascript; charset=utf-8",
+        Some("css") => "text/css; charset=utf-8",
+        Some("json") => "application/json; charset=utf-8",
+        Some("svg") => "image/svg+xml",
+        _ => "application/octet-stream",
+    };
+    Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, content_type)
+        .header(header::CACHE_CONTROL, "no-store")
+        .body(axum::body::Body::from(bytes))
+        .unwrap_or_else(|_| StatusCode::INTERNAL_SERVER_ERROR.into_response())
 }
 
 async fn health(State(state): State<LocalHubState>) -> impl IntoResponse {
@@ -1288,6 +1340,46 @@ mod tests {
                 .authorize("browser-1", "synthetic-device-token-123456"),
             Ok(())
         );
+    }
+
+    #[tokio::test]
+    async fn browser_root_serves_the_real_app_shell_and_rejects_traversal() {
+        let root = std::env::temp_dir().join(format!("nexora-local-hub-{}", now_ms()));
+        tokio::fs::create_dir_all(&root).await.unwrap();
+        tokio::fs::write(
+            root.join("index.html"),
+            "<!doctype html><html><body>Nexora desktop shell</body></html>",
+        )
+        .await
+        .unwrap();
+        let app = router(LocalHubState {
+            app_url: Some("http://127.0.0.1:43173".to_owned()),
+            browser_root: Some(root.clone()),
+            ..LocalHubState::default()
+        });
+        let response = app
+            .clone()
+            .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
+        assert!(
+            String::from_utf8(body.to_vec())
+                .unwrap()
+                .contains("Nexora desktop shell")
+        );
+        let traversal = app
+            .oneshot(
+                Request::builder()
+                    .uri("/../secret")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_ne!(traversal.status(), StatusCode::OK);
+        let _ = tokio::fs::remove_dir_all(root).await;
     }
 
     #[tokio::test]

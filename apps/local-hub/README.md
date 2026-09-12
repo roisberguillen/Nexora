@@ -12,6 +12,10 @@ Discovery uses the explicit `_nexora._tcp` service and `assess_same_network`
 provides a preflight hint for same-subnet UX. Network proximity never replaces
 TLS, host fingerprint verification or device pairing.
 
+When `browser_root` is configured, the router serves the versioned browser build
+with SPA fallback and traversal protection. Serving assets does not authorize a
+ledger request; pairing and session checks remain separate.
+
 The contract carries incremental operation metadata only. It never shares or
 opens a SQLite file. Discovery advertisement, QR pairing and revocation are
 typed contracts; mDNS/DNS-SD provider integration remains a separate gate.
