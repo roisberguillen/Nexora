@@ -1,7 +1,7 @@
 # Current task
 
-- Task: Desktop cross-platform distribution
-- Roadmap phase: FIX.12
-- Status: `COMPLETE` — aggiunti installer Windows MSI/NSIS e artifact CI per Windows, macOS Intel e macOS Apple Silicon. Il build Windows locale ha prodotto entrambi gli installer e l’eseguibile nativo è stato avviato direttamente senza terminale; nessuna modifica a ledger o dati.
-- Evidence: `.codex/state/test-evidence.md`; `docs/ROADMAP_STABILIZATION.md`.
-- Next task: nessuno.
+- Task: PC Manager PM-1 — Local Hub runtime lifecycle
+- Roadmap phase: PM-1
+- Status: `READY` — PM-0 contratto e threat model completati; implementazione runtime non ancora iniziata.
+- Evidence: `docs/PC_MANAGER_THREAT_MODEL.md`; `docs/ROADMAP_PC_MANAGER.md`; `docs/DECISIONS_LOG.md`.
+- Next task: avvio/shutdown Local Hub, binding loopback default, health esteso e gate LAN fail-closed.

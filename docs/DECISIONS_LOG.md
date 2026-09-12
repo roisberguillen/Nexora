@@ -12,6 +12,21 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-09-12 — PC Manager: trust model, sessione e ruolo del dispositivo
+
+- **Contesto:** la roadmap PC Manager richiede un flusso Pixel 9 → Local Hub → browser desktop,
+  ma il contratto esistente non fissava durata grant, sessione, lockout, revoca e responsabilità
+  tra telefono e computer.
+- **Scelta:** il computer è l'host del ledger e pubblica `appUrl`; il Pixel 9 è controller del
+  consenso e del pairing. Il grant QR è monouso e breve; la sessione browser scade dopo 30 minuti
+  di inattività; cinque errori di passcode attivano 15 minuti di lockout; revoca singola/globale
+  invalida token e sessioni; il cambio fingerprint richiede nuovo pairing. Un browser già
+  autorizzato può operare offline finché la credenziale non scade, ma non può fare nuovo pairing
+  o recovery senza il telefono.
+- **Conseguenze:** la stessa Wi-Fi non concede fiducia; health non concede il ledger; nessun file
+  SQLite aperto viene condiviso; i valori esatti potranno essere parametrizzati solo tramite nuovo
+  contratto compatibile e test di sicurezza.
+
 ## 2026-08-26 — Dashboard mensile e definizione della disponibilità
 
 - **Contesto:** la Dashboard precedente mostrava flussi sull'intero storico e mescolava

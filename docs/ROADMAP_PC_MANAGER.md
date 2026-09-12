@@ -59,7 +59,7 @@ SQLite aperto.
 
 ## Fasi della roadmap
 
-### PM-0 — Contratto prodotto e threat model
+### PM-0 — Contratto prodotto e threat model — COMPLETE
 
 **Obiettivo:** congelare il comportamento prima del codice.
 
@@ -74,6 +74,10 @@ SQLite aperto.
   rinnovo certificato e comportamento quando il telefono è offline.
 
 **Gate:** threat model approvato, nessuna ambiguità su trust model, revoca e recovery.
+
+**Evidence:** `docs/PC_MANAGER_THREAT_MODEL.md`; decisione registrata in
+`docs/DECISIONS_LOG.md` il 2026-09-12. Implementazione runtime e review indipendente restano gate
+delle fasi successive.
 
 ### PM-1 — Contratto Local Hub runtime
 
