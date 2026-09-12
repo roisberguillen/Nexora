@@ -17,6 +17,8 @@ export interface LocalHostHealth {
   readonly syncCursor?: number;
 }
 
+export const SUPPORTED_LOCAL_HOST_API_VERSION = 1;
+
 export interface LocalHostCredentials {
   readonly deviceId: string;
   readonly deviceToken: string;
@@ -81,6 +83,9 @@ export async function probeLocalHost(
   )
     throw new Error("invalid_host_response");
   const apiVersion = body.apiVersion as number;
+  if (apiVersion !== SUPPORTED_LOCAL_HOST_API_VERSION) {
+    throw new Error("host_protocol_version_mismatch");
+  }
   return Object.freeze({
     apiVersion,
     runtimeState: "running",

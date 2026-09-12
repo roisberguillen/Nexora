@@ -71,6 +71,19 @@ describe("local host connection", () => {
     );
   });
 
+  it("rejects an incompatible Local Hub protocol version", async () => {
+    const request = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({ status: "ok", apiVersion: 2, runtimeState: "running", binding: "lan" }),
+          { status: 200 },
+        ),
+    );
+    await expect(probeLocalHost("https://host.home", request)).rejects.toThrow(
+      "host_protocol_version_mismatch",
+    );
+  });
+
   it("sends session credentials ephemerally and never stores the session token", async () => {
     const request = vi.fn(
       async () => new Response(JSON.stringify({ status: "ok" }), { status: 200 }),

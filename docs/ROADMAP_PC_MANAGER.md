@@ -288,6 +288,10 @@ browser automatica, firewall e installer restano aperti.
 `Nexora_0.5.0-1_x64_en-US.msi` e `Nexora_0.5.0-1_x64-setup.exe`. Il gate installer passa; firewall,
 upgrade/restart e verifica browser post-install restano aperti.
 
+**Slice PM-7.5:** il probe web rifiuta `apiVersion` diversa da `SUPPORTED_LOCAL_HOST_API_VERSION`
+con `host_protocol_version_mismatch`, senza persistere l’host incompatibile. Restano smoke test
+post-install, firewall, upgrade/restart e gate dispositivo.
+
 ### PM-8 — Gate finale su Pixel 9 e desktop
 
 **Obiettivo:** dimostrare il flusso reale completo.
