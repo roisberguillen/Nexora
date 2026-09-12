@@ -1,6 +1,8 @@
 import {
   calculatePrudentExpenseForecast,
   categoryLabel,
+  financialPeriodForDate,
+  LocalDate,
   Money,
   summarizeCashFlow,
   type Category,
@@ -65,6 +67,7 @@ export interface AnalyticsLedgerData {
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
   readonly transactionSplits: readonly TransactionSplit[];
+  readonly financialMonthStartDay?: number;
 }
 
 export function buildAnalyticsViewModel(
@@ -72,18 +75,29 @@ export function buildAnalyticsViewModel(
   selectedPeriod: string,
   trendWindow: AnalyticsTrendWindow = 6,
   currency = defaultCurrency,
+  financialMonthStartDay = 1,
 ): AnalyticsViewModel {
   const periods = monthRange(selectedPeriod, 12);
   const previousPeriod = shiftMonth(selectedPeriod, -1);
-  const currentTransactions = transactionsForPeriod(data.transactions, selectedPeriod);
-  const previousTransactions = transactionsForPeriod(data.transactions, previousPeriod);
+  const currentTransactions = transactionsForPeriod(
+    data.transactions,
+    selectedPeriod,
+    financialMonthStartDay,
+  );
+  const previousTransactions = transactionsForPeriod(
+    data.transactions,
+    previousPeriod,
+    financialMonthStartDay,
+  );
   const monthlySummary = summarizeCashFlow(currentTransactions, currency);
   const previousSummary = summarizeCashFlow(previousTransactions, currency);
   const selectedTrends = periods
     .slice(-trendWindow)
-    .map((month) => trendForPeriod(data, month, currency, month === selectedPeriod));
+    .map((month) =>
+      trendForPeriod(data, month, currency, month === selectedPeriod, financialMonthStartDay),
+    );
   const history = periods.map((month) =>
-    trendForPeriod(data, month, currency, month === selectedPeriod),
+    trendForPeriod(data, month, currency, month === selectedPeriod, financialMonthStartDay),
   );
   const maximumExpense = selectedTrends.reduce(
     (maximum, trend) => (trend.expense.amountMinor > maximum ? trend.expense.amountMinor : maximum),
@@ -93,7 +107,13 @@ export function buildAnalyticsViewModel(
     ...trend,
     expenseBarPercent: boundedPercent(trend.expense.amountMinor, maximumExpense),
   }));
-  const categories = buildCategories(data, selectedPeriod, previousPeriod, currency);
+  const categories = buildCategories(
+    data,
+    selectedPeriod,
+    previousPeriod,
+    currency,
+    financialMonthStartDay,
+  );
   const averageExpense = averageMoney(
     trends.map((trend) => trend.expense),
     currency,
@@ -127,14 +147,20 @@ export function buildAnalyticsViewModel(
 export function currentAnalyticsPeriod(
   transactions: readonly Transaction[],
   today = new Date(),
+  startDay = 1,
 ): string {
   const latest = transactions
     .filter((transaction) => transaction.amount.currency === defaultCurrency)
-    .map((transaction) => transaction.bookedDate.toString().slice(0, 7))
+    .map((transaction) => financialPeriodForDate(transaction.bookedDate, startDay))
     .sort()
     .at(-1);
   if (latest !== undefined) return latest;
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
+  return financialPeriodForDate(
+    LocalDate.parse(
+      `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
+    ),
+    startDay,
+  );
 }
 
 export function shiftMonth(period: string, delta: number): string {
@@ -158,9 +184,10 @@ function monthRange(endPeriod: string, count: number): readonly string[] {
 function transactionsForPeriod(
   transactions: readonly Transaction[],
   period: string,
+  startDay = 1,
 ): readonly Transaction[] {
   return transactions.filter(
-    (transaction) => transaction.bookedDate.toString().slice(0, 7) === period,
+    (transaction) => financialPeriodForDate(transaction.bookedDate, startDay) === period,
   );
 }
 
@@ -169,8 +196,12 @@ function trendForPeriod(
   period: string,
   currency: string,
   isSelected: boolean,
+  startDay: number,
 ): AnalyticsTrendItem {
-  const summary = summarizeCashFlow(transactionsForPeriod(data.transactions, period), currency);
+  const summary = summarizeCashFlow(
+    transactionsForPeriod(data.transactions, period, startDay),
+    currency,
+  );
   return {
     month: period,
     income: summary.income,
@@ -186,10 +217,11 @@ function buildCategories(
   period: string,
   previousPeriod: string,
   currency: string,
+  startDay: number,
 ): readonly AnalyticsCategoryItem[] {
   const categoryById = new Map(data.categories.map((category) => [category.id, category]));
-  const current = categoryAmounts(data, period, currency);
-  const previous = categoryAmounts(data, previousPeriod, currency);
+  const current = categoryAmounts(data, period, currency, startDay);
+  const previous = categoryAmounts(data, previousPeriod, currency, startDay);
   const total = [...current.values()].reduce((sum, amount) => sum + amount, 0n);
   return [...current.entries()]
     .sort((left, right) =>
@@ -216,6 +248,7 @@ function categoryAmounts(
   data: AnalyticsLedgerData,
   period: string,
   currency: string,
+  startDay: number,
 ): Map<string, bigint> {
   const amounts = new Map<string, bigint>();
   const splitsByTransaction = new Map<string, TransactionSplit[]>();
@@ -224,7 +257,7 @@ function categoryAmounts(
     rows.push(split);
     splitsByTransaction.set(split.transactionId, rows);
   }
-  for (const transaction of transactionsForPeriod(data.transactions, period)) {
+  for (const transaction of transactionsForPeriod(data.transactions, period, startDay)) {
     if (
       transaction.kind !== "expense" ||
       !transaction.affectsIncomeExpense() ||

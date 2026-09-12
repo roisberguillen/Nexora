@@ -14,10 +14,18 @@ export interface AnalyticsPageProps {
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
   readonly transactionSplits: readonly TransactionSplit[];
+  readonly financialMonthStartDay?: number;
 }
 
-export function AnalyticsPage({ categories, transactions, transactionSplits }: AnalyticsPageProps) {
-  const [selectedPeriod, setSelectedPeriod] = useState(() => currentAnalyticsPeriod(transactions));
+export function AnalyticsPage({
+  categories,
+  transactions,
+  transactionSplits,
+  financialMonthStartDay = 1,
+}: AnalyticsPageProps) {
+  const [selectedPeriod, setSelectedPeriod] = useState(() =>
+    currentAnalyticsPeriod(transactions, new Date(), financialMonthStartDay),
+  );
   const [trendWindow, setTrendWindow] = useState<AnalyticsTrendWindow>(6);
   const model = useMemo(
     () =>
@@ -25,8 +33,17 @@ export function AnalyticsPage({ categories, transactions, transactionSplits }: A
         { categories, transactions, transactionSplits },
         selectedPeriod,
         trendWindow,
+        "EUR",
+        financialMonthStartDay,
       ),
-    [categories, selectedPeriod, transactions, transactionSplits, trendWindow],
+    [
+      categories,
+      financialMonthStartDay,
+      selectedPeriod,
+      transactions,
+      transactionSplits,
+      trendWindow,
+    ],
   );
   const moveMonth = (delta: number) => setSelectedPeriod(shiftMonth(selectedPeriod, delta));
 

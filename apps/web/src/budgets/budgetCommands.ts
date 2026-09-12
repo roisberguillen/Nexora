@@ -2,6 +2,8 @@ import {
   Budget,
   DomainError,
   Money,
+  financialPeriodForDate,
+  LocalDate,
   nextBudgetPeriod,
   type LedgerRepository,
 } from "@nexora/domain";
@@ -13,12 +15,19 @@ export interface BudgetInput {
   readonly secondAlertPercentage: number;
 }
 
-export function currentBudgetPeriod(today: Date = new Date()): string {
-  return new Intl.DateTimeFormat("sv-SE", {
+export function currentBudgetPeriod(today: Date = new Date(), startDay = 1): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    day: "2-digit",
     month: "2-digit",
     timeZone: "Europe/Rome",
     year: "numeric",
-  }).format(today);
+  }).formatToParts(today);
+  return financialPeriodForDate(
+    LocalDate.parse(
+      `${parts.find((part) => part.type === "year")?.value}-${parts.find((part) => part.type === "month")?.value}-${parts.find((part) => part.type === "day")?.value}`,
+    ),
+    startDay,
+  );
 }
 
 const defaultId = () => `budget-${crypto.randomUUID()}`;

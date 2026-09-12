@@ -36,6 +36,7 @@ export function SettingsPage({
   onResetApplication,
   trashedTransactions = [],
   onProbeLocalHost = probeLocalHost,
+  onFinancialMonthStartDayChange,
 }: {
   readonly onResetFinancialData?: (input: {
     readonly backupChecksumPrefix?: string;
@@ -52,6 +53,7 @@ export function SettingsPage({
   }) => Promise<TotalResetReport>;
   readonly trashedTransactions?: readonly TrashedTransaction[];
   readonly onProbeLocalHost?: (endpoint: string) => Promise<LocalHostHealth>;
+  readonly onFinancialMonthStartDayChange?: (day: number) => void;
 }) {
   const [preferences, setPreferences] = useState<AppPreferences>(() => readAppPreferences());
   useEffect(() => {
@@ -221,7 +223,11 @@ export function SettingsPage({
           <SettingsSelect
             label="Giorno di inizio del mese finanziario"
             value={String(preferences.financialMonthStartDay)}
-            onChange={(value) => update({ financialMonthStartDay: Number(value) })}
+            onChange={(value) => {
+              const day = Number(value);
+              update({ financialMonthStartDay: day });
+              onFinancialMonthStartDayChange?.(day);
+            }}
             options={Array.from(
               { length: MAX_FINANCIAL_MONTH_START_DAY - MIN_FINANCIAL_MONTH_START_DAY + 1 },
               (_, index) => {

@@ -1,5 +1,7 @@
 import {
   calculateMonthlyTrends,
+  financialPeriodForDate,
+  LocalDate,
   type InvestmentPosition,
   type MonthlyJournal,
   type Transaction,
@@ -9,7 +11,7 @@ import { useRef, useState, type FormEvent } from "react";
 
 import type { MonthlyJournalInput } from "./journalCommands";
 import { AccessibleDialog } from "../settings/AccessibleDialog";
-import { localCivilMonth } from "../date/localCivilDate";
+import { localCivilDate } from "../date/localCivilDate";
 
 export function JournalPage({
   journals,
@@ -17,14 +19,19 @@ export function JournalPage({
   onDelete,
   transactions,
   investments,
+  financialMonthStartDay = 1,
 }: {
   readonly journals: readonly MonthlyJournal[];
   readonly onSave: (input: MonthlyJournalInput, existingId: string | undefined) => Promise<void>;
   readonly onDelete: (id: string) => Promise<void>;
   readonly transactions: readonly Transaction[];
   readonly investments: readonly InvestmentPosition[];
+  readonly financialMonthStartDay?: number;
 }) {
-  const currentPeriod = localCivilMonth();
+  const currentPeriod = financialPeriodForDate(
+    LocalDate.parse(localCivilDate()),
+    financialMonthStartDay,
+  );
   const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
   const [editingJournalId, setEditingJournalId] = useState<string | undefined>(
     () => journals.find((journal) => journal.period === currentPeriod)?.id,
@@ -39,7 +46,7 @@ export function JournalPage({
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const editorRef = useRef<HTMLElement>(null);
-  const trend = calculateMonthlyTrends(transactions, "EUR").find(
+  const trend = calculateMonthlyTrends(transactions, "EUR", financialMonthStartDay).find(
     (item) => item.month === selectedPeriod,
   );
   const invested = investments

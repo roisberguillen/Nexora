@@ -1,5 +1,6 @@
 import type { Transaction } from "../entities/Transaction";
 import { Money } from "../value-objects/Money";
+import { financialPeriodForDate } from "./financialPeriods";
 
 export interface MonthlyTrend {
   readonly month: string;
@@ -11,11 +12,12 @@ export interface MonthlyTrend {
 export function calculateMonthlyTrends(
   transactions: readonly Transaction[],
   currency: string,
+  financialMonthStartDay?: number,
 ): readonly MonthlyTrend[] {
   const grouped = new Map<string, { income: Money; expense: Money }>();
   for (const transaction of transactions) {
     if (!transaction.affectsIncomeExpense() || transaction.amount.currency !== currency) continue;
-    const month = transaction.bookedDate.toString().slice(0, 7);
+    const month = financialPeriodForDate(transaction.bookedDate, financialMonthStartDay);
     const current = grouped.get(month) ?? {
       income: Money.zero(currency),
       expense: Money.zero(currency),

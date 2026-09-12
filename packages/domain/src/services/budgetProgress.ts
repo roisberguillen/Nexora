@@ -4,6 +4,7 @@ import type { Category } from "../entities/Category";
 import type { Transaction } from "../entities/Transaction";
 import type { TransactionSplit } from "../entities/TransactionSplit";
 import { Money } from "../value-objects/Money";
+import { financialPeriodContains } from "./financialPeriods";
 
 export type BudgetProgressStatus = "normal" | "warning" | "critical" | "over_budget";
 
@@ -63,12 +64,14 @@ export function calculateBudgetProgress({
   categories,
   transactions,
   splits,
+  financialMonthStartDay = 1,
 }: {
   readonly budget: Budget;
   readonly targetPeriod: string;
   readonly categories: readonly Category[];
   readonly transactions: readonly Transaction[];
   readonly splits: readonly TransactionSplit[];
+  readonly financialMonthStartDay?: number;
 }): BudgetProgress {
   const scope = resolveBudgetCategoryScope(budget, categories);
   const splitsByTransaction = new Map<string, TransactionSplit[]>();
@@ -84,7 +87,7 @@ export function calculateBudgetProgress({
       transaction.kind !== "expense" ||
       !transaction.affectsIncomeExpense() ||
       (transaction.status !== "booked" && transaction.status !== "reconciled") ||
-      transaction.bookedDate.toString().slice(0, 7) !== targetPeriod
+      !financialPeriodContains(transaction.bookedDate, targetPeriod, financialMonthStartDay)
     ) {
       continue;
     }

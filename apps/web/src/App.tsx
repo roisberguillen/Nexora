@@ -76,6 +76,7 @@ import {
 import { AnalyticsPage } from "./analytics/AnalyticsPage";
 import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
+import { readAppPreferences } from "./settings/preferences";
 import { NotificationsPage } from "./notifications/NotificationsPage";
 import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
 import { AppLockScreen } from "./security/AppLockScreen";
@@ -174,6 +175,9 @@ function AppContent({
   );
   const [isAppLocked, setIsAppLocked] = useState(() => readAppLock() !== undefined);
   const [totalResetReport] = useState(() => readTotalResetReport());
+  const [financialMonthStartDay, setFinancialMonthStartDay] = useState(
+    () => readAppPreferences().financialMonthStartDay,
+  );
 
   useEffect(() => {
     if (!appLockConfig || isAppLocked) return;
@@ -199,7 +203,10 @@ function AppContent({
     let isActive = true;
 
     void ledgerPromise
-      .then(async (ledger) => ({ ...(await loadAppModels(ledger)), ledger }))
+      .then(async (ledger) => ({
+        ...(await loadAppModels(ledger, financialMonthStartDay)),
+        ledger,
+      }))
       .then(
         ({
           accounts,
@@ -281,7 +288,7 @@ function AppContent({
     return () => {
       isActive = false;
     };
-  }, [ledgerPromise, startupBootstrap, startupDiagnostics]);
+  }, [financialMonthStartDay, ledgerPromise, startupBootstrap, startupDiagnostics]);
 
   useEffect(() => startupBootstrap?.subscribe(setStartupProgress), [startupBootstrap]);
 
@@ -300,7 +307,7 @@ function AppContent({
 
     try {
       await seedLedger(ledgerState.ledger.repository);
-      const models = await loadAppModels(ledgerState.ledger);
+      const models = await loadAppModels(ledgerState.ledger, financialMonthStartDay);
       setLedgerState({ ...ledgerState, ...models });
       setHasSeedFeedback(true);
       logger.info("persistence.demo-seed", {
@@ -326,7 +333,7 @@ function AppContent({
       return;
     }
     await operation(ledgerState.ledger);
-    const models = await loadAppModels(ledgerState.ledger);
+    const models = await loadAppModels(ledgerState.ledger, financialMonthStartDay);
     setLedgerState((current) => (current.status === "ready" ? { ...current, ...models } : current));
   };
 
@@ -777,6 +784,7 @@ function AppContent({
                   onCreate={createMonthlyBudget}
                   onDelete={removeMonthlyBudget}
                   onUpdate={updateMonthlyBudget}
+                  financialMonthStartDay={financialMonthStartDay}
                   transactions={ledgerState.rawTransactions}
                   transactionSplits={ledgerState.transactionSplits}
                 />
@@ -826,12 +834,14 @@ function AppContent({
                   onDelete={removeJournal}
                   onSave={saveJournal}
                   transactions={ledgerState.rawTransactions}
+                  financialMonthStartDay={financialMonthStartDay}
                 />
               ) : route === "analytics" ? (
                 <AnalyticsPage
                   categories={ledgerState.categories}
                   transactions={ledgerState.rawTransactions}
                   transactionSplits={ledgerState.transactionSplits}
+                  financialMonthStartDay={financialMonthStartDay}
                 />
               ) : route === "notifications" ? (
                 <NotificationsPage
@@ -852,6 +862,7 @@ function AppContent({
                   requiresResetPin={appLockConfig !== undefined}
                   onPreviewFinancialReset={previewResetFinancialData}
                   onResetApplication={resetApplication}
+                  onFinancialMonthStartDayChange={setFinancialMonthStartDay}
                   onRestoreTransaction={restoreTrashedTransaction}
                   onPurgeTransaction={purgeTrashedTransaction}
                   onPurgeTransactions={purgeTrashedTransactions}

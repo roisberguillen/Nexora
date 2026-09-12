@@ -25,6 +25,7 @@ export function BudgetsPage({
   onUpdate,
   onDelete,
   today,
+  financialMonthStartDay = 1,
 }: {
   readonly budgets: readonly Budget[];
   readonly categories: readonly Category[];
@@ -34,6 +35,7 @@ export function BudgetsPage({
   readonly onUpdate: (id: string, input: BudgetInput) => Promise<void>;
   readonly onDelete: (id: string) => Promise<void>;
   readonly today?: Date;
+  readonly financialMonthStartDay?: number;
 }) {
   const [editing, setEditing] = useState<Budget>();
   const [deleteCandidate, setDeleteCandidate] = useState<Budget>();
@@ -42,8 +44,10 @@ export function BudgetsPage({
   const [isSaving, setIsSaving] = useState(false);
   const [selectedMacroCategoryId, setSelectedMacroCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState(() => currentBudgetPeriod(today));
-  const isCurrentPeriod = selectedPeriod === currentBudgetPeriod(today);
+  const [selectedPeriod, setSelectedPeriod] = useState(() =>
+    currentBudgetPeriod(today, financialMonthStartDay),
+  );
+  const isCurrentPeriod = selectedPeriod === currentBudgetPeriod(today, financialMonthStartDay);
   const visibleBudgets = resolveActiveBudgetsForPeriod(budgets, selectedPeriod);
   const activeMacroCategories = categories.filter(
     (category) =>
@@ -194,6 +198,7 @@ export function BudgetsPage({
                   categories,
                   transactions,
                   splits: transactionSplits,
+                  ...(financialMonthStartDay === undefined ? {} : { financialMonthStartDay }),
                 });
                 const selectedCategory = categories.find((item) => item.id === budget.categoryId);
                 const category =

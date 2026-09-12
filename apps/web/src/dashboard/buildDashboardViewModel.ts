@@ -3,6 +3,8 @@ import {
   calculateBudgetProgress,
   calculateTotalBalance,
   categoryLabel,
+  financialPeriodForDate,
+  LocalDate,
   Money,
   resolveActiveBudgetsForPeriod,
   summarizeCashFlow,
@@ -33,6 +35,7 @@ export interface DashboardLedgerData {
   readonly budgets?: readonly Budget[];
   readonly recurringRules?: readonly RecurringRule[];
   readonly transactionSplits?: readonly TransactionSplit[];
+  readonly financialMonthStartDay?: number;
 }
 export interface DashboardCounts {
   readonly accounts: number;
@@ -123,12 +126,17 @@ export function buildDashboardViewModel(
   currency = defaultCurrency,
   today: Date = new Date(),
 ): DashboardViewModel {
-  const period = periodFor(today);
+  const financialMonthStartDay = data.financialMonthStartDay ?? 1;
+  const period = periodFor(today, financialMonthStartDay);
   const previousPeriod = previousMonth(period);
-  const monthlyTransactions = transactionsForPeriod(data.transactions, period);
+  const monthlyTransactions = transactionsForPeriod(
+    data.transactions,
+    period,
+    financialMonthStartDay,
+  );
   const cashFlow = summarizeCashFlow(monthlyTransactions, currency);
   const previousCashFlow = summarizeCashFlow(
-    transactionsForPeriod(data.transactions, previousPeriod),
+    transactionsForPeriod(data.transactions, previousPeriod, financialMonthStartDay),
     currency,
   );
   const accountById = new Map(data.accounts.map((account) => [account.id, account]));
@@ -144,6 +152,9 @@ export function buildDashboardViewModel(
       categories: data.categories,
       transactions: data.transactions,
       splits,
+      ...(data.financialMonthStartDay === undefined
+        ? {}
+        : { financialMonthStartDay: data.financialMonthStartDay }),
     }),
   }));
   const liquidAccounts = data.accounts.filter(
@@ -239,13 +250,17 @@ export function buildDashboardViewModel(
   });
 }
 
-function periodFor(today: Date): string {
-  const parts = new Intl.DateTimeFormat("en", {
+function periodFor(today: Date, startDay = 1): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: dashboardTimeZone,
     year: "numeric",
     month: "2-digit",
+    day: "2-digit",
   }).formatToParts(today);
-  return `${parts.find((part) => part.type === "year")?.value}-${parts.find((part) => part.type === "month")?.value}`;
+  const date = LocalDate.parse(
+    `${parts.find((part) => part.type === "year")?.value}-${parts.find((part) => part.type === "month")?.value}-${parts.find((part) => part.type === "day")?.value ?? "01"}`,
+  );
+  return financialPeriodForDate(date, startDay);
 }
 function previousMonth(period: string): string {
   const [rawYear, rawMonth] = period.split("-").map(Number);
@@ -264,9 +279,10 @@ function periodLabel(period: string): string {
 function transactionsForPeriod(
   transactions: readonly Transaction[],
   period: string,
+  startDay = 1,
 ): Transaction[] {
   return transactions.filter(
-    (transaction) => transaction.bookedDate.toString().slice(0, 7) === period,
+    (transaction) => financialPeriodForDate(transaction.bookedDate, startDay) === period,
   );
 }
 function monthStatus(

@@ -56,7 +56,10 @@ export class AppModelBuildError extends Error {
   }
 }
 
-export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
+export async function loadAppModels(
+  ledger: Ledger,
+  financialMonthStartDay = 1,
+): Promise<AppModels> {
   const snapshot = await readLedgerSnapshot(ledger.repository);
   const {
     accounts,
@@ -94,6 +97,7 @@ export async function loadAppModels(ledger: Ledger): Promise<AppModels> {
       transactions,
       transactionSplits,
       transfers,
+      financialMonthStartDay,
     });
   } catch (cause) {
     throw new AppModelBuildError("dashboard", cause);
