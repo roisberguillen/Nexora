@@ -165,6 +165,11 @@ desktop Nexora disegnata, non una schermata di servizio.
 **Gate:** il PC apre tutte le route desktop esistenti con lo stesso App Shell; zero duplicazione
 di layout; test screenshot, accessibilità, tastiera, zoom 200% e sei viewport.
 
+**Slice PM-4.1:** completata la guardia bootstrap health nel browser: `appUrl` viene accettato
+solo quando il runtime dichiara `running` e un binding valido; Settings mostra lo stato runtime.
+Il gate completo PM-4 resta aperto fino alla pubblicazione/serving della build locale, pairing
+browser e verifica visuale desktop end-to-end.
+
 ### PM-5 — Sincronizzazione live e stato connessione
 
 **Obiettivo:** rendere prevedibile la relazione telefono/host/browser.

@@ -67,6 +67,7 @@ export function SettingsPage({
       const next = {
         enabled: true,
         endpoint: hostConnection.endpoint,
+        runtimeState: health.runtimeState,
         ...(health.appUrl === undefined ? {} : { appUrl: health.appUrl }),
       };
       writeLocalHostConnection(next);
@@ -199,6 +200,9 @@ export function SettingsPage({
             label="Stato connessione"
             value={hostConnection.enabled ? "Host collegato" : "Solo locale"}
           />
+          {hostConnection.enabled ? (
+            <SettingsRow label="Runtime host" value={hostConnection.runtimeState ?? "Verificato"} />
+          ) : null}
           <SettingsRow label="Origine dati" value="Archivio di questo browser" />
           <label className="settings-row">
             <span>Indirizzo host</span>

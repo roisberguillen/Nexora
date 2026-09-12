@@ -227,7 +227,12 @@ describe("SettingsPage destructive flows", () => {
     const user = userEvent.setup();
     render(
       <SettingsPage
-        onProbeLocalHost={async () => ({ apiVersion: 1, appUrl: "https://nexora.home" })}
+        onProbeLocalHost={async () => ({
+          apiVersion: 1,
+          appUrl: "https://nexora.home",
+          runtimeState: "running",
+          binding: "lan",
+        })}
       />,
     );
     expect(screen.getByRole("region", { name: "Connessione dispositivi" })).toHaveTextContent(
