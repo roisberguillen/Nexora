@@ -123,7 +123,7 @@ export function SettingsPage({
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [hostConnection.enabled, hostConnection.endpoint, onProbeLocalHost]);
+  }, [hostConnection, onProbeLocalHost]);
   const deactivateHost = () => {
     const next = { enabled: false, endpoint: hostConnection.endpoint };
     writeLocalHostConnection(next);

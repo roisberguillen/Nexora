@@ -73,8 +73,7 @@ describe("local host connection", () => {
 
   it("sends session credentials ephemerally and never stores the session token", async () => {
     const request = vi.fn(
-      async (_input: RequestInfo | URL, _init?: RequestInit) =>
-        new Response(JSON.stringify({ status: "ok" }), { status: 200 }),
+      async () => new Response(JSON.stringify({ status: "ok" }), { status: 200 }),
     );
     const credentials = { deviceId: "browser-1", deviceToken: "device-token-123456789" };
     await configureLocalHostPasscode(
