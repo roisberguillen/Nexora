@@ -79,7 +79,7 @@ SQLite aperto.
 `docs/DECISIONS_LOG.md` il 2026-09-12. Implementazione runtime e review indipendente restano gate
 delle fasi successive.
 
-### PM-1 — Contratto Local Hub runtime
+### PM-1 — Contratto Local Hub runtime — COMPLETE
 
 **Obiettivo:** rendere l'host avviabile in modo esplicito e osservabile.
 
@@ -95,6 +95,10 @@ delle fasi successive.
 
 **Gate:** startup/shutdown deterministico, loopback default, LAN fail-closed, health senza segreti,
 test di crash/restart e collisione porta.
+
+**Evidence:** `apps/local-hub/src/lib.rs`, `apps/local-hub/README.md`; 25 Rust tests, `cargo fmt
+--check`, `cargo test --locked` e `cargo check --locked` PASS. LAN resta bloccata dal lifecycle
+controller fino alle fasi pairing/TLS successive.
 
 ### PM-2 — Verifica stessa rete e discovery
 

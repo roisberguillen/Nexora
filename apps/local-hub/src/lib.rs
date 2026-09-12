@@ -17,7 +17,8 @@ use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::sync::Arc;
 use subtle::ConstantTimeEq;
-use tokio::sync::{Mutex, RwLock};
+use tokio::sync::{Mutex, RwLock, oneshot};
+use tokio::task::JoinHandle;
 
 pub const API_VERSION: u16 = 1;
 pub const DEFAULT_PORT: u16 = 43_173;
@@ -26,6 +27,7 @@ pub const DEFAULT_PORT: u16 = 43_173;
 pub struct LocalHubState {
     pub pairing: Arc<RwLock<PairingRegistry>>,
     pub rate_limiter: Arc<Mutex<RateLimiter>>,
+    pub runtime: Arc<RwLock<HubRuntimeStatus>>,
     /// Optional browser entry point published only after explicit host setup.
     pub app_url: Option<String>,
 }
@@ -35,6 +37,7 @@ impl Default for LocalHubState {
         Self {
             pairing: Arc::new(RwLock::new(PairingRegistry::default())),
             rate_limiter: Arc::new(Mutex::new(RateLimiter::new(60, 60_000))),
+            runtime: Arc::new(RwLock::new(HubRuntimeStatus::default())),
             app_url: None,
         }
     }
@@ -48,9 +51,13 @@ pub fn router(state: LocalHubState) -> Router {
 }
 
 async fn health(State(state): State<LocalHubState>) -> impl IntoResponse {
+    let runtime = state.runtime.read().await.clone();
     (
         StatusCode::OK,
-        Json(health_response(state.app_url.as_deref())),
+        Json(health_response_with_runtime(
+            state.app_url.as_deref(),
+            &runtime,
+        )),
     )
 }
 
@@ -103,11 +110,128 @@ pub async fn serve(
     .map_err(RuntimeError::Io)
 }
 
+/// Lifecycle state exposed by `/v1/health` and the native controller.
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum HubLifecycleState {
+    #[default]
+    Stopped,
+    Starting,
+    Running,
+    Stopping,
+    Failed,
+}
+
+impl HubLifecycleState {
+    fn as_str(&self) -> &'static str {
+        match self {
+            Self::Stopped => "stopped",
+            Self::Starting => "starting",
+            Self::Running => "running",
+            Self::Stopping => "stopping",
+            Self::Failed => "failed",
+        }
+    }
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+pub struct HubRuntimeStatus {
+    pub state: HubLifecycleState,
+    pub binding: BindingMode,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub address: Option<SocketAddr>,
+}
+
+pub struct LocalHubRuntime {
+    config: TransportSecurityConfig,
+    state: LocalHubState,
+    shutdown: Option<oneshot::Sender<()>>,
+    task: Option<JoinHandle<Result<(), RuntimeError>>>,
+}
+
+impl LocalHubRuntime {
+    /// Starts only the safe loopback transport. LAN startup remains deferred until the
+    /// pairing/TLS runtime is wired in the later PC Manager phases.
+    pub async fn start(
+        config: TransportSecurityConfig,
+        state: LocalHubState,
+    ) -> Result<Self, RuntimeError> {
+        if config.binding != BindingMode::Loopback {
+            return Err(RuntimeError::LanRequiresPairing);
+        }
+        state.runtime.write().await.state = HubLifecycleState::Starting;
+        let address = config.bind_addr().map_err(RuntimeError::Binding)?;
+        let listener = tokio::net::TcpListener::bind(address)
+            .await
+            .map_err(RuntimeError::Io)?;
+        let bound_address = listener.local_addr().map_err(RuntimeError::Io)?;
+        {
+            let mut runtime = state.runtime.write().await;
+            runtime.state = HubLifecycleState::Running;
+            runtime.binding = config.binding;
+            runtime.address = Some(bound_address);
+        }
+        let (shutdown, shutdown_signal) = oneshot::channel();
+        let server_state = state.clone();
+        let task = tokio::spawn(async move {
+            let result = axum::serve(listener, router(server_state.clone()))
+                .with_graceful_shutdown(async move {
+                    let _ = shutdown_signal.await;
+                })
+                .await
+                .map_err(RuntimeError::Io);
+            if result.is_err() {
+                let mut runtime = server_state.runtime.write().await;
+                runtime.state = HubLifecycleState::Failed;
+            }
+            result
+        });
+        Ok(Self {
+            config,
+            state,
+            shutdown: Some(shutdown),
+            task: Some(task),
+        })
+    }
+
+    pub async fn status(&self) -> HubRuntimeStatus {
+        self.state.runtime.read().await.clone()
+    }
+
+    pub async fn stop(&mut self) -> Result<(), RuntimeError> {
+        if let Some(shutdown) = self.shutdown.take() {
+            self.state.runtime.write().await.state = HubLifecycleState::Stopping;
+            let _ = shutdown.send(());
+        }
+        if let Some(task) = self.task.take() {
+            match task.await {
+                Ok(Ok(())) => {}
+                Ok(Err(error)) => return Err(error),
+                Err(_) => return Err(RuntimeError::TaskJoin),
+            }
+        }
+        let mut runtime = self.state.runtime.write().await;
+        runtime.state = HubLifecycleState::Stopped;
+        runtime.address = None;
+        Ok(())
+    }
+
+    pub async fn restart(self) -> Result<Self, RuntimeError> {
+        let config = self.config.clone();
+        let state = self.state.clone();
+        let mut current = self;
+        current.stop().await?;
+        Self::start(config, state).await
+    }
+}
+
 #[derive(Debug)]
 pub enum RuntimeError {
     Binding(ConfigError),
     Tls(TlsConfigError),
+    LanRequiresPairing,
     Io(std::io::Error),
+    TaskJoin,
 }
 
 fn now_ms() -> u64 {
@@ -743,13 +867,27 @@ pub struct HealthResponse {
     pub status: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub app_url: Option<String>,
+    pub runtime_state: String,
+    pub binding: BindingMode,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub address: Option<SocketAddr>,
 }
 
 pub fn health_response(app_url: Option<&str>) -> HealthResponse {
+    health_response_with_runtime(app_url, &HubRuntimeStatus::default())
+}
+
+pub fn health_response_with_runtime(
+    app_url: Option<&str>,
+    runtime: &HubRuntimeStatus,
+) -> HealthResponse {
     HealthResponse {
         api_version: API_VERSION,
         status: "ok".to_owned(),
         app_url: app_url.map(str::to_owned),
+        runtime_state: runtime.state.as_str().to_owned(),
+        binding: runtime.binding,
+        address: runtime.address,
     }
 }
 
@@ -758,6 +896,7 @@ mod tests {
     use super::*;
     use axum::body::{Body, to_bytes};
     use http::Request;
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tower::ServiceExt;
 
     #[test]
@@ -993,6 +1132,49 @@ mod tests {
         let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
         let health: HealthResponse = serde_json::from_slice(&body).unwrap();
         assert_eq!(health.app_url.as_deref(), Some("https://nexora.home"));
+    }
+
+    #[tokio::test]
+    async fn lifecycle_starts_on_loopback_reports_status_and_stops_cleanly() {
+        let state = LocalHubState::default();
+        let config = TransportSecurityConfig {
+            port: 0,
+            ..TransportSecurityConfig::default()
+        };
+        let mut runtime = LocalHubRuntime::start(config, state.clone()).await.unwrap();
+        let status = runtime.status().await;
+        assert_eq!(status.state, HubLifecycleState::Running);
+        assert_eq!(status.binding, BindingMode::Loopback);
+        let address = status.address.unwrap();
+        let health = loopback_health(address).await;
+        assert!(health.starts_with("HTTP/1.1 200 OK"));
+        assert!(health.contains("\"runtime_state\":\"running\""));
+        runtime.stop().await.unwrap();
+        assert_eq!(runtime.status().await.state, HubLifecycleState::Stopped);
+    }
+
+    #[tokio::test]
+    async fn lifecycle_rejects_lan_before_pairing_runtime_is_ready() {
+        let config = TransportSecurityConfig {
+            binding: BindingMode::Lan,
+            address: "192.0.2.10".parse().unwrap(),
+            ..TransportSecurityConfig::default()
+        };
+        assert!(matches!(
+            LocalHubRuntime::start(config, LocalHubState::default()).await,
+            Err(RuntimeError::LanRequiresPairing)
+        ));
+    }
+
+    async fn loopback_health(address: SocketAddr) -> String {
+        let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
+        stream
+            .write_all(b"GET /v1/health HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+            .await
+            .unwrap();
+        let mut response = Vec::new();
+        stream.read_to_end(&mut response).await.unwrap();
+        String::from_utf8(response).unwrap()
     }
 
     #[test]
