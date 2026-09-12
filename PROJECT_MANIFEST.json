@@ -848,6 +848,11 @@
       "sha256": "37395cf176ea852af1bfc02842162c5053a5f85c4f055b6d116e18a6757a6d88"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-12-desktop-distribution.md",
+      "size": 1241,
+      "sha256": "6d60c735d3c9629172cb82f4f925f54f751a51e1c338e9c8afd0d3fa52d73a0d"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-09-12-fix-11-regression-gate.md",
       "size": 1297,
       "sha256": "1025801ac04b6ab8d9adf32538b6b217c4cd52a83bb36d657c0edc30c7e512be"
@@ -1234,8 +1239,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 554,
-      "sha256": "cf6075812aff38df313a77efe266f5fa062c39ecfe9cfd689fe53b7781104e8b"
+      "size": 471,
+      "sha256": "171410af7ed786fe29d31d939ed6595146b1e20671586194ceb31c7b68b2be20"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1269,8 +1274,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 181485,
-      "sha256": "e58bf25812f92483fedaec72dc7cdd5128a5d63fc932d860f52ec2ad217b4296"
+      "size": 182173,
+      "sha256": "4c9a953501190b341d98c430996eb728701674cf55f1ff8070747d578951f86b"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1324,8 +1329,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 4996,
-      "sha256": "29f0a0a4958c475bea8522608df179f809cd11b986555e3e8d6a96a50061ee24"
+      "size": 5858,
+      "sha256": "90c3db7412c83d72b77a1e429ea31d522599f5105e65b4dfcc1ab2b950bc0925"
     },
     {
       "path": ".gitignore",
@@ -1749,8 +1754,8 @@
     },
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
-      "size": 1005,
-      "sha256": "92daefa0ce0a2514ddb2b6562e7d9ee330e8ee7f47c10ba1768ab4a07758b0dc"
+      "size": 1084,
+      "sha256": "5af4508c349b281035184e8ea8812ddcd370725a4cfe096cb02513cd80f30f4e"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -2604,8 +2609,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 60765,
-      "sha256": "f72d74294411d9fe00e6324863374d954c132fc012b29733e52b7858cbe43dab"
+      "size": 60959,
+      "sha256": "3f3bf905e200ad5b564b15411fcd8ac96446ffeaad6150ae7c03e61314105488"
     },
     {
       "path": "design/mockup/README.md",
@@ -2791,6 +2796,11 @@
       "path": "docs/DECISIONS_LOG.md",
       "size": 32320,
       "sha256": "698eabbf533d145f3a20dba82512c8ef1b8cf7de4fd1b2179254df9bbbb79e87"
+    },
+    {
+      "path": "docs/DESKTOP_DISTRIBUTION.md",
+      "size": 1549,
+      "sha256": "6e39f7dd26006c1216841d24efafc41f698012390644221fa48ef651bb78189c"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
@@ -4024,8 +4034,8 @@
     },
     {
       "path": "README.md",
-      "size": 3643,
-      "sha256": "d789321bd04c162b5e5a7c9d3e2d5bdf5f4ad3f41142f1a2944ec508e794945f"
+      "size": 3803,
+      "sha256": "dea34ada39ef48afa59332a655a12c422745ff97ca41f712ab90404a9fafa44e"
     },
     {
       "path": "schemas/backup-manifest.schema.json",

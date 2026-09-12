@@ -9,6 +9,8 @@
   native/device matrix, orchestrator, manifest and UI/UX validation all PASS.
 - Closed FIX.12 final release gate: all stabilization phases reconciled; Nexora is marked `NEXORA READY`,
   `RELEASE READY` and `ANDROID PASS`.
+- Added desktop distribution: Windows MSI/NSIS installers and CI artifacts for Windows, macOS Intel
+  and macOS Apple Silicon, with direct launch from Start Menu/Finder and no terminal command.
 
 - Completed FIX.9 Android release signing with an external RSA-4096 keystore, reproducible Gradle/CI bindings, and verified arm64 APK signature.
 

@@ -2314,6 +2314,17 @@ Keep only the latest relevant evidence per completed phase.
   `pnpm test:ui-ux` and `pnpm quality:ui-ux` PASS; no P0/P1 open. `NEXORA READY`, `RELEASE READY`
   and `ANDROID PASS` are authorized.
 
+## 2026-09-12 — Desktop cross-platform distribution
+
+- `cargo check --locked --manifest-path apps/web/src-tauri/Cargo.toml` — PASS.
+- `pnpm --filter @nexora/web tauri build` — PASS; produced
+  `Nexora_0.5.0-1_x64_en-US.msi` and `Nexora_0.5.0-1_x64-setup.exe`.
+- Direct startup smoke — PASS: `apps/web/src-tauri/target/release/nexora.exe` started for 5 seconds
+  without PowerShell/terminal and exited cleanly after the check.
+- CI now builds and uploads Windows installers plus macOS Intel and Apple Silicon bundles. macOS
+  signing/notarization remains an external Apple credential step and is documented; unsigned CI
+  artifacts may show the operating system security warning.
+
 ## 2026-09-11 — FIX.10 repository quality gate after native export fix
 
 - `pnpm verify` — PASS: Prettier, ESLint with zero warnings, workspace typecheck, Vitest `645 passed / 4 skipped` in `143 passed / 1 skipped` files, and all workspace production builds including PWA generation.

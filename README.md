@@ -9,6 +9,9 @@ Versione corrente: **0.5.0-rc.1**. Non è una release di produzione. La roadmap 
 Candidate in `docs/ROADMAP.md` distingue in modo verificabile funzionalità completate, limiti e
 lavoro ancora necessario prima di una RC.
 
+Per installare l’app desktop senza terminale e scaricare i pacchetti Windows/macOS, consulta
+[`docs/DESKTOP_DISTRIBUTION.md`](docs/DESKTOP_DISTRIBUTION.md).
+
 ## Requisiti
 
 - Node.js `>=24.14.0 <25` (versione consigliata: 24.15.0);
