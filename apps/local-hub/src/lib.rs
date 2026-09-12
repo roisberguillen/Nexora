@@ -59,6 +59,10 @@ pub fn router(state: LocalHubState) -> Router {
         .route("/v1/health", get(health))
         .route("/v1/pairing/redeem", axum::routing::post(redeem_pairing))
         .route("/v1/authorize", get(authorize))
+        .route(
+            "/v1/session/configure",
+            axum::routing::post(configure_session),
+        )
         .route("/v1/session/unlock", axum::routing::post(unlock_session))
         .route("/v1/session/logout", axum::routing::post(logout_session))
         .route(
@@ -69,7 +73,7 @@ pub fn router(state: LocalHubState) -> Router {
         .with_state(state)
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct SessionUnlockRequest {
     pub device_id: String,
     pub device_token: String,
@@ -79,11 +83,56 @@ pub struct SessionUnlockRequest {
     pub ttl_ms: u64,
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct SessionConfigureRequest {
+    pub device_id: String,
+    pub device_token: String,
+    pub passcode: String,
+    pub salt: Vec<u8>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct SessionLogoutRequest {
     pub device_id: String,
     pub session_token: String,
     pub now_ms: u64,
+}
+
+async fn configure_session(
+    State(state): State<LocalHubState>,
+    Json(request): Json<SessionConfigureRequest>,
+) -> impl IntoResponse {
+    if state
+        .pairing
+        .read()
+        .await
+        .authorize(&request.device_id, &request.device_token)
+        .is_err()
+    {
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({ "error": "unauthorized" })),
+        );
+    }
+    match state
+        .sessions
+        .lock()
+        .await
+        .configure(&request.passcode, &request.salt, 5, 60_000)
+    {
+        Ok(()) => (
+            StatusCode::OK,
+            Json(serde_json::json!({ "status": "configured" })),
+        ),
+        Err(SessionError::InvalidPasscode) => (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({ "error": "invalid_passcode" })),
+        ),
+        _ => (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({ "error": "invalid_session_configuration" })),
+        ),
+    }
 }
 
 async fn unlock_session(
@@ -106,7 +155,7 @@ async fn unlock_session(
         &request.device_id,
         &request.passcode,
         &request.session_token,
-        request.now_ms,
+        now_ms(),
         request.ttl_ms,
     );
     match result {
@@ -143,7 +192,7 @@ async fn logout_session(
 ) -> impl IntoResponse {
     let mut sessions = state.sessions.lock().await;
     if sessions
-        .authenticate(&request.device_id, &request.session_token, request.now_ms)
+        .authenticate(&request.device_id, &request.session_token, now_ms())
         .is_err()
     {
         return (
@@ -373,13 +422,32 @@ async fn authorized_device<'a>(state: &LocalHubState, headers: &'a HeaderMap) ->
     if !state.rate_limiter.lock().await.allow(device_id, now_ms()) {
         return None;
     }
-    state
+    if state
         .pairing
         .read()
         .await
         .authorize(device_id, token)
-        .ok()
-        .map(|_| device_id)
+        .is_err()
+    {
+        return None;
+    }
+    let sessions = state.sessions.lock().await;
+    if sessions.is_configured() {
+        let session_token = headers
+            .get("x-nexora-session-token")
+            .and_then(|value| value.to_str().ok())?;
+        drop(sessions);
+        if state
+            .sessions
+            .lock()
+            .await
+            .authenticate(device_id, session_token, now_ms())
+            .is_err()
+        {
+            return None;
+        }
+    }
+    Some(device_id)
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -868,6 +936,10 @@ impl Default for PasscodeSessionRegistry {
 }
 
 impl PasscodeSessionRegistry {
+    pub fn is_configured(&self) -> bool {
+        self.passcode_digest.is_some()
+    }
+
     pub fn configure(
         &mut self,
         passcode: &str,
@@ -1925,6 +1997,128 @@ mod tests {
         let response: PullOperationsResponse = serde_json::from_slice(&body).unwrap();
         assert_eq!(response.operations.len(), 1);
         assert_eq!(response.operations[0].0, 1);
+    }
+
+    #[tokio::test]
+    async fn configured_session_is_required_for_sync_and_can_be_unlocked_and_logged_out() {
+        let state = LocalHubState::default();
+        let token = "synthetic-session-device-token-123456";
+        state.pairing.write().await.add_qr_grant(
+            "grant-session",
+            "code-session",
+            "sha256:host",
+            now_ms() + 60_000,
+        );
+        state
+            .pairing
+            .write()
+            .await
+            .redeem(
+                "grant-session",
+                "code-session",
+                "browser-session",
+                token,
+                "sha256:host",
+                now_ms(),
+            )
+            .unwrap();
+        let app = router(state.clone());
+        let configure = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/v1/session/configure")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        serde_json::to_vec(&SessionConfigureRequest {
+                            device_id: "browser-session".to_owned(),
+                            device_token: token.to_owned(),
+                            passcode: "4937".to_owned(),
+                            salt: b"synthetic-salt".to_vec(),
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(configure.status(), StatusCode::OK);
+
+        let unauthorized = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method("GET")
+                    .uri("/v1/operations?after=0")
+                    .header("authorization", format!("Bearer {token}"))
+                    .header("x-nexora-device-id", "browser-session")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(unauthorized.status(), StatusCode::UNAUTHORIZED);
+
+        let unlock = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/v1/session/unlock")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        serde_json::to_vec(&SessionUnlockRequest {
+                            device_id: "browser-session".to_owned(),
+                            device_token: token.to_owned(),
+                            passcode: "4937".to_owned(),
+                            session_token: "synthetic-session-token-123456".to_owned(),
+                            now_ms: 0,
+                            ttl_ms: 60_000,
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(unlock.status(), StatusCode::OK);
+
+        let authorized = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method("GET")
+                    .uri("/v1/operations?after=0")
+                    .header("authorization", format!("Bearer {token}"))
+                    .header("x-nexora-device-id", "browser-session")
+                    .header("x-nexora-session-token", "synthetic-session-token-123456")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(authorized.status(), StatusCode::OK);
+
+        let logout = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/v1/session/logout")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        serde_json::to_vec(&SessionLogoutRequest {
+                            device_id: "browser-session".to_owned(),
+                            session_token: "synthetic-session-token-123456".to_owned(),
+                            now_ms: 0,
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(logout.status(), StatusCode::OK);
     }
 
     #[tokio::test]

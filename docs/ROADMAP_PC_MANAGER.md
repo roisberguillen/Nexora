@@ -239,6 +239,11 @@ esporre via endpoint e UI prima del gate PM-6.
 device già paired e restituisce solo uno stato; il logout richiede device/sessione validi. La
 configurazione passcode dal telefono e l’obbligo sessione sulle API ledger/sync restano aperti.
 
+**Slice PM-6.3:** aggiunto `/v1/session/configure` per un device già paired; quando il passcode è
+configurato, `/v1/operations` richiede anche `x-nexora-session-token`. I timestamp delle richieste
+non controllano più expiry/rate limit lato server. Test HTTP copre configure → unlock → sync → logout.
+Restano UI telefono, gestione sessione browser e recovery/certificato cambiato.
+
 ### PM-7 — Packaging e avvio operativo
 
 **Obiettivo:** eliminare i passaggi tecnici per l'utente.
