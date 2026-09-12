@@ -252,6 +252,10 @@ session state browser e la recovery esplicita.
 sync aggiunge `x-nexora-session-token` soltanto quando disponibile. Logout cancella il token anche
 su errore di rete. Restano pairing UI, session expiry visibile, revoca/recovery e certificato.
 
+**Slice PM-6.6:** `/v1/pairing/revoke` rimuove un device autorizzato e invalida contemporaneamente
+le sue sessioni. Il flusso è testato su device/token/sessione; resta da esporre nel controller
+telefono/browser e da completare la recovery con nuovo pairing.
+
 ### PM-7 — Packaging e avvio operativo
 
 **Obiettivo:** eliminare i passaggi tecnici per l'utente.

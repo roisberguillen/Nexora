@@ -58,6 +58,7 @@ pub fn router(state: LocalHubState) -> Router {
     Router::new()
         .route("/v1/health", get(health))
         .route("/v1/pairing/redeem", axum::routing::post(redeem_pairing))
+        .route("/v1/pairing/revoke", axum::routing::post(revoke_pairing))
         .route("/v1/authorize", get(authorize))
         .route(
             "/v1/session/configure",
@@ -96,6 +97,45 @@ pub struct SessionLogoutRequest {
     pub device_id: String,
     pub session_token: String,
     pub now_ms: u64,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PairingRevokeRequest {
+    pub requester_device_id: String,
+    pub requester_device_token: String,
+    pub target_device_id: String,
+}
+
+async fn revoke_pairing(
+    State(state): State<LocalHubState>,
+    Json(request): Json<PairingRevokeRequest>,
+) -> impl IntoResponse {
+    if state
+        .pairing
+        .read()
+        .await
+        .authorize(
+            &request.requester_device_id,
+            &request.requester_device_token,
+        )
+        .is_err()
+    {
+        return StatusCode::UNAUTHORIZED;
+    }
+    if !state
+        .pairing
+        .write()
+        .await
+        .revoke(&request.target_device_id)
+    {
+        return StatusCode::NOT_FOUND;
+    }
+    state
+        .sessions
+        .lock()
+        .await
+        .revoke_device(&request.target_device_id);
+    StatusCode::NO_CONTENT
 }
 
 async fn configure_session(
@@ -1864,6 +1904,83 @@ mod tests {
                 .await
                 .authorize("browser-1", "synthetic-device-token-123456"),
             Ok(())
+        );
+    }
+
+    #[tokio::test]
+    async fn pairing_revoke_invalidates_target_device_and_session() {
+        let state = LocalHubState::default();
+        state.pairing.write().await.add_qr_grant(
+            "grant-revoke",
+            "code-revoke",
+            "sha256:host",
+            now_ms() + 60_000,
+        );
+        state
+            .pairing
+            .write()
+            .await
+            .redeem(
+                "grant-revoke",
+                "code-revoke",
+                "browser-revoke",
+                "device-token-revoke-123456",
+                "sha256:host",
+                now_ms(),
+            )
+            .unwrap();
+        state
+            .sessions
+            .lock()
+            .await
+            .configure("4937", b"salt", 5, 60_000)
+            .unwrap();
+        state
+            .sessions
+            .lock()
+            .await
+            .unlock(
+                "browser-revoke",
+                "4937",
+                "session-revoke-123456789",
+                now_ms(),
+                60_000,
+            )
+            .unwrap();
+        let response = router(state.clone())
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/v1/pairing/revoke")
+                    .header("content-type", "application/json")
+                    .body(Body::from(
+                        serde_json::to_vec(&PairingRevokeRequest {
+                            requester_device_id: "browser-revoke".to_owned(),
+                            requester_device_token: "device-token-revoke-123456".to_owned(),
+                            target_device_id: "browser-revoke".to_owned(),
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::NO_CONTENT);
+        assert_eq!(
+            state
+                .pairing
+                .read()
+                .await
+                .authorize("browser-revoke", "device-token-revoke-123456"),
+            Err(AuthError::UnknownDevice)
+        );
+        assert_eq!(
+            state.sessions.lock().await.authenticate(
+                "browser-revoke",
+                "session-revoke-123456789",
+                now_ms()
+            ),
+            Err(SessionError::InvalidSession)
         );
     }
 
