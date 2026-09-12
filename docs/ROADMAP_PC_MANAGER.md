@@ -121,7 +121,7 @@ possibile prima del pairing.
 `assess_same_network` e discovery `_nexora._tcp`; test Rust verificano stessa/differente subnet,
 loopback e prefisso invalido. La discovery resta solo un hint e non sostituisce TLS/pairing.
 
-### PM-3 — Pairing QR e autorizzazione dispositivo
+### PM-3 — Pairing QR e autorizzazione dispositivo — COMPLETE
 
 **Obiettivo:** associare il browser a uno specifico host e a uno specifico device.
 
@@ -136,6 +136,10 @@ loopback e prefisso invalido. La discovery resta solo un hint e non sostituisce 
 
 **Gate:** test QR scaduto/riusato, token errato, device errato, fingerprint errato, origine
 errata, replay, passcode errato, revoca e rinnovo.
+
+**Evidence:** `apps/local-hub/src/lib.rs` espone `POST /v1/pairing/redeem` con grant monouso,
+scadenza, host fingerprint e device credential; test HTTP coprono redemption, replay e separazione
+dall'autorizzazione ledger. Revoca e token digest restano coperti dal contratto esistente.
 
 ### PM-4 — Browser locale e caricamento della Desktop App Shell
 

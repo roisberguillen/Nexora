@@ -46,6 +46,7 @@ impl Default for LocalHubState {
 pub fn router(state: LocalHubState) -> Router {
     Router::new()
         .route("/v1/health", get(health))
+        .route("/v1/pairing/redeem", axum::routing::post(redeem_pairing))
         .route("/v1/authorize", get(authorize))
         .with_state(state)
 }
@@ -85,6 +86,39 @@ async fn authorize(State(state): State<LocalHubState>, headers: HeaderMap) -> im
     match state.pairing.read().await.authorize(device_id, bearer) {
         Ok(()) => StatusCode::NO_CONTENT.into_response(),
         Err(_) => StatusCode::FORBIDDEN.into_response(),
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PairingRedeemRequest {
+    pub grant_id: String,
+    pub code: String,
+    pub device_id: String,
+    pub device_token: String,
+    pub host_fingerprint: String,
+}
+
+async fn redeem_pairing(
+    State(state): State<LocalHubState>,
+    Json(request): Json<PairingRedeemRequest>,
+) -> impl IntoResponse {
+    if request.grant_id.is_empty()
+        || request.device_id.is_empty()
+        || request.device_token.len() < 24
+    {
+        return StatusCode::BAD_REQUEST;
+    }
+    match state.pairing.write().await.redeem(
+        &request.grant_id,
+        &request.code,
+        request.device_id,
+        &request.device_token,
+        &request.host_fingerprint,
+        now_ms(),
+    ) {
+        Ok(()) => StatusCode::NO_CONTENT,
+        Err(PairingError::Expired | PairingError::AlreadyUsed) => StatusCode::GONE,
+        Err(_) => StatusCode::FORBIDDEN,
     }
 }
 
@@ -427,8 +461,7 @@ pub fn assess_same_network(
             let remainder = prefix_length % 8;
             let same_full = host[..full_bytes] == client[..full_bytes];
             let same_partial = remainder == 0
-                || (host[full_bytes] >> (8 - remainder))
-                    == (client[full_bytes] >> (8 - remainder));
+                || (host[full_bytes] >> (8 - remainder)) == (client[full_bytes] >> (8 - remainder));
             if same_full && same_partial {
                 NetworkAssessment::SameLocalNetwork
             } else {
@@ -1203,6 +1236,58 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(unauthorized.status(), StatusCode::UNAUTHORIZED);
+    }
+
+    #[tokio::test]
+    async fn pairing_endpoint_redeems_once_and_keeps_ledger_authorization_separate() {
+        let state = LocalHubState::default();
+        state.pairing.write().await.add_qr_grant(
+            "grant-http",
+            "synthetic-code",
+            "sha256:host",
+            now_ms() + 60_000,
+        );
+        let request = PairingRedeemRequest {
+            grant_id: "grant-http".to_owned(),
+            code: "synthetic-code".to_owned(),
+            device_id: "browser-1".to_owned(),
+            device_token: "synthetic-device-token-123456".to_owned(),
+            host_fingerprint: "sha256:host".to_owned(),
+        };
+        let app = router(state.clone());
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/v1/pairing/redeem")
+                    .header("content-type", "application/json")
+                    .body(Body::from(serde_json::to_vec(&request).unwrap()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::NO_CONTENT);
+        let replay = app
+            .oneshot(
+                Request::builder()
+                    .method("POST")
+                    .uri("/v1/pairing/redeem")
+                    .header("content-type", "application/json")
+                    .body(Body::from(serde_json::to_vec(&request).unwrap()))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(replay.status(), StatusCode::GONE);
+        assert_eq!(
+            state
+                .pairing
+                .read()
+                .await
+                .authorize("browser-1", "synthetic-device-token-123456"),
+            Ok(())
+        );
     }
 
     #[tokio::test]
