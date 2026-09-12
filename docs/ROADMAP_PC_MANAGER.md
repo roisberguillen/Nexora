@@ -310,6 +310,10 @@ post-install, firewall, upgrade/restart e gate dispositivo.
 **Gate finale:** `PC_MANAGER_FINAL_GATE_PASS`, 0 P0/P1/P2 aperti, review di sicurezza indipendente,
 working tree pulito e documentazione/stato aggiornati.
 
+**Stato di esecuzione 2026-09-12:** PM-0–PM-7.5 hanno evidenze locali e commit pubblicati. PM-8
+non è dichiarato completato: `adb devices -l` resta vuoto dopo riavvio del server ADB, quindi
+installazione/launch e flusso reale Pixel 9 non sono verificati.
+
 ## Matrice di test minima
 
 | Area | Casi obbligatori |

@@ -1,7 +1,7 @@
 # Current task
 
-- Task: PC Manager PM-6 — passcode, sessioni e recovery UX
-- Roadmap phase: PM-6
-- Status: `READY` — PM-5.1–PM-5.5 verificati; il sink concreto richiede credenziali/sessione e recovery visuale.
-- Evidence: `apps/local-hub/src/lib.rs`; `apps/web/src/settings/localHostSync.ts`; `apps/web/src/App.tsx`; `docs/ROADMAP_PC_MANAGER.md`.
-- Next task: implementare sessione passcode fail-closed, logout/revoca e recovery senza esporre segreti.
+- Task: PC Manager PM-8 — gate reale Pixel 9 e desktop
+- Roadmap phase: PM-8
+- Status: `READY_WITH_DEVICE_GATE_OPEN` — PM-0–PM-7.5 verificati localmente; ADB non rileva alcun device.
+- Evidence: `docs/ROADMAP_PC_MANAGER.md`; `.codex/state/test-evidence.md`; bundle MSI/NSIS in `apps/web/src-tauri/target/debug/bundle/`.
+- Next task: con Pixel 9 connesso eseguire install/launch, pairing, passcode, browser LAN, sync, revoca e recovery; poi chiudere il gate finale.
