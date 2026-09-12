@@ -1,7 +1,7 @@
 # Current task
 
-- Task: PC Manager PM-4 — browser locale e Desktop App Shell
-- Roadmap phase: PM-4
-- Status: `READY` — PM-3 pairing redemption, replay protection e device authorization completati.
-- Evidence: `apps/local-hub/src/lib.rs`; `docs/ROADMAP_PC_MANAGER.md`.
-- Next task: bootstrap browser, sessione autorizzata e pubblicazione della vera App Shell desktop.
+- Task: PC Manager PM-6 — passcode, sessioni e recovery UX
+- Roadmap phase: PM-6
+- Status: `READY` — PM-5.1–PM-5.5 verificati; il sink concreto richiede credenziali/sessione e recovery visuale.
+- Evidence: `apps/local-hub/src/lib.rs`; `apps/web/src/settings/localHostSync.ts`; `apps/web/src/App.tsx`; `docs/ROADMAP_PC_MANAGER.md`.
+- Next task: implementare sessione passcode fail-closed, logout/revoca e recovery senza esporre segreti.

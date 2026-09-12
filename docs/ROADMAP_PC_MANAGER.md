@@ -206,8 +206,13 @@ offline client e il recovery di consegne parziali.
 
 **Slice PM-5.4:** `LocalHostSyncClient` implementa coda persistente, deduplica per idempotency key,
 flush push, mantenimento su conflitto/offline e pull cursor-based con credenziali volatile. Il
-gate finale resta aperto fino al collegamento dei command finanziari all'adapter sync e al recovery
-di consegne parziali nel flusso completo.
+gate finale resta aperto fino al recovery visuale di consegne parziali nel flusso completo.
+
+**Slice PM-5.5:** il confine App espone un `localLedgerSyncSink` opt-in: dopo una mutazione locale
+riuscita cattura uno snapshot portabile e lo consegna all'adapter senza bloccare il ledger se rete,
+pairing o sessione non sono disponibili. Il log registra solo lo stato differito e il nome errore
+classificato; payload e credenziali non entrano nei log. Restano da chiudere il sink concreto con
+sessione autorizzata, pull/apply esplicito e recovery visuale delle consegne parziali.
 
 ### PM-6 — Passcode, sessioni e recovery UX
 
