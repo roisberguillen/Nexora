@@ -89,4 +89,23 @@ describe("local host sync client", () => {
       }),
     );
   });
+
+  it("adds the volatile session header to sync requests", async () => {
+    const values = storage();
+    const request = vi.fn(async () => new Response(JSON.stringify([]), { status: 200 }));
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "device-1", token: "device-token", sessionToken: "session-token" },
+      storage: values,
+      request,
+    });
+    await client.flush();
+    expect(request).not.toHaveBeenCalled();
+    client.enqueue({ ...operation, idempotencyKey: "session-op" });
+    await client.flush();
+    const init = (request.mock.calls as unknown[][])[0]?.[1] as RequestInit | undefined;
+    expect(init?.headers).toMatchObject({
+      "x-nexora-session-token": "session-token",
+    });
+  });
 });

@@ -13,6 +13,7 @@ export interface LocalSyncOperation {
 export interface LocalSyncCredentials {
   readonly deviceId: string;
   readonly token: string;
+  readonly sessionToken?: string;
 }
 
 export interface LocalSyncStorage {
@@ -116,6 +117,9 @@ function headers(credentials: LocalSyncCredentials): HeadersInit {
     authorization: `Bearer ${credentials.token}`,
     "x-nexora-device-id": credentials.deviceId,
     "content-type": "application/json",
+    ...(credentials.sessionToken === undefined
+      ? {}
+      : { "x-nexora-session-token": credentials.sessionToken }),
   };
 }
 

@@ -248,6 +248,10 @@ Restano UI telefono, gestione sessione browser e recovery/certificato cambiato.
 token sessione non entra nella connessione persistita. Restano da collegare il pairing UI, il
 session state browser e la recovery esplicita.
 
+**Slice PM-6.5:** `LocalHostSessionController` mantiene la sessione solo in memoria e il client
+sync aggiunge `x-nexora-session-token` soltanto quando disponibile. Logout cancella il token anche
+su errore di rete. Restano pairing UI, session expiry visibile, revoca/recovery e certificato.
+
 ### PM-7 — Packaging e avvio operativo
 
 **Obiettivo:** eliminare i passaggi tecnici per l'utente.
