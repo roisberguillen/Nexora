@@ -1,5 +1,16 @@
 # Decision Log
 
+## 2026-09-12 — Giorno di apertura del mese finanziario
+
+- **Contesto:** il mese civile fisso non rappresenta utenti che ricevono lo stipendio o pianificano
+  il budget a metà mese; la nuova funzione deve cambiare le aggregazioni senza riscrivere il ledger.
+- **Scelta:** la prima versione usa una preferenza locale con default `1` e valori da `1` a `28`.
+  Il periodo mantiene la chiave `YYYY-MM` del mese di apertura ed è calcolato come intervallo civile
+  semiaperto in `Europe/Rome`.
+- **Conseguenze:** movimenti, ricorrenze nominali e dati persistiti restano invariati; Dashboard,
+  Analisi, budget e diario devono usare lo stesso servizio di dominio. Giorni `29–31` richiedono una
+  decisione separata sul comportamento nei mesi più corti.
+
 ## 2026-08-26 — Dashboard budget summary is overlap-safe
 
 - **Contesto:** i budget gerarchici possono coprire contemporaneamente una macro categoria e una

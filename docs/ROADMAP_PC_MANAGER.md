@@ -191,6 +191,10 @@ concedono accesso ledger e devono essere collegati a sessione/pairing nel seguit
 **Gate:** test a due client, offline/reload, retry, duplicate delivery, cursor stale, conflitto,
 revoca durante sync e recovery dopo crash.
 
+**Slice PM-5.1:** il Local Hub espone push/pull operation log su `/v1/operations`, con pairing,
+rate limit, delivery replay protection, cursor e risultati `Applied`/`Duplicate`/`Conflict`.
+Il gate completo resta aperto per heartbeat, stato UI, coda browser e recovery visuale.
+
 ### PM-6 — Passcode, sessioni e recovery UX
 
 **Obiettivo:** rendere sicuro e comprensibile l'uso quotidiano.

@@ -5,7 +5,7 @@
 
 use axum::{
     Json, Router,
-    extract::State,
+    extract::{Query, State},
     http::{HeaderMap, StatusCode, Uri, header},
     response::IntoResponse,
     response::Response,
@@ -34,6 +34,7 @@ pub struct LocalHubState {
     pub app_url: Option<String>,
     /// Root directory for the versioned local browser build, if published.
     pub browser_root: Option<PathBuf>,
+    pub sync: Arc<Mutex<SyncTransport>>,
 }
 
 impl Default for LocalHubState {
@@ -44,6 +45,7 @@ impl Default for LocalHubState {
             runtime: Arc::new(RwLock::new(HubRuntimeStatus::default())),
             app_url: None,
             browser_root: None,
+            sync: Arc::new(Mutex::new(SyncTransport::default())),
         }
     }
 }
@@ -53,6 +55,10 @@ pub fn router(state: LocalHubState) -> Router {
         .route("/v1/health", get(health))
         .route("/v1/pairing/redeem", axum::routing::post(redeem_pairing))
         .route("/v1/authorize", get(authorize))
+        .route(
+            "/v1/operations",
+            axum::routing::get(pull_operations).post(push_operations),
+        )
         .fallback(browser_asset)
         .with_state(state)
 }
@@ -139,6 +145,96 @@ async fn authorize(State(state): State<LocalHubState>, headers: HeaderMap) -> im
         Ok(()) => StatusCode::NO_CONTENT.into_response(),
         Err(_) => StatusCode::FORBIDDEN.into_response(),
     }
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PushOperationsRequest {
+    pub delivery_id: String,
+    pub operations: Vec<ReplicableOperation>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct PullOperationsResponse {
+    pub operations: Vec<(u64, ReplicableOperation)>,
+}
+
+async fn push_operations(
+    State(state): State<LocalHubState>,
+    headers: HeaderMap,
+    Json(request): Json<PushOperationsRequest>,
+) -> impl IntoResponse {
+    let Some(device_id) = authorized_device(&state, &headers).await else {
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({"error":"unauthorized"})),
+        )
+            .into_response();
+    };
+    let token = headers
+        .get(header::AUTHORIZATION)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.strip_prefix("Bearer "))
+        .unwrap_or_default();
+    let pairing = state.pairing.read().await;
+    let result = state.sync.lock().await.push_authorized(
+        &pairing,
+        device_id,
+        token,
+        &request.delivery_id,
+        request.operations,
+    );
+    match result {
+        Ok(results) => (StatusCode::OK, Json(results)).into_response(),
+        Err(TransportError::ReplayDetected) => (
+            StatusCode::CONFLICT,
+            Json(serde_json::json!({"error":"replay_detected"})),
+        )
+            .into_response(),
+        Err(TransportError::UnauthorizedDevice) => StatusCode::FORBIDDEN.into_response(),
+        Err(TransportError::CursorAhead) => StatusCode::BAD_REQUEST.into_response(),
+    }
+}
+
+async fn pull_operations(
+    State(state): State<LocalHubState>,
+    headers: HeaderMap,
+    Query(query): Query<CursorQuery>,
+) -> impl IntoResponse {
+    if authorized_device(&state, &headers).await.is_none() {
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({"error":"unauthorized"})),
+        )
+            .into_response();
+    }
+    let operations = state
+        .sync
+        .lock()
+        .await
+        .pull(query.after)
+        .map(|(cursor, operation)| (cursor, operation.clone()))
+        .collect();
+    (StatusCode::OK, Json(PullOperationsResponse { operations })).into_response()
+}
+
+async fn authorized_device<'a>(state: &LocalHubState, headers: &'a HeaderMap) -> Option<&'a str> {
+    let device_id = headers
+        .get("x-nexora-device-id")
+        .and_then(|value| value.to_str().ok())?;
+    let token = headers
+        .get(header::AUTHORIZATION)
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.strip_prefix("Bearer "))?;
+    if !state.rate_limiter.lock().await.allow(device_id, now_ms()) {
+        return None;
+    }
+    state
+        .pairing
+        .read()
+        .await
+        .authorize(device_id, token)
+        .ok()
+        .map(|_| device_id)
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -767,7 +863,7 @@ pub struct ReplicableOperation {
     pub created_at: String,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub enum OperationApplyResult {
     Applied { cursor: u64, revision: u64 },
     Duplicate { cursor: u64, revision: u64 },
@@ -1380,6 +1476,98 @@ mod tests {
             .unwrap();
         assert_ne!(traversal.status(), StatusCode::OK);
         let _ = tokio::fs::remove_dir_all(root).await;
+    }
+
+    #[tokio::test]
+    async fn sync_http_requires_pairing_and_preserves_replay_and_cursor_contracts() {
+        let state = LocalHubState::default();
+        let token = "synthetic-sync-device-token-123456";
+        state.pairing.write().await.add_qr_grant(
+            "grant-sync",
+            "code-sync",
+            "sha256:host",
+            now_ms() + 60_000,
+        );
+        state
+            .pairing
+            .write()
+            .await
+            .redeem(
+                "grant-sync",
+                "code-sync",
+                "browser-sync",
+                token,
+                "sha256:host",
+                now_ms(),
+            )
+            .unwrap();
+        let operation = ReplicableOperation {
+            idempotency_key: "op-http-1".to_owned(),
+            device_id: "browser-sync".to_owned(),
+            entity_id: "movement-http-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:payload".to_owned(),
+            payload: "synthetic-payload".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-12T00:00:00Z".to_owned(),
+        };
+        let headers = |request: http::request::Builder| {
+            request
+                .header("authorization", format!("Bearer {token}"))
+                .header("x-nexora-device-id", "browser-sync")
+                .header("content-type", "application/json")
+        };
+        let app = router(state);
+        let push = app
+            .clone()
+            .oneshot(
+                headers(Request::builder().method("POST").uri("/v1/operations"))
+                    .body(Body::from(
+                        serde_json::to_vec(&PushOperationsRequest {
+                            delivery_id: "delivery-http-1".to_owned(),
+                            operations: vec![operation.clone()],
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(push.status(), StatusCode::OK);
+        let replay = app
+            .clone()
+            .oneshot(
+                headers(Request::builder().method("POST").uri("/v1/operations"))
+                    .body(Body::from(
+                        serde_json::to_vec(&PushOperationsRequest {
+                            delivery_id: "delivery-http-1".to_owned(),
+                            operations: vec![operation],
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(replay.status(), StatusCode::CONFLICT);
+        let pull = app
+            .oneshot(
+                headers(
+                    Request::builder()
+                        .method("GET")
+                        .uri("/v1/operations?after=0"),
+                )
+                .body(Body::empty())
+                .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(pull.status(), StatusCode::OK);
+        let body = to_bytes(pull.into_body(), usize::MAX).await.unwrap();
+        let response: PullOperationsResponse = serde_json::from_slice(&body).unwrap();
+        assert_eq!(response.operations.len(), 1);
+        assert_eq!(response.operations[0].0, 1);
     }
 
     #[tokio::test]

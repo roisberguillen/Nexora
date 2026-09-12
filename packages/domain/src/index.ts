@@ -95,6 +95,16 @@ export {
   validateCategoryUniqueness,
 } from "./services/categoryHierarchy";
 export { calculateMonthlyTrends, type MonthlyTrend } from "./services/monthlyTrends";
+export {
+  DEFAULT_FINANCIAL_MONTH_START_DAY,
+  MAX_FINANCIAL_MONTH_START_DAY,
+  MIN_FINANCIAL_MONTH_START_DAY,
+  financialPeriodBounds,
+  financialPeriodContains,
+  financialPeriodForDate,
+  validateFinancialMonthStartDay,
+  type FinancialPeriodBounds,
+} from "./services/financialPeriods";
 export { summarizeExpenseBehavior, type ExpenseBehaviorSummary } from "./services/expenseBehavior";
 export {
   calculateBudgetProgress,

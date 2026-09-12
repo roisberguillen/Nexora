@@ -876,6 +876,9 @@
 
 # Unreleased
 
+- Fase 1 del mese finanziario configurabile: aggiunto il contratto dominio per scegliere il giorno
+  di apertura del periodo mensile, con intervalli civili, validazione `1–28` e test sui confini.
+
 - Added strict ROADMAP AUTOPILOT orchestration with deterministic next-task resolution, hard advancement checks, full-gate finalization, and verified commit/push requirements.
 
 # Unreleased
