@@ -6,7 +6,7 @@ Schermata: PM-8 device and desktop gate preflight
 Route: Desktop installer / Pixel 9 ADB preflight
 Flusso principale: installer artefacts → ADB install/launch → Local Hub host gate
 Reviewer/fase: Codex — PM-8 preflight
-Modifiche: invito pairing, autorizzazione/revoca device e gestione passcode/sessione aggiunti alla Settings UI; registrati anche installazione/avvio release sul Pixel 9, il gate loopback e il ramo TLS runtime del Local Hub.
+Modifiche: invito pairing, autorizzazione/revoca device e gestione passcode/sessione aggiunti alla Settings UI; registrati anche installazione/avvio release sul Pixel 9, il gate loopback, il ramo TLS runtime e il provisioning LAN esplicito del Local Hub.
 
 ## Verifiche
 
@@ -23,7 +23,7 @@ Modifiche: invito pairing, autorizzazione/revoca device e gestione passcode/sess
 | Accessibilità | A-01 | N/A | Verifica device/browser reale ancora aperta. |
 | Finanza | FN-01 | PASS | Gate USB pairing/sessione eseguito con operazioni sintetiche; nessun dato reale modificato. |
 | Performance | P-01 | N/A | Performance LAN reale ancora aperta. |
-| TLS/LAN | N-01 | N/A | Il ramo HTTPS runtime è fail-closed e non cambia la UI Tauri; provisioning, firewall e rete LAN reale restano aperti. |
+| TLS/LAN | N-01 | PARTIAL | UI Tauri per indirizzo LAN e selezione PEM/key verificata; HTTPS health 200 dal PC. Pixel sulla stessa subnet, ma firewall Windows `Public` con regole Nexora `Block` impedisce il probe TCP; serve consenso amministrativo mirato. |
 
 ## Criticità e decisione
 
@@ -31,4 +31,4 @@ P0 aperti: Nessuno
 P1/P2 aperti: Nessuno
 Esito: PASS_CON_P1
 
-Nota: pairing/passcode UI, gate USB e loopback host verificati; PM-8 finale ancora aperta per LAN Wi‑Fi/TLS, sync/recovery completa e provisioning.
+Nota: pairing/passcode UI, gate USB, loopback e provisioning TLS LAN verificati parzialmente; PM-8 finale resta aperta per firewall autorizzato, browser LAN, sync/recovery completa e verifica dal Pixel.

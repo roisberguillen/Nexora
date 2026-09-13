@@ -343,6 +343,15 @@ shutdown controllato; senza materiale TLS il bind fallisce prima dell’esposizi
 Tauri locked e `cargo test` Local Hub `34/34` PASS. Il comando Tauri continua intenzionalmente a
 usare loopback: provisioning cert/key/fingerprint, firewall e prova LAN reale sono ancora aperti.
 
+**Slice PM-8 LAN provisioning — 2026-09-13:** dalla Settings UI Tauri è stato selezionato un
+indirizzo LAN specifico (`10.2.32.159`) e sono stati forniti certificato PEM e chiave privata PEM
+locali senza copiarli o salvarli. Il runtime ha pubblicato HTTPS su `10.2.32.159:43173`, il
+fingerprint è stato derivato dal certificato fornito, `/v1/health` ha restituito `200` e Windows
+ha mostrato il consenso firewall. Il Pixel 9 ha però rilevato la stessa subnet `/24` ma il probe
+TCP verso la porta è andato in timeout: la Wi-Fi Windows è classificata `Public` e le regole
+persistenti `Nexora` risultano `Inbound/Block/Public`. L'aggiunta automatica della regola mirata
+è stata rifiutata per privilegi insufficienti; pairing browser LAN, sync e recovery restano aperti.
+
 **Gate fisico USB — 2026-09-13:** sul build Tauri aggiornato il Pixel ha raggiunto la socket
 loopback tramite `adb reverse`; l’invito generato dalla UI ha completato redeem `204` e authorize
 `204`. Configure passcode, unlock, pull operations autorizzato e logout hanno restituito `200`,

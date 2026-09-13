@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
+use std::net::IpAddr;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -9,6 +10,7 @@ use nexora_local_hub::{
 };
 use rusqlite::{Connection, params_from_iter, types::Value};
 use serde_json::{Map, Value as JsonValue};
+use sha2::{Digest, Sha256};
 use tauri::{Manager, State};
 use tokio::sync::Mutex as AsyncMutex;
 
@@ -21,6 +23,14 @@ struct NativeTransactionState {
 #[derive(Default)]
 struct LocalHubDesktopState {
     runtime: AsyncMutex<Option<LocalHubRuntime>>,
+}
+
+#[derive(Clone, Debug, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct LanHubStartRequest {
+    address: String,
+    certificate_path: String,
+    private_key_path: String,
 }
 
 #[tauri::command]
@@ -42,6 +52,61 @@ async fn pc_manager_start(
     let started = LocalHubRuntime::start(TransportSecurityConfig::default(), hub_state)
         .await
         .map_err(|error| format!("Local Hub start failed: {error:?}"))?;
+    let status = started.status().await;
+    *runtime = Some(started);
+    Ok(status)
+}
+
+#[tauri::command]
+async fn pc_manager_start_lan(
+    app: tauri::AppHandle,
+    state: State<'_, LocalHubDesktopState>,
+    request: LanHubStartRequest,
+) -> Result<HubRuntimeStatus, String> {
+    let mut runtime = state.runtime.lock().await;
+    if runtime.is_some() {
+        return Err("Stop the existing Local Hub before publishing it on LAN".to_owned());
+    }
+    let address: IpAddr = request
+        .address
+        .parse()
+        .map_err(|_| "Invalid LAN address".to_owned())?;
+    if address.is_loopback() || address.is_unspecified() {
+        return Err("LAN publication requires a specific non-loopback address".to_owned());
+    }
+    let certificate_pem = fs::read_to_string(&request.certificate_path)
+        .map_err(|_| "Could not read the selected TLS certificate".to_owned())?;
+    let private_key_pem = fs::read_to_string(&request.private_key_path)
+        .map_err(|_| "Could not read the selected TLS private key".to_owned())?;
+    if certificate_pem.trim().is_empty() || private_key_pem.trim().is_empty() {
+        return Err("TLS certificate and private key cannot be empty".to_owned());
+    }
+    let fingerprint = format!(
+        "sha256:{}",
+        Sha256::digest(certificate_pem.as_bytes())
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>()
+    );
+    let app_url = format!("https://{}/", std::net::SocketAddr::new(address, 43_173));
+    let mut hub_state = LocalHubState::default();
+    hub_state.app_url = Some(app_url);
+    hub_state.browser_root = app
+        .path()
+        .resource_dir()
+        .ok()
+        .map(|directory| directory.join("browser"));
+    let config = TransportSecurityConfig {
+        binding: nexora_local_hub::BindingMode::Lan,
+        address,
+        port: 43_173,
+        tls_certificate_pem: Some(certificate_pem),
+        tls_private_key_pem: Some(private_key_pem),
+        host_fingerprint: Some(fingerprint),
+    };
+    let started = LocalHubRuntime::start(config, hub_state)
+        .await
+        .map_err(|error| format!("Local Hub LAN start failed: {error:?}"))?;
     let status = started.status().await;
     *runtime = Some(started);
     Ok(status)
@@ -278,6 +343,7 @@ pub fn run() {
         .manage(LocalHubDesktopState::default())
         .invoke_handler(tauri::generate_handler![
             pc_manager_start,
+            pc_manager_start_lan,
             pc_manager_status,
             pc_manager_create_pairing_invite,
             pc_manager_stop,

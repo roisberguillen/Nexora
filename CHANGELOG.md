@@ -11,6 +11,9 @@
   Settings UI; passcode, salt e session token restano volatili e le API sync restano protette.
 - Local Hub: il runtime supporta ora il ramo HTTPS LAN con shutdown controllato quando sono forniti
   indirizzo specifico, certificato, chiave e fingerprint; il default Tauri resta loopback-only.
+- PC Manager PM-8: la Settings UI Tauri consente provisioning LAN esplicito con indirizzo e file
+  PEM scelti dall'utente, senza persistenza dei percorsi; HTTPS/health dal PC verificati. Il gate
+  Pixel resta aperto finché una regola firewall autorizzata consente la porta 43173 sulla LAN.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and

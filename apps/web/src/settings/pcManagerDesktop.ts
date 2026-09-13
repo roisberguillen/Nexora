@@ -14,6 +14,12 @@ export interface DesktopPairingInvite {
   readonly expiresAtMs: number;
 }
 
+export interface DesktopLanStartRequest {
+  readonly address: string;
+  readonly certificatePath: string;
+  readonly privateKeyPath: string;
+}
+
 export function isDesktopRuntime(): boolean {
   return isTauri();
 }
@@ -28,6 +34,10 @@ export function getDesktopLocalHubStatus(): Promise<DesktopHubStatus> {
 
 export function createDesktopPairingInvite(): Promise<DesktopPairingInvite> {
   return invoke<DesktopPairingInvite>("pc_manager_create_pairing_invite");
+}
+
+export function startDesktopLanHub(input: DesktopLanStartRequest): Promise<DesktopHubStatus> {
+  return invoke<DesktopHubStatus>("pc_manager_start_lan", { request: input });
 }
 
 export function stopDesktopLocalHub(): Promise<void> {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { open } from "@tauri-apps/plugin-dialog";
 import {
   MAX_FINANCIAL_MONTH_START_DAY,
   MIN_FINANCIAL_MONTH_START_DAY,
@@ -35,6 +36,7 @@ import {
   getDesktopLocalHubStatus,
   isDesktopRuntime,
   startDesktopLocalHub,
+  startDesktopLanHub,
   stopDesktopLocalHub,
   type DesktopHubStatus,
 } from "./pcManagerDesktop";
@@ -81,6 +83,8 @@ export function SettingsPage({
   const [isCheckingHost, setIsCheckingHost] = useState(false);
   const [desktopHubStatus, setDesktopHubStatus] = useState<DesktopHubStatus | null>(null);
   const [isManagingDesktopHub, setIsManagingDesktopHub] = useState(false);
+  const [lanAddress, setLanAddress] = useState("");
+  const [isStartingLan, setIsStartingLan] = useState(false);
   const [pairingInvite, setPairingInvite] = useState("");
   const [pairedCredentials, setPairedCredentials] = useState<LocalHostCredentials | null>(null);
   const [pairingMessage, setPairingMessage] = useState<string | null>(null);
@@ -153,6 +157,40 @@ export function SettingsPage({
       setPairingMessage("Invito monouso creato. Copialo sul dispositivo da autorizzare.");
     } catch {
       setPairingMessage("Avvia prima il Local Hub desktop per creare un invito.");
+    }
+  };
+  const startLanHub = async () => {
+    if (lanAddress.trim() === "") return;
+    setIsStartingLan(true);
+    setPairingMessage(null);
+    try {
+      const certificatePath = await open({
+        directory: false,
+        multiple: false,
+        filters: [{ name: "Certificato TLS", extensions: ["pem", "crt", "cer"] }],
+      });
+      if (typeof certificatePath !== "string") return;
+      const privateKeyPath = await open({
+        directory: false,
+        multiple: false,
+        filters: [{ name: "Chiave privata TLS", extensions: ["pem", "key"] }],
+      });
+      if (typeof privateKeyPath !== "string") return;
+      const next = await startDesktopLanHub({
+        address: lanAddress.trim(),
+        certificatePath,
+        privateKeyPath,
+      });
+      setDesktopHubStatus(next);
+      setHostMessage(
+        "Local Hub pubblicato in HTTPS sulla rete. Usa il fingerprint mostrato nell’invito pairing.",
+      );
+    } catch {
+      setPairingMessage(
+        "Pubblicazione LAN non completata: verifica indirizzo, certificato e chiave TLS.",
+      );
+    } finally {
+      setIsStartingLan(false);
     }
   };
   const pairHost = async () => {
@@ -448,6 +486,33 @@ export function SettingsPage({
                 >
                   Genera invito pairing
                 </button>
+              ) : null}
+              {desktopHubStatus?.state !== "running" ? (
+                <>
+                  <label className="settings-row">
+                    <span>Indirizzo LAN del PC</span>
+                    <input
+                      aria-label="Indirizzo LAN del PC"
+                      disabled={isStartingLan || isManagingDesktopHub}
+                      inputMode="decimal"
+                      onChange={(event) => setLanAddress(event.currentTarget.value)}
+                      placeholder="192.168.1.10"
+                      value={lanAddress}
+                    />
+                  </label>
+                  <button
+                    className="secondary-action"
+                    disabled={isStartingLan || lanAddress.trim() === ""}
+                    onClick={() => void startLanHub()}
+                    type="button"
+                  >
+                    {isStartingLan ? "Selezione TLS…" : "Pubblica Local Hub in LAN"}
+                  </button>
+                  <small>
+                    Richiede consenso esplicito, certificato PEM e chiave privata selezionati da te.
+                    I file non vengono copiati né salvati da Nexora.
+                  </small>
+                </>
               ) : null}
             </div>
           ) : null}

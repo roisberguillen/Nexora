@@ -4,6 +4,7 @@ import {
   createDesktopPairingInvite,
   getDesktopLocalHubStatus,
   startDesktopLocalHub,
+  startDesktopLanHub,
   stopDesktopLocalHub,
 } from "./pcManagerDesktop";
 
@@ -37,5 +38,27 @@ describe("desktop PC Manager bridge", () => {
       hostFingerprint: "loopback",
     });
     expect(invoke).toHaveBeenCalledWith("pc_manager_create_pairing_invite");
+  });
+
+  it("passes explicit LAN TLS file selections to the native host command", async () => {
+    invoke.mockResolvedValueOnce({
+      state: "running",
+      binding: "lan",
+      address: "192.168.1.10:43173",
+    });
+    await expect(
+      startDesktopLanHub({
+        address: "192.168.1.10",
+        certificatePath: "C:/cert.pem",
+        privateKeyPath: "C:/key.pem",
+      }),
+    ).resolves.toMatchObject({ binding: "lan" });
+    expect(invoke).toHaveBeenCalledWith("pc_manager_start_lan", {
+      request: {
+        address: "192.168.1.10",
+        certificatePath: "C:/cert.pem",
+        privateKeyPath: "C:/key.pem",
+      },
+    });
   });
 });
