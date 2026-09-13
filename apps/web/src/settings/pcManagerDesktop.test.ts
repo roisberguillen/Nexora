@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  createDesktopPairingInvite,
   getDesktopLocalHubStatus,
   startDesktopLocalHub,
   stopDesktopLocalHub,
@@ -21,5 +22,20 @@ describe("desktop PC Manager bridge", () => {
     expect(invoke).toHaveBeenNthCalledWith(1, "pc_manager_start");
     expect(invoke).toHaveBeenNthCalledWith(2, "pc_manager_status");
     expect(invoke).toHaveBeenNthCalledWith(3, "pc_manager_stop");
+  });
+
+  it("requests a short-lived pairing invite from the running desktop host", async () => {
+    invoke.mockResolvedValueOnce({
+      endpoint: "http://127.0.0.1:43173",
+      grantId: "grant-1",
+      code: "code-1",
+      hostFingerprint: "loopback",
+      expiresAtMs: 123,
+    });
+    await expect(createDesktopPairingInvite()).resolves.toMatchObject({
+      grantId: "grant-1",
+      hostFingerprint: "loopback",
+    });
+    expect(invoke).toHaveBeenCalledWith("pc_manager_create_pairing_invite");
   });
 });

@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   configureLocalHostPasscode,
+  createLocalHostDeviceCredentials,
   logoutLocalHostSession,
   probeLocalHost,
+  parseLocalHostPairingInvite,
   redeemLocalHostPairing,
   readLocalHostConnection,
   revokeLocalHostDevice,
@@ -12,6 +14,32 @@ import {
 } from "./localHostConnection";
 
 describe("local host connection", () => {
+  it("parses a pairing invite without accepting secrets in an arbitrary shape", () => {
+    expect(
+      parseLocalHostPairingInvite(
+        JSON.stringify({
+          endpoint: "http://127.0.0.1:43173",
+          grantId: "grant-12345678",
+          code: "code-12345678",
+          hostFingerprint: "loopback",
+        }),
+      ),
+    ).toEqual({
+      endpoint: "http://127.0.0.1:43173",
+      grantId: "grant-12345678",
+      code: "code-12345678",
+      hostFingerprint: "loopback",
+    });
+    expect(() => parseLocalHostPairingInvite("{}")).toThrow("invalid_pairing_invite");
+  });
+
+  it("creates a high-entropy device token without persisting it", () => {
+    const credentials = createLocalHostDeviceCredentials("pixel-9-test");
+    expect(credentials.deviceId).toBe("pixel-9-test");
+    expect(credentials.deviceToken).toMatch(/^[0-9a-f]{48}$/);
+    expect(localStorage.getItem("nexora.local-host-connection.v1")).toBeNull();
+  });
+
   it("persists only a valid local host connection", () => {
     const values = new Map<string, string>();
     const storage = {

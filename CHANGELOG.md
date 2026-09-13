@@ -4,6 +4,9 @@
 
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
 - Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
+- PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del
+  dispositivo dalla Settings UI e la revoca volatile del dispositivo, senza persistenza di token o
+  credenziali.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and

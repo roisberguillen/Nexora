@@ -32,6 +32,50 @@ export interface LocalHostPairingRequest {
   readonly hostFingerprint: string;
 }
 
+export interface LocalHostPairingInvite {
+  readonly endpoint?: string;
+  readonly grantId: string;
+  readonly code: string;
+  readonly hostFingerprint: string;
+}
+
+export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite {
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch {
+    throw new Error("invalid_pairing_invite");
+  }
+  if (typeof value !== "object" || value === null) throw new Error("invalid_pairing_invite");
+  const candidate = value as Record<string, unknown>;
+  if (
+    typeof candidate.grantId !== "string" ||
+    candidate.grantId.length < 8 ||
+    typeof candidate.code !== "string" ||
+    candidate.code.length < 8 ||
+    typeof candidate.hostFingerprint !== "string" ||
+    candidate.hostFingerprint.length === 0
+  ) {
+    throw new Error("invalid_pairing_invite");
+  }
+  return Object.freeze({
+    ...(typeof candidate.endpoint === "string" ? { endpoint: candidate.endpoint } : {}),
+    grantId: candidate.grantId,
+    code: candidate.code,
+    hostFingerprint: candidate.hostFingerprint,
+  });
+}
+
+export function createLocalHostDeviceCredentials(deviceId = `device-${crypto.randomUUID()}`): {
+  readonly deviceId: string;
+  readonly deviceToken: string;
+} {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  const deviceToken = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return Object.freeze({ deviceId, deviceToken });
+}
+
 export interface LocalHostSessionRequest {
   (input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
 }

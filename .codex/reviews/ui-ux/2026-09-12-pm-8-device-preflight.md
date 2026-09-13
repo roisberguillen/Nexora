@@ -6,7 +6,7 @@ Schermata: PM-8 device and desktop gate preflight
 Route: Desktop installer / Pixel 9 ADB preflight
 Flusso principale: installer artefacts → ADB install/launch → Local Hub host gate
 Reviewer/fase: Codex — PM-8 preflight
-Modifiche: registrati installazione/avvio release sul Pixel 9 e il gate loopback del Local Hub; nessuna UI runtime modificata.
+Modifiche: invito pairing e autorizzazione/revoca device aggiunti alla Settings UI; registrati anche installazione/avvio release sul Pixel 9 e il gate loopback del Local Hub.
 
 ## Verifiche
 
@@ -18,7 +18,7 @@ Modifiche: registrati installazione/avvio release sul Pixel 9 e il gate loopback
 | Tablet | T-01 | N/A | Nessun device tablet collegato. |
 | Visuale | V-01 | PASS | WebView Android renderizza App Shell e route iniziale; PC Manager/Local Hub smoke resta aperto. |
 | Ricerca | R-01 | N/A | Nessuna ricerca modificata. |
-| Form | F-01 | N/A | Nessun form modificato. |
+| Form | F-01 | PASS | Invito pairing incollabile, stato busy e feedback accessibile verificati nei test Settings. |
 | Feedback | FB-01 | PASS | Device online registrato; Tauri mostra stop dopo l’avvio e il Local Hub loopback risponde su health/browser. |
 | Accessibilità | A-01 | N/A | Verifica device/browser reale ancora aperta. |
 | Finanza | FN-01 | N/A | Nessun dato reale modificato; sync reale non eseguito perché pairing/LAN non sono ancora chiusi. |
@@ -30,4 +30,4 @@ P0 aperti: Nessuno
 P1/P2 aperti: Nessuno
 Esito: PASS_CON_P1
 
-Nota: loopback host verificato; PM-8 finale ancora aperta per pairing/LAN/TLS/sync/recovery.
+Nota: pairing UI e loopback host verificati; PM-8 finale ancora aperta per passcode UI, LAN/TLS/sync/recovery e prova fisica.

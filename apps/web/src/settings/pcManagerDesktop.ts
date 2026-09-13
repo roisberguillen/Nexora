@@ -6,6 +6,14 @@ export interface DesktopHubStatus {
   readonly address?: string;
 }
 
+export interface DesktopPairingInvite {
+  readonly endpoint: string;
+  readonly grantId: string;
+  readonly code: string;
+  readonly hostFingerprint: string;
+  readonly expiresAtMs: number;
+}
+
 export function isDesktopRuntime(): boolean {
   return isTauri();
 }
@@ -16,6 +24,10 @@ export function startDesktopLocalHub(): Promise<DesktopHubStatus> {
 
 export function getDesktopLocalHubStatus(): Promise<DesktopHubStatus> {
   return invoke<DesktopHubStatus>("pc_manager_status");
+}
+
+export function createDesktopPairingInvite(): Promise<DesktopPairingInvite> {
+  return invoke<DesktopPairingInvite>("pc_manager_create_pairing_invite");
 }
 
 export function stopDesktopLocalHub(): Promise<void> {

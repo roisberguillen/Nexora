@@ -134,6 +134,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | PM-2 | complete — 2026-09-12 | `_nexora._tcp` discovery contract e `assess_same_network` con same/different subnet, loopback e prefisso invalido; test Rust PASS; PM-3 next |
 | PM-3 | complete — 2026-09-12 | `POST /v1/pairing/redeem`, grant monouso/scadenza/fingerprint/device credential, replay test e ledger authorization separation; 27 Rust tests PASS; PM-4 next |
 | PM-8 checkpoint | verified — 2026-09-13 | Tauri desktop Local Hub avviato dalla UI; `127.0.0.1:43173` health/browser root/`/settings` PASS; Pixel 9 ADB autorizzato e USB reverse socket PASS; pairing UI, LAN/TLS, sync/revoca/recovery reali ancora aperti |
+| PM-8 pairing slice | verified — 2026-09-13 | Invito monouso a entropia OS, bridge Tauri, redeem/revoca UI e credenziali device volatile; Rust 34/34, bridge 2/2, connessione/Settings 19/19, typecheck PASS; passcode UI, LAN/TLS, sync/recovery reali ancora aperti |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

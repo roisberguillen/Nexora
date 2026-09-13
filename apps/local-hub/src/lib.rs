@@ -584,6 +584,16 @@ pub struct LocalHubRuntime {
     task: Option<JoinHandle<Result<(), RuntimeError>>>,
 }
 
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PairingInvite {
+    pub endpoint: String,
+    pub grant_id: String,
+    pub code: String,
+    pub host_fingerprint: String,
+    pub expires_at_ms: u64,
+}
+
 impl LocalHubRuntime {
     /// Starts only the safe loopback transport. LAN startup remains deferred until the
     /// pairing/TLS runtime is wired in the later PC Manager phases.
@@ -633,6 +643,44 @@ impl LocalHubRuntime {
         self.state.runtime.read().await.clone()
     }
 
+    /// Creates a short-lived, single-use invite. The code is returned only to the
+    /// caller so it can be shown in the desktop pairing surface or encoded as QR.
+    pub async fn create_pairing_invite(&self) -> Result<PairingInvite, RuntimeError> {
+        if self.status().await.state != HubLifecycleState::Running {
+            return Err(RuntimeError::NotRunning);
+        }
+        let mut grant_bytes = [0_u8; 16];
+        let mut code_bytes = [0_u8; 18];
+        getrandom::getrandom(&mut grant_bytes).map_err(RuntimeError::Random)?;
+        getrandom::getrandom(&mut code_bytes).map_err(RuntimeError::Random)?;
+        let grant_id = hex_bytes(&grant_bytes);
+        let code = hex_bytes(&code_bytes);
+        let expires_at_ms = now_ms().saturating_add(5 * 60 * 1_000);
+        let host_fingerprint = self
+            .config
+            .host_fingerprint
+            .clone()
+            .unwrap_or_else(|| "loopback".to_owned());
+        self.state.pairing.write().await.add_qr_grant(
+            grant_id.clone(),
+            &code,
+            host_fingerprint.clone(),
+            expires_at_ms,
+        );
+        let endpoint = self
+            .state
+            .app_url
+            .clone()
+            .ok_or(RuntimeError::MissingAppUrl)?;
+        Ok(PairingInvite {
+            endpoint,
+            grant_id,
+            code,
+            host_fingerprint,
+            expires_at_ms,
+        })
+    }
+
     pub async fn stop(&mut self) -> Result<(), RuntimeError> {
         if let Some(shutdown) = self.shutdown.take() {
             self.state.runtime.write().await.state = HubLifecycleState::Stopping;
@@ -665,8 +713,15 @@ pub enum RuntimeError {
     Binding(ConfigError),
     Tls(TlsConfigError),
     LanRequiresPairing,
+    NotRunning,
+    MissingAppUrl,
+    Random(getrandom::Error),
     Io(std::io::Error),
     TaskJoin,
+}
+
+fn hex_bytes(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
 }
 
 fn now_ms() -> u64 {
@@ -2276,6 +2331,46 @@ mod tests {
         assert!(health.contains("\"runtime_state\":\"running\""));
         runtime.stop().await.unwrap();
         assert_eq!(runtime.status().await.state, HubLifecycleState::Stopped);
+    }
+
+    #[tokio::test]
+    async fn running_runtime_creates_single_use_pairing_invite_without_plaintext_storage() {
+        let state = LocalHubState {
+            app_url: Some("http://127.0.0.1:43173".to_owned()),
+            ..LocalHubState::default()
+        };
+        let config = TransportSecurityConfig {
+            port: 0,
+            ..TransportSecurityConfig::default()
+        };
+        let mut runtime = LocalHubRuntime::start(config, state.clone()).await.unwrap();
+        let invite = runtime.create_pairing_invite().await.unwrap();
+        assert_eq!(invite.endpoint, "http://127.0.0.1:43173");
+        assert_eq!(invite.grant_id.len(), 32);
+        assert_eq!(invite.code.len(), 36);
+        assert_eq!(invite.host_fingerprint, "loopback");
+        state
+            .pairing
+            .write()
+            .await
+            .redeem(
+                &invite.grant_id,
+                &invite.code,
+                "synthetic-phone",
+                "synthetic-device-token-123456",
+                &invite.host_fingerprint,
+                invite.expires_at_ms.saturating_sub(1),
+            )
+            .unwrap();
+        assert!(
+            state
+                .pairing
+                .read()
+                .await
+                .authorize("synthetic-phone", "synthetic-device-token-123456")
+                .is_ok()
+        );
+        runtime.stop().await.unwrap();
     }
 
     #[tokio::test]

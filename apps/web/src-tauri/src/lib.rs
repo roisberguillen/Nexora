@@ -4,7 +4,9 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 
-use nexora_local_hub::{HubRuntimeStatus, LocalHubRuntime, LocalHubState, TransportSecurityConfig};
+use nexora_local_hub::{
+    HubRuntimeStatus, LocalHubRuntime, LocalHubState, PairingInvite, TransportSecurityConfig,
+};
 use rusqlite::{Connection, params_from_iter, types::Value};
 use serde_json::{Map, Value as JsonValue};
 use tauri::{Manager, State};
@@ -54,6 +56,19 @@ async fn pc_manager_status(
         Some(runtime) => Ok(runtime.status().await),
         None => Ok(HubRuntimeStatus::default()),
     }
+}
+
+#[tauri::command]
+async fn pc_manager_create_pairing_invite(
+    state: State<'_, LocalHubDesktopState>,
+) -> Result<PairingInvite, String> {
+    let runtime = state.runtime.lock().await;
+    runtime
+        .as_ref()
+        .ok_or_else(|| "Local Hub is not running".to_owned())?
+        .create_pairing_invite()
+        .await
+        .map_err(|error| format!("Pairing invite failed: {error:?}"))
 }
 
 #[tauri::command]
@@ -264,6 +279,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             pc_manager_start,
             pc_manager_status,
+            pc_manager_create_pairing_invite,
             pc_manager_stop,
             nexora_sql_begin_transaction,
             nexora_sql_transaction_execute,

@@ -19,12 +19,18 @@ import {
   type AppPreferences,
 } from "./preferences";
 import {
+  createLocalHostDeviceCredentials,
+  parseLocalHostPairingInvite,
   probeLocalHost,
+  redeemLocalHostPairing,
   readLocalHostConnection,
+  revokeLocalHostDevice,
   writeLocalHostConnection,
   type LocalHostHealth,
+  type LocalHostCredentials,
 } from "./localHostConnection";
 import {
+  createDesktopPairingInvite,
   getDesktopLocalHubStatus,
   isDesktopRuntime,
   startDesktopLocalHub,
@@ -74,6 +80,10 @@ export function SettingsPage({
   const [isCheckingHost, setIsCheckingHost] = useState(false);
   const [desktopHubStatus, setDesktopHubStatus] = useState<DesktopHubStatus | null>(null);
   const [isManagingDesktopHub, setIsManagingDesktopHub] = useState(false);
+  const [pairingInvite, setPairingInvite] = useState("");
+  const [pairedCredentials, setPairedCredentials] = useState<LocalHostCredentials | null>(null);
+  const [pairingMessage, setPairingMessage] = useState<string | null>(null);
+  const [isPairing, setIsPairing] = useState(false);
   const desktopRuntime = isDesktopRuntime();
   const manageDesktopHub = async () => {
     setIsManagingDesktopHub(true);
@@ -126,6 +136,52 @@ export function SettingsPage({
       );
     } finally {
       setIsCheckingHost(false);
+    }
+  };
+  const generatePairingInvite = async () => {
+    setPairingMessage(null);
+    try {
+      const invite = await createDesktopPairingInvite();
+      setPairingInvite(JSON.stringify(invite));
+      setPairingMessage("Invito monouso creato. Copialo sul dispositivo da autorizzare.");
+    } catch {
+      setPairingMessage("Avvia prima il Local Hub desktop per creare un invito.");
+    }
+  };
+  const pairHost = async () => {
+    setIsPairing(true);
+    setPairingMessage(null);
+    try {
+      const invite = parseLocalHostPairingInvite(pairingInvite);
+      const endpoint = invite.endpoint ?? hostConnection.endpoint;
+      const credentials = createLocalHostDeviceCredentials();
+      await redeemLocalHostPairing(endpoint, { ...invite, ...credentials });
+      const next = { enabled: true, endpoint, runtimeState: "running" as const };
+      writeLocalHostConnection(next);
+      setHostConnection(next);
+      setPairedCredentials(credentials);
+      setPairingMessage("Dispositivo autorizzato. La credenziale resta solo in memoria.");
+    } catch {
+      setPairingMessage("Pairing non completato: verifica invito, host e scadenza.");
+    } finally {
+      setIsPairing(false);
+    }
+  };
+  const revokePairedDevice = async () => {
+    if (pairedCredentials === null) return;
+    setIsPairing(true);
+    try {
+      await revokeLocalHostDevice(
+        hostConnection.endpoint,
+        pairedCredentials,
+        pairedCredentials.deviceId,
+      );
+      setPairedCredentials(null);
+      setHostMessage("Dispositivo revocato. È necessario un nuovo pairing.");
+    } catch {
+      setPairingMessage("Revoca non completata: il dispositivo resta autorizzato.");
+    } finally {
+      setIsPairing(false);
     }
   };
   useEffect(() => {
@@ -330,7 +386,53 @@ export function SettingsPage({
                 Il Local Hub desktop parte in loopback. La pubblicazione LAN richiede pairing e
                 consenso esplicito.
               </small>
+              {desktopHubStatus?.state === "running" ? (
+                <button
+                  className="secondary-action"
+                  disabled={isPairing}
+                  onClick={() => void generatePairingInvite()}
+                  type="button"
+                >
+                  Genera invito pairing
+                </button>
+              ) : null}
             </div>
+          ) : null}
+          <label className="settings-row settings-row--stacked">
+            <span>Invito pairing</span>
+            <textarea
+              aria-label="Invito pairing"
+              disabled={isPairing}
+              onChange={(event) => setPairingInvite(event.currentTarget.value)}
+              placeholder="Incolla qui l’invito JSON generato dal PC"
+              rows={3}
+              value={pairingInvite}
+            />
+          </label>
+          <div className="settings-actions">
+            <button
+              className="primary-action"
+              disabled={isPairing || pairingInvite.trim() === ""}
+              onClick={() => void pairHost()}
+              type="button"
+            >
+              {isPairing ? "Autorizzazione…" : "Autorizza questo dispositivo"}
+            </button>
+            {pairedCredentials !== null ? (
+              <button
+                className="secondary-action"
+                disabled={isPairing}
+                onClick={() => void revokePairedDevice()}
+                type="button"
+              >
+                Revoca questo dispositivo
+              </button>
+            ) : null}
+          </div>
+          {pairingMessage !== null ? (
+            <p className="account-feedback" role="status">
+              {pairingMessage}
+            </p>
           ) : null}
           <label className="settings-row">
             <span>Indirizzo host</span>

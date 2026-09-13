@@ -319,11 +319,18 @@ Il root browser e la route `/settings` rispondono 200; `adb reverse tcp:43173 tc
 e il Pixel raggiunge la socket via USB (`toybox nc` exit 0). PM-8 resta aperta: pairing UI,
 LAN/TLS reale, sync/revoca/recovery e prova browser dal device non sono ancora dimostrati.
 
-**Avanzamento PM-8:** il gate software deterministico copre anche il serving dell'asset reale
-`apps/web/src-tauri/target/debug/browser/index.html`; il test Local Hub resta verde con 33 casi,
+**Avanzamento PM-8:** il gate software deterministico copre anche il serving dell’asset reale
+`apps/web/src-tauri/target/debug/browser/index.html`; il test Local Hub resta verde con 34 casi,
 inclusi shell browser, pairing monouso, sessione passcode, sync HTTP, replay/cursor e revoca.
 Questa evidenza non sostituisce la prova su dispositivo fisico, rete LAN reale, TLS e browser
 desktop post-install.
+
+**Slice PM-8 pairing UI — 2026-09-13:** il runtime genera ora un invito monouso a entropia OS,
+con scadenza di cinque minuti e grant conservato solo come digest; Tauri lo espone al desktop e
+Settings consente di incollarlo, creare una credenziale device volatile, redimere il grant e
+revocare il device. Test Rust `34/34`, bridge desktop `2/2`, connessione/Settings `19/19` e
+typecheck web PASS. Restano passcode/sessione UI, LAN/TLS reale, sync/recovery e prova fisica
+del pairing dal Pixel.
 
 ## Matrice di test minima
 
