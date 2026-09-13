@@ -143,6 +143,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | PM-8 Pixel browser/pairing/session/sync gate | verified — 2026-09-13 | Pixel apre `https://10.2.32.159:43173/#settings`; pairing UI `Host collegato`/`Runtime host running`, configure/unlock passcode PASS; browser wire gate sintetico `redeem 204`, `authorize 204`, `pull 200`, `logout 200`, `revoke 204`, post-revoca `403`, zero operazioni reali |
 | PM-8 | complete — 2026-09-13 | Final gate riconciliato: Local Hub desktop/LAN TLS, firewall, browser Pixel, pairing, passcode/sessione, sync pull, logout, revoca/recovery, documentazione e test globali verdi; roadmap PC Manager PM-0–PM-8 complete |
 | PMA-0 | complete — 2026-09-14 | Roadmap Phone Local Hub Android registrata; Pixel come host temporaneo, PC come client peer, ADR 0020 e checkpoint CRITICAL pubblicati; prossimo PMA-1 |
+| PMA-1 | in progress — 2026-09-14 | Tauri Android arm64 baseline verificata con percorso ufficiale `tauri android build --debug --target aarch64`; APK/AAB debug prodotti. Runtime host Android, lifecycle foreground, binding LAN e permessi minimali restano aperti |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,
