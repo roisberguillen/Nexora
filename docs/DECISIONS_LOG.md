@@ -23,6 +23,16 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-09-14 — Phone Local Hub: inversione controllata del ruolo host
+
+- **Contesto:** il PC Manager completato usa il PC come host; il nuovo flusso richiesto deve
+  partire dal Pixel e mostrare sul PC i dati presenti nel telefono.
+- **Scelta:** introdurre la roadmap PMA separata con Pixel come host temporaneo e PC come client
+  peer autorizzato. Il telefono espone solo HTTPS/API operation-log dopo consenso esplicito; non
+  condivide il file SQLite. Il comportamento PC-host PM-0–PM-8 resta invariato fino a PMA-8.
+- **Conseguenze:** servono lifecycle Android, permessi minimali, secure storage, sync bidirezionale
+  e review di sicurezza prima dell'abilitazione. Nessuna modifica dati è autorizzata in PMA-0.
+
 ## 2026-09-12 — PC Manager: trust model, sessione e ruolo del dispositivo
 
 - **Contesto:** la roadmap PC Manager richiede un flusso Pixel 9 → Local Hub → browser desktop,

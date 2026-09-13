@@ -1,7 +1,7 @@
 # Current task
 
-- Task: PC Manager PM-8 — gate reale Pixel 9 e desktop
-- Roadmap phase: PM-8
-- Status: `PM8_COMPLETE` — build aggiornato pubblicato in HTTPS LAN; Pixel renderizza `/#settings`, pairing UI mostra Host collegato/Runtime running, passcode configure/unlock riusciti e gate browser diretto redeem/authorize/pull/logout/revoke verificato con dati sintetici.
-- Evidence: `docs/ROADMAP_PC_MANAGER.md`; `.codex/state/test-evidence.md`; bundle MSI/NSIS in `apps/web/src-tauri/target/debug/bundle/`.
-- Next task: nessuno nella roadmap PC Manager PM-0–PM-8; mantenere il monitoraggio dei gate globali nelle future modifiche.
+- Task: PMA-0 — roadmap Phone Local Hub Android verso PC
+- Roadmap phase: PMA-0
+- Status: `PMA0_COMPLETE` — contratto ruolo Pixel-host/PC-client, ADR 0020, roadmap e checkpoint registrati; PMA-1 autorizzato solo dopo i gate documentali.
+- Evidence: `docs/ROADMAP_PHONE_LOCAL_HUB.md`; `docs/ADR/0020-phone-local-hub-host.md`; `docs/DECISIONS_LOG.md`.
+- Next task: PMA-1 — runtime host Android lifecycle, binding e permessi minimali.

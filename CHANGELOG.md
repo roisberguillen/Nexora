@@ -921,3 +921,8 @@
   the SQL plugin pool cannot keep a frontend transaction across IPC calls.
 - Rebuilt the unsigned arm64 Android APK with the native CRUD persistence fix.
 - Rebuilt the Windows standalone executable with the native CRUD persistence fix.
+
+# Unreleased
+
+- Added the Phone Local Hub roadmap and ADR for an explicit Pixel 9 host with an authorized PC
+  peer client. No runtime or ledger behavior changes are included in PMA-0.
