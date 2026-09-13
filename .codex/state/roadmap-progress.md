@@ -137,6 +137,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | PM-8 pairing slice | verified — 2026-09-13 | Invito monouso a entropia OS, bridge Tauri, redeem/revoca UI e credenziali device volatile; Rust 34/34, bridge 2/2, connessione/Settings 19/19, typecheck PASS; passcode UI, LAN/TLS, sync/recovery reali ancora aperti |
 | PM-8 passcode slice | verified — 2026-09-13 | Settings espone configure/unlock/logout tramite controller volatile; Settings/session tests 12/12 e web typecheck PASS; LAN/TLS, sync/recovery reali ancora aperti |
 | PM-8 TLS runtime slice | verified — 2026-09-13 | Runtime HTTPS LAN con handle di shutdown e guardia fail-closed implementato; `cargo check` Tauri locked e Local Hub 34/34 PASS; provisioning TLS, firewall e LAN reale ancora aperti |
+| PM-8 USB physical gate | verified — 2026-09-13 | Build Tauri aggiornato; Pixel via `adb reverse`; redeem/authorize 204, configure/unlock/pull/logout 200, revoke 204, accesso post-revoca 401 con dati sintetici; LAN Wi-Fi/TLS ancora aperta |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

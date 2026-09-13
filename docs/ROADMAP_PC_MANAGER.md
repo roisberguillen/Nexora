@@ -343,6 +343,12 @@ shutdown controllato; senza materiale TLS il bind fallisce prima dell’esposizi
 Tauri locked e `cargo test` Local Hub `34/34` PASS. Il comando Tauri continua intenzionalmente a
 usare loopback: provisioning cert/key/fingerprint, firewall e prova LAN reale sono ancora aperti.
 
+**Gate fisico USB — 2026-09-13:** sul build Tauri aggiornato il Pixel ha raggiunto la socket
+loopback tramite `adb reverse`; l’invito generato dalla UI ha completato redeem `204` e authorize
+`204`. Configure passcode, unlock, pull operations autorizzato e logout hanno restituito `200`,
+la revoca `204` e le richieste successive al device revocato `401`. Sono stati usati soltanto
+identificativi, passcode e operazioni sintetiche; questo gate non sostituisce LAN Wi-Fi/TLS.
+
 ## Matrice di test minima
 
 | Area | Casi obbligatori |

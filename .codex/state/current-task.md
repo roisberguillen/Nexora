@@ -2,6 +2,6 @@
 
 - Task: PC Manager PM-8 — gate reale Pixel 9 e desktop
 - Roadmap phase: PM-8
-- Status: `TLS_RUNTIME_SLICE_PASS` — Local Hub loopback, pairing/sessione UI e ramo runtime HTTPS LAN fail-closed implementati e testati; Tauri resta loopback-only finché non esiste provisioning TLS esplicito.
+- Status: `USB_PAIRING_SESSION_GATE_PASS` — Tauri aggiornato e Pixel raggiunge il Local Hub via USB reverse; redeem, authorize, passcode, unlock, sync pull, logout e revoca verificati con dati sintetici.
 - Evidence: `docs/ROADMAP_PC_MANAGER.md`; `.codex/state/test-evidence.md`; bundle MSI/NSIS in `apps/web/src-tauri/target/debug/bundle/`.
 - Next task: definire/provare provisioning TLS e configurazione LAN reale, poi verificare browser LAN, sync e recovery sul Pixel; chiudere solo con evidenze reali.

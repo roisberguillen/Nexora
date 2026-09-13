@@ -21,7 +21,7 @@ Modifiche: invito pairing, autorizzazione/revoca device e gestione passcode/sess
 | Form | F-01 | PASS | Invito pairing incollabile, stato busy e feedback accessibile verificati nei test Settings. |
 | Feedback | FB-01 | PASS | Device online registrato; Tauri mostra stop dopo l’avvio e il Local Hub loopback risponde su health/browser. |
 | Accessibilità | A-01 | N/A | Verifica device/browser reale ancora aperta. |
-| Finanza | FN-01 | N/A | Nessun dato reale modificato; sync reale non eseguito perché pairing/LAN non sono ancora chiusi. |
+| Finanza | FN-01 | PASS | Gate USB pairing/sessione eseguito con operazioni sintetiche; nessun dato reale modificato. |
 | Performance | P-01 | N/A | Performance LAN reale ancora aperta. |
 | TLS/LAN | N-01 | N/A | Il ramo HTTPS runtime è fail-closed e non cambia la UI Tauri; provisioning, firewall e rete LAN reale restano aperti. |
 
@@ -31,4 +31,4 @@ P0 aperti: Nessuno
 P1/P2 aperti: Nessuno
 Esito: PASS_CON_P1
 
-Nota: pairing e passcode UI e loopback host verificati; PM-8 finale ancora aperta per LAN/TLS/sync/recovery e prova fisica.
+Nota: pairing/passcode UI, gate USB e loopback host verificati; PM-8 finale ancora aperta per LAN Wi‑Fi/TLS, sync/recovery completa e provisioning.
