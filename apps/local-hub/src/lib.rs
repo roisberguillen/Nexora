@@ -265,17 +265,17 @@ async fn browser_asset(State(state): State<LocalHubState>, uri: Uri) -> Response
         return StatusCode::BAD_REQUEST.into_response();
     }
     let candidate = root.join(requested);
-    let bytes = match tokio::fs::read(&candidate).await {
-        Ok(bytes) => bytes,
+    let (served_path, bytes) = match tokio::fs::read(&candidate).await {
+        Ok(bytes) => (candidate, bytes),
         Err(_) if !requested.contains('.') => {
             match tokio::fs::read(root.join("index.html")).await {
-                Ok(bytes) => bytes,
+                Ok(bytes) => (root.join("index.html"), bytes),
                 Err(_) => return StatusCode::NOT_FOUND.into_response(),
             }
         }
         Err(_) => return StatusCode::NOT_FOUND.into_response(),
     };
-    let content_type = match candidate
+    let content_type = match served_path
         .extension()
         .and_then(|extension| extension.to_str())
     {
@@ -2113,6 +2113,21 @@ mod tests {
             String::from_utf8(body.to_vec())
                 .unwrap()
                 .contains("Nexora desktop shell")
+        );
+        let settings = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri("/settings")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(settings.status(), StatusCode::OK);
+        assert_eq!(
+            settings.headers().get(header::CONTENT_TYPE).unwrap(),
+            "text/html; charset=utf-8"
         );
         let traversal = app
             .oneshot(

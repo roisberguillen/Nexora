@@ -169,15 +169,26 @@ export async function probeLocalHost(
     cache: "no-store",
   });
   if (!response.ok) throw new Error("host_unavailable");
-  const body = (await response.json()) as Partial<LocalHostHealth> & { status?: string };
+  const body = (await response.json()) as Partial<LocalHostHealth> & {
+    status?: string;
+    api_version?: number;
+    app_url?: string;
+    runtime_state?: string;
+    sync_state?: string;
+    sync_cursor?: number;
+  };
+  const apiVersion = body.apiVersion ?? body.api_version;
+  const runtimeState = body.runtimeState ?? body.runtime_state;
+  const appUrl = body.appUrl ?? body.app_url;
+  const syncState = body.syncState ?? body.sync_state;
+  const syncCursor = body.syncCursor ?? body.sync_cursor;
   if (
     body.status !== "ok" ||
-    !Number.isSafeInteger(body.apiVersion) ||
-    body.runtimeState !== "running" ||
+    !Number.isSafeInteger(apiVersion) ||
+    runtimeState !== "running" ||
     (body.binding !== "loopback" && body.binding !== "lan")
   )
     throw new Error("invalid_host_response");
-  const apiVersion = body.apiVersion as number;
   if (apiVersion !== SUPPORTED_LOCAL_HOST_API_VERSION) {
     throw new Error("host_protocol_version_mismatch");
   }
@@ -186,13 +197,11 @@ export async function probeLocalHost(
     runtimeState: "running",
     binding: body.binding,
     ...(validAddress(body.address) ? { address: body.address } : {}),
-    ...(validSyncState(body.syncState) ? { syncState: body.syncState } : {}),
-    ...(typeof body.syncCursor === "number" &&
-    Number.isSafeInteger(body.syncCursor) &&
-    body.syncCursor >= 0
-      ? { syncCursor: body.syncCursor }
+    ...(validSyncState(syncState) ? { syncState } : {}),
+    ...(typeof syncCursor === "number" && Number.isSafeInteger(syncCursor) && syncCursor >= 0
+      ? { syncCursor }
       : {}),
-    ...(validUrl(body.appUrl) ? { appUrl: body.appUrl } : {}),
+    ...(validUrl(appUrl) ? { appUrl } : {}),
   });
 }
 

@@ -88,6 +88,34 @@ describe("local host connection", () => {
     expect(request).toHaveBeenCalledWith("https://host.home/v1/health", { cache: "no-store" });
   });
 
+  it("accepts the Local Hub wire health response in snake_case", async () => {
+    const request = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          api_version: 1,
+          status: "ok",
+          app_url: "https://10.2.32.159:43173/",
+          runtime_state: "running",
+          binding: "lan",
+          address: "10.2.32.159:43173",
+          sync_state: "idle",
+          sync_cursor: 0,
+        }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      ),
+    );
+
+    await expect(probeLocalHost("https://10.2.32.159:43173", request)).resolves.toEqual({
+      apiVersion: 1,
+      appUrl: "https://10.2.32.159:43173/",
+      runtimeState: "running",
+      binding: "lan",
+      address: "10.2.32.159:43173",
+      syncState: "idle",
+      syncCursor: 0,
+    });
+  });
+
   it("does not persist an app URL until the host health response advertises it", async () => {
     const request = vi.fn(
       async () =>

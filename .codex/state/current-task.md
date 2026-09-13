@@ -2,6 +2,6 @@
 
 - Task: PC Manager PM-8 — gate reale Pixel 9 e desktop
 - Roadmap phase: PM-8
-- Status: `LAN_TLS_PROVISIONED_FIREWALL_BLOCKED` — Tauri pubblica il Local Hub su HTTPS LAN con certificato/chiave scelti dalla UI; health locale 200 e Pixel sulla stessa subnet verificati, ma il probe TCP dal Pixel è bloccato da una regola Windows `Nexora` in ingresso con azione `Block` sulla rete pubblica.
+- Status: `PIXEL_BROWSER_PAIRING_SESSION_SYNC_RECOVERY_PASS` — build aggiornato pubblicato in HTTPS LAN; Pixel renderizza `/#settings`, pairing UI mostra Host collegato/Runtime running, passcode configure/unlock riusciti e gate browser diretto redeem/authorize/pull/logout/revoke verificato con dati sintetici.
 - Evidence: `docs/ROADMAP_PC_MANAGER.md`; `.codex/state/test-evidence.md`; bundle MSI/NSIS in `apps/web/src-tauri/target/debug/bundle/`.
-- Next task: ottenere consenso amministrativo per una regola firewall privata/porta 43173, poi verificare browser LAN, pairing, sync e recovery sul Pixel; chiudere solo con evidenze reali.
+- Next task: eseguire i gate finali completi, aggiornare documentazione e review, poi commit/push; PM-8 si chiude solo dopo i gate verdi e working tree verificato.

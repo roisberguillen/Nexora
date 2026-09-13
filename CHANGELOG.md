@@ -14,6 +14,11 @@
 - PC Manager PM-8: la Settings UI Tauri consente provisioning LAN esplicito con indirizzo e file
   PEM scelti dall'utente, senza persistenza dei percorsi; HTTPS/health dal PC verificati. Il gate
   Pixel resta aperto finché una regola firewall autorizzata consente la porta 43173 sulla LAN.
+- Local Hub browser: corretto il `Content-Type` delle route SPA senza estensione, così `/settings`
+  viene renderizzata come HTML invece di essere scaricata dal browser.
+- Local Hub browser: il client accetta il formato health wire `snake_case` del runtime Rust e mostra
+  correttamente Host collegato/Runtime running dopo pairing LAN; gate Pixel HTTPS/sessione/sync
+  sintetica verificato.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and

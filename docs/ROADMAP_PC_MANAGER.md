@@ -352,6 +352,20 @@ TCP verso la porta è andato in timeout: la Wi-Fi Windows è classificata `Publi
 persistenti `Nexora` risultano `Inbound/Block/Public`. L'aggiunta automatica della regola mirata
 è stata rifiutata per privilegi insufficienti; pairing browser LAN, sync e recovery restano aperti.
 
+**Correzione PM-8 browser SPA — 2026-09-13:** le route senza estensione come `/settings` che
+ricadevano su `index.html` ereditavano il MIME del path richiesto (`application/octet-stream`) e
+Chrome poteva scaricarle invece di renderizzarle. Il server ora calcola il `Content-Type` sul file
+effettivamente servito; il test Rust verifica `/settings` come `text/html`. Il retest fisico Pixel
+va ripetuto sul build aggiornato prima di chiudere browser/pairing.
+
+**Gate PM-8 browser/Pairing — 2026-09-13:** sul build Tauri aggiornato il Pixel ha aperto
+`https://10.2.32.159:43173/#settings` e ha renderizzato la superficie Settings dal browser locale.
+Il pairing UI ha mostrato `Host collegato` e `Runtime host: running`; la sessione UI ha completato
+configurazione passcode e unlock. Il parser health ora accetta il wire format reale `snake_case`.
+Con un secondo invito sintetico, il browser ha verificato `redeem 204`, `authorize 204`,
+`configure 200`, `unlock 200`, `pull operations 200` (zero operazioni reali), `logout 200`,
+`revoke 204` e autorizzazione post-revoca `403`. Nessun ledger reale è stato letto o modificato.
+
 **Gate fisico USB — 2026-09-13:** sul build Tauri aggiornato il Pixel ha raggiunto la socket
 loopback tramite `adb reverse`; l’invito generato dalla UI ha completato redeem `204` e authorize
 `204`. Configure passcode, unlock, pull operations autorizzato e logout hanno restituito `200`,

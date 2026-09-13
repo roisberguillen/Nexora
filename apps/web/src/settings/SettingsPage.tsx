@@ -206,6 +206,7 @@ export function SettingsPage({
       setHostConnection(next);
       setPairedCredentials(credentials);
       setSessionController(new LocalHostSessionController(endpoint, credentials));
+      setHostMessage("Host collegato. Runtime e sincronizzazione disponibili dopo l’unlock.");
       setPairingMessage("Dispositivo autorizzato. La credenziale resta solo in memoria.");
     } catch {
       setPairingMessage("Pairing non completato: verifica invito, host e scadenza.");
