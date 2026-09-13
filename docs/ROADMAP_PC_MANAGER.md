@@ -310,9 +310,11 @@ post-install, firewall, upgrade/restart e gate dispositivo.
 **Gate finale:** `PC_MANAGER_FINAL_GATE_PASS`, 0 P0/P1/P2 aperti, review di sicurezza indipendente,
 working tree pulito e documentazione/stato aggiornati.
 
-**Stato di esecuzione 2026-09-12:** PM-0–PM-7.5 hanno evidenze locali e commit pubblicati. PM-8
-non è dichiarato completato: `adb devices -l` resta vuoto dopo riavvio del server ADB, quindi
-installazione/launch e flusso reale Pixel 9 non sono verificati.
+**Stato di esecuzione 2026-09-13:** PM-0–PM-7.5 hanno evidenze locali e commit pubblicati. Il
+Pixel 9 autorizzato è ora rilevato, la release `0.5.0-1` è stata installata con `adb install -r`
+e `MainActivity` è rimasta in foreground senza marker di crash. PM-8 non è ancora completata:
+la porta Local Hub `43173` non è in ascolto e pairing, LAN, sync, revoca e recovery reali restano
+da eseguire dalla shell Tauri desktop.
 
 **Avanzamento PM-8:** il gate software deterministico copre anche il serving dell'asset reale
 `apps/web/src-tauri/target/debug/browser/index.html`; il test Local Hub resta verde con 33 casi,
