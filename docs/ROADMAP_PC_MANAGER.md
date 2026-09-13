@@ -311,10 +311,13 @@ post-install, firewall, upgrade/restart e gate dispositivo.
 working tree pulito e documentazione/stato aggiornati.
 
 **Stato di esecuzione 2026-09-13:** PM-0–PM-7.5 hanno evidenze locali e commit pubblicati. Il
-Pixel 9 autorizzato è ora rilevato, la release `0.5.0-1` è stata installata con `adb install -r`
-e `MainActivity` è rimasta in foreground senza marker di crash. PM-8 non è ancora completata:
-la porta Local Hub `43173` non è in ascolto e pairing, LAN, sync, revoca e recovery reali restano
-da eseguire dalla shell Tauri desktop.
+Pixel 9 autorizzato è rilevato, la release `0.5.0-1` è stata installata con `adb install -r`
+e `MainActivity` è rimasta in foreground senza marker di crash. Il gate loopback desktop è ora
+PASS: il pulsante Tauri avvia il Local Hub, `127.0.0.1:43173` resta in ascolto e `/v1/health`
+restituisce `status: ok`, `runtime_state: running`, `binding: loopback`, `sync_state: idle`.
+Il root browser e la route `/settings` rispondono 200; `adb reverse tcp:43173 tcp:43173` è attivo
+e il Pixel raggiunge la socket via USB (`toybox nc` exit 0). PM-8 resta aperta: pairing UI,
+LAN/TLS reale, sync/revoca/recovery e prova browser dal device non sono ancora dimostrati.
 
 **Avanzamento PM-8:** il gate software deterministico copre anche il serving dell'asset reale
 `apps/web/src-tauri/target/debug/browser/index.html`; il test Local Hub resta verde con 33 casi,
