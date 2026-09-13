@@ -366,6 +366,12 @@ Con un secondo invito sintetico, il browser ha verificato `redeem 204`, `authori
 `configure 200`, `unlock 200`, `pull operations 200` (zero operazioni reali), `logout 200`,
 `revoke 204` e autorizzazione post-revoca `403`. Nessun ledger reale è stato letto o modificato.
 
+**PM-8 COMPLETE — 2026-09-13:** tutti i gate PC Manager PM-0–PM-8 sono riconciliati: runtime
+desktop avviabile, pairing/autorizzazione/revoca, passcode e sessione, TLS LAN con consenso,
+stessa rete verificata, browser locale responsive sul Pixel, stato di connessione live, pull
+operation log, logout e recovery post-revoca. `pnpm verify`, Local Hub Rust 34/34, Tauri check,
+UI/UX review e orchestrator sono verdi; nessun dato finanziario reale è stato usato.
+
 **Gate fisico USB — 2026-09-13:** sul build Tauri aggiornato il Pixel ha raggiunto la socket
 loopback tramite `adb reverse`; l’invito generato dalla UI ha completato redeem `204` e authorize
 `204`. Configure passcode, unlock, pull operations autorizzato e logout hanno restituito `200`,

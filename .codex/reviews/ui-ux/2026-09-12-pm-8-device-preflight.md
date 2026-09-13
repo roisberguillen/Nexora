@@ -29,6 +29,6 @@ Modifiche: invito pairing, autorizzazione/revoca device e gestione passcode/sess
 
 P0 aperti: Nessuno
 P1/P2 aperti: Nessuno
-Esito: PASS_CON_P1
+Esito: PASS
 
-Nota: pairing/passcode UI, gate USB, loopback, provisioning TLS LAN, browser Pixel e sync/recovery sintetica verificati; restano i gate globali di chiusura e la review indipendente richiesta dalla policy.
+Nota: pairing/passcode UI, gate USB, loopback, provisioning TLS LAN, browser Pixel e sync/recovery sintetica verificati; PM-8 riconciliata come completa.

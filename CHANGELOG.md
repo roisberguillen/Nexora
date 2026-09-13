@@ -19,6 +19,8 @@
 - Local Hub browser: il client accetta il formato health wire `snake_case` del runtime Rust e mostra
   correttamente Host collegato/Runtime running dopo pairing LAN; gate Pixel HTTPS/sessione/sync
   sintetica verificato.
+- Closed PC Manager PM-8 final gate: Local Hub desktop/LAN, Pixel browser, pairing, passcode,
+  sessione, sync pull, logout e recovery post-revoca verificati con dati sintetici.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and
