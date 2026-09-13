@@ -29,6 +29,7 @@ import {
   type LocalHostHealth,
   type LocalHostCredentials,
 } from "./localHostConnection";
+import { LocalHostSessionController } from "./localHostSession";
 import {
   createDesktopPairingInvite,
   getDesktopLocalHubStatus,
@@ -84,6 +85,12 @@ export function SettingsPage({
   const [pairedCredentials, setPairedCredentials] = useState<LocalHostCredentials | null>(null);
   const [pairingMessage, setPairingMessage] = useState<string | null>(null);
   const [isPairing, setIsPairing] = useState(false);
+  const [sessionController, setSessionController] = useState<LocalHostSessionController | null>(
+    null,
+  );
+  const [sessionPasscode, setSessionPasscode] = useState("");
+  const [sessionMessage, setSessionMessage] = useState<string | null>(null);
+  const [isManagingSession, setIsManagingSession] = useState(false);
   const desktopRuntime = isDesktopRuntime();
   const manageDesktopHub = async () => {
     setIsManagingDesktopHub(true);
@@ -160,6 +167,7 @@ export function SettingsPage({
       writeLocalHostConnection(next);
       setHostConnection(next);
       setPairedCredentials(credentials);
+      setSessionController(new LocalHostSessionController(endpoint, credentials));
       setPairingMessage("Dispositivo autorizzato. La credenziale resta solo in memoria.");
     } catch {
       setPairingMessage("Pairing non completato: verifica invito, host e scadenza.");
@@ -177,11 +185,56 @@ export function SettingsPage({
         pairedCredentials.deviceId,
       );
       setPairedCredentials(null);
+      setSessionController(null);
+      setSessionPasscode("");
       setHostMessage("Dispositivo revocato. È necessario un nuovo pairing.");
     } catch {
       setPairingMessage("Revoca non completata: il dispositivo resta autorizzato.");
     } finally {
       setIsPairing(false);
+    }
+  };
+  const configureSessionPasscode = async () => {
+    if (sessionController === null || sessionPasscode.length < 4) return;
+    setIsManagingSession(true);
+    setSessionMessage(null);
+    try {
+      const salt = new Uint8Array(16);
+      crypto.getRandomValues(salt);
+      await sessionController.configure(sessionPasscode, salt);
+      setSessionMessage("Passcode configurato. Le API sync richiedono ora una sessione sbloccata.");
+    } catch {
+      setSessionMessage("Passcode non configurato: verifica la lunghezza e riprova.");
+    } finally {
+      setIsManagingSession(false);
+    }
+  };
+  const unlockSession = async () => {
+    if (sessionController === null || sessionPasscode.length < 4) return;
+    setIsManagingSession(true);
+    setSessionMessage(null);
+    try {
+      const sessionToken = createLocalHostDeviceCredentials("session").deviceToken;
+      await sessionController.unlock(sessionPasscode, sessionToken);
+      setSessionMessage("Sessione sbloccata in memoria.");
+    } catch {
+      setSessionMessage(
+        "Unlock non riuscito: passcode errato, sessione scaduta o non configurata.",
+      );
+    } finally {
+      setIsManagingSession(false);
+    }
+  };
+  const logoutSession = async () => {
+    if (sessionController === null) return;
+    setIsManagingSession(true);
+    try {
+      await sessionController.logout();
+      setSessionMessage("Sessione chiusa. Il passcode non è stato salvato nel browser.");
+    } catch {
+      setSessionMessage("Logout non riuscito: la sessione locale è stata comunque cancellata.");
+    } finally {
+      setIsManagingSession(false);
     }
   };
   useEffect(() => {
@@ -433,6 +486,54 @@ export function SettingsPage({
             <p className="account-feedback" role="status">
               {pairingMessage}
             </p>
+          ) : null}
+          {sessionController !== null ? (
+            <>
+              <label className="settings-row">
+                <span>Passcode sessione</span>
+                <input
+                  aria-label="Passcode sessione"
+                  autoComplete="off"
+                  disabled={isManagingSession}
+                  inputMode="numeric"
+                  minLength={4}
+                  onChange={(event) => setSessionPasscode(event.currentTarget.value)}
+                  type="password"
+                  value={sessionPasscode}
+                />
+              </label>
+              <div className="settings-actions">
+                <button
+                  className="secondary-action"
+                  disabled={isManagingSession || sessionPasscode.length < 4}
+                  onClick={() => void configureSessionPasscode()}
+                  type="button"
+                >
+                  Configura passcode
+                </button>
+                <button
+                  className="primary-action"
+                  disabled={isManagingSession || sessionPasscode.length < 4}
+                  onClick={() => void unlockSession()}
+                  type="button"
+                >
+                  Sblocca sessione
+                </button>
+                <button
+                  className="secondary-action"
+                  disabled={isManagingSession}
+                  onClick={() => void logoutSession()}
+                  type="button"
+                >
+                  Chiudi sessione
+                </button>
+              </div>
+              {sessionMessage !== null ? (
+                <p className="account-feedback" role="status">
+                  {sessionMessage}
+                </p>
+              ) : null}
+            </>
           ) : null}
           <label className="settings-row">
             <span>Indirizzo host</span>

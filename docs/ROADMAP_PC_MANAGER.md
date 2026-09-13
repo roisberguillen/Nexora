@@ -332,6 +332,11 @@ revocare il device. Test Rust `34/34`, bridge desktop `2/2`, connessione/Setting
 typecheck web PASS. Restano passcode/sessione UI, LAN/TLS reale, sync/recovery e prova fisica
 del pairing dal Pixel.
 
+**Slice PM-8 passcode UI — 2026-09-13:** dopo il pairing Settings espone configurazione passcode,
+unlock e logout tramite `LocalHostSessionController`; salt, passcode e session token non entrano
+in localStorage o URL. Test Settings/session controller `12/12` e typecheck web PASS. Restano
+LAN/TLS reale, sync/recovery e verifica fisica completa dal Pixel.
+
 ## Matrice di test minima
 
 | Area | Casi obbligatori |

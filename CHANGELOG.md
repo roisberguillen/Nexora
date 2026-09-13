@@ -7,6 +7,8 @@
 - PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del
   dispositivo dalla Settings UI e la revoca volatile del dispositivo, senza persistenza di token o
   credenziali.
+- PC Manager PM-8: aggiunti configurazione passcode, unlock e logout della sessione host dalla
+  Settings UI; passcode, salt e session token restano volatili e le API sync restano protette.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and

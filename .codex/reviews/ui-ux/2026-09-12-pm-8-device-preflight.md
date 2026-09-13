@@ -6,7 +6,7 @@ Schermata: PM-8 device and desktop gate preflight
 Route: Desktop installer / Pixel 9 ADB preflight
 Flusso principale: installer artefacts → ADB install/launch → Local Hub host gate
 Reviewer/fase: Codex — PM-8 preflight
-Modifiche: invito pairing e autorizzazione/revoca device aggiunti alla Settings UI; registrati anche installazione/avvio release sul Pixel 9 e il gate loopback del Local Hub.
+Modifiche: invito pairing, autorizzazione/revoca device e gestione passcode/sessione aggiunti alla Settings UI; registrati anche installazione/avvio release sul Pixel 9 e il gate loopback del Local Hub.
 
 ## Verifiche
 
@@ -30,4 +30,4 @@ P0 aperti: Nessuno
 P1/P2 aperti: Nessuno
 Esito: PASS_CON_P1
 
-Nota: pairing UI e loopback host verificati; PM-8 finale ancora aperta per passcode UI, LAN/TLS/sync/recovery e prova fisica.
+Nota: pairing e passcode UI e loopback host verificati; PM-8 finale ancora aperta per LAN/TLS/sync/recovery e prova fisica.
