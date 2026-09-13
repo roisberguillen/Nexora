@@ -24,6 +24,10 @@ export function isDesktopRuntime(): boolean {
   return isTauri();
 }
 
+export function isAndroidRuntime(): boolean {
+  return isTauri() && /Android/i.test(globalThis.navigator?.userAgent ?? "");
+}
+
 export function startDesktopLocalHub(): Promise<DesktopHubStatus> {
   return invoke<DesktopHubStatus>("pc_manager_start");
 }
@@ -42,4 +46,16 @@ export function startDesktopLanHub(input: DesktopLanStartRequest): Promise<Deskt
 
 export function stopDesktopLocalHub(): Promise<void> {
   return invoke("pc_manager_stop");
+}
+
+export function startPhoneLocalHub(): Promise<DesktopHubStatus> {
+  return invoke<DesktopHubStatus>("phone_local_hub_start");
+}
+
+export function getPhoneLocalHubStatus(): Promise<DesktopHubStatus> {
+  return invoke<DesktopHubStatus>("phone_local_hub_status");
+}
+
+export function stopPhoneLocalHub(): Promise<void> {
+  return invoke("phone_local_hub_stop");
 }

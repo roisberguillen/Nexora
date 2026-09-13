@@ -58,6 +58,13 @@ Verificare quali permessi sono realmente necessari e rifiutare permessi superflu
 
 Gate: compile Android, test lifecycle, loopback default, LAN fail-closed, nessun listener dopo stop.
 
+**Slice PMA-1.1 — 2026-09-14:** aggiunti comandi Tauri condivisi `phone_local_hub_start`,
+`phone_local_hub_status` e `phone_local_hub_stop`, con stato nativo condiviso e binding
+loopback-only. Settings identifica il runtime Android e mostra il controllo del Local Hub del
+telefono; il controllo desktop non viene mostrato sul Pixel. La build ufficiale Tauri Android
+arm64 ha prodotto APK/AAB debug e il bridge web passa 5/5 test. Il gate PMA-1 resta aperto per
+lifecycle foreground realmente osservato, LAN/TLS, permessi e test stop/restart sul dispositivo.
+
 ### PMA-2 — Ledger host e bridge sicuro
 
 Collegare il ledger SQLite nativo del Pixel alle API operation-log del Local Hub senza esporre il

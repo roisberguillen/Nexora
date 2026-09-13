@@ -1,15 +1,23 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   createDesktopPairingInvite,
   getDesktopLocalHubStatus,
+  getPhoneLocalHubStatus,
+  isAndroidRuntime,
   startDesktopLocalHub,
   startDesktopLanHub,
+  startPhoneLocalHub,
   stopDesktopLocalHub,
+  stopPhoneLocalHub,
 } from "./pcManagerDesktop";
 
 const invoke = vi.hoisted(() => vi.fn());
 vi.mock("@tauri-apps/api/core", () => ({ invoke, isTauri: () => true }));
+
+beforeEach(() => {
+  invoke.mockReset();
+});
 
 describe("desktop PC Manager bridge", () => {
   it("uses the Tauri lifecycle commands", async () => {
@@ -60,5 +68,22 @@ describe("desktop PC Manager bridge", () => {
         privateKeyPath: "C:/key.pem",
       },
     });
+  });
+
+  it("uses the phone-host lifecycle commands", async () => {
+    invoke
+      .mockResolvedValueOnce({ state: "running", binding: "loopback" })
+      .mockResolvedValueOnce({ state: "running", binding: "loopback" })
+      .mockResolvedValueOnce(undefined);
+    await expect(startPhoneLocalHub()).resolves.toMatchObject({ state: "running" });
+    await expect(getPhoneLocalHubStatus()).resolves.toMatchObject({ binding: "loopback" });
+    await expect(stopPhoneLocalHub()).resolves.toBeUndefined();
+    expect(invoke).toHaveBeenNthCalledWith(1, "phone_local_hub_start");
+    expect(invoke).toHaveBeenNthCalledWith(2, "phone_local_hub_status");
+    expect(invoke).toHaveBeenNthCalledWith(3, "phone_local_hub_stop");
+  });
+
+  it("does not classify a browser user agent as the Android native runtime", () => {
+    expect(isAndroidRuntime()).toBe(false);
   });
 });

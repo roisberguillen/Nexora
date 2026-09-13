@@ -926,3 +926,5 @@
 
 - Added the Phone Local Hub roadmap and ADR for an explicit Pixel 9 host with an authorized PC
   peer client. No runtime or ledger behavior changes are included in PMA-0.
+- Started PMA-1 with Android foreground/loopback Local Hub lifecycle commands and a mobile Settings
+  control. LAN/TLS, secure pairing and ledger exposure remain gated to later phases.

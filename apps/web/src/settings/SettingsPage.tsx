@@ -34,10 +34,14 @@ import { LocalHostSessionController } from "./localHostSession";
 import {
   createDesktopPairingInvite,
   getDesktopLocalHubStatus,
+  getPhoneLocalHubStatus,
+  isAndroidRuntime,
   isDesktopRuntime,
   startDesktopLocalHub,
   startDesktopLanHub,
+  startPhoneLocalHub,
   stopDesktopLocalHub,
+  stopPhoneLocalHub,
   type DesktopHubStatus,
 } from "./pcManagerDesktop";
 
@@ -83,6 +87,8 @@ export function SettingsPage({
   const [isCheckingHost, setIsCheckingHost] = useState(false);
   const [desktopHubStatus, setDesktopHubStatus] = useState<DesktopHubStatus | null>(null);
   const [isManagingDesktopHub, setIsManagingDesktopHub] = useState(false);
+  const [phoneHubStatus, setPhoneHubStatus] = useState<DesktopHubStatus | null>(null);
+  const [isManagingPhoneHub, setIsManagingPhoneHub] = useState(false);
   const [lanAddress, setLanAddress] = useState("");
   const [isStartingLan, setIsStartingLan] = useState(false);
   const [pairingInvite, setPairingInvite] = useState("");
@@ -95,7 +101,8 @@ export function SettingsPage({
   const [sessionPasscode, setSessionPasscode] = useState("");
   const [sessionMessage, setSessionMessage] = useState<string | null>(null);
   const [isManagingSession, setIsManagingSession] = useState(false);
-  const desktopRuntime = isDesktopRuntime();
+  const androidRuntime = isAndroidRuntime();
+  const desktopRuntime = isDesktopRuntime() && !androidRuntime;
   const manageDesktopHub = async () => {
     setIsManagingDesktopHub(true);
     try {
@@ -121,6 +128,33 @@ export function SettingsPage({
       .then(setDesktopHubStatus)
       .catch(() => undefined);
   }, [desktopRuntime]);
+  const managePhoneHub = async () => {
+    setIsManagingPhoneHub(true);
+    try {
+      const next =
+        phoneHubStatus?.state === "running"
+          ? (await stopPhoneLocalHub(), null)
+          : await startPhoneLocalHub();
+      setPhoneHubStatus(next);
+      setHostMessage(
+        next === null
+          ? "Local Hub del telefono arrestato."
+          : "Local Hub del telefono avviato in foreground e loopback.",
+      );
+    } catch {
+      setHostMessage(
+        "Impossibile gestire il Local Hub del telefono. Nessun dato locale è stato modificato.",
+      );
+    } finally {
+      setIsManagingPhoneHub(false);
+    }
+  };
+  useEffect(() => {
+    if (!androidRuntime) return;
+    void getPhoneLocalHubStatus()
+      .then(setPhoneHubStatus)
+      .catch(() => undefined);
+  }, [androidRuntime]);
   const activateHost = async () => {
     setIsCheckingHost(true);
     setHostMessage(null);
@@ -462,6 +496,25 @@ export function SettingsPage({
             </>
           ) : null}
           <SettingsRow label="Origine dati" value="Archivio di questo browser" />
+          {androidRuntime ? (
+            <div className="settings-actions">
+              <button
+                className="primary-action"
+                disabled={isManagingPhoneHub}
+                onClick={() => void managePhoneHub()}
+                type="button"
+              >
+                {phoneHubStatus?.state === "running"
+                  ? "Arresta Local Hub del telefono"
+                  : "Avvia Local Hub del telefono"}
+              </button>
+              <SettingsRow label="Runtime telefono" value={phoneHubStatus?.state ?? "stopped"} />
+              <small>
+                PMA-1: il Local Hub resta in foreground e loopback. La pubblicazione LAN richiederà
+                consenso, TLS e pairing nelle fasi successive.
+              </small>
+            </div>
+          ) : null}
           {desktopRuntime ? (
             <div className="settings-actions">
               <button

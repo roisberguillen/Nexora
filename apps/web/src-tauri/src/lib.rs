@@ -21,7 +21,7 @@ struct NativeTransactionState {
 }
 
 #[derive(Default)]
-struct LocalHubDesktopState {
+struct LocalHubNativeState {
     runtime: AsyncMutex<Option<LocalHubRuntime>>,
 }
 
@@ -36,7 +36,7 @@ struct LanHubStartRequest {
 #[tauri::command]
 async fn pc_manager_start(
     app: tauri::AppHandle,
-    state: State<'_, LocalHubDesktopState>,
+    state: State<'_, LocalHubNativeState>,
 ) -> Result<HubRuntimeStatus, String> {
     let mut runtime = state.runtime.lock().await;
     if let Some(current) = runtime.as_ref() {
@@ -57,10 +57,48 @@ async fn pc_manager_start(
     Ok(status)
 }
 
+/// Starts the phone-owned host while Nexora is in the Android foreground.
+/// PMA-1 intentionally keeps this command loopback-only; LAN/TLS provisioning
+/// is a later gate and cannot be inferred from the phone being on Wi-Fi.
+#[tauri::command]
+async fn phone_local_hub_start(
+    app: tauri::AppHandle,
+    state: State<'_, LocalHubNativeState>,
+) -> Result<HubRuntimeStatus, String> {
+    let mut runtime = state.runtime.lock().await;
+    if let Some(current) = runtime.as_ref() {
+        return Ok(current.status().await);
+    }
+    let mut hub_state = LocalHubState::default();
+    hub_state.app_url = Some("http://127.0.0.1:43173".to_owned());
+    hub_state.browser_root = app
+        .path()
+        .resource_dir()
+        .ok()
+        .map(|directory| directory.join("browser"));
+    let started = LocalHubRuntime::start(TransportSecurityConfig::default(), hub_state)
+        .await
+        .map_err(|error| format!("Phone Local Hub start failed: {error:?}"))?;
+    let status = started.status().await;
+    *runtime = Some(started);
+    Ok(status)
+}
+
+#[tauri::command]
+async fn phone_local_hub_status(
+    state: State<'_, LocalHubNativeState>,
+) -> Result<HubRuntimeStatus, String> {
+    let runtime = state.runtime.lock().await;
+    match runtime.as_ref() {
+        Some(runtime) => Ok(runtime.status().await),
+        None => Ok(HubRuntimeStatus::default()),
+    }
+}
+
 #[tauri::command]
 async fn pc_manager_start_lan(
     app: tauri::AppHandle,
-    state: State<'_, LocalHubDesktopState>,
+    state: State<'_, LocalHubNativeState>,
     request: LanHubStartRequest,
 ) -> Result<HubRuntimeStatus, String> {
     let mut runtime = state.runtime.lock().await;
@@ -114,7 +152,7 @@ async fn pc_manager_start_lan(
 
 #[tauri::command]
 async fn pc_manager_status(
-    state: State<'_, LocalHubDesktopState>,
+    state: State<'_, LocalHubNativeState>,
 ) -> Result<HubRuntimeStatus, String> {
     let runtime = state.runtime.lock().await;
     match runtime.as_ref() {
@@ -125,7 +163,7 @@ async fn pc_manager_status(
 
 #[tauri::command]
 async fn pc_manager_create_pairing_invite(
-    state: State<'_, LocalHubDesktopState>,
+    state: State<'_, LocalHubNativeState>,
 ) -> Result<PairingInvite, String> {
     let runtime = state.runtime.lock().await;
     runtime
@@ -137,13 +175,25 @@ async fn pc_manager_create_pairing_invite(
 }
 
 #[tauri::command]
-async fn pc_manager_stop(state: State<'_, LocalHubDesktopState>) -> Result<(), String> {
+async fn pc_manager_stop(state: State<'_, LocalHubNativeState>) -> Result<(), String> {
     let mut runtime = state.runtime.lock().await;
     if let Some(mut runtime) = runtime.take() {
         runtime
             .stop()
             .await
             .map_err(|error| format!("Local Hub stop failed: {error:?}"))?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn phone_local_hub_stop(state: State<'_, LocalHubNativeState>) -> Result<(), String> {
+    let mut runtime = state.runtime.lock().await;
+    if let Some(mut runtime) = runtime.take() {
+        runtime
+            .stop()
+            .await
+            .map_err(|error| format!("Phone Local Hub stop failed: {error:?}"))?;
     }
     Ok(())
 }
@@ -340,13 +390,16 @@ fn nexora_sql_rollback_transaction(
 pub fn run() {
     tauri::Builder::default()
         .manage(NativeTransactionState::default())
-        .manage(LocalHubDesktopState::default())
+        .manage(LocalHubNativeState::default())
         .invoke_handler(tauri::generate_handler![
             pc_manager_start,
+            phone_local_hub_start,
+            phone_local_hub_status,
             pc_manager_start_lan,
             pc_manager_status,
             pc_manager_create_pairing_invite,
             pc_manager_stop,
+            phone_local_hub_stop,
             nexora_sql_begin_transaction,
             nexora_sql_transaction_execute,
             nexora_sql_transaction_select,
