@@ -76,6 +76,7 @@ import {
 import { AnalyticsPage } from "./analytics/AnalyticsPage";
 import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
+import { installPhoneLocalHubForegroundGuard } from "./settings/phoneLocalHubForeground";
 import { readAppPreferences } from "./settings/preferences";
 import { NotificationsPage } from "./notifications/NotificationsPage";
 import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
@@ -183,6 +184,8 @@ function AppContent({
   const [financialMonthStartDay, setFinancialMonthStartDay] = useState(
     () => readAppPreferences().financialMonthStartDay,
   );
+
+  useEffect(() => installPhoneLocalHubForegroundGuard(), []);
 
   useEffect(() => {
     if (!appLockConfig || isAppLocked) return;

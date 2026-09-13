@@ -65,6 +65,12 @@ telefono; il controllo desktop non viene mostrato sul Pixel. La build ufficiale 
 arm64 ha prodotto APK/AAB debug e il bridge web passa 5/5 test. Il gate PMA-1 resta aperto per
 lifecycle foreground realmente osservato, LAN/TLS, permessi e test stop/restart sul dispositivo.
 
+**Slice PMA-1.2 — 2026-09-14:** aggiunta una guardia di foreground globale: quando la WebView
+Android diventa `hidden`, Nexora invoca lo stop del Local Hub; il cleanup rimuove il listener e
+gli errori di stop non espongono segreti né bloccano il ledger locale. Test guardia, bridge e
+Settings `18/18` PASS. Il gate PMA-1 resta aperto per la prova fisica con build firmata e per
+binding LAN/TLS/permessi.
+
 ### PMA-2 — Ledger host e bridge sicuro
 
 Collegare il ledger SQLite nativo del Pixel alle API operation-log del Local Hub senza esporre il

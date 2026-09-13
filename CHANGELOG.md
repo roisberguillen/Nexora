@@ -928,3 +928,5 @@
   peer client. No runtime or ledger behavior changes are included in PMA-0.
 - Started PMA-1 with Android foreground/loopback Local Hub lifecycle commands and a mobile Settings
   control. LAN/TLS, secure pairing and ledger exposure remain gated to later phases.
+- Added a fail-safe Android foreground guard that stops the phone Local Hub when the app WebView is
+  hidden, without adding permissions or touching ledger data.
