@@ -18,6 +18,7 @@ use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::time::Duration;
 use subtle::ConstantTimeEq;
 use tokio::sync::{Mutex, RwLock, oneshot};
 use tokio::task::JoinHandle;
@@ -582,6 +583,7 @@ pub struct LocalHubRuntime {
     state: LocalHubState,
     shutdown: Option<oneshot::Sender<()>>,
     task: Option<JoinHandle<Result<(), RuntimeError>>>,
+    tls_handle: Option<axum_server::Handle>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -595,36 +597,78 @@ pub struct PairingInvite {
 }
 
 impl LocalHubRuntime {
-    /// Starts only the safe loopback transport. LAN startup remains deferred until the
-    /// pairing/TLS runtime is wired in the later PC Manager phases.
+    /// Starts loopback HTTP or explicitly configured LAN HTTPS. LAN never falls back to HTTP.
     pub async fn start(
         config: TransportSecurityConfig,
         state: LocalHubState,
     ) -> Result<Self, RuntimeError> {
-        if config.binding != BindingMode::Loopback {
-            return Err(RuntimeError::LanRequiresPairing);
-        }
         state.runtime.write().await.state = HubLifecycleState::Starting;
         let address = config.bind_addr().map_err(RuntimeError::Binding)?;
-        let listener = tokio::net::TcpListener::bind(address)
-            .await
+        let (shutdown, shutdown_signal) = oneshot::channel();
+        if config.binding == BindingMode::Loopback {
+            let listener = tokio::net::TcpListener::bind(address)
+                .await
+                .map_err(RuntimeError::Io)?;
+            let bound_address = listener.local_addr().map_err(RuntimeError::Io)?;
+            {
+                let mut runtime = state.runtime.write().await;
+                runtime.state = HubLifecycleState::Running;
+                runtime.binding = config.binding;
+                runtime.address = Some(bound_address);
+            }
+            let server_state = state.clone();
+            let task = tokio::spawn(async move {
+                let result = axum::serve(listener, router(server_state.clone()))
+                    .with_graceful_shutdown(async move {
+                        let _ = shutdown_signal.await;
+                    })
+                    .await
+                    .map_err(RuntimeError::Io);
+                if result.is_err() {
+                    let mut runtime = server_state.runtime.write().await;
+                    runtime.state = HubLifecycleState::Failed;
+                }
+                result
+            });
+            return Ok(Self {
+                config,
+                state,
+                shutdown: Some(shutdown),
+                task: Some(task),
+                tls_handle: None,
+            });
+        }
+
+        let tls = config.server_config().map_err(RuntimeError::Tls)?;
+        let std_listener = std::net::TcpListener::bind(address).map_err(RuntimeError::Io)?;
+        std_listener
+            .set_nonblocking(true)
             .map_err(RuntimeError::Io)?;
-        let bound_address = listener.local_addr().map_err(RuntimeError::Io)?;
+        let bound_address = std_listener.local_addr().map_err(RuntimeError::Io)?;
+        let handle = axum_server::Handle::new();
+        let server = axum_server::tls_rustls::from_tcp_rustls(
+            std_listener,
+            axum_server::tls_rustls::RustlsConfig::from_config(Arc::new(tls)),
+        )
+        .handle(handle.clone());
         {
             let mut runtime = state.runtime.write().await;
             runtime.state = HubLifecycleState::Running;
             runtime.binding = config.binding;
             runtime.address = Some(bound_address);
         }
-        let (shutdown, shutdown_signal) = oneshot::channel();
         let server_state = state.clone();
+        let shutdown_handle = handle.clone();
         let task = tokio::spawn(async move {
-            let result = axum::serve(listener, router(server_state.clone()))
-                .with_graceful_shutdown(async move {
-                    let _ = shutdown_signal.await;
-                })
-                .await
-                .map_err(RuntimeError::Io);
+            let result = tokio::select! {
+                result = server.serve(router(server_state.clone()).into_make_service()) => {
+                    result.map_err(RuntimeError::Io)
+                }
+                _ = shutdown_signal => {
+                    shutdown_handle.graceful_shutdown(Some(Duration::from_secs(1)));
+                    Ok(())
+                }
+            };
             if result.is_err() {
                 let mut runtime = server_state.runtime.write().await;
                 runtime.state = HubLifecycleState::Failed;
@@ -636,6 +680,7 @@ impl LocalHubRuntime {
             state,
             shutdown: Some(shutdown),
             task: Some(task),
+            tls_handle: Some(handle),
         })
     }
 
@@ -682,6 +727,9 @@ impl LocalHubRuntime {
     }
 
     pub async fn stop(&mut self) -> Result<(), RuntimeError> {
+        if let Some(handle) = self.tls_handle.take() {
+            handle.shutdown();
+        }
         if let Some(shutdown) = self.shutdown.take() {
             self.state.runtime.write().await.state = HubLifecycleState::Stopping;
             let _ = shutdown.send(());
@@ -2374,7 +2422,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn lifecycle_rejects_lan_before_pairing_runtime_is_ready() {
+    async fn lifecycle_rejects_lan_without_explicit_tls_material() {
         let config = TransportSecurityConfig {
             binding: BindingMode::Lan,
             address: "192.0.2.10".parse().unwrap(),
@@ -2382,7 +2430,7 @@ mod tests {
         };
         assert!(matches!(
             LocalHubRuntime::start(config, LocalHubState::default()).await,
-            Err(RuntimeError::LanRequiresPairing)
+            Err(RuntimeError::Binding(ConfigError::TlsCertificateRequired))
         ));
     }
 

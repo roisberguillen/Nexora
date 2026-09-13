@@ -337,6 +337,12 @@ unlock e logout tramite `LocalHostSessionController`; salt, passcode e session t
 in localStorage o URL. Test Settings/session controller `12/12` e typecheck web PASS. Restano
 LAN/TLS reale, sync/recovery e verifica fisica completa dal Pixel.
 
+**Slice PM-8 TLS runtime — 2026-09-13:** `LocalHubRuntime` supporta il bind LAN solo dopo la
+validazione di indirizzo, certificato, chiave e fingerprint e serve esclusivamente HTTPS con
+shutdown controllato; senza materiale TLS il bind fallisce prima dell’esposizione. `cargo check`
+Tauri locked e `cargo test` Local Hub `34/34` PASS. Il comando Tauri continua intenzionalmente a
+usare loopback: provisioning cert/key/fingerprint, firewall e prova LAN reale sono ancora aperti.
+
 ## Matrice di test minima
 
 | Area | Casi obbligatori |

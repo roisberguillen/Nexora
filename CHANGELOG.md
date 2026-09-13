@@ -9,6 +9,8 @@
   credenziali.
 - PC Manager PM-8: aggiunti configurazione passcode, unlock e logout della sessione host dalla
   Settings UI; passcode, salt e session token restano volatili e le API sync restano protette.
+- Local Hub: il runtime supporta ora il ramo HTTPS LAN con shutdown controllato quando sono forniti
+  indirizzo specifico, certificato, chiave e fingerprint; il default Tauri resta loopback-only.
 
 - Closed FIX.10 Android device gate: signed release install/launch, native backup/restore, offline
   operation, import preview/deduplication, synthetic import commit, ledger verification and
