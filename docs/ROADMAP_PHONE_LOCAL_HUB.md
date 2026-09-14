@@ -88,6 +88,14 @@ atomiche già supportate dal dominio.
 Gate: adapter parity, precisione monetaria, trasferimenti neutrali, replay/duplicate/conflict e
 recovery dopo consegna parziale.
 
+**Slice PMA-2.1 — 2026-09-14:** il phone-host ora può collegare il runtime allo stesso file
+SQLite nativo `nexora.db` usato dall’app. `sync_operations`, `sync_revisions` e
+`sync_operation_deliveries` persistono payload operation-log, revisioni, cursor, idempotenza e
+delivery replay; le route HTTP protette usano il backend durevole quando il runtime Android lo
+fornisce, mentre il percorso desktop di test resta compatibile. Rust Local Hub `36/36`, Tauri
+`cargo check --locked` e typecheck local-host PASS. Restano aperti snapshot/bootstrap e
+applicazione atomica dei payload alle tabelle ledger, quindi PMA-2 non è ancora chiusa.
+
 ### PMA-3 — Discovery, pairing e autorizzazione dal telefono
 
 Pubblicare `_nexora._tcp` solo dopo consenso, generare QR/grant monouso, mostrare fingerprint e

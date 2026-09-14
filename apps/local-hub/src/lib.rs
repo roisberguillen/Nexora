@@ -23,6 +23,9 @@ use subtle::ConstantTimeEq;
 use tokio::sync::{Mutex, RwLock, oneshot};
 use tokio::task::JoinHandle;
 
+mod sqlite_sync;
+pub use sqlite_sync::{DurableSyncError, SqliteSyncOperationStore};
+
 pub const API_VERSION: u16 = 1;
 pub const DEFAULT_PORT: u16 = 43_173;
 
@@ -36,6 +39,7 @@ pub struct LocalHubState {
     /// Root directory for the versioned local browser build, if published.
     pub browser_root: Option<PathBuf>,
     pub sync: Arc<Mutex<SyncTransport>>,
+    pub durable_sync: Option<Arc<Mutex<SqliteSyncOperationStore>>>,
     pub sync_status: Arc<RwLock<SyncRuntimeStatus>>,
     pub sessions: Arc<Mutex<PasscodeSessionRegistry>>,
 }
@@ -49,6 +53,7 @@ impl Default for LocalHubState {
             app_url: None,
             browser_root: None,
             sync: Arc::new(Mutex::new(SyncTransport::default())),
+            durable_sync: None,
             sync_status: Arc::new(RwLock::new(SyncRuntimeStatus::default())),
             sessions: Arc::new(Mutex::new(PasscodeSessionRegistry::default())),
         }
@@ -381,13 +386,32 @@ async fn push_operations(
         .unwrap_or_default();
     state.sync_status.write().await.state = SyncRuntimeState::Syncing;
     let pairing = state.pairing.read().await;
-    let result = state.sync.lock().await.push_authorized(
-        &pairing,
-        device_id,
-        token,
-        &request.delivery_id,
-        request.operations,
-    );
+    let result = if let Some(store) = state.durable_sync.as_ref() {
+        match store
+            .lock()
+            .await
+            .push(&request.delivery_id, request.operations)
+        {
+            Ok(results) => Ok(results),
+            Err(DurableSyncError::Transport(error)) => Err(error),
+            Err(DurableSyncError::Sqlite(_) | DurableSyncError::NumericOverflow) => {
+                state.sync_status.write().await.state = SyncRuntimeState::Error;
+                return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({"error":"sync_storage_unavailable"})),
+                )
+                    .into_response();
+            }
+        }
+    } else {
+        state.sync.lock().await.push_authorized(
+            &pairing,
+            device_id,
+            token,
+            &request.delivery_id,
+            request.operations,
+        )
+    };
     match result {
         Ok(results) => {
             let conflict = results
@@ -427,13 +451,29 @@ async fn pull_operations(
             .into_response();
     }
     state.sync_status.write().await.state = SyncRuntimeState::Syncing;
-    let operations: Vec<(u64, ReplicableOperation)> = state
-        .sync
-        .lock()
-        .await
-        .pull(query.after)
-        .map(|(cursor, operation)| (cursor, operation.clone()))
-        .collect();
+    let operations: Result<Vec<(u64, ReplicableOperation)>, DurableSyncError> =
+        if let Some(store) = state.durable_sync.as_ref() {
+            store.lock().await.pull(query.after)
+        } else {
+            Ok(state
+                .sync
+                .lock()
+                .await
+                .pull(query.after)
+                .map(|(cursor, operation)| (cursor, operation.clone()))
+                .collect())
+        };
+    let operations = match operations {
+        Ok(operations) => operations,
+        Err(_) => {
+            state.sync_status.write().await.state = SyncRuntimeState::Error;
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({"error":"sync_storage_unavailable"})),
+            )
+                .into_response();
+        }
+    };
     let cursor = operations
         .last()
         .map(|operation| operation.0)
@@ -2144,7 +2184,11 @@ mod tests {
 
     #[tokio::test]
     async fn sync_http_requires_pairing_and_preserves_replay_and_cursor_contracts() {
-        let state = LocalHubState::default();
+        let directory = tempfile::tempdir().unwrap();
+        let mut state = LocalHubState::default();
+        state.durable_sync = Some(Arc::new(Mutex::new(
+            SqliteSyncOperationStore::open(directory.path().join("nexora.db")).unwrap(),
+        )));
         let token = "synthetic-sync-device-token-123456";
         state.pairing.write().await.add_qr_grant(
             "grant-sync",

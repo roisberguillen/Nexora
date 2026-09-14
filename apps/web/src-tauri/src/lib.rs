@@ -1,12 +1,14 @@
 use std::collections::HashMap;
 use std::fs;
 use std::net::IpAddr;
+use std::sync::Arc;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use nexora_local_hub::{
-    HubRuntimeStatus, LocalHubRuntime, LocalHubState, PairingInvite, TransportSecurityConfig,
+    HubRuntimeStatus, LocalHubRuntime, LocalHubState, PairingInvite, SqliteSyncOperationStore,
+    TransportSecurityConfig,
 };
 use rusqlite::{Connection, params_from_iter, types::Value};
 use serde_json::{Map, Value as JsonValue};
@@ -70,6 +72,11 @@ async fn phone_local_hub_start(
         return Ok(current.status().await);
     }
     let mut hub_state = LocalHubState::default();
+    let database_file = database_path(&app, "sqlite:nexora.db")?;
+    hub_state.durable_sync = Some(Arc::new(AsyncMutex::new(
+        SqliteSyncOperationStore::open(database_file)
+            .map_err(|error| format!("Phone Local Hub SQLite sync store failed: {error}"))?,
+    )));
     hub_state.app_url = Some("http://127.0.0.1:43173".to_owned());
     hub_state.browser_root = app
         .path()

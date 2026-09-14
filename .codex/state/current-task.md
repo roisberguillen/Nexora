@@ -2,6 +2,6 @@
 
 - Task: PMA-2 — ledger host e bridge sicuro Android
 - Roadmap phase: PMA-1
-- Status: `PMA1_COMPLETE` — APK release arm64 firmato/installato sul Pixel 9; lifecycle foreground/background, start/stop/restart, loopback health e permessi minimali verificati senza perdita dati. PMA-2 autorizzata.
-- Evidence: `docs/ROADMAP_PHONE_LOCAL_HUB.md`; `apps/web/src-tauri/src/lib.rs`; `apps/web/src/settings/pcManagerDesktop.ts`; `.codex/state/test-evidence.md`.
-- Next task: instradare PMA-2 — collegare il ledger SQLite nativo alle API operation-log con adapter parity, transazioni atomiche e recovery.
+- Status: `PMA2_IN_PROGRESS` — slice 2.1 collegata: operation-log durevole su SQLite nativo del phone-host con idempotenza, revisioni, cursor e delivery replay; snapshot/bootstrap e applicazione atomica ai payload ledger restano aperti.
+- Evidence: `docs/ROADMAP_PHONE_LOCAL_HUB.md`; `apps/local-hub/src/sqlite_sync.rs`; `apps/local-hub/src/lib.rs`; `apps/web/src-tauri/src/lib.rs`; `.codex/state/test-evidence.md`.
+- Next task: completare PMA-2.2 — definire snapshot/bootstrap ledger e applicare operation payload in transazione atomica con invarianti Money/trasferimenti.

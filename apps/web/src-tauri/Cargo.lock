@@ -2345,6 +2345,7 @@ dependencies = [
  "axum-server",
  "getrandom 0.2.17",
  "mdns-sd",
+ "rusqlite",
  "rustls",
  "rustls-pemfile",
  "serde",
