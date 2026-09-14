@@ -214,17 +214,18 @@ a {
   z-index: 90;
   inset: 0;
   display: grid;
-  align-items: end;
+  align-items: stretch;
   background: rgb(11 28 48 / 42%);
 }
 
 .mobile-navigation-sheet {
-  width: min(100%, 34rem);
-  max-height: min(88dvh, 48rem);
-  padding: 1rem 1rem calc(1.25rem + env(safe-area-inset-bottom));
-  margin-inline: auto;
+  width: 100%;
+  height: 100dvh;
+  max-height: none;
+  padding: calc(1rem + env(safe-area-inset-top)) 1rem
+    calc(1.25rem + env(safe-area-inset-bottom));
   overflow-y: auto;
-  border-radius: 1.5rem 1.5rem 0 0;
+  border-radius: 0;
   background: var(--color-card);
   box-shadow: var(--shadow-floating);
 }

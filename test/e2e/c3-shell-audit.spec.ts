@@ -20,6 +20,11 @@ test("C3.1 shell: drawer, focus, route e resize live", async ({ page }, testInfo
   const mobileMenu = page.getByRole("button", { name: "Apri menu completo" });
   await mobileMenu.click();
   const mobileDrawer = page.getByRole("dialog", { name: "Menu" });
+  const mobileDrawerBox = await mobileDrawer.boundingBox();
+  expect(mobileDrawerBox?.x).toBe(0);
+  expect(mobileDrawerBox?.y).toBe(0);
+  expect(mobileDrawerBox?.width).toBe(390);
+  expect(mobileDrawerBox?.height).toBe(844);
   for (const label of [
     "Budget",
     "Ricorrenze e allocazioni",
