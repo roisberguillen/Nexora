@@ -68,8 +68,16 @@ lifecycle foreground realmente osservato, LAN/TLS, permessi e test stop/restart 
 **Slice PMA-1.2 — 2026-09-14:** aggiunta una guardia di foreground globale: quando la WebView
 Android diventa `hidden`, Nexora invoca lo stop del Local Hub; il cleanup rimuove il listener e
 gli errori di stop non espongono segreti né bloccano il ledger locale. Test guardia, bridge e
-Settings `18/18` PASS. Il gate PMA-1 resta aperto per la prova fisica con build firmata e per
-binding LAN/TLS/permessi.
+Settings `18/18` PASS.
+
+**PMA-1 COMPLETE / PASS — 2026-09-14:** build release arm64 firmata con certificato atteso,
+installazione in-place sul Pixel 9 (`adb install -r` PASS), avvio foreground senza marker di
+crash, start/stop/restart del Local Hub dalla Settings UI, health `200` su `127.0.0.1:43173`,
+`runtime_state=running`, `binding=loopback` e `sync_state=idle`. Dopo stop non è rimasto alcun
+listener `LISTEN`; dopo HOME/background il health è diventato non disponibile e il listener è
+scomparso. Il restart successivo è tornato `200` e il Local Hub è stato lasciato attivo.
+Manifest Android: solo `INTERNET`; nessun permesso storage/Bluetooth/foreground-service. PMA-2 è
+autorizzata.
 
 ### PMA-2 — Ledger host e bridge sicuro
 

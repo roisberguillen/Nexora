@@ -1,7 +1,7 @@
 # Current task
 
-- Task: PMA-1 — runtime host Android foreground e loopback
+- Task: PMA-2 — ledger host e bridge sicuro Android
 - Roadmap phase: PMA-1
-- Status: `PMA1_IN_PROGRESS` — contratto PMA-0 pubblicato; Android arm64 Tauri build baseline verificata con APK/AAB debug, guardia stop su WebView hidden e preflight permessi/ADB verificati. Restano aperti prova fisica della nuova build firmata, binding LAN/TLS e verifica stop/restart sul dispositivo.
+- Status: `PMA1_COMPLETE` — APK release arm64 firmato/installato sul Pixel 9; lifecycle foreground/background, start/stop/restart, loopback health e permessi minimali verificati senza perdita dati. PMA-2 autorizzata.
 - Evidence: `docs/ROADMAP_PHONE_LOCAL_HUB.md`; `apps/web/src-tauri/src/lib.rs`; `apps/web/src/settings/pcManagerDesktop.ts`; `.codex/state/test-evidence.md`.
-- Next task: completare PMA-1 — runtime host Android lifecycle, binding e permessi minimali.
+- Next task: instradare PMA-2 — collegare il ledger SQLite nativo alle API operation-log con adapter parity, transazioni atomiche e recovery.

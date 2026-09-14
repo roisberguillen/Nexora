@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- PMA-1 Phone Local Hub completata sul Pixel 9: runtime Android firmato, lifecycle foreground/background,
+  loopback health, stop/restart e permessi minimi verificati senza rimuovere dati locali.
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
 - Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
 - PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del
