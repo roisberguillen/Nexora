@@ -29,4 +29,5 @@ P0 aperti: Nessuno
 Gate result: PASS.
 
 State reconciliation: PMA-2 remains in progress; direct domain-table application and transfer
-invariant enforcement are deferred to PMA-2.3.
+invariant enforcement are deferred to PMA-2.3. Android packaging/device verification is a
+separate blocked credential gate; no UI behavior is claimed from that gate.

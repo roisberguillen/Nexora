@@ -103,7 +103,9 @@ intere e valute ISO maiuscole; la validazione avviene dentro la stessa transazio
 delivery, quindi un payload invalido non lascia delivery, operation o revisioni parziali. Sono
 coperti rifiuto atomico, bootstrap dopo riapertura, pairing HTTP e replay. L'applicazione del
 payload alle tabelle di dominio e il controllo completo delle invarianti trasferimenti restano il
-prossimo slice PMA-2.3; PMA-2 resta in progress.
+prossimo slice PMA-2.3; PMA-2 resta in progress. La verifica fisica della build aggiornata sul Pixel è
+ancora bloccata: la compilazione AArch64 è riuscita, ma il packaging release ha richiesto la password
+della keystore nel processo che ha eseguito Gradle.
 
 ### PMA-3 — Discovery, pairing e autorizzazione dal telefono
 
