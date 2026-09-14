@@ -116,8 +116,15 @@ e trigger nativi impediscono valute/conto/date incoerenti e trasferimenti non bi
 di un trasferimento vengono quindi registrate come movimenti neutrali e il bundle viene creato solo
 quando debit/credit rispettano le invarianti del ledger. Sono coperti replay/idempotenza, rollback
 su payload invalido, precisione e bundle bilanciato/non bilanciato (`38/38` test Local Hub).
-Il build/install Android aggiornato e la verifica fisica sul Pixel restano il gate di chiusura di
-PMA-2.3; PMA-2 resta in progress.
+Il build/install Android aggiornato e la verifica fisica sul Pixel chiudono PMA-2.3; il perimetro
+del prossimo slice è PMA-3. I mapper per entity di dominio diversi da `transaction` e `transfer`
+restano esplicitamente fuori da questo slice e vengono rifiutati fail-closed.
+
+Gate fisico PASS: APK universal release firmato con schema v2 installato con `adb install -r` sul
+Pixel 9 autorizzato. Dalla Settings UI: start → `/v1/health` 200 con runtime `running`, binding
+`loopback` e sync `idle`; stop → endpoint non raggiungibile e listener assente; restart → health 200;
+HOME/background → endpoint non raggiungibile e listener assente; il runtime è stato lasciato
+nuovamente `running`. Nessun dato finanziario reale usato.
 
 ### PMA-3 — Discovery, pairing e autorizzazione dal telefono
 

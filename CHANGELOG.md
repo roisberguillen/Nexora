@@ -12,6 +12,8 @@
   health, stop/restart e guardia background verificati senza reset dei dati.
 - PMA-2.3: il phone-host applica transaction e transfer payload nello stesso SQLite transaction,
   con minor-unit, foreign key, trigger di neutralità trasferimenti e rollback su invarianti violate.
+- PMA-2.3 device gate: APK release firmato installato sul Pixel 9; Local Hub loopback verificato
+  con start/stop/restart e arresto automatico in background, senza usare dati finanziari reali.
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
 - Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
 - PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del

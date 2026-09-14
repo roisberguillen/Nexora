@@ -26,7 +26,9 @@ Esito: PASS
 
 P0 aperti: Nessuno
 
-Gate result: PASS per il codice; gate Android/device ancora pending.
+Gate result: PASS per codice e device Android. Il gate fisico ha verificato lifecycle loopback,
+health, stop, restart e guardia background sul Pixel 9; nessuna superficie UI è stata modificata.
 
-State reconciliation: PMA-2 remains in progress; physical PMA-2.3 verification is required before
-the next roadmap slice.
+State reconciliation: PMA-2.3 è chiusa per il perimetro transaction/transfer; PMA-3 è il prossimo
+slice autorizzato. I mapper per altre entity restano fuori perimetro e devono essere aggiunti in
+uno slice dedicato prima di dichiarare completa la copertura ledger complessiva.
