@@ -6,6 +6,8 @@
   loopback health, stop/restart e permessi minimi verificati senza rimuovere dati locali.
 - PMA-2.1: operation-log durevole SQLite per il phone-host con idempotenza, revisioni, cursor,
   conflitti espliciti e protezione replay delle delivery.
+- PMA-2.2: bootstrap autenticato del phone-host con cursor/schema versionato e payload ledger
+  JSON tipizzato, allowlistato e validato atomicamente prima della persistenza.
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
 - Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
 - PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del

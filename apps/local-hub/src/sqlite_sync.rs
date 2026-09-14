@@ -1,4 +1,5 @@
 use rusqlite::{Connection, OptionalExtension, params};
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 use crate::{OperationApplyResult, ReplicableOperation, TransportError};
@@ -8,6 +9,27 @@ use crate::{OperationApplyResult, ReplicableOperation, TransportError};
 /// WebView lifecycle changes without exposing the ledger file over HTTP.
 pub struct SqliteSyncOperationStore {
     connection: Connection,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct SyncBootstrapSnapshot {
+    pub schema_version: u16,
+    pub cursor: u64,
+    pub operations: Vec<(u64, ReplicableOperation)>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+struct LedgerOperationPayload {
+    schema_version: u16,
+    operation: String,
+    entity_type: String,
+    entity_id: String,
+    #[serde(default)]
+    amount_minor: Option<String>,
+    #[serde(default)]
+    currency: Option<String>,
+    #[serde(default)]
+    transfer_group_id: Option<String>,
 }
 
 impl SqliteSyncOperationStore {
@@ -44,6 +66,10 @@ impl SqliteSyncOperationStore {
         operations: impl IntoIterator<Item = ReplicableOperation>,
     ) -> Result<Vec<OperationApplyResult>, DurableSyncError> {
         let transaction = self.connection.transaction()?;
+        let operations: Vec<ReplicableOperation> = operations.into_iter().collect();
+        for operation in &operations {
+            validate_payload(operation)?;
+        }
         let delivered = transaction
             .query_row(
                 "SELECT 1 FROM sync_operation_deliveries WHERE delivery_id = ?1",
@@ -150,6 +176,16 @@ impl SqliteSyncOperationStore {
         })
         .collect()
     }
+
+    pub fn bootstrap(&self) -> Result<SyncBootstrapSnapshot, DurableSyncError> {
+        let operations = self.pull(0)?;
+        let cursor = operations.last().map(|(cursor, _)| *cursor).unwrap_or(0);
+        Ok(SyncBootstrapSnapshot {
+            schema_version: 1,
+            cursor,
+            operations,
+        })
+    }
 }
 
 #[derive(Debug)]
@@ -157,6 +193,72 @@ pub enum DurableSyncError {
     Sqlite(rusqlite::Error),
     Transport(TransportError),
     NumericOverflow,
+    InvalidPayload(String),
+}
+
+fn validate_payload(operation: &ReplicableOperation) -> Result<(), DurableSyncError> {
+    if operation.idempotency_key.is_empty()
+        || operation.device_id.is_empty()
+        || operation.entity_id.is_empty()
+        || operation.created_at.is_empty()
+    {
+        return Err(DurableSyncError::InvalidPayload(
+            "missing operation identity".to_owned(),
+        ));
+    }
+    let payload: LedgerOperationPayload = serde_json::from_str(&operation.payload)
+        .map_err(|_| DurableSyncError::InvalidPayload("payload is not valid JSON".to_owned()))?;
+    if payload.schema_version != 1
+        || !matches!(payload.operation.as_str(), "upsert" | "delete")
+        || payload.entity_id != operation.entity_id
+        || !matches!(
+            payload.entity_type.as_str(),
+            "account"
+                | "category"
+                | "tag"
+                | "transaction"
+                | "transaction_split"
+                | "transaction_tag"
+                | "transfer"
+                | "recurring_rule"
+                | "allocation_plan"
+                | "budget"
+                | "loan"
+                | "investment_position"
+                | "monthly_journal"
+                | "import_batch"
+                | "import_row"
+        )
+    {
+        return Err(DurableSyncError::InvalidPayload(
+            "unsupported ledger payload".to_owned(),
+        ));
+    }
+    if let Some(amount_minor) = payload.amount_minor.as_deref()
+        && !amount_minor.parse::<i128>().is_ok()
+    {
+        return Err(DurableSyncError::InvalidPayload(
+            "amount_minor must be an integer string".to_owned(),
+        ));
+    }
+    if let Some(currency) = payload.currency.as_deref()
+        && (currency.len() != 3
+            || !currency
+                .chars()
+                .all(|character| character.is_ascii_uppercase()))
+    {
+        return Err(DurableSyncError::InvalidPayload(
+            "currency must be an ISO uppercase code".to_owned(),
+        ));
+    }
+    if let Some(transfer_group_id) = payload.transfer_group_id.as_deref()
+        && transfer_group_id.is_empty()
+    {
+        return Err(DurableSyncError::InvalidPayload(
+            "transfer_group_id cannot be empty".to_owned(),
+        ));
+    }
+    Ok(())
 }
 
 impl From<rusqlite::Error> for DurableSyncError {
@@ -195,7 +297,9 @@ mod tests {
             base_revision,
             revision: 0,
             payload_digest: format!("sha256:{key}"),
-            payload: "{\"amount_minor\":\"100\"}".to_owned(),
+            payload: format!(
+                "{{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"transaction-synthetic\",\"amount_minor\":\"100\",\"currency\":\"EUR\"}}"
+            ),
             tombstone: false,
             created_at: "2026-09-14T00:00:00.000Z".to_owned(),
         }
@@ -244,5 +348,24 @@ mod tests {
             }]
         );
         assert_eq!(store.pull(0).unwrap().len(), 1);
+    }
+
+    #[test]
+    fn rejects_invalid_payload_atomically_and_bootstraps_durable_log() {
+        let directory = tempdir().unwrap();
+        let mut store = SqliteSyncOperationStore::open(directory.path().join("nexora.db")).unwrap();
+        let mut invalid = operation("op-invalid", 0);
+        invalid.payload = "not-json".to_owned();
+        assert!(matches!(
+            store.push("delivery-invalid", [invalid]),
+            Err(super::DurableSyncError::InvalidPayload(_))
+        ));
+        assert_eq!(store.pull(0).unwrap(), Vec::new());
+        store
+            .push("delivery-valid", [operation("op-valid", 0)])
+            .unwrap();
+        assert_eq!(store.bootstrap().unwrap().schema_version, 1);
+        assert_eq!(store.bootstrap().unwrap().cursor, 1);
+        assert_eq!(store.bootstrap().unwrap().operations.len(), 1);
     }
 }

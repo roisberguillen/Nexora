@@ -24,7 +24,7 @@ use tokio::sync::{Mutex, RwLock, oneshot};
 use tokio::task::JoinHandle;
 
 mod sqlite_sync;
-pub use sqlite_sync::{DurableSyncError, SqliteSyncOperationStore};
+pub use sqlite_sync::{DurableSyncError, SqliteSyncOperationStore, SyncBootstrapSnapshot};
 
 pub const API_VERSION: u16 = 1;
 pub const DEFAULT_PORT: u16 = 43_173;
@@ -76,6 +76,7 @@ pub fn router(state: LocalHubState) -> Router {
             "/v1/operations",
             axum::routing::get(pull_operations).post(push_operations),
         )
+        .route("/v1/bootstrap", get(bootstrap_sync))
         .fallback(browser_asset)
         .with_state(state)
 }
@@ -394,6 +395,13 @@ async fn push_operations(
         {
             Ok(results) => Ok(results),
             Err(DurableSyncError::Transport(error)) => Err(error),
+            Err(DurableSyncError::InvalidPayload(_)) => {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    Json(serde_json::json!({"error":"invalid_ledger_payload"})),
+                )
+                    .into_response();
+            }
             Err(DurableSyncError::Sqlite(_) | DurableSyncError::NumericOverflow) => {
                 state.sync_status.write().await.state = SyncRuntimeState::Error;
                 return (
@@ -436,6 +444,50 @@ async fn push_operations(
         Err(TransportError::UnauthorizedDevice) => StatusCode::FORBIDDEN.into_response(),
         Err(TransportError::CursorAhead) => StatusCode::BAD_REQUEST.into_response(),
     }
+}
+
+async fn bootstrap_sync(
+    State(state): State<LocalHubState>,
+    headers: HeaderMap,
+) -> impl IntoResponse {
+    if authorized_device(&state, &headers).await.is_none() {
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({"error":"unauthorized"})),
+        )
+            .into_response();
+    }
+    let snapshot = if let Some(store) = state.durable_sync.as_ref() {
+        match store.lock().await.bootstrap() {
+            Ok(snapshot) => snapshot,
+            Err(_) => {
+                state.sync_status.write().await.state = SyncRuntimeState::Error;
+                return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({"error":"sync_storage_unavailable"})),
+                )
+                    .into_response();
+            }
+        }
+    } else {
+        let operations: Vec<(u64, ReplicableOperation)> = state
+            .sync
+            .lock()
+            .await
+            .pull(0)
+            .map(|(cursor, operation)| (cursor, operation.clone()))
+            .collect();
+        let cursor = operations.last().map(|(cursor, _)| *cursor).unwrap_or(0);
+        SyncBootstrapSnapshot {
+            schema_version: 1,
+            cursor,
+            operations,
+        }
+    };
+    let mut status = state.sync_status.write().await;
+    status.state = SyncRuntimeState::Idle;
+    status.cursor = status.cursor.max(snapshot.cursor);
+    (StatusCode::OK, Json(snapshot)).into_response()
 }
 
 async fn pull_operations(
@@ -2216,7 +2268,7 @@ mod tests {
             base_revision: 0,
             revision: 0,
             payload_digest: "sha256:payload".to_owned(),
-            payload: "synthetic-payload".to_owned(),
+            payload: "{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\",\"amount_minor\":\"100\",\"currency\":\"EUR\"}".to_owned(),
             tombstone: false,
             created_at: "2026-09-12T00:00:00Z".to_owned(),
         };
@@ -2260,6 +2312,7 @@ mod tests {
             .unwrap();
         assert_eq!(replay.status(), StatusCode::CONFLICT);
         let pull = app
+            .clone()
             .oneshot(
                 headers(
                     Request::builder()
@@ -2276,6 +2329,20 @@ mod tests {
         let response: PullOperationsResponse = serde_json::from_slice(&body).unwrap();
         assert_eq!(response.operations.len(), 1);
         assert_eq!(response.operations[0].0, 1);
+        let bootstrap = app
+            .oneshot(
+                headers(Request::builder().method("GET").uri("/v1/bootstrap"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(bootstrap.status(), StatusCode::OK);
+        let body = to_bytes(bootstrap.into_body(), usize::MAX).await.unwrap();
+        let snapshot: SyncBootstrapSnapshot = serde_json::from_slice(&body).unwrap();
+        assert_eq!(snapshot.schema_version, 1);
+        assert_eq!(snapshot.cursor, 1);
+        assert_eq!(snapshot.operations.len(), 1);
     }
 
     #[tokio::test]

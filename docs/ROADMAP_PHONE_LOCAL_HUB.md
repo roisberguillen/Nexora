@@ -96,6 +96,15 @@ fornisce, mentre il percorso desktop di test resta compatibile. Rust Local Hub `
 `cargo check --locked` e typecheck local-host PASS. Restano aperti snapshot/bootstrap e
 applicazione atomica dei payload alle tabelle ledger, quindi PMA-2 non è ancora chiusa.
 
+**Slice PMA-2.2 — 2026-09-14:** aggiunto il bootstrap autenticato `/v1/bootstrap`, con schema
+versionato, cursor e operation-log durevole. I payload del phone-host devono essere JSON tipizzati
+con operazione `upsert/delete`, entity allowlistata, `entity_id` coerente, importi in stringhe
+intere e valute ISO maiuscole; la validazione avviene dentro la stessa transazione che registra la
+delivery, quindi un payload invalido non lascia delivery, operation o revisioni parziali. Sono
+coperti rifiuto atomico, bootstrap dopo riapertura, pairing HTTP e replay. L'applicazione del
+payload alle tabelle di dominio e il controllo completo delle invarianti trasferimenti restano il
+prossimo slice PMA-2.3; PMA-2 resta in progress.
+
 ### PMA-3 — Discovery, pairing e autorizzazione dal telefono
 
 Pubblicare `_nexora._tcp` solo dopo consenso, generare QR/grant monouso, mostrare fingerprint e
