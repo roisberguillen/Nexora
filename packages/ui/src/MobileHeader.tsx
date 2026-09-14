@@ -1,43 +1,19 @@
 import { type RefObject } from "react";
 
 import { NavIcon } from "./NavIcon";
-import type { NavigationRoute } from "./SidebarNavigation";
-
-const labels: Partial<Record<NavigationRoute, string>> = {
-  analytics: "Analisi",
-  overview: "Panoramica",
-  accounts: "Conti",
-  backup: "Backup",
-  budgets: "Budget",
-  categories: "Categorie",
-  exports: "Esporta",
-  imports: "Importa",
-  investments: "Investimenti",
-  journal: "Diario finanziario",
-  loans: "Prestiti",
-  notifications: "Notifiche",
-  "privacy-security": "Privacy e sicurezza",
-  profile: "Profilo",
-  recurring: "Ricorrenze e allocazioni",
-  settings: "Impostazioni e cestino",
-  tags: "Tag",
-  transactions: "Movimenti",
-};
 
 export function MobileHeader({
-  activeRoute,
   isNavigationOpen,
   navigationTriggerRef,
   onOpenSearch,
   onToggleNavigation,
   searchTriggerRef,
 }: {
-  readonly activeRoute: NavigationRoute;
   readonly isNavigationOpen: boolean;
   readonly navigationTriggerRef?: RefObject<HTMLButtonElement | null>;
   readonly onOpenSearch: () => void;
   readonly onToggleNavigation: () => void;
-  readonly searchTriggerRef?: RefObject<HTMLButtonElement | null>;
+  readonly searchTriggerRef?: RefObject<HTMLInputElement | null>;
 }) {
   return (
     <header className="mobile-header">
@@ -56,19 +32,20 @@ export function MobileHeader({
           <span />
         </span>
       </button>
-      <a aria-label="Apri profilo" className="mobile-header-icon" href="./#profile">
-        <NavIcon name="profile" />
-      </a>
-      <strong>{labels[activeRoute] ?? "Nexora"}</strong>
-      <button
-        aria-label="Apri ricerca globale"
-        className="mobile-header-icon"
-        onClick={onOpenSearch}
-        ref={searchTriggerRef}
-        type="button"
-      >
+      <label className="mobile-search-field">
         <span aria-hidden="true">⌕</span>
-      </button>
+        <input
+          aria-label="Ricerca globale"
+          onClick={onOpenSearch}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") onOpenSearch();
+          }}
+          placeholder="Cerca…"
+          readOnly
+          ref={searchTriggerRef}
+          type="search"
+        />
+      </label>
       <a aria-label="Apri notifiche" className="mobile-header-icon" href="./#notifications">
         <NavIcon name="bell" />
       </a>

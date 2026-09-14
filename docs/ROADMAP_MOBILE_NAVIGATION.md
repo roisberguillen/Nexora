@@ -11,9 +11,9 @@ nuove route, dati, comandi finanziari o permessi.
 
 ## Stato implementazione — 2026-09-14
 
-`MN-1`–`MN-5` completate: il menu mobile usa la sidebar/catalogo esistente, è richiamabile
-dall'header sotto 768 px, mantiene invariata la bottom navigation e gestisce chiusura, focus,
-route e gate responsive.
+`MN-1`–`MN-5` completate: il menu mobile usa il catalogo route condiviso ma una struttura e
+stili mobile dedicati, è richiamabile dall'header sotto 768 px, mantiene invariata la bottom
+navigation e gestisce chiusura, focus, route e gate responsive.
 
 ## Baseline verificata
 
@@ -50,10 +50,10 @@ Le destinazioni da rendere disponibili nel menu mobile secondario sono:
    route e stato attivo.
 2. Il nuovo accesso è un unico menu mobile completo, non una seconda bottom bar e non una copia
    della sidebar desktop sempre visibile.
-3. Il menu riusa gli stessi gruppi, label, icone e route della sidebar desktop. La sorgente dei
-   dati di navigazione deve essere condivisa per evitare divergenze future.
-4. Il menu può essere aperto dall'header mobile con un controllo esplicito `Apri navigazione`;
-   il controllo non sostituisce profilo, ricerca o notifiche.
+3. Il menu riusa gli stessi gruppi, label, icone e route della sidebar desktop tramite una sorgente
+   dati condivisa, ma usa markup, layout e stili mobile dedicati: non ricopia la sidebar desktop.
+4. Il menu può essere aperto dall'header mobile con un controllo esplicito `Apri menu completo`;
+   il controllo non modifica la bottom navigation, la ricerca o le notifiche.
 5. Le azioni rapide restano azioni rapide: non vengono trasformate in voci del menu e non vengono
    duplicate senza una necessità di accessibilità o discoverability documentata.
 6. Il menu non deve cambiare l'URL, il ledger o lo stato finanziario durante la sola apertura.
@@ -71,14 +71,15 @@ Evidenza: test del catalogo che garantisce parità tra tutte le destinazioni des
 ### MN-2 — Trigger nell'header mobile
 
 - Aggiungere un pulsante menu nell'header mobile con nome accessibile e `aria-expanded`.
-- Conservare senza variazioni i tre controlli già presenti: profilo, ricerca e notifiche.
+- Conservare la ricerca e le notifiche; il profilo resta raggiungibile dalla bottom navigation,
+  senza duplicarlo nell'header.
 - Verificare che l'header resti utilizzabile a 320 px senza clipping o sovrapposizioni.
 
 Evidenza: test component e screenshot/DOM a 320, 375 e 390 px.
 
 ### MN-3 — Drawer/sheet del menu completo
 
-- Riutilizzare la struttura gerarchica desktop in un drawer mobile scorrevole.
+- Riutilizzare il catalogo gerarchico desktop in uno sheet mobile scorrevole dedicato.
 - Mostrare tutti i gruppi e le 18 destinazioni desktop con route attiva evidenziata.
 - Rendere il drawer chiudibile con voce, backdrop ed `Escape`, con focus iniziale, focus trap e
   ritorno del focus al trigger.

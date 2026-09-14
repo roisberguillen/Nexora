@@ -59,9 +59,9 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Apri navigazione" }));
-    const navigation = screen.getByLabelText("Pannello di navigazione");
-    const close = within(navigation).getByRole("button", { name: "Chiudi navigazione" });
+    await user.click(screen.getByRole("button", { name: "Apri menu completo" }));
+    const navigation = screen.getByRole("dialog", { name: "Menu" });
+    const close = within(navigation).getByRole("button", { name: "Chiudi menu" });
     await waitFor(() => expect(close).toHaveFocus());
     await user.keyboard("{Tab}");
     expect(navigation).toContainElement(document.activeElement as HTMLElement);
@@ -145,9 +145,9 @@ describe("AppShell", () => {
     const trigger = screen.getByRole("button", { name: "Apri menu completo" });
     await user.click(trigger);
 
-    const navigation = screen.getByLabelText("Pannello di navigazione");
+    const navigation = screen.getByRole("dialog", { name: "Menu" });
     expect(trigger).toHaveAttribute("aria-expanded", "true");
-    expect(navigation).toHaveClass("is-open");
+    expect(navigation).toHaveClass("mobile-navigation-sheet");
     expect(within(navigation).getByRole("link", { name: "Ricorrenze e allocazioni" })).toHaveAttribute(
       "href",
       "./#recurring",
@@ -163,19 +163,22 @@ describe("AppShell", () => {
     ).toBeInTheDocument();
 
     await user.click(within(navigation).getByRole("link", { name: "Backup" }));
-    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("dialog", { name: "Menu" })).toBeNull();
     expect(window.location.hash).toBe("#backup");
   });
 
-  it("mantiene coerenti titolo mobile, label e icona della panoramica e delle analisi", () => {
+  it("mantiene coerente la ricerca mobile e le icone della navigazione", () => {
     const { container } = render(
       <AppShell activeRoute="analytics">
         <h1>Contenuto di prova</h1>
       </AppShell>,
     );
 
-    expect(container.querySelectorAll(".mobile-header .mobile-header-icon")).toHaveLength(4);
-    expect(screen.getByText("Analisi", { selector: ".mobile-header strong" })).toBeVisible();
+    expect(container.querySelectorAll(".mobile-header .mobile-header-icon")).toHaveLength(2);
+    expect(screen.getByRole("searchbox", { name: "Ricerca globale" })).toHaveAttribute(
+      "placeholder",
+      "Cerca…",
+    );
     const mobileNavigation = screen.getByRole("navigation", { name: "Navigazione mobile" });
     expect(mobileNavigation).toHaveTextContent("Panoramica");
     expect(mobileNavigation).toHaveTextContent("Analisi");
@@ -203,7 +206,7 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    const trigger = screen.getByRole("button", { name: "Apri ricerca globale" });
+    const trigger = screen.getByRole("searchbox", { name: "Ricerca globale" });
     await user.click(trigger);
     const search = within(screen.getByRole("dialog", { name: "Ricerca globale" })).getByRole(
       "searchbox",
@@ -256,7 +259,7 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Apri ricerca globale" }));
+    await user.click(screen.getByRole("searchbox", { name: "Ricerca globale" }));
     const search = within(screen.getByRole("dialog", { name: "Ricerca globale" })).getByRole(
       "searchbox",
       { name: "Ricerca globale" },

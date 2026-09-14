@@ -2,13 +2,13 @@ import { type RefObject } from "react";
 
 import { NavIcon, type NavIconName } from "./NavIcon";
 
-interface NavigationItem {
+export interface NavigationItem {
   readonly label: string;
   readonly icon: NavIconName;
   readonly route: NavigationRoute;
 }
 
-interface NavigationGroup {
+export interface NavigationGroup {
   readonly items: readonly NavigationItem[];
   readonly label: string;
 }
@@ -34,7 +34,7 @@ export type NavigationRoute =
   | "privacy-security"
   | "new-transaction";
 
-const navigationGroups: readonly NavigationGroup[] = [
+export const navigationGroups: readonly NavigationGroup[] = [
   {
     label: "Principale",
     items: [

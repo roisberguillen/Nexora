@@ -23,4 +23,5 @@ export type { NavigationRoute } from "./SidebarNavigation";
 export { TopHeader } from "./TopHeader";
 export { MobileBottomNavigation } from "./MobileBottomNavigation";
 export { MobileHeader } from "./MobileHeader";
+export { MobileNavigationSheet } from "./MobileNavigationSheet";
 export { QuickActionSheet, type QuickAction } from "./QuickActionSheet";

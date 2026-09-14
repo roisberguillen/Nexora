@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-- Menu mobile completo: aggiunto l'accesso al catalogo desktop tramite drawer responsive, senza
-  modificare bottom navigation, quick actions, route o dati locali.
+- Menu mobile completo: aggiunto uno sheet mobile dedicato alimentato dal catalogo route condiviso,
+  con ricerca centrata in un campo reale, spaziatura uniforme dell'header e senza duplicare profilo
+  o modificare bottom navigation, quick actions, route o dati locali.
 - PMA-1 Phone Local Hub completata sul Pixel 9: runtime Android firmato, lifecycle foreground/background,
   loopback health, stop/restart e permessi minimi verificati senza rimuovere dati locali.
 - PMA-2.1: operation-log durevole SQLite per il phone-host con idempotenza, revisioni, cursor,

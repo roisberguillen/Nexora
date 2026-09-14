@@ -5,6 +5,7 @@ import type { GlobalSearchResult } from "./GlobalSearch";
 import { TopHeader } from "./TopHeader";
 import { MobileBottomNavigation } from "./MobileBottomNavigation";
 import { MobileHeader } from "./MobileHeader";
+import { MobileNavigationSheet } from "./MobileNavigationSheet";
 import { QuickActionSheet, type QuickAction } from "./QuickActionSheet";
 import { OfflineBanner } from "./OfflineBanner";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
@@ -23,13 +24,15 @@ export function AppShell({
   searchResults = [],
 }: AppShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
   const [isNavigationCollapsed, setIsNavigationCollapsed] = useState(false);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const quickActionTriggerRef = useRef<HTMLButtonElement>(null);
-  const searchTriggerRef = useRef<HTMLButtonElement>(null);
+  const searchTriggerRef = useRef<HTMLInputElement>(null);
   const navigationRef = useRef<HTMLElement>(null);
   const navigationTriggerRef = useRef<HTMLButtonElement>(null);
+  const mobileNavigationTriggerRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!isNavigationOpen) {
       return;
@@ -85,6 +88,10 @@ export function AppShell({
     setIsQuickActionsOpen(false);
     requestAnimationFrame(() => quickActionTriggerRef.current?.focus());
   };
+  const closeMobileNavigation = useCallback(() => {
+    setIsMobileNavigationOpen(false);
+    requestAnimationFrame(() => mobileNavigationTriggerRef.current?.focus());
+  }, []);
   const closeSearch = useCallback(() => {
     setIsSearchOpen(false);
     searchTriggerRef.current?.focus();
@@ -113,12 +120,11 @@ export function AppShell({
       <div className={`app-workspace${isNavigationCollapsed ? " is-sidebar-collapsed" : ""}`}>
         <OfflineBanner />
         <MobileHeader
-          activeRoute={activeRoute}
-          isNavigationOpen={isNavigationOpen}
-          navigationTriggerRef={navigationTriggerRef}
+          isNavigationOpen={isMobileNavigationOpen}
+          navigationTriggerRef={mobileNavigationTriggerRef}
           onOpenSearch={() => setIsSearchOpen(true)}
           onToggleNavigation={() => {
-            setIsNavigationOpen((isOpen) => !isOpen);
+            setIsMobileNavigationOpen((isOpen) => !isOpen);
           }}
           searchTriggerRef={searchTriggerRef}
         />
@@ -146,6 +152,12 @@ export function AppShell({
       </div>
       {isQuickActionsOpen ? (
         <QuickActionSheet actions={quickActions} onClose={closeQuickActions} />
+      ) : null}
+      {isMobileNavigationOpen ? (
+        <MobileNavigationSheet
+          activeRoute={activeRoute}
+          onClose={closeMobileNavigation}
+        />
       ) : null}
       {isSearchOpen ? <GlobalSearchDialog onClose={closeSearch} results={searchResults} /> : null}
     </div>

@@ -19,7 +19,7 @@ test("C3.1 shell: drawer, focus, route e resize live", async ({ page }, testInfo
   await page.setViewportSize({ width: 390, height: 844 });
   const mobileMenu = page.getByRole("button", { name: "Apri menu completo" });
   await mobileMenu.click();
-  const mobileDrawer = page.getByLabel("Pannello di navigazione");
+  const mobileDrawer = page.getByRole("dialog", { name: "Menu" });
   for (const label of [
     "Budget",
     "Ricorrenze e allocazioni",
@@ -39,7 +39,7 @@ test("C3.1 shell: drawer, focus, route e resize live", async ({ page }, testInfo
   await expect(
     page.getByRole("navigation", { name: "Navigazione mobile" }).getByRole("link"),
   ).toHaveCount(5);
-  await mobileDrawer.getByRole("button", { name: "Chiudi navigazione" }).click();
+  await mobileDrawer.getByRole("button", { name: "Chiudi menu" }).click();
   await page
     .getByRole("navigation", { name: "Navigazione mobile" })
     .getByRole("link", { name: "Movimenti" })
