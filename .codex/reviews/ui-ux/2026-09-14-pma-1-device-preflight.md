@@ -28,4 +28,4 @@ P0 aperti: Nessuno
 Gate result: PASS.
 
 State reconciliation: PMA-1 remains in progress; this review records only the device/permission
-preflight and does not close the signed-build or LAN/TLS gates.
+preflight and state reconciliation and does not close the signed-build or LAN/TLS gates.
