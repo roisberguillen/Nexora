@@ -144,7 +144,7 @@ Authoritative roadmaps: `docs/ROADMAP_UI_ARCHITECTURE.md` for the completed prod
 | PM-8 | complete — 2026-09-13 | Final gate riconciliato: Local Hub desktop/LAN TLS, firewall, browser Pixel, pairing, passcode/sessione, sync pull, logout, revoca/recovery, documentazione e test globali verdi; roadmap PC Manager PM-0–PM-8 complete |
 | PMA-0 | complete — 2026-09-14 | Roadmap Phone Local Hub Android registrata; Pixel come host temporaneo, PC come client peer, ADR 0020 e checkpoint CRITICAL pubblicati; prossimo PMA-1 |
 | PMA-1 | complete — 2026-09-14 | `PMA-1 COMPLETE / PASS`; APK release arm64 firmato/installato sul Pixel 9, start/stop/restart, health loopback 200, no listener dopo stop/background, manifest INTERNET-only e 18/18 test PMA-1; prossimo PMA-2 |
-| PMA-2 | in progress — 2026-09-14 | PMA-2.2 complete: bootstrap autenticato con cursor/schema versionato, payload ledger allowlistato e validazione transazionale; Local Hub 37/37, verify completo, APK release firmato/installato sul Pixel 9, health loopback 200, stop/restart/background gate PASS; applicazione diretta alle tabelle ledger resta PMA-2.3 |
+| PMA-2 | in progress — 2026-09-14 | PMA-2.3 code slice: applicazione atomica di transaction/transfer al SQLite nativo con minor-unit, foreign key, check/trigger e rollback su bundle invalido; Local Hub 38/38, Tauri cargo check locked e local-host typecheck PASS; build/install Android e gate fisico PMA-2.3 pending |
 
 The 12.5.C2 sequence is authoritative for the completed banking UX checkpoint. C2 and C3.0 are
 complete; C3.1, C3.2, C3.3, C3.4, C3.5, C3.6, C3.7, C3.8, C3.9, C3.10, C3.11, C3.12, C3.13,

@@ -402,6 +402,13 @@ async fn push_operations(
                 )
                     .into_response();
             }
+            Err(DurableSyncError::LedgerRejected) => {
+                return (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({"error":"ledger_invariant_violation"})),
+                )
+                    .into_response();
+            }
             Err(DurableSyncError::Sqlite(_) | DurableSyncError::NumericOverflow) => {
                 state.sync_status.write().await.state = SyncRuntimeState::Error;
                 return (
@@ -1744,6 +1751,7 @@ pub fn health_response_with_runtime_and_sync(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rusqlite::Connection;
 
     #[test]
     fn passcode_sessions_are_expiring_rate_limited_and_revocable() {
@@ -2237,6 +2245,21 @@ mod tests {
     #[tokio::test]
     async fn sync_http_requires_pairing_and_preserves_replay_and_cursor_contracts() {
         let directory = tempfile::tempdir().unwrap();
+        let connection = Connection::open(directory.path().join("nexora.db")).unwrap();
+        connection
+            .execute_batch(
+                "PRAGMA foreign_keys = ON;
+                 CREATE TABLE accounts (id TEXT PRIMARY KEY, currency TEXT NOT NULL);
+                 CREATE TABLE transactions (
+                   id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL,
+                   account_id TEXT NOT NULL REFERENCES accounts(id), amount_minor TEXT NOT NULL,
+                   currency TEXT NOT NULL, booked_date TEXT NOT NULL, value_date TEXT,
+                   payee TEXT, description TEXT, category_id TEXT, note TEXT,
+                   source TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT ''
+                 );
+                 INSERT INTO accounts (id, currency) VALUES ('account-http', 'EUR');",
+            )
+            .unwrap();
         let mut state = LocalHubState::default();
         state.durable_sync = Some(Arc::new(Mutex::new(
             SqliteSyncOperationStore::open(directory.path().join("nexora.db")).unwrap(),
@@ -2268,7 +2291,7 @@ mod tests {
             base_revision: 0,
             revision: 0,
             payload_digest: "sha256:payload".to_owned(),
-            payload: "{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\",\"amount_minor\":\"100\",\"currency\":\"EUR\"}".to_owned(),
+            payload: "{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\",\"amount_minor\":\"100\",\"currency\":\"EUR\",\"kind\":\"adjustment\",\"status\":\"booked\",\"account_id\":\"account-http\",\"booked_date\":\"2026-09-14\",\"source\":\"manual\"}".to_owned(),
             tombstone: false,
             created_at: "2026-09-12T00:00:00Z".to_owned(),
         };

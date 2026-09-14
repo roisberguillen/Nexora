@@ -109,6 +109,16 @@ senza reset dati, app avviata sul Pixel 9 autorizzato, `/v1/health` 200 in loopb
 `running`, stop con health non raggiungibile, restart con health 200 e HOME/background con listener
 assente. Il runtime è stato lasciato nuovamente `running`. PMA-2 resta in progress.
 
+**Slice PMA-2.3 — 2026-09-14:** il ramo SQLite durevole applica i payload `transaction` e
+`transfer` nella stessa transazione che registra delivery, operation e revision. I movimenti
+richiedono campi tipizzati e vengono scritti in minor-unit stringa; foreign key, check dello schema
+e trigger nativi impediscono valute/conto/date incoerenti e trasferimenti non bilanciati. Le gambe
+di un trasferimento vengono quindi registrate come movimenti neutrali e il bundle viene creato solo
+quando debit/credit rispettano le invarianti del ledger. Sono coperti replay/idempotenza, rollback
+su payload invalido, precisione e bundle bilanciato/non bilanciato (`38/38` test Local Hub).
+Il build/install Android aggiornato e la verifica fisica sul Pixel restano il gate di chiusura di
+PMA-2.3; PMA-2 resta in progress.
+
 ### PMA-3 — Discovery, pairing e autorizzazione dal telefono
 
 Pubblicare `_nexora._tcp` solo dopo consenso, generare QR/grant monouso, mostrare fingerprint e
