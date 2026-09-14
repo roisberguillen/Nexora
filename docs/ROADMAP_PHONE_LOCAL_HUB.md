@@ -104,8 +104,10 @@ delivery, quindi un payload invalido non lascia delivery, operation o revisioni 
 coperti rifiuto atomico, bootstrap dopo riapertura, pairing HTTP e replay. L'applicazione del
 payload alle tabelle di dominio e il controllo completo delle invarianti trasferimenti restano il
 prossimo slice PMA-2.3; PMA-2 resta in progress. La verifica fisica della build aggiornata sul Pixel è
-ancora bloccata: la compilazione AArch64 è riuscita, ma il packaging release ha richiesto la password
-della keystore nel processo che ha eseguito Gradle.
+completata il 2026-09-14: APK universal release firmato con schema v2, installato con `adb install -r`
+senza reset dati, app avviata sul Pixel 9 autorizzato, `/v1/health` 200 in loopback con runtime
+`running`, stop con health non raggiungibile, restart con health 200 e HOME/background con listener
+assente. Il runtime è stato lasciato nuovamente `running`. PMA-2 resta in progress.
 
 ### PMA-3 — Discovery, pairing e autorizzazione dal telefono
 
