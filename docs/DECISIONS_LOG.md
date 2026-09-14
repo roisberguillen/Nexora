@@ -533,3 +533,16 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   o credenziali. Nessun listener LAN, pairing o origine autorizzata viene creato automaticamente.
 - **Conseguenze:** l'accesso browser è disponibile come superficie esplicita dell'host configurato,
   mentre loopback, TLS, fingerprint, pairing, revoca e token restano obbligatori per i dati.
+
+## 2026-09-14 — Menu mobile completo senza alterare la bottom navigation
+
+- **Contesto:** la sidebar desktop contiene tutte le destinazioni applicative, mentre il mobile
+  espone una bottom navigation compatta e alcune destinazioni tramite header, profilo e azioni
+  rapide.
+- **Decisione:** integrare le destinazioni mancanti in un drawer/sheet mobile completo richiamato
+  dall'header, mantenendo invariati i cinque elementi della bottom navigation, le loro route e le
+  azioni rapide esistenti.
+- **Motivazione:** preservare memoria muscolare e gerarchia mobile, migliorando la discoverability
+  senza duplicare CTA o introdurre una seconda barra di navigazione.
+- **Impatto:** il catalogo di navigazione dovrà essere condiviso tra desktop e mobile; apertura,
+  chiusura e selezione route restano operazioni non mutanti sul ledger.

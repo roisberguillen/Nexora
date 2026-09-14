@@ -931,6 +931,14 @@ a {
     display: none;
   }
 
+  .app-sidebar.is-open {
+    display: flex;
+  }
+
+  .sidebar-backdrop.is-visible {
+    display: block;
+  }
+
   .sidebar-collapse {
     display: none;
   }
@@ -942,7 +950,7 @@ a {
   .mobile-header {
     display: grid;
     min-height: 4rem;
-    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem 2.75rem;
+    grid-template-columns: repeat(2, 2.75rem) minmax(0, 1fr) repeat(2, 2.75rem);
     align-items: center;
     padding: max(0.5rem, env(safe-area-inset-top)) 1rem 0.5rem;
     border-bottom: 1px solid var(--color-outline);
@@ -950,9 +958,13 @@ a {
   }
 
   .mobile-header strong {
+    min-width: 0;
+    overflow: hidden;
     color: var(--color-primary);
     font-size: 1rem;
+    text-overflow: ellipsis;
     text-align: center;
+    white-space: nowrap;
   }
 
   .mobile-header-icon {
@@ -963,6 +975,7 @@ a {
     border: 1px solid var(--color-outline);
     border-radius: var(--radius-md);
     color: var(--color-primary);
+    cursor: pointer;
   }
 
   .main-content {

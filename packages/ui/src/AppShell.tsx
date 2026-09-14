@@ -114,7 +114,12 @@ export function AppShell({
         <OfflineBanner />
         <MobileHeader
           activeRoute={activeRoute}
+          isNavigationOpen={isNavigationOpen}
+          navigationTriggerRef={navigationTriggerRef}
           onOpenSearch={() => setIsSearchOpen(true)}
+          onToggleNavigation={() => {
+            setIsNavigationOpen((isOpen) => !isOpen);
+          }}
           searchTriggerRef={searchTriggerRef}
         />
         <TopHeader

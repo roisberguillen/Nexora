@@ -120,6 +120,10 @@ describe("AppShell", () => {
     );
 
     expect(screen.getByRole("navigation", { name: "Navigazione mobile" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Apri menu completo" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
     expect(
       within(screen.getByRole("navigation", { name: "Navigazione mobile" })).getByRole("link", {
         name: "Movimenti",
@@ -130,6 +134,39 @@ describe("AppShell", () => {
     expect(quickActionCount).toBe(1);
   });
 
+  it("apre il menu mobile completo senza alterare la bottom navigation", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppShell activeRoute="settings">
+        <h1>Contenuto di prova</h1>
+      </AppShell>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Apri menu completo" });
+    await user.click(trigger);
+
+    const navigation = screen.getByLabelText("Pannello di navigazione");
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(navigation).toHaveClass("is-open");
+    expect(within(navigation).getByRole("link", { name: "Ricorrenze e allocazioni" })).toHaveAttribute(
+      "href",
+      "./#recurring",
+    );
+    expect(within(navigation).getByRole("link", { name: "Privacy e sicurezza" })).toHaveAttribute(
+      "href",
+      "./#privacy-security",
+    );
+    expect(
+      within(screen.getByRole("navigation", { name: "Navigazione mobile" })).getByRole("link", {
+        name: "Panoramica",
+      }),
+    ).toBeInTheDocument();
+
+    await user.click(within(navigation).getByRole("link", { name: "Backup" }));
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(window.location.hash).toBe("#backup");
+  });
+
   it("mantiene coerenti titolo mobile, label e icona della panoramica e delle analisi", () => {
     const { container } = render(
       <AppShell activeRoute="analytics">
@@ -137,7 +174,7 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(container.querySelectorAll(".mobile-header .mobile-header-icon")).toHaveLength(3);
+    expect(container.querySelectorAll(".mobile-header .mobile-header-icon")).toHaveLength(4);
     expect(screen.getByText("Analisi", { selector: ".mobile-header strong" })).toBeVisible();
     const mobileNavigation = screen.getByRole("navigation", { name: "Navigazione mobile" });
     expect(mobileNavigation).toHaveTextContent("Panoramica");
