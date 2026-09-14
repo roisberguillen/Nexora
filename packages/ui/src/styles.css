@@ -1061,12 +1061,12 @@ a {
   }
 
   .mobile-search-field {
+    position: relative;
     display: flex;
     min-width: 0;
     height: 2.75rem;
     align-items: center;
-    gap: 0.5rem;
-    padding-inline: 0.75rem;
+    padding: 0;
     border: 1px solid var(--color-outline);
     border-radius: var(--radius-pill);
     background: var(--color-surface);
@@ -1082,8 +1082,10 @@ a {
     width: 100%;
     height: 100%;
     min-width: 0;
-    padding: 0;
+    padding: 0 0.75rem 0 2.25rem;
     border: 0;
+    border-radius: inherit;
+    appearance: none;
     outline: 0;
     background: transparent;
     color: var(--color-on-surface);
@@ -1092,6 +1094,13 @@ a {
   .mobile-search-field input::placeholder {
     color: var(--color-on-surface-muted);
     opacity: 1;
+  }
+
+  .mobile-search-field > span {
+    position: absolute;
+    z-index: 1;
+    left: 0.75rem;
+    pointer-events: none;
   }
 
   .mobile-search-field {
