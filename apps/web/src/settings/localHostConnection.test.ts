@@ -22,6 +22,7 @@ describe("local host connection", () => {
           grantId: "grant-12345678",
           code: "code-12345678",
           hostFingerprint: "loopback",
+          expiresAtMs: Date.now() + 60_000,
         }),
       ),
     ).toEqual({
@@ -29,6 +30,7 @@ describe("local host connection", () => {
       grantId: "grant-12345678",
       code: "code-12345678",
       hostFingerprint: "loopback",
+      expiresAtMs: expect.any(Number),
     });
     expect(() => parseLocalHostPairingInvite("{}")).toThrow("invalid_pairing_invite");
   });

@@ -1,5 +1,22 @@
 # Test evidence
 
+## MN-1–MN-4 — Menu mobile completo — 2026-09-14 — IMPLEMENTED / PASS
+
+- Routing: `localized_bug / STANDARD / low`; scope limitato a `packages/ui` e alla regressione E2E
+  della shell; bottom navigation, quick actions, route e dati locali fuori modifica.
+- Implementazione: il trigger `Apri menu completo` usa la sidebar/catalogo già esistente; sotto
+  768 px il drawer e il backdrop diventano visibili solo quando aperti. La bottom navigation resta
+  composta dagli stessi cinque link.
+- Test mirati: `packages/ui/src/AppShell.test.tsx` `10/10 PASS`; `pnpm typecheck` PASS;
+  `pnpm test:ui-ux` `4/4 PASS`; `pnpm quality:ui-ux` PASS; `pnpm build` PASS;
+  `pnpm codex:validate` PASS.
+- Browser reale: viewport 390 con tutte le 18 destinazioni desktop nel drawer; viewport 375 e 320
+  con 19 link nel drawer (brand + 18 destinazioni) e 5 link nella bottom navigation. E2E shell
+  dedicato `chromium-390` `1 passed, 1 skipped`; il test verifica route attiva, chiusura e assenza
+  di alterazioni alla bottom navigation.
+- Nota build: il primo E2E ha usato un `dist` precedente; dopo `pnpm build` la suite è stata
+  ripetuta con la nuova UI e il test mobile è passato.
+
 ## Stabilization roadmap analysis — 2026-09-08 — ROADMAP CREATED / NOT STARTED
 
 - Router: `tauri_android / ADVANCED / rischio dati low`; no application fix or functional test was
@@ -2388,4 +2405,6 @@ Keep only the latest relevant evidence per completed phase.
 - 2026-09-14 — PMA-2.2 device gate: compilazione Rust release `aarch64-linux-android` PASS, ma packaging `packageUniversalRelease` BLOCKED da password keystore non disponibile nel processo Gradle (`Keystore was tampered with, or password was incorrect`). Nessuna installazione o modifica dati sul Pixel eseguita con questa build; retry richiesto nella PowerShell che raccoglie le password in variabili di processo.
 - 2026-09-14 — PMA-2.2 device gate PASS: APK universal release firmato (`apksigner` v2), `adb install -r` PASS sul Pixel 9 `46060DLAQ002XQ` senza uninstall/clear dati. Avvio esplicito PASS; start → `/v1/health` 200 con `runtime_state=running`, `binding=loopback`, `sync_state=idle`; stop → health non raggiungibile e nessun listener loopback; restart → health 200; HOME/background → health non raggiungibile e listener assente; runtime lasciato running. Nessun dato finanziario reale usato.
 - 2026-09-14 — PMA-2.3 ledger application gate: `SqliteSyncOperationStore` applica transaction/transfer nello stesso `BEGIN IMMEDIATE` del delivery log; test con minor-unit stringa, foreign key, rollback su invariant failure e transfer debit/credit bilanciato `38/38`; Tauri cargo check locked, local-host typecheck, full verify, UI/UX gate e diff check PASS. APK universal release firmato con schema v2 installato con `adb install -r` sul Pixel 9 `46060DLAQ002XQ`; Settings Android start → `/v1/health` 200 (`runtime_state=running`, `binding=loopback`, `sync_state=idle`), stop → health non raggiungibile e listener `LISTEN` assente, restart → health 200, HOME/background → health non raggiungibile e listener assente; runtime lasciato `running`. Nessun dato finanziario reale usato.
+- 2026-09-14 — PMA-3.1 pairing preview: `localHostConnection.test.ts` + `SettingsPage.test.tsx` `20/20 PASS`; web typecheck e Prettier PASS. Gli inviti richiedono `expiresAtMs` intero futuro e la UI mostra endpoint/fingerprint/scadenza prima del consenso esplicito. I test Rust Local Hub coprono invito monouso, host fingerprint, replay, revoca e device non autorizzato; gate full verify/UI e Android synthetic invite restano aperti.
+- 2026-09-14 — PMA-3.1 Android preflight: APK universal release firmato con schema v2, `adb install -r` PASS sul Pixel 9 `46060DLAQ002XQ`, avvio `MainActivity` PASS senza marker di crash e Settings pairing surface renderizzata. L’iniezione del JSON completo via `adb shell input text` non preserva i caratteri speciali, quindi la preview con invito sintetico non è dichiarata verificata; serve incolla reale da PC/clipboard per chiudere il gate fisico.
 - 2026-09-14 — PMA-1 device/permission preflight: Pixel 9 ADB autorizzato (`get-state=device`). Il manifest Android generato dichiara solo `android.permission.INTERNET`; non sono presenti storage, Bluetooth o foreground-service permissions. `dumpsys package` del pacchetto già installato mostra anche il controllo di rete locale Android associato al target SDK, senza modifiche applicate ai dati. Questa è evidenza di preflight, non sostituisce la verifica della nuova build firmata.

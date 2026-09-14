@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Menu mobile completo: aggiunto l'accesso al catalogo desktop tramite drawer responsive, senza
+  modificare bottom navigation, quick actions, route o dati locali.
 - PMA-1 Phone Local Hub completata sul Pixel 9: runtime Android firmato, lifecycle foreground/background,
   loopback health, stop/restart e permessi minimi verificati senza rimuovere dati locali.
 - PMA-2.1: operation-log durevole SQLite per il phone-host con idempotenza, revisioni, cursor,
@@ -14,6 +16,8 @@
   con minor-unit, foreign key, trigger di neutralità trasferimenti e rollback su invarianti violate.
 - PMA-2.3 device gate: APK release firmato installato sul Pixel 9; Local Hub loopback verificato
   con start/stop/restart e arresto automatico in background, senza usare dati finanziari reali.
+- PMA-3.1: la Settings UI valida e mostra endpoint, fingerprint e scadenza dell’invito pairing
+  prima dell’autorizzazione esplicita; gli inviti senza scadenza futura vengono rifiutati.
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
 - Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
 - PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del

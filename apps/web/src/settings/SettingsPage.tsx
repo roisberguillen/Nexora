@@ -29,6 +29,7 @@ import {
   writeLocalHostConnection,
   type LocalHostHealth,
   type LocalHostCredentials,
+  type LocalHostPairingInvite,
 } from "./localHostConnection";
 import { LocalHostSessionController } from "./localHostSession";
 import {
@@ -92,6 +93,7 @@ export function SettingsPage({
   const [lanAddress, setLanAddress] = useState("");
   const [isStartingLan, setIsStartingLan] = useState(false);
   const [pairingInvite, setPairingInvite] = useState("");
+  const [pairingPreview, setPairingPreview] = useState<LocalHostPairingInvite | null>(null);
   const [pairedCredentials, setPairedCredentials] = useState<LocalHostCredentials | null>(null);
   const [pairingMessage, setPairingMessage] = useState<string | null>(null);
   const [isPairing, setIsPairing] = useState(false);
@@ -246,6 +248,14 @@ export function SettingsPage({
       setPairingMessage("Pairing non completato: verifica invito, host e scadenza.");
     } finally {
       setIsPairing(false);
+    }
+  };
+  const updatePairingInvite = (value: string) => {
+    setPairingInvite(value);
+    try {
+      setPairingPreview(value.trim() === "" ? null : parseLocalHostPairingInvite(value));
+    } catch {
+      setPairingPreview(null);
     }
   };
   const revokePairedDevice = async () => {
@@ -575,12 +585,22 @@ export function SettingsPage({
             <textarea
               aria-label="Invito pairing"
               disabled={isPairing}
-              onChange={(event) => setPairingInvite(event.currentTarget.value)}
+              onChange={(event) => updatePairingInvite(event.currentTarget.value)}
               placeholder="Incolla qui l’invito JSON generato dal PC"
               rows={3}
               value={pairingInvite}
             />
           </label>
+          {pairingPreview !== null ? (
+            <div className="account-feedback" role="status">
+              <strong>Verifica host prima di autorizzare</strong>
+              <small>
+                Endpoint: {pairingPreview.endpoint ?? "non indicato"}. Fingerprint:{" "}
+                {pairingPreview.hostFingerprint}. Invito valido fino a{" "}
+                {new Date(pairingPreview.expiresAtMs).toLocaleString("it-IT")}.
+              </small>
+            </div>
+          ) : null}
           <div className="settings-actions">
             <button
               className="primary-action"

@@ -1,7 +1,7 @@
 # Current task
 
-- Task: PMA-2 — ledger host e bridge sicuro Android
-- Roadmap phase: PMA-2
-- Status: `PMA2_3_COMPLETE_NEXT_PMA3` — PMA-2.3 applica payload tipizzati `transaction` e `transfer` alla stessa transazione SQLite del phone-host; importi minor-unit, foreign key, check e trigger trasferimenti proteggono l’atomicità. Test desktop e gate fisico Pixel 9 verdi.
-- Evidence: `docs/ROADMAP_PHONE_LOCAL_HUB.md`; `apps/local-hub/src/sqlite_sync.rs`; `apps/local-hub/src/lib.rs`; `apps/web/src-tauri/src/lib.rs`; `.codex/state/test-evidence.md`.
-- Next task: PMA-3 — discovery, pairing e autorizzazione dal telefono; non usare dati finanziari reali nel gate.
+- Task: PMA-3.1 — pairing preview e conferma esplicita dal telefono
+- Roadmap phase: PMA-3
+- Status: `PMA3_1_CODE_COMPLETE_DEVICE_GATE_PENDING` — la UI valida la scadenza dell’invito e mostra endpoint/fingerprint prima dell’autorizzazione; il pairing monouso, revoca e controlli negativi del Local Hub restano fail-closed.
+- Evidence: `docs/ROADMAP_PHONE_LOCAL_HUB.md`; `apps/web/src/settings/localHostConnection.ts`; `apps/web/src/settings/SettingsPage.tsx`; `.codex/state/test-evidence.md`.
+- Next task: eseguire verify/UI review e il gate Android sul Pixel con invito sintetico; nessun dato finanziario reale.

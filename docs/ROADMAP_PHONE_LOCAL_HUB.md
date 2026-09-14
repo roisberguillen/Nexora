@@ -135,6 +135,12 @@ storage volatile/approvato.
 Gate: grant scaduto/riusato, fingerprint/origin/device errati, rate limit, revoca singola/globale,
 rete diversa e attacco replay.
 
+**Slice PMA-3.1 — 2026-09-14:** la UI del telefono ora valida la scadenza dell’invito e mostra
+endpoint, fingerprint dell’host e scadenza prima del pulsante di autorizzazione. Il parser rifiuta
+inviti senza `expiresAtMs` intero futuro; credenziali e invito non vengono persistiti dalla preview.
+Il contratto Rust mantiene grant monouso, host fingerprint, revoca e separazione tra pairing e ledger.
+Gate full verify, UI review e invito sintetico sul Pixel ancora aperti.
+
 ### PMA-4 — Browser desktop client
 
 Aggiungere al browser desktop il bootstrap `health → fingerprint → pairing → sessione → ledger`,

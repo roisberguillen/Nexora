@@ -37,6 +37,7 @@ export interface LocalHostPairingInvite {
   readonly grantId: string;
   readonly code: string;
   readonly hostFingerprint: string;
+  readonly expiresAtMs: number;
 }
 
 export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite {
@@ -54,7 +55,10 @@ export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite
     typeof candidate.code !== "string" ||
     candidate.code.length < 8 ||
     typeof candidate.hostFingerprint !== "string" ||
-    candidate.hostFingerprint.length === 0
+    candidate.hostFingerprint.length === 0 ||
+    typeof candidate.expiresAtMs !== "number" ||
+    !Number.isSafeInteger(candidate.expiresAtMs) ||
+    candidate.expiresAtMs <= Date.now()
   ) {
     throw new Error("invalid_pairing_invite");
   }
@@ -63,6 +67,7 @@ export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite
     grantId: candidate.grantId,
     code: candidate.code,
     hostFingerprint: candidate.hostFingerprint,
+    expiresAtMs: candidate.expiresAtMs,
   });
 }
 
