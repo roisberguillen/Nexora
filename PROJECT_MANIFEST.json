@@ -1078,6 +1078,11 @@
       "sha256": "f52c2d78cd3f50ca64698d118cac320e78a5032952e83404026aab5a6dd645fc"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-06-ci-test-stability.md",
+      "size": 1327,
+      "sha256": "9f1a0d141936f61707456c89ed3a6e8aa45fd02527f1b365b5ca162d1faddb2c"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -2419,8 +2424,8 @@
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.test.tsx",
-      "size": 1676,
-      "sha256": "daf61ee7a9efd9f4ae014d4a4195a9ab422f4491b641ba5482727117893643d2"
+      "size": 1771,
+      "sha256": "8fe3411fd185707e50aee6017e551192cc2106a33cfaa0a9ff0d1e3ef27ecbf2"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
@@ -2629,8 +2634,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 11272,
-      "sha256": "fcd7616b146d3eb1609680b4b50d9a91dfdcaaedf69779576de35ea28dd6ba34"
+      "size": 11368,
+      "sha256": "69c9408f1224c673b4e6ec7af426a5c1ec65693e261fc22b2b6b6358c163bcea"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",

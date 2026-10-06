@@ -22,7 +22,9 @@ describe("NotificationsPage", () => {
     const savedStates = JSON.parse(
       localStorage.getItem("nexora.local-notifications.v1") ?? "{}",
     ) as Record<string, { readAt?: string }>;
-    const backupState = Object.entries(savedStates).find(([id]) => id.startsWith("backup_overdue:"));
+    const backupState = Object.entries(savedStates).find(([id]) =>
+      id.startsWith("backup_overdue:"),
+    );
     expect(backupState?.[1].readAt).toEqual(expect.any(String));
   });
 
