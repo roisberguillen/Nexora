@@ -148,10 +148,9 @@ describe("AppShell", () => {
     const navigation = screen.getByRole("dialog", { name: "Menu" });
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(navigation).toHaveClass("mobile-navigation-sheet");
-    expect(within(navigation).getByRole("link", { name: "Ricorrenze e allocazioni" })).toHaveAttribute(
-      "href",
-      "./#recurring",
-    );
+    expect(
+      within(navigation).getByRole("link", { name: "Ricorrenze e allocazioni" }),
+    ).toHaveAttribute("href", "./#recurring");
     expect(within(navigation).getByRole("link", { name: "Privacy e sicurezza" })).toHaveAttribute(
       "href",
       "./#privacy-security",
