@@ -98,6 +98,8 @@ jobs:
         with:
           targets: aarch64-linux-android
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install Android build dependencies
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
       - run: pnpm install --frozen-lockfile
@@ -127,6 +129,8 @@ jobs:
         with:
           targets: aarch64-linux-android
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install Android build dependencies
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
       - run: pnpm install --frozen-lockfile
