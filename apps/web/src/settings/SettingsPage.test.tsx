@@ -95,9 +95,8 @@ describe("SettingsPage destructive flows", () => {
     await user.click(confirm);
     expect(purge).toHaveBeenCalledTimes(1);
     resolvePurge?.();
-    expect(await screen.findByRole("status")).toHaveTextContent(
-      "Movimento eliminato definitivamente.",
-    );
+    const purgeStatus = await screen.findByText("Movimento eliminato definitivamente.");
+    expect(purgeStatus).toHaveAttribute("role", "status");
   });
 
   it("svuota il cestino solo dopo una conferma esplicita", async () => {
@@ -119,7 +118,8 @@ describe("SettingsPage destructive flows", () => {
       }),
     );
     await waitFor(() => expect(purge).toHaveBeenCalledWith(["trashed-expense"]));
-    expect(await screen.findByRole("status")).toHaveTextContent("Cestino svuotato");
+    const purgeAllStatus = await screen.findByText("Cestino svuotato definitivamente.");
+    expect(purgeAllStatus).toHaveAttribute("role", "status");
   });
 
   it("mostra un errore accessibile se il ripristino non riesce", async () => {
