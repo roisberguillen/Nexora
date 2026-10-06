@@ -1,0 +1,39 @@
+name: Prepare CI gate fix
+
+on:
+  push:
+    branches: ["codex/ci-gates-2026-10-06"]
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format failing UI files
+        run: pnpm exec prettier --write packages/ui/src/AppShell.test.tsx packages/ui/src/AppShell.tsx packages/ui/src/styles.css
+      - name: Remove temporary workflow and refresh manifest
+        run: |
+          git rm .github/workflows/ci-fix-prepare.yml
+          pnpm manifest:update
+      - name: Commit prepared fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/ui/src/AppShell.test.tsx packages/ui/src/AppShell.tsx packages/ui/src/styles.css PROJECT_MANIFEST.json .github/workflows/ci-fix-prepare.yml
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "No formatting changes to commit."
+            exit 0
+          fi
+          git commit -m "style(ui): apply repository formatting"
+          git push origin HEAD:codex/ci-gates-2026-10-06
