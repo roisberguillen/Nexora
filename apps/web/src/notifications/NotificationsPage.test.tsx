@@ -19,11 +19,11 @@ describe("NotificationsPage", () => {
     );
 
     await user.click(screen.getAllByRole("link", { name: "Apri" }).at(0)!);
-    expect(JSON.parse(localStorage.getItem("nexora.local-notifications.v1") ?? "{}")).toEqual(
-      expect.objectContaining({
-        "backup_overdue:2026-09": expect.objectContaining({ readAt: expect.any(String) }),
-      }),
-    );
+    const savedStates = JSON.parse(
+      localStorage.getItem("nexora.local-notifications.v1") ?? "{}",
+    ) as Record<string, { readAt?: string }>;
+    const backupState = Object.entries(savedStates).find(([id]) => id.startsWith("backup_overdue:"));
+    expect(backupState?.[1].readAt).toEqual(expect.any(String));
   });
 
   it("persists dismissed local alerts separately from the ledger and renders the empty state", async () => {
