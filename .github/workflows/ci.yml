@@ -50,6 +50,7 @@ jobs:
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @nexora/web build
       - run: cargo check --locked
         working-directory: apps/web/src-tauri
       - run: pnpm --filter @nexora/web tauri build
@@ -71,6 +72,7 @@ jobs:
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @nexora/web build
       - run: cargo check --locked
         working-directory: apps/web/src-tauri
       - run: pnpm --filter @nexora/web tauri build
@@ -103,6 +105,8 @@ jobs:
       - name: Install Android build dependencies
         run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
       - run: pnpm install --frozen-lockfile
+      - name: Initialize Android project
+        run: pnpm --filter @nexora/web tauri android init --ci --skip-targets-install
       - run: pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci
       - uses: actions/upload-artifact@v4
         with:
