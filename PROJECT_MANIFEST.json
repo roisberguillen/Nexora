@@ -1068,6 +1068,11 @@
       "sha256": "62586b8872330aa772cc4eb22a45336bee6e801638a1ce81f913dc44e56fffbd"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-06-ci-build-prerequisites.md",
+      "size": 1280,
+      "sha256": "5b283a6a4ed1321c76658173bb165aae375614ab02c02600f456188ab0cd5aef"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-10-06-ci-formatting.md",
       "size": 1339,
       "sha256": "f52c2d78cd3f50ca64698d118cac320e78a5032952e83404026aab5a6dd645fc"
@@ -1569,8 +1574,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 5956,
-      "sha256": "0dfc996bcd01b4c3c084fa40558a900cd1a64569a4934e24c31f2517dbcb1ce1"
+      "size": 6173,
+      "sha256": "f16b9b502db081b8a04d4b0a06f81a5a3f3a72b57cbbbfcade4b3e0ad493e18d"
     },
     {
       "path": ".gitignore",
