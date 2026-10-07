@@ -85,7 +85,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: nexora-android-arm64-unsigned
-          path: apps/web/src-tauri/gen/android/app/build/outputs/apk/arm64/release/*-unsigned.apk
+          path: apps/web/src-tauri/gen/android/app/build/outputs/apk/universal/release/*-unsigned.apk
           if-no-files-found: error
 
   android-arm64-signed:
