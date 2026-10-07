@@ -1079,8 +1079,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-07-remote-mobile-host.md",
-      "size": 1645,
-      "sha256": "99eb22fa4918d944a6b10748357110441f4b3319627a1ce8a79e333ee02ccc50"
+      "size": 1665,
+      "sha256": "d726b53810081553ae0ab1bed5df57c01815621cbe331501a18f5bf277851f52"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1589,8 +1589,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 5365,
-      "sha256": "e521bf4fee9cf59c160716d9877c9a4cc8710bdcf8a8dfe4d57eff2e1783091a"
+      "size": 5353,
+      "sha256": "58d1da507c1372aea1a0e6955dc83f531fbcea1a546281293fb81a88e359f4d8"
     },
     {
       "path": ".gitignore",

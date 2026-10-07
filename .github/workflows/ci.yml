@@ -31,7 +31,7 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm manifest:check
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright install chromium
       - run: pnpm exec playwright test
 
   desktop-windows:
