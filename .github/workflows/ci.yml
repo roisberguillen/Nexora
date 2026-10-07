@@ -34,31 +34,6 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm exec playwright test
 
-  desktop-macos:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-15-intel, macos-15]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.15.0
-          cache: pnpm
-      - uses: dtolnay/rust-toolchain@stable
-      - run: pnpm install --frozen-lockfile
-      - run: cargo check --locked
-        working-directory: apps/web/src-tauri
-      - run: pnpm --filter @nexora/web tauri build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: nexora-desktop-${{ matrix.os }}
-          path: apps/web/src-tauri/target/release/bundle/**
-          if-no-files-found: error
-
   desktop-windows:
     runs-on: windows-latest
     timeout-minutes: 30
@@ -71,6 +46,7 @@ jobs:
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @nexora/web build
       - run: cargo check --locked
         working-directory: apps/web/src-tauri
       - run: pnpm --filter @nexora/web tauri build
@@ -97,9 +73,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: ""
       - name: Install Android build dependencies
-        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
+        run: sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci
       - uses: actions/upload-artifact@v4
@@ -126,9 +104,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: ""
       - name: Install Android build dependencies
-        run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
+        run: sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
       - run: pnpm install --frozen-lockfile
       - name: Initialize Android project
         run: pnpm --filter @nexora/web tauri android init --ci --skip-targets-install

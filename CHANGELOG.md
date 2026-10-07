@@ -49,8 +49,8 @@
   native/device matrix, orchestrator, manifest and UI/UX validation all PASS.
 - Closed FIX.12 final release gate: all stabilization phases reconciled; Nexora is marked `NEXORA READY`,
   `RELEASE READY` and `ANDROID PASS`.
-- Added desktop distribution: Windows MSI/NSIS installers and CI artifacts for Windows, macOS Intel
-  and macOS Apple Silicon, with direct launch from Start Menu/Finder and no terminal command.
+- Added desktop distribution: Windows MSI/NSIS installers with direct launch from the Start Menu
+  and no terminal command. macOS packaging is currently outside the supported release pipeline.
 - Added the Local Hub browser entry point: a verified host may advertise `appUrl`, and Settings now
   exposes a protected “Apri Nexora nel browser locale” link without persisting credentials or
   weakening LAN pairing/TLS requirements.

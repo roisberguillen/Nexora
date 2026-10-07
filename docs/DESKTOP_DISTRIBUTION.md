@@ -7,21 +7,18 @@ command is required.
 ## Supported desktop outputs
 
 - Windows: NSIS installer and MSI, produced by the `desktop-windows` CI job.
-- macOS Intel: DMG/app, produced by the `macos-15-intel` CI job.
-- macOS Apple Silicon: DMG/app, produced by the `macos-15` CI job.
 
-The CI artifacts are generated per operating system and architecture. A Windows executable cannot
-run natively on macOS, so the correct installer must be downloaded for the computer being used.
+La distribuzione nativa macOS è fuori scope per il momento e non viene verificata o pubblicata
+dalla pipeline CI.
 
 ## Installation
 
-1. Download the artifact matching the operating system and CPU architecture.
-2. Windows: run the `.exe` installer or open the `.msi`; Nexora is then available from the Start Menu.
-3. macOS: open the `.dmg`, drag Nexora to Applications, then launch it from Finder or Spotlight.
+1. Scarica l’artifact Windows prodotto dal job `desktop-windows`.
+2. Avvia l’installer `.exe` oppure apri il file `.msi`; Nexora sarà disponibile dal menu Start.
 
 Unsigned development artifacts may show the operating system's security warning. Production
-distribution should add Windows code signing and Apple Developer ID signing/notarization using
-external credentials; secrets must never be stored in this repository.
+distribution should add Windows code signing using external credentials; secrets must never be
+stored in this repository.
 
 ## Local Windows build
 

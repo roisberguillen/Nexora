@@ -863,6 +863,241 @@
       "sha256": "1eb26d08e0042d1017e8b2caf58695d4145bdb2b3e6262f76f03c60b497a87db"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-09-12-local-browser-entry-point.md",
+      "size": 1593,
+      "sha256": "1e56f202fe946fe608ac42b59071ee4aefaa1e00c5917d8a9b71dd4de618e06c"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pc-manager-roadmap.md",
+      "size": 1824,
+      "sha256": "d7b8bd55f7cdc69855e91e71a7ca3f1ac6695a994b21c83271c5a221015a00e9"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-0-threat-model.md",
+      "size": 1601,
+      "sha256": "a5046b08984211714d372393cb0ceef419f44f7d4c49a615985f90a80d3c7482"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-1-lifecycle.md",
+      "size": 1506,
+      "sha256": "eb58b4848bf2733795232e6eddcdac6450836bae44c3a78a733eb3590fee6fe1"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-2-network-discovery.md",
+      "size": 1410,
+      "sha256": "e64c5564b23e3efd9eff1bcd99fa1bb59320ab45ca8185dfd7412391bcce94ce"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-3-pairing.md",
+      "size": 1385,
+      "sha256": "7b46d2bd221009d66cbf7246baa16b402e3a748b495e507a6e6c9ba37cb68ecc"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-4-browser-serving.md",
+      "size": 1469,
+      "sha256": "6bfda9d146947c792b56a0914b8ae337b1cce55a5d4ef7cb5f8e3c3c2142647a"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-4-health-bootstrap.md",
+      "size": 1605,
+      "sha256": "f7892001cc5fe68de6c513270a389f68c8ac01966da21ed48a496c295c5a764f"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-client-queue.md",
+      "size": 1349,
+      "sha256": "f6e1fb3959788ed2ef587871e935aab9c91d9239034dba72be2508aac389d445"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-docs-state.md",
+      "size": 1295,
+      "sha256": "bb86698ffd2610aefbbe5b1c9f9cf7aec9239776a83a28cf413d244381929aab"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-gate-financial-period-typecheck.md",
+      "size": 1547,
+      "sha256": "e47116c58aa80f5de82a10f9233f3176165b368cc2824d86ca6c3cd504312a20"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-heartbeat.md",
+      "size": 1533,
+      "sha256": "64473d876be06c5eddb6f12fb7a31b048f40e1b4e5f927b9b237dcec9b1be9bb"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-sync-adapter-boundary.md",
+      "size": 1517,
+      "sha256": "b57be3b9c2f7d306fa03ae5f249d48d524c1c761259dfce9864336442f93596b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-sync-http.md",
+      "size": 1353,
+      "sha256": "5c893876b25d6c460349cadfb3a1aeb0f52e04074f1a658258a6b154bd32e402"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-5-sync-status.md",
+      "size": 1347,
+      "sha256": "f3a3159af25c2f6d296083203003894513a26d5d088d759327ce8ac811c303b5"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-6-browser-session.md",
+      "size": 1350,
+      "sha256": "8bd05b72901a7b62f79168a72b34fc98f9759f07b5490d66cb7e2bf213737913"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-6-client-session-contract.md",
+      "size": 1346,
+      "sha256": "5e0982fb54ed48918dc60e0af07239eb499de01d34be529eb43237e4527a4702"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-6-passcode-contract.md",
+      "size": 1456,
+      "sha256": "4974f4c4a01b22a00eb5dbf1c970e57145ddec2d5f28d42a6123f54a215dbd63"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-6-revocation.md",
+      "size": 1316,
+      "sha256": "2c4db0d968d208bc7c01c7169c8bec1062a4e6c0ba4bac82582a242452ea59ee"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-6-session-endpoints.md",
+      "size": 1420,
+      "sha256": "05f739993344c7a041591b4153c54c7050796226f06958aa5cf7534b9b98544e"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-6-session-enforcement.md",
+      "size": 1554,
+      "sha256": "47ab0be0dc7a1b7607f5905cf10bb266e2f7d6a6f50ba48031744ab43ebf784b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-7-browser-assets.md",
+      "size": 1439,
+      "sha256": "d35b9d31c6a43f98171205d3846a8f3049e026928e0c50226dde600b6ebe7783"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-7-desktop-control.md",
+      "size": 1445,
+      "sha256": "c1a4186bdc8143ce8967799d574bf6678dc9d039ca03e1d9256dc53c1acdb7f9"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-7-protocol-version.md",
+      "size": 1334,
+      "sha256": "eca386c07c3c5dfcc01419d25493a7343f9d17646de2501ea2f67edb2562246f"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-7-tauri-hub-lifecycle.md",
+      "size": 1420,
+      "sha256": "b6ee33ef1800c94b37b123c23fd503175b6ad716bf4ec7ea89850972131b9fe0"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-7-windows-bundle.md",
+      "size": 1324,
+      "sha256": "e8562aceb48ee3ee074777d8ef1a08bb3d1a2c473730ea8f0877fdcbda380089"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-8-device-preflight.md",
+      "size": 2305,
+      "sha256": "f87ff935f559ba8903772255b00c551dfd8c0ef77c34842f7fc1776efdfeead0"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-12-pm-8-software-gate.md",
+      "size": 1598,
+      "sha256": "f32fec2d9ed1baf2b1d18751fb59c5cd8d7b541fd30b152e318ff191e557419b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-mobile-menu-coherent.md",
+      "size": 1598,
+      "sha256": "92b09a83a3b34873dc95ebf49637658dc67eb41e8230fa6d5219ae8a4137ad52"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-mobile-menu-fullscreen.md",
+      "size": 1427,
+      "sha256": "b3c9cee43199404174507a48bc009c1a94355f2ab2c916587092739d90c10b54"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-mobile-navigation.md",
+      "size": 1523,
+      "sha256": "d78995a41fc556c2edaa515af19e70d73499d5f50595d4885e8ac584ae21f2a8"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-mobile-search-sizing.md",
+      "size": 1374,
+      "sha256": "0486e18a949f0af49b888f3adc4d5603203633f813ce262c5f7620ea46743382"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-0-roadmap.md",
+      "size": 1290,
+      "sha256": "b0c9674ff70999165676d9433d9defd85150a06e83a2e129687e441e38860bb8"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-1-2-foreground-guard.md",
+      "size": 1536,
+      "sha256": "c4f4bb5269957cda1819581f430e65653b42f8fe0cb30d4cef0050947e93348d"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-1-device-preflight.md",
+      "size": 1461,
+      "sha256": "2e0bfd68d6fadeef4898c9c0652a785f3eef35d56a9f0eedf00712e4e003e9f3"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-1-physical-gate.md",
+      "size": 1682,
+      "sha256": "456508262cbe13baa78eeb2b21904587ec667b04233a08477667b3d8d3d98dde"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-1-preflight.md",
+      "size": 1491,
+      "sha256": "e5358ae63beb941a5cace219bdbef94509c1e1975081b4c8679951b53be453b3"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-2-1-durable-sync.md",
+      "size": 1322,
+      "sha256": "ef5d1dd9f0dad56a6c79b2a247aa16745306b1339aab608e3521a9b50c2b698b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-2-2-bootstrap.md",
+      "size": 1618,
+      "sha256": "b5eaa055d79194876cc3e250d0a023b8d11bc5813eef11527b0d379723787c8b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-2-3-ledger-apply.md",
+      "size": 1779,
+      "sha256": "abe5ddd155882c582d69193077bbc44884cf2f77af61ede06bd7882ab1c75887"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-3-1-pairing-preview.md",
+      "size": 1742,
+      "sha256": "62586b8872330aa772cc4eb22a45336bee6e801638a1ce81f913dc44e56fffbd"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-09-14-pma-3-2-phone-lan-menu.md",
+      "size": 1531,
+      "sha256": "b95915061715b2ba9515fc74348801b9f8427db8ac3670408eb9e478c4e588d3"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
+      "size": 1359,
+      "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/financial-month-start-integration.md",
+      "size": 1653,
+      "sha256": "2acb0de12f5a564714ea2696f98c4ee3c9de1a8f09ce849f0ebb1ef0fd1da302"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/financial-month-start-period-labels.md",
+      "size": 1559,
+      "sha256": "dd55e452f51edc4561cc95e5b4a03e42422da95bf0dee1b89a3ca3c0ffbf097b"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/financial-month-start-preference.md",
+      "size": 1518,
+      "sha256": "172f61d9f186f27451164120afbbda8ead450113b2f90bf33ef8b8fd53958654"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/financial-month-start-quality-gate.md",
+      "size": 1304,
+      "sha256": "b3a48e9eedfcf8c6d0f5db08fd71ddff723186f74e4ca7faf611be77ce1ccb89"
+    },
+    {
       "path": ".codex/reviews/ui-ux/phase-15-0-local-hub-foundation.md",
       "size": 1433,
       "sha256": "60ea4ec6ca967979236eb88d36482678b1120569cc1f81858a8264f1fc8acbee"
@@ -1238,9 +1473,14 @@
       "sha256": "a354b91d8dd8d283b81f97535be2a8ac9e0c076fa4b3fe36a7c50a17b47ba418"
     },
     {
+      "path": ".codex/state/checkpoints/2026-09-14-roadmap-phone-local-hub-android.md",
+      "size": 977,
+      "sha256": "e17aa3290101c137a046da2cc38b67bdacb89b709e75bb88e85983f84d3caa22"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 471,
-      "sha256": "171410af7ed786fe29d31d939ed6595146b1e20671586194ceb31c7b68b2be20"
+      "size": 657,
+      "sha256": "a98ba20c3e86a2fa859f4075b2137ad5d96deb0154bf5c61151d6f41f24f266f"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1269,13 +1509,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 20390,
-      "sha256": "0c2b3bf5440faa8bc346ea67dbf19d6a2ac2c7d8a2525fb9356ad7864aaf9902"
+      "size": 25192,
+      "sha256": "61364c1d18e2dfe1b82622c213cd329b2f4b65335445ad33f6e268e2fbb0c11a"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 182173,
-      "sha256": "4c9a953501190b341d98c430996eb728701674cf55f1ff8070747d578951f86b"
+      "size": 203743,
+      "sha256": "a0a14709146c2412328bf3024a2cbd1b60e77f476e6f51c11ef62ead89f355cb"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1329,13 +1569,13 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 5858,
-      "sha256": "90c3db7412c83d72b77a1e429ea31d522599f5105e65b4dfcc1ab2b950bc0925"
+      "size": 5234,
+      "sha256": "e583f60ccc11f71e406b1181f1c83d6dff089e0f5a7a193de5da1581d91c4e24"
     },
     {
       "path": ".gitignore",
-      "size": 578,
-      "sha256": "b2ffef1aeb79d8de88da3ccec7c09cbfb31cd6ae6116410a459788ec2ac0930a"
+      "size": 746,
+      "sha256": "0f77d8924eeb8994efec6907a67ef09f7fdf6bc218206b1cde50b36d89b35ddb"
     },
     {
       "path": ".node-version",
@@ -1404,23 +1644,28 @@
     },
     {
       "path": "apps/local-hub/Cargo.lock",
-      "size": 26981,
-      "sha256": "b0dc0b9a8b39b2eb004d5ede8485eed95db020f2a03a4c0bcaf9d863a02b9f7f"
+      "size": 30895,
+      "sha256": "cbaa7f112dc5bad7862c21ff55a262955bff9f8558fc9d7d56f3b848a5eed3b4"
     },
     {
       "path": "apps/local-hub/Cargo.toml",
-      "size": 542,
-      "sha256": "6b38de35bb296b0c8a2a517e2bf58c81d1e409f1317fee02fe61e347d35823a5"
+      "size": 637,
+      "sha256": "ded62d81497b19e98e7de0936b14736fd790b305e48a181478d283c01013e6b0"
     },
     {
       "path": "apps/local-hub/README.md",
-      "size": 577,
-      "sha256": "bd84d72b5bba826c4111191a62d4a93d31894929d4aab144e2d111903ec58071"
+      "size": 1195,
+      "sha256": "3adbc85efe3a719a3ad9babf2576c0cf2199900221081c618050ab6a64d84b6f"
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 37940,
-      "sha256": "c882475d21be70306a86320fee7c72cd818965992c7de6faf4d9ae84ca1405a8"
+      "size": 93917,
+      "sha256": "ce56722a1d8fbe6322e8df2bb26f79d6a882c4eec39e24ddcfe07c09a1efd329"
+    },
+    {
+      "path": "apps/local-hub/src/sqlite_sync.rs",
+      "size": 23882,
+      "sha256": "80fe87c7f62c7d943754e7acbe69f8c7d33bf543ed61e092c9ec59b78e64405a"
     },
     {
       "path": "apps/web/index.html",
@@ -1469,18 +1714,18 @@
     },
     {
       "path": "apps/web/src-tauri/capabilities/default.json",
-      "size": 320,
-      "sha256": "085baa7729d9013e866182979c71303403bb1aebec575eea74dbbeb779030790"
+      "size": 345,
+      "sha256": "9034faa9d8583f621d0d5e9af9ae6b2ec04a9eb2acc449580b59086b346fd5d8"
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 136785,
-      "sha256": "acd0d78a523a04261cc78133eae4a000c96438385d4b5bd1fba75ab5218102f6"
+      "size": 144920,
+      "sha256": "cfc85fc9555b74bda8e8b498c0935e20b5cebd71a93625f1dc614e9eb18e6ee9"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 565,
-      "sha256": "09a19f8521b586a9e25e1bade157765661974b81c3e75ae7d8b93abb98bdb139"
+      "size": 707,
+      "sha256": "2f33e76781057ee36fc52ba2888429b3c27868d8c8ad6765d91840b5c0bafc67"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -1744,8 +1989,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 8619,
-      "sha256": "7005d1d5ddb0ea9632777be9f2ffaa8dcb8987134e8b2c81353efd3279d9fb0a"
+      "size": 18080,
+      "sha256": "88bf3c24bce12d66bf8d971edd491ee3041cb9c6c53334668fcf222d3b02e9dc"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -1754,8 +1999,8 @@
     },
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
-      "size": 1084,
-      "sha256": "5af4508c349b281035184e8ea8812ddcd370725a4cfe096cb02513cd80f30f4e"
+      "size": 1137,
+      "sha256": "532d7953da5c17fce503a6082a3fa70de7e6c83ce4257cf29a764e6366588b81"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -1785,12 +2030,12 @@
     {
       "path": "apps/web/src/analytics/AnalyticsPage.test.tsx",
       "size": 2223,
-      "sha256": "3b5916398013ed6d27de40e854163900ee99a78f7daa3fc49f812db501c5a64a"
+      "sha256": "52f69bd91ba7bcfe2af125532200be9e6f6eefa64c642a7841aba395276c6c80"
     },
     {
       "path": "apps/web/src/analytics/AnalyticsPage.tsx",
-      "size": 16552,
-      "sha256": "4b5046e69bfce4cf6fef62e351c9bc9e2b025f39db8d9b6efd355e737c63eec0"
+      "size": 17013,
+      "sha256": "83d9afa0eda3bef163f9c90a27c906ee971f5b3cc2d7afd014641ea0f96e74d6"
     },
     {
       "path": "apps/web/src/analytics/buildAnalyticsViewModel.test.ts",
@@ -1799,8 +2044,8 @@
     },
     {
       "path": "apps/web/src/analytics/buildAnalyticsViewModel.ts",
-      "size": 11182,
-      "sha256": "86e3805fc2b6e53adf3f31bd9cb268678e25e73227898dde51224756e1c4823c"
+      "size": 11751,
+      "sha256": "afa40a88ed15c3ab0fdbd8c3998608789a3c9ffe53698011573c56acf57afa25"
     },
     {
       "path": "apps/web/src/App.test.tsx",
@@ -1809,8 +2054,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 42501,
-      "sha256": "22ae392786084b590d235377464c9173b6d1695188f3d79826fe91625bb1b0ba"
+      "size": 43969,
+      "sha256": "eb120fb5f0392684499de3874fb24d084e03bbe4adb507f1ca22d0813f6c7ec4"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -1819,8 +2064,8 @@
     },
     {
       "path": "apps/web/src/appModels.ts",
-      "size": 3520,
-      "sha256": "5982cc8813a6551481754f05e3ecae32d5dc5792c049fcf661bf763fc386e1c2"
+      "size": 3585,
+      "sha256": "ea1ff196683c90cc176e4b49541190766d12829665dfc50d84bed8c9303fd852"
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
@@ -1869,8 +2114,8 @@
     },
     {
       "path": "apps/web/src/budgets/budgetCommands.ts",
-      "size": 4510,
-      "sha256": "7511fc384a620e14ff7dfc68974b6d9e5eb37a0ed97e333d52fd287c7d22078d"
+      "size": 4845,
+      "sha256": "907da70e442601416775817e7ce73a849d985be29cf2ddb88107cf8196f381dc"
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.test.tsx",
@@ -1879,8 +2124,8 @@
     },
     {
       "path": "apps/web/src/budgets/BudgetsPage.tsx",
-      "size": 16325,
-      "sha256": "bf6373459e16ddaad4c0eff8c981afe5eb7fc620673f25e811707c08a521aef7"
+      "size": 16890,
+      "sha256": "4cbe1ca24b48c43c22160b80075be7c0bedae2775b8f04e891cdefd98a152eca"
     },
     {
       "path": "apps/web/src/categories/CategoriesPage.test.tsx",
@@ -1974,8 +2219,8 @@
     },
     {
       "path": "apps/web/src/dashboard/buildDashboardViewModel.ts",
-      "size": 18227,
-      "sha256": "a53b4aac1fc611b1b2902a86772a37b3943d6f446fc9f4d8eabd3ffa91e71a85"
+      "size": 18541,
+      "sha256": "cd8ad226d9b0bff6b978b41bdb81a93b5fa9b92b07f938e6b9142e86f1fdfc22"
     },
     {
       "path": "apps/web/src/dashboard/Dashboard.test.tsx",
@@ -1991,6 +2236,16 @@
       "path": "apps/web/src/dashboard/trendBar.ts",
       "size": 211,
       "sha256": "0502cee7c5d920caeeef80edfe10f10438469e6d2aee6a0ba8681fa5cb7ab6e1"
+    },
+    {
+      "path": "apps/web/src/date/financialPeriodPresentation.test.ts",
+      "size": 477,
+      "sha256": "95ac632927e60d78acedbe0b0469515ab2b1c2205017d036d60371e12264d13e"
+    },
+    {
+      "path": "apps/web/src/date/financialPeriodPresentation.ts",
+      "size": 1055,
+      "sha256": "da8f1cff8adcdbfd922b221512d1c15ffb31e50dd8b4178138a58ecae99e36fc"
     },
     {
       "path": "apps/web/src/date/localCivilDate.test.ts",
@@ -2104,13 +2359,13 @@
     },
     {
       "path": "apps/web/src/journal/JournalPage.test.tsx",
-      "size": 4102,
-      "sha256": "be4cf7f207e0750170dffc10746a0511e48c8bac83f70378257c300855983838"
+      "size": 4115,
+      "sha256": "eb746f9b20512bdffef2470357f8b7aa60341bf5928d16dcfce1eabed8b3f420"
     },
     {
       "path": "apps/web/src/journal/JournalPage.tsx",
-      "size": 12125,
-      "sha256": "d21b07e127a279194d98803e8fda8ea80e386b594fb37518a3b9e0c589ee9026"
+      "size": 12780,
+      "sha256": "1459bf5e3952acd93c49ac886bc3194a13cb3df636ad179a3d7b747cf25046de"
     },
     {
       "path": "apps/web/src/loans/loanCommands.test.ts",
@@ -2154,18 +2409,18 @@
     },
     {
       "path": "apps/web/src/notifications/localNotifications.ts",
-      "size": 9111,
-      "sha256": "56c2e39ed048a1f3c0325f70f8f423a018d98a70f91f2d8fff4a440483209bfa"
+      "size": 9287,
+      "sha256": "473c91b80ea2b0c298e09f1a7eec7c1dff5323340737ebbeff8b652bf2123e6d"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.test.tsx",
-      "size": 1676,
-      "sha256": "daf61ee7a9efd9f4ae014d4a4195a9ab422f4491b641ba5482727117893643d2"
+      "size": 1886,
+      "sha256": "5594e63586b5898ea74a9f41571e3d5c714d625e41b6515ea78cb899a1921baa"
     },
     {
       "path": "apps/web/src/notifications/NotificationsPage.tsx",
-      "size": 9699,
-      "sha256": "93f1c99450c847bd55df96995055305ef29a1014a69e55a9d40a1d194d23b7a9"
+      "size": 9835,
+      "sha256": "6bf19a8ae763729048b8bf9e3314668f324c2f31a2f1c2f203db426f795c9f51"
     },
     {
       "path": "apps/web/src/page.css",
@@ -2309,33 +2564,73 @@
     },
     {
       "path": "apps/web/src/settings/localHostConnection.test.ts",
-      "size": 1325,
-      "sha256": "27cf586b3533e7d172e8109191c6e2e5fd1c2a0b7371ee729afb88976591db38"
+      "size": 6850,
+      "sha256": "244f13c4643acb7bb0461089fa0067c10e3a4ae6a7f4352e4664c92362b596ac"
     },
     {
       "path": "apps/web/src/settings/localHostConnection.ts",
-      "size": 2145,
-      "sha256": "ffe606059bd3bfd2cccdc4f7cdf051fd2b6866b9cb751d624a234da4a424d9bb"
+      "size": 9978,
+      "sha256": "8ae0c79ce7d17f1e424e373e0528c20cb1be595e9825125cbd3354261f2ae22c"
+    },
+    {
+      "path": "apps/web/src/settings/localHostSession.test.ts",
+      "size": 963,
+      "sha256": "168366d5f5972b214203a6b03359892c8027e313231f75b2ad79ebf9344eea70"
+    },
+    {
+      "path": "apps/web/src/settings/localHostSession.ts",
+      "size": 1681,
+      "sha256": "f7d37d0bb0d124f35bb49d44bb3168d6078c08fe558e4a3d14674a901525b086"
+    },
+    {
+      "path": "apps/web/src/settings/localHostSync.test.ts",
+      "size": 4102,
+      "sha256": "302820783e816f6515ef29c71159b6886fdcc1a31dde8c3f416e43afa03ee34d"
+    },
+    {
+      "path": "apps/web/src/settings/localHostSync.ts",
+      "size": 5564,
+      "sha256": "8cfd8ee5172f155e2c8065ff884b8324a55fbd2fe7302e2f51d8d02f117e3bb4"
+    },
+    {
+      "path": "apps/web/src/settings/pcManagerDesktop.test.ts",
+      "size": 3279,
+      "sha256": "e70339e081610a75bd6975927587f8d57c5e87b62a22b8e348ca128e6e9d5fd7"
+    },
+    {
+      "path": "apps/web/src/settings/pcManagerDesktop.ts",
+      "size": 1767,
+      "sha256": "beaf65af0c67e476cedd1409f404c49984f54daf7136dbb71bdef076ccbaaa50"
+    },
+    {
+      "path": "apps/web/src/settings/phoneLocalHubForeground.test.ts",
+      "size": 1753,
+      "sha256": "4b3c67ac7aa8dd759f59c45caba6b55e94c875289f5efaf9152bed1a5b50381f"
+    },
+    {
+      "path": "apps/web/src/settings/phoneLocalHubForeground.ts",
+      "size": 758,
+      "sha256": "6633b57aa25b4c688c6eeb4d6d8fb7b333b24f8df53d31e3168ed0e10f70da70"
     },
     {
       "path": "apps/web/src/settings/preferences.test.ts",
-      "size": 1329,
-      "sha256": "983d879f10f4b96c77aaeaad7ba5f60f77afdb5af1db9890a60f9802c81f3850"
+      "size": 1504,
+      "sha256": "4da8b7e1aac79cbb3e4d9e7b22d56342a29af08e7d2002196d31d240cd3aeaa6"
     },
     {
       "path": "apps/web/src/settings/preferences.ts",
-      "size": 1729,
-      "sha256": "7549aac05d440c3c7ace4747183d706ebbba560f1d1d8fe4e36b0cad7d5bdbdd"
+      "size": 2080,
+      "sha256": "6d3fee4e0a911191bb1d765049ded146d89d78286b79cd018a761dcf31b792f8"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 10470,
-      "sha256": "2dcef564b75e54d3a8f650034d8b651285417722a37a58ce982e2310254a47a3"
+      "size": 11272,
+      "sha256": "fcd7616b146d3eb1609680b4b50d9a91dfdcaaedf69779576de35ea28dd6ba34"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 30440,
-      "sha256": "cdd25c231c3354b78410d27898621f6910d53434ecc6ed5530052083eb7bc359"
+      "size": 50694,
+      "sha256": "25cd5aef5f957fb3deb74b9cb5a532f647ab78793996a5b3a8ace67b19ca0936"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -2609,8 +2904,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 60959,
-      "sha256": "3f3bf905e200ad5b564b15411fcd8ac96446ffeaad6150ae7c03e61314105488"
+      "size": 65891,
+      "sha256": "801ca02da25746d58e7ea76f2f36f9eb1ebc8e262a47c3d21cc78fc8faafd8c8"
     },
     {
       "path": "design/mockup/README.md",
@@ -2738,6 +3033,11 @@
       "sha256": "1aa37e8e703328923feba0b55a2d4689e1badf5ae974bf66c63921ecc82c3b28"
     },
     {
+      "path": "docs/adr/0020-phone-local-hub-host.md",
+      "size": 2333,
+      "sha256": "cded65ed3a30575fbc6fa6d89640b12be279d0d7f4cfd91f99487f85e59c1d12"
+    },
+    {
       "path": "docs/adr/0021-advanced-recurring-schedules.md",
       "size": 1901,
       "sha256": "127e0460efb3ad85e74882dcae996e09e3ffd39c992b6b0ca8b078b44a5176ce"
@@ -2779,8 +3079,8 @@
     },
     {
       "path": "docs/CURRENT_SOURCES.md",
-      "size": 1307,
-      "sha256": "3c916ebe26aed0667812cd42674d582870d5287ec37f4ead6b192b488d54b6b7"
+      "size": 1339,
+      "sha256": "1cfbaea58f0806a7be1ad18868fabac443b42d9dabe52e3de02a862ae752d179"
     },
     {
       "path": "docs/DATA_DELETION_MODEL.md",
@@ -2794,13 +3094,13 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 32320,
-      "sha256": "698eabbf533d145f3a20dba82512c8ef1b8cf7de4fd1b2179254df9bbbb79e87"
+      "size": 36443,
+      "sha256": "08fad098f44fa55e8a8fc391a493f37ee3102c5140cce5c216a8fa97fb3e8cde"
     },
     {
       "path": "docs/DESKTOP_DISTRIBUTION.md",
-      "size": 1549,
-      "sha256": "6e39f7dd26006c1216841d24efafc41f698012390644221fa48ef651bb78189c"
+      "size": 1184,
+      "sha256": "eacb04668c8894466f281dcd9f06d5bb1575009bf17ec2b1bd57211169989b8c"
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
@@ -2836,6 +3136,11 @@
       "path": "docs/operations/REAL_DATA_VALIDATION_CHECKPOINT.md",
       "size": 3274,
       "sha256": "9606745427e36f3991ff30eab0aaf13ff1bb1394b63704174b061fff101448f2"
+    },
+    {
+      "path": "docs/PC_MANAGER_THREAT_MODEL.md",
+      "size": 6154,
+      "sha256": "54596e1531d36bb10f31d3e3d5ed6373bc0a6fc8e0ded7101e6164a9abb0ec11"
     },
     {
       "path": "docs/PLATFORM_MATRIX.md",
@@ -2918,9 +3223,29 @@
       "sha256": "9756c385be660f2ea3e7dc538dc4c9081957911226f3820b639027d226f40e23"
     },
     {
+      "path": "docs/ROADMAP_FINANCIAL_MONTH_START.md",
+      "size": 3180,
+      "sha256": "d48d5b50a5ee9e56c47434995f311c72e79f4828645637afceba916cc500b11b"
+    },
+    {
+      "path": "docs/ROADMAP_MOBILE_NAVIGATION.md",
+      "size": 5567,
+      "sha256": "9bd39a7a28921b9c037e14169755a9defc4b8805df17282d46a44491cbec1dfa"
+    },
+    {
       "path": "docs/ROADMAP_NEXT_SHARED_LAN.md",
       "size": 2256,
       "sha256": "ec0d95f1749f4ebcd2d14c6eeba4a491318e6a93248ada945770ed8cfc852022"
+    },
+    {
+      "path": "docs/ROADMAP_PC_MANAGER.md",
+      "size": 26343,
+      "sha256": "b5e9b7ba10882baaa07a69b5bb518cb34a7c2b83c5d7f44debff5f4f21f402b2"
+    },
+    {
+      "path": "docs/ROADMAP_PHONE_LOCAL_HUB.md",
+      "size": 12406,
+      "sha256": "9a4ebb91e9a5457f440b51fee9eafdeca2dd75f9dcc3638c0cdff4b20a986313"
     },
     {
       "path": "docs/ROADMAP_STABILIZATION.md",
@@ -2954,8 +3279,8 @@
     },
     {
       "path": "docs/SYNC_SPEC.md",
-      "size": 654,
-      "sha256": "32e49da3ab56c01cb6ef243ea23bee994f05203c35d52f81d49c3b3093d3ae1a"
+      "size": 1124,
+      "sha256": "abc2296daf25a54336fa971cd606813bab75212c52e66421e685662914676969"
     },
     {
       "path": "docs/TEST_STRATEGY.md",
@@ -3024,8 +3349,8 @@
     },
     {
       "path": "eslint.config.mjs",
-      "size": 1285,
-      "sha256": "1a24940ddfb83841b7c6db5f256e5dda83be60057472163c353cda9ec4c4544e"
+      "size": 1314,
+      "sha256": "06167c0d1a348e6f15872ff80c3bfe8735effe74bccedca5869bedfbc36b3b3d"
     },
     {
       "path": "examples/imports/mapping-profile.example.json",
@@ -3084,8 +3409,8 @@
     },
     {
       "path": "packages/config/src/logging.ts",
-      "size": 2570,
-      "sha256": "2d51b370335a35179e044bf6afd768fff462eaae26f1061d66f99953c7325740"
+      "size": 2629,
+      "sha256": "df9df3b84b9d323d370322863082fcf1fd8158b2c78d6fd6fa501027f5363674"
     },
     {
       "path": "packages/config/src/settings.ts",
@@ -3624,8 +3949,8 @@
     },
     {
       "path": "packages/domain/src/index.ts",
-      "size": 4024,
-      "sha256": "1f22409adadaf769deffff9376b42d9dd7eeeaae7d558aff5e8759a93033ebe5"
+      "size": 4316,
+      "sha256": "95ffda881f3f50e49a9e4437db8be40864d8950b023975f11253172c8d31aff1"
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
@@ -3659,8 +3984,8 @@
     },
     {
       "path": "packages/domain/src/services/budgetProgress.ts",
-      "size": 5473,
-      "sha256": "b9d0d725a3543d94da45ed7ac195dcf6b83e2d7a0c4450cec855fb5403702d85"
+      "size": 5633,
+      "sha256": "ec3957b240d18a7038a6f77ebf655772566dca6ffec5b9b1063a20a9c11ef793"
     },
     {
       "path": "packages/domain/src/services/categoryHierarchy.test.ts",
@@ -3708,6 +4033,16 @@
       "sha256": "bf8f9714f282ad79371826a61df2de589a32f319f7d02c4b67a43270184784b1"
     },
     {
+      "path": "packages/domain/src/services/financialPeriods.test.ts",
+      "size": 1868,
+      "sha256": "3fe85ca9551ce6f52f0f2ee9d29539829f5b326af1c7853d5f096e683624a3b2"
+    },
+    {
+      "path": "packages/domain/src/services/financialPeriods.ts",
+      "size": 3270,
+      "sha256": "d477c791a1b619e5531df7b87c8b7d28e04e3bcd8aa541cf4988e13093003a96"
+    },
+    {
       "path": "packages/domain/src/services/ledgerReports.test.ts",
       "size": 2782,
       "sha256": "1d283ab0c52e75222eca679f681b1afaf73b9e1ff6b4cafe7893b10123321bfd"
@@ -3734,8 +4069,8 @@
     },
     {
       "path": "packages/domain/src/services/monthlyTrends.ts",
-      "size": 1322,
-      "sha256": "adecd64edb012de5ab42624358f3e5dce1ccdcf6a784dfd616b188d2e71d3227"
+      "size": 1443,
+      "sha256": "35c11d57d0ce0e601607f92ba4f2b0f73ec89df9255b2b219e32070f0329428b"
     },
     {
       "path": "packages/domain/src/services/prudentForecast.test.ts",
@@ -3889,13 +4224,13 @@
     },
     {
       "path": "packages/ui/src/AppShell.test.tsx",
-      "size": 8083,
-      "sha256": "11f4f37c236498312622f3bee6c66ee3e00c1146a5cc1dd2d5d4676606cb7372"
+      "size": 9445,
+      "sha256": "7c35762665472f1e4748105a56606da683898d4e4bd14d9b9b7557b06f5a0d60"
     },
     {
       "path": "packages/ui/src/AppShell.tsx",
-      "size": 5324,
-      "sha256": "75786439fd2bbf287259c5969e8b0a0dd88992ea6e0a677ddea345d1a5abcdf2"
+      "size": 6044,
+      "sha256": "ac039d178bf28b83dc3515d7b3e97296c416dd55ec24c3f2c69551cf3756036b"
     },
     {
       "path": "packages/ui/src/ErrorBoundary.test.tsx",
@@ -3934,8 +4269,8 @@
     },
     {
       "path": "packages/ui/src/index.ts",
-      "size": 1081,
-      "sha256": "b25ce04361d55a26bd5010caa4d2fb0c2e0aa67ee1d6b963914ad450b1840b50"
+      "size": 1146,
+      "sha256": "4ce11823ef2de13dcbbea5ba1d0defcc2aa4264b9bb9006ad5123d8e3bffe013"
     },
     {
       "path": "packages/ui/src/MetricCard.tsx",
@@ -3949,8 +4284,13 @@
     },
     {
       "path": "packages/ui/src/MobileHeader.tsx",
-      "size": 1569,
-      "sha256": "d4013f722df8c4aaf8dbc300ebc9d02eee16a1e9ff660fa67103467c741b496c"
+      "size": 1595,
+      "sha256": "fe8b00c89780da4a08f5f56db4356e5a693fe011f7ca3c8b0908c0ee5bf4fec5"
+    },
+    {
+      "path": "packages/ui/src/MobileNavigationSheet.tsx",
+      "size": 3403,
+      "sha256": "4966f84b4754b500ca8d0631b5141e842824cddf473ef9fe29ed0954f914d4ea"
     },
     {
       "path": "packages/ui/src/NavIcon.test.tsx",
@@ -3979,13 +4319,13 @@
     },
     {
       "path": "packages/ui/src/SidebarNavigation.tsx",
-      "size": 5247,
-      "sha256": "29fc8c52f71e76038ec6ba539380e2206b23b07785afc6dc60576da2111415f5"
+      "size": 5268,
+      "sha256": "dcdc40aef89f2bd818973d687b9f4834a346e6ec256d7b3eaff204ad415ac4ed"
     },
     {
       "path": "packages/ui/src/styles.css",
-      "size": 20821,
-      "sha256": "6511144067d2e0e02c1222c3a7d2c4ba7e9b313ce95eccf881bcfce64aa708c2"
+      "size": 24554,
+      "sha256": "dec5d3d2d3c18cc564ea6d67dd26ff0008d771141d0fd25569db61ff04c9ef55"
     },
     {
       "path": "packages/ui/src/SyncConflictBanner.test.tsx",
@@ -4034,8 +4374,8 @@
     },
     {
       "path": "README.md",
-      "size": 3803,
-      "sha256": "dea34ada39ef48afa59332a655a12c422745ff97ca41f712ab90404a9fafa44e"
+      "size": 3802,
+      "sha256": "7546d7b18c4c917a22b06002240b5d83edee87dae514014c411da191eb854149"
     },
     {
       "path": "schemas/backup-manifest.schema.json",
@@ -4174,8 +4514,8 @@
     },
     {
       "path": "test/e2e/c3-shell-audit.spec.ts",
-      "size": 3095,
-      "sha256": "5b6a719817caafed18d729fe067a481946f8f0a0b2c383a695c3baaa07b8cdee"
+      "size": 4042,
+      "sha256": "92637084b56e4d9259805283b32e55fe16709ac93da70de37ec9e551b781fffb"
     },
     {
       "path": "test/e2e/c4-app-lock-settings-recovery-flow.spec.ts",
