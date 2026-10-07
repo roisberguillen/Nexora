@@ -37,7 +37,10 @@ import { applyAppPreferences, readAppPreferences } from "./settings/preferences"
 import { LocalHostSyncClient } from "./settings/localHostSync";
 import { readLocalHostConnection } from "./settings/localHostConnection";
 import { readLocalHostCredentials } from "./settings/localHostVault";
-import { connectRemoteLedgerRepository } from "./settings/remoteLedgerRepository";
+import {
+  connectRemoteLedgerRepository,
+  type RemoteLedgerConnection,
+} from "./settings/remoteLedgerRepository";
 
 const rootElement = document.querySelector("#root");
 
@@ -78,6 +81,9 @@ const applyPwaUpdate =
 let selectedStorageKind: LedgerStorageKind | undefined;
 let allowOpfsFallback = false;
 let discoveredArchives: readonly StorageArchiveInspection[] = [];
+let remoteLedgerConnection: RemoteLedgerConnection | undefined;
+let remoteSyncTimer: number | undefined;
+let remoteOnlineHandler: (() => void) | undefined;
 const startupBootstrap = createStartupBootstrap(
   new StartupOrchestrator({
     discoverStorage: async () => {
@@ -122,8 +128,18 @@ const startupBootstrap = createStartupBootstrap(
               : { sessionToken: remote.credentials.sessionToken }),
           },
         });
-        const repository = await connectRemoteLedgerRepository(cache.repository, client);
-        return { ...cache, repository };
+        remoteLedgerConnection = await connectRemoteLedgerRepository(cache.repository, client);
+        void remoteLedgerConnection.sync().catch(() => undefined);
+        if (remoteSyncTimer === undefined) {
+          remoteOnlineHandler = () => {
+            void remoteLedgerConnection?.sync().catch(() => undefined);
+          };
+          window.addEventListener("online", remoteOnlineHandler);
+          remoteSyncTimer = window.setInterval(() => {
+            void remoteLedgerConnection?.sync().catch(() => undefined);
+          }, 30_000);
+        }
+        return { ...cache, repository: remoteLedgerConnection.repository };
       }
       const storageKind = selectedStorageKind;
       if (storageKind === "native-sqlite") {
@@ -199,6 +215,9 @@ const getStartupDiagnostics = (): StartupDiagnosticsContext => {
 window.addEventListener(
   "pagehide",
   () => {
+    if (remoteSyncTimer !== undefined) window.clearInterval(remoteSyncTimer);
+    if (remoteOnlineHandler !== undefined)
+      window.removeEventListener("online", remoteOnlineHandler);
     void ledgerPromise.then((ledger) => ledger.close()).catch(() => undefined);
   },
   { once: true },

@@ -4,7 +4,8 @@ Schermata: Settings pairing e bootstrap app
 Route: #settings
 Flusso principale: Pairing credenziale, riapertura cache remoto e sincronizzazione transazione
 Reviewer/fase: Scope review per integrazione runtime
-Modifiche: Aggiunta persistenza cifrata delle credenziali e riapertura automatica della sessione; le superfici visive, i colori, i font e il layout approvato restano invariati.
+Modifiche: Aggiunta persistenza cifrata delle credenziali, riapertura automatica della sessione e
+pull remoto nel lifecycle; le superfici visive, i colori, i font e il layout approvato restano invariati.
 
 | Area | Superficie | Esito | Evidenza |
 |---|---|---|---|
@@ -18,7 +19,7 @@ Modifiche: Aggiunta persistenza cifrata delle credenziali e riapertura automatic
 | Feedback | Stato pairing | PASS | Il messaggio indica vault locale invece di memoria volatile. |
 | Accessibilità | Form esistenti | PASS | Nessun elemento interattivo nuovo o rimosso. |
 | Finanza | Ledger remoto | PASS | Il cache mostra il bootstrap del ledger host. |
-| Performance | Startup remoto | PASS | Il bootstrap è eseguito prima del mount pronto dell’app. |
+| Performance | Startup remoto | PASS | Il bootstrap è eseguito prima del mount pronto dell’app; il pull successivo aggiorna i modelli senza cambiare la superficie. |
 
 P0 aperti: Nessuno
 Esito: PASS

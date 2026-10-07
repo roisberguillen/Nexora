@@ -4,8 +4,8 @@
 
 - `remote-mobile-host`: il client PC apre un cache ledger IndexedDB dedicato, ricostruito dal
   bootstrap autenticato del Local Hub del telefono; le mutazioni di transazione usano operation
-  log, revisioni, push immediato e outbox persistente con retry offline. Pairing, device token e
-  session token sono cifrati con AES-GCM in un vault IndexedDB locale.
+  log, revisioni, pull/push con cursore persistente e outbox persistente con retry offline. Pairing,
+  device token e session token sono cifrati con AES-GCM in un vault IndexedDB locale.
 - Local Hub sync hardening: verified device binding and SHA-256 payload digests on HTTP push,
   preserved applied operations when a batch also contains conflicts, added authenticated bootstrap
   on the web client, and allowed HTTPS LAN connections in the Tauri CSP.

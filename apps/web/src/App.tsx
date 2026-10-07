@@ -78,6 +78,7 @@ import { ProfilePage } from "./profile/ProfilePage";
 import { SettingsPage } from "./settings/SettingsPage";
 import { installPhoneLocalHubForegroundGuard } from "./settings/phoneLocalHubForeground";
 import { readAppPreferences } from "./settings/preferences";
+import { remoteLedgerSyncEventName } from "./settings/remoteLedgerRepository";
 import { NotificationsPage } from "./notifications/NotificationsPage";
 import { PrivacySecurityPage } from "./security/PrivacySecurityPage";
 import { AppLockScreen } from "./security/AppLockScreen";
@@ -299,6 +300,19 @@ function AppContent({
   }, [financialMonthStartDay, ledgerPromise, startupBootstrap, startupDiagnostics]);
 
   useEffect(() => startupBootstrap?.subscribe(setStartupProgress), [startupBootstrap]);
+
+  useEffect(() => {
+    const refreshAfterRemotePull = () => {
+      if (ledgerState.status !== "ready") return;
+      void loadAppModels(ledgerState.ledger, financialMonthStartDay).then((models) => {
+        setLedgerState((current) =>
+          current.status === "ready" ? { ...current, ...models } : current,
+        );
+      });
+    };
+    window.addEventListener(remoteLedgerSyncEventName, refreshAfterRemotePull);
+    return () => window.removeEventListener(remoteLedgerSyncEventName, refreshAfterRemotePull);
+  }, [financialMonthStartDay, ledgerState]);
 
   const addDemoData = async (): Promise<void> => {
     if (ledgerState.status !== "ready" || isSeeding) {

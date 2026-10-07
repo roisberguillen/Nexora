@@ -135,9 +135,37 @@ describe("local host sync client", () => {
     );
   });
 
+  it("persists the pull cursor per endpoint and paired device", () => {
+    const values = storage();
+    const first = new LocalHostSyncClient({
+      endpoint: "https://host.home/",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: values,
+      request: vi.fn(),
+    });
+    first.setCursor(7);
+    const restored = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: values,
+      request: vi.fn(),
+    });
+    const otherDevice = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-2", token: "volatile-token" },
+      storage: values,
+      request: vi.fn(),
+    });
+    expect(restored.cursor()).toBe(7);
+    expect(otherDevice.cursor()).toBe(0);
+  });
+
   it("adds the volatile session header to sync requests", async () => {
     const values = storage();
-    const request = vi.fn(async () => new Response(JSON.stringify([]), { status: 200 }));
+    const request = vi.fn(
+      async () =>
+        new Response(JSON.stringify([{ Applied: { cursor: 1, revision: 1 } }]), { status: 200 }),
+    );
     const client = new LocalHostSyncClient({
       endpoint: "https://host.home",
       credentials: { deviceId: "device-1", token: "device-token", sessionToken: "session-token" },

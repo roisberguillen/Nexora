@@ -53,6 +53,7 @@ export interface LocalSyncBootstrapResult {
 }
 
 const queueKeyPrefix = "nexora.local-sync-queue.v1";
+const cursorKeyPrefix = "nexora.local-sync-cursor.v1";
 
 export class LocalHostSyncClient {
   private readonly storage: LocalSyncStorage;
@@ -71,6 +72,18 @@ export class LocalHostSyncClient {
 
   public deviceId(): string {
     return this.options.credentials.deviceId;
+  }
+
+  public cursor(): number {
+    const raw = this.storage.getItem(this.cursorKey());
+    if (raw === null) return 0;
+    const cursor = Number(raw);
+    return Number.isSafeInteger(cursor) && cursor >= 0 ? cursor : 0;
+  }
+
+  public setCursor(cursor: number): void {
+    if (!Number.isSafeInteger(cursor) || cursor < 0) throw new Error("invalid_sync_cursor");
+    this.storage.setItem(this.cursorKey(), String(cursor));
   }
 
   public enqueue(operation: LocalSyncOperation): void {
@@ -165,6 +178,10 @@ export class LocalHostSyncClient {
 
   private queueKey(): string {
     return `${queueKeyPrefix}:${trimEndpoint(this.options.endpoint)}:${this.options.credentials.deviceId}`;
+  }
+
+  private cursorKey(): string {
+    return `${cursorKeyPrefix}:${trimEndpoint(this.options.endpoint)}:${this.options.credentials.deviceId}`;
   }
 }
 

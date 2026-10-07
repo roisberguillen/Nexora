@@ -1079,8 +1079,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-07-remote-mobile-host.md",
-      "size": 1462,
-      "sha256": "cb6b04a512e425f9e4c9f0c765a08b047ecfa28d4797fc918c4e0fd9ce654be8"
+      "size": 1557,
+      "sha256": "0f194e593e08d75a72a4ecf1cea7d09dbe828c1ccbda4431e35e305e048e465c"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1534,8 +1534,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 205450,
-      "sha256": "f602826831a14e73009ad329315649a1cdbf30d8c0f000ff1f422eee8311e9e1"
+      "size": 205848,
+      "sha256": "63900c0a90f794327f88b154abe01607102a3ab0855994ef8714ad62911fc36c"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2074,8 +2074,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 43969,
-      "sha256": "eb120fb5f0392684499de3874fb24d084e03bbe4adb507f1ca22d0813f6c7ec4"
+      "size": 44611,
+      "sha256": "59985a967abc61ac46ca97a087b0573dbc2b9ce7050e72761db50999fc2cb0ef"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -2409,8 +2409,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 8128,
-      "sha256": "02692a6877de2458c8c20491d319e690802ab710e616f33523f71e0f904e3ce3"
+      "size": 9007,
+      "sha256": "4ccbf497dce4b988cdacdd8ba1cc90fbb8325984de69fc823ae2a6e241a5e8d3"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -2604,13 +2604,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 5640,
-      "sha256": "afbb81266df4313b1f6684043fc8e9022755f1eeece7e8b86d3ed0db553c605b"
+      "size": 6485,
+      "sha256": "0a04c4de11b5902cdfcf17309125c362e4e628d2d39d6838e70d49d9ea2375f4"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 7800,
-      "sha256": "9f956ac74e9b9ca26b9b44c8a3a16adefdcd139220348df4340104096d8b89fb"
+      "size": 8424,
+      "sha256": "5f63119eaa4450bf5df8a60260aebc5ab77e645b785cc3c407fda0162410855a"
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",
@@ -2649,8 +2649,8 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 7365,
-      "sha256": "34e2b24085bcd6a50a46c475aa43ef1c68ddb484c9ade0f359bfabfe986d7bb0"
+      "size": 8455,
+      "sha256": "32fed91527f57e5656cec913123d5d772a867e70a26a542b1ab48b223ae356cc"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
@@ -2934,8 +2934,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 66515,
-      "sha256": "9c69a91909d1917a9041ac11f3edb5a333b534c2814ec27273b3852b41b084be"
+      "size": 66534,
+      "sha256": "fd85c619bac8813cf29cb17e8db68da71c9bf995b63ef61ff62c2e0e97ab25d0"
     },
     {
       "path": "design/mockup/README.md",

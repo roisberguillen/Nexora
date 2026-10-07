@@ -2432,4 +2432,7 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm test:ui-ux` — PASS, 4 passed.
 - Vitest mirato — NON VALIDATO: i worker Windows non hanno raccolto i test entro il timeout del
   runner, anche con un solo worker.
+- Il client remoto ora esegue pull incrementale con cursore persistente per endpoint/device,
+  all’avvio, quando torna online e con polling lifecycle; l’interfaccia ricarica i modelli dopo
+  l’applicazione delle operazioni ricevute.
 - CI GitHub — da verificare sul commit pubblicato.

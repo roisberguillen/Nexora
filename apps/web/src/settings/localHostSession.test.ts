@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("./localHostVault", () => ({
+  saveLocalHostCredentials: vi.fn(),
+  clearLocalHostCredentials: vi.fn(),
+}));
+
 import { LocalHostSessionController } from "./localHostSession";
 
 describe("LocalHostSessionController", () => {

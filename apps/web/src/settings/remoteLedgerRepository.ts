@@ -9,10 +9,17 @@ import {
 import type { LocalSyncOperation } from "./localHostSync";
 import { LocalHostSyncClient } from "./localHostSync";
 
+export const remoteLedgerSyncEventName = "nexora:remote-ledger-sync";
+
+export interface RemoteLedgerConnection {
+  readonly repository: LedgerRepository;
+  sync(): Promise<void>;
+}
+
 export async function connectRemoteLedgerRepository(
   repository: LedgerRepository,
   client: LocalHostSyncClient,
-): Promise<LedgerRepository> {
+): Promise<RemoteLedgerConnection> {
   try {
     await client.flush();
   } catch {
@@ -27,7 +34,33 @@ export async function connectRemoteLedgerRepository(
     revisions.set(operation.entityId, operation.revision);
     await applyRemoteOperation(repository, operation);
   }
-  return createRemoteRepository(repository, client, revisions);
+  client.setCursor(bootstrap.cursor);
+  const remoteRepository = createRemoteRepository(repository, client, revisions);
+  return {
+    repository: remoteRepository,
+    async sync(): Promise<void> {
+      try {
+        await client.flush();
+      } catch {
+        // The durable outbox keeps the operation for the next reconnect.
+      }
+      const after = client.cursor();
+      const pulled = await client.pull(after);
+      let lastCursor = after;
+      for (const [cursor, operation] of pulled.operations) {
+        if (!Number.isSafeInteger(cursor) || cursor < lastCursor) {
+          throw new Error("invalid_sync_pull_cursor");
+        }
+        revisions.set(operation.entityId, operation.revision);
+        await applyRemoteOperation(repository, operation);
+        lastCursor = cursor;
+      }
+      if (lastCursor !== after) {
+        client.setCursor(lastCursor);
+        window.dispatchEvent(new Event(remoteLedgerSyncEventName));
+      }
+    },
+  };
 }
 
 function createRemoteRepository(
