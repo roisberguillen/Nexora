@@ -26,3 +26,10 @@ imports/private/
 # This prevents statements, exports, browser profiles and encrypted test backups
 # from entering the repository while keeping synthetic fixtures reviewable.
 validation/real-data/
+
+# Local validation and export artifacts.
+outputs/
+Nexora-desktop.exe
+money-manager-*.png
+scripts/edit-uploaded-money-manager.mjs
+scripts/update-corrected-balances.mjs
