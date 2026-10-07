@@ -2594,8 +2594,8 @@
     },
     {
       "path": "apps/web/src/settings/localHostSession.test.ts",
-      "size": 963,
-      "sha256": "168366d5f5972b214203a6b03359892c8027e313231f75b2ad79ebf9344eea70"
+      "size": 1081,
+      "sha256": "1da968911d59831103d81155afdf6a45493a0051eaed1c8b2a73403f399eedbd"
     },
     {
       "path": "apps/web/src/settings/localHostSession.ts",
@@ -2604,8 +2604,8 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 6485,
-      "sha256": "0a04c4de11b5902cdfcf17309125c362e4e628d2d39d6838e70d49d9ea2375f4"
+      "size": 6545,
+      "sha256": "06d67e63fff48fab66deb3bd92f0b92030bf8ed567774abd57e575c6fdb33ba8"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
