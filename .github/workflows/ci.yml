@@ -79,6 +79,8 @@ jobs:
       - name: Install Android build dependencies
         run: sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;35.0.0" "ndk;29.0.13846066"
       - run: pnpm install --frozen-lockfile
+      - name: Initialize Android project
+        run: pnpm --filter @nexora/web tauri android init --ci --skip-targets-install
       - run: pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci
       - uses: actions/upload-artifact@v4
         with:
