@@ -198,7 +198,7 @@ async function navigateToSurface(
 
   if (isMobileNavigationVisible) {
     if (surface === "profile") {
-      await page.getByRole("link", { name: "Apri profilo" }).click();
+      await mobileNavigation.getByRole("link", { name: "Profilo", exact: true }).click();
       return;
     }
     const labels = {

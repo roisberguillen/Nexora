@@ -10,7 +10,8 @@ const targetTag = "Mensile C4.4";
 const extraTag = "Abitazione C4.4";
 const description = "Bolletta energia C4.4";
 const payee = "Fornitore energia C4.4";
-const period = "2026-09";
+const period = "2026-10";
+const periodLabel = "Ottobre 2026";
 
 test.describe("C4.4 classificazione, ricerca globale e diario", () => {
   test("completa il ciclo UI, merge, archiviazione, diario e riapertura", async ({
@@ -111,14 +112,14 @@ test.describe("C4.4 classificazione, ricerca globale e diario", () => {
       await assertFinancialState(page);
       await page.goto("/#journal");
       await assertJournal(page);
-      await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(1);
+      await expect(page.getByRole("list").filter({ hasText: periodLabel })).toHaveCount(1);
     } finally {
       await context.setOffline(false);
     }
     await page.goto("/#transactions");
     await expect(page.locator(".transaction-list-row").filter({ hasText: payee })).toHaveCount(1);
     await page.goto("/#journal");
-    await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(1);
+    await expect(page.getByRole("list").filter({ hasText: periodLabel })).toHaveCount(1);
   });
 
   test("rifiuta duplicati, annullamenti e riferimenti archiviati senza scritture parziali", async ({
@@ -212,7 +213,7 @@ async function createClassifiedExpense(page: Page, includeTags = true): Promise<
     .locator('select[name="category"]')
     .selectOption({ label: `${rootName} → ${sourceCategory}` });
   await page.getByLabel("Controparte").fill(payee);
-  await page.getByLabel("Data").fill("2026-09-04");
+  await page.getByLabel("Data").fill("2026-10-04");
   await page.getByLabel("Descrizione").fill(description);
   await page.getByText("Altri dettagli").click();
   if (includeTags) {
@@ -279,10 +280,12 @@ async function verifySearchExcludes(page: Page, term: string): Promise<void> {
 }
 
 async function openGlobalSearch(page: Page): Promise<{ input: Locator; dialog: boolean }> {
-  const trigger = page.getByRole("button", { name: "Apri ricerca globale" });
+  const trigger = page.getByRole("searchbox", { name: "Ricerca globale" }).first();
   if (await trigger.isVisible()) {
     await trigger.click();
-    const input = page.getByRole("searchbox", { name: "Ricerca globale" });
+    const input = page.getByRole("dialog", { name: "Ricerca globale" }).getByRole("searchbox", {
+      name: "Ricerca globale",
+    });
     await expect(input).toBeFocused();
     return { input, dialog: true };
   }
@@ -291,7 +294,7 @@ async function openGlobalSearch(page: Page): Promise<{ input: Locator; dialog: b
 
 async function createAndEditJournal(page: Page): Promise<void> {
   await page.goto("/#journal");
-  await expect(page.getByRole("heading", { name: period })).toBeVisible();
+  await expect(page.getByRole("heading", { name: periodLabel })).toBeVisible();
   await expect(page.getByLabel("Come è andato il mese?")).toBeVisible();
   await expect(page.getByText("80,00").first()).toBeVisible();
   await page
@@ -303,11 +306,11 @@ async function createAndEditJournal(page: Page): Promise<void> {
   await page.getByLabel("Percezione di controllo").selectOption("4");
   await page.getByLabel("Periodo").fill("2026-13");
   await page.getByRole("button", { name: "Salva diario" }).click();
-  await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(0);
+  await expect(page.getByRole("list").filter({ hasText: periodLabel })).toHaveCount(0);
   await page.getByLabel("Periodo").fill(period);
   await page.getByRole("button", { name: "Salva diario" }).dblclick();
   await expect(page.locator(".account-feedback")).toContainText("Diario mensile salvato");
-  await expect(page.getByRole("list").filter({ hasText: period })).toHaveCount(1);
+  await expect(page.getByRole("list").filter({ hasText: periodLabel })).toHaveCount(1);
   await page.getByRole("button", { name: "Modifica" }).click();
   await page
     .getByLabel("Come è andato il mese?")
@@ -324,7 +327,7 @@ async function createAndEditJournal(page: Page): Promise<void> {
 
 async function assertJournal(page: Page): Promise<void> {
   await page.goto("/#journal");
-  await expect(page.getByRole("heading", { name: period })).toBeVisible();
+  await expect(page.getByRole("heading", { name: periodLabel })).toBeVisible();
   await expect(
     page
       .getByLabel("Mesi registrati")

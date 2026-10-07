@@ -6,11 +6,13 @@ test("la ricerca globale trova e apre dati locali su ogni superficie", async ({ 
 
   const isMobile = (page.viewportSize()?.width ?? 0) <= 768;
   if (isMobile) {
-    await page.getByRole("button", { name: "Apri ricerca globale" }).click();
+    await page.getByRole("searchbox", { name: "Ricerca globale" }).first().click();
   }
-  const search = page.getByRole(isMobile ? "searchbox" : "combobox", {
-    name: "Ricerca globale",
-  });
+  const search = isMobile
+    ? page.getByRole("dialog", { name: "Ricerca globale" }).getByRole("searchbox", {
+        name: "Ricerca globale",
+      })
+    : page.getByRole("combobox", { name: "Ricerca globale" });
   if (isMobile) {
     await expect(search).toBeFocused();
   }
@@ -26,11 +28,13 @@ test("la ricerca globale gestisce no-results, clear ed Escape", async ({ page })
 
   const isMobile = (page.viewportSize()?.width ?? 0) <= 768;
   if (isMobile) {
-    await page.getByRole("button", { name: "Apri ricerca globale" }).click();
+    await page.getByRole("searchbox", { name: "Ricerca globale" }).first().click();
   }
-  const search = page.getByRole(isMobile ? "searchbox" : "combobox", {
-    name: "Ricerca globale",
-  });
+  const search = isMobile
+    ? page.getByRole("dialog", { name: "Ricerca globale" }).getByRole("searchbox", {
+        name: "Ricerca globale",
+      })
+    : page.getByRole("combobox", { name: "Ricerca globale" });
   await search.fill("nessun risultato Nexora");
   await expect(page.getByText("Nessun risultato locale.", { exact: true })).toBeVisible();
   const clear = page.getByRole("button", { name: "Cancella ricerca" }).last();
@@ -45,7 +49,7 @@ test("la ricerca globale gestisce no-results, clear ed Escape", async ({ page })
     expect(closeBox?.width).toBeGreaterThanOrEqual(44);
     expect(closeBox?.height).toBeGreaterThanOrEqual(44);
     await page.keyboard.press("Escape");
-    await expect(page.getByRole("button", { name: "Apri ricerca globale" })).toBeFocused();
+    await expect(page.getByRole("searchbox", { name: "Ricerca globale" }).first()).toBeFocused();
   } else {
     await expect(search).toBeFocused();
   }
@@ -56,7 +60,7 @@ test("la ricerca globale supporta keyboard, touch target e resize live", async (
   await page.goto("/#overview");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
 
-  const trigger = page.getByRole("button", { name: "Apri ricerca globale" });
+  const trigger = page.getByRole("searchbox", { name: "Ricerca globale" }).first();
   const triggerBox = await trigger.boundingBox();
   expect(triggerBox?.width).toBeGreaterThanOrEqual(44);
   expect(triggerBox?.height).toBeGreaterThanOrEqual(44);
@@ -69,7 +73,7 @@ test("la ricerca globale supporta keyboard, touch target e resize live", async (
   await expect(page).toHaveURL(/#transactions$/);
 
   await page.goto("/#overview");
-  await page.getByRole("button", { name: "Apri ricerca globale" }).click();
+  await page.getByRole("searchbox", { name: "Ricerca globale" }).first().click();
   const liveSearch = page.getByRole("dialog", { name: "Ricerca globale" }).getByRole("searchbox", {
     name: "Ricerca globale",
   });
@@ -98,7 +102,7 @@ test("la ricerca globale resta utilizzabile al 200%", async ({ page, browserName
   });
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
-  await page.getByRole("button", { name: "Apri ricerca globale" }).click();
+  await page.getByRole("searchbox", { name: "Ricerca globale" }).first().click();
   const search = page.getByRole("searchbox", { name: "Ricerca globale" });
   await expect(search).toBeFocused();
   await search.fill("Cinema campione");

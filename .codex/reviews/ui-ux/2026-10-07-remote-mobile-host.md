@@ -24,4 +24,5 @@ pull remoto nel lifecycle; le superfici visive, i colori, i font e il layout app
 P0 aperti: Nessuno
 Esito: PASS
 Nota CI: il timeout del job verify è stato portato a 90 minuti per consentire il completamento della matrice Playwright completa; nessuna superficie UI o regola visuale è stata modificata.
+Nota test: i selettori end-to-end sono stati riallineati alle label accessibili già presenti nella shell mobile e al formato localizzato del periodo del diario.
 Manifest: aggiornato e verificato dopo la chiusura del lifecycle remoto, la build PWA e il gate browser CI.

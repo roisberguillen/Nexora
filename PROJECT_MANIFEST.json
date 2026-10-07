@@ -1079,8 +1079,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-07-remote-mobile-host.md",
-      "size": 1856,
-      "sha256": "73a941c29d82e1856819946c71acc540833d8f94edb6679f1e453a3d4b4c3b45"
+      "size": 2018,
+      "sha256": "b27e18627d6c62abb57d67040c3a14797f0a22f7c01abc47306f390c6c685dcd"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -4564,13 +4564,13 @@
     },
     {
       "path": "test/e2e/c4-classification-search-journal-flow.spec.ts",
-      "size": 22757,
-      "sha256": "f823cfe8619dfef745a734fb055ad4ccad1c947945837881de6f3b78e3415456"
+      "size": 22889,
+      "sha256": "a4e5892df7e1a93b05c14de78507ad6273a3ba5b9be584d1362875fbf29ba58b"
     },
     {
       "path": "test/e2e/c4-first-start-account-flow.spec.ts",
-      "size": 10437,
-      "sha256": "4568a2fb6824d8c8827ae0c4ba794083a27b0ec2926f1814624a6e51247e3bc3"
+      "size": 10457,
+      "sha256": "33e61fcb32525ea0765f12509377bff902bed5c71256efd86c374e158f303eeb"
     },
     {
       "path": "test/e2e/c4-income-expense-flow.spec.ts",
@@ -4654,8 +4654,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 4984,
-      "sha256": "67279210fcbff894f6b2f2306b2c3423aa8149bafc50ba5438600a63d88c5d5b"
+      "size": 5240,
+      "sha256": "5d0b639b5b1d0920b5eb25ac5a811b83f824bd406343ec778ab908e829f62eb7"
     },
     {
       "path": "test/e2e/google-drive-onboarding.spec.ts",
