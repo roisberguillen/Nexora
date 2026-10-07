@@ -39,9 +39,7 @@ test.describe("C4.6 prestiti, investimenti, Dashboard e Analisi", () => {
     await page.reload();
     await expectSummary(page, "9.468,00", "1.200,00", "140,00");
     await page.goto("/#analytics");
-    await expect(
-      page.getByRole("heading", { name: /Come è andato Ottobre 2026\?/ }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Come è andato Ottobre 2026\?/ })).toBeVisible();
     await expect(page.locator("#analytics")).toContainText("3.000,00");
     await expect(page.locator("#analytics")).toContainText("672,00");
     await expect(page.locator("#analytics")).toContainText("2.328,00");

@@ -1079,8 +1079,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-07-remote-mobile-host.md",
-      "size": 2151,
-      "sha256": "f8c88e9c79f8f1ef97dc00fac6a7302305aa27ed50294f7fd5a5853cdeedca9a"
+      "size": 2256,
+      "sha256": "b5ac9a68d421d60889c7f15ef46ffbef51c0ac5db03578c650c18553b1a94fca"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -4579,8 +4579,8 @@
     },
     {
       "path": "test/e2e/c4-loans-investments-dashboard-analytics-flow.spec.ts",
-      "size": 14915,
-      "sha256": "86dda31038c679d54f81b845f55ccb4bd021ec7e269f4ff3141c18cbb9a1398f"
+      "size": 14902,
+      "sha256": "6b3d35a46d13edf99f22e7104b7ea926b8dd0f1976131f3172576957d58f5aff"
     },
     {
       "path": "test/e2e/c4-money-manager-xlsx-migration-flow.spec.ts",
