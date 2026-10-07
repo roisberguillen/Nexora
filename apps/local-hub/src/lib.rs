@@ -385,6 +385,17 @@ async fn push_operations(
         .and_then(|value| value.to_str().ok())
         .and_then(|value| value.strip_prefix("Bearer "))
         .unwrap_or_default();
+    if request
+        .operations
+        .iter()
+        .any(|operation| !valid_operation_for_device(operation, device_id))
+    {
+        return (
+            StatusCode::FORBIDDEN,
+            Json(serde_json::json!({"error":"operation_device_mismatch"})),
+        )
+            .into_response();
+    }
     state.sync_status.write().await.state = SyncRuntimeState::Syncing;
     let pairing = state.pairing.read().await;
     let result = if let Some(store) = state.durable_sync.as_ref() {
@@ -451,6 +462,20 @@ async fn push_operations(
         Err(TransportError::UnauthorizedDevice) => StatusCode::FORBIDDEN.into_response(),
         Err(TransportError::CursorAhead) => StatusCode::BAD_REQUEST.into_response(),
     }
+}
+
+fn valid_operation_for_device(operation: &ReplicableOperation, device_id: &str) -> bool {
+    if operation.device_id != device_id || operation.idempotency_key.is_empty() {
+        return false;
+    }
+    let digest = format!(
+        "sha256:{}",
+        Sha256::digest(operation.payload.as_bytes())
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>()
+    );
+    digest == operation.payload_digest
 }
 
 async fn bootstrap_sync(
@@ -1791,6 +1816,36 @@ mod tests {
     }
 
     #[test]
+    fn rejects_operations_with_a_different_device_or_payload_digest() {
+        let operation = ReplicableOperation {
+            idempotency_key: "operation-1".to_owned(),
+            device_id: "device-1".to_owned(),
+            entity_id: "transaction-1".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: format!(
+                "sha256:{}",
+                Sha256::digest(b"payload")
+                    .iter()
+                    .map(|byte| format!("{byte:02x}"))
+                    .collect::<String>()
+            ),
+            payload: "payload".to_owned(),
+            tombstone: false,
+            created_at: "2026-10-07T00:00:00Z".to_owned(),
+        };
+        assert!(valid_operation_for_device(&operation, "device-1"));
+        assert!(!valid_operation_for_device(&operation, "device-2"));
+        assert!(!valid_operation_for_device(
+            &ReplicableOperation {
+                payload_digest: "sha256:wrong".to_owned(),
+                ..operation
+            },
+            "device-1"
+        ));
+    }
+
+    #[test]
     fn passcode_session_revocation_removes_device_sessions() {
         let mut registry = PasscodeSessionRegistry::default();
         registry.configure("4937", b"host-salt", 5, 1_000).unwrap();
@@ -2290,7 +2345,13 @@ mod tests {
             entity_id: "movement-http-1".to_owned(),
             base_revision: 0,
             revision: 0,
-            payload_digest: "sha256:payload".to_owned(),
+            payload_digest: format!(
+                "sha256:{}",
+                Sha256::digest(b"{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\",\"amount_minor\":\"100\",\"currency\":\"EUR\",\"kind\":\"adjustment\",\"status\":\"booked\",\"account_id\":\"account-http\",\"booked_date\":\"2026-09-14\",\"source\":\"manual\"}")
+                    .iter()
+                    .map(|byte| format!("{byte:02x}"))
+                    .collect::<String>()
+            ),
             payload: "{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\",\"amount_minor\":\"100\",\"currency\":\"EUR\",\"kind\":\"adjustment\",\"status\":\"booked\",\"account_id\":\"account-http\",\"booked_date\":\"2026-09-14\",\"source\":\"manual\"}".to_owned(),
             tombstone: false,
             created_at: "2026-09-12T00:00:00Z".to_owned(),

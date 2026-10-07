@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Local Hub sync hardening: verified device binding and SHA-256 payload digests on HTTP push,
+  preserved applied operations when a batch also contains conflicts, added authenticated bootstrap
+  on the web client, and allowed HTTPS LAN connections in the Tauri CSP.
 - Menu mobile completo: aggiunto uno sheet mobile dedicato alimentato dal catalogo route condiviso,
   con ricerca centrata in un campo reale, spaziatura uniforme dell'header e senza duplicare profilo
   o modificare bottom navigation, quick actions, route o dati locali.

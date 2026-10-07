@@ -70,6 +70,51 @@ describe("local host sync client", () => {
     expect(client.pending()).toHaveLength(1);
   });
 
+  it("removes only applied operations when a batch contains a conflict", async () => {
+    const request = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify([
+            { Applied: { cursor: 1, revision: 1 } },
+            { Conflict: { current_revision: 2 } },
+          ]),
+          { status: 200 },
+        ),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: storage(),
+      request,
+      deliveryId: () => "delivery-2",
+    });
+    client.enqueue(operation);
+    client.enqueue({ ...operation, idempotencyKey: "op-2", entityId: "transaction-2" });
+    await expect(client.flush()).resolves.toEqual({ status: "conflict", pendingCount: 1 });
+    expect(client.pending().map(({ idempotencyKey }) => idempotencyKey)).toEqual(["op-2"]);
+  });
+
+  it("bootstraps the durable operation log and rejects malformed responses", async () => {
+    const request = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({ schema_version: 1, cursor: 3, operations: [[3, operation]] }),
+          { status: 200 },
+        ),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: storage(),
+      request,
+    });
+    await expect(client.bootstrap()).resolves.toEqual({
+      schemaVersion: 1,
+      cursor: 3,
+      operations: [[3, operation]],
+    });
+  });
+
   it("pulls only validated cursors and sends the paired headers", async () => {
     const request = vi.fn(
       async () => new Response(JSON.stringify({ operations: [[1, operation]] }), { status: 200 }),

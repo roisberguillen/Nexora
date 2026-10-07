@@ -46,6 +46,12 @@ export interface LocalSyncFlushResult {
   readonly pendingCount: number;
 }
 
+export interface LocalSyncBootstrapResult {
+  readonly schemaVersion: number;
+  readonly cursor: number;
+  readonly operations: readonly [number, LocalSyncOperation][];
+}
+
 const queueKey = "nexora.local-sync-queue.v1";
 
 export class LocalHostSyncClient {
@@ -84,11 +90,45 @@ export class LocalHostSyncClient {
     }
     const results = (await response.json()) as readonly OperationResult[];
     const conflict = results.some((result) => result.Conflict !== undefined);
-    if (conflict) return { status: "conflict", pendingCount: queue.length };
-    this.storage.setItem(queueKey, "[]");
+    const remaining = queue.filter((_, index) => results[index]?.Conflict !== undefined);
+    this.storage.setItem(queueKey, JSON.stringify(remaining));
+    if (conflict) return { status: "conflict", pendingCount: remaining.length };
     const duplicate =
       results.length > 0 && results.every((result) => result.Duplicate !== undefined);
     return { status: duplicate ? "duplicate" : "applied", pendingCount: 0 };
+  }
+
+  public async bootstrap(): Promise<LocalSyncBootstrapResult> {
+    const response = await this.request(`${trimEndpoint(this.options.endpoint)}/v1/bootstrap`, {
+      cache: "no-store",
+      headers: headers(this.options.credentials),
+    });
+    if (!response.ok) throw new Error(`sync_bootstrap_failed_${response.status}`);
+    const body = (await response.json()) as {
+      schema_version?: unknown;
+      cursor?: unknown;
+      operations?: unknown;
+    };
+    const schemaVersion = typeof body.schema_version === "number" ? body.schema_version : undefined;
+    const cursor = typeof body.cursor === "number" ? body.cursor : undefined;
+    if (
+      schemaVersion === undefined ||
+      !Number.isSafeInteger(schemaVersion) ||
+      schemaVersion < 1 ||
+      cursor === undefined ||
+      !Number.isSafeInteger(cursor) ||
+      cursor < 0 ||
+      !Array.isArray(body.operations)
+    ) {
+      throw new Error("invalid_sync_bootstrap_response");
+    }
+    const validSchemaVersion = schemaVersion as number;
+    const validCursor = cursor as number;
+    return Object.freeze({
+      schemaVersion: validSchemaVersion,
+      cursor: validCursor,
+      operations: body.operations as readonly [number, LocalSyncOperation][],
+    });
   }
 
   public async pull(after: number): Promise<LocalSyncPullResult> {

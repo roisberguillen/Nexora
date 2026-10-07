@@ -546,3 +546,14 @@ flusso mobile; backup e recovery non recuperano alcun percorso NAS/SMB.
   senza duplicare CTA o introdurre una seconda barra di navigazione.
 - **Impatto:** il catalogo di navigazione dovrà essere condiviso tra desktop e mobile; apertura,
   chiusura e selezione route restano operazioni non mutanti sul ledger.
+# 2026-10-07 — Local Hub sync ingress hardening
+
+Il phone-host rifiuta una delivery se una singola operazione dichiara un `device_id` diverso dal
+dispositivo autenticato o se `payload_digest` non corrisponde al payload ricevuto. Il client conserva
+solo le operazioni non applicate quando una delivery parziale contiene un conflitto. La persistenza
+della coppia certificato/chiave LAN non viene introdotta su file applicativo: la chiave privata deve
+passare dal secure storage Android prima di sopravvivere a un riavvio.
+
+Questa decisione non dichiara ancora completata la modalità PC `remote-mobile-host`: sessione e
+pairing runtime restano da collegare a secure storage persistente e il ledger client remoto resta
+un gate successivo.
