@@ -23,4 +23,4 @@ pull remoto nel lifecycle; le superfici visive, i colori, i font e il layout app
 
 P0 aperti: Nessuno
 Esito: PASS
-Manifest: aggiornato e verificato dopo la chiusura del lifecycle remoto.
+Manifest: aggiornato e verificato dopo la chiusura del lifecycle remoto e la build PWA.
