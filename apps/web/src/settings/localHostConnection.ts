@@ -22,6 +22,7 @@ export const SUPPORTED_LOCAL_HOST_API_VERSION = 1;
 export interface LocalHostCredentials {
   readonly deviceId: string;
   readonly deviceToken: string;
+  readonly sessionToken?: string;
 }
 
 export interface LocalHostPairingRequest {

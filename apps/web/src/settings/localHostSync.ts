@@ -52,7 +52,7 @@ export interface LocalSyncBootstrapResult {
   readonly operations: readonly [number, LocalSyncOperation][];
 }
 
-const queueKey = "nexora.local-sync-queue.v1";
+const queueKeyPrefix = "nexora.local-sync-queue.v1";
 
 export class LocalHostSyncClient {
   private readonly storage: LocalSyncStorage;
@@ -66,17 +66,21 @@ export class LocalHostSyncClient {
   }
 
   public pending(): readonly LocalSyncOperation[] {
-    return readQueue(this.storage);
+    return readQueue(this.storage, this.queueKey());
+  }
+
+  public deviceId(): string {
+    return this.options.credentials.deviceId;
   }
 
   public enqueue(operation: LocalSyncOperation): void {
-    const queue = readQueue(this.storage);
+    const queue = readQueue(this.storage, this.queueKey());
     if (queue.some((candidate) => candidate.idempotencyKey === operation.idempotencyKey)) return;
-    this.storage.setItem(queueKey, JSON.stringify([...queue, operation]));
+    this.storage.setItem(this.queueKey(), JSON.stringify([...queue, operation]));
   }
 
   public async flush(): Promise<LocalSyncFlushResult> {
-    const queue = readQueue(this.storage);
+    const queue = readQueue(this.storage, this.queueKey());
     if (queue.length === 0) return { status: "applied", pendingCount: 0 };
     const response = await this.request(`${trimEndpoint(this.options.endpoint)}/v1/operations`, {
       method: "POST",
@@ -89,9 +93,23 @@ export class LocalHostSyncClient {
       throw new Error(`sync_push_failed_${response.status}`);
     }
     const results = (await response.json()) as readonly OperationResult[];
+    if (
+      !Array.isArray(results) ||
+      results.length !== queue.length ||
+      results.some(
+        (result) =>
+          result === null ||
+          typeof result !== "object" ||
+          (result.Applied === undefined &&
+            result.Duplicate === undefined &&
+            result.Conflict === undefined),
+      )
+    ) {
+      throw new Error("invalid_sync_push_response");
+    }
     const conflict = results.some((result) => result.Conflict !== undefined);
     const remaining = queue.filter((_, index) => results[index]?.Conflict !== undefined);
-    this.storage.setItem(queueKey, JSON.stringify(remaining));
+    this.storage.setItem(this.queueKey(), JSON.stringify(remaining));
     if (conflict) return { status: "conflict", pendingCount: remaining.length };
     const duplicate =
       results.length > 0 && results.every((result) => result.Duplicate !== undefined);
@@ -144,6 +162,10 @@ export class LocalHostSyncClient {
       operations: body.operations as readonly [number, LocalSyncOperation][],
     });
   }
+
+  private queueKey(): string {
+    return `${queueKeyPrefix}:${trimEndpoint(this.options.endpoint)}:${this.options.credentials.deviceId}`;
+  }
 }
 
 interface OperationResult {
@@ -167,9 +189,9 @@ function trimEndpoint(endpoint: string): string {
   return endpoint.replace(/\/$/, "");
 }
 
-function readQueue(storage: LocalSyncStorage): LocalSyncOperation[] {
+function readQueue(storage: LocalSyncStorage, key: string): LocalSyncOperation[] {
   try {
-    const raw = storage.getItem(queueKey);
+    const raw = storage.getItem(key);
     if (raw === null) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];

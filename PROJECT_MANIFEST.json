@@ -1073,6 +1073,16 @@
       "sha256": "b95915061715b2ba9515fc74348801b9f8427db8ac3670408eb9e478c4e588d3"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-07-local-hub-sync-hardening.md",
+      "size": 1385,
+      "sha256": "389806c897cef7567a29c8b0f2727b06f69726487719061e57dc0590d40988e1"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-07-remote-mobile-host.md",
+      "size": 1462,
+      "sha256": "cb6b04a512e425f9e4c9f0c765a08b047ecfa28d4797fc918c4e0fd9ce654be8"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -1478,6 +1488,16 @@
       "sha256": "e17aa3290101c137a046da2cc38b67bdacb89b709e75bb88e85983f84d3caa22"
     },
     {
+      "path": ".codex/state/checkpoints/2026-10-07-checkpoint-remote-mobile-host.md",
+      "size": 544,
+      "sha256": "aa4768504fde10ba7c3982edb071be9e67fccd108fabfd99d9d7a33e9a75eea9"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-10-07-checkpoint-sync-architecture.md",
+      "size": 543,
+      "sha256": "8dad831a1f99c92f3113c70f1a049f785479e3b5ded851c9b23605b90f67d93d"
+    },
+    {
       "path": ".codex/state/current-task.md",
       "size": 657,
       "sha256": "a98ba20c3e86a2fa859f4075b2137ad5d96deb0154bf5c61151d6f41f24f266f"
@@ -1514,8 +1534,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 204200,
-      "sha256": "3303c64e45f365a05826da43ef40e4409e0f51c5832bc41f9f69efe09824146a"
+      "size": 205450,
+      "sha256": "f602826831a14e73009ad329315649a1cdbf30d8c0f000ff1f422eee8311e9e1"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1659,13 +1679,13 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 93917,
-      "sha256": "ce56722a1d8fbe6322e8df2bb26f79d6a882c4eec39e24ddcfe07c09a1efd329"
+      "size": 99882,
+      "sha256": "5c9d9c0d98c8065fd6974f571d91e04fb5ecfa6b50c87e5e62c8fbabc090065a"
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 23882,
-      "sha256": "80fe87c7f62c7d943754e7acbe69f8c7d33bf543ed61e092c9ec59b78e64405a"
+      "size": 28306,
+      "sha256": "0f6eb90495a0ce1dda02b6c7b5bd9064cbeb0f69c5db4861e62c0e71d9dc6c78"
     },
     {
       "path": "apps/web/index.html",
@@ -1999,8 +2019,8 @@
     },
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
-      "size": 1137,
-      "sha256": "532d7953da5c17fce503a6082a3fa70de7e6c83ce4257cf29a764e6366588b81"
+      "size": 1144,
+      "sha256": "5d4c90a4fe233f6b11625dda375959df11c2c88d5bd4ebc507d8bfc47109b26c"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -2389,8 +2409,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 6470,
-      "sha256": "5fdece3d603685a59806279ad4919cac3b31b6dc8cc10af97241e68764754c19"
+      "size": 8128,
+      "sha256": "02692a6877de2458c8c20491d319e690802ab710e616f33523f71e0f904e3ce3"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -2569,8 +2589,8 @@
     },
     {
       "path": "apps/web/src/settings/localHostConnection.ts",
-      "size": 9978,
-      "sha256": "8ae0c79ce7d17f1e424e373e0528c20cb1be595e9825125cbd3354261f2ae22c"
+      "size": 10012,
+      "sha256": "35eff00455472f1096bf0a65417e5c5e095313530162e25de7d30e75a7011c83"
     },
     {
       "path": "apps/web/src/settings/localHostSession.test.ts",
@@ -2579,18 +2599,23 @@
     },
     {
       "path": "apps/web/src/settings/localHostSession.ts",
-      "size": 1681,
-      "sha256": "f7d37d0bb0d124f35bb49d44bb3168d6078c08fe558e4a3d14674a901525b086"
+      "size": 1939,
+      "sha256": "26671897a6e1619a6e2e444609d1ff197fc26d55f92d8ed767bfdfae37e67bce"
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 4102,
-      "sha256": "302820783e816f6515ef29c71159b6886fdcc1a31dde8c3f416e43afa03ee34d"
+      "size": 5640,
+      "sha256": "afbb81266df4313b1f6684043fc8e9022755f1eeece7e8b86d3ed0db553c605b"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 5564,
-      "sha256": "8cfd8ee5172f155e2c8065ff884b8324a55fbd2fe7302e2f51d8d02f117e3bb4"
+      "size": 7800,
+      "sha256": "9f956ac74e9b9ca26b9b44c8a3a16adefdcd139220348df4340104096d8b89fb"
+    },
+    {
+      "path": "apps/web/src/settings/localHostVault.ts",
+      "size": 4560,
+      "sha256": "549eb6d94a320cad3475b4a558cb0e1d06f537d5c48e6ce86e8e689059e43871"
     },
     {
       "path": "apps/web/src/settings/pcManagerDesktop.test.ts",
@@ -2623,14 +2648,19 @@
       "sha256": "6d3fee4e0a911191bb1d765049ded146d89d78286b79cd018a761dcf31b792f8"
     },
     {
+      "path": "apps/web/src/settings/remoteLedgerRepository.ts",
+      "size": 7365,
+      "sha256": "34e2b24085bcd6a50a46c475aa43ef1c68ddb484c9ade0f359bfabfe986d7bb0"
+    },
+    {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
       "size": 11272,
       "sha256": "fcd7616b146d3eb1609680b4b50d9a91dfdcaaedf69779576de35ea28dd6ba34"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 50694,
-      "sha256": "25cd5aef5f957fb3deb74b9cb5a532f647ab78793996a5b3a8ace67b19ca0936"
+      "size": 51306,
+      "sha256": "d2650f14ae4ee32df1fefd630280d69489e630dc76737d9d78398670e9872cd1"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -2904,8 +2934,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 65891,
-      "sha256": "801ca02da25746d58e7ea76f2f36f9eb1ebc8e262a47c3d21cc78fc8faafd8c8"
+      "size": 66515,
+      "sha256": "9c69a91909d1917a9041ac11f3edb5a333b534c2814ec27273b3852b41b084be"
     },
     {
       "path": "design/mockup/README.md",
@@ -3094,8 +3124,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 36443,
-      "sha256": "08fad098f44fa55e8a8fc391a493f37ee3102c5140cce5c216a8fa97fb3e8cde"
+      "size": 37181,
+      "sha256": "d3030b8b2355bd130bdd90be7de13f587950520ed630695a1fff74f19ec309f2"
     },
     {
       "path": "docs/DESKTOP_DISTRIBUTION.md",

@@ -2379,6 +2379,95 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(push.status(), StatusCode::OK);
+        let host_connection = Connection::open(directory.path().join("nexora.db")).unwrap();
+        assert_eq!(
+            host_connection
+                .query_row(
+                    "SELECT amount_minor FROM transactions WHERE id = 'movement-http-1'",
+                    [],
+                    |row| row.get::<_, String>(0),
+                )
+                .unwrap(),
+            "100"
+        );
+        let digest_payload = |payload: &str| {
+            format!(
+                "sha256:{}",
+                Sha256::digest(payload.as_bytes())
+                    .iter()
+                    .map(|byte| format!("{byte:02x}"))
+                    .collect::<String>()
+            )
+        };
+        let updated_payload = "{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\",\"amount_minor\":\"250\",\"currency\":\"EUR\",\"kind\":\"adjustment\",\"status\":\"booked\",\"account_id\":\"account-http\",\"booked_date\":\"2026-09-14\",\"source\":\"manual\"}";
+        let updated = ReplicableOperation {
+            idempotency_key: "op-http-2".to_owned(),
+            base_revision: 1,
+            payload_digest: digest_payload(updated_payload),
+            payload: updated_payload.to_owned(),
+            ..operation.clone()
+        };
+        let updated_response = app
+            .clone()
+            .oneshot(
+                headers(Request::builder().method("POST").uri("/v1/operations"))
+                    .body(Body::from(
+                        serde_json::to_vec(&PushOperationsRequest {
+                            delivery_id: "delivery-http-2".to_owned(),
+                            operations: vec![updated],
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(updated_response.status(), StatusCode::OK);
+        assert_eq!(
+            host_connection
+                .query_row(
+                    "SELECT amount_minor FROM transactions WHERE id = 'movement-http-1'",
+                    [],
+                    |row| row.get::<_, String>(0),
+                )
+                .unwrap(),
+            "250"
+        );
+        let deleted_payload = "{\"schema_version\":1,\"operation\":\"delete\",\"entity_type\":\"transaction\",\"entity_id\":\"movement-http-1\"}";
+        let deleted = ReplicableOperation {
+            idempotency_key: "op-http-3".to_owned(),
+            base_revision: 2,
+            payload_digest: digest_payload(deleted_payload),
+            payload: deleted_payload.to_owned(),
+            tombstone: true,
+            ..operation.clone()
+        };
+        let deleted_response = app
+            .clone()
+            .oneshot(
+                headers(Request::builder().method("POST").uri("/v1/operations"))
+                    .body(Body::from(
+                        serde_json::to_vec(&PushOperationsRequest {
+                            delivery_id: "delivery-http-3".to_owned(),
+                            operations: vec![deleted],
+                        })
+                        .unwrap(),
+                    ))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(deleted_response.status(), StatusCode::OK);
+        assert_eq!(
+            host_connection
+                .query_row(
+                    "SELECT count(*) FROM transactions WHERE id = 'movement-http-1'",
+                    [],
+                    |row| row.get::<_, i64>(0),
+                )
+                .unwrap(),
+            0
+        );
         let replay = app
             .clone()
             .oneshot(
@@ -2386,7 +2475,7 @@ mod tests {
                     .body(Body::from(
                         serde_json::to_vec(&PushOperationsRequest {
                             delivery_id: "delivery-http-1".to_owned(),
-                            operations: vec![operation],
+                            operations: vec![operation.clone()],
                         })
                         .unwrap(),
                     ))
@@ -2411,7 +2500,7 @@ mod tests {
         assert_eq!(pull.status(), StatusCode::OK);
         let body = to_bytes(pull.into_body(), usize::MAX).await.unwrap();
         let response: PullOperationsResponse = serde_json::from_slice(&body).unwrap();
-        assert_eq!(response.operations.len(), 1);
+        assert_eq!(response.operations.len(), 3);
         assert_eq!(response.operations[0].0, 1);
         let bootstrap = app
             .oneshot(
@@ -2425,8 +2514,8 @@ mod tests {
         let body = to_bytes(bootstrap.into_body(), usize::MAX).await.unwrap();
         let snapshot: SyncBootstrapSnapshot = serde_json::from_slice(&body).unwrap();
         assert_eq!(snapshot.schema_version, 1);
-        assert_eq!(snapshot.cursor, 1);
-        assert_eq!(snapshot.operations.len(), 1);
+        assert_eq!(snapshot.cursor, 3);
+        assert_eq!(snapshot.operations.len(), 3);
     }
 
     #[tokio::test]

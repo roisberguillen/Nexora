@@ -5,6 +5,7 @@ import {
   type LocalHostCredentials,
   type LocalHostSessionRequest,
 } from "./localHostConnection";
+import { saveLocalHostCredentials } from "./localHostVault";
 
 export interface LocalHostSessionState {
   readonly deviceId: string;
@@ -35,6 +36,10 @@ export class LocalHostSessionController {
       ttlMs,
       this.request,
     );
+    await saveLocalHostCredentials(this.endpoint, {
+      ...this.credentials,
+      sessionToken: this.sessionToken,
+    });
   }
 
   public async logout(): Promise<void> {
@@ -42,6 +47,7 @@ export class LocalHostSessionController {
     const token = this.sessionToken;
     try {
       await logoutLocalHostSession(this.endpoint, this.credentials.deviceId, token, this.request);
+      await saveLocalHostCredentials(this.endpoint, this.credentials);
     } finally {
       this.sessionToken = undefined;
     }

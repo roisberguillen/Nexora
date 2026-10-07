@@ -8,7 +8,7 @@ import "./startup/startup.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { isTauri } from "@tauri-apps/api/core";
-import type { LedgerStorageKind } from "@nexora/database";
+import { openIndexedDbLedger, type LedgerStorageKind } from "@nexora/database";
 import { openTauriLedger } from "@nexora/database-tauri";
 import { registerSW } from "virtual:pwa-register";
 
@@ -34,6 +34,10 @@ import { readStoragePreferenceHint } from "./startup/storagePreference";
 import { withStartupLock } from "./startup/StartupLock";
 import { renderPreMountError } from "./startup/PreMountError";
 import { applyAppPreferences, readAppPreferences } from "./settings/preferences";
+import { LocalHostSyncClient } from "./settings/localHostSync";
+import { readLocalHostConnection } from "./settings/localHostConnection";
+import { readLocalHostCredentials } from "./settings/localHostVault";
+import { connectRemoteLedgerRepository } from "./settings/remoteLedgerRepository";
 
 const rootElement = document.querySelector("#root");
 
@@ -47,6 +51,17 @@ if (!(rootElement instanceof HTMLElement)) {
 applyAppPreferences(readAppPreferences());
 
 const nativeRuntime = isTauri();
+const remoteConnectionPromise = (async () => {
+  const connection = readLocalHostConnection();
+  if (!connection.enabled) return null;
+  try {
+    const saved = await readLocalHostCredentials();
+    if (saved === null || saved.endpoint !== connection.endpoint) return null;
+    return saved;
+  } catch {
+    return null;
+  }
+})();
 const applyPwaUpdate =
   import.meta.env.PROD && !nativeRuntime
     ? registerSW({
@@ -66,6 +81,10 @@ let discoveredArchives: readonly StorageArchiveInspection[] = [];
 const startupBootstrap = createStartupBootstrap(
   new StartupOrchestrator({
     discoverStorage: async () => {
+      if ((await remoteConnectionPromise) !== null) {
+        selectedStorageKind = "indexeddb";
+        return;
+      }
       if (nativeRuntime) {
         selectedStorageKind = "native-sqlite";
         return;
@@ -87,9 +106,25 @@ const startupBootstrap = createStartupBootstrap(
         selection.storageKind === "opfs" &&
         discovery.archives.some((archive) => archive.kind === "opfs" && archive.state === "absent");
     },
-    openLedger: () => {
+    openLedger: async () => {
       if (selectedStorageKind === undefined)
         throw new Error("Nexora storage selection is missing.");
+      const remote = await remoteConnectionPromise;
+      if (remote !== null) {
+        const cache = await openIndexedDbLedger({ databaseName: "nexora-remote-cache" });
+        const client = new LocalHostSyncClient({
+          endpoint: remote.endpoint,
+          credentials: {
+            deviceId: remote.credentials.deviceId,
+            token: remote.credentials.deviceToken,
+            ...(remote.credentials.sessionToken === undefined
+              ? {}
+              : { sessionToken: remote.credentials.sessionToken }),
+          },
+        });
+        const repository = await connectRemoteLedgerRepository(cache.repository, client);
+        return { ...cache, repository };
+      }
       const storageKind = selectedStorageKind;
       if (storageKind === "native-sqlite") {
         return withStartupLock(() => openTauriLedger());
@@ -132,8 +167,11 @@ const startupBootstrap = createStartupBootstrap(
     },
   }),
 );
-const ledgerPromise = startupBootstrap.ledgerPromise.then((ledger) => {
+const ledgerPromise = startupBootstrap.ledgerPromise.then(async (ledger) => {
   if (ledger.storageKind === "native-sqlite") return ledger;
+  // The remote cache has its own database name and must not change the
+  // user's default local PWA storage preference.
+  if ((await remoteConnectionPromise) !== null) return ledger;
   try {
     // The ledger is already opened and verified here; a blocked preference store must
     // not turn a valid local ledger into a startup failure.

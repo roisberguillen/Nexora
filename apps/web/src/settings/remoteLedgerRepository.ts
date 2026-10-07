@@ -1,0 +1,197 @@
+import type { Account, LedgerRepository, Transaction } from "@nexora/domain";
+import {
+  Account as DomainAccount,
+  LocalDate,
+  Money,
+  Transaction as DomainTransaction,
+} from "@nexora/domain";
+
+import type { LocalSyncOperation } from "./localHostSync";
+import { LocalHostSyncClient } from "./localHostSync";
+
+export async function connectRemoteLedgerRepository(
+  repository: LedgerRepository,
+  client: LocalHostSyncClient,
+): Promise<LedgerRepository> {
+  try {
+    await client.flush();
+  } catch {
+    // The persistent outbox is retained for the next connection attempt.
+  }
+  const bootstrap = await client.bootstrap();
+  // The remote cache is disposable. Rebuild it from the phone so deleted host
+  // records cannot remain visible on the PC after a reconnect.
+  await repository.resetFinancialData();
+  const revisions = new Map<string, number>();
+  for (const [, operation] of bootstrap.operations) {
+    revisions.set(operation.entityId, operation.revision);
+    await applyRemoteOperation(repository, operation);
+  }
+  return createRemoteRepository(repository, client, revisions);
+}
+
+function createRemoteRepository(
+  repository: LedgerRepository,
+  client: LocalHostSyncClient,
+  revisions: Map<string, number>,
+): LedgerRepository {
+  return new Proxy(repository, {
+    get(target, property, receiver) {
+      const method = Reflect.get(target, property, receiver);
+      if (typeof method !== "function") return method;
+      return async (...args: unknown[]) => {
+        const result = await method.apply(target, args);
+        const operation = await operationForMutation(
+          String(property),
+          args,
+          target,
+          client.deviceId(),
+          revisions,
+        );
+        if (operation !== undefined) {
+          client.enqueue(operation);
+          try {
+            await client.flush();
+          } catch {
+            // The durable outbox keeps the operation for the next reconnect.
+          }
+        }
+        return result;
+      };
+    },
+  }) as LedgerRepository;
+}
+
+async function operationForMutation(
+  method: string,
+  args: readonly unknown[],
+  repository: LedgerRepository,
+  deviceId: string,
+  revisions: Map<string, number>,
+): Promise<LocalSyncOperation | undefined> {
+  let transaction: Transaction | undefined;
+  let entityId: string | undefined;
+  let tombstone = false;
+  if (
+    method === "saveTransaction" ||
+    method === "updateTransaction" ||
+    method === "saveTransactionWithSplits" ||
+    method === "saveTransactionWithDetails" ||
+    method === "updateTransactionWithDetails"
+  ) {
+    transaction = args[0] as Transaction;
+    entityId = transaction?.id;
+  } else if (method === "purgeTrashedTransaction") {
+    entityId = typeof args[0] === "string" ? args[0] : undefined;
+    tombstone = true;
+  }
+  if (entityId === undefined) return undefined;
+  const current = transaction ?? (await repository.findTransactionById(entityId));
+  if (!tombstone && current === undefined) return undefined;
+  const payload = tombstone
+    ? JSON.stringify({
+        schema_version: 1,
+        operation: "delete",
+        entity_type: "transaction",
+        entity_id: entityId,
+      })
+    : JSON.stringify(transactionPayload(current!));
+  const baseRevision = revisions.get(entityId) ?? 0;
+  revisions.set(entityId, baseRevision + 1);
+  return {
+    idempotencyKey: crypto.randomUUID(),
+    deviceId,
+    entityId,
+    baseRevision,
+    revision: baseRevision + 1,
+    payloadDigest: await digest(payload),
+    payload,
+    tombstone,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function transactionPayload(transaction: Transaction): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "transaction",
+    entity_id: transaction.id,
+    amount_minor: transaction.amount.amountMinor.toString(),
+    currency: transaction.amount.currency,
+    kind: transaction.kind,
+    status: transaction.status,
+    account_id: transaction.accountId,
+    booked_date: transaction.bookedDate.toString(),
+    ...(transaction.valueDate === undefined
+      ? {}
+      : { value_date: transaction.valueDate.toString() }),
+    ...(transaction.payee === undefined ? {} : { payee: transaction.payee }),
+    ...(transaction.description === undefined ? {} : { description: transaction.description }),
+    ...(transaction.categoryId === undefined ? {} : { category_id: transaction.categoryId }),
+    ...(transaction.note === undefined ? {} : { note: transaction.note }),
+    source: transaction.source,
+  };
+}
+
+async function applyRemoteOperation(
+  repository: LedgerRepository,
+  operation: LocalSyncOperation,
+): Promise<void> {
+  const payload = JSON.parse(operation.payload) as Record<string, unknown>;
+  if (payload.entity_type === "account") {
+    const account = DomainAccount.create({
+      id: operation.entityId,
+      name: String(payload.name),
+      type: String(payload.type) as Account["type"],
+      currency: String(payload.currency),
+      ...(payload.institution === null || payload.institution === undefined
+        ? {}
+        : { institution: String(payload.institution) }),
+      ...(payload.parent_account_id === null || payload.parent_account_id === undefined
+        ? {}
+        : { parentAccountId: String(payload.parent_account_id) }),
+      openingBalance: Money.fromMinor(
+        BigInt(String(payload.opening_balance_minor ?? "0")),
+        String(payload.currency),
+      ),
+      isArchived: payload.is_archived === true,
+    });
+    if (await repository.findAccountById(account.id)) await repository.updateAccount(account);
+    else await repository.saveAccount(account);
+    return;
+  }
+  if (payload.entity_type !== "transaction") return;
+  if (payload.operation === "delete") {
+    if (await repository.findTransactionById(operation.entityId)) {
+      await repository.purgeTrashedTransaction(operation.entityId).catch(() => undefined);
+    }
+    return;
+  }
+  const account = await repository.findAccountById(String(payload.account_id));
+  if (account === undefined) return;
+  const transaction = DomainTransaction.create({
+    id: operation.entityId,
+    kind: String(payload.kind) as Transaction["kind"],
+    status: String(payload.status) as Transaction["status"],
+    accountId: account.id,
+    amount: Money.fromMinor(BigInt(String(payload.amount_minor)), String(payload.currency)),
+    bookedDate: LocalDate.parse(String(payload.booked_date)),
+    source: String(payload.source) as Transaction["source"],
+    ...(payload.value_date === undefined
+      ? {}
+      : { valueDate: LocalDate.parse(String(payload.value_date)) }),
+    ...(payload.payee === undefined ? {} : { payee: String(payload.payee) }),
+    ...(payload.description === undefined ? {} : { description: String(payload.description) }),
+    ...(payload.category_id === undefined ? {} : { categoryId: String(payload.category_id) }),
+    ...(payload.note === undefined ? {} : { note: String(payload.note) }),
+  });
+  if (await repository.findTransactionById(transaction.id))
+    await repository.updateTransaction(transaction);
+  else await repository.saveTransaction(transaction);
+}
+
+async function digest(value: string): Promise<string> {
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return `sha256:${Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}

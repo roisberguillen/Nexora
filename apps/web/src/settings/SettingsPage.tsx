@@ -33,6 +33,11 @@ import {
 } from "./localHostConnection";
 import { LocalHostSessionController } from "./localHostSession";
 import {
+  clearLocalHostCredentials,
+  readLocalHostCredentials,
+  saveLocalHostCredentials,
+} from "./localHostVault";
+import {
   createDesktopPairingInvite,
   getDesktopLocalHubStatus,
   getPhoneLocalHubStatus,
@@ -106,6 +111,15 @@ export function SettingsPage({
   const [isManagingSession, setIsManagingSession] = useState(false);
   const androidRuntime = isAndroidRuntime();
   const desktopRuntime = isDesktopRuntime() && !androidRuntime;
+  useEffect(() => {
+    void readLocalHostCredentials()
+      .then((saved) => {
+        if (saved === null || saved.endpoint !== hostConnection.endpoint) return;
+        setPairedCredentials(saved.credentials);
+        setSessionController(new LocalHostSessionController(saved.endpoint, saved.credentials));
+      })
+      .catch(() => undefined);
+  }, [hostConnection.endpoint]);
   const manageDesktopHub = async () => {
     setIsManagingDesktopHub(true);
     try {
@@ -242,13 +256,14 @@ export function SettingsPage({
       const endpoint = invite.endpoint ?? hostConnection.endpoint;
       const credentials = createLocalHostDeviceCredentials();
       await redeemLocalHostPairing(endpoint, { ...invite, ...credentials });
+      await saveLocalHostCredentials(endpoint, credentials);
       const next = { enabled: true, endpoint, runtimeState: "running" as const };
       writeLocalHostConnection(next);
       setHostConnection(next);
       setPairedCredentials(credentials);
       setSessionController(new LocalHostSessionController(endpoint, credentials));
       setHostMessage("Host collegato. Runtime e sincronizzazione disponibili dopo l’unlock.");
-      setPairingMessage("Dispositivo autorizzato. La credenziale resta solo in memoria.");
+      setPairingMessage("Dispositivo autorizzato. La credenziale è protetta nel vault locale.");
     } catch {
       setPairingMessage("Pairing non completato: verifica invito, host e scadenza.");
     } finally {
@@ -274,6 +289,7 @@ export function SettingsPage({
       );
       setPairedCredentials(null);
       setSessionController(null);
+      await clearLocalHostCredentials();
       setSessionPasscode("");
       setHostMessage("Dispositivo revocato. È necessario un nuovo pairing.");
     } catch {

@@ -1,5 +1,6 @@
 use rusqlite::{Connection, OptionalExtension, Transaction, params};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::path::Path;
 
 use crate::{OperationApplyResult, ReplicableOperation, TransportError};
@@ -207,13 +208,116 @@ impl SqliteSyncOperationStore {
     }
 
     pub fn bootstrap(&self) -> Result<SyncBootstrapSnapshot, DurableSyncError> {
-        let operations = self.pull(0)?;
+        let mut operations = self.pull(0)?;
         let cursor = operations.last().map(|(cursor, _)| *cursor).unwrap_or(0);
+        let logged_entities = operations
+            .iter()
+            .map(|(_, operation)| operation.entity_id.as_str())
+            .collect::<std::collections::HashSet<_>>();
+        let mut snapshot_operations = self.current_ledger_operations()?;
+        snapshot_operations.retain(|(_, operation)| !logged_entities.contains(operation.entity_id.as_str()));
+        operations.append(&mut snapshot_operations);
         Ok(SyncBootstrapSnapshot {
             schema_version: 1,
             cursor,
             operations,
         })
+    }
+
+    fn current_ledger_operations(&self) -> Result<Vec<(u64, ReplicableOperation)>, DurableSyncError> {
+        let mut operations = Vec::new();
+        if table_has_column(&self.connection, "accounts", "name")? {
+            let mut accounts = self.connection.prepare(
+                "SELECT id, name, type, currency, institution, parent_account_id,
+                        opening_balance_minor, is_archived FROM accounts ORDER BY id",
+            )?;
+            for row in accounts.query_map([], |row| {
+                let payload = serde_json::json!({
+                    "schema_version": 1,
+                    "operation": "upsert",
+                    "entity_type": "account",
+                    "entity_id": row.get::<_, String>(0)?,
+                    "name": row.get::<_, String>(1)?,
+                    "type": row.get::<_, String>(2)?,
+                    "currency": row.get::<_, String>(3)?,
+                    "institution": row.get::<_, Option<String>>(4)?,
+                    "parent_account_id": row.get::<_, Option<String>>(5)?,
+                    "opening_balance_minor": row.get::<_, String>(6)?,
+                    "is_archived": row.get::<_, i64>(7)? != 0,
+                });
+                Ok(bootstrap_operation(payload))
+            })? {
+                operations.push((0, row?));
+            }
+        }
+        let mut transactions = self.connection.prepare(
+            "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
+                    value_date, payee, description, category_id, note, source
+             FROM transactions ORDER BY id",
+        )?;
+        for row in transactions.query_map([], |row| {
+            let payload = serde_json::json!({
+                "schema_version": 1,
+                "operation": "upsert",
+                "entity_type": "transaction",
+                "entity_id": row.get::<_, String>(0)?,
+                "kind": row.get::<_, String>(1)?,
+                "status": row.get::<_, String>(2)?,
+                "account_id": row.get::<_, String>(3)?,
+                "amount_minor": row.get::<_, String>(4)?,
+                "currency": row.get::<_, String>(5)?,
+                "booked_date": row.get::<_, String>(6)?,
+                "value_date": row.get::<_, Option<String>>(7)?,
+                "payee": row.get::<_, Option<String>>(8)?,
+                "description": row.get::<_, Option<String>>(9)?,
+                "category_id": row.get::<_, Option<String>>(10)?,
+                "note": row.get::<_, Option<String>>(11)?,
+                "source": row.get::<_, String>(12)?,
+            });
+            Ok(bootstrap_operation(payload))
+        })? {
+            operations.push((0, row?));
+        }
+        Ok(operations)
+    }
+}
+
+fn table_has_column(
+    connection: &Connection,
+    table: &str,
+    column: &str,
+) -> Result<bool, rusqlite::Error> {
+    let mut statement = connection.prepare("SELECT name FROM pragma_table_info(?1)")?;
+    Ok(statement
+        .query_map(params![table], |row| row.get::<_, String>(0))?
+        .any(|name| name.map(|value| value == column).unwrap_or(false)))
+}
+
+fn bootstrap_operation(payload: serde_json::Value) -> ReplicableOperation {
+    let payload_text = payload.to_string();
+    let entity_id = payload
+        .get("entity_id")
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default()
+        .to_owned();
+    let idempotency_key = format!("bootstrap:{entity_id}");
+    let digest = format!(
+        "sha256:{}",
+        Sha256::digest(payload_text.as_bytes())
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>()
+    );
+    ReplicableOperation {
+        idempotency_key,
+        device_id: "phone-local-ledger".to_owned(),
+        entity_id,
+        base_revision: 0,
+        revision: 1,
+        payload_digest: digest,
+        payload: payload_text,
+        tombstone: false,
+        created_at: "1970-01-01T00:00:00.000Z".to_owned(),
     }
 }
 

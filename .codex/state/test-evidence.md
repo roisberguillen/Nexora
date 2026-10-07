@@ -2420,3 +2420,16 @@ Keep only the latest relevant evidence per completed phase.
 - `pnpm exec vitest run apps/web/src/settings/localHostSync.test.ts` — NOT VALIDATED: Vitest worker
   startup timed out in the current Windows environment before tests were collected.
 - Full `pnpm verify` — NOT RUN for this slice; the Vitest worker failure remains an environment gate.
+## 2026-10-07 — remote-mobile-host
+
+- `pnpm manifest:update` — PASS.
+- `pnpm --filter @nexora/web typecheck` — PASS dopo l’integrazione del cache remoto, repository
+  proxy, vault credenziali e lifecycle startup.
+- `cargo test --manifest-path apps/local-hub/Cargo.toml` — PASS, 39 passed, 0 failed; include
+  bootstrap dai record SQLite host e test HTTP create/update/delete con verifica diretta sul database.
+- `pnpm lint` — PASS.
+- `pnpm manifest:check` — PASS.
+- `pnpm test:ui-ux` — PASS, 4 passed.
+- Vitest mirato — NON VALIDATO: i worker Windows non hanno raccolto i test entro il timeout del
+  runner, anche con un solo worker.
+- CI GitHub — da verificare sul commit pubblicato.
