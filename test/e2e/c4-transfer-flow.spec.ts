@@ -5,7 +5,7 @@ const sourceAccount = "Conto origine C4.3";
 const destinationAccount = "Conto destinazione C4.3";
 const rootCategory = "Casa C4.3";
 const expenseCategory = "Utenze C4.3";
-const bookedDate = "2026-09-04";
+const bookedDate = "2026-10-04";
 
 test.describe("C4.3 flusso completo dei trasferimenti tra conti", () => {
   test("riconcilia trasferimento, annullamento, correzione e cinque superfici", async ({

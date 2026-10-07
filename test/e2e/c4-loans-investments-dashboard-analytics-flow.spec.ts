@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const frozenNow = new Date("2026-09-05T10:00:00+02:00");
+const frozenNow = new Date("2026-10-05T10:00:00+02:00");
 
 test.describe("C4.6 prestiti, investimenti, Dashboard e Analisi", () => {
   test("riconcilia il flusso finanziario completo su ogni viewport", async ({ page }, testInfo) => {
@@ -16,14 +16,14 @@ test.describe("C4.6 prestiti, investimenti, Dashboard e Analisi", () => {
     await createAccount(page, "Directa C4.6", "investment", "0,00");
     await createAccount(page, "Findomestic C4.6", "loan", "0,00");
     await createCategory(page);
-    await createTransaction(page, "Entrata agosto C4.6", "income", "2800,00", "2026-08-05");
-    await createTransaction(page, "Spesa agosto C4.6", "expense", "600,00", "2026-08-06", true);
-    await createTransaction(page, "Entrata settembre C4.6", "income", "3000,00", "2026-09-05");
-    await createTransaction(page, "Spesa settembre C4.6", "expense", "500,00", "2026-09-05", true);
-    await createLoan(page, "5000,00", "10000,00", "2026-09-10");
+    await createTransaction(page, "Entrata settembre C4.6", "income", "2800,00", "2026-09-05");
+    await createTransaction(page, "Spesa settembre C4.6", "expense", "600,00", "2026-09-06", true);
+    await createTransaction(page, "Entrata ottobre C4.6", "income", "3000,00", "2026-10-05");
+    await createTransaction(page, "Spesa ottobre C4.6", "expense", "500,00", "2026-10-05", true);
+    await createLoan(page, "5000,00", "10000,00", "2026-10-10");
     await createInvestment(page, "1000,00", "1125,00");
     await expectSummary(page, "9.700,00", "1.125,00", "125,00");
-    await createTransaction(page, "Rata Findomestic C4.6", "expense", "172,00", "2026-09-05");
+    await createTransaction(page, "Rata Findomestic C4.6", "expense", "172,00", "2026-10-05");
     await updateLoan(page);
     await createTransfer(page);
     await updateInvestment(page);
@@ -39,7 +39,9 @@ test.describe("C4.6 prestiti, investimenti, Dashboard e Analisi", () => {
     await page.reload();
     await expectSummary(page, "9.468,00", "1.200,00", "140,00");
     await page.goto("/#analytics");
-    await expect(page.getByRole("heading", { name: /Come è andato settembre 2026/ })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Come è andato Ottobre 2026\?/ }),
+    ).toBeVisible();
     await expect(page.locator("#analytics")).toContainText("3.000,00");
     await expect(page.locator("#analytics")).toContainText("672,00");
     await expect(page.locator("#analytics")).toContainText("2.328,00");

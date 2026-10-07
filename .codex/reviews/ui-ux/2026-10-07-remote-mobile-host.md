@@ -25,4 +25,5 @@ P0 aperti: Nessuno
 Esito: PASS
 Nota CI: il timeout del job verify è stato portato a 90 minuti per consentire il completamento della matrice Playwright completa; nessuna superficie UI o regola visuale è stata modificata.
 Nota test: i selettori end-to-end sono stati riallineati alle label accessibili già presenti nella shell mobile e al formato localizzato del periodo del diario.
+Nota fixture: i flussi browser usano il mese corrente deterministico e le label testuali attuali delle superfici Settings e Analisi.
 Manifest: aggiornato e verificato dopo la chiusura del lifecycle remoto, la build PWA e il gate browser CI.

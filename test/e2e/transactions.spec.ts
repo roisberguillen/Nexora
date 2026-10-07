@@ -428,7 +428,9 @@ test("la gestione dati espone dialog accessibili con Escape e focus di ritorno",
   await expect(dialog).toHaveCount(0);
   await expect(trigger).toBeFocused();
   await expect(page.getByRole("region", { name: "Gestione dati" })).toBeVisible();
-  await expect(page.getByText(/non sono ancora configurabili/i)).toBeVisible();
+  await expect(
+    page.getByText(/Gestisci gli elementi archiviati, il cestino e le copie di sicurezza/i),
+  ).toBeVisible();
 
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations).toEqual([]);

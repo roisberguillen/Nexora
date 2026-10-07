@@ -66,7 +66,9 @@ test("la ricerca globale supporta keyboard, touch target e resize live", async (
   expect(triggerBox?.height).toBeGreaterThanOrEqual(44);
   await trigger.click();
 
-  const search = page.getByRole("searchbox", { name: "Ricerca globale" });
+  const search = page.getByRole("dialog", { name: "Ricerca globale" }).getByRole("searchbox", {
+    name: "Ricerca globale",
+  });
   await search.click();
   await page.keyboard.type("Cinema campione");
   await page.getByRole("option", { name: /Cinema campione/ }).press("Enter");
@@ -103,7 +105,9 @@ test("la ricerca globale resta utilizzabile al 200%", async ({ page, browserName
   await page.goto("/");
   await page.getByRole("button", { name: "Carica dati dimostrativi" }).click();
   await page.getByRole("searchbox", { name: "Ricerca globale" }).first().click();
-  const search = page.getByRole("searchbox", { name: "Ricerca globale" });
+  const search = page.getByRole("dialog", { name: "Ricerca globale" }).getByRole("searchbox", {
+    name: "Ricerca globale",
+  });
   await expect(search).toBeFocused();
   await search.fill("Cinema campione");
   await expect(page.getByRole("option", { name: /Cinema campione/ })).toBeVisible();

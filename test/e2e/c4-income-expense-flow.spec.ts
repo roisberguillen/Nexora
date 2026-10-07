@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const storagePreferenceKey = "nexora.ledger-storage.v1";
 const accountName = "Conto C4.2 sintetico";
-const bookedDate = "2026-09-03";
+const bookedDate = "2026-10-03";
 
 test.describe("C4.2 ciclo completo di entrate e spese", () => {
   test("riconcilia entrata, spese, modifica, annullamento e riapertura", async ({

@@ -1079,8 +1079,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-07-remote-mobile-host.md",
-      "size": 2018,
-      "sha256": "b27e18627d6c62abb57d67040c3a14797f0a22f7c01abc47306f390c6c685dcd"
+      "size": 2151,
+      "sha256": "f8c88e9c79f8f1ef97dc00fac6a7302305aa27ed50294f7fd5a5853cdeedca9a"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -4575,12 +4575,12 @@
     {
       "path": "test/e2e/c4-income-expense-flow.spec.ts",
       "size": 15306,
-      "sha256": "f3d0b73842135ab2e4d233d47b3bb990c1a105518b3189c98c059057d2e7c96b"
+      "sha256": "83f29ad9f65c1a1fa41711f3ee8f0bf698810352ffe9f99844d8e09cf1b41e43"
     },
     {
       "path": "test/e2e/c4-loans-investments-dashboard-analytics-flow.spec.ts",
-      "size": 14900,
-      "sha256": "ea5513d7200fc5810ae7f80db87c29b8093817adaba0ce556076bf7a6562d305"
+      "size": 14915,
+      "sha256": "86dda31038c679d54f81b845f55ccb4bd021ec7e269f4ff3141c18cbb9a1398f"
     },
     {
       "path": "test/e2e/c4-money-manager-xlsx-migration-flow.spec.ts",
@@ -4595,7 +4595,7 @@
     {
       "path": "test/e2e/c4-transfer-flow.spec.ts",
       "size": 16035,
-      "sha256": "f75c3371651ade99a7eda79434607dde2c75bdf08401215502cfadb56c8ecdde"
+      "sha256": "c570d4e4fffdd8f2ee75eb9ab080fec81e0a2f99ea156048abdf0179d75cc31e"
     },
     {
       "path": "test/e2e/categories.spec.ts",
@@ -4654,8 +4654,8 @@
     },
     {
       "path": "test/e2e/global-search.spec.ts",
-      "size": 5240,
-      "sha256": "5d0b639b5b1d0920b5eb25ac5a811b83f824bd406343ec778ab908e829f62eb7"
+      "size": 5352,
+      "sha256": "2072b7ceb7ffe2f13fb824fb3114a4454662bc296cf6cf15f9188bed53f03e72"
     },
     {
       "path": "test/e2e/google-drive-onboarding.spec.ts",
@@ -4744,8 +4744,8 @@
     },
     {
       "path": "test/e2e/transactions.spec.ts",
-      "size": 20246,
-      "sha256": "8ff891ad9ba0b3f070e31ae99d0492fb99692be3d71e794afb448be5c467a49d"
+      "size": 20294,
+      "sha256": "768ebd384b1e65e627151a39c0dd3bc0e1f48f11bb2190392f5895a60e3a8851"
     },
     {
       "path": "test/project-privacy.test.ts",
