@@ -154,10 +154,7 @@ export function AppShell({
         <QuickActionSheet actions={quickActions} onClose={closeQuickActions} />
       ) : null}
       {isMobileNavigationOpen ? (
-        <MobileNavigationSheet
-          activeRoute={activeRoute}
-          onClose={closeMobileNavigation}
-        />
+        <MobileNavigationSheet activeRoute={activeRoute} onClose={closeMobileNavigation} />
       ) : null}
       {isSearchOpen ? <GlobalSearchDialog onClose={closeSearch} results={searchResults} /> : null}
     </div>

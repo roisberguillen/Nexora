@@ -141,6 +141,13 @@ inviti senza `expiresAtMs` intero futuro; credenziali e invito non vengono persi
 Il contratto Rust mantiene grant monouso, host fingerprint, revoca e separazione tra pairing e ledger.
 Gate full verify, UI review e invito sintetico sul Pixel ancora aperti.
 
+**Slice PMA-3.2 — 2026-09-14:** il comando Android rileva l’indirizzo Wi-Fi del telefono e avvia
+il Local Hub LAN su HTTPS con certificato temporaneo generato per quell’indirizzo, fingerprint
+calcolato a runtime e porta `43173`. La Settings UI Android è stata ridotta al flusso operativo
+`Avvia/Arresta Local Hub LAN → Runtime → URL da aprire sul PC`; i controlli passcode/sessione e le
+azioni desktop non pertinenti sono nascosti sul telefono. L’autorizzazione backend resta separata
+e fail-closed. Build firmata e verifica reale Pixel → PC sulla stessa Wi-Fi sono il gate residuo.
+
 ### PMA-4 — Browser desktop client
 
 Aggiungere al browser desktop il bootstrap `health → fingerprint → pairing → sessione → ledger`,

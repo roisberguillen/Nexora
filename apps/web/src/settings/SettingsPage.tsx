@@ -89,6 +89,7 @@ export function SettingsPage({
   const [desktopHubStatus, setDesktopHubStatus] = useState<DesktopHubStatus | null>(null);
   const [isManagingDesktopHub, setIsManagingDesktopHub] = useState(false);
   const [phoneHubStatus, setPhoneHubStatus] = useState<DesktopHubStatus | null>(null);
+  const [phoneHubUrl, setPhoneHubUrl] = useState<string | null>(null);
   const [isManagingPhoneHub, setIsManagingPhoneHub] = useState(false);
   const [lanAddress, setLanAddress] = useState("");
   const [isStartingLan, setIsStartingLan] = useState(false);
@@ -138,10 +139,11 @@ export function SettingsPage({
           ? (await stopPhoneLocalHub(), null)
           : await startPhoneLocalHub();
       setPhoneHubStatus(next);
+      setPhoneHubUrl(next?.binding === "lan" && next.address ? `https://${next.address}/` : null);
       setHostMessage(
         next === null
           ? "Local Hub del telefono arrestato."
-          : "Local Hub del telefono avviato in foreground e loopback.",
+          : "Local Hub LAN del telefono avviato. Apri l’indirizzo dal PC sulla stessa Wi-Fi.",
       );
     } catch {
       setHostMessage(
@@ -154,7 +156,10 @@ export function SettingsPage({
   useEffect(() => {
     if (!androidRuntime) return;
     void getPhoneLocalHubStatus()
-      .then(setPhoneHubStatus)
+      .then((next) => {
+        setPhoneHubStatus(next);
+        setPhoneHubUrl(next.binding === "lan" && next.address ? `https://${next.address}/` : null);
+      })
       .catch(() => undefined);
   }, [androidRuntime]);
   const activateHost = async () => {
@@ -505,7 +510,6 @@ export function SettingsPage({
               />
             </>
           ) : null}
-          <SettingsRow label="Origine dati" value="Archivio di questo browser" />
           {androidRuntime ? (
             <div className="settings-actions">
               <button
@@ -515,220 +519,230 @@ export function SettingsPage({
                 type="button"
               >
                 {phoneHubStatus?.state === "running"
-                  ? "Arresta Local Hub del telefono"
-                  : "Avvia Local Hub del telefono"}
+                  ? "Arresta Local Hub LAN"
+                  : "Avvia Local Hub LAN"}
               </button>
               <SettingsRow label="Runtime telefono" value={phoneHubStatus?.state ?? "stopped"} />
+              {phoneHubUrl !== null ? (
+                <a href={phoneHubUrl} rel="noopener noreferrer" target="_blank">
+                  Apri Nexora dal PC: {phoneHubUrl}
+                </a>
+              ) : null}
               <small>
-                PMA-1: il Local Hub resta in foreground e loopback. La pubblicazione LAN richiederà
-                consenso, TLS e pairing nelle fasi successive.
+                Telefono e PC devono essere sulla stessa Wi-Fi. Il certificato temporaneo viene
+                rigenerato a ogni avvio; il passcode sessione non è richiesto.
               </small>
             </div>
           ) : null}
-          {desktopRuntime ? (
-            <div className="settings-actions">
-              <button
-                className="primary-action"
-                disabled={isManagingDesktopHub}
-                onClick={() => void manageDesktopHub()}
-                type="button"
-              >
-                {desktopHubStatus?.state === "running"
-                  ? "Arresta Local Hub desktop"
-                  : "Avvia Local Hub desktop"}
-              </button>
-              <small>
-                Il Local Hub desktop parte in loopback. La pubblicazione LAN richiede pairing e
-                consenso esplicito.
-              </small>
-              {desktopHubStatus?.state === "running" ? (
-                <button
-                  className="secondary-action"
-                  disabled={isPairing}
-                  onClick={() => void generatePairingInvite()}
-                  type="button"
-                >
-                  Genera invito pairing
-                </button>
-              ) : null}
-              {desktopHubStatus?.state !== "running" ? (
-                <>
-                  <label className="settings-row">
-                    <span>Indirizzo LAN del PC</span>
-                    <input
-                      aria-label="Indirizzo LAN del PC"
-                      disabled={isStartingLan || isManagingDesktopHub}
-                      inputMode="decimal"
-                      onChange={(event) => setLanAddress(event.currentTarget.value)}
-                      placeholder="192.168.1.10"
-                      value={lanAddress}
-                    />
-                  </label>
+          {!androidRuntime ? (
+            <>
+              <SettingsRow label="Origine dati" value="Archivio di questo browser" />
+              {desktopRuntime ? (
+                <div className="settings-actions">
                   <button
-                    className="secondary-action"
-                    disabled={isStartingLan || lanAddress.trim() === ""}
-                    onClick={() => void startLanHub()}
+                    className="primary-action"
+                    disabled={isManagingDesktopHub}
+                    onClick={() => void manageDesktopHub()}
                     type="button"
                   >
-                    {isStartingLan ? "Selezione TLS…" : "Pubblica Local Hub in LAN"}
+                    {desktopHubStatus?.state === "running"
+                      ? "Arresta Local Hub desktop"
+                      : "Avvia Local Hub desktop"}
                   </button>
                   <small>
-                    Richiede consenso esplicito, certificato PEM e chiave privata selezionati da te.
-                    I file non vengono copiati né salvati da Nexora.
+                    Il Local Hub desktop parte in loopback. La pubblicazione LAN richiede pairing e
+                    consenso esplicito.
                   </small>
+                  {desktopHubStatus?.state === "running" ? (
+                    <button
+                      className="secondary-action"
+                      disabled={isPairing}
+                      onClick={() => void generatePairingInvite()}
+                      type="button"
+                    >
+                      Genera invito pairing
+                    </button>
+                  ) : null}
+                  {desktopHubStatus?.state !== "running" ? (
+                    <>
+                      <label className="settings-row">
+                        <span>Indirizzo LAN del PC</span>
+                        <input
+                          aria-label="Indirizzo LAN del PC"
+                          disabled={isStartingLan || isManagingDesktopHub}
+                          inputMode="decimal"
+                          onChange={(event) => setLanAddress(event.currentTarget.value)}
+                          placeholder="192.168.1.10"
+                          value={lanAddress}
+                        />
+                      </label>
+                      <button
+                        className="secondary-action"
+                        disabled={isStartingLan || lanAddress.trim() === ""}
+                        onClick={() => void startLanHub()}
+                        type="button"
+                      >
+                        {isStartingLan ? "Selezione TLS…" : "Pubblica Local Hub in LAN"}
+                      </button>
+                      <small>
+                        Richiede consenso esplicito, certificato PEM e chiave privata selezionati da
+                        te. I file non vengono copiati né salvati da Nexora.
+                      </small>
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
+              <label className="settings-row settings-row--stacked">
+                <span>Invito pairing</span>
+                <textarea
+                  aria-label="Invito pairing"
+                  disabled={isPairing}
+                  onChange={(event) => updatePairingInvite(event.currentTarget.value)}
+                  placeholder="Incolla qui l’invito JSON generato dal PC"
+                  rows={3}
+                  value={pairingInvite}
+                />
+              </label>
+              {pairingPreview !== null ? (
+                <div className="account-feedback" role="status">
+                  <strong>Verifica host prima di autorizzare</strong>
+                  <small>
+                    Endpoint: {pairingPreview.endpoint ?? "non indicato"}. Fingerprint:{" "}
+                    {pairingPreview.hostFingerprint}. Invito valido fino a{" "}
+                    {new Date(pairingPreview.expiresAtMs).toLocaleString("it-IT")}.
+                  </small>
+                </div>
+              ) : null}
+              <div className="settings-actions">
+                <button
+                  className="primary-action"
+                  disabled={isPairing || pairingInvite.trim() === ""}
+                  onClick={() => void pairHost()}
+                  type="button"
+                >
+                  {isPairing ? "Autorizzazione…" : "Autorizza questo dispositivo"}
+                </button>
+                {pairedCredentials !== null ? (
+                  <button
+                    className="secondary-action"
+                    disabled={isPairing}
+                    onClick={() => void revokePairedDevice()}
+                    type="button"
+                  >
+                    Revoca questo dispositivo
+                  </button>
+                ) : null}
+              </div>
+              {pairingMessage !== null ? (
+                <p className="account-feedback" role="status">
+                  {pairingMessage}
+                </p>
+              ) : null}
+              {sessionController !== null ? (
+                <>
+                  <label className="settings-row">
+                    <span>Passcode sessione</span>
+                    <input
+                      aria-label="Passcode sessione"
+                      autoComplete="off"
+                      disabled={isManagingSession}
+                      inputMode="numeric"
+                      minLength={4}
+                      onChange={(event) => setSessionPasscode(event.currentTarget.value)}
+                      type="password"
+                      value={sessionPasscode}
+                    />
+                  </label>
+                  <div className="settings-actions">
+                    <button
+                      className="secondary-action"
+                      disabled={isManagingSession || sessionPasscode.length < 4}
+                      onClick={() => void configureSessionPasscode()}
+                      type="button"
+                    >
+                      Configura passcode
+                    </button>
+                    <button
+                      className="primary-action"
+                      disabled={isManagingSession || sessionPasscode.length < 4}
+                      onClick={() => void unlockSession()}
+                      type="button"
+                    >
+                      Sblocca sessione
+                    </button>
+                    <button
+                      className="secondary-action"
+                      disabled={isManagingSession}
+                      onClick={() => void logoutSession()}
+                      type="button"
+                    >
+                      Chiudi sessione
+                    </button>
+                  </div>
+                  {sessionMessage !== null ? (
+                    <p className="account-feedback" role="status">
+                      {sessionMessage}
+                    </p>
+                  ) : null}
                 </>
               ) : null}
-            </div>
-          ) : null}
-          <label className="settings-row settings-row--stacked">
-            <span>Invito pairing</span>
-            <textarea
-              aria-label="Invito pairing"
-              disabled={isPairing}
-              onChange={(event) => updatePairingInvite(event.currentTarget.value)}
-              placeholder="Incolla qui l’invito JSON generato dal PC"
-              rows={3}
-              value={pairingInvite}
-            />
-          </label>
-          {pairingPreview !== null ? (
-            <div className="account-feedback" role="status">
-              <strong>Verifica host prima di autorizzare</strong>
-              <small>
-                Endpoint: {pairingPreview.endpoint ?? "non indicato"}. Fingerprint:{" "}
-                {pairingPreview.hostFingerprint}. Invito valido fino a{" "}
-                {new Date(pairingPreview.expiresAtMs).toLocaleString("it-IT")}.
-              </small>
-            </div>
-          ) : null}
-          <div className="settings-actions">
-            <button
-              className="primary-action"
-              disabled={isPairing || pairingInvite.trim() === ""}
-              onClick={() => void pairHost()}
-              type="button"
-            >
-              {isPairing ? "Autorizzazione…" : "Autorizza questo dispositivo"}
-            </button>
-            {pairedCredentials !== null ? (
-              <button
-                className="secondary-action"
-                disabled={isPairing}
-                onClick={() => void revokePairedDevice()}
-                type="button"
-              >
-                Revoca questo dispositivo
-              </button>
-            ) : null}
-          </div>
-          {pairingMessage !== null ? (
-            <p className="account-feedback" role="status">
-              {pairingMessage}
-            </p>
-          ) : null}
-          {sessionController !== null ? (
-            <>
               <label className="settings-row">
-                <span>Passcode sessione</span>
+                <span>Indirizzo host</span>
                 <input
-                  aria-label="Passcode sessione"
-                  autoComplete="off"
-                  disabled={isManagingSession}
-                  inputMode="numeric"
-                  minLength={4}
-                  onChange={(event) => setSessionPasscode(event.currentTarget.value)}
-                  type="password"
-                  value={sessionPasscode}
+                  aria-label="Indirizzo host"
+                  disabled={isCheckingHost || hostConnection.enabled}
+                  inputMode="url"
+                  onChange={(event) =>
+                    setHostConnection((current) => ({
+                      ...current,
+                      endpoint: event.currentTarget.value,
+                    }))
+                  }
+                  value={hostConnection.endpoint}
                 />
               </label>
               <div className="settings-actions">
-                <button
-                  className="secondary-action"
-                  disabled={isManagingSession || sessionPasscode.length < 4}
-                  onClick={() => void configureSessionPasscode()}
-                  type="button"
-                >
-                  Configura passcode
-                </button>
-                <button
-                  className="primary-action"
-                  disabled={isManagingSession || sessionPasscode.length < 4}
-                  onClick={() => void unlockSession()}
-                  type="button"
-                >
-                  Sblocca sessione
-                </button>
-                <button
-                  className="secondary-action"
-                  disabled={isManagingSession}
-                  onClick={() => void logoutSession()}
-                  type="button"
-                >
-                  Chiudi sessione
-                </button>
+                {hostConnection.enabled ? (
+                  <button className="secondary-action" onClick={deactivateHost} type="button">
+                    Disattiva host
+                  </button>
+                ) : (
+                  <button
+                    className="primary-action"
+                    disabled={isCheckingHost}
+                    onClick={() => void activateHost()}
+                    type="button"
+                  >
+                    {isCheckingHost ? "Verifica host…" : "Attiva host"}
+                  </button>
+                )}
               </div>
-              {sessionMessage !== null ? (
-                <p className="account-feedback" role="status">
-                  {sessionMessage}
+              {hostMessage === null ? (
+                <p className="account-feedback">
+                  Nessun host condiviso configurato: anche offline puoi continuare a usare Nexora.
                 </p>
+              ) : (
+                <p className="account-feedback" role="status">
+                  {hostMessage}
+                </p>
+              )}
+              {hostConnection.enabled && hostConnection.appUrl !== undefined ? (
+                <div className="settings-actions">
+                  <a
+                    className="secondary-action"
+                    href={hostConnection.appUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Apri Nexora nel browser locale
+                  </a>
+                  <small>
+                    Apri la superficie browser pubblicata dall’host già verificato. Il collegamento
+                    non salva credenziali nel browser.
+                  </small>
+                </div>
               ) : null}
             </>
-          ) : null}
-          <label className="settings-row">
-            <span>Indirizzo host</span>
-            <input
-              aria-label="Indirizzo host"
-              disabled={isCheckingHost || hostConnection.enabled}
-              inputMode="url"
-              onChange={(event) =>
-                setHostConnection((current) => ({
-                  ...current,
-                  endpoint: event.currentTarget.value,
-                }))
-              }
-              value={hostConnection.endpoint}
-            />
-          </label>
-          <div className="settings-actions">
-            {hostConnection.enabled ? (
-              <button className="secondary-action" onClick={deactivateHost} type="button">
-                Disattiva host
-              </button>
-            ) : (
-              <button
-                className="primary-action"
-                disabled={isCheckingHost}
-                onClick={() => void activateHost()}
-                type="button"
-              >
-                {isCheckingHost ? "Verifica host…" : "Attiva host"}
-              </button>
-            )}
-          </div>
-          {hostMessage === null ? (
-            <p className="account-feedback">
-              Nessun host condiviso configurato: anche offline puoi continuare a usare Nexora.
-            </p>
-          ) : (
-            <p className="account-feedback" role="status">
-              {hostMessage}
-            </p>
-          )}
-          {hostConnection.enabled && hostConnection.appUrl !== undefined ? (
-            <div className="settings-actions">
-              <a
-                className="secondary-action"
-                href={hostConnection.appUrl}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Apri Nexora nel browser locale
-              </a>
-              <small>
-                Apri la superficie browser pubblicata dall’host già verificato. Il collegamento non
-                salva credenziali nel browser.
-              </small>
-            </div>
           ) : null}
         </SettingsGroup>
         {onRestoreTransaction === undefined ? null : (
@@ -749,7 +763,7 @@ export function SettingsPage({
               ]}
             />
             {expiredTrashEntries === 0 ? null : (
-              <p className="account-feedback" role="status">
+              <p aria-live="polite" className="account-feedback">
                 {expiredTrashEntries} elementi hanno superato la conservazione scelta: verifica e
                 conferma manualmente l&apos;eliminazione. Nexora non elimina dati in background.
               </p>

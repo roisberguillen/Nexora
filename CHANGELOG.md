@@ -19,6 +19,9 @@
   con start/stop/restart e arresto automatico in background, senza usare dati finanziari reali.
 - PMA-3.1: la Settings UI valida e mostra endpoint, fingerprint e scadenza dell’invito pairing
   prima dell’autorizzazione esplicita; gli inviti senza scadenza futura vengono rifiutati.
+- PMA-3.2: il Pixel può avviare esplicitamente il Local Hub LAN su HTTPS usando il proprio IP Wi-Fi,
+  con certificato temporaneo e URL visibile sul telefono; il menu Android non mostra più passcode
+  sessione o controlli desktop non pertinenti.
 - Mostrati gli intervalli civili dei periodi finanziari su Dashboard, Analisi, Budget e Diario, con riallineamento automatico dopo il cambio della preferenza.
 - Roadmap del giorno di inizio del mese finanziario completata: contratto dominio, preferenza locale, aggregazioni e label degli intervalli sono implementati e verificati.
 - PC Manager PM-8: aggiunto l’invito pairing monouso dal Local Hub desktop, l’autorizzazione del

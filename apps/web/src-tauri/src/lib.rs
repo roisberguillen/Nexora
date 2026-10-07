@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::fs;
-use std::net::IpAddr;
-use std::sync::Arc;
+use std::net::{IpAddr, UdpSocket};
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -77,18 +77,89 @@ async fn phone_local_hub_start(
         SqliteSyncOperationStore::open(database_file)
             .map_err(|error| format!("Phone Local Hub SQLite sync store failed: {error}"))?,
     )));
-    hub_state.app_url = Some("http://127.0.0.1:43173".to_owned());
+    let lan_address = detect_local_lan_address()?;
+    let identity = generate_phone_lan_identity(lan_address)?;
+    hub_state.app_url = Some(format!("https://{lan_address}:43173/"));
     hub_state.browser_root = app
         .path()
         .resource_dir()
         .ok()
         .map(|directory| directory.join("browser"));
-    let started = LocalHubRuntime::start(TransportSecurityConfig::default(), hub_state)
+    let config = TransportSecurityConfig {
+        binding: nexora_local_hub::BindingMode::Lan,
+        address: lan_address,
+        port: 43_173,
+        tls_certificate_pem: Some(identity.certificate_pem),
+        tls_private_key_pem: Some(identity.private_key_pem),
+        host_fingerprint: Some(identity.fingerprint),
+    };
+    let started = LocalHubRuntime::start(config, hub_state)
         .await
         .map_err(|error| format!("Phone Local Hub start failed: {error:?}"))?;
     let status = started.status().await;
     *runtime = Some(started);
     Ok(status)
+}
+
+struct PhoneLanIdentity {
+    certificate_pem: String,
+    private_key_pem: String,
+    fingerprint: String,
+}
+
+fn detect_local_lan_address() -> Result<IpAddr, String> {
+    if let Ok(interfaces) = if_addrs::get_if_addrs() {
+        if let Some(address) = interfaces
+            .into_iter()
+            .map(|interface| interface.ip())
+            .find(|address| is_preferred_lan_address(*address))
+        {
+            return Ok(address);
+        }
+    }
+
+    let socket = UdpSocket::bind("0.0.0.0:0")
+        .map_err(|error| format!("Could not inspect the local network: {error}"))?;
+    socket
+        .connect("8.8.8.8:80")
+        .map_err(|error| format!("Could not resolve the local Wi-Fi route: {error}"))?;
+    let address = socket
+        .local_addr()
+        .map_err(|error| format!("Could not read the local Wi-Fi address: {error}"))?
+        .ip();
+    if address.is_loopback() || address.is_unspecified() {
+        return Err("The phone is not connected to a local Wi-Fi network".to_owned());
+    }
+    Ok(address)
+}
+
+fn is_preferred_lan_address(address: IpAddr) -> bool {
+    match address {
+        IpAddr::V4(address) => address.is_private() && !address.is_loopback(),
+        IpAddr::V6(address) => address.is_unique_local() && !address.is_loopback(),
+    }
+}
+
+fn generate_phone_lan_identity(address: IpAddr) -> Result<PhoneLanIdentity, String> {
+    let certificate =
+        rcgen::generate_simple_self_signed(vec![address.to_string(), "localhost".to_owned()])
+            .map_err(|error| {
+                format!("Could not create the temporary Local Hub certificate: {error}")
+            })?;
+    let certificate_pem = certificate.cert.pem();
+    let private_key_pem = certificate.key_pair.serialize_pem();
+    let fingerprint = format!(
+        "sha256:{}",
+        Sha256::digest(certificate_pem.as_bytes())
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>()
+    );
+    Ok(PhoneLanIdentity {
+        certificate_pem,
+        private_key_pem,
+        fingerprint,
+    })
 }
 
 #[tauri::command]
