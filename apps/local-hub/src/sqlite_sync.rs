@@ -70,6 +70,10 @@ struct LedgerOperationPayload {
     opening_balance_minor: Option<String>,
     #[serde(default)]
     is_archived: Option<bool>,
+    #[serde(default)]
+    kind_scope: Option<String>,
+    #[serde(default)]
+    parent_id: Option<String>,
 }
 
 impl SqliteSyncOperationStore {
@@ -385,7 +389,7 @@ fn validate_payload(
         || payload.entity_id != operation.entity_id
         || !matches!(
             payload.entity_type.as_str(),
-            "account" | "transaction" | "transfer"
+            "account" | "category" | "transaction" | "transfer"
         )
     {
         return Err(DurableSyncError::InvalidPayload(
@@ -426,6 +430,13 @@ fn validate_payload(
                 {
                     return Err(DurableSyncError::InvalidPayload(
                         "account payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "category" => {
+                if payload.name.is_none() || payload.kind_scope.is_none() {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "category payload is incomplete".to_owned(),
                     ));
                 }
             }
@@ -498,6 +509,25 @@ fn apply_ledger_operation(
                 payload.currency.as_deref(),
                 payload.parent_account_id.as_deref(),
                 payload.opening_balance_minor.as_deref(),
+                i64::from(payload.is_archived.unwrap_or(false)),
+            ],
+        ),
+        ("category", "delete") => transaction.execute(
+            "DELETE FROM categories WHERE id = ?1",
+            params![operation.entity_id],
+        ),
+        ("category", "upsert") => transaction.execute(
+            "INSERT INTO categories (id, name, kind_scope, parent_id, is_archived)
+             VALUES (?1, ?2, ?3, ?4, ?5)
+             ON CONFLICT(id) DO UPDATE SET
+              name = excluded.name, kind_scope = excluded.kind_scope,
+              parent_id = excluded.parent_id, is_archived = excluded.is_archived,
+              updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+            params![
+                operation.entity_id,
+                payload.name.as_deref(),
+                payload.kind_scope.as_deref(),
+                payload.parent_id.as_deref(),
                 i64::from(payload.is_archived.unwrap_or(false)),
             ],
         ),

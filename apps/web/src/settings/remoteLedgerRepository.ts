@@ -1,6 +1,7 @@
-import type { Account, LedgerRepository, Transaction } from "@nexora/domain";
+import type { Account, Category, LedgerRepository, Transaction } from "@nexora/domain";
 import {
   Account as DomainAccount,
+  Category as DomainCategory,
   LocalDate,
   Money,
   Transaction as DomainTransaction,
@@ -134,6 +135,9 @@ const mutatingMethods = new Set([
   "saveCategory",
   "updateCategory",
   "deleteUnusedCategory",
+  "saveCategory",
+  "updateCategory",
+  "deleteUnusedCategory",
   "mergeCategory",
   "saveTag",
   "updateTag",
@@ -182,6 +186,9 @@ const supportedRemoteMutations = new Set([
   "saveAccount",
   "updateAccount",
   "deleteUnusedAccount",
+  "saveCategory",
+  "updateCategory",
+  "deleteUnusedCategory",
   "saveTransaction",
   "updateTransaction",
   "updateTransactionWithDetails",
@@ -200,6 +207,7 @@ async function operationForMutation(
 ): Promise<LocalSyncOperation | undefined> {
   let transaction: Transaction | undefined;
   let account: Account | undefined;
+  let category: Category | undefined;
   let entityId: string | undefined;
   let tombstone = false;
   if (
@@ -220,19 +228,33 @@ async function operationForMutation(
   } else if (method === "deleteUnusedAccount") {
     entityId = typeof args[0] === "string" ? args[0] : undefined;
     tombstone = true;
+  } else if (method === "saveCategory" || method === "updateCategory") {
+    category = args[0] as Category;
+    entityId = category?.id;
+  } else if (method === "deleteUnusedCategory") {
+    entityId = typeof args[0] === "string" ? args[0] : undefined;
+    tombstone = true;
   }
   if (entityId === undefined) return undefined;
   if (method === "deleteUnusedAccount") account = await repository.findAccountById(entityId);
+  if (method === "deleteUnusedCategory") category = await repository.findCategoryById(entityId);
   const current = transaction ?? (await repository.findTransactionById(entityId));
   if (!tombstone && current === undefined) return undefined;
   const payload = tombstone
     ? JSON.stringify({
         schema_version: 1,
         operation: "delete",
-        entity_type: account === undefined ? "transaction" : "account",
+        entity_type:
+          account !== undefined ? "account" : category !== undefined ? "category" : "transaction",
         entity_id: entityId,
       })
-    : JSON.stringify(account === undefined ? transactionPayload(current!) : accountPayload(account));
+    : JSON.stringify(
+        account !== undefined
+          ? accountPayload(account)
+          : category !== undefined
+            ? categoryPayload(category)
+            : transactionPayload(current!),
+      );
   const baseRevision = revisions.get(entityId) ?? client.revision(entityId);
   revisions.set(entityId, baseRevision + 1);
   return {
@@ -287,6 +309,19 @@ function accountPayload(account: Account): Record<string, unknown> {
   };
 }
 
+function categoryPayload(category: Category): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "category",
+    entity_id: category.id,
+    name: category.name,
+    kind_scope: category.kindScope,
+    parent_id: category.parentId ?? null,
+    is_archived: category.isArchived,
+  };
+}
+
 async function applyRemoteOperation(
   repository: LedgerRepository,
   operation: LocalSyncOperation,
@@ -317,6 +352,25 @@ async function applyRemoteOperation(
     });
     if (await repository.findAccountById(account.id)) await repository.updateAccount(account);
     else await repository.saveAccount(account);
+    return;
+  }
+  if (payload.entity_type === "category") {
+    if (payload.operation === "delete") {
+      if (await repository.findCategoryById(operation.entityId))
+        await repository.deleteUnusedCategory(operation.entityId);
+      return;
+    }
+    const category = DomainCategory.create({
+      id: operation.entityId,
+      name: String(payload.name),
+      kindScope: String(payload.kind_scope) as Category["kindScope"],
+      ...(payload.parent_id === null || payload.parent_id === undefined
+        ? {}
+        : { parentId: String(payload.parent_id) }),
+      isArchived: payload.is_archived === true,
+    });
+    if (await repository.findCategoryById(category.id)) await repository.updateCategory(category);
+    else await repository.saveCategory(category);
     return;
   }
   if (payload.entity_type !== "transaction") return;

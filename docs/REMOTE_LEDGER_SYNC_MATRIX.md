@@ -10,7 +10,8 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 |---|---|---|---|---|---|---|
 | `resetFinancialData` | ledger | non supportato | — | — | no | no |
 | `saveAccount`, `updateAccount`, `deleteUnusedAccount` | account | PC→telefono implementato; telefono→PC ancora bootstrap | `account.upsert/delete` | `(entity_type, entity_id)` | sì | bootstrap only |
-| `saveCategory`, `updateCategory`, `deleteUnusedCategory`, `mergeCategory` | category | non supportato | — | — | no | no |
+| `saveCategory`, `updateCategory`, `deleteUnusedCategory` | category | PC→telefono implementato; telefono→PC ancora bootstrap | `category.upsert/delete` | `(entity_type, entity_id)` | sì | bootstrap only |
+| `mergeCategory` | category + riferimenti | non supportato | — | — | no | no |
 | `saveTag`, `updateTag`, `deleteUnusedTag`, `mergeTag`, `removeTagGlobally` | tag | non supportato | — | — | no | no |
 | `setTransactionTags` | transaction-tag | non supportato | — | — | no | no |
 | `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | non supportato | — | — | no | no |
