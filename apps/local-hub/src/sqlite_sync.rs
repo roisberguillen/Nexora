@@ -144,6 +144,8 @@ struct LedgerOperationPayload {
     next_month_goals: Option<String>,
     #[serde(default)]
     perceived_control: Option<i64>,
+    #[serde(default)]
+    tag_ids: Vec<String>,
 }
 
 impl SqliteSyncOperationStore {
@@ -487,6 +489,16 @@ impl SqliteSyncOperationStore {
             let mut rows = self.connection.prepare("SELECT id,period,note,next_month_goals,perceived_control FROM monthly_journals ORDER BY id")?;
             for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({"schema_version":1,"operation":"upsert","entity_type":"monthly_journal","entity_id":r.get::<_,String>(0)?,"period":r.get::<_,String>(1)?,"note":r.get::<_,Option<String>>(2)?,"next_month_goals":r.get::<_,Option<String>>(3)?,"perceived_control":r.get::<_,Option<i64>>(4)?}))))? { operations.push((0,row?)); }
         }
+        if table_has_column(&self.connection, "transaction_tags", "transaction_id")? {
+            let mut relations = self.connection.prepare("SELECT transaction_id, json_group_array(tag_id) FROM transaction_tags GROUP BY transaction_id ORDER BY transaction_id")?;
+            for row in
+                relations.query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))?
+            {
+                let (transaction_id, tag_ids) = row?;
+                let payload = serde_json::json!({"schema_version":1,"operation":"replace","entity_type":"transaction_tag_set","entity_id":transaction_id,"tag_ids":serde_json::from_str::<Vec<String>>(&tag_ids).unwrap_or_default()});
+                operations.push((0, bootstrap_operation(payload)));
+            }
+        }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
                     value_date, payee, description, category_id, note, source
@@ -575,6 +587,30 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
             "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'tag', 'entity_id', NEW.id, 'name', NEW.name, 'is_archived', NEW.is_archived)",
             "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'tag', 'entity_id', OLD.id)",
         ));
+    }
+    if table_has_column(connection, "transaction_tags", "transaction_id")? {
+        sql.push_str(r#"
+        DROP TRIGGER IF EXISTS sync_transaction_tags_insert;
+        DROP TRIGGER IF EXISTS sync_transaction_tags_delete;
+        CREATE TRIGGER sync_transaction_tags_insert AFTER INSERT ON transaction_tags
+        WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+          INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+          SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', 'transaction_tag_set', NEW.transaction_id,
+            COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'transaction_tag_set' AND entity_id = NEW.transaction_id), 0),
+            COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'transaction_tag_set' AND entity_id = NEW.transaction_id), 0) + 1,
+            'sha256:phone-local-journal', json_object('schema_version',1,'operation','replace','entity_type','transaction_tag_set','entity_id',NEW.transaction_id,'tag_ids',COALESCE((SELECT json_group_array(tag_id) FROM transaction_tags WHERE transaction_id = NEW.transaction_id), json('[]'))), 0, strftime('%Y-%m-%dT%H:%M:%fZ','now');
+          INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT 'transaction_tag_set', NEW.transaction_id, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+        END;
+        CREATE TRIGGER sync_transaction_tags_delete AFTER DELETE ON transaction_tags
+        WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+          INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+          SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', 'transaction_tag_set', OLD.transaction_id,
+            COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'transaction_tag_set' AND entity_id = OLD.transaction_id), 0),
+            COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'transaction_tag_set' AND entity_id = OLD.transaction_id), 0) + 1,
+            'sha256:phone-local-journal', json_object('schema_version',1,'operation','replace','entity_type','transaction_tag_set','entity_id',OLD.transaction_id,'tag_ids',COALESCE((SELECT json_group_array(tag_id) FROM transaction_tags WHERE transaction_id = OLD.transaction_id), json('[]'))), 0, strftime('%Y-%m-%dT%H:%M:%fZ','now');
+          INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT 'transaction_tag_set', OLD.transaction_id, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+        END;
+        "#);
     }
     if table_has_column(connection, "transactions", "amount_minor")? {
         sql.push_str(&entity_trigger_sql(
@@ -710,7 +746,7 @@ fn validate_payload(
     let payload: LedgerOperationPayload = serde_json::from_str(&operation.payload)
         .map_err(|_| DurableSyncError::InvalidPayload("payload is not valid JSON".to_owned()))?;
     if payload.schema_version != 1
-        || !matches!(payload.operation.as_str(), "upsert" | "delete")
+        || !matches!(payload.operation.as_str(), "upsert" | "delete" | "replace")
         || payload.entity_id != operation.entity_id
         || !matches!(
             payload.entity_type.as_str(),
@@ -723,6 +759,7 @@ fn validate_payload(
                 | "loan"
                 | "investment"
                 | "monthly_journal"
+                | "transaction_tag_set"
                 | "transaction"
                 | "transfer"
         )
@@ -853,6 +890,7 @@ fn validate_payload(
                     ));
                 }
             }
+            "transaction_tag_set" => {}
             "transaction" => {
                 if payload.amount_minor.is_none()
                     || payload.currency.is_none()
@@ -1029,6 +1067,13 @@ fn apply_ledger_operation(
         ("investment", "upsert") => transaction.execute("INSERT INTO investment_positions (id,account_id,name,symbol,units,cost_basis_minor,current_value_minor,currency,valuation_date) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9) ON CONFLICT(id) DO UPDATE SET account_id=excluded.account_id,name=excluded.name,symbol=excluded.symbol,units=excluded.units,cost_basis_minor=excluded.cost_basis_minor,current_value_minor=excluded.current_value_minor,currency=excluded.currency,valuation_date=excluded.valuation_date", params![operation.entity_id,payload.account_id.as_deref(),payload.name.as_deref(),payload.symbol.as_deref(),payload.units.as_deref(),payload.cost_basis_minor.as_deref(),payload.current_value_minor.as_deref(),payload.currency.as_deref(),payload.valuation_date.as_deref()]),
         ("monthly_journal", "delete") => transaction.execute("DELETE FROM monthly_journals WHERE id = ?1", params![operation.entity_id]),
         ("monthly_journal", "upsert") => transaction.execute("INSERT INTO monthly_journals (id,period,note,next_month_goals,perceived_control,created_at,updated_at) VALUES (?1,?2,?3,?4,?5,strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now')) ON CONFLICT(id) DO UPDATE SET period=excluded.period,note=excluded.note,next_month_goals=excluded.next_month_goals,perceived_control=excluded.perceived_control,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now')", params![operation.entity_id,payload.period.as_deref(),payload.note.as_deref(),payload.next_month_goals.as_deref(),payload.perceived_control]),
+        ("transaction_tag_set", "replace") => {
+            transaction.execute("DELETE FROM transaction_tags WHERE transaction_id = ?1", params![operation.entity_id])?;
+            for tag_id in &payload.tag_ids {
+                transaction.execute("INSERT INTO transaction_tags (transaction_id, tag_id) VALUES (?1, ?2)", params![operation.entity_id, tag_id])?;
+            }
+            Ok(0)
+        }
         ("transaction", "delete") => transaction.execute(
             "DELETE FROM transactions WHERE id = ?1",
             params![operation.entity_id],
@@ -1134,6 +1179,10 @@ mod tests {
                  );
                  CREATE TABLE tags (
                    id TEXT PRIMARY KEY, name TEXT NOT NULL, is_archived INTEGER NOT NULL DEFAULT 0
+                 );
+                 CREATE TABLE transaction_tags (
+                   transaction_id TEXT NOT NULL, tag_id TEXT NOT NULL,
+                   PRIMARY KEY (transaction_id, tag_id)
                  );
                  CREATE TABLE budgets (
                    id TEXT PRIMARY KEY, series_id TEXT NOT NULL, period TEXT NOT NULL,

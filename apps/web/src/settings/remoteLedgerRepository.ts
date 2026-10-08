@@ -252,6 +252,16 @@ const supportedRemoteMutations = new Set([
   "saveAllocationPlan",
   "updateAllocationPlan",
   "deleteAllocationPlan",
+  "saveLoan",
+  "updateLoan",
+  "deleteLoan",
+  "saveInvestmentPosition",
+  "updateInvestmentPosition",
+  "deleteInvestmentPosition",
+  "saveMonthlyJournal",
+  "updateMonthlyJournal",
+  "deleteMonthlyJournal",
+  "setTransactionTags",
   "purgeTrashedTransaction",
 ]);
 
@@ -469,6 +479,24 @@ async function operationForMutation(
         entity_id: String(args[0]),
       }),
       true,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  if (method === "setTransactionTags") {
+    const transactionId = String(args[0]);
+    const tagIds = Array.isArray(args[1]) ? [...new Set(args[1].map(String))].sort() : [];
+    return operationFromPayload(
+      transactionId,
+      JSON.stringify({
+        schema_version: 1,
+        operation: "replace",
+        entity_type: "transaction_tag_set",
+        entity_id: transactionId,
+        tag_ids: tagIds,
+      }),
+      false,
       deviceId,
       revisions,
       client,
@@ -1013,6 +1041,11 @@ async function applyRemoteOperation(
     if ((await repository.listMonthlyJournals()).some((x) => x.id === value.id))
       await repository.updateMonthlyJournal(value);
     else await repository.saveMonthlyJournal(value);
+    return;
+  }
+  if (payload.entity_type === "transaction_tag_set") {
+    const tagIds = Array.isArray(payload.tag_ids) ? payload.tag_ids.map(String) : [];
+    await repository.setTransactionTags(operation.entityId, [...new Set(tagIds)]);
     return;
   }
   if (payload.entity_type === "transfer") {

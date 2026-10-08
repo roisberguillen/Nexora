@@ -968,3 +968,5 @@
   pull, push, outbox persistente, conflitti e idempotenza come le altre entità supportate.
 - `remote-mobile-host`: loan, investment position e monthly journal aggiunti al bootstrap,
   push/pull, outbox e journal SQLite incrementale con delete e validazione payload.
+- `remote-mobile-host`: aggiunta la sincronizzazione atomica del set di tag per transazione,
+  con semantica replace, bootstrap, outbox e journal incrementale.
