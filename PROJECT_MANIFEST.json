@@ -2674,8 +2674,8 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.test.ts",
-      "size": 11632,
-      "sha256": "b67ea249f17ef814429ae8634031435c3f496a9f07582e751c5de1d0a02e6056"
+      "size": 11634,
+      "sha256": "8522684b01cfd00b28740b3939025ed31eed1c4f24af7d4665a36fa87180e7e0"
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
@@ -3239,8 +3239,8 @@
     },
     {
       "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
-      "size": 4526,
-      "sha256": "6b4b43d7615b3f9d769e310d68c30217e935bb6b89a82e36ea61395cb4de8db3"
+      "size": 4270,
+      "sha256": "9efdc9c2695198ba71026ebaeb8eb32901df8f01cc0a5fedd99bfa4fec8af511"
     },
     {
       "path": "docs/reports/final-verification.md",

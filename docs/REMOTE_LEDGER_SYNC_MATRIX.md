@@ -15,8 +15,6 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | `saveTag`, `updateTag`, `deleteUnusedTag` | tag | bidirezionale incrementale per il core | `tag.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `mergeTag`, `removeTagGlobally` | tag + relazioni | non supportato | — | — | no | no |
 | `setTransactionTags` | transaction-tag | non supportato | — | — | no | no |
-| `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | non supportato | — | — | no | no |
-| `saveAllocationPlan`, `updateAllocationPlan`, `deleteAllocationPlan` | allocation plan | non supportato | — | — | no | no |
 | `saveBudget`, `updateBudget`, `reviseBudget`, `deleteBudget` | budget | bidirezionale incrementale | `budget.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | bidirezionale incrementale | `recurring_rule.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveAllocationPlan`, `updateAllocationPlan`, `deleteAllocationPlan` | allocation plan | bidirezionale incrementale | `allocation_plan.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
