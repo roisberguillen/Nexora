@@ -146,6 +146,10 @@ struct LedgerOperationPayload {
     perceived_control: Option<i64>,
     #[serde(default)]
     tag_ids: Vec<String>,
+    #[serde(default)]
+    deletion_group_id: Option<String>,
+    #[serde(default)]
+    deleted_at: Option<String>,
 }
 
 impl SqliteSyncOperationStore {
@@ -499,6 +503,10 @@ impl SqliteSyncOperationStore {
                 operations.push((0, bootstrap_operation(payload)));
             }
         }
+        if table_has_column(&self.connection, "transaction_trash", "transaction_id")? {
+            let mut rows = self.connection.prepare("SELECT transaction_id, deleted_at, deletion_group_id FROM transaction_trash ORDER BY transaction_id")?;
+            for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({"schema_version":1,"operation":"upsert","entity_type":"transaction_trash","entity_id":r.get::<_,String>(0)?,"deleted_at":r.get::<_,String>(1)?,"deletion_group_id":r.get::<_,String>(2)?}))))? { operations.push((0,row?)); }
+        }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
                     value_date, payee, description, category_id, note, source
@@ -611,6 +619,9 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
           INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT 'transaction_tag_set', OLD.transaction_id, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
         END;
         "#);
+    }
+    if table_has_column(connection, "transaction_trash", "transaction_id")? {
+        sql.push_str(&entity_trigger_sql("transaction_trash", "transaction_trash", "NEW.transaction_id", "OLD.transaction_id", "json_object('schema_version',1,'operation','upsert','entity_type','transaction_trash','entity_id',NEW.transaction_id,'deleted_at',NEW.deleted_at,'deletion_group_id',NEW.deletion_group_id)", "json_object('schema_version',1,'operation','delete','entity_type','transaction_trash','entity_id',OLD.transaction_id)"));
     }
     if table_has_column(connection, "transactions", "amount_minor")? {
         sql.push_str(&entity_trigger_sql(
@@ -760,6 +771,7 @@ fn validate_payload(
                 | "investment"
                 | "monthly_journal"
                 | "transaction_tag_set"
+                | "transaction_trash"
                 | "transaction"
                 | "transfer"
         )
@@ -891,6 +903,13 @@ fn validate_payload(
                 }
             }
             "transaction_tag_set" => {}
+            "transaction_trash" => {
+                if payload.deletion_group_id.is_none() || payload.deleted_at.is_none() {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "transaction trash payload is incomplete".to_owned(),
+                    ));
+                }
+            }
             "transaction" => {
                 if payload.amount_minor.is_none()
                     || payload.currency.is_none()
@@ -1074,6 +1093,8 @@ fn apply_ledger_operation(
             }
             Ok(0)
         }
+        ("transaction_trash", "delete") => transaction.execute("DELETE FROM transaction_trash WHERE transaction_id = ?1", params![operation.entity_id]),
+        ("transaction_trash", "upsert") => transaction.execute("INSERT OR IGNORE INTO transaction_trash (transaction_id, deleted_at, deletion_group_id) VALUES (?1, ?2, ?3)", params![operation.entity_id, payload.deleted_at.as_deref(), payload.deletion_group_id.as_deref()]),
         ("transaction", "delete") => transaction.execute(
             "DELETE FROM transactions WHERE id = ?1",
             params![operation.entity_id],
@@ -1183,6 +1204,10 @@ mod tests {
                  CREATE TABLE transaction_tags (
                    transaction_id TEXT NOT NULL, tag_id TEXT NOT NULL,
                    PRIMARY KEY (transaction_id, tag_id)
+                 );
+                 CREATE TABLE transaction_trash (
+                   transaction_id TEXT PRIMARY KEY, deleted_at TEXT NOT NULL,
+                   deletion_group_id TEXT NOT NULL
                  );
                  CREATE TABLE budgets (
                    id TEXT PRIMARY KEY, series_id TEXT NOT NULL, period TEXT NOT NULL,

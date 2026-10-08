@@ -168,6 +168,11 @@ const mutatingMethods = new Set([
   "mergeTag",
   "removeTagGlobally",
   "cancelTransaction",
+  "trashTransaction",
+  "trashTransactions",
+  "restoreTransaction",
+  "purgeTrashedTransaction",
+  "purgeTrashedTransactions",
   "saveRecurringRule",
   "updateRecurringRule",
   "deleteRecurringRule",
@@ -221,6 +226,11 @@ const mutatingMethods = new Set([
   "saveTransactionWithDetails",
   "saveTransfer",
   "cancelTransaction",
+  "trashTransaction",
+  "trashTransactions",
+  "restoreTransaction",
+  "purgeTrashedTransaction",
+  "purgeTrashedTransactions",
   "cancelTransfer",
   "trashTransaction",
   "trashTransactions",
@@ -445,6 +455,51 @@ async function operationForMutation(
           revisions,
           client,
         );
+  }
+  if (method === "trashTransaction" || method === "trashTransactions") {
+    const ids =
+      method === "trashTransaction"
+        ? [String(args[0])]
+        : Array.isArray(args[0])
+          ? args[0].map(String)
+          : [];
+    const trashed = await repository.listTrashedTransactions();
+    return Promise.all(
+      ids.map(async (id) => {
+        const entry = trashed.find((value) => value.transaction.id === id);
+        return operationFromPayload(
+          id,
+          JSON.stringify({
+            schema_version: 1,
+            operation: "upsert",
+            entity_type: "transaction_trash",
+            entity_id: id,
+            deletion_group_id: entry?.deletionGroupId ?? `transaction:${id}`,
+            deleted_at: entry?.deletedAt ?? new Date().toISOString(),
+          }),
+          false,
+          deviceId,
+          revisions,
+          client,
+        );
+      }),
+    );
+  }
+  if (method === "restoreTransaction") {
+    const id = String(args[0]);
+    return operationFromPayload(
+      id,
+      JSON.stringify({
+        schema_version: 1,
+        operation: "delete",
+        entity_type: "transaction_trash",
+        entity_id: id,
+      }),
+      true,
+      deviceId,
+      revisions,
+      client,
+    );
   }
   if (method === "cancelTransfer") {
     const transfer = await repository.findTransferById(String(args[0]));
@@ -1178,6 +1233,11 @@ async function applyRemoteOperation(
   if (payload.entity_type === "transaction_tag_set") {
     const tagIds = Array.isArray(payload.tag_ids) ? payload.tag_ids.map(String) : [];
     await repository.setTransactionTags(operation.entityId, [...new Set(tagIds)]);
+    return;
+  }
+  if (payload.entity_type === "transaction_trash") {
+    if (payload.operation === "delete") await repository.restoreTransaction(operation.entityId);
+    else await repository.trashTransaction(operation.entityId);
     return;
   }
   if (payload.entity_type === "transfer") {

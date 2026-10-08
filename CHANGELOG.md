@@ -972,3 +972,5 @@
   con semantica replace, bootstrap, outbox e journal incrementale.
 - `remote-mobile-host`: aggiunto il percorso outbox PC per merge category, merge/remove tag e
   annullamento transazione, mantenendo operation elementari ricostruibili dal client remoto.
+- `remote-mobile-host`: aggiunti payload e apply host per lo stato `transaction_trash`,
+  inclusi bootstrap, outbox PC e journal SQLite con identità stabile per transazione.

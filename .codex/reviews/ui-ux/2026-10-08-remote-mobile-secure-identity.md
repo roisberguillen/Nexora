@@ -6,7 +6,7 @@ Schermata: Settings pairing e stati sync
 Route: Settings
 Flusso principale: Phone Local Hub → pairing invite → PC reconnect
 Reviewer/fase: Codex — gate pre-commit
-Modifiche: Identità TLS sicura del telefono, host identity stabile, pairing generato dal telefono, manifest aggiornato, matrice Ledger sincronizzata senza duplicati per account/category/tag/transaction/transfer/budget/recurring_rule/allocation_plan/loan/investment/monthly_journal/transaction_tag_set, cache remota offline, bootstrap, pull remoto e journal incrementale SQLite per le entità supportate; aggiunto il percorso PC per mutazioni composte di categoria, tag e annullamento transazione.
+Modifiche: Identità TLS sicura del telefono, host identity stabile, pairing generato dal telefono, manifest aggiornato, matrice Ledger sincronizzata senza duplicati per account/category/tag/transaction/transfer/budget/recurring_rule/allocation_plan/loan/investment/monthly_journal/transaction_tag_set, cache remota offline, bootstrap, pull remoto e journal incrementale SQLite per le entità supportate; aggiunti payload host per stato trash e mutazioni composte di categoria, tag e annullamento transazione.
 
 | Area | ID | Esito | Evidenza / N.A. |
 |---|---|---|---|
