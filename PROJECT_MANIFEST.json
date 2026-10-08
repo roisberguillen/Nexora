@@ -1109,8 +1109,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-09-phone-local-hub-start.md",
-      "size": 1298,
-      "sha256": "913ad7e8a5c0528f5df9b896f5b4a2e58995800073dad929ebdc7d6bb31ffff5"
+      "size": 1412,
+      "sha256": "29784f611c31738a878d470542d3d358ca503c84c883bc31085780d8010459a2"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1589,8 +1589,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 209626,
-      "sha256": "09109f47af359b11d15df4b5993db684c9ed78a58cecd85c336765241c01e81f"
+      "size": 209716,
+      "sha256": "409072dcd5fae9ea2c31994dfbb01988299f33b082ef44959ad3ad2a482ff945"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2994,8 +2994,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 69672,
-      "sha256": "ea04ed96feb19be92ea0c6103eb0c8f762824e354660724073f6cc0cfab18ba4"
+      "size": 69671,
+      "sha256": "d0e382daf45cf478cc3997670160d981f8bf841c73597437368be981d5f09751"
     },
     {
       "path": "design/mockup/README.md",

@@ -6,7 +6,7 @@ Schermata: Impostazioni — Local Hub del telefono
 Route: settings
 Flusso principale: Impostazioni → avvio Local Hub LAN → stato o errore
 Reviewer/fase: Codex — bug fix e quality gate
-Modifiche: Feedback locale di loading/errore e nessuna variazione ai token o al layout approvato.
+Modifiche: Feedback locale di loading/errore e nessuna variazione ai token o al layout approvato.\nEvidence: APK arm64 firmato installato sul Pixel 9 con `adb install -r`; avvio verificato senza cancellare dati.
 
 | Area | ID | Esito | Evidenza / N.A. |
 | --- | --- | --- | --- |
