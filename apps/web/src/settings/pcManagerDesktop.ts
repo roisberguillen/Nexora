@@ -40,6 +40,10 @@ export function createDesktopPairingInvite(): Promise<DesktopPairingInvite> {
   return invoke<DesktopPairingInvite>("pc_manager_create_pairing_invite");
 }
 
+export function createPhonePairingInvite(): Promise<DesktopPairingInvite> {
+  return invoke<DesktopPairingInvite>("phone_local_hub_create_pairing_invite");
+}
+
 export function startDesktopLanHub(input: DesktopLanStartRequest): Promise<DesktopHubStatus> {
   return invoke<DesktopHubStatus>("pc_manager_start_lan", { request: input });
 }

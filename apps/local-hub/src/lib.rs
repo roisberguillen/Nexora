@@ -719,6 +719,7 @@ pub struct PairingInvite {
     pub grant_id: String,
     pub code: String,
     pub host_fingerprint: String,
+    pub host_identity: Option<String>,
     pub expires_at_ms: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub certificate_pem: Option<String>,
@@ -851,6 +852,7 @@ impl LocalHubRuntime {
             grant_id,
             code,
             host_fingerprint,
+            host_identity: self.config.host_identity.clone(),
             expires_at_ms,
             certificate_pem: self.config.tls_certificate_pem.clone(),
         })
@@ -961,6 +963,7 @@ pub struct TransportSecurityConfig {
     pub tls_certificate_pem: Option<String>,
     pub tls_private_key_pem: Option<String>,
     pub host_fingerprint: Option<String>,
+    pub host_identity: Option<String>,
 }
 
 impl Default for TransportSecurityConfig {
@@ -972,6 +975,7 @@ impl Default for TransportSecurityConfig {
             tls_certificate_pem: None,
             tls_private_key_pem: None,
             host_fingerprint: None,
+            host_identity: None,
         }
     }
 }

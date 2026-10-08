@@ -1083,6 +1083,21 @@
       "sha256": "b5ac9a68d421d60889c7f15ef46ffbef51c0ac5db03578c650c18553b1a94fca"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-08-remote-ledger-contract.md",
+      "size": 1162,
+      "sha256": "3e6a8a3eec35af10513c846244c9e227753cabbb3ad98a8b3f9830dbfb185827"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-host-tls.md",
+      "size": 1561,
+      "sha256": "02b04f65d13b98ead1147182855666da09186fc2ea97379b8be36bd92b1f500d"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
+      "size": 793,
+      "sha256": "c81b7f9964c501a73628b34c1752bbdf519126c6cf345fa8d6506db7178dee5d"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -1679,13 +1694,13 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 100182,
-      "sha256": "e612cf736968b85f301e8028a5e222b2ad0d48fae390122031d351faa55616f3"
+      "size": 100355,
+      "sha256": "3e6938f428516953787a37b9471f0bd93ce28c9fd2cb2f861f6853d3e78a9933"
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 28334,
-      "sha256": "fe1df4488308a2fa0bc3c96c493d6bcd396281322a9d8368008ea4eef2484749"
+      "size": 28306,
+      "sha256": "0f6eb90495a0ce1dda02b6c7b5bd9064cbeb0f69c5db4861e62c0e71d9dc6c78"
     },
     {
       "path": "apps/web/index.html",
@@ -1739,13 +1754,13 @@
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 149055,
-      "sha256": "73adfda91e218dedd69a6fd805a1c56a79a08aa2ff2232bce7370557dac7366c"
+      "size": 149392,
+      "sha256": "666857681ec8471dd0760785e1191b6c9fed6e48cd3638a016e3c4952b6d2e9b"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 812,
-      "sha256": "834b8bf3536180f4c84e278099706413f34b3104e6af9523e2df8f495eb47090"
+      "size": 870,
+      "sha256": "e05d7d645c59339f24bfc28ccc90f8bda37ad3be49af5db0f8a0e93ba196e11f"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2009,8 +2024,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 23326,
-      "sha256": "14f067cf9606ee8ad15d38a0831a0eb6f40b9b5913ec750c8382cabd9e369e9b"
+      "size": 26887,
+      "sha256": "4c99cfc1ef8464f1aad86ccddff313990f118e03ba21f65562834ed4a9991cf7"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -2019,8 +2034,8 @@
     },
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
-      "size": 1144,
-      "sha256": "5d4c90a4fe233f6b11625dda375959df11c2c88d5bd4ebc507d8bfc47109b26c"
+      "size": 1194,
+      "sha256": "dce30f272aeae14837ef138c506d6d12c63d23b28351115e38738e3fe7f47c60"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -2584,13 +2599,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostConnection.test.ts",
-      "size": 7317,
-      "sha256": "86841776c40c5415b2be3c346d83599c83dd545265b859e19df049f29f4a67e1"
+      "size": 7355,
+      "sha256": "d11aefb649a98dfac8e84c3d3f90be0951b03c2ebbb38faee6b1a710d8d57b86"
     },
     {
       "path": "apps/web/src/settings/localHostConnection.ts",
-      "size": 11541,
-      "sha256": "85d77f39c5f6132c9208b42e2fafb8fdf4090b3ca0cd9da64a9f8b374bb5cd6f"
+      "size": 12301,
+      "sha256": "dc9682bf85dbb53edf593fd260cf0eb3ce29356fca0d423e6b437543365a6d05"
     },
     {
       "path": "apps/web/src/settings/localHostSession.test.ts",
@@ -2614,8 +2629,8 @@
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",
-      "size": 4754,
-      "sha256": "8c543008e86629b513438e3b9ecd0901d940530c47d9c1f411df0fff9eb4e5c4"
+      "size": 4846,
+      "sha256": "c9d1b1d3586db7cbd2fcb26f7288f37edd84383f4016dc54238f87de116bd462"
     },
     {
       "path": "apps/web/src/settings/pcManagerDesktop.test.ts",
@@ -2624,8 +2639,8 @@
     },
     {
       "path": "apps/web/src/settings/pcManagerDesktop.ts",
-      "size": 1767,
-      "sha256": "beaf65af0c67e476cedd1409f404c49984f54daf7136dbb71bdef076ccbaaa50"
+      "size": 1926,
+      "sha256": "34b84fd59f00e8d3d094f1683427d6959feb73b7fac21ef1d7cc2503a4e787bb"
     },
     {
       "path": "apps/web/src/settings/phoneLocalHubForeground.test.ts",
@@ -2659,8 +2674,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 51604,
-      "sha256": "8fb5c76630d7bc32f4ee60716a892298910106e65b6a8ed972c3db91bddf9af7"
+      "size": 51799,
+      "sha256": "6755d3e7cd33f7e3e64998d3e709abe8dd731bfc8f3a1f767c316347fcc1d2d9"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -3206,6 +3221,11 @@
       "path": "docs/release/STARTUP_ORCHESTRATOR_REPORT_2026-07-29.md",
       "size": 1999,
       "sha256": "be7b744edb7469ef3f0dbff19a5ca35088c555ebe9f447b171d9d03e1addb8fa"
+    },
+    {
+      "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
+      "size": 1688,
+      "sha256": "17b24188e284b53d98035c18c2629464c0406f9dff1bdf74741581b8ea8f0e62"
     },
     {
       "path": "docs/reports/final-verification.md",

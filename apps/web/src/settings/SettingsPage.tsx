@@ -40,6 +40,7 @@ import {
 } from "./localHostVault";
 import {
   createDesktopPairingInvite,
+  createPhonePairingInvite,
   getDesktopLocalHubStatus,
   getPhoneLocalHubStatus,
   isAndroidRuntime,
@@ -208,7 +209,9 @@ export function SettingsPage({
   const generatePairingInvite = async () => {
     setPairingMessage(null);
     try {
-      const invite = await createDesktopPairingInvite();
+      const invite = await (isAndroidRuntime()
+        ? createPhonePairingInvite()
+        : createDesktopPairingInvite());
       setPairingInvite(JSON.stringify(invite));
       setPairingMessage("Invito monouso creato. Copialo sul dispositivo da autorizzare.");
     } catch {
@@ -263,6 +266,7 @@ export function SettingsPage({
           ? createNativeLocalHostRequest({
               certificatePem: invite.certificatePem,
               hostFingerprint: invite.hostFingerprint,
+              ...(invite.hostIdentity === undefined ? {} : { hostIdentity: invite.hostIdentity }),
             })
           : undefined,
       );

@@ -30,6 +30,9 @@
     "resources": {
       "../dist": "browser"
     },
+    "android": {
+      "minSdkVersion": 28
+    },
     "targets": "all",
     "icon": [
       "icons/icon.ico",

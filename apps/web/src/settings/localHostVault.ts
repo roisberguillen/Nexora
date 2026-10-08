@@ -76,6 +76,7 @@ function validCredentials(value: unknown): value is LocalHostCredentials {
     typeof candidate.deviceToken === "string" &&
     candidate.deviceToken.length >= 24 &&
     (candidate.hostFingerprint === undefined || typeof candidate.hostFingerprint === "string") &&
+    (candidate.hostIdentity === undefined || typeof candidate.hostIdentity === "string") &&
     (candidate.certificatePem === undefined || typeof candidate.certificatePem === "string")
   );
 }

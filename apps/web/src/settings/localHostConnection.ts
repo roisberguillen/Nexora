@@ -25,6 +25,7 @@ export interface LocalHostCredentials {
   readonly deviceToken: string;
   readonly sessionToken?: string;
   readonly hostFingerprint?: string;
+  readonly hostIdentity?: string;
   readonly certificatePem?: string;
 }
 
@@ -34,6 +35,7 @@ export interface LocalHostPairingRequest {
   readonly deviceId: string;
   readonly deviceToken: string;
   readonly hostFingerprint: string;
+  readonly hostIdentity?: string;
   readonly certificatePem?: string;
 }
 
@@ -43,6 +45,7 @@ export interface LocalHostPairingInvite {
   readonly grantId: string;
   readonly code: string;
   readonly hostFingerprint: string;
+  readonly hostIdentity?: string;
   readonly expiresAtMs: number;
   readonly certificatePem?: string;
 }
@@ -76,6 +79,7 @@ export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite
     grantId: candidate.grantId,
     code: candidate.code,
     hostFingerprint: candidate.hostFingerprint,
+    ...(typeof candidate.hostIdentity === "string" ? { hostIdentity: candidate.hostIdentity } : {}),
     expiresAtMs: candidate.expiresAtMs,
     ...(typeof candidate.certificatePem === "string"
       ? { certificatePem: candidate.certificatePem }
@@ -119,6 +123,7 @@ export async function redeemLocalHostPairing(
     deviceId: pairing.deviceId,
     deviceToken: pairing.deviceToken,
     hostFingerprint: pairing.hostFingerprint,
+    ...(typeof pairing.hostIdentity === "string" ? { hostIdentity: pairing.hostIdentity } : {}),
     ...(typeof pairing.certificatePem === "string"
       ? { certificatePem: pairing.certificatePem }
       : {}),
@@ -126,22 +131,31 @@ export async function redeemLocalHostPairing(
 }
 
 export function createNativeLocalHostRequest(
-  credentials: Pick<LocalHostCredentials, "certificatePem" | "hostFingerprint">,
+  credentials: Pick<LocalHostCredentials, "certificatePem" | "hostFingerprint" | "hostIdentity">,
 ): LocalHostSessionRequest {
   return async (input, init = {}) => {
     const { invoke } = await import("@tauri-apps/api/core");
+    const original = new URL(String(input));
+    const resolveAddress =
+      credentials.hostIdentity === undefined || original.protocol !== "https:"
+        ? undefined
+        : `${original.hostname}:${original.port || "443"}`;
+    if (credentials.hostIdentity !== undefined && original.protocol === "https:")
+      original.hostname = credentials.hostIdentity;
     const response = await invoke<{
       status: number;
       headers: Record<string, string>;
       body: string;
     }>("local_host_request", {
       request: {
-        url: String(input),
+        url: original.toString(),
         method: init.method ?? "GET",
         headers: Object.fromEntries(new Headers(init.headers).entries()),
         body: typeof init.body === "string" ? init.body : undefined,
         certificatePem: credentials.certificatePem,
         expectedFingerprint: credentials.hostFingerprint,
+        hostIdentity: credentials.hostIdentity,
+        resolveAddress,
       },
     });
     return new Response(response.body, { status: response.status, headers: response.headers });
