@@ -10,6 +10,7 @@ import type {
   RecurringRule,
   Tag,
   Transaction,
+  TrashedTransaction,
   TransferBundle,
 } from "@nexora/domain";
 import {
@@ -62,6 +63,8 @@ export async function connectRemoteLedgerRepository(
           for (const [cursor, operation] of pulled.operations) {
             if (!Number.isSafeInteger(cursor) || cursor <= lastCursor)
               throw new Error("invalid_sync_pull_cursor");
+            const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
+            client.setRevision(revisionKey, operation.revision);
             client.setRevision(operation.entityId, operation.revision);
             await applyRemoteOperation(repository, operation);
             lastCursor = cursor;
@@ -78,7 +81,10 @@ export async function connectRemoteLedgerRepository(
   await repository.resetFinancialData();
   const revisions = new Map<string, number>();
   for (const [, operation] of bootstrap.operations) {
-    revisions.set(operation.entityId, operation.revision);
+    const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
+    revisions.set(revisionKey, operation.revision);
+    client.setRevision(revisionKey, operation.revision);
+    client.setRevision(operation.entityId, operation.revision);
     await applyRemoteOperation(repository, operation);
   }
   client.setCursor(bootstrap.cursor);
@@ -98,7 +104,9 @@ export async function connectRemoteLedgerRepository(
         if (!Number.isSafeInteger(cursor) || cursor < lastCursor) {
           throw new Error("invalid_sync_pull_cursor");
         }
-        revisions.set(operation.entityId, operation.revision);
+        const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
+        revisions.set(revisionKey, operation.revision);
+        client.setRevision(revisionKey, operation.revision);
         client.setRevision(operation.entityId, operation.revision);
         await applyRemoteOperation(repository, operation);
         lastCursor = cursor;
@@ -136,6 +144,14 @@ function createRemoteRepository(
                 ),
               )
             : undefined;
+        const trashSnapshot =
+          methodName === "trashTransaction" ||
+          methodName === "trashTransactions" ||
+          methodName === "restoreTransaction" ||
+          methodName === "purgeTrashedTransaction" ||
+          methodName === "purgeTrashedTransactions"
+            ? await target.listTrashedTransactions()
+            : undefined;
         const result = await method.apply(target, args);
         const operation = await operationForMutation(
           methodName,
@@ -145,6 +161,7 @@ function createRemoteRepository(
           revisions,
           client,
           transactionTagSnapshot,
+          trashSnapshot,
         );
         if (operation !== undefined) {
           const operations = Array.isArray(operation) ? operation : [operation];
@@ -275,6 +292,7 @@ async function operationForMutation(
   revisions: Map<string, number>,
   client: LocalHostSyncClient,
   transactionTagSnapshot?: ReadonlyMap<string, readonly Tag[]>,
+  trashSnapshot?: readonly TrashedTransaction[],
 ): Promise<LocalSyncOperation | readonly LocalSyncOperation[] | undefined> {
   if (method === "saveTransfer") {
     const bundle = args[0] as TransferBundle;
@@ -455,9 +473,24 @@ async function operationForMutation(
           ? args[0].map(String)
           : [];
     const trashed = await repository.listTrashedTransactions();
+    const snapshot = trashSnapshot ?? trashed;
+    const requestedIds =
+      method === "trashTransaction" || method === "trashTransactions" ? ids : ids;
+    const groups = new Set(
+      requestedIds
+        .map((id) => snapshot.find((value) => value.transaction.id === id)?.deletionGroupId)
+        .filter((value): value is string => value !== undefined),
+    );
+    const entries =
+      method === "trashTransaction" || method === "trashTransactions"
+        ? trashed.filter(
+            (value) =>
+              requestedIds.includes(value.transaction.id) || groups.has(value.deletionGroupId),
+          )
+        : trashed;
     return Promise.all(
-      ids.map(async (id) => {
-        const entry = trashed.find((value) => value.transaction.id === id);
+      entries.map(async (entry) => {
+        const id = entry.transaction.id;
         return operationFromPayload(
           id,
           JSON.stringify({
@@ -478,18 +511,28 @@ async function operationForMutation(
   }
   if (method === "restoreTransaction") {
     const id = String(args[0]);
-    return operationFromPayload(
-      id,
-      JSON.stringify({
-        schema_version: 1,
-        operation: "delete",
-        entity_type: "transaction_trash",
-        entity_id: id,
-      }),
-      true,
-      deviceId,
-      revisions,
-      client,
+    const entry = trashSnapshot?.find((value) => value.transaction.id === id);
+    const groupId = entry?.deletionGroupId;
+    const entries =
+      groupId === undefined
+        ? [{ transaction: { id }, deletionGroupId: undefined }]
+        : trashSnapshot!.filter((value) => value.deletionGroupId === groupId);
+    return Promise.all(
+      entries.map((value) =>
+        operationFromPayload(
+          value.transaction.id,
+          JSON.stringify({
+            schema_version: 1,
+            operation: "delete",
+            entity_type: "transaction_trash",
+            entity_id: value.transaction.id,
+          }),
+          true,
+          deviceId,
+          revisions,
+          client,
+        ),
+      ),
     );
   }
   if (method === "purgeTrashedTransaction" || method === "purgeTrashedTransactions") {
@@ -499,8 +542,24 @@ async function operationForMutation(
         : Array.isArray(args[0])
           ? args[0].map(String)
           : [];
+    const snapshot = trashSnapshot ?? [];
+    const groups = new Set(
+      ids
+        .map((id) => snapshot.find((value) => value.transaction.id === id)?.deletionGroupId)
+        .filter((value): value is string => value !== undefined),
+    );
+    const purgeIds = [
+      ...new Set(
+        snapshot
+          .filter(
+            (value) => groups.has(value.deletionGroupId) || ids.includes(value.transaction.id),
+          )
+          .map((value) => value.transaction.id)
+          .concat(ids),
+      ),
+    ];
     return Promise.all(
-      ids.flatMap((id) => [
+      purgeIds.flatMap((id) => [
         operationFromPayload(
           id,
           JSON.stringify({
@@ -803,8 +862,11 @@ async function operationFromPayload(
   revisions: Map<string, number>,
   client: LocalHostSyncClient,
 ): Promise<LocalSyncOperation> {
-  const baseRevision = revisions.get(entityId) ?? client.revision(entityId);
-  revisions.set(entityId, baseRevision + 1);
+  const revisionKey = syncRevisionKey(payload, entityId);
+  const persistedRevision = client.revision(revisionKey);
+  const baseRevision = revisions.get(revisionKey) ?? persistedRevision;
+  revisions.set(revisionKey, baseRevision + 1);
+  client.setRevision(revisionKey, baseRevision + 1);
   return {
     idempotencyKey: crypto.randomUUID(),
     deviceId,
@@ -816,6 +878,15 @@ async function operationFromPayload(
     tombstone,
     createdAt: new Date().toISOString(),
   };
+}
+
+function syncRevisionKey(payload: string, entityId: string): string {
+  try {
+    const parsed = JSON.parse(payload) as { entity_type?: unknown };
+    return `${typeof parsed.entity_type === "string" ? parsed.entity_type : "unknown"}:${entityId}`;
+  } catch {
+    return `unknown:${entityId}`;
+  }
 }
 
 function transactionPayload(transaction: Transaction): Record<string, unknown> {

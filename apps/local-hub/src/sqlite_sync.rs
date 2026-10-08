@@ -236,8 +236,10 @@ impl SqliteSyncOperationStore {
             params![delivery_id],
         )?;
 
-        let mut results = Vec::new();
-        for (operation, payload) in operations.into_iter().zip(payloads) {
+        let mut preflight = Vec::with_capacity(operations.len());
+        let mut current_revisions = Vec::with_capacity(operations.len());
+        let mut has_conflict = false;
+        for (operation, payload) in operations.iter().zip(&payloads) {
             let duplicate = transaction
                 .query_row(
                     "SELECT cursor, revision FROM sync_operations WHERE idempotency_key = ?1",
@@ -246,26 +248,54 @@ impl SqliteSyncOperationStore {
                 )
                 .optional()?;
             if let Some((cursor, revision)) = duplicate {
-                results.push(OperationApplyResult::Duplicate {
+                current_revisions.push(0);
+                preflight.push(Some(OperationApplyResult::Duplicate {
                     cursor: as_u64(cursor)?,
                     revision: as_u64(revision)?,
-                });
+                }));
                 continue;
             }
-
-            let current = transaction
-                .query_row(
-                    "SELECT revision FROM sync_revisions WHERE entity_type = ?1 AND entity_id = ?2",
-                    params![payload.entity_type.as_str(), operation.entity_id],
-                    |row| row.get::<_, i64>(0),
-                )
-                .optional()?
-                .unwrap_or(0);
-            let current_revision = as_u64(current)?;
+            let current_revision = as_u64(
+                transaction
+                    .query_row(
+                        "SELECT revision FROM sync_revisions WHERE entity_type = ?1 AND entity_id = ?2",
+                        params![payload.entity_type.as_str(), operation.entity_id],
+                        |row| row.get::<_, i64>(0),
+                    )
+                    .optional()?
+                    .unwrap_or(0),
+            )?;
+            current_revisions.push(current_revision);
             if operation.base_revision != current_revision {
-                results.push(OperationApplyResult::Conflict { current_revision });
+                has_conflict = true;
+                preflight.push(Some(OperationApplyResult::Conflict { current_revision }));
+            } else {
+                preflight.push(None);
+            }
+        }
+        if has_conflict {
+            let results = preflight
+                .into_iter()
+                .enumerate()
+                .map(|(index, result)| {
+                    result.unwrap_or(OperationApplyResult::Conflict {
+                        current_revision: current_revisions[index],
+                    })
+                })
+                .collect();
+            transaction.commit()?;
+            return Ok(results);
+        }
+
+        let mut results = Vec::with_capacity(operations.len());
+        for ((operation, payload), preflight_result) in
+            operations.into_iter().zip(payloads).zip(preflight)
+        {
+            if let Some(result) = preflight_result {
+                results.push(result);
                 continue;
             }
+            let current_revision = operation.base_revision;
 
             apply_ledger_operation(&transaction, &operation, &payload)?;
 
@@ -1095,10 +1125,67 @@ fn apply_ledger_operation(
         }
         ("transaction_trash", "delete") => transaction.execute("DELETE FROM transaction_trash WHERE transaction_id = ?1", params![operation.entity_id]),
         ("transaction_trash", "upsert") => transaction.execute("INSERT OR IGNORE INTO transaction_trash (transaction_id, deleted_at, deletion_group_id) VALUES (?1, ?2, ?3)", params![operation.entity_id, payload.deleted_at.as_deref(), payload.deletion_group_id.as_deref()]),
-        ("transaction", "delete") => transaction.execute(
-            "DELETE FROM transactions WHERE id = ?1",
-            params![operation.entity_id],
-        ),
+        ("transaction", "delete") => {
+            let has_tags: i64 = transaction.query_row(
+                "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'transaction_tags')",
+                [],
+                |row| row.get(0),
+            )?;
+            if has_tags != 0 {
+                transaction.execute(
+                    "DELETE FROM transaction_tags WHERE transaction_id = ?1",
+                    params![operation.entity_id],
+                )?;
+            }
+            let has_splits: i64 = transaction.query_row(
+                "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'transaction_splits')",
+                [],
+                |row| row.get(0),
+            )?;
+            if has_splits != 0 {
+                transaction.execute(
+                    "DELETE FROM transaction_splits WHERE transaction_id = ?1",
+                    params![operation.entity_id],
+                )?;
+            }
+            let has_import_rows: i64 = transaction.query_row(
+                "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'import_rows')",
+                [],
+                |row| row.get(0),
+            )?;
+            if has_import_rows != 0 {
+                transaction.execute(
+                    "UPDATE import_rows SET deleted_transaction_id = created_transaction_id, created_transaction_id = NULL WHERE created_transaction_id = ?1",
+                    params![operation.entity_id],
+                )?;
+            }
+            let has_trash: i64 = transaction.query_row(
+                "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'transaction_trash')",
+                [],
+                |row| row.get(0),
+            )?;
+            if has_trash != 0 {
+                transaction.execute(
+                    "DELETE FROM transaction_trash WHERE transaction_id = ?1",
+                    params![operation.entity_id],
+                )?;
+            }
+            let has_transfers: i64 = transaction.query_row(
+                "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'transfers')",
+                [],
+                |row| row.get(0),
+            )?;
+            if has_transfers != 0 {
+                transaction.execute(
+                    "DELETE FROM transfers WHERE debit_transaction_id = ?1 OR credit_transaction_id = ?1 OR fee_transaction_id = ?1",
+                    params![operation.entity_id],
+                )?;
+            }
+            transaction.execute(
+                "DELETE FROM transactions WHERE id = ?1",
+                params![operation.entity_id],
+            )
+        }
         ("transaction", "upsert") => transaction.execute(
             "INSERT INTO transactions
              (id, kind, status, account_id, amount_minor, currency, booked_date, value_date,
@@ -1204,6 +1291,11 @@ mod tests {
                  CREATE TABLE transaction_tags (
                    transaction_id TEXT NOT NULL, tag_id TEXT NOT NULL,
                    PRIMARY KEY (transaction_id, tag_id)
+                 );
+                 CREATE TABLE transaction_splits (
+                   id TEXT PRIMARY KEY, transaction_id TEXT NOT NULL,
+                   category_id TEXT, amount_minor TEXT NOT NULL,
+                   currency TEXT NOT NULL, note TEXT
                  );
                  CREATE TABLE transaction_trash (
                    transaction_id TEXT PRIMARY KEY, deleted_at TEXT NOT NULL,
@@ -1367,6 +1459,192 @@ mod tests {
     }
 
     #[test]
+    fn composed_delivery_conflict_rolls_back_every_operation() {
+        let directory = tempdir().unwrap();
+        let path = directory.path().join("nexora.db");
+        let mut store = open_store(&path);
+        store
+            .push("delivery-initial", [operation("op-initial", 0)])
+            .unwrap();
+
+        let valid_account = ReplicableOperation {
+            idempotency_key: "op-account-update".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "account-synthetic".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:account-update".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"upsert","entity_type":"account","entity_id":"account-synthetic","name":"Should Roll Back","type":"checking","currency":"EUR","opening_balance_minor":"0","is_archived":false}"#.to_owned(),
+            tombstone: false,
+            created_at: "2026-10-08T00:00:00.000Z".to_owned(),
+        };
+        let stale_transaction = operation("op-stale", 0);
+        let results = store
+            .push(
+                "delivery-composed-conflict",
+                [valid_account, stale_transaction],
+            )
+            .unwrap();
+        assert!(
+            results
+                .iter()
+                .any(|result| matches!(result, OperationApplyResult::Conflict { .. }))
+        );
+
+        let connection = Connection::open(&path).unwrap();
+        let account_name: String = connection
+            .query_row(
+                "SELECT name FROM accounts WHERE id = 'account-synthetic'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(account_name, "Synthetic");
+        assert_eq!(store.pull(0).unwrap().len(), 1);
+    }
+
+    #[test]
+    fn ledger_failure_rolls_back_prior_mutations_in_the_same_delivery() {
+        let directory = tempdir().unwrap();
+        let path = directory.path().join("nexora.db");
+        let mut store = open_store(&path);
+        let valid_account = ReplicableOperation {
+            idempotency_key: "op-account-rollback".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "account-synthetic".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:account-rollback".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"upsert","entity_type":"account","entity_id":"account-synthetic","name":"Should Roll Back","type":"checking","currency":"EUR","opening_balance_minor":"0","is_archived":false}"#.to_owned(),
+            tombstone: false,
+            created_at: "2026-10-08T00:00:00.000Z".to_owned(),
+        };
+        let invalid_transaction = ReplicableOperation {
+            idempotency_key: "op-invalid-account".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "transaction-invalid-account".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:invalid-account".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction","entity_id":"transaction-invalid-account","amount_minor":"100","currency":"EUR","kind":"expense","status":"booked","account_id":"missing-account","booked_date":"2026-10-08","source":"manual"}"#.to_owned(),
+            tombstone: false,
+            created_at: "2026-10-08T00:00:00.000Z".to_owned(),
+        };
+        assert!(matches!(
+            store.push("delivery-ledger-rollback", [valid_account, invalid_transaction]),
+            Err(super::DurableSyncError::LedgerRejected)
+        ));
+        let connection = Connection::open(&path).unwrap();
+        let account_name: String = connection
+            .query_row("SELECT name FROM accounts WHERE id = 'account-synthetic'", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(account_name, "Synthetic");
+        assert_eq!(store.pull(0).unwrap().len(), 0);
+    }
+
+    #[test]
+    fn purge_removes_transaction_children_and_passes_sqlite_integrity_checks() {
+        let directory = tempdir().unwrap();
+        let path = directory.path().join("nexora.db");
+        let mut store = open_store(&path);
+        store
+            .push("delivery-transaction", [operation("op-transaction", 0)])
+            .unwrap();
+        let tag_set = ReplicableOperation {
+            idempotency_key: "op-tags".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "transaction-synthetic".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:tags".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"replace","entity_type":"transaction_tag_set","entity_id":"transaction-synthetic","tag_ids":["tag-synthetic"]}"#.to_owned(),
+            tombstone: false,
+            created_at: "2026-10-08T00:00:00.000Z".to_owned(),
+        };
+        let trash = ReplicableOperation {
+            idempotency_key: "op-trash".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "transaction-synthetic".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:trash".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction_trash","entity_id":"transaction-synthetic","deletion_group_id":"transaction:transaction-synthetic","deleted_at":"2026-10-08T00:00:00.000Z"}"#.to_owned(),
+            tombstone: false,
+            created_at: "2026-10-08T00:00:00.000Z".to_owned(),
+        };
+        store.push("delivery-relations", [tag_set, trash]).unwrap();
+
+        let purge_transaction = ReplicableOperation {
+            idempotency_key: "op-purge-transaction".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "transaction-synthetic".to_owned(),
+            base_revision: 1,
+            revision: 0,
+            payload_digest: "sha256:purge-transaction".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"delete","entity_type":"transaction","entity_id":"transaction-synthetic"}"#.to_owned(),
+            tombstone: true,
+            created_at: "2026-10-08T00:00:01.000Z".to_owned(),
+        };
+        let purge_trash = ReplicableOperation {
+            idempotency_key: "op-purge-trash".to_owned(),
+            device_id: "pc-test".to_owned(),
+            entity_id: "transaction-synthetic".to_owned(),
+            base_revision: 1,
+            revision: 0,
+            payload_digest: "sha256:purge-trash".to_owned(),
+            payload: r#"{"schema_version":1,"operation":"delete","entity_type":"transaction_trash","entity_id":"transaction-synthetic"}"#.to_owned(),
+            tombstone: true,
+            created_at: "2026-10-08T00:00:01.000Z".to_owned(),
+        };
+        store
+            .push("delivery-purge", [purge_transaction, purge_trash])
+            .unwrap();
+
+        let connection = Connection::open(&path).unwrap();
+        for (table, column) in [
+            ("transactions", "id"),
+            ("transaction_tags", "transaction_id"),
+            ("transaction_splits", "transaction_id"),
+            ("transaction_trash", "transaction_id"),
+        ] {
+            let count: i64 = connection
+                .query_row(
+                    &format!(
+                        "SELECT COUNT(*) FROM {table} WHERE {column} = 'transaction-synthetic'"
+                    ),
+                    [],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(count, 0, "{table} retained a purged row");
+        }
+        let foreign_key_errors: Vec<String> = connection
+            .prepare("PRAGMA foreign_key_check")
+            .unwrap()
+            .query_map([], |row| row.get(0))
+            .unwrap()
+            .collect::<Result<_, _>>()
+            .unwrap();
+        assert!(foreign_key_errors.is_empty());
+        let integrity: String = connection
+            .query_row("PRAGMA integrity_check", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(integrity, "ok");
+
+        let duplicate = store
+            .push(
+                "delivery-purge-duplicate",
+                [operation("op-purge-transaction", 1)],
+            )
+            .unwrap();
+        assert!(
+            duplicate
+                .iter()
+                .any(|result| matches!(result, OperationApplyResult::Duplicate { .. }))
+        );
+    }
+
+    #[test]
     fn rejects_invalid_payload_atomically_and_bootstraps_durable_log() {
         let directory = tempdir().unwrap();
         let mut store = open_store(directory.path().join("nexora.db"));
@@ -1527,6 +1805,73 @@ mod tests {
         assert_eq!(incremental[4].0, 8);
         assert!(incremental[4].1.payload.contains("transfer-mobile"));
         assert!(store.pull(8).unwrap().is_empty());
+    }
+
+    #[test]
+    fn phone_composed_mutations_emit_incremental_journal_for_every_changed_entity() {
+        let directory = tempdir().unwrap();
+        let store = open_store(directory.path().join("nexora.db"));
+        store
+            .connection
+            .execute_batch(
+                "INSERT INTO categories (id, name, kind_scope) VALUES ('category-target', 'Target', 'expense');
+                 INSERT INTO categories (id, name, kind_scope) VALUES ('category-source', 'Source', 'expense');
+                 INSERT INTO tags (id, name) VALUES ('tag-a', 'A');
+                 INSERT INTO tags (id, name) VALUES ('tag-b', 'B');
+                 INSERT INTO transactions
+                   (id, kind, status, account_id, amount_minor, currency, booked_date, source, category_id)
+                   VALUES ('transaction-composed', 'expense', 'booked', 'account-synthetic', '100', 'EUR', '2026-10-08', 'manual', 'category-source');
+                 INSERT INTO transaction_tags (transaction_id, tag_id) VALUES ('transaction-composed', 'tag-a');
+                 BEGIN;
+                 UPDATE transactions SET category_id = 'category-target' WHERE id = 'transaction-composed';
+                 UPDATE transactions SET status = 'cancelled' WHERE id = 'transaction-composed';
+                 INSERT INTO transaction_tags (transaction_id, tag_id) VALUES ('transaction-composed', 'tag-b');
+                 DELETE FROM transaction_tags WHERE transaction_id = 'transaction-composed' AND tag_id = 'tag-a';
+                 DELETE FROM tags WHERE id = 'tag-a';
+                 DELETE FROM categories WHERE id = 'category-source';
+                 INSERT INTO transaction_trash (transaction_id, deleted_at, deletion_group_id)
+                   VALUES ('transaction-composed', '2026-10-08T00:00:00.000Z', 'transaction:transaction-composed');
+                 DELETE FROM transaction_trash WHERE transaction_id = 'transaction-composed';
+                 COMMIT;",
+            )
+            .unwrap();
+
+        let payloads = store
+            .pull(0)
+            .unwrap()
+            .into_iter()
+            .map(|(_, operation)| operation.payload)
+            .collect::<Vec<_>>();
+        assert!(
+            payloads
+                .iter()
+                .any(|payload| payload.contains("category-source"))
+        );
+        assert!(payloads.iter().any(|payload| payload.contains("tag-a")));
+        assert!(payloads.iter().any(|payload| payload.contains("tag-b")));
+        assert!(
+            payloads
+                .iter()
+                .any(|payload| payload.contains("\"status\":\"cancelled\""))
+        );
+        assert!(
+            payloads
+                .iter()
+                .any(|payload| payload.contains("transaction_trash"))
+        );
+        assert!(
+            payloads
+                .iter()
+                .any(|payload| payload.contains("\"operation\":\"delete\""))
+        );
+
+        let final_tag_set = payloads
+            .iter()
+            .filter(|payload| payload.contains("transaction_tag_set"))
+            .last()
+            .unwrap();
+        assert!(final_tag_set.contains("tag-b"));
+        assert!(!final_tag_set.contains("tag-a"));
     }
 
     #[test]

@@ -2436,3 +2436,17 @@ Keep only the latest relevant evidence per completed phase.
   all’avvio, quando torna online e con polling lifecycle; l’interfaccia ricarica i modelli dopo
   l’applicazione delle operazioni ricevute.
 - CI GitHub — da verificare sul commit pubblicato.
+
+## 2026-10-08 — remote-mobile-host composed mutations
+
+- `cargo test --locked` in `apps/local-hub` — PASS, 48 passed, 0 failed; include preflight conflict
+  all-or-nothing, rollback su errore a metà delivery, journal telefonico per mutazioni composte,
+  purge dei figli e `PRAGMA foreign_key_check` vuoto / `PRAGMA integrity_check = ok`.
+- `pnpm --filter @nexora/web typecheck` — PASS.
+- `pnpm exec vitest run apps/web/src/settings --pool=threads --maxWorkers=1` — PASS, 44 passed.
+- Regressioni remote repository — PASS, 6 tests: mergeTag source→target, trash/purge batch e
+  revisioni composite.
+- `pnpm manifest:update`, `pnpm manifest:check`, `git diff --check` — PASS.
+- La matrice remote ledger resta conservativa: la copertura E2E PC↔host HTTP per tutti i metodi
+  composti e i gate platform finali devono ancora chiudere il blocco.
+- 2026-10-08 — composed remote-mobile-host final verification: `cargo test --locked` PASS, 49 passed / 0 failed; `pnpm --filter @nexora/web typecheck` PASS; focused settings Vitest remote regressions 6/6 PASS; full Playwright parallel run completed 424 passed / 9 failed / 233 skipped with all failures limited to concurrent `chromium-375` service-worker/MIME startup contention, then serial `chromium-375` rerun completed 62 passed / 49 skipped / 0 failed. Full Vitest had one Windows default-timeout failure in the privacy scan; the same test passed isolated with `--testTimeout=30000`. Matrix remains conservative because a complete PC↔host HTTP E2E for every composed mutation and final platform gates are still outstanding.

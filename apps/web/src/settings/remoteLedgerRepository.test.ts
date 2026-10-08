@@ -306,6 +306,83 @@ describe("remote ledger repository", () => {
     expect(tagSet?.tag_ids).toEqual([target.id]);
   });
 
+  it("pushes trash and purge batches with independent entity revisions", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const request = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap"))
+        return response({ schema_version: 1, cursor: 0, operations: [] });
+      if (url.endsWith("/v1/operations")) {
+        const body = JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] };
+        return response(
+          body.operations.map((candidate, index) => ({
+            Applied: { cursor: index + 1, revision: candidate.revision },
+          })),
+        );
+      }
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-1", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    const account = Account.create({
+      id: "account-trash",
+      name: "Trash",
+      type: "checking",
+      currency: "EUR",
+    });
+    await connection.repository.saveAccount(account);
+    for (const id of ["transaction-trash-a", "transaction-trash-b"]) {
+      await connection.repository.saveTransaction(
+        Transaction.create({
+          id,
+          kind: "expense",
+          status: "booked",
+          accountId: account.id,
+          amount: Money.fromMinor(-100n, "EUR"),
+          bookedDate: LocalDate.parse("2026-10-08"),
+          source: "manual",
+        }),
+      );
+    }
+    await connection.repository.trashTransactions(["transaction-trash-a", "transaction-trash-b"]);
+    await connection.repository.purgeTrashedTransactions([
+      "transaction-trash-a",
+      "transaction-trash-b",
+    ]);
+
+    const pushed = request.mock.calls
+      .filter(([input]) => String(input).endsWith("/v1/operations"))
+      .flatMap(
+        ([, init]) =>
+          (JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] }).operations,
+      )
+      .map((candidate) => ({
+        candidate,
+        payload: JSON.parse(candidate.payload) as Record<string, unknown>,
+      }));
+    const purgeDeletes = pushed.filter(
+      ({ payload }) =>
+        payload.operation === "delete" &&
+        (payload.entity_type === "transaction" || payload.entity_type === "transaction_trash"),
+    );
+    expect(purgeDeletes).toHaveLength(4);
+    for (const { candidate, payload } of purgeDeletes) {
+      expect(candidate.baseRevision).toBe(1);
+      expect(["transaction-trash-a", "transaction-trash-b"]).toContain(payload.entity_id);
+    }
+    expect(new Set(purgeDeletes.map(({ payload }) => payload.entity_type))).toEqual(
+      new Set(["transaction", "transaction_trash"]),
+    );
+    expect(new Set(purgeDeletes.map(({ payload }) => payload.entity_id))).toEqual(
+      new Set(["transaction-trash-a", "transaction-trash-b"]),
+    );
+  });
+
   it("applies recurring and allocation bootstrap records and pushes updates", async () => {
     const repository = new InMemoryLedgerRepository();
     const account = Account.create({

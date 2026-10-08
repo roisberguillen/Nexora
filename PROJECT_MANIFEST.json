@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1697,
-      "sha256": "acdab25f0a630b2c1d65fb74b9afe5b3b7ea976a2e0551551920dfdadfcd3f3b"
+      "size": 1723,
+      "sha256": "585463dfa47b145a6f498b1218d688920c43b925cffb9d9f480d3ef079bb575e"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1559,8 +1559,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 205848,
-      "sha256": "63900c0a90f794327f88b154abe01607102a3ab0855994ef8714ad62911fc36c"
+      "size": 207439,
+      "sha256": "502962657852d0c834cbf9148ea6e412f0a4394ce4c5cc9bfb3b53d9dc4d664c"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1709,8 +1709,8 @@
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 91526,
-      "sha256": "ade73deec821f787e482a3588803c090780397655c6c354bca6894b323c16d1d"
+      "size": 107184,
+      "sha256": "2cc1efc63be2682a6c164fbdc8fb7376b76ee72e85ce59cfc6562cfa4d00e4df"
     },
     {
       "path": "apps/web/index.html",
@@ -2674,13 +2674,13 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.test.ts",
-      "size": 14103,
-      "sha256": "575350eb6cf97f628fd6b61ed6c12358ef01a78d56fe5c8e0232da7d9ee6a177"
+      "size": 17090,
+      "sha256": "23813eddc261fd5e7e09a1dd57e3e4b215570af762675560616c5e0e552bb266"
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 44375,
-      "sha256": "c877fdf44f6b89f5ed6ee6a011b1dbc95f0c023d94318cbb871e7a8fa8c8868c"
+      "size": 47376,
+      "sha256": "7318d18cde033caabc6c2e99cdc4793352d90b8badae98ca291ecf51e6688b29"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
@@ -2964,8 +2964,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 68318,
-      "sha256": "56245af16faa3f61d1be51731a1b4f0d5a845f8f441f2c95d02a1fe99f9da3a8"
+      "size": 68558,
+      "sha256": "cd793ba334bfb19b0720478aff94557149f06ad56181c0f3eac8d779b7a7ced2"
     },
     {
       "path": "design/mockup/README.md",
