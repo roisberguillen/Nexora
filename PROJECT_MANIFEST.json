@@ -1108,6 +1108,11 @@
       "sha256": "f8b35420ecbbcbb19d606a8379f2d32fddd0794dcba44b32ca9bf428c8e187e5"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-09-phone-local-hub-start.md",
+      "size": 1298,
+      "sha256": "913ad7e8a5c0528f5df9b896f5b4a2e58995800073dad929ebdc7d6bb31ffff5"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -1543,6 +1548,11 @@
       "sha256": "fa966cccd760860fcd70b8df70eb4419619002dd12e679298712df1efeb5d44e"
     },
     {
+      "path": ".codex/state/checkpoints/2026-10-09-phone-lan-start-debug.md",
+      "size": 456,
+      "sha256": "e1e367c4bc92a8de554e9d144494aa7b14be2764e00ea53ad4c7726eebb25201"
+    },
+    {
       "path": ".codex/state/current-task.md",
       "size": 657,
       "sha256": "a98ba20c3e86a2fa859f4075b2137ad5d96deb0154bf5c61151d6f41f24f266f"
@@ -1579,8 +1589,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 209168,
-      "sha256": "27805ca0da9d90cb5dd2822244c33b6b4384d9d6b518033fabd26090ce414686"
+      "size": 209626,
+      "sha256": "09109f47af359b11d15df4b5993db684c9ed78a58cecd85c336765241c01e81f"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2054,8 +2064,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 34551,
-      "sha256": "5666821e7f3cd716a05427d40b140e7a371d66bd71c83a2100c35b7a9c606e57"
+      "size": 35316,
+      "sha256": "bf909af35887b609d41f0c5e917d7204642e0494ff98cf3210ae12e18a38c78c"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -2709,8 +2719,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 51860,
-      "sha256": "0873e3fadf61eb3efd3b3e68ce28ed6885db282700c0df6333b05e340e1cba9d"
+      "size": 52245,
+      "sha256": "f86ba0abf159baa8eced793c920a4024ffa5443ceef63d5164eedc2e2188f857"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -2984,8 +2994,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 69461,
-      "sha256": "387257d6f078ea98496e2e4188f7699815d05a9d9f688ff0b1a61e431de28179"
+      "size": 69672,
+      "sha256": "ea04ed96feb19be92ea0c6103eb0c8f762824e354660724073f6cc0cfab18ba4"
     },
     {
       "path": "design/mockup/README.md",

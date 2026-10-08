@@ -98,6 +98,7 @@ export function SettingsPage({
   const [phoneHubStatus, setPhoneHubStatus] = useState<DesktopHubStatus | null>(null);
   const [phoneHubUrl, setPhoneHubUrl] = useState<string | null>(null);
   const [isManagingPhoneHub, setIsManagingPhoneHub] = useState(false);
+  const [phoneHubMessage, setPhoneHubMessage] = useState<string | null>(null);
   const [lanAddress, setLanAddress] = useState("");
   const [isStartingLan, setIsStartingLan] = useState(false);
   const [pairingInvite, setPairingInvite] = useState("");
@@ -149,6 +150,7 @@ export function SettingsPage({
   }, [desktopRuntime]);
   const managePhoneHub = async () => {
     setIsManagingPhoneHub(true);
+    setPhoneHubMessage(null);
     try {
       const next =
         phoneHubStatus?.state === "running"
@@ -162,7 +164,7 @@ export function SettingsPage({
           : "Local Hub LAN del telefono avviato. Apri l’indirizzo dal PC sulla stessa Wi-Fi.",
       );
     } catch {
-      setHostMessage(
+      setPhoneHubMessage(
         "Impossibile gestire il Local Hub del telefono. Nessun dato locale è stato modificato.",
       );
     } finally {
@@ -551,11 +553,18 @@ export function SettingsPage({
                 onClick={() => void managePhoneHub()}
                 type="button"
               >
-                {phoneHubStatus?.state === "running"
-                  ? "Arresta Local Hub LAN"
-                  : "Avvia Local Hub LAN"}
+                {isManagingPhoneHub
+                  ? "Avvio Local Hub LAN…"
+                  : phoneHubStatus?.state === "running"
+                    ? "Arresta Local Hub LAN"
+                    : "Avvia Local Hub LAN"}
               </button>
               <SettingsRow label="Runtime telefono" value={phoneHubStatus?.state ?? "stopped"} />
+              {phoneHubMessage !== null ? (
+                <p className="account-error" role="alert">
+                  {phoneHubMessage}
+                </p>
+              ) : null}
               {phoneHubUrl !== null ? (
                 <a href={phoneHubUrl} rel="noopener noreferrer" target="_blank">
                   Apri Nexora dal PC: {phoneHubUrl}

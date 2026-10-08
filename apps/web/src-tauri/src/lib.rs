@@ -394,17 +394,22 @@ async fn load_or_generate_phone_lan_identity(
 }
 
 fn detect_local_lan_address() -> Result<IpAddr, String> {
-    if let Ok(interfaces) = if_addrs::get_if_addrs() {
-        if let Some(address) = interfaces
-            .into_iter()
-            .map(|interface| interface.ip())
-            .find(|address| is_preferred_lan_address(*address))
-        {
-            return Ok(address);
-        }
-    }
+    let mut interfaces = if_addrs::get_if_addrs()
+        .map_err(|error| format!("Could not inspect local network interfaces: {error}"))?;
+    interfaces.sort_by_key(|interface| !is_wifi_interface_name(&interface.name));
+    interfaces
+        .into_iter()
+        .map(|interface| interface.ip())
+        .find(|address| is_preferred_lan_address(*address))
+        .ok_or_else(|| "The phone is not connected to a local Wi-Fi network".to_owned())
+}
 
-    Err("The phone is not connected to a local Wi-Fi network".to_owned())
+fn is_wifi_interface_name(name: &str) -> bool {
+    let normalized = name.to_ascii_lowercase();
+    normalized.starts_with("wlan")
+        || normalized.starts_with("wifi")
+        || normalized.starts_with("eth")
+        || normalized.starts_with("en")
 }
 
 fn is_preferred_lan_address(address: IpAddr) -> bool {
@@ -947,5 +952,15 @@ mod tests {
             validate_native_local_host_request(&external).unwrap_err(),
             "invalid_host_fingerprint"
         );
+    }
+
+    #[test]
+    fn wifi_interface_precedes_cellular_and_vpn_interfaces() {
+        assert!(super::is_wifi_interface_name("wlan0"));
+        assert!(super::is_wifi_interface_name("wifi0"));
+        assert!(super::is_wifi_interface_name("eth0"));
+        assert!(super::is_wifi_interface_name("en0"));
+        assert!(!super::is_wifi_interface_name("rmnet1"));
+        assert!(!super::is_wifi_interface_name("tun0"));
     }
 }

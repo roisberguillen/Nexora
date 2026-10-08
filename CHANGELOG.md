@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Local Hub LAN mobile: la rilevazione ora privilegia l'interfaccia Wi-Fi/Ethernet rispetto a
+  interfacce cellulari o VPN; l'avvio mostra subito lo stato di caricamento e l'errore nella
+  sezione del telefono.
 - Android signing CI hardening: the signed job now validates the stable user-owned keystore and
   alias before building, passes passwords only to Gradle, verifies `zipalign` and `apksigner`,
   uploads only `nexora-android-arm64-release-signed.apk`, and removes temporary signing material.
