@@ -55,6 +55,8 @@ export interface LocalSyncBootstrapResult {
 
 const queueKeyPrefix = "nexora.local-sync-queue.v1";
 const cursorKeyPrefix = "nexora.local-sync-cursor.v1";
+const revisionKeyPrefix = "nexora.local-sync-revisions.v1";
+const bootstrapKeyPrefix = "nexora.local-sync-bootstrap.v1";
 
 export class LocalHostSyncClient {
   private readonly storage: LocalSyncStorage;
@@ -85,6 +87,26 @@ export class LocalHostSyncClient {
   public setCursor(cursor: number): void {
     if (!Number.isSafeInteger(cursor) || cursor < 0) throw new Error("invalid_sync_cursor");
     this.storage.setItem(this.cursorKey(), String(cursor));
+  }
+
+  public revision(entityId: string): number {
+    const revisions = readRevisions(this.storage, this.revisionKey());
+    return revisions[entityId] ?? 0;
+  }
+
+  public setRevision(entityId: string, revision: number): void {
+    if (!Number.isSafeInteger(revision) || revision < 0) throw new Error("invalid_sync_revision");
+    const revisions = readRevisions(this.storage, this.revisionKey());
+    revisions[entityId] = revision;
+    this.storage.setItem(this.revisionKey(), JSON.stringify(revisions));
+  }
+
+  public hasBootstrapCache(): boolean {
+    return this.storage.getItem(this.bootstrapKey()) === "1";
+  }
+
+  public markBootstrapCache(): void {
+    this.storage.setItem(this.bootstrapKey(), "1");
   }
 
   public enqueue(operation: LocalSyncOperation): void {
@@ -122,6 +144,11 @@ export class LocalHostSyncClient {
       throw new Error("invalid_sync_push_response");
     }
     const conflict = results.some((result) => result.Conflict !== undefined);
+    for (const [index, result] of results.entries()) {
+      const revision = result.Applied?.revision ?? result.Duplicate?.revision;
+      const queued = queue[index];
+      if (revision !== undefined && queued !== undefined) this.setRevision(queued.entityId, revision);
+    }
     const remaining = queue.filter((_, index) => results[index]?.Conflict !== undefined);
     this.storage.setItem(this.queueKey(), JSON.stringify(remaining));
     if (conflict) return { status: "conflict", pendingCount: remaining.length };
@@ -156,11 +183,14 @@ export class LocalHostSyncClient {
     }
     const validSchemaVersion = schemaVersion as number;
     const validCursor = cursor as number;
-    return Object.freeze({
+    const result = Object.freeze({
       schemaVersion: validSchemaVersion,
       cursor: validCursor,
       operations: body.operations as readonly [number, LocalSyncOperation][],
     });
+    for (const [, operation] of result.operations) this.setRevision(operation.entityId, operation.revision);
+    this.markBootstrapCache();
+    return result;
   }
 
   public async pull(after: number): Promise<LocalSyncPullResult> {
@@ -183,6 +213,14 @@ export class LocalHostSyncClient {
 
   private cursorKey(): string {
     return `${cursorKeyPrefix}:${trimEndpoint(this.options.endpoint)}:${this.options.credentials.deviceId}`;
+  }
+
+  private revisionKey(): string {
+    return `${revisionKeyPrefix}:${trimEndpoint(this.options.endpoint)}:${this.options.credentials.deviceId}`;
+  }
+
+  private bootstrapKey(): string {
+    return `${bootstrapKeyPrefix}:${trimEndpoint(this.options.endpoint)}:${this.options.credentials.deviceId}`;
   }
 }
 
@@ -216,6 +254,20 @@ function readQueue(storage: LocalSyncStorage, key: string): LocalSyncOperation[]
     return parsed.filter(isOperation);
   } catch {
     return [];
+  }
+}
+
+function readRevisions(storage: LocalSyncStorage, key: string): Record<string, number> {
+  try {
+    const parsed = JSON.parse(storage.getItem(key) ?? "{}") as unknown;
+    if (parsed === null || typeof parsed !== "object") return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter(
+        ([, value]) => Number.isSafeInteger(value) && Number(value) >= 0,
+      ),
+    );
+  } catch {
+    return {};
   }
 }
 

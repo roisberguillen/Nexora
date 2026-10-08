@@ -80,10 +80,26 @@ impl SqliteSyncOperationStore {
                  created_at TEXT NOT NULL
              ) STRICT;
              CREATE TABLE IF NOT EXISTS sync_revisions (
-                 entity_id TEXT PRIMARY KEY,
-                 revision INTEGER NOT NULL
+                 entity_type TEXT NOT NULL,
+                 entity_id TEXT NOT NULL,
+                 revision INTEGER NOT NULL,
+                 PRIMARY KEY (entity_type, entity_id)
              ) STRICT;",
         )?;
+        if !table_has_column(&connection, "sync_revisions", "entity_type")? {
+            connection.execute_batch(
+                "ALTER TABLE sync_revisions RENAME TO sync_revisions_legacy;
+                 CREATE TABLE sync_revisions (
+                     entity_type TEXT NOT NULL,
+                     entity_id TEXT NOT NULL,
+                     revision INTEGER NOT NULL,
+                     PRIMARY KEY (entity_type, entity_id)
+                 ) STRICT;
+                 INSERT INTO sync_revisions (entity_type, entity_id, revision)
+                 SELECT 'legacy', entity_id, revision FROM sync_revisions_legacy;
+                 DROP TABLE sync_revisions_legacy;",
+            )?;
+        }
         Ok(Self { connection })
     }
 
@@ -132,8 +148,8 @@ impl SqliteSyncOperationStore {
 
             let current = transaction
                 .query_row(
-                    "SELECT revision FROM sync_revisions WHERE entity_id = ?1",
-                    params![operation.entity_id],
+                    "SELECT revision FROM sync_revisions WHERE entity_type = ?1 AND entity_id = ?2",
+                    params![payload.entity_type.as_str(), operation.entity_id],
                     |row| row.get::<_, i64>(0),
                 )
                 .optional()?
@@ -168,9 +184,13 @@ impl SqliteSyncOperationStore {
             )?;
             let cursor = as_u64(transaction.last_insert_rowid())?;
             transaction.execute(
-                "INSERT INTO sync_revisions (entity_id, revision) VALUES (?1, ?2)
-                 ON CONFLICT(entity_id) DO UPDATE SET revision = excluded.revision",
-                params![operation.entity_id, as_i64(revision)?],
+                "INSERT INTO sync_revisions (entity_type, entity_id, revision) VALUES (?1, ?2, ?3)
+                 ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision",
+                params![
+                    payload.entity_type.as_str(),
+                    operation.entity_id,
+                    as_i64(revision)?
+                ],
             )?;
             results.push(OperationApplyResult::Applied { cursor, revision });
         }
@@ -215,7 +235,8 @@ impl SqliteSyncOperationStore {
             .map(|(_, operation)| operation.entity_id.as_str())
             .collect::<std::collections::HashSet<_>>();
         let mut snapshot_operations = self.current_ledger_operations()?;
-        snapshot_operations.retain(|(_, operation)| !logged_entities.contains(operation.entity_id.as_str()));
+        snapshot_operations
+            .retain(|(_, operation)| !logged_entities.contains(operation.entity_id.as_str()));
         operations.append(&mut snapshot_operations);
         Ok(SyncBootstrapSnapshot {
             schema_version: 1,
@@ -224,7 +245,9 @@ impl SqliteSyncOperationStore {
         })
     }
 
-    fn current_ledger_operations(&self) -> Result<Vec<(u64, ReplicableOperation)>, DurableSyncError> {
+    fn current_ledger_operations(
+        &self,
+    ) -> Result<Vec<(u64, ReplicableOperation)>, DurableSyncError> {
         let mut operations = Vec::new();
         if table_has_column(&self.connection, "accounts", "name")? {
             let mut accounts = self.connection.prepare(

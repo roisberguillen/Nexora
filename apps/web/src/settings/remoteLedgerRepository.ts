@@ -25,7 +25,32 @@ export async function connectRemoteLedgerRepository(
   } catch {
     // The persistent outbox is retained for the next connection attempt.
   }
-  const bootstrap = await client.bootstrap();
+  let bootstrap;
+  try {
+    bootstrap = await client.bootstrap();
+  } catch (error) {
+    if (!client.hasBootstrapCache()) throw error;
+    return {
+      repository: createRemoteRepository(repository, client, new Map()),
+      async sync(): Promise<void> {
+        try {
+          await client.flush();
+          const pulled = await client.pull(client.cursor());
+          let lastCursor = client.cursor();
+          for (const [cursor, operation] of pulled.operations) {
+            if (!Number.isSafeInteger(cursor) || cursor <= lastCursor)
+              throw new Error("invalid_sync_pull_cursor");
+            client.setRevision(operation.entityId, operation.revision);
+            await applyRemoteOperation(repository, operation);
+            lastCursor = cursor;
+          }
+          if (lastCursor !== client.cursor()) client.setCursor(lastCursor);
+        } catch {
+          // Cache and outbox remain authoritative locally until reconnect.
+        }
+      },
+    };
+  }
   // The remote cache is disposable. Rebuild it from the phone so deleted host
   // records cannot remain visible on the PC after a reconnect.
   await repository.resetFinancialData();
@@ -52,6 +77,7 @@ export async function connectRemoteLedgerRepository(
           throw new Error("invalid_sync_pull_cursor");
         }
         revisions.set(operation.entityId, operation.revision);
+        client.setRevision(operation.entityId, operation.revision);
         await applyRemoteOperation(repository, operation);
         lastCursor = cursor;
       }
@@ -73,13 +99,18 @@ function createRemoteRepository(
       const method = Reflect.get(target, property, receiver);
       if (typeof method !== "function") return method;
       return async (...args: unknown[]) => {
+        const methodName = String(property);
+        if (mutatingMethods.has(methodName) && !supportedRemoteMutations.has(methodName)) {
+          throw new Error(`remote_mutation_not_supported:${methodName}`);
+        }
         const result = await method.apply(target, args);
         const operation = await operationForMutation(
-          String(property),
+          methodName,
           args,
           target,
           client.deviceId(),
           revisions,
+          client,
         );
         if (operation !== undefined) {
           client.enqueue(operation);
@@ -95,12 +126,74 @@ function createRemoteRepository(
   }) as LedgerRepository;
 }
 
+const mutatingMethods = new Set([
+  "resetFinancialData",
+  "saveAccount",
+  "updateAccount",
+  "deleteUnusedAccount",
+  "saveCategory",
+  "updateCategory",
+  "deleteUnusedCategory",
+  "mergeCategory",
+  "saveTag",
+  "updateTag",
+  "deleteUnusedTag",
+  "mergeTag",
+  "removeTagGlobally",
+  "setTransactionTags",
+  "saveRecurringRule",
+  "updateRecurringRule",
+  "deleteRecurringRule",
+  "saveAllocationPlan",
+  "updateAllocationPlan",
+  "deleteAllocationPlan",
+  "saveBudget",
+  "updateBudget",
+  "reviseBudget",
+  "deleteBudget",
+  "saveLoan",
+  "updateLoan",
+  "deleteLoan",
+  "saveInvestmentPosition",
+  "updateInvestmentPosition",
+  "deleteInvestmentPosition",
+  "saveMonthlyJournal",
+  "updateMonthlyJournal",
+  "deleteMonthlyJournal",
+  "saveImportBatch",
+  "commitImportBatch",
+  "undoImportBatch",
+  "saveTransaction",
+  "updateTransaction",
+  "updateTransactionWithDetails",
+  "saveTransactionWithSplits",
+  "saveTransactionWithDetails",
+  "saveTransfer",
+  "cancelTransaction",
+  "cancelTransfer",
+  "trashTransaction",
+  "trashTransactions",
+  "restoreTransaction",
+  "purgeTrashedTransaction",
+  "purgeTrashedTransactions",
+]);
+
+const supportedRemoteMutations = new Set([
+  "saveTransaction",
+  "updateTransaction",
+  "updateTransactionWithDetails",
+  "saveTransactionWithSplits",
+  "saveTransactionWithDetails",
+  "purgeTrashedTransaction",
+]);
+
 async function operationForMutation(
   method: string,
   args: readonly unknown[],
   repository: LedgerRepository,
   deviceId: string,
   revisions: Map<string, number>,
+  client: LocalHostSyncClient,
 ): Promise<LocalSyncOperation | undefined> {
   let transaction: Transaction | undefined;
   let entityId: string | undefined;
@@ -129,7 +222,7 @@ async function operationForMutation(
         entity_id: entityId,
       })
     : JSON.stringify(transactionPayload(current!));
-  const baseRevision = revisions.get(entityId) ?? 0;
+  const baseRevision = revisions.get(entityId) ?? client.revision(entityId);
   revisions.set(entityId, baseRevision + 1);
   return {
     idempotencyKey: crypto.randomUUID(),

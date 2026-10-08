@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1273,
-      "sha256": "65f5e26f077199d976f79820042a59d9b3ab9a9e996b3c83fa10b0ece50b883b"
+      "size": 1295,
+      "sha256": "40b2a3d737232456a6112356253ea39a6da959acedb627a72f5d234f154a41cc"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1513,6 +1513,11 @@
       "sha256": "8dad831a1f99c92f3113c70f1a049f785479e3b5ded851c9b23605b90f67d93d"
     },
     {
+      "path": ".codex/state/checkpoints/2026-10-08-remote-mobile-host-authoritative-bidirectional-synchronization.md",
+      "size": 585,
+      "sha256": "f4002538ff42a9f86a9cf92792696bd97d141b43f9077da84b854d577b8118cb"
+    },
+    {
       "path": ".codex/state/checkpoints/2026-10-08-remote-mobile-host-full-synchronization-and-signed-android-gate.md",
       "size": 587,
       "sha256": "fe76dca1837f425add33ff82d205eec116f07c25eea05c9ec2de09526d4e250c"
@@ -1704,8 +1709,8 @@
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 28306,
-      "sha256": "0f6eb90495a0ce1dda02b6c7b5bd9064cbeb0f69c5db4861e62c0e71d9dc6c78"
+      "size": 29326,
+      "sha256": "19227b428a608b919d9e0507dd15ab7364f26bb83e1b1089296d296735679164"
     },
     {
       "path": "apps/web/index.html",
@@ -2624,13 +2629,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 6545,
-      "sha256": "06d67e63fff48fab66deb3bd92f0b92030bf8ed567774abd57e575c6fdb33ba8"
+      "size": 7527,
+      "sha256": "514fbe9ca4a5097812de3edc5d9dff1855d3170ae9eada301918dc17465448ed"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 8460,
-      "sha256": "6b75e409bc1af24eaa46a65e2a44019ab0f46096c53e6a9e17ab83cbc97f6d35"
+      "size": 10465,
+      "sha256": "eb08a5170338d97f1ab6cd065578704fe3cdf0fec472e2a73dc3ea275aa69f4c"
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",
@@ -2669,8 +2674,8 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 8455,
-      "sha256": "32fed91527f57e5656cec913123d5d772a867e70a26a542b1ab48b223ae356cc"
+      "size": 11109,
+      "sha256": "22b2438d01d0ec42b449f2106649593980ffa3c367b3fdf842bdf400209df332"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",

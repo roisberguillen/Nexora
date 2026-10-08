@@ -160,6 +160,33 @@ describe("local host sync client", () => {
     expect(otherDevice.cursor()).toBe(0);
   });
 
+  it("persists entity revisions and bootstrap availability across restarts", async () => {
+    const values = storage();
+    const request = vi.fn(async () =>
+      new Response(JSON.stringify({ schema_version: 1, cursor: 4, operations: [[4, operation]] }), {
+        status: 200,
+      }),
+    );
+    const first = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: values,
+      request,
+    });
+    expect(first.hasBootstrapCache()).toBe(false);
+    await first.bootstrap();
+    expect(first.revision("transaction-1")).toBe(0);
+    first.setRevision("account-1", 7);
+    const restored = new LocalHostSyncClient({
+      endpoint: "https://host.home/",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: values,
+      request,
+    });
+    expect(restored.hasBootstrapCache()).toBe(true);
+    expect(restored.revision("account-1")).toBe(7);
+  });
+
   it("adds the volatile session header to sync requests", async () => {
     const values = storage();
     const request = vi.fn(
