@@ -179,6 +179,9 @@ const mutatingMethods = new Set([
 ]);
 
 const supportedRemoteMutations = new Set([
+  "saveAccount",
+  "updateAccount",
+  "deleteUnusedAccount",
   "saveTransaction",
   "updateTransaction",
   "updateTransactionWithDetails",
@@ -196,6 +199,7 @@ async function operationForMutation(
   client: LocalHostSyncClient,
 ): Promise<LocalSyncOperation | undefined> {
   let transaction: Transaction | undefined;
+  let account: Account | undefined;
   let entityId: string | undefined;
   let tombstone = false;
   if (
@@ -210,18 +214,25 @@ async function operationForMutation(
   } else if (method === "purgeTrashedTransaction") {
     entityId = typeof args[0] === "string" ? args[0] : undefined;
     tombstone = true;
+  } else if (method === "saveAccount" || method === "updateAccount") {
+    account = args[0] as Account;
+    entityId = account?.id;
+  } else if (method === "deleteUnusedAccount") {
+    entityId = typeof args[0] === "string" ? args[0] : undefined;
+    tombstone = true;
   }
   if (entityId === undefined) return undefined;
+  if (method === "deleteUnusedAccount") account = await repository.findAccountById(entityId);
   const current = transaction ?? (await repository.findTransactionById(entityId));
   if (!tombstone && current === undefined) return undefined;
   const payload = tombstone
     ? JSON.stringify({
         schema_version: 1,
         operation: "delete",
-        entity_type: "transaction",
+        entity_type: account === undefined ? "transaction" : "account",
         entity_id: entityId,
       })
-    : JSON.stringify(transactionPayload(current!));
+    : JSON.stringify(account === undefined ? transactionPayload(current!) : accountPayload(account));
   const baseRevision = revisions.get(entityId) ?? client.revision(entityId);
   revisions.set(entityId, baseRevision + 1);
   return {
@@ -260,12 +271,33 @@ function transactionPayload(transaction: Transaction): Record<string, unknown> {
   };
 }
 
+function accountPayload(account: Account): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "account",
+    entity_id: account.id,
+    name: account.name,
+    type: account.type,
+    currency: account.currency,
+    institution: account.institution ?? null,
+    parent_account_id: account.parentAccountId ?? null,
+    opening_balance_minor: account.openingBalance.amountMinor.toString(),
+    is_archived: account.isArchived,
+  };
+}
+
 async function applyRemoteOperation(
   repository: LedgerRepository,
   operation: LocalSyncOperation,
 ): Promise<void> {
   const payload = JSON.parse(operation.payload) as Record<string, unknown>;
   if (payload.entity_type === "account") {
+    if (payload.operation === "delete") {
+      if (await repository.findAccountById(operation.entityId))
+        await repository.deleteUnusedAccount(operation.entityId);
+      return;
+    }
     const account = DomainAccount.create({
       id: operation.entityId,
       name: String(payload.name),

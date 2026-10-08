@@ -9,7 +9,7 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | Metodo mutativo | Entità | Stato attuale | Operation | Conflitto/revisione | PC → telefono | Telefono → PC |
 |---|---|---|---|---|---|---|
 | `resetFinancialData` | ledger | non supportato | — | — | no | no |
-| `saveAccount`, `updateAccount`, `deleteUnusedAccount` | account | bootstrap parziale; mutazione non emessa | `account.upsert/delete` | per entità | no | bootstrap only |
+| `saveAccount`, `updateAccount`, `deleteUnusedAccount` | account | PC→telefono implementato; telefono→PC ancora bootstrap | `account.upsert/delete` | `(entity_type, entity_id)` | sì | bootstrap only |
 | `saveCategory`, `updateCategory`, `deleteUnusedCategory`, `mergeCategory` | category | non supportato | — | — | no | no |
 | `saveTag`, `updateTag`, `deleteUnusedTag`, `mergeTag`, `removeTagGlobally` | tag | non supportato | — | — | no | no |
 | `setTransactionTags` | transaction-tag | non supportato | — | — | no | no |

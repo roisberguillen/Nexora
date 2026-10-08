@@ -57,6 +57,19 @@ struct LedgerOperationPayload {
     credit_transaction_id: Option<String>,
     #[serde(default)]
     fee_transaction_id: Option<String>,
+    #[serde(default)]
+    name: Option<String>,
+    #[serde(default)]
+    #[serde(rename = "type")]
+    account_type: Option<String>,
+    #[serde(default)]
+    institution: Option<String>,
+    #[serde(default)]
+    parent_account_id: Option<String>,
+    #[serde(default)]
+    opening_balance_minor: Option<String>,
+    #[serde(default)]
+    is_archived: Option<bool>,
 }
 
 impl SqliteSyncOperationStore {
@@ -370,7 +383,10 @@ fn validate_payload(
     if payload.schema_version != 1
         || !matches!(payload.operation.as_str(), "upsert" | "delete")
         || payload.entity_id != operation.entity_id
-        || !matches!(payload.entity_type.as_str(), "transaction" | "transfer")
+        || !matches!(
+            payload.entity_type.as_str(),
+            "account" | "transaction" | "transfer"
+        )
     {
         return Err(DurableSyncError::InvalidPayload(
             "unsupported ledger payload".to_owned(),
@@ -402,6 +418,17 @@ fn validate_payload(
     }
     if payload.operation == "upsert" {
         match payload.entity_type.as_str() {
+            "account" => {
+                if payload.name.is_none()
+                    || payload.account_type.is_none()
+                    || payload.currency.is_none()
+                    || payload.opening_balance_minor.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "account payload is incomplete".to_owned(),
+                    ));
+                }
+            }
             "transaction" => {
                 if payload.amount_minor.is_none()
                     || payload.currency.is_none()
@@ -449,6 +476,31 @@ fn apply_ledger_operation(
     payload: &LedgerOperationPayload,
 ) -> Result<(), DurableSyncError> {
     let result = match (payload.entity_type.as_str(), payload.operation.as_str()) {
+        ("account", "delete") => transaction.execute(
+            "DELETE FROM accounts WHERE id = ?1",
+            params![operation.entity_id],
+        ),
+        ("account", "upsert") => transaction.execute(
+            "INSERT INTO accounts
+             (id, name, type, institution, currency, parent_account_id, opening_balance_minor, is_archived)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+             ON CONFLICT(id) DO UPDATE SET
+              name = excluded.name, institution = excluded.institution,
+              parent_account_id = excluded.parent_account_id,
+              opening_balance_minor = excluded.opening_balance_minor,
+              is_archived = excluded.is_archived,
+              updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+            params![
+                operation.entity_id,
+                payload.name.as_deref(),
+                payload.account_type.as_deref(),
+                payload.institution.as_deref(),
+                payload.currency.as_deref(),
+                payload.parent_account_id.as_deref(),
+                payload.opening_balance_minor.as_deref(),
+                i64::from(payload.is_archived.unwrap_or(false)),
+            ],
+        ),
         ("transaction", "delete") => transaction.execute(
             "DELETE FROM transactions WHERE id = ?1",
             params![operation.entity_id],
