@@ -1,4 +1,11 @@
-import type { Account, Category, LedgerRepository, Tag, Transaction } from "@nexora/domain";
+import type {
+  Account,
+  Category,
+  LedgerRepository,
+  Tag,
+  Transaction,
+  TransferBundle,
+} from "@nexora/domain";
 import {
   Account as DomainAccount,
   Category as DomainCategory,
@@ -116,7 +123,8 @@ function createRemoteRepository(
           client,
         );
         if (operation !== undefined) {
-          client.enqueue(operation);
+          const operations = Array.isArray(operation) ? operation : [operation];
+          for (const candidate of operations) client.enqueue(candidate);
           try {
             await client.flush();
           } catch {
@@ -196,6 +204,8 @@ const supportedRemoteMutations = new Set([
   "updateTransactionWithDetails",
   "saveTransactionWithSplits",
   "saveTransactionWithDetails",
+  "saveTransfer",
+  "cancelTransfer",
   "purgeTrashedTransaction",
 ]);
 
@@ -206,7 +216,71 @@ async function operationForMutation(
   deviceId: string,
   revisions: Map<string, number>,
   client: LocalHostSyncClient,
-): Promise<LocalSyncOperation | undefined> {
+): Promise<LocalSyncOperation | readonly LocalSyncOperation[] | undefined> {
+  if (method === "saveTransfer") {
+    const bundle = args[0] as TransferBundle;
+    return [
+      await operationFromPayload(
+        bundle.debitTransaction.id,
+        JSON.stringify(transactionPayload(bundle.debitTransaction)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+      await operationFromPayload(
+        bundle.creditTransaction.id,
+        JSON.stringify(transactionPayload(bundle.creditTransaction)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+      ...(bundle.feeTransaction === undefined
+        ? []
+        : [
+            await operationFromPayload(
+              bundle.feeTransaction.id,
+              JSON.stringify(transactionPayload(bundle.feeTransaction)),
+              false,
+              deviceId,
+              revisions,
+              client,
+            ),
+          ]),
+      await operationFromPayload(
+        bundle.transfer.id,
+        transferPayload(bundle),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+    ];
+  }
+  if (method === "cancelTransfer") {
+    const transfer = await repository.findTransferById(String(args[0]));
+    if (transfer === undefined) return undefined;
+    const transactions = [
+      await repository.findTransactionById(transfer.debitTransactionId),
+      await repository.findTransactionById(transfer.creditTransactionId),
+      ...(transfer.feeTransactionId === undefined
+        ? []
+        : [await repository.findTransactionById(transfer.feeTransactionId)]),
+    ].filter((candidate): candidate is Transaction => candidate !== undefined);
+    return Promise.all(
+      transactions.map((candidate) =>
+        operationFromPayload(
+          candidate.id,
+          JSON.stringify(transactionPayload(candidate)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      ),
+    );
+  }
   let transaction: Transaction | undefined;
   let account: Account | undefined;
   let category: Category | undefined;
@@ -274,6 +348,17 @@ async function operationForMutation(
               ? tagPayload(tag)
               : transactionPayload(current!),
       );
+  return operationFromPayload(entityId, payload, tombstone, deviceId, revisions, client);
+}
+
+async function operationFromPayload(
+  entityId: string,
+  payload: string,
+  tombstone: boolean,
+  deviceId: string,
+  revisions: Map<string, number>,
+  client: LocalHostSyncClient,
+): Promise<LocalSyncOperation> {
   const baseRevision = revisions.get(entityId) ?? client.revision(entityId);
   revisions.set(entityId, baseRevision + 1);
   return {
@@ -310,6 +395,18 @@ function transactionPayload(transaction: Transaction): Record<string, unknown> {
     ...(transaction.note === undefined ? {} : { note: transaction.note }),
     source: transaction.source,
   };
+}
+
+function transferPayload(bundle: TransferBundle): string {
+  return JSON.stringify({
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "transfer",
+    entity_id: bundle.transfer.id,
+    debit_transaction_id: bundle.transfer.debitTransactionId,
+    credit_transaction_id: bundle.transfer.creditTransactionId,
+    fee_transaction_id: bundle.transfer.feeTransactionId ?? null,
+  });
 }
 
 function accountPayload(account: Account): Record<string, unknown> {

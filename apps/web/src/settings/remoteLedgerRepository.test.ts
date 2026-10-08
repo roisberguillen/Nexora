@@ -1,5 +1,5 @@
 import { InMemoryLedgerRepository } from "@nexora/database";
-import { Account, Tag, LocalDate, Money } from "@nexora/domain";
+import { Account, Tag, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
 import { describe, expect, it, vi } from "vitest";
 
 import { LocalHostSyncClient, type LocalSyncOperation } from "./localHostSync";
@@ -148,5 +148,91 @@ describe("remote ledger repository", () => {
     await expect(connection.repository.listTags()).resolves.toEqual([]);
     expect(client.revision("tag-phone")).toBe(2);
     expect(client.cursor()).toBe(2);
+  });
+
+  it("pushes transfer legs and transfer metadata as one outbox delivery", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const debitAccount = Account.create({
+      id: "account-debit",
+      name: "Debit",
+      type: "checking",
+      currency: "EUR",
+    });
+    const creditAccount = Account.create({
+      id: "account-credit",
+      name: "Credit",
+      type: "checking",
+      currency: "EUR",
+    });
+    const accountOperations = [debitAccount, creditAccount].map(
+      (account, index) =>
+        [
+          index + 1,
+          operation(account.id, {
+            schema_version: 1,
+            operation: "upsert",
+            entity_type: "account",
+            entity_id: account.id,
+            name: account.name,
+            type: account.type,
+            currency: account.currency,
+            opening_balance_minor: "0",
+            is_archived: false,
+          }),
+        ] as [number, LocalSyncOperation],
+    );
+    let pushedBody: { operations: readonly LocalSyncOperation[] } | undefined;
+    const request = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap"))
+        return response({ schema_version: 1, cursor: 2, operations: accountOperations });
+      if (url.endsWith("/v1/operations")) {
+        pushedBody = JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] };
+        return response(
+          pushedBody.operations.map((candidate, index) => ({
+            Applied: { cursor: index + 3, revision: candidate.revision },
+          })),
+        );
+      }
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-1", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    const debitTransaction = Transaction.create({
+      id: "transfer-debit",
+      kind: "transfer",
+      status: "booked",
+      accountId: debitAccount.id,
+      amount: Money.fromMinor(-1000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-10-08"),
+      source: "manual",
+    });
+    const creditTransaction = Transaction.create({
+      id: "transfer-credit",
+      kind: "transfer",
+      status: "booked",
+      accountId: creditAccount.id,
+      amount: Money.fromMinor(1000n, "EUR"),
+      bookedDate: LocalDate.parse("2026-10-08"),
+      source: "manual",
+    });
+    const transfer = Transfer.create({
+      id: "transfer-phone",
+      debitTransaction,
+      creditTransaction,
+    });
+
+    await connection.repository.saveTransfer({ transfer, debitTransaction, creditTransaction });
+
+    expect(pushedBody?.operations).toHaveLength(3);
+    expect(
+      pushedBody?.operations.map((candidate) => JSON.parse(candidate.payload).entity_type),
+    ).toEqual(["transaction", "transaction", "transfer"]);
+    expect(client.pending()).toEqual([]);
   });
 });
