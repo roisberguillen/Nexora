@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 793,
-      "sha256": "c81b7f9964c501a73628b34c1752bbdf519126c6cf345fa8d6506db7178dee5d"
+      "size": 1243,
+      "sha256": "d7b7526d79ff3d1c25dd0ec6eb9477f055c5345e226c418c428fcaa90bab11ce"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1511,6 +1511,11 @@
       "path": ".codex/state/checkpoints/2026-10-07-checkpoint-sync-architecture.md",
       "size": 543,
       "sha256": "8dad831a1f99c92f3113c70f1a049f785479e3b5ded851c9b23605b90f67d93d"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-10-08-remote-mobile-host-full-synchronization-and-signed-android-gate.md",
+      "size": 587,
+      "sha256": "fe76dca1837f425add33ff82d205eec116f07c25eea05c9ec2de09526d4e250c"
     },
     {
       "path": ".codex/state/current-task.md",

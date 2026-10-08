@@ -6,7 +6,7 @@ Schermata: Settings pairing e stati sync
 Route: Settings
 Flusso principale: Phone Local Hub → pairing invite → PC reconnect
 Reviewer/fase: Codex — gate pre-commit
-Modifiche: Identità TLS sicura del telefono, host identity stabile e pairing generato dal telefono.
+Modifiche: Identità TLS sicura del telefono, host identity stabile, pairing generato dal telefono e manifest aggiornato.
 
 | Area | ID | Esito | Evidenza / N.A. |
 |---|---|---|---|
