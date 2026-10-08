@@ -1,6 +1,6 @@
 # Matrice remote-mobile-host
 
-Baseline verificata: `e7a217fe3cb5827c3d73ffddb30286b801970515`.
+Baseline verificata: `c1bf8d3d8decc0cce7477681d818e8bca96bc10e`.
 
 La matrice distingue il contratto del dominio dal supporto effettivamente presente nel branch.
 Il protocollo attuale usa operation versionate per entità e revisioni per `entityId`; il conflitto

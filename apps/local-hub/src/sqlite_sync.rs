@@ -290,6 +290,45 @@ impl SqliteSyncOperationStore {
                 operations.push((0, row?));
             }
         }
+        if table_has_column(&self.connection, "categories", "name")? {
+            let mut categories = self.connection.prepare(
+                "SELECT id, name, kind_scope, parent_id, is_archived
+                 FROM categories ORDER BY id",
+            )?;
+            for row in categories.query_map([], |row| {
+                let payload = serde_json::json!({
+                    "schema_version": 1,
+                    "operation": "upsert",
+                    "entity_type": "category",
+                    "entity_id": row.get::<_, String>(0)?,
+                    "name": row.get::<_, String>(1)?,
+                    "kind_scope": row.get::<_, String>(2)?,
+                    "parent_id": row.get::<_, Option<String>>(3)?,
+                    "is_archived": row.get::<_, i64>(4)? != 0,
+                });
+                Ok(bootstrap_operation(payload))
+            })? {
+                operations.push((0, row?));
+            }
+        }
+        if table_has_column(&self.connection, "tags", "name")? {
+            let mut tags = self
+                .connection
+                .prepare("SELECT id, name, is_archived FROM tags ORDER BY id")?;
+            for row in tags.query_map([], |row| {
+                let payload = serde_json::json!({
+                    "schema_version": 1,
+                    "operation": "upsert",
+                    "entity_type": "tag",
+                    "entity_id": row.get::<_, String>(0)?,
+                    "name": row.get::<_, String>(1)?,
+                    "is_archived": row.get::<_, i64>(2)? != 0,
+                });
+                Ok(bootstrap_operation(payload))
+            })? {
+                operations.push((0, row?));
+            }
+        }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
                     value_date, payee, description, category_id, note, source
@@ -646,6 +685,13 @@ mod tests {
             .execute_batch(
                 "PRAGMA foreign_keys = ON;
                  CREATE TABLE accounts (id TEXT PRIMARY KEY, currency TEXT NOT NULL);
+                 CREATE TABLE categories (
+                   id TEXT PRIMARY KEY, name TEXT NOT NULL, kind_scope TEXT NOT NULL,
+                   parent_id TEXT, is_archived INTEGER NOT NULL DEFAULT 0
+                 );
+                 CREATE TABLE tags (
+                   id TEXT PRIMARY KEY, name TEXT NOT NULL, is_archived INTEGER NOT NULL DEFAULT 0
+                 );
                  CREATE TABLE transactions (
                    id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL,
                    account_id TEXT NOT NULL REFERENCES accounts(id), amount_minor TEXT NOT NULL,
@@ -672,7 +718,10 @@ mod tests {
                    ) THEN RAISE(ABORT, 'invalid transfer legs') END;
                  END;
                  INSERT INTO accounts (id, currency) VALUES
-                   ('account-synthetic', 'EUR'), ('account-second', 'EUR');",
+                   ('account-synthetic', 'EUR'), ('account-second', 'EUR');
+                 INSERT INTO categories (id, name, kind_scope) VALUES
+                   ('category-synthetic', 'Synthetic', 'expense');
+                 INSERT INTO tags (id, name) VALUES ('tag-synthetic', 'Synthetic');",
             )
             .unwrap();
         SqliteSyncOperationStore::open(path).unwrap()
@@ -774,9 +823,22 @@ mod tests {
         store
             .push("delivery-valid", [operation("op-valid", 0)])
             .unwrap();
-        assert_eq!(store.bootstrap().unwrap().schema_version, 1);
-        assert_eq!(store.bootstrap().unwrap().cursor, 1);
-        assert_eq!(store.bootstrap().unwrap().operations.len(), 1);
+        let bootstrap = store.bootstrap().unwrap();
+        assert_eq!(bootstrap.schema_version, 1);
+        assert_eq!(bootstrap.cursor, 1);
+        assert_eq!(bootstrap.operations.len(), 3);
+        assert!(
+            bootstrap
+                .operations
+                .iter()
+                .any(|(_, operation)| operation.payload.contains("category-synthetic"))
+        );
+        assert!(
+            bootstrap
+                .operations
+                .iter()
+                .any(|(_, operation)| operation.payload.contains("tag-synthetic"))
+        );
     }
 
     #[test]
