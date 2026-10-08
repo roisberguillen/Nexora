@@ -4,7 +4,7 @@ Schermata: N/A — sincronizzazione Local Hub e repository remoto
 Route: N/A — nessuna route UI modificata
 Flusso principale: N/A — modifica a protocollo, adapter e test di persistenza
 Reviewer/fase: Codex — remote-mobile-host HTTP E2E
-Modifiche: aggiunti test HTTP reali e supporto alle mutazioni composte/import batch; nessun componente UI, stile o route è stato modificato.
+Modifiche: aggiunti test HTTP reali e supporto alle mutazioni composte/import batch; nessun componente UI, stile o route è stato modificato. Formattazione documentale corretta dopo il gate.
 
 | Area | Superficie | Esito | Evidenza |
 |---|---|---|---|

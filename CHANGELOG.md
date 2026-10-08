@@ -984,4 +984,5 @@
   annullamento transazione, mantenendo operation elementari ricostruibili dal client remoto.
 - `remote-mobile-host`: aggiunti payload e apply host per lo stato `transaction_trash`,
   inclusi bootstrap, outbox PC e journal SQLite con identità stabile per transazione.
+
 ## Unreleased

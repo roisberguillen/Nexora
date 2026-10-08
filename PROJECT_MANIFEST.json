@@ -1098,6 +1098,11 @@
       "sha256": "585463dfa47b145a6f498b1218d688920c43b925cffb9d9f480d3ef079bb575e"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-08-remote-sync.md",
+      "size": 1343,
+      "sha256": "c01e7d91e3b0ac4fa7413fd8ccb86ec1a8cc5ca12f187bec6d190335035121a2"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -2964,8 +2969,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 68898,
-      "sha256": "c467b8f7099200de8d2855121521dd281df32bd419e6d401308124c30cb39b26"
+      "size": 68897,
+      "sha256": "759636855ced9681fecbe73f813ff68b4305f43e289e3b7ac81cc0432146ebed"
     },
     {
       "path": "design/mockup/README.md",
