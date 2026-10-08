@@ -1689,13 +1689,13 @@
     },
     {
       "path": "apps/local-hub/Cargo.lock",
-      "size": 30895,
-      "sha256": "cbaa7f112dc5bad7862c21ff55a262955bff9f8558fc9d7d56f3b848a5eed3b4"
+      "size": 45606,
+      "sha256": "af709ed415f86ef0997e52cdb64d4a81b3ffa8c9266b9cd4bb6174f9bb58ef5c"
     },
     {
       "path": "apps/local-hub/Cargo.toml",
-      "size": 637,
-      "sha256": "ded62d81497b19e98e7de0936b14736fd790b305e48a181478d283c01013e6b0"
+      "size": 729,
+      "sha256": "b98d5d9a995c305aa32e5199353fe03b19f689f181aae1332228a67a13d8b144"
     },
     {
       "path": "apps/local-hub/README.md",
@@ -1704,13 +1704,13 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 100355,
-      "sha256": "3e6938f428516953787a37b9471f0bd93ce28c9fd2cb2f861f6853d3e78a9933"
+      "size": 123333,
+      "sha256": "643e8a3bac03f65a5a98e47c295867c9dc108976efe553a1479da565528725c0"
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 107184,
-      "sha256": "2cc1efc63be2682a6c164fbdc8fb7376b76ee72e85ce59cfc6562cfa4d00e4df"
+      "size": 117710,
+      "sha256": "64ec2c11969898b792ee5fbed25c4991009fbaa1e2f87d2e6a71decdef30576e"
     },
     {
       "path": "apps/web/index.html",
@@ -2674,13 +2674,13 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.test.ts",
-      "size": 17090,
-      "sha256": "23813eddc261fd5e7e09a1dd57e3e4b215570af762675560616c5e0e552bb266"
+      "size": 20269,
+      "sha256": "8ed4b60aac15a160ab0a3f524c1a53b3af6635bd20ad2fce15cded66f10179ef"
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 47376,
-      "sha256": "7318d18cde033caabc6c2e99cdc4793352d90b8badae98ca291ecf51e6688b29"
+      "size": 54623,
+      "sha256": "8f3df014d1cf9f1b5c4f15e190d13992cb18891b72fb03b4dfc9be02f977c249"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
@@ -2964,8 +2964,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 68558,
-      "sha256": "cd793ba334bfb19b0720478aff94557149f06ad56181c0f3eac8d779b7a7ced2"
+      "size": 68898,
+      "sha256": "c467b8f7099200de8d2855121521dd281df32bd419e6d401308124c30cb39b26"
     },
     {
       "path": "design/mockup/README.md",
@@ -3239,8 +3239,8 @@
     },
     {
       "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
-      "size": 4602,
-      "sha256": "6ab6808ad52815568bb8a24d5fd7269bf5ea06aff2a37cba412b0147947e4b8c"
+      "size": 5667,
+      "sha256": "e0b418f850271aedf7837e19d4e8394086686e07765dab270b3aebb9ba319bec"
     },
     {
       "path": "docs/reports/final-verification.md",
@@ -3599,8 +3599,8 @@
     },
     {
       "path": "packages/database/src/in-memory/InMemoryLedgerRepository.ts",
-      "size": 46290,
-      "sha256": "bbbd44e2a35259f52ae9b3bf8cdc1af3a1288ea74a74ca6fdfee610f7276ea76"
+      "size": 46981,
+      "sha256": "e89675309b877379982ce21dee6d8ee44317de9d0db91682e3d2a408465a0b6a"
     },
     {
       "path": "packages/database/src/index.ts",
@@ -3614,8 +3614,8 @@
     },
     {
       "path": "packages/database/src/indexeddb/IndexedDbLedgerRepository.ts",
-      "size": 105723,
-      "sha256": "afcd559902f2f9925b740b725a1198d77358acf39e6bf2b799d6e1da61b485d5"
+      "size": 107088,
+      "sha256": "fd5dfd69cc67eee0e90e71c7cf5b21a7bd05d1e0685c7353fdcaa8edf688b408"
     },
     {
       "path": "packages/database/src/indexeddb/openIndexedDbLedger.ts",
@@ -3854,8 +3854,8 @@
     },
     {
       "path": "packages/database/src/sqlite/SqliteLedgerRepository.ts",
-      "size": 107910,
-      "sha256": "b33404b15511ca89fe6087cfa124b858167a43d60e503749231acc1f3333634f"
+      "size": 112596,
+      "sha256": "7dca67bbc94142b00d2d35d884dbaf33248e489ad34079f7079f74f68ed5be61"
     },
     {
       "path": "packages/database/tsconfig.json",
@@ -4019,8 +4019,8 @@
     },
     {
       "path": "packages/domain/src/repositories/LedgerRepository.ts",
-      "size": 6236,
-      "sha256": "a9d1db561e96c9b3a6b9b8a7a1b2b8f349d699fb7fdabf545e3149472c0efe2b"
+      "size": 6416,
+      "sha256": "d1af946ee6bd64071905a6dcaf15fd88e24a9b0a8d008381e83aa69a4001fa07"
     },
     {
       "path": "packages/domain/src/services/accountHierarchy.test.ts",

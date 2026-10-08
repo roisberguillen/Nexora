@@ -352,17 +352,34 @@ export class InMemoryLedgerRepository implements LedgerRepository {
     this.importBatches.set(batch.id, batch);
     for (const row of rows) this.importRows.set(row.id, row);
   }
+  public async upsertImportBatch(
+    batch: ImportBatch,
+    rows: readonly ImportRow[] = [],
+  ): Promise<void> {
+    this.importBatches.set(batch.id, batch);
+    for (const row of rows) {
+      if (row.batchId !== batch.id)
+        throw new DomainError("invalid_import", "Import row batch mismatch.");
+      this.importRows.set(row.id, row);
+    }
+  }
   public async commitImportBatch(plan: ImportCommitPlan): Promise<ImportBatch> {
     return this.runAtomically(async () => {
       const { batch, rows, transactions } = plan;
       const transferBundles = plan.transferBundles ?? [];
       const committed = validateImportCommit(batch, rows, transactions, transferBundles);
-      this.assertNew(this.importBatches, batch.id, "Import batch");
+      const existingBatch = this.importBatches.get(batch.id);
+      if (existingBatch !== undefined && existingBatch.status !== "previewed")
+        throw new DomainError("duplicate_entity", "Import batch id already exists.");
       validateAccountHierarchy([...this.accounts.values(), ...(plan.accountsToCreate ?? [])]);
       for (const account of sortAccountsParentFirst(plan.accountsToCreate ?? []))
         await this.saveAccount(account);
       for (const category of plan.categoriesToCreate ?? []) await this.saveCategory(category);
-      for (const row of rows) this.assertNew(this.importRows, row.id, "Import row");
+      for (const row of rows) {
+        const existingRow = this.importRows.get(row.id);
+        if (existingRow !== undefined && existingRow.batchId !== row.batchId)
+          throw new DomainError("duplicate_entity", "Import row id already exists.");
+      }
       const transferTransactions = transferBundles.flatMap((bundle) => [
         bundle.debitTransaction,
         bundle.creditTransaction,

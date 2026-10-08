@@ -858,10 +858,43 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
               throw new DomainError("invalid_import", "Import batch rows are invalid.");
             const batches = transaction.objectStore("import_batches");
             const importRows = transaction.objectStore("import_rows");
-            await this.assertNew(batches, batch.id, "Import batch");
-            for (const row of rows) await this.assertNew(importRows, row.id, "Import row");
+            const storedBatch = await requestResult<unknown>(batches.get(batch.id));
+            if (
+              storedBatch !== undefined &&
+              importBatchFromRecord(storedBatch as ImportBatchRecord).status !== "previewed"
+            )
+              throw new DomainError("duplicate_entity", "Import batch id already exists.");
+            for (const row of rows) {
+              const storedRow = await requestResult<unknown>(importRows.get(row.id));
+              if (
+                storedRow !== undefined &&
+                (storedRow as ImportRowRecord).batch_id !== row.batchId
+              )
+                throw new DomainError("duplicate_entity", "Import row id already exists.");
+            }
             await requestResult(batches.add(importBatchToRecord(batch)));
             for (const row of rows) await requestResult(importRows.add(importRowToRecord(row)));
+          },
+        ),
+      ),
+    );
+  }
+  public upsertImportBatch(batch: ImportBatch, rows: readonly ImportRow[] = []): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withTransaction(
+          ["import_batches", "import_rows"],
+          "readwrite",
+          async (transaction) => {
+            if (rows.some((row) => row.batchId !== batch.id))
+              throw new DomainError("invalid_import", "Import row batch mismatch.");
+            await requestResult(
+              transaction.objectStore("import_batches").put(importBatchToRecord(batch)),
+            );
+            for (const row of rows)
+              await requestResult(
+                transaction.objectStore("import_rows").put(importRowToRecord(row)),
+              );
           },
         ),
       ),
@@ -921,12 +954,12 @@ export class IndexedDbLedgerRepository implements LedgerRepository {
               )
                 throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
             }
-            await requestResult(batches.add(importBatchToRecord(committed)));
+            await requestResult(batches.put(importBatchToRecord(committed)));
             for (const ledgerTransaction of allTransactions)
               await requestResult(storedTransactions.add(transactionToRecord(ledgerTransaction)));
             for (const bundle of transferBundles)
               await requestResult(transfers.add(transferToRecord(bundle.transfer)));
-            for (const row of rows) await requestResult(importRows.add(importRowToRecord(row)));
+            for (const row of rows) await requestResult(importRows.put(importRowToRecord(row)));
             return committed;
           },
         ),

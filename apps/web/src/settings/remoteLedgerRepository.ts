@@ -7,6 +7,7 @@ import type {
   LedgerRepository,
   Loan,
   MonthlyJournal,
+  ImportCommitPlan,
   RecurringRule,
   Tag,
   Transaction,
@@ -27,6 +28,9 @@ import {
   RecurringRule as DomainRecurringRule,
   Transfer as DomainTransfer,
   Transaction as DomainTransaction,
+  ImportBatch,
+  ImportRow,
+  validateImportCommit,
 } from "@nexora/domain";
 
 import type { LocalSyncOperation } from "./localHostSync";
@@ -282,6 +286,9 @@ const supportedRemoteMutations = new Set([
   "restoreTransaction",
   "purgeTrashedTransaction",
   "purgeTrashedTransactions",
+  "saveImportBatch",
+  "commitImportBatch",
+  "undoImportBatch",
 ]);
 
 async function operationForMutation(
@@ -334,6 +341,143 @@ async function operationForMutation(
         client,
       ),
     ];
+  }
+  if (method === "saveImportBatch") {
+    const batch = args[0] as ImportBatch;
+    const rows = (args[1] as readonly ImportRow[]) ?? [];
+    return [
+      await operationFromPayload(
+        batch.id,
+        JSON.stringify(importBatchPayload(batch)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+      ...(await Promise.all(
+        rows.map((row) =>
+          operationFromPayload(
+            row.id,
+            JSON.stringify(importRowPayload(row)),
+            false,
+            deviceId,
+            revisions,
+            client,
+          ),
+        ),
+      )),
+    ];
+  }
+  if (method === "commitImportBatch") {
+    const plan = args[0] as ImportCommitPlan;
+    const committed = validateImportCommit(
+      plan.batch,
+      plan.rows,
+      plan.transactions,
+      plan.transferBundles ?? [],
+    );
+    const operations: LocalSyncOperation[] = [
+      await operationFromPayload(
+        committed.id,
+        JSON.stringify(importBatchPayload(committed)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+    ];
+    for (const account of plan.accountsToCreate ?? [])
+      operations.push(
+        await operationFromPayload(
+          account.id,
+          JSON.stringify(accountPayload(account)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    for (const category of plan.categoriesToCreate ?? [])
+      operations.push(
+        await operationFromPayload(
+          category.id,
+          JSON.stringify(categoryPayload(category)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    const importedTransactions = [
+      ...plan.transactions,
+      ...(plan.transferBundles ?? []).flatMap((bundle) => [
+        bundle.debitTransaction,
+        bundle.creditTransaction,
+      ]),
+    ];
+    for (const transaction of importedTransactions)
+      operations.push(
+        await operationFromPayload(
+          transaction.id,
+          JSON.stringify(transactionPayload(transaction)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    for (const bundle of plan.transferBundles ?? [])
+      operations.push(
+        await operationFromPayload(
+          bundle.transfer.id,
+          transferPayload(bundle),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    for (const row of plan.rows)
+      operations.push(
+        await operationFromPayload(
+          row.id,
+          JSON.stringify(importRowPayload(row)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    return operations;
+  }
+  if (method === "undoImportBatch") {
+    const batchId = String(args[0]);
+    const batch = await repository.findImportBatchById(batchId);
+    if (batch === undefined) return undefined;
+    const operations: LocalSyncOperation[] = [
+      await operationFromPayload(
+        batch.id,
+        JSON.stringify(importBatchPayload(batch)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+    ];
+    for (const transaction of (await repository.listTransactions()).filter(
+      (candidate) => candidate.importBatchId === batchId,
+    ))
+      operations.push(
+        await operationFromPayload(
+          transaction.id,
+          JSON.stringify(transactionPayload(transaction)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    return operations;
   }
   if (method === "mergeCategory") {
     const sourceId = String(args[0]);
@@ -909,6 +1053,47 @@ function transactionPayload(transaction: Transaction): Record<string, unknown> {
     ...(transaction.categoryId === undefined ? {} : { category_id: transaction.categoryId }),
     ...(transaction.note === undefined ? {} : { note: transaction.note }),
     source: transaction.source,
+    ...(transaction.importBatchId === undefined
+      ? {}
+      : { import_batch_id: transaction.importBatchId }),
+    ...(transaction.sourceFingerprint === undefined
+      ? {}
+      : { source_fingerprint: transaction.sourceFingerprint }),
+  };
+}
+
+function importBatchPayload(batch: ImportBatch): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "import_batch",
+    entity_id: batch.id,
+    importer_type: batch.importerType,
+    source_filename: batch.sourceFilename,
+    source_sha256: batch.sourceSha256,
+    mapping_profile_id: batch.mappingProfileId ?? null,
+    status: batch.status,
+    rows_total: batch.rowsTotal,
+    rows_imported: batch.rowsImported,
+    rows_skipped: batch.rowsSkipped,
+    rows_failed: batch.rowsFailed,
+  };
+}
+
+function importRowPayload(row: ImportRow): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "import_row",
+    entity_id: row.id,
+    batch_id: row.batchId,
+    row_number: row.rowNumber,
+    raw_json: row.rawJson,
+    normalized_json: row.normalizedJson ?? null,
+    status: row.status,
+    error_code: row.errorCode ?? null,
+    created_transaction_id: row.createdTransactionId ?? null,
+    deleted_transaction_id: row.deletedTransactionId ?? null,
   };
 }
 
@@ -1330,6 +1515,54 @@ async function applyRemoteOperation(
     else await repository.saveMonthlyJournal(value);
     return;
   }
+  if (payload.entity_type === "import_batch") {
+    const batch = ImportBatch.create({
+      id: operation.entityId,
+      importerType: String(payload.importer_type) as ImportBatch["importerType"],
+      sourceFilename: String(payload.source_filename),
+      sourceSha256: String(payload.source_sha256),
+      ...(payload.mapping_profile_id == null
+        ? {}
+        : { mappingProfileId: String(payload.mapping_profile_id) }),
+      status: String(payload.status) as ImportBatch["status"],
+      rowsTotal: Number(payload.rows_total),
+      rowsImported: Number(payload.rows_imported ?? 0),
+      rowsSkipped: Number(payload.rows_skipped ?? 0),
+      rowsFailed: Number(payload.rows_failed ?? 0),
+    });
+    const existingRows = await repository.listImportRows(batch.id);
+    await repository.upsertImportBatch(batch, existingRows);
+    return;
+  }
+  if (payload.entity_type === "import_row") {
+    const row = ImportRow.create({
+      id: operation.entityId,
+      batchId: String(payload.batch_id),
+      rowNumber: Number(payload.row_number),
+      rawJson: String(payload.raw_json),
+      ...(payload.normalized_json == null
+        ? {}
+        : { normalizedJson: String(payload.normalized_json) }),
+      status: String(payload.status) as ImportRow["status"],
+      ...(payload.error_code == null ? {} : { errorCode: String(payload.error_code) }),
+      ...(payload.created_transaction_id == null
+        ? {}
+        : { createdTransactionId: String(payload.created_transaction_id) }),
+      ...(payload.deleted_transaction_id == null
+        ? {}
+        : { deletedTransactionId: String(payload.deleted_transaction_id) }),
+    });
+    if (payload.operation === "delete") return;
+    const batch = await repository.findImportBatchById(row.batchId);
+    if (batch)
+      await repository.upsertImportBatch(batch, [
+        ...(await repository
+          .listImportRows(row.batchId)
+          .then((rows) => rows.filter((candidate) => candidate.id !== row.id))),
+        row,
+      ]);
+    return;
+  }
   if (payload.entity_type === "transaction_tag_set") {
     const tagIds = Array.isArray(payload.tag_ids) ? payload.tag_ids.map(String) : [];
     await repository.setTransactionTags(operation.entityId, [...new Set(tagIds)]);
@@ -1400,6 +1633,12 @@ async function applyRemoteOperation(
     ...(payload.description === undefined ? {} : { description: String(payload.description) }),
     ...(payload.category_id === undefined ? {} : { categoryId: String(payload.category_id) }),
     ...(payload.note === undefined ? {} : { note: String(payload.note) }),
+    ...(payload.import_batch_id === undefined
+      ? {}
+      : { importBatchId: String(payload.import_batch_id) }),
+    ...(payload.source_fingerprint === undefined
+      ? {}
+      : { sourceFingerprint: String(payload.source_fingerprint) }),
   });
   if (await repository.findTransactionById(transaction.id))
     await repository.updateTransaction(transaction);

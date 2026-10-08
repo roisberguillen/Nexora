@@ -1506,7 +1506,7 @@ pub struct ReplicableOperation {
     pub created_at: String,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub enum OperationApplyResult {
     Applied { cursor: u64, revision: u64 },
     Duplicate { cursor: u64, revision: u64 },
@@ -2320,7 +2320,8 @@ mod tests {
                    account_id TEXT NOT NULL REFERENCES accounts(id), amount_minor TEXT NOT NULL,
                    currency TEXT NOT NULL, booked_date TEXT NOT NULL, value_date TEXT,
                    payee TEXT, description TEXT, category_id TEXT, note TEXT,
-                   source TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT ''
+                   source TEXT NOT NULL, import_batch_id TEXT, source_fingerprint TEXT,
+                   updated_at TEXT NOT NULL DEFAULT ''
                  );
                  INSERT INTO accounts (id, currency) VALUES ('account-http', 'EUR');",
             )
@@ -2526,6 +2527,565 @@ mod tests {
         assert_eq!(snapshot.schema_version, 1);
         assert_eq!(snapshot.cursor, 3);
         assert_eq!(snapshot.operations.len(), 3);
+    }
+
+    async fn http_push(
+        client: &reqwest::Client,
+        base_url: &str,
+        device_id: &str,
+        token: &str,
+        delivery_id: &str,
+        operations: Vec<ReplicableOperation>,
+    ) -> Vec<OperationApplyResult> {
+        let response = client
+            .post(format!("{base_url}/v1/operations"))
+            .bearer_auth(token)
+            .header("x-nexora-device-id", device_id)
+            .json(&PushOperationsRequest {
+                delivery_id: delivery_id.to_owned(),
+                operations,
+            })
+            .send()
+            .await
+            .unwrap();
+        let status = response.status();
+        let body = response.text().await.unwrap();
+        assert_eq!(status, StatusCode::OK, "HTTP push failed: {body}");
+        serde_json::from_str(&body).unwrap()
+    }
+
+    fn http_operation(
+        device_id: &str,
+        key: &str,
+        entity_id: &str,
+        base_revision: u64,
+        payload: &str,
+        tombstone: bool,
+    ) -> ReplicableOperation {
+        ReplicableOperation {
+            idempotency_key: key.to_owned(),
+            device_id: device_id.to_owned(),
+            entity_id: entity_id.to_owned(),
+            base_revision,
+            revision: base_revision + 1,
+            payload_digest: format!(
+                "sha256:{}",
+                Sha256::digest(payload.as_bytes())
+                    .iter()
+                    .map(|byte| format!("{byte:02x}"))
+                    .collect::<String>()
+            ),
+            payload: payload.to_owned(),
+            tombstone,
+            created_at: "2026-10-08T00:00:00Z".to_owned(),
+        }
+    }
+
+    #[tokio::test]
+    async fn real_http_composed_mutations_imports_conflict_retry_and_restart_converge() {
+        let directory = tempfile::tempdir().unwrap();
+        let database_path = directory.path().join("nexora.db");
+        let connection = Connection::open(&database_path).unwrap();
+        connection
+            .execute_batch(
+                "PRAGMA foreign_keys = ON;
+                 CREATE TABLE accounts (id TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL, institution TEXT, currency TEXT NOT NULL, parent_account_id TEXT, opening_balance_minor TEXT NOT NULL, is_archived INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL DEFAULT '');
+                 CREATE TABLE categories (id TEXT PRIMARY KEY, name TEXT NOT NULL, kind_scope TEXT NOT NULL, parent_id TEXT, is_archived INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL DEFAULT '');
+                 CREATE TABLE tags (id TEXT PRIMARY KEY, name TEXT NOT NULL, is_archived INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL DEFAULT '');
+                 CREATE TABLE transactions (id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL, account_id TEXT NOT NULL REFERENCES accounts(id), amount_minor TEXT NOT NULL, currency TEXT NOT NULL, booked_date TEXT NOT NULL, value_date TEXT, payee TEXT, description TEXT, category_id TEXT REFERENCES categories(id), note TEXT, source TEXT NOT NULL, import_batch_id TEXT REFERENCES import_batches(id), source_fingerprint TEXT, updated_at TEXT NOT NULL DEFAULT '');
+                 CREATE TABLE transaction_tags (transaction_id TEXT NOT NULL REFERENCES transactions(id), tag_id TEXT NOT NULL REFERENCES tags(id), PRIMARY KEY (transaction_id, tag_id));
+                 CREATE TABLE transaction_trash (transaction_id TEXT PRIMARY KEY REFERENCES transactions(id), deleted_at TEXT NOT NULL, deletion_group_id TEXT NOT NULL);
+                 CREATE TABLE import_batches (id TEXT PRIMARY KEY, importer_type TEXT NOT NULL, importer_type_v2 TEXT NOT NULL, importer_type_v3 TEXT NOT NULL, importer_type_v4 TEXT NOT NULL, source_filename TEXT NOT NULL, source_sha256 TEXT NOT NULL, mapping_profile_id TEXT, status TEXT NOT NULL, started_at TEXT NOT NULL, completed_at TEXT, rows_total INTEGER NOT NULL, rows_imported INTEGER NOT NULL, rows_skipped INTEGER NOT NULL, rows_failed INTEGER NOT NULL);
+                 CREATE TABLE import_rows (id TEXT PRIMARY KEY, batch_id TEXT NOT NULL REFERENCES import_batches(id), row_number INTEGER NOT NULL, raw_json TEXT NOT NULL, normalized_json TEXT, status TEXT NOT NULL, error_code TEXT, created_transaction_id TEXT REFERENCES transactions(id), deleted_transaction_id TEXT);
+                 INSERT INTO accounts VALUES ('account-http', 'Main', 'checking', NULL, 'EUR', NULL, '0', 0, '');
+                 INSERT INTO categories (id, name, kind_scope, parent_id, is_archived) VALUES ('category-a', 'A', 'expense', NULL, 0), ('category-b', 'B', 'expense', NULL, 0);
+                 INSERT INTO tags (id, name, is_archived) VALUES ('tag-a', 'A', 0), ('tag-b', 'B', 0);
+                 INSERT INTO transactions (id, kind, status, account_id, amount_minor, currency, booked_date, source) VALUES ('transaction-http', 'expense', 'booked', 'account-http', '-100', 'EUR', '2026-10-08', 'manual');
+                 INSERT INTO transaction_tags VALUES ('transaction-http', 'tag-a');",
+            )
+            .unwrap();
+        drop(connection);
+
+        let mut state = LocalHubState::default();
+        state.durable_sync = Some(Arc::new(Mutex::new(
+            SqliteSyncOperationStore::open(&database_path).unwrap(),
+        )));
+        let device_id = "pc-http-e2e";
+        let token = "pc-http-e2e-token-123456";
+        state.pairing.write().await.add_qr_grant(
+            "grant-http-e2e",
+            "code-http-e2e",
+            "sha256:host",
+            now_ms() + 60_000,
+        );
+        state
+            .pairing
+            .write()
+            .await
+            .redeem(
+                "grant-http-e2e",
+                "code-http-e2e",
+                device_id,
+                token,
+                "sha256:host",
+                now_ms(),
+            )
+            .unwrap();
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move {
+            axum::serve(listener, router(state)).await.unwrap();
+        });
+        let client = reqwest::Client::new();
+        let bootstrap = client
+            .get(format!("{base_url}/v1/bootstrap"))
+            .bearer_auth(token)
+            .header("x-nexora-device-id", device_id)
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(bootstrap.status(), StatusCode::OK);
+        let bootstrap: SyncBootstrapSnapshot = bootstrap.json().await.unwrap();
+        assert_eq!(bootstrap.cursor, 0);
+
+        let target_category = http_operation(
+            device_id,
+            "merge-category-target",
+            "category-b",
+            0,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"category","entity_id":"category-b","name":"B","kind_scope":"expense","parent_id":null,"is_archived":false}"#,
+            false,
+        );
+        let transaction_category = http_operation(
+            device_id,
+            "merge-category-transaction",
+            "transaction-http",
+            0,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction","entity_id":"transaction-http","amount_minor":"-100","currency":"EUR","kind":"expense","status":"booked","account_id":"account-http","booked_date":"2026-10-08","category_id":"category-b","source":"manual"}"#,
+            false,
+        );
+        let delete_category = http_operation(
+            device_id,
+            "merge-category-source",
+            "category-a",
+            0,
+            r#"{"schema_version":1,"operation":"delete","entity_type":"category","entity_id":"category-a"}"#,
+            true,
+        );
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-merge-category",
+                vec![transaction_category, delete_category, target_category]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+
+        let merge_tag = http_operation(
+            device_id,
+            "merge-tag-relations",
+            "transaction-http",
+            0,
+            r#"{"schema_version":1,"operation":"replace","entity_type":"transaction_tag_set","entity_id":"transaction-http","tag_ids":["tag-b"]}"#,
+            false,
+        );
+        let delete_tag = http_operation(
+            device_id,
+            "merge-tag-source",
+            "tag-a",
+            0,
+            r#"{"schema_version":1,"operation":"delete","entity_type":"tag","entity_id":"tag-a"}"#,
+            true,
+        );
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-merge-tag",
+                vec![merge_tag, delete_tag]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+        let remove_tag = http_operation(
+            device_id,
+            "remove-tag-relations",
+            "transaction-http",
+            1,
+            r#"{"schema_version":1,"operation":"replace","entity_type":"transaction_tag_set","entity_id":"transaction-http","tag_ids":[]}"#,
+            false,
+        );
+        let remove_tag_source = http_operation(
+            device_id,
+            "remove-tag-source",
+            "tag-b",
+            0,
+            r#"{"schema_version":1,"operation":"delete","entity_type":"tag","entity_id":"tag-b"}"#,
+            true,
+        );
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-remove-tag",
+                vec![remove_tag, remove_tag_source]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+
+        let cancel_payload = r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction","entity_id":"transaction-http","amount_minor":"-100","currency":"EUR","kind":"expense","status":"cancelled","account_id":"account-http","booked_date":"2026-10-08","source":"manual"}"#;
+        let cancel = http_operation(
+            device_id,
+            "cancel-transaction",
+            "transaction-http",
+            1,
+            cancel_payload,
+            false,
+        );
+        let cancel_results = http_push(
+            &client,
+            &base_url,
+            device_id,
+            token,
+            "delivery-cancel",
+            vec![cancel.clone()],
+        )
+        .await;
+        assert!(matches!(
+            cancel_results.as_slice(),
+            [OperationApplyResult::Applied { .. }]
+        ));
+        let retry_results = http_push(
+            &client,
+            &base_url,
+            device_id,
+            token,
+            "delivery-cancel-retry",
+            vec![cancel],
+        )
+        .await;
+        assert!(matches!(
+            retry_results.as_slice(),
+            [OperationApplyResult::Duplicate { .. }]
+        ));
+
+        let conflict = http_operation(
+            device_id,
+            "cancel-conflict",
+            "transaction-http",
+            0,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction","entity_id":"transaction-http","amount_minor":"-100","currency":"EUR","kind":"expense","status":"booked","account_id":"account-http","booked_date":"2026-10-08","source":"manual"}"#,
+            false,
+        );
+        let conflict_results = http_push(
+            &client,
+            &base_url,
+            device_id,
+            token,
+            "delivery-conflict",
+            vec![conflict],
+        )
+        .await;
+        assert!(matches!(
+            conflict_results.as_slice(),
+            [OperationApplyResult::Conflict { .. }]
+        ));
+
+        let trash = http_operation(
+            device_id,
+            "trash-transaction",
+            "transaction-http",
+            0,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction_trash","entity_id":"transaction-http","deletion_group_id":"transaction:transaction-http","deleted_at":"2026-10-08T00:00:00Z"}"#,
+            false,
+        );
+        assert!(matches!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-trash",
+                vec![trash]
+            )
+            .await
+            .as_slice(),
+            [OperationApplyResult::Applied { .. }]
+        ));
+        let restore = http_operation(
+            device_id,
+            "restore-transaction",
+            "transaction-http",
+            1,
+            r#"{"schema_version":1,"operation":"delete","entity_type":"transaction_trash","entity_id":"transaction-http"}"#,
+            true,
+        );
+        assert!(matches!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-restore",
+                vec![restore]
+            )
+            .await
+            .as_slice(),
+            [OperationApplyResult::Applied { .. }]
+        ));
+        let trash_again = http_operation(
+            device_id,
+            "trash-again",
+            "transaction-http",
+            2,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction_trash","entity_id":"transaction-http","deletion_group_id":"transaction:transaction-http","deleted_at":"2026-10-08T00:00:00Z"}"#,
+            false,
+        );
+        assert!(matches!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-trash-again",
+                vec![trash_again]
+            )
+            .await
+            .as_slice(),
+            [OperationApplyResult::Applied { .. }]
+        ));
+        let purge = http_operation(
+            device_id,
+            "purge-transaction",
+            "transaction-http",
+            2,
+            r#"{"schema_version":1,"operation":"delete","entity_type":"transaction","entity_id":"transaction-http"}"#,
+            true,
+        );
+        let purge_trash = http_operation(
+            device_id,
+            "purge-transaction-trash",
+            "transaction-http",
+            3,
+            r#"{"schema_version":1,"operation":"delete","entity_type":"transaction_trash","entity_id":"transaction-http"}"#,
+            true,
+        );
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-purge",
+                vec![purge, purge_trash]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+
+        let batch_payload = r#"{"schema_version":1,"operation":"upsert","entity_type":"import_batch","entity_id":"batch-http","importer_type":"money_manager_xlsx","source_filename":"sample.xlsx","source_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"previewed","rows_total":1,"rows_imported":0,"rows_skipped":0,"rows_failed":0}"#;
+        let row_payload = r#"{"schema_version":1,"operation":"upsert","entity_type":"import_row","entity_id":"row-http","batch_id":"batch-http","row_number":1,"raw_json":"{\"amount\":\"-5\"}","normalized_json":"{\"accountId\":\"account-http\"}","status":"imported","created_transaction_id":"imported-http"}"#;
+        let save_batch = http_operation(
+            device_id,
+            "save-batch",
+            "batch-http",
+            0,
+            batch_payload,
+            false,
+        );
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-save-batch",
+                vec![save_batch]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+        let import_transaction = http_operation(
+            device_id,
+            "import-transaction",
+            "imported-http",
+            0,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction","entity_id":"imported-http","amount_minor":"-5","currency":"EUR","kind":"expense","status":"booked","account_id":"account-http","booked_date":"2026-10-08","source":"import","import_batch_id":"batch-http","source_fingerprint":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}"#,
+            false,
+        );
+        let commit_batch = http_operation(
+            device_id,
+            "commit-batch",
+            "batch-http",
+            1,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"import_batch","entity_id":"batch-http","importer_type":"money_manager_xlsx","source_filename":"sample.xlsx","source_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"committed","rows_total":1,"rows_imported":1,"rows_skipped":0,"rows_failed":0}"#,
+            false,
+        );
+        let commit_row = http_operation(device_id, "commit-row", "row-http", 0, row_payload, false);
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-commit-batch",
+                vec![commit_batch, import_transaction, commit_row]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+        let undo_batch = http_operation(
+            device_id,
+            "undo-batch",
+            "batch-http",
+            2,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"import_batch","entity_id":"batch-http","importer_type":"money_manager_xlsx","source_filename":"sample.xlsx","source_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"undone","rows_total":1,"rows_imported":1,"rows_skipped":0,"rows_failed":0}"#,
+            false,
+        );
+        let undo_transaction = http_operation(
+            device_id,
+            "undo-imported-transaction",
+            "imported-http",
+            1,
+            r#"{"schema_version":1,"operation":"upsert","entity_type":"transaction","entity_id":"imported-http","amount_minor":"-5","currency":"EUR","kind":"expense","status":"cancelled","account_id":"account-http","booked_date":"2026-10-08","source":"import","import_batch_id":"batch-http","source_fingerprint":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}"#,
+            false,
+        );
+        assert!(
+            http_push(
+                &client,
+                &base_url,
+                device_id,
+                token,
+                "delivery-undo-batch",
+                vec![undo_batch, undo_transaction]
+            )
+            .await
+            .iter()
+            .all(|result| matches!(result, OperationApplyResult::Applied { .. }))
+        );
+
+        let host = Connection::open(&database_path).unwrap();
+        assert_eq!(
+            host.query_row("SELECT count(*) FROM transactions", [], |row| row
+                .get::<_, i64>(0))
+                .unwrap(),
+            1
+        );
+        assert_eq!(
+            host.query_row(
+                "SELECT status FROM transactions WHERE id = 'imported-http'",
+                [],
+                |row| row.get::<_, String>(0)
+            )
+            .unwrap(),
+            "cancelled"
+        );
+        assert_eq!(
+            host.query_row(
+                "SELECT status FROM import_batches WHERE id = 'batch-http'",
+                [],
+                |row| row.get::<_, String>(0)
+            )
+            .unwrap(),
+            "undone"
+        );
+        assert_eq!(
+            host.query_row(
+                "SELECT count(*) FROM import_rows WHERE batch_id = 'batch-http'",
+                [],
+                |row| row.get::<_, i64>(0)
+            )
+            .unwrap(),
+            1
+        );
+        assert!(
+            host.query_row("SELECT count(*) FROM sync_operations", [], |row| row
+                .get::<_, i64>(0))
+                .unwrap()
+                > 0
+        );
+        assert_eq!(
+            host.query_row("PRAGMA integrity_check", [], |row| row.get::<_, String>(0))
+                .unwrap(),
+            "ok"
+        );
+        assert_eq!(
+            host.query_row("SELECT count(*) FROM pragma_foreign_key_check", [], |row| {
+                row.get::<_, i64>(0)
+            })
+            .unwrap(),
+            0
+        );
+
+        let pull = client
+            .get(format!("{base_url}/v1/operations?after=0"))
+            .bearer_auth(token)
+            .header("x-nexora-device-id", device_id)
+            .send()
+            .await
+            .unwrap();
+        let pulled: PullOperationsResponse = pull.json().await.unwrap();
+        let cursor = pulled.operations.last().map(|entry| entry.0).unwrap_or(0);
+        server.abort();
+        let _ = server.await;
+
+        let mut restarted_state = LocalHubState::default();
+        restarted_state.durable_sync = Some(Arc::new(Mutex::new(
+            SqliteSyncOperationStore::open(&database_path).unwrap(),
+        )));
+        restarted_state.pairing.write().await.add_qr_grant(
+            "grant-http-e2e-restart",
+            "code-http-e2e-restart",
+            "sha256:host",
+            now_ms() + 60_000,
+        );
+        restarted_state
+            .pairing
+            .write()
+            .await
+            .redeem(
+                "grant-http-e2e-restart",
+                "code-http-e2e-restart",
+                device_id,
+                token,
+                "sha256:host",
+                now_ms(),
+            )
+            .unwrap();
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let restarted_url = format!("http://{}", listener.local_addr().unwrap());
+        let restarted_server = tokio::spawn(async move {
+            axum::serve(listener, router(restarted_state))
+                .await
+                .unwrap();
+        });
+        let resumed = client
+            .get(format!("{restarted_url}/v1/operations?after={cursor}"))
+            .bearer_auth(token)
+            .header("x-nexora-device-id", device_id)
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(resumed.status(), StatusCode::OK);
+        let resumed: PullOperationsResponse = resumed.json().await.unwrap();
+        assert!(resumed.operations.is_empty());
+        restarted_server.abort();
+        let _ = restarted_server.await;
     }
 
     #[tokio::test]

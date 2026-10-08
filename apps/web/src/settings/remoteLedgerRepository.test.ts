@@ -8,6 +8,8 @@ import {
   Money,
   Transaction,
   Transfer,
+  ImportBatch,
+  ImportRow,
 } from "@nexora/domain";
 import { describe, expect, it, vi } from "vitest";
 
@@ -381,6 +383,95 @@ describe("remote ledger repository", () => {
     expect(new Set(purgeDeletes.map(({ payload }) => payload.entity_id))).toEqual(
       new Set(["transaction-trash-a", "transaction-trash-b"]),
     );
+  });
+
+  it("pushes import preview, commit and undo as durable operations", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const request = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap"))
+        return response({ schema_version: 1, cursor: 0, operations: [] });
+      if (url.endsWith("/v1/operations")) {
+        const body = JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] };
+        return response(
+          body.operations.map((candidate) => ({
+            Applied: { cursor: 1, revision: candidate.revision },
+          })),
+        );
+      }
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-1", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    const account = Account.create({
+      id: "account-import",
+      name: "Import",
+      type: "checking",
+      currency: "EUR",
+    });
+    const batch = ImportBatch.create({
+      id: "batch-import",
+      importerType: "generic_csv",
+      sourceFilename: "sample.csv",
+      sourceSha256: "a".repeat(64),
+      rowsTotal: 1,
+    });
+    const row = ImportRow.create({
+      id: "row-import",
+      batchId: batch.id,
+      rowNumber: 1,
+      rawJson: '{"amount":"-5"}',
+      normalizedJson: JSON.stringify({ accountId: account.id }),
+      status: "imported",
+      createdTransactionId: "transaction-import",
+    });
+    const transaction = Transaction.create({
+      id: "transaction-import",
+      kind: "expense",
+      status: "booked",
+      accountId: account.id,
+      amount: Money.fromMinor(-500n, "EUR"),
+      bookedDate: LocalDate.parse("2026-10-08"),
+      source: "import",
+      importBatchId: batch.id,
+      sourceFingerprint: "b".repeat(64),
+    });
+
+    await connection.repository.saveImportBatch(batch, [row]);
+    const committed = batch.commit({ rowsImported: 1, rowsSkipped: 0, rowsFailed: 0 });
+    await connection.repository.commitImportBatch({
+      batch,
+      rows: [row],
+      accountsToCreate: [account],
+      transactions: [transaction],
+    });
+    await connection.repository.undoImportBatch(committed.id);
+
+    const payloads = request.mock.calls
+      .filter(([input]) => String(input).endsWith("/v1/operations"))
+      .flatMap(
+        ([, init]) =>
+          (JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] }).operations,
+      )
+      .map((candidate) => JSON.parse(candidate.payload) as Record<string, unknown>);
+    expect(payloads.map((payload) => `${payload.entity_type}:${payload.operation}`)).toEqual([
+      "import_batch:upsert",
+      "import_row:upsert",
+      "import_batch:upsert",
+      "account:upsert",
+      "transaction:upsert",
+      "import_row:upsert",
+      "import_batch:upsert",
+      "transaction:upsert",
+    ]);
+    await expect(repository.findTransactionById(transaction.id)).resolves.toMatchObject({
+      status: "cancelled",
+    });
   });
 
   it("applies recurring and allocation bootstrap records and pushes updates", async () => {

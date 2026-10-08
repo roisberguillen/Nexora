@@ -150,6 +150,40 @@ struct LedgerOperationPayload {
     deletion_group_id: Option<String>,
     #[serde(default)]
     deleted_at: Option<String>,
+    #[serde(default)]
+    importer_type: Option<String>,
+    #[serde(default)]
+    source_filename: Option<String>,
+    #[serde(default)]
+    source_sha256: Option<String>,
+    #[serde(default)]
+    mapping_profile_id: Option<String>,
+    #[serde(default)]
+    rows_total: Option<i64>,
+    #[serde(default)]
+    rows_imported: Option<i64>,
+    #[serde(default)]
+    rows_skipped: Option<i64>,
+    #[serde(default)]
+    rows_failed: Option<i64>,
+    #[serde(default)]
+    batch_id: Option<String>,
+    #[serde(default)]
+    row_number: Option<i64>,
+    #[serde(default)]
+    raw_json: Option<String>,
+    #[serde(default)]
+    normalized_json: Option<String>,
+    #[serde(default)]
+    error_code: Option<String>,
+    #[serde(default)]
+    created_transaction_id: Option<String>,
+    #[serde(default)]
+    deleted_transaction_id: Option<String>,
+    #[serde(default)]
+    import_batch_id: Option<String>,
+    #[serde(default)]
+    source_fingerprint: Option<String>,
 }
 
 impl SqliteSyncOperationStore {
@@ -523,6 +557,24 @@ impl SqliteSyncOperationStore {
             let mut rows = self.connection.prepare("SELECT id,period,note,next_month_goals,perceived_control FROM monthly_journals ORDER BY id")?;
             for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({"schema_version":1,"operation":"upsert","entity_type":"monthly_journal","entity_id":r.get::<_,String>(0)?,"period":r.get::<_,String>(1)?,"note":r.get::<_,Option<String>>(2)?,"next_month_goals":r.get::<_,Option<String>>(3)?,"perceived_control":r.get::<_,Option<i64>>(4)?}))))? { operations.push((0,row?)); }
         }
+        if table_has_column(&self.connection, "import_batches", "source_sha256")? {
+            let mut rows = self.connection.prepare("SELECT id, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, rows_total, rows_imported, rows_skipped, rows_failed FROM import_batches ORDER BY id")?;
+            for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({
+                "schema_version": 1, "operation": "upsert", "entity_type": "import_batch", "entity_id": r.get::<_, String>(0)?,
+                "importer_type": r.get::<_, String>(1)?, "source_filename": r.get::<_, String>(2)?, "source_sha256": r.get::<_, String>(3)?,
+                "mapping_profile_id": r.get::<_, Option<String>>(4)?, "status": r.get::<_, String>(5)?, "rows_total": r.get::<_, i64>(6)?,
+                "rows_imported": r.get::<_, i64>(7)?, "rows_skipped": r.get::<_, i64>(8)?, "rows_failed": r.get::<_, i64>(9)?
+            }))))? { operations.push((0, row?)); }
+        }
+        if table_has_column(&self.connection, "import_rows", "batch_id")? {
+            let mut rows = self.connection.prepare("SELECT id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id FROM import_rows ORDER BY id")?;
+            for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({
+                "schema_version": 1, "operation": "upsert", "entity_type": "import_row", "entity_id": r.get::<_, String>(0)?,
+                "batch_id": r.get::<_, String>(1)?, "row_number": r.get::<_, i64>(2)?, "raw_json": r.get::<_, String>(3)?,
+                "normalized_json": r.get::<_, Option<String>>(4)?, "status": r.get::<_, String>(5)?, "error_code": r.get::<_, Option<String>>(6)?,
+                "created_transaction_id": r.get::<_, Option<String>>(7)?, "deleted_transaction_id": r.get::<_, Option<String>>(8)?
+            }))))? { operations.push((0, row?)); }
+        }
         if table_has_column(&self.connection, "transaction_tags", "transaction_id")? {
             let mut relations = self.connection.prepare("SELECT transaction_id, json_group_array(tag_id) FROM transaction_tags GROUP BY transaction_id ORDER BY transaction_id")?;
             for row in
@@ -539,7 +591,8 @@ impl SqliteSyncOperationStore {
         }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
-                    value_date, payee, description, category_id, note, source
+                    value_date, payee, description, category_id, note, source,
+                    import_batch_id, source_fingerprint
              FROM transactions ORDER BY id",
         )?;
         for row in transactions.query_map([], |row| {
@@ -560,6 +613,8 @@ impl SqliteSyncOperationStore {
                 "category_id": row.get::<_, Option<String>>(10)?,
                 "note": row.get::<_, Option<String>>(11)?,
                 "source": row.get::<_, String>(12)?,
+                "import_batch_id": row.get::<_, Option<String>>(13)?,
+                "source_fingerprint": row.get::<_, Option<String>>(14)?,
             });
             Ok(bootstrap_operation(payload))
         })? {
@@ -656,7 +711,7 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
     if table_has_column(connection, "transactions", "amount_minor")? {
         sql.push_str(&entity_trigger_sql(
             "transactions", "transaction", "NEW.id", "OLD.id",
-            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'transaction', 'entity_id', NEW.id, 'amount_minor', NEW.amount_minor, 'currency', NEW.currency, 'kind', NEW.kind, 'status', NEW.status, 'account_id', NEW.account_id, 'booked_date', NEW.booked_date, 'value_date', NEW.value_date, 'payee', NEW.payee, 'description', NEW.description, 'category_id', NEW.category_id, 'note', NEW.note, 'source', NEW.source)",
+            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'transaction', 'entity_id', NEW.id, 'amount_minor', NEW.amount_minor, 'currency', NEW.currency, 'kind', NEW.kind, 'status', NEW.status, 'account_id', NEW.account_id, 'booked_date', NEW.booked_date, 'value_date', NEW.value_date, 'payee', NEW.payee, 'description', NEW.description, 'category_id', NEW.category_id, 'note', NEW.note, 'source', NEW.source, 'import_batch_id', NEW.import_batch_id, 'source_fingerprint', NEW.source_fingerprint)",
             "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'transaction', 'entity_id', OLD.id)",
         ));
     }
@@ -696,6 +751,16 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
     }
     if table_has_column(connection, "monthly_journals", "period")? {
         sql.push_str(&entity_trigger_sql("monthly_journals", "monthly_journal", "NEW.id", "OLD.id", "json_object('schema_version',1,'operation','upsert','entity_type','monthly_journal','entity_id',NEW.id,'period',NEW.period,'note',NEW.note,'next_month_goals',NEW.next_month_goals,'perceived_control',NEW.perceived_control)", "json_object('schema_version',1,'operation','delete','entity_type','monthly_journal','entity_id',OLD.id)"));
+    }
+    if table_has_column(connection, "import_batches", "source_sha256")?
+        && table_has_column(connection, "import_batches", "importer_type_v4")?
+    {
+        sql.push_str(&entity_trigger_sql("import_batches", "import_batch", "NEW.id", "OLD.id", "json_object('schema_version',1,'operation','upsert','entity_type','import_batch','entity_id',NEW.id,'importer_type',NEW.importer_type_v4,'source_filename',NEW.source_filename,'source_sha256',NEW.source_sha256,'mapping_profile_id',NEW.mapping_profile_id,'status',NEW.status,'rows_total',NEW.rows_total,'rows_imported',NEW.rows_imported,'rows_skipped',NEW.rows_skipped,'rows_failed',NEW.rows_failed)", "json_object('schema_version',1,'operation','delete','entity_type','import_batch','entity_id',OLD.id)"));
+    }
+    if table_has_column(connection, "import_rows", "batch_id")?
+        && table_has_column(connection, "import_rows", "deleted_transaction_id")?
+    {
+        sql.push_str(&entity_trigger_sql("import_rows", "import_row", "NEW.id", "OLD.id", "json_object('schema_version',1,'operation','upsert','entity_type','import_row','entity_id',NEW.id,'batch_id',NEW.batch_id,'row_number',NEW.row_number,'raw_json',NEW.raw_json,'normalized_json',NEW.normalized_json,'status',NEW.status,'error_code',NEW.error_code,'created_transaction_id',NEW.created_transaction_id,'deleted_transaction_id',NEW.deleted_transaction_id)", "json_object('schema_version',1,'operation','delete','entity_type','import_row','entity_id',OLD.id)"));
     }
     connection.execute_batch(&sql)
 }
@@ -804,6 +869,8 @@ fn validate_payload(
                 | "transaction_trash"
                 | "transaction"
                 | "transfer"
+                | "import_batch"
+                | "import_row"
         )
     {
         return Err(DurableSyncError::InvalidPayload(
@@ -964,6 +1031,29 @@ fn validate_payload(
                 ) {
                     return Err(DurableSyncError::InvalidPayload(
                         "transaction enum is invalid".to_owned(),
+                    ));
+                }
+            }
+            "import_batch" => {
+                if payload.importer_type.is_none()
+                    || payload.source_filename.is_none()
+                    || payload.source_sha256.is_none()
+                    || payload.status.is_none()
+                    || payload.rows_total.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "import batch payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "import_row" => {
+                if payload.batch_id.is_none()
+                    || payload.row_number.is_none()
+                    || payload.raw_json.is_none()
+                    || payload.status.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "import row payload is incomplete".to_owned(),
                     ));
                 }
             }
@@ -1186,17 +1276,83 @@ fn apply_ledger_operation(
                 params![operation.entity_id],
             )
         }
+        ("import_batch", "upsert") => transaction.execute(
+            "INSERT INTO import_batches
+             (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4,
+              source_filename, source_sha256, mapping_profile_id, status, started_at,
+              rows_total, rows_imported, rows_skipped, rows_failed)
+             VALUES (?1, ?2, ?2, ?2, ?2, ?3, ?4, ?5, ?6,
+                     strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?7, ?8, ?9, ?10)
+             ON CONFLICT(id) DO UPDATE SET
+              importer_type_v2 = excluded.importer_type_v2,
+              importer_type_v3 = excluded.importer_type_v3,
+              importer_type_v4 = excluded.importer_type_v4,
+              source_filename = excluded.source_filename,
+              source_sha256 = excluded.source_sha256,
+              mapping_profile_id = excluded.mapping_profile_id,
+              status = excluded.status,
+              rows_total = excluded.rows_total,
+              rows_imported = excluded.rows_imported,
+              rows_skipped = excluded.rows_skipped,
+              rows_failed = excluded.rows_failed,
+              completed_at = CASE WHEN excluded.status = 'previewed' THEN NULL ELSE strftime('%Y-%m-%dT%H:%M:%fZ','now') END",
+            params![
+                operation.entity_id,
+                payload.importer_type.as_deref().unwrap_or("money_manager_xlsx"),
+                payload.source_filename.as_deref(),
+                payload.source_sha256.as_deref(),
+                payload.mapping_profile_id.as_deref(),
+                payload.status.as_deref().unwrap_or("previewed"),
+                payload.rows_total.unwrap_or(0),
+                payload.rows_imported.unwrap_or(0),
+                payload.rows_skipped.unwrap_or(0),
+                payload.rows_failed.unwrap_or(0),
+            ],
+        ),
+        ("import_batch", "delete") => transaction.execute(
+            "DELETE FROM import_batches WHERE id = ?1",
+            params![operation.entity_id],
+        ),
+        ("import_row", "upsert") => transaction.execute(
+            "INSERT INTO import_rows
+             (id, batch_id, row_number, raw_json, normalized_json, status, error_code,
+              created_transaction_id, deleted_transaction_id)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+             ON CONFLICT(id) DO UPDATE SET
+              batch_id = excluded.batch_id, row_number = excluded.row_number,
+              raw_json = excluded.raw_json, normalized_json = excluded.normalized_json,
+              status = excluded.status, error_code = excluded.error_code,
+              created_transaction_id = excluded.created_transaction_id,
+              deleted_transaction_id = excluded.deleted_transaction_id",
+            params![
+                operation.entity_id,
+                payload.batch_id.as_deref(),
+                payload.row_number,
+                payload.raw_json.as_deref(),
+                payload.normalized_json.as_deref(),
+                payload.status.as_deref(),
+                payload.error_code.as_deref(),
+                payload.created_transaction_id.as_deref(),
+                payload.deleted_transaction_id.as_deref(),
+            ],
+        ),
+        ("import_row", "delete") => transaction.execute(
+            "DELETE FROM import_rows WHERE id = ?1",
+            params![operation.entity_id],
+        ),
         ("transaction", "upsert") => transaction.execute(
             "INSERT INTO transactions
              (id, kind, status, account_id, amount_minor, currency, booked_date, value_date,
-              payee, description, category_id, note, source)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
+              payee, description, category_id, note, source, import_batch_id, source_fingerprint)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)
              ON CONFLICT(id) DO UPDATE SET
               kind = excluded.kind, status = excluded.status, account_id = excluded.account_id,
               amount_minor = excluded.amount_minor, currency = excluded.currency,
               booked_date = excluded.booked_date, value_date = excluded.value_date,
               payee = excluded.payee, description = excluded.description,
               category_id = excluded.category_id, note = excluded.note, source = excluded.source,
+              import_batch_id = excluded.import_batch_id,
+              source_fingerprint = excluded.source_fingerprint,
               updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
             params![
                 operation.entity_id,
@@ -1212,6 +1368,8 @@ fn apply_ledger_operation(
                 payload.category_id.as_deref(),
                 payload.note.as_deref(),
                 payload.source.as_deref().unwrap_or("manual"),
+                payload.import_batch_id.as_deref(),
+                payload.source_fingerprint.as_deref(),
             ],
         ),
         ("transfer", "delete") => transaction.execute(
@@ -1345,7 +1503,23 @@ mod tests {
                    account_id TEXT NOT NULL REFERENCES accounts(id), amount_minor TEXT NOT NULL,
                    currency TEXT NOT NULL, booked_date TEXT NOT NULL, value_date TEXT,
                    payee TEXT, description TEXT, category_id TEXT, note TEXT,
-                   source TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT ''
+                   source TEXT NOT NULL, import_batch_id TEXT, source_fingerprint TEXT,
+                   updated_at TEXT NOT NULL DEFAULT ''
+                 );
+                 CREATE TABLE import_batches (
+                   id TEXT PRIMARY KEY, importer_type TEXT NOT NULL,
+                   importer_type_v2 TEXT NOT NULL, importer_type_v3 TEXT NOT NULL,
+                   importer_type_v4 TEXT NOT NULL, source_filename TEXT NOT NULL,
+                   source_sha256 TEXT NOT NULL, mapping_profile_id TEXT,
+                   status TEXT NOT NULL, started_at TEXT NOT NULL, completed_at TEXT,
+                   rows_total INTEGER NOT NULL, rows_imported INTEGER NOT NULL,
+                   rows_skipped INTEGER NOT NULL, rows_failed INTEGER NOT NULL
+                 );
+                 CREATE TABLE import_rows (
+                   id TEXT PRIMARY KEY, batch_id TEXT NOT NULL REFERENCES import_batches(id),
+                   row_number INTEGER NOT NULL, raw_json TEXT NOT NULL,
+                   normalized_json TEXT, status TEXT NOT NULL, error_code TEXT,
+                   created_transaction_id TEXT, deleted_transaction_id TEXT
                  );
                  CREATE TABLE transfers (
                    id TEXT PRIMARY KEY, debit_transaction_id TEXT NOT NULL UNIQUE
@@ -1531,12 +1705,19 @@ mod tests {
             created_at: "2026-10-08T00:00:00.000Z".to_owned(),
         };
         assert!(matches!(
-            store.push("delivery-ledger-rollback", [valid_account, invalid_transaction]),
+            store.push(
+                "delivery-ledger-rollback",
+                [valid_account, invalid_transaction]
+            ),
             Err(super::DurableSyncError::LedgerRejected)
         ));
         let connection = Connection::open(&path).unwrap();
         let account_name: String = connection
-            .query_row("SELECT name FROM accounts WHERE id = 'account-synthetic'", [], |row| row.get(0))
+            .query_row(
+                "SELECT name FROM accounts WHERE id = 'account-synthetic'",
+                [],
+                |row| row.get(0),
+            )
             .unwrap();
         assert_eq!(account_name, "Synthetic");
         assert_eq!(store.pull(0).unwrap().len(), 0);

@@ -59,6 +59,8 @@ export interface LedgerRepository {
   updateMonthlyJournal(journal: MonthlyJournal): Promise<void>;
   deleteMonthlyJournal(id: string): Promise<void>;
   saveImportBatch(batch: ImportBatch, rows: readonly ImportRow[]): Promise<void>;
+  /** Applies a replicated batch header and any rows atomically without requiring a new id. */
+  upsertImportBatch(batch: ImportBatch, rows?: readonly ImportRow[]): Promise<void>;
   commitImportBatch(plan: ImportCommitPlan): Promise<ImportBatch>;
   undoImportBatch(batchId: string): Promise<ImportBatch>;
   updateTag(tag: Tag): Promise<void>;

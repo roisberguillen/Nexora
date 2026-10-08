@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Verificato il flusso HTTP reale PC ↔ Local Hub con SQLite temporaneo per mutazioni composte,
+  conflitti, retry idempotente, cursore, riavvio e purge atomico.
+- Collegati a outbox e journal remoto `saveImportBatch`, `commitImportBatch` e `undoImportBatch`;
+  gli adapter aggiornano anche batch preview già persistiti.
+
 - `remote-mobile-host`: le mutazioni PC di merge tag e purge batch generano operation coerenti;
   aggiunta una regressione che verifica la sostituzione del tag sorgente nella outbox remota.
 - `remote-mobile-host`: una delivery SQLite con conflitto o errore a metà ora fa rollback completo;
@@ -979,3 +984,4 @@
   annullamento transazione, mantenendo operation elementari ricostruibili dal client remoto.
 - `remote-mobile-host`: aggiunti payload e apply host per lo stato `transaction_trash`,
   inclusi bootstrap, outbox PC e journal SQLite con identità stabile per transazione.
+## Unreleased

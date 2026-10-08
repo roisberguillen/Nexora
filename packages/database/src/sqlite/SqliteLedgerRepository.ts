@@ -953,11 +953,11 @@ export class SqliteLedgerRepository implements LedgerRepository {
         this.withWriteTransaction(async () => {
           if (rows.length !== batch.rowsTotal || rows.some((row) => row.batchId !== batch.id))
             throw new DomainError("invalid_import", "Import batch rows are invalid.");
-          const existing = await this.database.query<{ readonly id: string }>(
-            "SELECT id FROM import_batches WHERE id = ?",
+          const existing = await this.database.query<{ readonly status: string }>(
+            "SELECT status FROM import_batches WHERE id = ?",
             [batch.id],
           );
-          if (existing.length > 0)
+          if (existing.length > 0 && existing[0]?.status !== "previewed")
             throw new DomainError("duplicate_entity", "Import batch id already exists.");
           await this.database.run(
             "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -981,6 +981,75 @@ export class SqliteLedgerRepository implements LedgerRepository {
           for (const row of rows)
             await this.database.run(
               "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+              [
+                row.id,
+                row.batchId,
+                row.rowNumber,
+                row.rawJson,
+                row.normalizedJson ?? null,
+                row.status,
+                row.errorCode ?? null,
+                row.createdTransactionId ?? null,
+                row.deletedTransactionId ?? null,
+              ],
+            );
+        }),
+      ),
+    );
+  }
+  public upsertImportBatch(batch: ImportBatch, rows: readonly ImportRow[] = []): Promise<void> {
+    return this.enqueue(() =>
+      this.performDatabaseOperation(() =>
+        this.withWriteTransaction(async () => {
+          if (rows.some((row) => row.batchId !== batch.id))
+            throw new DomainError("invalid_import", "Import row batch mismatch.");
+          const existing = await this.database.query<{ readonly id: string }>(
+            "SELECT id FROM import_batches WHERE id = ?",
+            [batch.id],
+          );
+          if (existing.length === 0)
+            await this.database.run(
+              "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+              [
+                batch.id,
+                "money_manager_xlsx",
+                importerTypeV2(batch.importerType),
+                importerTypeV3(batch.importerType),
+                batch.importerType,
+                batch.sourceFilename,
+                batch.sourceSha256,
+                batch.mappingProfileId ?? null,
+                batch.status,
+                new Date().toISOString(),
+                batch.rowsTotal,
+                batch.rowsImported,
+                batch.rowsSkipped,
+                batch.rowsFailed,
+              ],
+            );
+          else
+            await this.database.run(
+              "UPDATE import_batches SET importer_type_v2 = ?, importer_type_v3 = ?, importer_type_v4 = ?, source_filename = ?, source_sha256 = ?, mapping_profile_id = ?, status = ?, rows_total = ?, rows_imported = ?, rows_skipped = ?, rows_failed = ?, completed_at = CASE WHEN ? = 'previewed' THEN NULL ELSE ? END WHERE id = ?",
+              [
+                importerTypeV2(batch.importerType),
+                importerTypeV3(batch.importerType),
+                batch.importerType,
+                batch.sourceFilename,
+                batch.sourceSha256,
+                batch.mappingProfileId ?? null,
+                batch.status,
+                batch.rowsTotal,
+                batch.rowsImported,
+                batch.rowsSkipped,
+                batch.rowsFailed,
+                batch.status,
+                batch.status === "previewed" ? null : new Date().toISOString(),
+                batch.id,
+              ],
+            );
+          for (const row of rows)
+            await this.database.run(
+              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET batch_id = excluded.batch_id, row_number = excluded.row_number, raw_json = excluded.raw_json, normalized_json = excluded.normalized_json, status = excluded.status, error_code = excluded.error_code, created_transaction_id = excluded.created_transaction_id, deleted_transaction_id = excluded.deleted_transaction_id",
               [
                 row.id,
                 row.batchId,
@@ -1063,23 +1132,43 @@ export class SqliteLedgerRepository implements LedgerRepository {
               throw new DomainError("duplicate_entity", "Import fingerprint already exists.");
           }
           await this.database.run(
-            "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            existing.length > 0
+              ? "UPDATE import_batches SET importer_type_v2 = ?, importer_type_v3 = ?, importer_type_v4 = ?, source_filename = ?, source_sha256 = ?, mapping_profile_id = ?, status = ?, completed_at = ?, rows_total = ?, rows_imported = ?, rows_skipped = ?, rows_failed = ? WHERE id = ?"
+              : "INSERT INTO import_batches (id, importer_type, importer_type_v2, importer_type_v3, importer_type_v4, source_filename, source_sha256, mapping_profile_id, status, started_at, completed_at, rows_total, rows_imported, rows_skipped, rows_failed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
-              committed.id,
-              "money_manager_xlsx",
-              importerTypeV2(committed.importerType),
-              importerTypeV3(committed.importerType),
-              committed.importerType,
-              committed.sourceFilename,
-              committed.sourceSha256,
-              committed.mappingProfileId ?? null,
-              committed.status,
-              new Date().toISOString(),
-              new Date().toISOString(),
-              committed.rowsTotal,
-              committed.rowsImported,
-              committed.rowsSkipped,
-              committed.rowsFailed,
+              ...(existing.length > 0
+                ? [
+                    importerTypeV2(committed.importerType),
+                    importerTypeV3(committed.importerType),
+                    committed.importerType,
+                    committed.sourceFilename,
+                    committed.sourceSha256,
+                    committed.mappingProfileId ?? null,
+                    committed.status,
+                    new Date().toISOString(),
+                    committed.rowsTotal,
+                    committed.rowsImported,
+                    committed.rowsSkipped,
+                    committed.rowsFailed,
+                    committed.id,
+                  ]
+                : [
+                    committed.id,
+                    "money_manager_xlsx",
+                    importerTypeV2(committed.importerType),
+                    importerTypeV3(committed.importerType),
+                    committed.importerType,
+                    committed.sourceFilename,
+                    committed.sourceSha256,
+                    committed.mappingProfileId ?? null,
+                    committed.status,
+                    new Date().toISOString(),
+                    new Date().toISOString(),
+                    committed.rowsTotal,
+                    committed.rowsImported,
+                    committed.rowsSkipped,
+                    committed.rowsFailed,
+                  ]),
             ],
           );
           for (const transaction of allTransactions) await this.insertTransaction(transaction);
@@ -1097,7 +1186,7 @@ export class SqliteLedgerRepository implements LedgerRepository {
           }
           for (const row of rows)
             await this.database.run(
-              "INSERT INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+              "INSERT OR REPLACE INTO import_rows (id, batch_id, row_number, raw_json, normalized_json, status, error_code, created_transaction_id, deleted_transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
               [
                 row.id,
                 row.batchId,
