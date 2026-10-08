@@ -21,7 +21,6 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | `saveLoan`, `updateLoan`, `deleteLoan` | loan | bidirezionale incrementale | `loan.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveInvestmentPosition`, `updateInvestmentPosition`, `deleteInvestmentPosition` | investment | bidirezionale incrementale | `investment.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | monthly journal | bidirezionale incrementale | `monthly_journal.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
-| `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | journal | non supportato | — | — | no | no |
 | `saveImportBatch`, `commitImportBatch`, `undoImportBatch` | import batch/rows | non supportato | — | — | no | no |
 | `saveTransaction`, `updateTransaction`, `saveTransactionWithSplits`, `saveTransactionWithDetails`, `updateTransactionWithDetails` | transaction | bidirezionale incrementale per il core | `transaction.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveTransfer`, `cancelTransfer` | transfer + legs | bidirezionale incrementale per il core | `transfer.upsert/delete` + leg operations | `(entity_type, entity_id)` | sì, delivery multi-operation | sì, journal incrementale |

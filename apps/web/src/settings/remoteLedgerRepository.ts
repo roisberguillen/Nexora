@@ -164,6 +164,10 @@ const mutatingMethods = new Set([
   "mergeTag",
   "removeTagGlobally",
   "setTransactionTags",
+  "mergeCategory",
+  "mergeTag",
+  "removeTagGlobally",
+  "cancelTransaction",
   "saveRecurringRule",
   "updateRecurringRule",
   "deleteRecurringRule",
@@ -262,6 +266,10 @@ const supportedRemoteMutations = new Set([
   "updateMonthlyJournal",
   "deleteMonthlyJournal",
   "setTransactionTags",
+  "mergeCategory",
+  "mergeTag",
+  "removeTagGlobally",
+  "cancelTransaction",
   "purgeTrashedTransaction",
 ]);
 
@@ -313,6 +321,130 @@ async function operationForMutation(
         client,
       ),
     ];
+  }
+  if (method === "mergeCategory") {
+    const sourceId = String(args[0]);
+    const target = await repository.findCategoryById(String(args[1]));
+    const operations: LocalSyncOperation[] = [];
+    if (target)
+      operations.push(
+        await operationFromPayload(
+          target.id,
+          JSON.stringify(categoryPayload(target)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        ),
+      );
+    operations.push(
+      await operationFromPayload(
+        sourceId,
+        JSON.stringify({
+          schema_version: 1,
+          operation: "delete",
+          entity_type: "category",
+          entity_id: sourceId,
+        }),
+        true,
+        deviceId,
+        revisions,
+        client,
+      ),
+    );
+    for (const value of await repository.listTransactions())
+      if (value.categoryId === String(args[1]))
+        operations.push(
+          await operationFromPayload(
+            value.id,
+            JSON.stringify(transactionPayload(value)),
+            false,
+            deviceId,
+            revisions,
+            client,
+          ),
+        );
+    for (const value of await repository.listRecurringRules())
+      if (value.categoryId === String(args[1]))
+        operations.push(
+          await operationFromPayload(
+            value.id,
+            JSON.stringify(recurringRulePayload(value)),
+            false,
+            deviceId,
+            revisions,
+            client,
+          ),
+        );
+    for (const value of await repository.listBudgets())
+      if (value.categoryId === String(args[1]))
+        operations.push(
+          await operationFromPayload(
+            value.id,
+            JSON.stringify(budgetPayload(value)),
+            false,
+            deviceId,
+            revisions,
+            client,
+          ),
+        );
+    return operations;
+  }
+  if (method === "mergeTag" || method === "removeTagGlobally") {
+    const sourceId = String(args[0]);
+    const operations: LocalSyncOperation[] = [];
+    operations.push(
+      await operationFromPayload(
+        sourceId,
+        JSON.stringify({
+          schema_version: 1,
+          operation: "delete",
+          entity_type: "tag",
+          entity_id: sourceId,
+        }),
+        true,
+        deviceId,
+        revisions,
+        client,
+      ),
+    );
+    for (const transaction of await repository.listTransactions()) {
+      const tags = await repository.listTransactionTags(transaction.id);
+      if (tags.some((tag) => tag.id === sourceId))
+        operations.push(
+          await operationFromPayload(
+            transaction.id,
+            JSON.stringify({
+              schema_version: 1,
+              operation: "replace",
+              entity_type: "transaction_tag_set",
+              entity_id: transaction.id,
+              tag_ids: tags
+                .filter((tag) => tag.id !== sourceId)
+                .map((tag) => tag.id)
+                .sort(),
+            }),
+            false,
+            deviceId,
+            revisions,
+            client,
+          ),
+        );
+    }
+    return operations;
+  }
+  if (method === "cancelTransaction") {
+    const value = await repository.findTransactionById(String(args[0]));
+    return value === undefined
+      ? undefined
+      : operationFromPayload(
+          value.id,
+          JSON.stringify(transactionPayload(value)),
+          false,
+          deviceId,
+          revisions,
+          client,
+        );
   }
   if (method === "cancelTransfer") {
     const transfer = await repository.findTransferById(String(args[0]));

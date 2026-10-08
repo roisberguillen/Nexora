@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1526,
-      "sha256": "30e625c696adc8a1ce9241900093c2f8208e2ebdac9d5d25b9acdb42717436e9"
+      "size": 1619,
+      "sha256": "6b3bdd8518815f4fd3f0bd21916f3622fa860ec32b79b039a2b287fd9f3d8818"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -2679,8 +2679,8 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 37966,
-      "sha256": "a736f0f53348d81400b07708d799cb9785e388c10bb396e79bd3538e86c40a4c"
+      "size": 41569,
+      "sha256": "1dd105366390cd0cc1133d5e3f2295236ad35ec03da7795df8d99fd012d9b72f"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
@@ -2964,8 +2964,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 67766,
-      "sha256": "bda607b20f64dc5f560aa789e62d096d0ae7437bb5d3b979a81e9ab4b34ffa79"
+      "size": 67953,
+      "sha256": "0a6df769a4e2953737182c733b20884c1d1a39ca9fcba4b8dcafaa90633d8724"
     },
     {
       "path": "design/mockup/README.md",
@@ -3239,8 +3239,8 @@
     },
     {
       "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
-      "size": 4724,
-      "sha256": "9403e036def5943c12ec0a10e7b02befefc0d083634b5a8d0a3ecff740169213"
+      "size": 4602,
+      "sha256": "6ab6808ad52815568bb8a24d5fd7269bf5ea06aff2a37cba412b0147947e4b8c"
     },
     {
       "path": "docs/reports/final-verification.md",

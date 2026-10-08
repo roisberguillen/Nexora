@@ -970,3 +970,5 @@
   push/pull, outbox e journal SQLite incrementale con delete e validazione payload.
 - `remote-mobile-host`: aggiunta la sincronizzazione atomica del set di tag per transazione,
   con semantica replace, bootstrap, outbox e journal incrementale.
+- `remote-mobile-host`: aggiunto il percorso outbox PC per merge category, merge/remove tag e
+  annullamento transazione, mantenendo operation elementari ricostruibili dal client remoto.
