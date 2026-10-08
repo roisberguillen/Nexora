@@ -203,6 +203,7 @@ describe("local host connection", () => {
     await expect(redeemLocalHostPairing("https://host.home/", pairing, request)).resolves.toEqual({
       deviceId: "browser-1",
       deviceToken: "device-token-123456789",
+      hostFingerprint: "sha256:host",
     });
     await revokeLocalHostDevice(
       "https://host.home/",
