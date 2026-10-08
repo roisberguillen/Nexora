@@ -29,6 +29,96 @@ struct LocalHubNativeState {
 
 #[derive(Clone, Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
+struct NativeHttpRequest {
+    url: String,
+    method: String,
+    headers: HashMap<String, String>,
+    body: Option<String>,
+    certificate_pem: Option<String>,
+    expected_fingerprint: Option<String>,
+}
+
+#[derive(Clone, Debug, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct NativeHttpResponse {
+    status: u16,
+    headers: HashMap<String, String>,
+    body: String,
+}
+
+#[tauri::command]
+async fn local_host_request(request: NativeHttpRequest) -> Result<NativeHttpResponse, String> {
+    if request.url.starts_with("https://") && request.certificate_pem.is_none() {
+        return Err("pinned_host_certificate_required".to_owned());
+    }
+    let mut builder = reqwest::Client::builder()
+        .https_only(request.url.starts_with("https://"))
+        .redirect(reqwest::redirect::Policy::none());
+    if let Some(certificate_pem) = request.certificate_pem.as_deref() {
+        if let Some(expected) = request.expected_fingerprint.as_deref() {
+            let mut reader = std::io::Cursor::new(certificate_pem.as_bytes());
+            let certificate = rustls_pemfile::certs(&mut reader)
+                .next()
+                .ok_or_else(|| "invalid_pinned_host_certificate".to_owned())
+                .and_then(|result| result.map_err(|_| "invalid_pinned_host_certificate".to_owned()))?;
+            verify_certificate_fingerprint(certificate.as_ref(), expected)?;
+        }
+        let certificate = reqwest::Certificate::from_pem(certificate_pem.as_bytes())
+            .map_err(|_| "invalid_pinned_host_certificate".to_owned())?;
+        builder = builder
+            .tls_built_in_root_certs(false)
+            .add_root_certificate(certificate);
+    }
+    let client = builder
+        .build()
+        .map_err(|error| format!("native_http_client_failed: {error}"))?;
+    let method = reqwest::Method::from_bytes(request.method.as_bytes())
+        .map_err(|_| "invalid_http_method".to_owned())?;
+    let mut outgoing = client.request(method, &request.url);
+    for (name, value) in request.headers {
+        outgoing = outgoing.header(name, value);
+    }
+    if let Some(body) = request.body {
+        outgoing = outgoing.body(body);
+    }
+    let response = outgoing
+        .send()
+        .await
+        .map_err(|error| format!("native_http_request_failed: {error}"))?;
+    let status = response.status().as_u16();
+    let headers = response
+        .headers()
+        .iter()
+        .filter_map(|(name, value)| Some((name.to_string(), value.to_str().ok()?.to_owned())))
+        .collect();
+    let body = response
+        .text()
+        .await
+        .map_err(|error| format!("native_http_response_failed: {error}"))?;
+    Ok(NativeHttpResponse {
+        status,
+        headers,
+        body,
+    })
+}
+
+fn verify_certificate_fingerprint(certificate_der: &[u8], expected: &str) -> Result<(), String> {
+    let actual = format!(
+        "sha256:{}",
+        Sha256::digest(certificate_der)
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>()
+    );
+    if actual == expected {
+        Ok(())
+    } else {
+        Err("host_fingerprint_mismatch".to_owned())
+    }
+}
+
+#[derive(Clone, Debug, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct LanHubStartRequest {
     address: String,
     certificate_path: String,
@@ -78,7 +168,7 @@ async fn phone_local_hub_start(
             .map_err(|error| format!("Phone Local Hub SQLite sync store failed: {error}"))?,
     )));
     let lan_address = detect_local_lan_address()?;
-    let identity = generate_phone_lan_identity(lan_address)?;
+    let identity = load_or_generate_phone_lan_identity(&app, lan_address)?;
     hub_state.app_url = Some(format!("https://{lan_address}:43173/"));
     hub_state.browser_root = app
         .path()
@@ -105,6 +195,42 @@ struct PhoneLanIdentity {
     certificate_pem: String,
     private_key_pem: String,
     fingerprint: String,
+}
+
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+struct PersistedPhoneLanIdentity {
+    certificate_pem: String,
+    private_key_pem: String,
+    fingerprint: String,
+}
+
+fn load_or_generate_phone_lan_identity(
+    app: &tauri::AppHandle,
+    address: IpAddr,
+) -> Result<PhoneLanIdentity, String> {
+    let path = database_path(app, "phone-local-hub-identity.json")?;
+    if let Ok(raw) = fs::read_to_string(&path) {
+        if let Ok(identity) = serde_json::from_str::<PersistedPhoneLanIdentity>(&raw) {
+            return Ok(PhoneLanIdentity {
+                certificate_pem: identity.certificate_pem,
+                private_key_pem: identity.private_key_pem,
+                fingerprint: identity.fingerprint,
+            });
+        }
+    }
+    let identity = generate_phone_lan_identity(address)?;
+    let persisted = PersistedPhoneLanIdentity {
+        certificate_pem: identity.certificate_pem.clone(),
+        private_key_pem: identity.private_key_pem.clone(),
+        fingerprint: identity.fingerprint.clone(),
+    };
+    fs::write(
+        path,
+        serde_json::to_vec(&persisted)
+            .map_err(|error| format!("Could not encode Local Hub identity: {error}"))?,
+    )
+    .map_err(|error| format!("Could not persist Local Hub identity: {error}"))?;
+    Ok(identity)
 }
 
 fn detect_local_lan_address() -> Result<IpAddr, String> {
@@ -150,7 +276,7 @@ fn generate_phone_lan_identity(address: IpAddr) -> Result<PhoneLanIdentity, Stri
     let private_key_pem = certificate.key_pair.serialize_pem();
     let fingerprint = format!(
         "sha256:{}",
-        Sha256::digest(certificate_pem.as_bytes())
+        Sha256::digest(certificate.cert.der().as_ref())
             .iter()
             .map(|byte| format!("{byte:02x}"))
             .collect::<String>()
@@ -470,6 +596,7 @@ pub fn run() {
         .manage(NativeTransactionState::default())
         .manage(LocalHubNativeState::default())
         .invoke_handler(tauri::generate_handler![
+            local_host_request,
             pc_manager_start,
             phone_local_hub_start,
             phone_local_hub_status,
@@ -493,7 +620,8 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::validate_database_filename;
+    use super::{generate_phone_lan_identity, validate_database_filename, verify_certificate_fingerprint};
+    use std::net::IpAddr;
 
     #[test]
     fn accepts_the_default_relative_sqlite_filename() {
@@ -518,5 +646,14 @@ mod tests {
                 "{database_url}"
             );
         }
+    }
+
+    #[test]
+    fn phone_tls_identity_has_a_stable_certificate_fingerprint_contract() {
+        let identity = generate_phone_lan_identity("192.0.2.10".parse::<IpAddr>().unwrap()).unwrap();
+        let mut reader = std::io::Cursor::new(identity.certificate_pem.as_bytes());
+        let certificate = rustls_pemfile::certs(&mut reader).next().unwrap().unwrap();
+        assert!(verify_certificate_fingerprint(certificate.as_ref(), &identity.fingerprint).is_ok());
+        assert!(verify_certificate_fingerprint(certificate.as_ref(), "sha256:deadbeef").is_err());
     }
 }

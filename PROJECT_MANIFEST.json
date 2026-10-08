@@ -1679,13 +1679,13 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 99882,
-      "sha256": "5c9d9c0d98c8065fd6974f571d91e04fb5ecfa6b50c87e5e62c8fbabc090065a"
+      "size": 100182,
+      "sha256": "e612cf736968b85f301e8028a5e222b2ad0d48fae390122031d351faa55616f3"
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 28306,
-      "sha256": "0f6eb90495a0ce1dda02b6c7b5bd9064cbeb0f69c5db4861e62c0e71d9dc6c78"
+      "size": 28334,
+      "sha256": "fe1df4488308a2fa0bc3c96c493d6bcd396281322a9d8368008ea4eef2484749"
     },
     {
       "path": "apps/web/index.html",
@@ -1739,13 +1739,13 @@
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 144920,
-      "sha256": "cfc85fc9555b74bda8e8b498c0935e20b5cebd71a93625f1dc614e9eb18e6ee9"
+      "size": 149055,
+      "sha256": "73adfda91e218dedd69a6fd805a1c56a79a08aa2ff2232bce7370557dac7366c"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 707,
-      "sha256": "2f33e76781057ee36fc52ba2888429b3c27868d8c8ad6765d91840b5c0bafc67"
+      "size": 812,
+      "sha256": "834b8bf3536180f4c84e278099706413f34b3104e6af9523e2df8f495eb47090"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2009,8 +2009,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 18080,
-      "sha256": "88bf3c24bce12d66bf8d971edd491ee3041cb9c6c53334668fcf222d3b02e9dc"
+      "size": 23326,
+      "sha256": "14f067cf9606ee8ad15d38a0831a0eb6f40b9b5913ec750c8382cabd9e369e9b"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -2409,8 +2409,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 9007,
-      "sha256": "4ccbf497dce4b988cdacdd8ba1cc90fbb8325984de69fc823ae2a6e241a5e8d3"
+      "size": 9394,
+      "sha256": "6271adbce45291cf50619c108f93a68cc4ab24af4708ea3f7659e2cf893f5bf8"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -2584,13 +2584,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostConnection.test.ts",
-      "size": 6850,
-      "sha256": "244f13c4643acb7bb0461089fa0067c10e3a4ae6a7f4352e4664c92362b596ac"
+      "size": 7317,
+      "sha256": "86841776c40c5415b2be3c346d83599c83dd545265b859e19df049f29f4a67e1"
     },
     {
       "path": "apps/web/src/settings/localHostConnection.ts",
-      "size": 10012,
-      "sha256": "35eff00455472f1096bf0a65417e5c5e095313530162e25de7d30e75a7011c83"
+      "size": 11541,
+      "sha256": "85d77f39c5f6132c9208b42e2fafb8fdf4090b3ca0cd9da64a9f8b374bb5cd6f"
     },
     {
       "path": "apps/web/src/settings/localHostSession.test.ts",
@@ -2609,13 +2609,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 8424,
-      "sha256": "5f63119eaa4450bf5df8a60260aebc5ab77e645b785cc3c407fda0162410855a"
+      "size": 8460,
+      "sha256": "6b75e409bc1af24eaa46a65e2a44019ab0f46096c53e6a9e17ab83cbc97f6d35"
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",
-      "size": 4560,
-      "sha256": "549eb6d94a320cad3475b4a558cb0e1d06f537d5c48e6ce86e8e689059e43871"
+      "size": 4754,
+      "sha256": "8c543008e86629b513438e3b9ecd0901d940530c47d9c1f411df0fff9eb4e5c4"
     },
     {
       "path": "apps/web/src/settings/pcManagerDesktop.test.ts",
@@ -2659,8 +2659,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 51306,
-      "sha256": "d2650f14ae4ee32df1fefd630280d69489e630dc76737d9d78398670e9872cd1"
+      "size": 51604,
+      "sha256": "8fb5c76630d7bc32f4ee60716a892298910106e65b6a8ed972c3db91bddf9af7"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",

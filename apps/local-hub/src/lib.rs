@@ -27,6 +27,7 @@ mod sqlite_sync;
 pub use sqlite_sync::{DurableSyncError, SqliteSyncOperationStore, SyncBootstrapSnapshot};
 
 pub const API_VERSION: u16 = 1;
+pub const PAIRING_PROTOCOL: &str = "nexora-local-hub/v1";
 pub const DEFAULT_PORT: u16 = 43_173;
 
 #[derive(Clone)]
@@ -713,11 +714,14 @@ pub struct LocalHubRuntime {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PairingInvite {
+    pub protocol: String,
     pub endpoint: String,
     pub grant_id: String,
     pub code: String,
     pub host_fingerprint: String,
     pub expires_at_ms: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub certificate_pem: Option<String>,
 }
 
 impl LocalHubRuntime {
@@ -842,11 +846,13 @@ impl LocalHubRuntime {
             .clone()
             .ok_or(RuntimeError::MissingAppUrl)?;
         Ok(PairingInvite {
+            protocol: PAIRING_PROTOCOL.to_owned(),
             endpoint,
             grant_id,
             code,
             host_fingerprint,
             expires_at_ms,
+            certificate_pem: self.config.tls_certificate_pem.clone(),
         })
     }
 

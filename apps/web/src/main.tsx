@@ -35,7 +35,10 @@ import { withStartupLock } from "./startup/StartupLock";
 import { renderPreMountError } from "./startup/PreMountError";
 import { applyAppPreferences, readAppPreferences } from "./settings/preferences";
 import { LocalHostSyncClient } from "./settings/localHostSync";
-import { readLocalHostConnection } from "./settings/localHostConnection";
+import {
+  createNativeLocalHostRequest,
+  readLocalHostConnection,
+} from "./settings/localHostConnection";
 import { readLocalHostCredentials } from "./settings/localHostVault";
 import {
   connectRemoteLedgerRepository,
@@ -118,7 +121,7 @@ const startupBootstrap = createStartupBootstrap(
       const remote = await remoteConnectionPromise;
       if (remote !== null) {
         const cache = await openIndexedDbLedger({ databaseName: "nexora-remote-cache" });
-        const client = new LocalHostSyncClient({
+        const clientOptions = {
           endpoint: remote.endpoint,
           credentials: {
             deviceId: remote.credentials.deviceId,
@@ -126,8 +129,16 @@ const startupBootstrap = createStartupBootstrap(
             ...(remote.credentials.sessionToken === undefined
               ? {}
               : { sessionToken: remote.credentials.sessionToken }),
+            ...(remote.credentials.certificatePem === undefined
+              ? {}
+              : { certificatePem: remote.credentials.certificatePem }),
           },
-        });
+        } as const;
+        const client = new LocalHostSyncClient(
+          nativeRuntime
+            ? { ...clientOptions, request: createNativeLocalHostRequest(remote.credentials) }
+            : clientOptions,
+        );
         remoteLedgerConnection = await connectRemoteLedgerRepository(cache.repository, client);
         void remoteLedgerConnection.sync().catch(() => undefined);
         if (remoteSyncTimer === undefined) {

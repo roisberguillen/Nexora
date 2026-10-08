@@ -14,6 +14,7 @@ export interface LocalSyncCredentials {
   readonly deviceId: string;
   readonly token: string;
   readonly sessionToken?: string;
+  readonly certificatePem?: string;
 }
 
 export interface LocalSyncStorage {

@@ -18,6 +18,7 @@ describe("local host connection", () => {
     expect(
       parseLocalHostPairingInvite(
         JSON.stringify({
+          protocol: "nexora-local-hub/v1",
           endpoint: "http://127.0.0.1:43173",
           grantId: "grant-12345678",
           code: "code-12345678",
@@ -26,6 +27,7 @@ describe("local host connection", () => {
         }),
       ),
     ).toEqual({
+      protocol: "nexora-local-hub/v1",
       endpoint: "http://127.0.0.1:43173",
       grantId: "grant-12345678",
       code: "code-12345678",
@@ -33,6 +35,18 @@ describe("local host connection", () => {
       expiresAtMs: expect.any(Number),
     });
     expect(() => parseLocalHostPairingInvite("{}")).toThrow("invalid_pairing_invite");
+    expect(() =>
+      parseLocalHostPairingInvite(
+        JSON.stringify({
+          protocol: "nexora-local-hub/v0",
+          endpoint: "https://127.0.0.1:43173",
+          grantId: "grant-12345678",
+          code: "code-12345678",
+          hostFingerprint: "sha256:host",
+          expiresAtMs: Date.now() + 60_000,
+        }),
+      ),
+    ).toThrow("invalid_pairing_invite");
   });
 
   it("creates a high-entropy device token without persisting it", () => {

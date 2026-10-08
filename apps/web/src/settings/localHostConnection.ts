@@ -18,11 +18,14 @@ export interface LocalHostHealth {
 }
 
 export const SUPPORTED_LOCAL_HOST_API_VERSION = 1;
+export const LOCAL_HOST_PAIRING_PROTOCOL = "nexora-local-hub/v1";
 
 export interface LocalHostCredentials {
   readonly deviceId: string;
   readonly deviceToken: string;
   readonly sessionToken?: string;
+  readonly hostFingerprint?: string;
+  readonly certificatePem?: string;
 }
 
 export interface LocalHostPairingRequest {
@@ -31,14 +34,17 @@ export interface LocalHostPairingRequest {
   readonly deviceId: string;
   readonly deviceToken: string;
   readonly hostFingerprint: string;
+  readonly certificatePem?: string;
 }
 
 export interface LocalHostPairingInvite {
+  readonly protocol?: string;
   readonly endpoint?: string;
   readonly grantId: string;
   readonly code: string;
   readonly hostFingerprint: string;
   readonly expiresAtMs: number;
+  readonly certificatePem?: string;
 }
 
 export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite {
@@ -51,6 +57,7 @@ export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite
   if (typeof value !== "object" || value === null) throw new Error("invalid_pairing_invite");
   const candidate = value as Record<string, unknown>;
   if (
+    candidate.protocol !== LOCAL_HOST_PAIRING_PROTOCOL ||
     typeof candidate.grantId !== "string" ||
     candidate.grantId.length < 8 ||
     typeof candidate.code !== "string" ||
@@ -64,11 +71,15 @@ export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite
     throw new Error("invalid_pairing_invite");
   }
   return Object.freeze({
+    ...(typeof candidate.protocol === "string" ? { protocol: candidate.protocol } : {}),
     ...(typeof candidate.endpoint === "string" ? { endpoint: candidate.endpoint } : {}),
     grantId: candidate.grantId,
     code: candidate.code,
     hostFingerprint: candidate.hostFingerprint,
     expiresAtMs: candidate.expiresAtMs,
+    ...(typeof candidate.certificatePem === "string"
+      ? { certificatePem: candidate.certificatePem }
+      : {}),
   });
 }
 
@@ -107,7 +118,34 @@ export async function redeemLocalHostPairing(
   return Object.freeze({
     deviceId: pairing.deviceId,
     deviceToken: pairing.deviceToken,
+    hostFingerprint: pairing.hostFingerprint,
+    ...(typeof pairing.certificatePem === "string"
+      ? { certificatePem: pairing.certificatePem }
+      : {}),
   });
+}
+
+export function createNativeLocalHostRequest(
+  credentials: Pick<LocalHostCredentials, "certificatePem" | "hostFingerprint">,
+): LocalHostSessionRequest {
+  return async (input, init = {}) => {
+    const { invoke } = await import("@tauri-apps/api/core");
+    const response = await invoke<{
+      status: number;
+      headers: Record<string, string>;
+      body: string;
+    }>("local_host_request", {
+      request: {
+        url: String(input),
+        method: init.method ?? "GET",
+        headers: Object.fromEntries(new Headers(init.headers).entries()),
+        body: typeof init.body === "string" ? init.body : undefined,
+        certificatePem: credentials.certificatePem,
+        expectedFingerprint: credentials.hostFingerprint,
+      },
+    });
+    return new Response(response.body, { status: response.status, headers: response.headers });
+  };
 }
 
 export async function revokeLocalHostDevice(

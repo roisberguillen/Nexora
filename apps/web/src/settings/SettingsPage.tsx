@@ -22,6 +22,7 @@ import {
 import {
   createLocalHostDeviceCredentials,
   parseLocalHostPairingInvite,
+  createNativeLocalHostRequest,
   probeLocalHost,
   redeemLocalHostPairing,
   readLocalHostConnection,
@@ -255,13 +256,22 @@ export function SettingsPage({
       const invite = parseLocalHostPairingInvite(pairingInvite);
       const endpoint = invite.endpoint ?? hostConnection.endpoint;
       const credentials = createLocalHostDeviceCredentials();
-      await redeemLocalHostPairing(endpoint, { ...invite, ...credentials });
-      await saveLocalHostCredentials(endpoint, credentials);
+      const paired = await redeemLocalHostPairing(
+        endpoint,
+        { ...invite, ...credentials },
+        isDesktopRuntime() && invite.certificatePem
+          ? createNativeLocalHostRequest({
+              certificatePem: invite.certificatePem,
+              hostFingerprint: invite.hostFingerprint,
+            })
+          : undefined,
+      );
+      await saveLocalHostCredentials(endpoint, paired);
       const next = { enabled: true, endpoint, runtimeState: "running" as const };
       writeLocalHostConnection(next);
       setHostConnection(next);
-      setPairedCredentials(credentials);
-      setSessionController(new LocalHostSessionController(endpoint, credentials));
+      setPairedCredentials(paired);
+      setSessionController(new LocalHostSessionController(endpoint, paired));
       setHostMessage("Host collegato. Runtime e sincronizzazione disponibili dopo l’unlock.");
       setPairingMessage("Dispositivo autorizzato. La credenziale è protetta nel vault locale.");
     } catch {
