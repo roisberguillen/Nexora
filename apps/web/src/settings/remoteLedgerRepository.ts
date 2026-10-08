@@ -1,7 +1,8 @@
-import type { Account, Category, LedgerRepository, Transaction } from "@nexora/domain";
+import type { Account, Category, LedgerRepository, Tag, Transaction } from "@nexora/domain";
 import {
   Account as DomainAccount,
   Category as DomainCategory,
+  Tag as DomainTag,
   LocalDate,
   Money,
   Transaction as DomainTransaction,
@@ -135,9 +136,9 @@ const mutatingMethods = new Set([
   "saveCategory",
   "updateCategory",
   "deleteUnusedCategory",
-  "saveCategory",
-  "updateCategory",
-  "deleteUnusedCategory",
+  "saveTag",
+  "updateTag",
+  "deleteUnusedTag",
   "mergeCategory",
   "saveTag",
   "updateTag",
@@ -189,6 +190,9 @@ const supportedRemoteMutations = new Set([
   "saveCategory",
   "updateCategory",
   "deleteUnusedCategory",
+  "saveTag",
+  "updateTag",
+  "deleteUnusedTag",
   "saveTransaction",
   "updateTransaction",
   "updateTransactionWithDetails",
@@ -208,6 +212,7 @@ async function operationForMutation(
   let transaction: Transaction | undefined;
   let account: Account | undefined;
   let category: Category | undefined;
+  let tag: Tag | undefined;
   let entityId: string | undefined;
   let tombstone = false;
   if (
@@ -234,10 +239,18 @@ async function operationForMutation(
   } else if (method === "deleteUnusedCategory") {
     entityId = typeof args[0] === "string" ? args[0] : undefined;
     tombstone = true;
+  } else if (method === "saveTag" || method === "updateTag") {
+    tag = args[0] as Tag;
+    entityId = tag?.id;
+  } else if (method === "deleteUnusedTag") {
+    entityId = typeof args[0] === "string" ? args[0] : undefined;
+    tombstone = true;
   }
   if (entityId === undefined) return undefined;
   if (method === "deleteUnusedAccount") account = await repository.findAccountById(entityId);
   if (method === "deleteUnusedCategory") category = await repository.findCategoryById(entityId);
+  if (method === "deleteUnusedTag")
+    tag = (await repository.listTags()).find((candidate) => candidate.id === entityId);
   const current = transaction ?? (await repository.findTransactionById(entityId));
   if (!tombstone && current === undefined) return undefined;
   const payload = tombstone
@@ -245,7 +258,13 @@ async function operationForMutation(
         schema_version: 1,
         operation: "delete",
         entity_type:
-          account !== undefined ? "account" : category !== undefined ? "category" : "transaction",
+          account !== undefined
+            ? "account"
+            : category !== undefined
+              ? "category"
+              : tag !== undefined
+                ? "tag"
+                : "transaction",
         entity_id: entityId,
       })
     : JSON.stringify(
@@ -253,7 +272,9 @@ async function operationForMutation(
           ? accountPayload(account)
           : category !== undefined
             ? categoryPayload(category)
-            : transactionPayload(current!),
+            : tag !== undefined
+              ? tagPayload(tag)
+              : transactionPayload(current!),
       );
   const baseRevision = revisions.get(entityId) ?? client.revision(entityId);
   revisions.set(entityId, baseRevision + 1);
@@ -322,6 +343,17 @@ function categoryPayload(category: Category): Record<string, unknown> {
   };
 }
 
+function tagPayload(tag: Tag): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "tag",
+    entity_id: tag.id,
+    name: tag.name,
+    is_archived: tag.isArchived,
+  };
+}
+
 async function applyRemoteOperation(
   repository: LedgerRepository,
   operation: LocalSyncOperation,
@@ -371,6 +403,22 @@ async function applyRemoteOperation(
     });
     if (await repository.findCategoryById(category.id)) await repository.updateCategory(category);
     else await repository.saveCategory(category);
+    return;
+  }
+  if (payload.entity_type === "tag") {
+    if (payload.operation === "delete") {
+      if ((await repository.listTags()).some((candidate) => candidate.id === operation.entityId))
+        await repository.deleteUnusedTag(operation.entityId);
+      return;
+    }
+    const tag = DomainTag.create({
+      id: operation.entityId,
+      name: String(payload.name),
+      isArchived: payload.is_archived === true,
+    });
+    if ((await repository.listTags()).some((candidate) => candidate.id === tag.id))
+      await repository.updateTag(tag);
+    else await repository.saveTag(tag);
     return;
   }
   if (payload.entity_type !== "transaction") return;

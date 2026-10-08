@@ -389,7 +389,7 @@ fn validate_payload(
         || payload.entity_id != operation.entity_id
         || !matches!(
             payload.entity_type.as_str(),
-            "account" | "category" | "transaction" | "transfer"
+            "account" | "category" | "tag" | "transaction" | "transfer"
         )
     {
         return Err(DurableSyncError::InvalidPayload(
@@ -437,6 +437,13 @@ fn validate_payload(
                 if payload.name.is_none() || payload.kind_scope.is_none() {
                     return Err(DurableSyncError::InvalidPayload(
                         "category payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "tag" => {
+                if payload.name.is_none() {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "tag payload is incomplete".to_owned(),
                     ));
                 }
             }
@@ -528,6 +535,21 @@ fn apply_ledger_operation(
                 payload.name.as_deref(),
                 payload.kind_scope.as_deref(),
                 payload.parent_id.as_deref(),
+                i64::from(payload.is_archived.unwrap_or(false)),
+            ],
+        ),
+        ("tag", "delete") => transaction.execute(
+            "DELETE FROM tags WHERE id = ?1",
+            params![operation.entity_id],
+        ),
+        ("tag", "upsert") => transaction.execute(
+            "INSERT INTO tags (id, name, is_archived) VALUES (?1, ?2, ?3)
+             ON CONFLICT(id) DO UPDATE SET
+              name = excluded.name, is_archived = excluded.is_archived,
+              updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')",
+            params![
+                operation.entity_id,
+                payload.name.as_deref(),
                 i64::from(payload.is_archived.unwrap_or(false)),
             ],
         ),
