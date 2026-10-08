@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1327,
-      "sha256": "eb4cee5bbbc84e9a94fdb95babb8a0fe14fcf4882feff0fcb1a9d7f6ac0c3cc0"
+      "size": 1358,
+      "sha256": "aff1ee6b321ffce635ef1044b4d66f4019911076f841ad119e729f6e7b7b5479"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -2629,13 +2629,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 7527,
-      "sha256": "514fbe9ca4a5097812de3edc5d9dff1855d3170ae9eada301918dc17465448ed"
+      "size": 7575,
+      "sha256": "cdf77884a000bde2010d3764a54af50a077d2d13680e70bb6e2d284fe9df0ecf"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 10465,
-      "sha256": "eb08a5170338d97f1ab6cd065578704fe3cdf0fec472e2a73dc3ea275aa69f4c"
+      "size": 10479,
+      "sha256": "394fb861ddd69d6ab9738562354b07a2c1187609013ef78ca4f799121f6461ac"
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",

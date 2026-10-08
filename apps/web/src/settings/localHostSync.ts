@@ -147,7 +147,8 @@ export class LocalHostSyncClient {
     for (const [index, result] of results.entries()) {
       const revision = result.Applied?.revision ?? result.Duplicate?.revision;
       const queued = queue[index];
-      if (revision !== undefined && queued !== undefined) this.setRevision(queued.entityId, revision);
+      if (revision !== undefined && queued !== undefined)
+        this.setRevision(queued.entityId, revision);
     }
     const remaining = queue.filter((_, index) => results[index]?.Conflict !== undefined);
     this.storage.setItem(this.queueKey(), JSON.stringify(remaining));
@@ -188,7 +189,8 @@ export class LocalHostSyncClient {
       cursor: validCursor,
       operations: body.operations as readonly [number, LocalSyncOperation][],
     });
-    for (const [, operation] of result.operations) this.setRevision(operation.entityId, operation.revision);
+    for (const [, operation] of result.operations)
+      this.setRevision(operation.entityId, operation.revision);
     this.markBootstrapCache();
     return result;
   }

@@ -162,10 +162,14 @@ describe("local host sync client", () => {
 
   it("persists entity revisions and bootstrap availability across restarts", async () => {
     const values = storage();
-    const request = vi.fn(async () =>
-      new Response(JSON.stringify({ schema_version: 1, cursor: 4, operations: [[4, operation]] }), {
-        status: 200,
-      }),
+    const request = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({ schema_version: 1, cursor: 4, operations: [[4, operation]] }),
+          {
+            status: 200,
+          },
+        ),
     );
     const first = new LocalHostSyncClient({
       endpoint: "https://host.home",
