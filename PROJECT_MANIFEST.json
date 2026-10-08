@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1243,
-      "sha256": "d7b7526d79ff3d1c25dd0ec6eb9477f055c5345e226c418c428fcaa90bab11ce"
+      "size": 1273,
+      "sha256": "65f5e26f077199d976f79820042a59d9b3ab9a9e996b3c83fa10b0ece50b883b"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -3229,8 +3229,8 @@
     },
     {
       "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
-      "size": 1688,
-      "sha256": "17b24188e284b53d98035c18c2629464c0406f9dff1bdf74741581b8ea8f0e62"
+      "size": 3143,
+      "sha256": "9d1d843f9ef1706ced37d1e5da43372c64a1382604b3ea67d8bb1531437c6e6a"
     },
     {
       "path": "docs/reports/final-verification.md",

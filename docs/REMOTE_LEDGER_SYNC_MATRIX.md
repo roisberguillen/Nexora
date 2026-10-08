@@ -1,22 +1,34 @@
-# Matrice sincronizzazione LedgerRepository remoto
+# Matrice remote-mobile-host
 
-Baseline: b6e0f76227c71f67154486ee5e8b5cef88ddbcab
+Baseline verificata: `e7a217fe3cb5827c3d73ffddb30286b801970515`.
 
-| Metodo | Entità | Stato baseline | Strategia |
-|---|---|---|---|
-| resetFinancialData | ledger | non remoto | operation ledger atomica con revisione e conferma |
-| save/update/deleteUnusedAccount | account | non remoto | upsert/tombstone idempotente |
-| save/update/deleteUnusedCategory, mergeCategory | category | non remoto | upsert/tombstone con riferimenti validati |
-| save/update/delete/merge/removeTag, setTransactionTags | tag/relation | non remoto | operation entità + relazione |
-| save/update/deleteRecurringRule | recurring_rule | non remoto | upsert/tombstone |
-| save/update/deleteAllocationPlan | allocation_plan | non remoto | upsert/tombstone |
-| save/update/revise/deleteBudget | budget | non remoto | revisioni con controllo overlap |
-| save/update/deleteLoan | loan | non remoto | upsert/tombstone |
-| save/update/deleteInvestmentPosition | investment_position | non remoto | upsert/tombstone |
-| save/update/deleteMonthlyJournal | monthly_journal | non remoto | upsert/tombstone |
-| save/commit/undoImportBatch | import batch/rows | non remoto | batch atomico con righe e transazioni collegate |
-| save/update/details/splits transaction | transaction | parziale | operation con dettagli e relazioni |
-| saveTransfer/cancelTransfer | transfer | parziale | bundle atomico con gambe |
-| cancel/trash/restore/purge transaction(s) | trash/transaction | parziale | tombstone semantico e ripristino atomico |
+La matrice distingue il contratto del dominio dal supporto effettivamente presente nel branch.
+Il protocollo attuale usa operation versionate per entità e revisioni per `entityId`; il conflitto
+è esplicito e non usa last-write-wins. Le direzioni indicate come `no` restano gate aperti.
 
-La matrice è una baseline di implementazione; il gate resta chiuso finché ogni riga non ha test PC→SQLite telefono, telefono→PC, offline e conflitto.
+| Metodo mutativo | Entità | Stato attuale | Operation | Conflitto/revisione | PC → telefono | Telefono → PC |
+|---|---|---|---|---|---|---|
+| `resetFinancialData` | ledger | non supportato | — | — | no | no |
+| `saveAccount`, `updateAccount`, `deleteUnusedAccount` | account | bootstrap parziale; mutazione non emessa | `account.upsert/delete` | per entità | no | bootstrap only |
+| `saveCategory`, `updateCategory`, `deleteUnusedCategory`, `mergeCategory` | category | non supportato | — | — | no | no |
+| `saveTag`, `updateTag`, `deleteUnusedTag`, `mergeTag`, `removeTagGlobally` | tag | non supportato | — | — | no | no |
+| `setTransactionTags` | transaction-tag | non supportato | — | — | no | no |
+| `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | non supportato | — | — | no | no |
+| `saveAllocationPlan`, `updateAllocationPlan`, `deleteAllocationPlan` | allocation plan | non supportato | — | — | no | no |
+| `saveBudget`, `updateBudget`, `reviseBudget`, `deleteBudget` | budget | non supportato | — | — | no | no |
+| `saveLoan`, `updateLoan`, `deleteLoan` | loan | non supportato | — | — | no | no |
+| `saveInvestmentPosition`, `updateInvestmentPosition`, `deleteInvestmentPosition` | investment | non supportato | — | — | no | no |
+| `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | journal | non supportato | — | — | no | no |
+| `saveImportBatch`, `commitImportBatch`, `undoImportBatch` | import batch/rows | non supportato | — | — | no | no |
+| `saveTransaction`, `updateTransaction`, `saveTransactionWithSplits`, `saveTransactionWithDetails`, `updateTransactionWithDetails` | transaction | parziale | `transaction.upsert` | per entità | sì | bootstrap only |
+| `saveTransfer`, `cancelTransfer` | transfer + legs | parziale | `transfer.upsert` | per entità | sì, server-side | bootstrap only |
+| `cancelTransaction` | transaction | non supportato | — | — | no | no |
+| `trashTransaction`, `trashTransactions` | trash | non supportato | — | — | no | no |
+| `restoreTransaction` | trash/transaction | non supportato | — | — | no | no |
+| `purgeTrashedTransaction`, `purgeTrashedTransactions` | trash/transaction | singolo purge parziale | `transaction.delete` | per entità | parziale | no |
+
+La definizione di completamento richiede che ogni riga supportata percorra UI → cache → outbox →
+operation → validazione Local Hub → transazione sul `nexora.db` del telefono → ACK, e che le
+modifiche del repository Android producano eventi leggibili dal pull PC. Finché la matrice non viene
+aggiornata con test PC→SQLite, telefono→PC, offline e conflitto per ogni riga, il gate
+`remote-mobile-host` resta aperto.
