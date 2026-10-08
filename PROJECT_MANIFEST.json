@@ -1099,8 +1099,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-sync.md",
-      "size": 1507,
-      "sha256": "9c451be92a12d653a3c0f7a92b02a59ae5d167376a959d78f4d85b26e4dc40df"
+      "size": 1537,
+      "sha256": "f8b35420ecbbcbb19d606a8379f2d32fddd0794dcba44b32ca9bf428c8e187e5"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1570,7 +1570,7 @@
     {
       "path": ".codex/state/test-evidence.md",
       "size": 208538,
-      "sha256": "4ee12bcf05b47ccf342260f16c0da496e88f3772a69bd9e9e5c398940cb2c7ec"
+      "sha256": "997252c87530cbd714d7a3c6daa3c635ea8b6470cb8821f23e75dfb51524ae5e"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
