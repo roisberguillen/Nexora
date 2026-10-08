@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Android signing CI hardening: the signed job now validates the stable user-owned keystore and
+  alias before building, passes passwords only to Gradle, verifies `zipalign` and `apksigner`,
+  uploads only `nexora-android-arm64-release-signed.apk`, and removes temporary signing material.
 - TLS identity hardening del Local Hub mobile: fingerprint DER, validazione reale cert/key,
   SAN `host_identity`, validità temporale, recovery fail-closed, pinning HTTPS e blocco di host,
   redirect, downgrade e indirizzi esterni; la rilevazione LAN non usa più Internet.

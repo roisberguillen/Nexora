@@ -127,22 +127,59 @@ jobs:
           : "${ANDROID_KEY_PASSWORD:?ANDROID_KEY_PASSWORD is required}"
           : "${ANDROID_STORE_PASSWORD:?ANDROID_STORE_PASSWORD is required}"
           signing_dir="$RUNNER_TEMP/nexora-signing"
+          umask 077
           mkdir -m 700 -p "$signing_dir"
           printf '%s' "$ANDROID_KEY_BASE64" | base64 --decode > "$signing_dir/nexora-release.jks"
+          test -s "$signing_dir/nexora-release.jks"
+          keytool -list -keystore "$signing_dir/nexora-release.jks" \
+            -alias "$ANDROID_KEY_ALIAS" \
+            -storepass "$ANDROID_STORE_PASSWORD" \
+            -keypass "$ANDROID_KEY_PASSWORD" \
+            >/dev/null
           cat > apps/web/src-tauri/gen/android/app/keystore.properties <<EOF
           storeFile=$signing_dir/nexora-release.jks
-          storePassword=$ANDROID_STORE_PASSWORD
           keyAlias=$ANDROID_KEY_ALIAS
-          keyPassword=$ANDROID_KEY_PASSWORD
           EOF
       - name: Configure generated Gradle signing
         run: pnpm android:configure-signing
-      - run: pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci
+      - name: Build signed arm64 APK
+        env:
+          NEXORA_ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          NEXORA_ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: pnpm --filter @nexora/web tauri android build --apk --target aarch64 --ci
+      - name: Verify and name signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          : "${sdk_root:?Android SDK path is required}"
+          build_tools_dir="$sdk_root/build-tools/35.0.0"
+          apksigner="$build_tools_dir/apksigner"
+          zipalign="$build_tools_dir/zipalign"
+          test -x "$apksigner"
+          test -x "$zipalign"
+          mapfile -t release_apks < <(
+            find apps/web/src-tauri/gen/android/app/build/outputs/apk \
+              -type f -name '*-release.apk' ! -name '*-unsigned.apk' -print
+          )
+          if [ "${#release_apks[@]}" -ne 1 ]; then
+            printf 'Expected exactly one signed release APK, found %s\n' "${#release_apks[@]}" >&2
+            printf '%s\n' "${release_apks[@]}" >&2
+            exit 1
+          fi
+          signed_dir="$RUNNER_TEMP/nexora-signed"
+          umask 077
+          mkdir -m 700 -p "$signed_dir"
+          signed_apk="$signed_dir/nexora-android-arm64-release-signed.apk"
+          cp -- "${release_apks[0]}" "$signed_apk"
+          "$zipalign" -c -v 4 "$signed_apk"
+          "$apksigner" verify --verbose --print-certs "$signed_apk"
+          test -s "$signed_apk"
       - uses: actions/upload-artifact@v4
         with:
           name: nexora-android-arm64-signed
-          path: apps/web/src-tauri/gen/android/app/build/outputs/apk/**/release/*.apk
+          path: ${{ runner.temp }}/nexora-signed/nexora-android-arm64-release-signed.apk
           if-no-files-found: error
       - name: Remove temporary release signing inputs
         if: ${{ always() }}
-        run: rm -f "$RUNNER_TEMP/nexora-signing/nexora-release.jks" apps/web/src-tauri/gen/android/app/keystore.properties
+        run: rm -rf "$RUNNER_TEMP/nexora-signing" "$RUNNER_TEMP/nexora-signed" apps/web/src-tauri/gen/android/app/keystore.properties

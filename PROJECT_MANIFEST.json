@@ -1083,6 +1083,11 @@
       "sha256": "b5ac9a68d421d60889c7f15ef46ffbef51c0ac5db03578c650c18553b1a94fca"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-08-android-signing.md",
+      "size": 1466,
+      "sha256": "03deed3bd413bac70c59b4adfa1623de1c29677263e926976de16ef2e4fbd65f"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-ledger-contract.md",
       "size": 1162,
       "sha256": "3e6a8a3eec35af10513c846244c9e227753cabbb3ad98a8b3f9830dbfb185827"
@@ -1518,6 +1523,11 @@
       "sha256": "8dad831a1f99c92f3113c70f1a049f785479e3b5ded851c9b23605b90f67d93d"
     },
     {
+      "path": ".codex/state/checkpoints/2026-10-08-android-signing.md",
+      "size": 781,
+      "sha256": "81e229cfd77f0e3fd35e59df940a7e3de83499d0765467ffb14b410ce693d9e1"
+    },
+    {
       "path": ".codex/state/checkpoints/2026-10-08-remote-mobile-host-authoritative-bidirectional-synchronization.md",
       "size": 585,
       "sha256": "f4002538ff42a9f86a9cf92792696bd97d141b43f9077da84b854d577b8118cb"
@@ -1569,8 +1579,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 208538,
-      "sha256": "997252c87530cbd714d7a3c6daa3c635ea8b6470cb8821f23e75dfb51524ae5e"
+      "size": 209168,
+      "sha256": "27805ca0da9d90cb5dd2822244c33b6b4384d9d6b518033fabd26090ce414686"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1624,8 +1634,8 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "size": 5353,
-      "sha256": "de147f9a4c1a411096c1aef451dc6c15fb44fa156e2b8a4987a8943fb9b47478"
+      "size": 7030,
+      "sha256": "6c5a3f85cde23650ff7919ba0979d5f53bc9209f562457269f2be3c7ddd3f92a"
     },
     {
       "path": ".gitignore",
@@ -2974,8 +2984,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 69172,
-      "sha256": "100f0134a4747106e5805d66c8177191f21d43ff9dd1d90b9352535fa5a2c978"
+      "size": 69461,
+      "sha256": "387257d6f078ea98496e2e4188f7699815d05a9d9f688ff0b1a61e431de28179"
     },
     {
       "path": "design/mockup/README.md",
@@ -3119,8 +3129,8 @@
     },
     {
       "path": "docs/ANDROID_SIGNING.md",
-      "size": 2418,
-      "sha256": "e85eeb6c1c5280abbfa9462d59b8e3084a14396ec47fd1c1277a2a52af54cc71"
+      "size": 4787,
+      "sha256": "5828a98a0bfe6c478d7b2ae32ff1a2c2b03ce26e5a02464531512faae53ca356"
     },
     {
       "path": "docs/APPLICATION_LAYER.md",
