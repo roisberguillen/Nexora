@@ -112,6 +112,38 @@ struct LedgerOperationPayload {
     target_account_id: Option<String>,
     #[serde(default)]
     enabled: Option<bool>,
+    #[serde(default)]
+    lender: Option<String>,
+    #[serde(default)]
+    installment_minor: Option<String>,
+    #[serde(default)]
+    remaining_principal_minor: Option<String>,
+    #[serde(default)]
+    original_principal_minor: Option<String>,
+    #[serde(default)]
+    annual_nominal_rate_bps: Option<i64>,
+    #[serde(default)]
+    annual_effective_rate_bps: Option<i64>,
+    #[serde(default)]
+    installments_paid: Option<i64>,
+    #[serde(default)]
+    installments_remaining: Option<i64>,
+    #[serde(default)]
+    next_due_date: Option<String>,
+    #[serde(default)]
+    symbol: Option<String>,
+    #[serde(default)]
+    units: Option<String>,
+    #[serde(default)]
+    cost_basis_minor: Option<String>,
+    #[serde(default)]
+    current_value_minor: Option<String>,
+    #[serde(default)]
+    valuation_date: Option<String>,
+    #[serde(default)]
+    next_month_goals: Option<String>,
+    #[serde(default)]
+    perceived_control: Option<i64>,
 }
 
 impl SqliteSyncOperationStore {
@@ -443,6 +475,18 @@ impl SqliteSyncOperationStore {
                 "target_account_id": row.get::<_, String>(4)?, "amount_minor": row.get::<_, String>(5)?, "currency": row.get::<_, String>(6)?, "enabled": row.get::<_, i64>(7)? != 0
             }))))? { operations.push((0, row?)); }
         }
+        if table_has_column(&self.connection, "loans", "installment_minor")? {
+            let mut rows = self.connection.prepare("SELECT id,account_id,lender,installment_minor,remaining_principal_minor,original_principal_minor,currency,annual_nominal_rate_bps,annual_effective_rate_bps,installments_paid,installments_remaining,next_due_date FROM loans ORDER BY id")?;
+            for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({"schema_version":1,"operation":"upsert","entity_type":"loan","entity_id":r.get::<_,String>(0)?,"account_id":r.get::<_,String>(1)?,"lender":r.get::<_,String>(2)?,"installment_minor":r.get::<_,String>(3)?,"remaining_principal_minor":r.get::<_,String>(4)?,"original_principal_minor":r.get::<_,Option<String>>(5)?,"currency":r.get::<_,String>(6)?,"annual_nominal_rate_bps":r.get::<_,Option<i64>>(7)?,"annual_effective_rate_bps":r.get::<_,Option<i64>>(8)?,"installments_paid":r.get::<_,Option<i64>>(9)?,"installments_remaining":r.get::<_,Option<i64>>(10)?,"next_due_date":r.get::<_,Option<String>>(11)?}))))? { operations.push((0,row?)); }
+        }
+        if table_has_column(&self.connection, "investment_positions", "cost_basis_minor")? {
+            let mut rows = self.connection.prepare("SELECT id,account_id,name,symbol,units,cost_basis_minor,current_value_minor,currency,valuation_date FROM investment_positions ORDER BY id")?;
+            for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({"schema_version":1,"operation":"upsert","entity_type":"investment","entity_id":r.get::<_,String>(0)?,"account_id":r.get::<_,String>(1)?,"name":r.get::<_,String>(2)?,"symbol":r.get::<_,Option<String>>(3)?,"units":r.get::<_,Option<String>>(4)?,"cost_basis_minor":r.get::<_,String>(5)?,"current_value_minor":r.get::<_,String>(6)?,"currency":r.get::<_,String>(7)?,"valuation_date":r.get::<_,String>(8)?}))))? { operations.push((0,row?)); }
+        }
+        if table_has_column(&self.connection, "monthly_journals", "period")? {
+            let mut rows = self.connection.prepare("SELECT id,period,note,next_month_goals,perceived_control FROM monthly_journals ORDER BY id")?;
+            for row in rows.query_map([], |r| Ok(bootstrap_operation(serde_json::json!({"schema_version":1,"operation":"upsert","entity_type":"monthly_journal","entity_id":r.get::<_,String>(0)?,"period":r.get::<_,String>(1)?,"note":r.get::<_,Option<String>>(2)?,"next_month_goals":r.get::<_,Option<String>>(3)?,"perceived_control":r.get::<_,Option<i64>>(4)?}))))? { operations.push((0,row?)); }
+        }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
                     value_date, payee, description, category_id, note, source
@@ -567,6 +611,15 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
             "json_object('schema_version',1,'operation','delete','entity_type','allocation_plan','entity_id',OLD.id)",
         ));
     }
+    if table_has_column(connection, "loans", "installment_minor")? {
+        sql.push_str(&entity_trigger_sql("loans", "loan", "NEW.id", "OLD.id", "json_object('schema_version',1,'operation','upsert','entity_type','loan','entity_id',NEW.id,'account_id',NEW.account_id,'lender',NEW.lender,'installment_minor',NEW.installment_minor,'remaining_principal_minor',NEW.remaining_principal_minor,'original_principal_minor',NEW.original_principal_minor,'currency',NEW.currency,'annual_nominal_rate_bps',NEW.annual_nominal_rate_bps,'annual_effective_rate_bps',NEW.annual_effective_rate_bps,'installments_paid',NEW.installments_paid,'installments_remaining',NEW.installments_remaining,'next_due_date',NEW.next_due_date)", "json_object('schema_version',1,'operation','delete','entity_type','loan','entity_id',OLD.id)"));
+    }
+    if table_has_column(connection, "investment_positions", "cost_basis_minor")? {
+        sql.push_str(&entity_trigger_sql("investment_positions", "investment", "NEW.id", "OLD.id", "json_object('schema_version',1,'operation','upsert','entity_type','investment','entity_id',NEW.id,'account_id',NEW.account_id,'name',NEW.name,'symbol',NEW.symbol,'units',NEW.units,'cost_basis_minor',NEW.cost_basis_minor,'current_value_minor',NEW.current_value_minor,'currency',NEW.currency,'valuation_date',NEW.valuation_date)", "json_object('schema_version',1,'operation','delete','entity_type','investment','entity_id',OLD.id)"));
+    }
+    if table_has_column(connection, "monthly_journals", "period")? {
+        sql.push_str(&entity_trigger_sql("monthly_journals", "monthly_journal", "NEW.id", "OLD.id", "json_object('schema_version',1,'operation','upsert','entity_type','monthly_journal','entity_id',NEW.id,'period',NEW.period,'note',NEW.note,'next_month_goals',NEW.next_month_goals,'perceived_control',NEW.perceived_control)", "json_object('schema_version',1,'operation','delete','entity_type','monthly_journal','entity_id',OLD.id)"));
+    }
     connection.execute_batch(&sql)
 }
 
@@ -667,6 +720,9 @@ fn validate_payload(
                 | "budget"
                 | "recurring_rule"
                 | "allocation_plan"
+                | "loan"
+                | "investment"
+                | "monthly_journal"
                 | "transaction"
                 | "transfer"
         )
@@ -762,6 +818,38 @@ fn validate_payload(
                 {
                     return Err(DurableSyncError::InvalidPayload(
                         "allocation plan payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "loan" => {
+                if payload.account_id.is_none()
+                    || payload.lender.is_none()
+                    || payload.installment_minor.is_none()
+                    || payload.remaining_principal_minor.is_none()
+                    || payload.currency.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "loan payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "investment" => {
+                if payload.account_id.is_none()
+                    || payload.name.is_none()
+                    || payload.cost_basis_minor.is_none()
+                    || payload.current_value_minor.is_none()
+                    || payload.currency.is_none()
+                    || payload.valuation_date.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "investment payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "monthly_journal" => {
+                if payload.period.is_none() {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "monthly journal payload is incomplete".to_owned(),
                     ));
                 }
             }
@@ -935,6 +1023,12 @@ fn apply_ledger_operation(
             "INSERT INTO allocation_plans (id,name,trigger_kind,source_account_id,target_account_id,amount_minor,currency,enabled) VALUES (?1,?2,?3,?4,?5,?6,?7,?8) ON CONFLICT(id) DO UPDATE SET name=excluded.name,trigger_kind=excluded.trigger_kind,source_account_id=excluded.source_account_id,target_account_id=excluded.target_account_id,amount_minor=excluded.amount_minor,currency=excluded.currency,enabled=excluded.enabled",
             params![operation.entity_id,payload.name.as_deref(),payload.trigger_kind.as_deref(),payload.source_account_id.as_deref(),payload.target_account_id.as_deref(),payload.amount_minor.as_deref(),payload.currency.as_deref(),i64::from(payload.enabled.unwrap_or(true))],
         ),
+        ("loan", "delete") => transaction.execute("DELETE FROM loans WHERE id = ?1", params![operation.entity_id]),
+        ("loan", "upsert") => transaction.execute("INSERT INTO loans (id,account_id,lender,installment_minor,remaining_principal_minor,original_principal_minor,currency,annual_nominal_rate_bps,annual_effective_rate_bps,installments_paid,installments_remaining,next_due_date) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12) ON CONFLICT(id) DO UPDATE SET account_id=excluded.account_id,lender=excluded.lender,installment_minor=excluded.installment_minor,remaining_principal_minor=excluded.remaining_principal_minor,original_principal_minor=excluded.original_principal_minor,currency=excluded.currency,annual_nominal_rate_bps=excluded.annual_nominal_rate_bps,annual_effective_rate_bps=excluded.annual_effective_rate_bps,installments_paid=excluded.installments_paid,installments_remaining=excluded.installments_remaining,next_due_date=excluded.next_due_date", params![operation.entity_id,payload.account_id.as_deref(),payload.lender.as_deref(),payload.installment_minor.as_deref(),payload.remaining_principal_minor.as_deref(),payload.original_principal_minor.as_deref(),payload.currency.as_deref(),payload.annual_nominal_rate_bps,payload.annual_effective_rate_bps,payload.installments_paid,payload.installments_remaining,payload.next_due_date.as_deref()]),
+        ("investment", "delete") => transaction.execute("DELETE FROM investment_positions WHERE id = ?1", params![operation.entity_id]),
+        ("investment", "upsert") => transaction.execute("INSERT INTO investment_positions (id,account_id,name,symbol,units,cost_basis_minor,current_value_minor,currency,valuation_date) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9) ON CONFLICT(id) DO UPDATE SET account_id=excluded.account_id,name=excluded.name,symbol=excluded.symbol,units=excluded.units,cost_basis_minor=excluded.cost_basis_minor,current_value_minor=excluded.current_value_minor,currency=excluded.currency,valuation_date=excluded.valuation_date", params![operation.entity_id,payload.account_id.as_deref(),payload.name.as_deref(),payload.symbol.as_deref(),payload.units.as_deref(),payload.cost_basis_minor.as_deref(),payload.current_value_minor.as_deref(),payload.currency.as_deref(),payload.valuation_date.as_deref()]),
+        ("monthly_journal", "delete") => transaction.execute("DELETE FROM monthly_journals WHERE id = ?1", params![operation.entity_id]),
+        ("monthly_journal", "upsert") => transaction.execute("INSERT INTO monthly_journals (id,period,note,next_month_goals,perceived_control,created_at,updated_at) VALUES (?1,?2,?3,?4,?5,strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now')) ON CONFLICT(id) DO UPDATE SET period=excluded.period,note=excluded.note,next_month_goals=excluded.next_month_goals,perceived_control=excluded.perceived_control,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now')", params![operation.entity_id,payload.period.as_deref(),payload.note.as_deref(),payload.next_month_goals.as_deref(),payload.perceived_control]),
         ("transaction", "delete") => transaction.execute(
             "DELETE FROM transactions WHERE id = ?1",
             params![operation.entity_id],
@@ -1063,6 +1157,22 @@ mod tests {
                    id TEXT PRIMARY KEY, name TEXT NOT NULL, trigger_kind TEXT NOT NULL,
                    source_account_id TEXT NOT NULL, target_account_id TEXT NOT NULL,
                    amount_minor TEXT NOT NULL, currency TEXT NOT NULL, enabled INTEGER NOT NULL DEFAULT 1
+                 );
+                 CREATE TABLE loans (
+                   id TEXT PRIMARY KEY, account_id TEXT NOT NULL, lender TEXT NOT NULL,
+                   installment_minor TEXT NOT NULL, remaining_principal_minor TEXT NOT NULL,
+                   original_principal_minor TEXT, currency TEXT NOT NULL,
+                   annual_nominal_rate_bps INTEGER, annual_effective_rate_bps INTEGER,
+                   installments_paid INTEGER, installments_remaining INTEGER, next_due_date TEXT
+                 );
+                 CREATE TABLE investment_positions (
+                   id TEXT PRIMARY KEY, account_id TEXT NOT NULL, name TEXT NOT NULL,
+                   symbol TEXT, units TEXT, cost_basis_minor TEXT NOT NULL,
+                   current_value_minor TEXT NOT NULL, currency TEXT NOT NULL, valuation_date TEXT NOT NULL
+                 );
+                 CREATE TABLE monthly_journals (
+                   id TEXT PRIMARY KEY, period TEXT NOT NULL, note TEXT, next_month_goals TEXT,
+                   perceived_control INTEGER, created_at TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL DEFAULT ''
                  );
                  CREATE TABLE transactions (
                    id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL,
@@ -1430,6 +1540,28 @@ mod tests {
         assert_eq!(pulled.len(), 2);
         assert!(pulled[0].1.payload.contains("recurring_rule"));
         assert!(pulled[1].1.payload.contains("allocation_plan"));
+    }
+
+    #[test]
+    fn loan_investment_and_monthly_journal_are_journaled() {
+        let directory = tempdir().unwrap();
+        let store = open_store(directory.path().join("nexora.db"));
+        store.connection.execute("INSERT INTO loans (id,account_id,lender,installment_minor,remaining_principal_minor,currency) VALUES ('loan-1','account-synthetic','Bank','1000','9000','EUR')", []).unwrap();
+        store.connection.execute("INSERT INTO investment_positions (id,account_id,name,cost_basis_minor,current_value_minor,currency,valuation_date) VALUES ('investment-1','account-synthetic','Fund','10000','11000','EUR','2026-10-01')", []).unwrap();
+        store.connection.execute("INSERT INTO monthly_journals (id,period,note) VALUES ('journal-1','2026-10','Note')", []).unwrap();
+        let pulled = store.pull(0).unwrap();
+        assert_eq!(pulled.len(), 3);
+        assert!(pulled.iter().any(|(_, op)| op.payload.contains("loan")));
+        assert!(
+            pulled
+                .iter()
+                .any(|(_, op)| op.payload.contains("investment"))
+        );
+        assert!(
+            pulled
+                .iter()
+                .any(|(_, op)| op.payload.contains("monthly_journal"))
+        );
     }
 
     #[test]

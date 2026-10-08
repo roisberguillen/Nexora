@@ -3,7 +3,10 @@ import type {
   AllocationPlan,
   Budget,
   Category,
+  InvestmentPosition,
   LedgerRepository,
+  Loan,
+  MonthlyJournal,
   RecurringRule,
   Tag,
   Transaction,
@@ -17,6 +20,9 @@ import {
   Tag as DomainTag,
   LocalDate,
   Money,
+  InvestmentPosition as DomainInvestmentPosition,
+  Loan as DomainLoan,
+  MonthlyJournal as DomainMonthlyJournal,
   RecurringRule as DomainRecurringRule,
   Transfer as DomainTransfer,
   Transaction as DomainTransaction,
@@ -164,6 +170,15 @@ const mutatingMethods = new Set([
   "saveAllocationPlan",
   "updateAllocationPlan",
   "deleteAllocationPlan",
+  "saveLoan",
+  "updateLoan",
+  "deleteLoan",
+  "saveInvestmentPosition",
+  "updateInvestmentPosition",
+  "deleteInvestmentPosition",
+  "saveMonthlyJournal",
+  "updateMonthlyJournal",
+  "deleteMonthlyJournal",
   "saveBudget",
   "updateBudget",
   "reviseBudget",
@@ -174,6 +189,15 @@ const mutatingMethods = new Set([
   "saveAllocationPlan",
   "updateAllocationPlan",
   "deleteAllocationPlan",
+  "saveLoan",
+  "updateLoan",
+  "deleteLoan",
+  "saveInvestmentPosition",
+  "updateInvestmentPosition",
+  "deleteInvestmentPosition",
+  "saveMonthlyJournal",
+  "updateMonthlyJournal",
+  "deleteMonthlyJournal",
   "saveLoan",
   "updateLoan",
   "deleteLoan",
@@ -395,6 +419,53 @@ async function operationForMutation(
         schema_version: 1,
         operation: "delete",
         entity_type: "allocation_plan",
+        entity_id: String(args[0]),
+      }),
+      true,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  const simpleEntities: Record<string, { type: string; value: Record<string, unknown> }> = {};
+  if (method === "saveLoan" || method === "updateLoan") {
+    const value = args[0] as Loan;
+    simpleEntities[value.id] = { type: "loan", value: loanPayload(value) };
+  }
+  if (method === "saveInvestmentPosition" || method === "updateInvestmentPosition") {
+    const value = args[0] as InvestmentPosition;
+    simpleEntities[value.id] = { type: "investment", value: investmentPayload(value) };
+  }
+  if (method === "saveMonthlyJournal" || method === "updateMonthlyJournal") {
+    const value = args[0] as MonthlyJournal;
+    simpleEntities[value.id] = { type: "monthly_journal", value: monthlyJournalPayload(value) };
+  }
+  for (const [entityId, entity] of Object.entries(simpleEntities))
+    return operationFromPayload(
+      entityId,
+      JSON.stringify(entity.value),
+      false,
+      deviceId,
+      revisions,
+      client,
+    );
+  if (
+    method === "deleteLoan" ||
+    method === "deleteInvestmentPosition" ||
+    method === "deleteMonthlyJournal"
+  ) {
+    const type =
+      method === "deleteLoan"
+        ? "loan"
+        : method === "deleteInvestmentPosition"
+          ? "investment"
+          : "monthly_journal";
+    return operationFromPayload(
+      String(args[0]),
+      JSON.stringify({
+        schema_version: 1,
+        operation: "delete",
+        entity_type: type,
         entity_id: String(args[0]),
       }),
       true,
@@ -639,6 +710,54 @@ function allocationPlanPayload(plan: AllocationPlan): Record<string, unknown> {
   };
 }
 
+function loanPayload(value: Loan): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "loan",
+    entity_id: value.id,
+    account_id: value.accountId,
+    lender: value.lender,
+    installment_minor: value.installment.amountMinor.toString(),
+    remaining_principal_minor: value.remainingPrincipal.amountMinor.toString(),
+    original_principal_minor: value.originalPrincipal?.amountMinor.toString() ?? null,
+    currency: value.remainingPrincipal.currency,
+    annual_nominal_rate_bps: value.annualNominalRateBps ?? null,
+    annual_effective_rate_bps: value.annualEffectiveRateBps ?? null,
+    installments_paid: value.installmentsPaid ?? null,
+    installments_remaining: value.installmentsRemaining ?? null,
+    next_due_date: value.nextDueDate?.toString() ?? null,
+  };
+}
+function investmentPayload(value: InvestmentPosition): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "investment",
+    entity_id: value.id,
+    account_id: value.accountId,
+    name: value.name,
+    symbol: value.symbol ?? null,
+    units: value.units ?? null,
+    cost_basis_minor: value.costBasis.amountMinor.toString(),
+    current_value_minor: value.currentValue.amountMinor.toString(),
+    currency: value.costBasis.currency,
+    valuation_date: value.valuationDate.toString(),
+  };
+}
+function monthlyJournalPayload(value: MonthlyJournal): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "monthly_journal",
+    entity_id: value.id,
+    period: value.period,
+    note: value.note ?? null,
+    next_month_goals: value.nextMonthGoals ?? null,
+    perceived_control: value.perceivedControl ?? null,
+  };
+}
+
 async function applyRemoteOperation(
   repository: LedgerRepository,
   operation: LocalSyncOperation,
@@ -798,6 +917,102 @@ async function applyRemoteOperation(
     if ((await repository.listAllocationPlans()).some((x) => x.id === plan.id))
       await repository.updateAllocationPlan(plan);
     else await repository.saveAllocationPlan(plan);
+    return;
+  }
+  if (payload.entity_type === "loan") {
+    if (payload.operation === "delete") {
+      if ((await repository.listLoans()).some((x) => x.id === operation.entityId))
+        await repository.deleteLoan(operation.entityId);
+      return;
+    }
+    const value = DomainLoan.create({
+      id: operation.entityId,
+      accountId: String(payload.account_id),
+      lender: String(payload.lender),
+      installment: Money.fromMinor(
+        BigInt(String(payload.installment_minor)),
+        String(payload.currency),
+      ),
+      remainingPrincipal: Money.fromMinor(
+        BigInt(String(payload.remaining_principal_minor)),
+        String(payload.currency),
+      ),
+      ...(payload.original_principal_minor == null
+        ? {}
+        : {
+            originalPrincipal: Money.fromMinor(
+              BigInt(String(payload.original_principal_minor)),
+              String(payload.currency),
+            ),
+          }),
+      ...(payload.annual_nominal_rate_bps == null
+        ? {}
+        : { annualNominalRateBps: Number(payload.annual_nominal_rate_bps) }),
+      ...(payload.annual_effective_rate_bps == null
+        ? {}
+        : { annualEffectiveRateBps: Number(payload.annual_effective_rate_bps) }),
+      ...(payload.installments_paid == null
+        ? {}
+        : { installmentsPaid: Number(payload.installments_paid) }),
+      ...(payload.installments_remaining == null
+        ? {}
+        : { installmentsRemaining: Number(payload.installments_remaining) }),
+      ...(payload.next_due_date == null
+        ? {}
+        : { nextDueDate: LocalDate.parse(String(payload.next_due_date)) }),
+    });
+    if ((await repository.listLoans()).some((x) => x.id === value.id))
+      await repository.updateLoan(value);
+    else await repository.saveLoan(value);
+    return;
+  }
+  if (payload.entity_type === "investment") {
+    if (payload.operation === "delete") {
+      if ((await repository.listInvestmentPositions()).some((x) => x.id === operation.entityId))
+        await repository.deleteInvestmentPosition(operation.entityId);
+      return;
+    }
+    const value = DomainInvestmentPosition.create({
+      id: operation.entityId,
+      accountId: String(payload.account_id),
+      name: String(payload.name),
+      ...(payload.symbol == null ? {} : { symbol: String(payload.symbol) }),
+      ...(payload.units == null ? {} : { units: String(payload.units) }),
+      costBasis: Money.fromMinor(
+        BigInt(String(payload.cost_basis_minor)),
+        String(payload.currency),
+      ),
+      currentValue: Money.fromMinor(
+        BigInt(String(payload.current_value_minor)),
+        String(payload.currency),
+      ),
+      valuationDate: LocalDate.parse(String(payload.valuation_date)),
+    });
+    if ((await repository.listInvestmentPositions()).some((x) => x.id === value.id))
+      await repository.updateInvestmentPosition(value);
+    else await repository.saveInvestmentPosition(value);
+    return;
+  }
+  if (payload.entity_type === "monthly_journal") {
+    if (payload.operation === "delete") {
+      if ((await repository.listMonthlyJournals()).some((x) => x.id === operation.entityId))
+        await repository.deleteMonthlyJournal(operation.entityId);
+      return;
+    }
+    const value = DomainMonthlyJournal.create({
+      id: operation.entityId,
+      period: String(payload.period),
+      ...(payload.note == null ? {} : { note: String(payload.note) }),
+      ...(payload.next_month_goals == null
+        ? {}
+        : { nextMonthGoals: String(payload.next_month_goals) }),
+      ...(payload.perceived_control == null
+        ? {}
+        : { perceivedControl: Number(payload.perceived_control) as 1 | 2 | 3 | 4 | 5 }),
+    });
+    if ((await repository.listMonthlyJournals()).some((x) => x.id === value.id))
+      await repository.updateMonthlyJournal(value);
+    else await repository.saveMonthlyJournal(value);
     return;
   }
   if (payload.entity_type === "transfer") {

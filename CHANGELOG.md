@@ -966,3 +966,5 @@
   outbox PC e applicazione atomica nello SQLite del telefono; aggiunti test di scrittura host.
 - `remote-mobile-host`: recurring rules e allocation plans ora attraversano bootstrap, journal SQLite,
   pull, push, outbox persistente, conflitti e idempotenza come le altre entità supportate.
+- `remote-mobile-host`: loan, investment position e monthly journal aggiunti al bootstrap,
+  push/pull, outbox e journal SQLite incrementale con delete e validazione payload.

@@ -18,6 +18,9 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | `saveBudget`, `updateBudget`, `reviseBudget`, `deleteBudget` | budget | bidirezionale incrementale | `budget.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | bidirezionale incrementale | `recurring_rule.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveAllocationPlan`, `updateAllocationPlan`, `deleteAllocationPlan` | allocation plan | bidirezionale incrementale | `allocation_plan.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
+| `saveLoan`, `updateLoan`, `deleteLoan` | loan | bidirezionale incrementale | `loan.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
+| `saveInvestmentPosition`, `updateInvestmentPosition`, `deleteInvestmentPosition` | investment | bidirezionale incrementale | `investment.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
+| `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | monthly journal | bidirezionale incrementale | `monthly_journal.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveLoan`, `updateLoan`, `deleteLoan` | loan | non supportato | — | — | no | no |
 | `saveInvestmentPosition`, `updateInvestmentPosition`, `deleteInvestmentPosition` | investment | non supportato | — | — | no | no |
 | `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | journal | non supportato | — | — | no | no |
