@@ -17,11 +17,13 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::io::Cursor;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 use std::time::Duration;
 use subtle::ConstantTimeEq;
 use tokio::sync::{Mutex, RwLock, oneshot};
 use tokio::task::JoinHandle;
+use x509_parser::extensions::ParsedExtension;
+use x509_parser::prelude::parse_x509_certificate;
 
 mod sqlite_sync;
 pub use sqlite_sync::{DurableSyncError, SqliteSyncOperationStore, SyncBootstrapSnapshot};
@@ -768,6 +770,9 @@ impl LocalHubRuntime {
             });
         }
 
+        if config.host_identity.is_some() {
+            config.validate_identity().map_err(RuntimeError::Tls)?;
+        }
         let tls = config.server_config().map_err(RuntimeError::Tls)?;
         let std_listener = std::net::TcpListener::bind(address).map_err(RuntimeError::Io)?;
         std_listener
@@ -966,6 +971,14 @@ pub struct TransportSecurityConfig {
     pub host_identity: Option<String>,
 }
 
+static RUSTLS_PROVIDER: OnceLock<()> = OnceLock::new();
+
+fn ensure_rustls_crypto_provider() {
+    RUSTLS_PROVIDER.get_or_init(|| {
+        let _ = rustls::crypto::ring::default_provider().install_default();
+    });
+}
+
 impl Default for TransportSecurityConfig {
     fn default() -> Self {
         Self {
@@ -1011,6 +1024,7 @@ impl TransportSecurityConfig {
     /// Parses the configured certificate and key into a rustls server config.
     /// The caller must still bind only to the address returned by `bind_addr`.
     pub fn server_config(&self) -> Result<rustls::ServerConfig, TlsConfigError> {
+        ensure_rustls_crypto_provider();
         let cert_pem = self
             .tls_certificate_pem
             .as_deref()
@@ -1033,6 +1047,58 @@ impl TransportSecurityConfig {
             .with_single_cert(certificates, key)
             .map_err(|_| TlsConfigError::InvalidCertificate)
     }
+
+    /// Validates the complete persisted host identity before the listener is opened.
+    /// The fingerprint is over the DER certificate, the key is matched by rustls,
+    /// and the stable host identity must be present in a DNS SAN.
+    pub fn validate_identity(&self) -> Result<(), TlsConfigError> {
+        let cert_pem = self
+            .tls_certificate_pem
+            .as_deref()
+            .ok_or(TlsConfigError::CertificateRequired)?;
+        let expected_fingerprint = self
+            .host_fingerprint
+            .as_deref()
+            .ok_or(TlsConfigError::FingerprintRequired)?;
+        let host_identity = self
+            .host_identity
+            .as_deref()
+            .ok_or(TlsConfigError::HostIdentityRequired)?;
+        let certificates = rustls_pemfile::certs(&mut Cursor::new(cert_pem.as_bytes()))
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|_| TlsConfigError::InvalidCertificate)?;
+        let certificate = certificates
+            .first()
+            .ok_or(TlsConfigError::InvalidCertificate)?;
+        let actual = format!(
+            "sha256:{}",
+            Sha256::digest(certificate.as_ref())
+                .iter()
+                .map(|byte| format!("{byte:02x}"))
+                .collect::<String>()
+        );
+        if actual != expected_fingerprint {
+            return Err(TlsConfigError::FingerprintMismatch);
+        }
+        let (_, parsed) = parse_x509_certificate(certificate.as_ref())
+            .map_err(|_| TlsConfigError::InvalidCertificate)?;
+        let has_identity_san = parsed.tbs_certificate.extensions().iter().any(|extension| {
+            matches!(
+                extension.parsed_extension(),
+                ParsedExtension::SubjectAlternativeName(san)
+                    if san.general_names.iter().any(|name| {
+                        matches!(name, x509_parser::extensions::GeneralName::DNSName(value) if *value == host_identity)
+                    })
+            )
+        });
+        if !has_identity_san {
+            return Err(TlsConfigError::HostIdentitySanMismatch);
+        }
+        if !parsed.validity().is_valid() {
+            return Err(TlsConfigError::CertificateNotValid);
+        }
+        self.server_config().map(|_| ())
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1041,6 +1107,11 @@ pub enum TlsConfigError {
     PrivateKeyRequired,
     InvalidCertificate,
     InvalidPrivateKey,
+    FingerprintRequired,
+    FingerprintMismatch,
+    HostIdentityRequired,
+    HostIdentitySanMismatch,
+    CertificateNotValid,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -1903,6 +1974,128 @@ mod tests {
             ..Default::default()
         };
         assert_eq!(config.bind_addr(), Err(ConfigError::TlsCertificateRequired));
+    }
+
+    fn tls_identity_config(
+        certificate_pem: String,
+        private_key_pem: String,
+        host_identity: &str,
+    ) -> TransportSecurityConfig {
+        let mut reader = Cursor::new(certificate_pem.as_bytes());
+        let certificate = rustls_pemfile::certs(&mut reader).next().unwrap().unwrap();
+        let fingerprint = format!(
+            "sha256:{}",
+            Sha256::digest(certificate.as_ref())
+                .iter()
+                .map(|byte| format!("{byte:02x}"))
+                .collect::<String>()
+        );
+        TransportSecurityConfig {
+            binding: BindingMode::Lan,
+            address: "192.0.2.10".parse().unwrap(),
+            port: DEFAULT_PORT,
+            tls_certificate_pem: Some(certificate_pem),
+            tls_private_key_pem: Some(private_key_pem),
+            host_fingerprint: Some(fingerprint),
+            host_identity: Some(host_identity.to_owned()),
+        }
+    }
+
+    #[test]
+    fn tls_identity_validation_accepts_matching_fingerprint_keypair_and_san() {
+        let certificate =
+            rcgen::generate_simple_self_signed(vec!["nexora-phone-test.local".to_owned()]).unwrap();
+        let config = tls_identity_config(
+            certificate.cert.pem(),
+            certificate.key_pair.serialize_pem(),
+            "nexora-phone-test.local",
+        );
+        assert_eq!(config.validate_identity(), Ok(()));
+    }
+
+    #[test]
+    fn tls_identity_validation_rejects_fingerprint_tampering() {
+        let certificate =
+            rcgen::generate_simple_self_signed(vec!["nexora-phone-test.local".to_owned()]).unwrap();
+        let mut config = tls_identity_config(
+            certificate.cert.pem(),
+            certificate.key_pair.serialize_pem(),
+            "nexora-phone-test.local",
+        );
+        config.host_fingerprint = Some(format!("sha256:{}", "0".repeat(64)));
+        assert_eq!(
+            config.validate_identity(),
+            Err(TlsConfigError::FingerprintMismatch)
+        );
+    }
+
+    #[test]
+    fn tls_identity_validation_rejects_wrong_key_and_san() {
+        let certificate =
+            rcgen::generate_simple_self_signed(vec!["nexora-phone-test.local".to_owned()]).unwrap();
+        let other =
+            rcgen::generate_simple_self_signed(vec!["other-phone.local".to_owned()]).unwrap();
+        let wrong_key = tls_identity_config(
+            certificate.cert.pem(),
+            other.key_pair.serialize_pem(),
+            "nexora-phone-test.local",
+        );
+        assert_eq!(
+            wrong_key.validate_identity(),
+            Err(TlsConfigError::InvalidCertificate)
+        );
+        let wrong_san = tls_identity_config(
+            certificate.cert.pem(),
+            certificate.key_pair.serialize_pem(),
+            "other-phone.local",
+        );
+        assert_eq!(
+            wrong_san.validate_identity(),
+            Err(TlsConfigError::HostIdentitySanMismatch)
+        );
+    }
+
+    #[test]
+    fn tls_identity_validation_rejects_missing_identity_metadata() {
+        let certificate =
+            rcgen::generate_simple_self_signed(vec!["nexora-phone-test.local".to_owned()]).unwrap();
+        let mut config = tls_identity_config(
+            certificate.cert.pem(),
+            certificate.key_pair.serialize_pem(),
+            "nexora-phone-test.local",
+        );
+        config.host_identity = None;
+        assert_eq!(
+            config.validate_identity(),
+            Err(TlsConfigError::HostIdentityRequired)
+        );
+        config.host_identity = Some("nexora-phone-test.local".to_owned());
+        config.host_fingerprint = None;
+        assert_eq!(
+            config.validate_identity(),
+            Err(TlsConfigError::FingerprintRequired)
+        );
+    }
+
+    #[test]
+    fn tls_identity_validation_rejects_expired_certificate() {
+        let mut params = rcgen::CertificateParams::new(vec![
+            "nexora-phone-test.local".to_owned(),
+        ])
+        .unwrap();
+        params.not_before = rcgen::date_time_ymd(2000, 1, 1);
+        params.not_after = rcgen::date_time_ymd(2001, 1, 1);
+        let key_pair = rcgen::KeyPair::generate().unwrap();
+        let certificate = params.self_signed(&key_pair).unwrap();
+        let config = tls_identity_config(
+            certificate.pem(),
+            key_pair.serialize_pem(),
+            "nexora-phone-test.local",
+        );
+        assert_eq!(
+            config.validate_identity(),
+            Err(TlsConfigError::CertificateNotValid)
+        );
     }
 
     #[test]

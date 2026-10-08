@@ -28,4 +28,5 @@ tauri-plugin-dialog = "2.4.2"
 tokio = { version = "1", features = ["sync"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
 rustls-pemfile = "2"
+x509-parser = "0.16"
 tauri-plugin-keystore = "2.1.0-alpha.2"

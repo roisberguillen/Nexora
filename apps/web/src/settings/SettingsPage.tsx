@@ -263,11 +263,14 @@ export function SettingsPage({
         endpoint,
         { ...invite, ...credentials },
         isDesktopRuntime() && invite.certificatePem
-          ? createNativeLocalHostRequest({
-              certificatePem: invite.certificatePem,
-              hostFingerprint: invite.hostFingerprint,
-              ...(invite.hostIdentity === undefined ? {} : { hostIdentity: invite.hostIdentity }),
-            })
+          ? createNativeLocalHostRequest(
+              {
+                certificatePem: invite.certificatePem,
+                hostFingerprint: invite.hostFingerprint,
+                ...(invite.hostIdentity === undefined ? {} : { hostIdentity: invite.hostIdentity }),
+              },
+              endpoint,
+            )
           : undefined,
       );
       await saveLocalHostCredentials(endpoint, paired);

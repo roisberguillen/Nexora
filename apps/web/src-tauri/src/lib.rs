@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
-use std::net::{IpAddr, UdpSocket};
+use std::net::IpAddr;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -15,6 +15,8 @@ use serde_json::{Map, Value as JsonValue};
 use sha2::{Digest, Sha256};
 use tauri::{Manager, State};
 use tokio::sync::Mutex as AsyncMutex;
+use x509_parser::extensions::ParsedExtension;
+use x509_parser::prelude::parse_x509_certificate;
 
 #[cfg(mobile)]
 use tauri_plugin_keystore::{KeystoreExt, RetrieveRequest, StoreRequest};
@@ -53,44 +55,28 @@ struct NativeHttpResponse {
 
 #[tauri::command]
 async fn local_host_request(request: NativeHttpRequest) -> Result<NativeHttpResponse, String> {
-    if request.url.starts_with("https://") && request.certificate_pem.is_none() {
-        return Err("pinned_host_certificate_required".to_owned());
-    }
+    let url = validate_native_local_host_request(&request)?;
     let mut builder = reqwest::Client::builder()
-        .https_only(request.url.starts_with("https://"))
+        .https_only(true)
         .redirect(reqwest::redirect::Policy::none());
-    if let (Some(host_identity), Some(resolve_address)) = (
-        request.host_identity.as_deref(),
-        request.resolve_address.as_deref(),
-    ) {
-        let address = resolve_address
-            .parse::<std::net::SocketAddr>()
-            .map_err(|_| "invalid_host_resolution_address".to_owned())?;
-        builder = builder.resolve(host_identity, address);
-    }
-    if let Some(certificate_pem) = request.certificate_pem.as_deref() {
-        if let Some(expected) = request.expected_fingerprint.as_deref() {
-            let mut reader = std::io::Cursor::new(certificate_pem.as_bytes());
-            let certificate = rustls_pemfile::certs(&mut reader)
-                .next()
-                .ok_or_else(|| "invalid_pinned_host_certificate".to_owned())
-                .and_then(|result| {
-                    result.map_err(|_| "invalid_pinned_host_certificate".to_owned())
-                })?;
-            verify_certificate_fingerprint(certificate.as_ref(), expected)?;
-        }
-        let certificate = reqwest::Certificate::from_pem(certificate_pem.as_bytes())
-            .map_err(|_| "invalid_pinned_host_certificate".to_owned())?;
-        builder = builder
-            .tls_built_in_root_certs(false)
-            .add_root_certificate(certificate);
-    }
+    let host_identity = request.host_identity.as_deref().unwrap();
+    let resolve_address = request.resolve_address.as_deref().unwrap();
+    let address = resolve_address
+        .parse::<std::net::SocketAddr>()
+        .map_err(|_| "invalid_host_resolution_address".to_owned())?;
+    builder = builder.resolve(host_identity, address);
+    let certificate_pem = request.certificate_pem.as_deref().unwrap();
+    let certificate = reqwest::Certificate::from_pem(certificate_pem.as_bytes())
+        .map_err(|_| "invalid_pinned_host_certificate".to_owned())?;
+    builder = builder
+        .tls_built_in_root_certs(false)
+        .add_root_certificate(certificate);
     let client = builder
         .build()
         .map_err(|error| format!("native_http_client_failed: {error}"))?;
     let method = reqwest::Method::from_bytes(request.method.as_bytes())
         .map_err(|_| "invalid_http_method".to_owned())?;
-    let mut outgoing = client.request(method, &request.url);
+    let mut outgoing = client.request(method, url);
     for (name, value) in request.headers {
         outgoing = outgoing.header(name, value);
     }
@@ -116,6 +102,106 @@ async fn local_host_request(request: NativeHttpRequest) -> Result<NativeHttpResp
         headers,
         body,
     })
+}
+
+fn validate_native_local_host_request(request: &NativeHttpRequest) -> Result<reqwest::Url, String> {
+    if request.url.contains("/../")
+        || request.url.ends_with("/..")
+        || request.url.to_ascii_lowercase().contains("%2e%2e")
+    {
+        return Err("unsafe_host_path".to_owned());
+    }
+    let url = reqwest::Url::parse(&request.url).map_err(|_| "malformed_host_url".to_owned())?;
+    if url.scheme() != "https" {
+        return Err("https_only".to_owned());
+    }
+    if !url.username().is_empty() || url.password().is_some() || url.fragment().is_some() {
+        return Err("unsafe_host_url".to_owned());
+    }
+    if url
+        .path_segments()
+        .is_some_and(|mut segments| segments.any(|segment| segment == ".."))
+    {
+        return Err("unsafe_host_path".to_owned());
+    }
+    let host_identity = request
+        .host_identity
+        .as_deref()
+        .ok_or_else(|| "paired_host_identity_required".to_owned())?;
+    if host_identity.is_empty()
+        || host_identity.len() > 253
+        || !host_identity.ends_with(".local")
+        || host_identity.contains(':')
+        || url.host_str() != Some(host_identity)
+    {
+        return Err("paired_host_identity_mismatch".to_owned());
+    }
+    let expected = request
+        .expected_fingerprint
+        .as_deref()
+        .ok_or_else(|| "pinned_host_fingerprint_required".to_owned())?;
+    if !is_sha256_fingerprint(expected) {
+        return Err("invalid_host_fingerprint".to_owned());
+    }
+    let certificate_pem = request
+        .certificate_pem
+        .as_deref()
+        .ok_or_else(|| "pinned_host_certificate_required".to_owned())?;
+    let certificate_der = parse_first_certificate(certificate_pem)?;
+    verify_certificate_fingerprint(certificate_der.as_ref(), expected)?;
+    verify_certificate_san(certificate_der.as_ref(), host_identity)?;
+    let resolve_address = request
+        .resolve_address
+        .as_deref()
+        .ok_or_else(|| "paired_host_address_required".to_owned())?;
+    let address = resolve_address
+        .parse::<std::net::SocketAddr>()
+        .map_err(|_| "invalid_host_resolution_address".to_owned())?;
+    if !is_private_lan_address(address.ip()) {
+        return Err("unpaired_or_external_host_address".to_owned());
+    }
+    Ok(url)
+}
+
+fn parse_first_certificate(certificate_pem: &str) -> Result<Vec<u8>, String> {
+    rustls_pemfile::certs(&mut std::io::Cursor::new(certificate_pem.as_bytes()))
+        .next()
+        .ok_or_else(|| "invalid_pinned_host_certificate".to_owned())?
+        .map(|certificate| certificate.to_vec())
+        .map_err(|_| "invalid_pinned_host_certificate".to_owned())
+}
+
+fn is_sha256_fingerprint(value: &str) -> bool {
+    let Some(hex) = value.strip_prefix("sha256:") else {
+        return false;
+    };
+    hex.len() == 64 && hex.bytes().all(|byte| byte.is_ascii_hexdigit())
+}
+
+fn is_private_lan_address(address: IpAddr) -> bool {
+    match address {
+        IpAddr::V4(value) => value.is_private() && !value.is_loopback(),
+        IpAddr::V6(value) => value.is_unique_local() && !value.is_loopback(),
+    }
+}
+
+fn verify_certificate_san(certificate_der: &[u8], host_identity: &str) -> Result<(), String> {
+    let (_, certificate) = parse_x509_certificate(certificate_der)
+        .map_err(|_| "invalid_pinned_host_certificate".to_owned())?;
+    let valid = certificate.tbs_certificate.extensions().iter().any(|extension| {
+        matches!(
+            extension.parsed_extension(),
+            ParsedExtension::SubjectAlternativeName(san)
+                if san.general_names.iter().any(|name| {
+                    matches!(name, x509_parser::extensions::GeneralName::DNSName(value) if *value == host_identity)
+                })
+        )
+    });
+    if valid {
+        Ok(())
+    } else {
+        Err("host_identity_not_in_certificate_san".to_owned())
+    }
 }
 
 fn verify_certificate_fingerprint(certificate_der: &[u8], expected: &str) -> Result<(), String> {
@@ -230,8 +316,10 @@ async fn load_or_generate_phone_lan_identity(
 ) -> Result<PhoneLanIdentity, String> {
     let path = database_path(app, "phone-local-hub-identity.json")?;
     let key_alias = "nexora.local-hub.tls.v1".to_owned();
-    if let Ok(raw) = fs::read_to_string(&path) {
-        if let Ok(identity) = serde_json::from_str::<PersistedPhoneLanIdentity>(&raw) {
+    match fs::read_to_string(&path) {
+        Ok(raw) => {
+            let identity = serde_json::from_str::<PersistedPhoneLanIdentity>(&raw)
+                .map_err(|_| "invalid_persisted_local_hub_identity".to_owned())?;
             if identity.key_alias != key_alias {
                 return Err("invalid_persisted_local_hub_identity".to_owned());
             }
@@ -245,15 +333,20 @@ async fn load_or_generate_phone_lan_identity(
                 .map_err(|_| "secure_tls_key_unavailable".to_owned())?
                 .value
                 .ok_or_else(|| "secure_tls_key_unavailable".to_owned())?;
-            return Ok(PhoneLanIdentity {
+            let loaded = PhoneLanIdentity {
                 certificate_pem: identity.certificate_pem,
                 private_key_pem,
                 fingerprint: identity.fingerprint,
                 host_identity: identity.host_identity,
-            });
+            };
+            validate_phone_lan_identity(&loaded)?;
+            return Ok(loaded);
         }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(_) => return Err("persisted_local_hub_identity_unavailable".to_owned()),
     }
     let identity = generate_phone_lan_identity(address)?;
+    validate_phone_lan_identity(&identity)?;
     let persisted = PersistedPhoneLanIdentity {
         certificate_pem: identity.certificate_pem.clone(),
         fingerprint: identity.fingerprint.clone(),
@@ -277,6 +370,21 @@ async fn load_or_generate_phone_lan_identity(
     Ok(identity)
 }
 
+fn validate_phone_lan_identity(identity: &PhoneLanIdentity) -> Result<(), String> {
+    let config = TransportSecurityConfig {
+        binding: nexora_local_hub::BindingMode::Lan,
+        address: "192.0.2.10".parse().expect("test-only placeholder address"),
+        port: 43_173,
+        tls_certificate_pem: Some(identity.certificate_pem.clone()),
+        tls_private_key_pem: Some(identity.private_key_pem.clone()),
+        host_fingerprint: Some(identity.fingerprint.clone()),
+        host_identity: Some(identity.host_identity.clone()),
+    };
+    config
+        .validate_identity()
+        .map_err(|error| format!("invalid_persisted_local_hub_identity: {error:?}"))
+}
+
 #[cfg(not(mobile))]
 async fn load_or_generate_phone_lan_identity(
     _app: &tauri::AppHandle,
@@ -296,19 +404,7 @@ fn detect_local_lan_address() -> Result<IpAddr, String> {
         }
     }
 
-    let socket = UdpSocket::bind("0.0.0.0:0")
-        .map_err(|error| format!("Could not inspect the local network: {error}"))?;
-    socket
-        .connect("8.8.8.8:80")
-        .map_err(|error| format!("Could not resolve the local Wi-Fi route: {error}"))?;
-    let address = socket
-        .local_addr()
-        .map_err(|error| format!("Could not read the local Wi-Fi address: {error}"))?
-        .ip();
-    if address.is_loopback() || address.is_unspecified() {
-        return Err("The phone is not connected to a local Wi-Fi network".to_owned());
-    }
-    Ok(address)
+    Err("The phone is not connected to a local Wi-Fi network".to_owned())
 }
 
 fn is_preferred_lan_address(address: IpAddr) -> bool {
@@ -387,9 +483,10 @@ async fn pc_manager_start_lan(
     if certificate_pem.trim().is_empty() || private_key_pem.trim().is_empty() {
         return Err("TLS certificate and private key cannot be empty".to_owned());
     }
+    let certificate_der = parse_first_certificate(&certificate_pem)?;
     let fingerprint = format!(
         "sha256:{}",
-        Sha256::digest(certificate_pem.as_bytes())
+        Sha256::digest(&certificate_der)
             .iter()
             .map(|byte| format!("{byte:02x}"))
             .collect::<String>()
@@ -702,8 +799,12 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use super::{
-        generate_phone_lan_identity, validate_database_filename, verify_certificate_fingerprint,
+        NativeHttpRequest, generate_phone_lan_identity, parse_first_certificate,
+        validate_database_filename, validate_native_local_host_request,
+        verify_certificate_fingerprint,
     };
     use std::net::IpAddr;
 
@@ -757,5 +858,94 @@ mod tests {
         let json = serde_json::to_string(&persisted).unwrap();
         assert!(!json.contains("private_key_pem"));
         assert!(!json.contains("PRIVATE KEY"));
+    }
+
+    #[test]
+    fn persisted_phone_identity_round_trip_keeps_certificate_fingerprint_and_host_identity() {
+        let identity =
+            generate_phone_lan_identity("192.0.2.10".parse::<IpAddr>().unwrap()).unwrap();
+        let persisted = super::PersistedPhoneLanIdentity {
+            certificate_pem: identity.certificate_pem.clone(),
+            fingerprint: identity.fingerprint.clone(),
+            key_alias: "nexora.local-hub.tls.v1".to_owned(),
+            host_identity: identity.host_identity.clone(),
+        };
+        let restored = serde_json::from_str::<super::PersistedPhoneLanIdentity>(
+            &serde_json::to_string(&persisted).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(restored.fingerprint, identity.fingerprint);
+        assert_eq!(restored.host_identity, identity.host_identity);
+        assert_eq!(restored.certificate_pem, identity.certificate_pem);
+        assert!(verify_certificate_fingerprint(
+            &parse_first_certificate(&restored.certificate_pem).unwrap(),
+            &restored.fingerprint
+        )
+        .is_ok());
+    }
+
+    #[test]
+    fn native_local_host_request_fails_closed_for_transport_and_host_confusion() {
+        let identity =
+            generate_phone_lan_identity("192.0.2.10".parse::<IpAddr>().unwrap()).unwrap();
+        let request = |url: &str| NativeHttpRequest {
+            url: url.to_owned(),
+            method: "GET".to_owned(),
+            headers: HashMap::new(),
+            body: None,
+            certificate_pem: Some(identity.certificate_pem.clone()),
+            expected_fingerprint: Some(identity.fingerprint.clone()),
+            host_identity: Some(identity.host_identity.clone()),
+            resolve_address: Some("192.168.1.20:43173".to_owned()),
+        };
+        assert!(
+            validate_native_local_host_request(&request(&format!(
+                "https://{}:43173/v1/health",
+                identity.host_identity
+            )))
+            .is_ok()
+        );
+        let identity_url = |scheme: &str, suffix: &str| {
+            format!("{scheme}://{}:43173{suffix}", identity.host_identity)
+        };
+        for (url, error) in [
+            (identity_url("http", ""), "https_only"),
+            (
+                "https://evil.local:43173".to_owned(),
+                "paired_host_identity_mismatch",
+            ),
+            (
+                format!("https://{}@evil.local:43173", identity.host_identity),
+                "unsafe_host_url",
+            ),
+            (identity_url("https", "/a/../secret"), "unsafe_host_path"),
+        ] {
+            assert_eq!(
+                validate_native_local_host_request(&request(&url)).unwrap_err(),
+                error
+            );
+        }
+        let mut external = request(&format!("https://{}:43173", identity.host_identity));
+        external.resolve_address = Some("8.8.8.8:443".to_owned());
+        assert_eq!(
+            validate_native_local_host_request(&external).unwrap_err(),
+            "unpaired_or_external_host_address"
+        );
+        external.resolve_address = Some("127.0.0.1:43173".to_owned());
+        assert_eq!(
+            validate_native_local_host_request(&external).unwrap_err(),
+            "unpaired_or_external_host_address"
+        );
+        external.resolve_address = Some("192.168.1.20:43173".to_owned());
+        external.expected_fingerprint = None;
+        assert_eq!(
+            validate_native_local_host_request(&external).unwrap_err(),
+            "pinned_host_fingerprint_required"
+        );
+        external.expected_fingerprint = Some("sha256:wrong".to_owned());
+        assert_eq!(
+            validate_native_local_host_request(&external).unwrap_err(),
+            "invalid_host_fingerprint"
+        );
     }
 }

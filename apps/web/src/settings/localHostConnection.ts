@@ -59,32 +59,70 @@ export function parseLocalHostPairingInvite(raw: string): LocalHostPairingInvite
   }
   if (typeof value !== "object" || value === null) throw new Error("invalid_pairing_invite");
   const candidate = value as Record<string, unknown>;
+  const endpoint = typeof candidate.endpoint === "string" ? candidate.endpoint : undefined;
+  const hostIdentity =
+    typeof candidate.hostIdentity === "string" ? candidate.hostIdentity : undefined;
+  const certificatePem =
+    typeof candidate.certificatePem === "string" ? candidate.certificatePem : undefined;
   if (
     candidate.protocol !== LOCAL_HOST_PAIRING_PROTOCOL ||
+    endpoint === undefined ||
     typeof candidate.grantId !== "string" ||
     candidate.grantId.length < 8 ||
     typeof candidate.code !== "string" ||
     candidate.code.length < 8 ||
     typeof candidate.hostFingerprint !== "string" ||
-    candidate.hostFingerprint.length === 0 ||
+    !isAcceptedFingerprint(candidate.hostFingerprint) ||
     typeof candidate.expiresAtMs !== "number" ||
     !Number.isSafeInteger(candidate.expiresAtMs) ||
     candidate.expiresAtMs <= Date.now()
   ) {
     throw new Error("invalid_pairing_invite");
   }
+  let endpointUrl: URL;
+  try {
+    endpointUrl = new URL(endpoint);
+  } catch {
+    throw new Error("invalid_pairing_invite");
+  }
+  if (
+    endpointUrl.username !== "" ||
+    endpointUrl.password !== "" ||
+    endpointUrl.hash !== "" ||
+    (endpointUrl.protocol !== "https:" &&
+      !(
+        candidate.hostFingerprint === "loopback" &&
+        endpointUrl.protocol === "http:" &&
+        (endpointUrl.hostname === "127.0.0.1" || endpointUrl.hostname === "localhost")
+      ))
+  ) {
+    throw new Error("invalid_pairing_invite");
+  }
+  if (endpointUrl.protocol === "https:") {
+    if (
+      hostIdentity === undefined ||
+      hostIdentity.length === 0 ||
+      !hostIdentity.endsWith(".local") ||
+      certificatePem === undefined ||
+      !certificatePem.includes("BEGIN CERTIFICATE")
+    ) {
+      throw new Error("invalid_pairing_invite");
+    }
+  }
   return Object.freeze({
     ...(typeof candidate.protocol === "string" ? { protocol: candidate.protocol } : {}),
-    ...(typeof candidate.endpoint === "string" ? { endpoint: candidate.endpoint } : {}),
+    endpoint,
     grantId: candidate.grantId,
     code: candidate.code,
     hostFingerprint: candidate.hostFingerprint,
-    ...(typeof candidate.hostIdentity === "string" ? { hostIdentity: candidate.hostIdentity } : {}),
+    ...(hostIdentity === undefined ? {} : { hostIdentity }),
     expiresAtMs: candidate.expiresAtMs,
-    ...(typeof candidate.certificatePem === "string"
-      ? { certificatePem: candidate.certificatePem }
-      : {}),
+    ...(certificatePem === undefined ? {} : { certificatePem }),
   });
+}
+
+function isAcceptedFingerprint(value: string): boolean {
+  return value === "loopback" || /^sha256:[0-9a-f]{64}$/i.test(value);
 }
 
 export function createLocalHostDeviceCredentials(deviceId = `device-${crypto.randomUUID()}`): {
@@ -132,16 +170,24 @@ export async function redeemLocalHostPairing(
 
 export function createNativeLocalHostRequest(
   credentials: Pick<LocalHostCredentials, "certificatePem" | "hostFingerprint" | "hostIdentity">,
+  pairedEndpoint: string,
 ): LocalHostSessionRequest {
   return async (input, init = {}) => {
     const { invoke } = await import("@tauri-apps/api/core");
     const original = new URL(String(input));
-    const resolveAddress =
-      credentials.hostIdentity === undefined || original.protocol !== "https:"
-        ? undefined
-        : `${original.hostname}:${original.port || "443"}`;
-    if (credentials.hostIdentity !== undefined && original.protocol === "https:")
-      original.hostname = credentials.hostIdentity;
+    const paired = new URL(pairedEndpoint);
+    if (
+      paired.protocol !== "https:" ||
+      original.protocol !== "https:" ||
+      original.origin !== paired.origin ||
+      credentials.hostIdentity === undefined ||
+      credentials.hostFingerprint === undefined ||
+      credentials.certificatePem === undefined
+    ) {
+      throw new Error("paired_https_endpoint_required");
+    }
+    original.hostname = credentials.hostIdentity;
+    const resolveAddress = `${paired.hostname.includes(":") ? `[${paired.hostname}]` : paired.hostname}:${paired.port || "443"}`;
     const response = await invoke<{
       status: number;
       headers: Record<string, string>;

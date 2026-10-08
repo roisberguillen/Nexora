@@ -3,8 +3,8 @@ Data: 2026-10-08
 Schermata: N/A — sincronizzazione Local Hub e repository remoto
 Route: N/A — nessuna route UI modificata
 Flusso principale: N/A — modifica a protocollo, adapter e test di persistenza
-Reviewer/fase: Codex — remote-mobile-host HTTP E2E
-Modifiche: aggiunti test HTTP reali e supporto alle mutazioni composte/import batch; nessun componente UI, stile o route è stato modificato. Formattazione documentale e manifest verificati dopo il gate.
+Reviewer/fase: Codex — Local Hub TLS identity hardening
+Modifiche: aggiunti validazione TLS, pinning, blocchi host/redirect e test pairing; il collegamento nativo in `main.tsx` e `SettingsPage.tsx` aggiorna solo i parametri di trasporto. Nessun componente UI, stile o route è stato modificato. Formattazione documentale e manifest verificati dopo il gate.
 
 | Area | Superficie | Esito | Evidenza |
 |---|---|---|---|

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   configureLocalHostPasscode,
   createLocalHostDeviceCredentials,
+  createNativeLocalHostRequest,
   logoutLocalHostSession,
   probeLocalHost,
   parseLocalHostPairingInvite,
@@ -47,6 +48,47 @@ describe("local host connection", () => {
         }),
       ),
     ).toThrow("invalid_pairing_invite");
+  });
+
+  it("rejects insecure or malformed mobile pairing invites", () => {
+    const base = {
+      protocol: "nexora-local-hub/v1",
+      endpoint: "https://nexora-phone-abc.local:43173/",
+      grantId: "grant-12345678",
+      code: "code-12345678",
+      hostFingerprint: `sha256:${"a".repeat(64)}`,
+      hostIdentity: "nexora-phone-abc.local",
+      certificatePem: "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----",
+      expiresAtMs: Date.now() + 60_000,
+    };
+    for (const invalid of [
+      { ...base, endpoint: "http://nexora-phone-abc.local:43173/" },
+      { ...base, endpoint: "https://user:pass@nexora-phone-abc.local:43173/" },
+      { ...base, hostFingerprint: "sha256:wrong" },
+      { ...base, hostIdentity: "" },
+      { ...base, certificatePem: undefined },
+    ]) {
+      expect(() => parseLocalHostPairingInvite(JSON.stringify(invalid))).toThrow(
+        "invalid_pairing_invite",
+      );
+    }
+  });
+
+  it("rejects native requests outside the paired HTTPS origin before invoking Rust", async () => {
+    const request = createNativeLocalHostRequest(
+      {
+        hostIdentity: "nexora-phone-abc.local",
+        hostFingerprint: `sha256:${"a".repeat(64)}`,
+        certificatePem: "certificate",
+      },
+      "https://192.168.1.20:43173/",
+    );
+    await expect(request("http://192.168.1.20:43173/v1/health")).rejects.toThrow(
+      "paired_https_endpoint_required",
+    );
+    await expect(request("https://192.168.1.21:43173/v1/health")).rejects.toThrow(
+      "paired_https_endpoint_required",
+    );
   });
 
   it("creates a high-entropy device token without persisting it", () => {

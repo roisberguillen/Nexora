@@ -136,7 +136,10 @@ const startupBootstrap = createStartupBootstrap(
         } as const;
         const client = new LocalHostSyncClient(
           nativeRuntime
-            ? { ...clientOptions, request: createNativeLocalHostRequest(remote.credentials) }
+            ? {
+                ...clientOptions,
+                request: createNativeLocalHostRequest(remote.credentials, remote.endpoint),
+              }
             : clientOptions,
         );
         remoteLedgerConnection = await connectRemoteLedgerRepository(cache.repository, client);

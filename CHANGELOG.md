@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- TLS identity hardening del Local Hub mobile: fingerprint DER, validazione reale cert/key,
+  SAN `host_identity`, validità temporale, recovery fail-closed, pinning HTTPS e blocco di host,
+  redirect, downgrade e indirizzi esterni; la rilevazione LAN non usa più Internet.
 - Verificato il flusso HTTP reale PC ↔ Local Hub con SQLite temporaneo per mutazioni composte,
   conflitti, retry idempotente, cursore, riavvio e purge atomico.
 - Collegati a outbox e journal remoto `saveImportBatch`, `commitImportBatch` e `undoImportBatch`;
