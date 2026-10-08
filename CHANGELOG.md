@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `remote-mobile-host`: le mutazioni PC di merge tag e purge batch generano operation coerenti;
+  aggiunta una regressione che verifica la sostituzione del tag sorgente nella outbox remota.
 - `remote-mobile-host`: il phone-host installa un journal SQLite atomico per account, category, tag,
   transaction e transfer; le mutazioni normali producono operation incrementali, cursor monotono,
   revisioni composite e tombstone, mentre il client PC applica pull successivi senza nuovo bootstrap.

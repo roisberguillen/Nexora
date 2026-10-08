@@ -245,6 +245,67 @@ describe("remote ledger repository", () => {
     expect(client.pending()).toEqual([]);
   });
 
+  it("pushes mergeTag as a replacement of the source tag", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const request = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap"))
+        return response({ schema_version: 1, cursor: 0, operations: [] });
+      if (url.endsWith("/v1/operations")) {
+        const body = JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] };
+        return response(
+          body.operations.map((candidate, index) => ({
+            Applied: { cursor: index + 1, revision: candidate.revision },
+          })),
+        );
+      }
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-1", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    const account = Account.create({
+      id: "account-tags",
+      name: "Tags",
+      type: "checking",
+      currency: "EUR",
+    });
+    const source = Tag.create({ id: "tag-source", name: "Source" });
+    const target = Tag.create({ id: "tag-target", name: "Target" });
+    const transaction = Transaction.create({
+      id: "transaction-tags",
+      kind: "expense",
+      status: "booked",
+      accountId: account.id,
+      amount: Money.fromMinor(-500n, "EUR"),
+      bookedDate: LocalDate.parse("2026-10-08"),
+      source: "manual",
+    });
+    await connection.repository.saveAccount(account);
+    await connection.repository.saveTag(source);
+    await connection.repository.saveTag(target);
+    await connection.repository.saveTransaction(transaction);
+    await connection.repository.setTransactionTags(transaction.id, [source.id]);
+    await connection.repository.mergeTag(source.id, target.id);
+
+    const pushedPayloads = request.mock.calls
+      .filter(([input]) => String(input).endsWith("/v1/operations"))
+      .flatMap(
+        ([, init]) =>
+          (JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] }).operations,
+      )
+      .map((candidate) => JSON.parse(candidate.payload) as Record<string, unknown>);
+    const tagSets = pushedPayloads.filter(
+      (payload) => payload.entity_type === "transaction_tag_set",
+    );
+    const tagSet = tagSets.at(-1);
+    expect(tagSet?.tag_ids).toEqual([target.id]);
+  });
+
   it("applies recurring and allocation bootstrap records and pushes updates", async () => {
     const repository = new InMemoryLedgerRepository();
     const account = Account.create({

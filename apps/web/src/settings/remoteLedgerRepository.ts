@@ -125,6 +125,17 @@ function createRemoteRepository(
         if (mutatingMethods.has(methodName) && !supportedRemoteMutations.has(methodName)) {
           throw new Error(`remote_mutation_not_supported:${methodName}`);
         }
+        const transactionTagSnapshot =
+          methodName === "mergeTag" || methodName === "removeTagGlobally"
+            ? new Map(
+                await Promise.all(
+                  (await target.listTransactions()).map(
+                    async (transaction) =>
+                      [transaction.id, await target.listTransactionTags(transaction.id)] as const,
+                  ),
+                ),
+              )
+            : undefined;
         const result = await method.apply(target, args);
         const operation = await operationForMutation(
           methodName,
@@ -133,6 +144,7 @@ function createRemoteRepository(
           client.deviceId(),
           revisions,
           client,
+          transactionTagSnapshot,
         );
         if (operation !== undefined) {
           const operations = Array.isArray(operation) ? operation : [operation];
@@ -164,9 +176,6 @@ const mutatingMethods = new Set([
   "mergeTag",
   "removeTagGlobally",
   "setTransactionTags",
-  "mergeCategory",
-  "mergeTag",
-  "removeTagGlobally",
   "cancelTransaction",
   "trashTransaction",
   "trashTransactions",
@@ -192,30 +201,6 @@ const mutatingMethods = new Set([
   "updateBudget",
   "reviseBudget",
   "deleteBudget",
-  "saveRecurringRule",
-  "updateRecurringRule",
-  "deleteRecurringRule",
-  "saveAllocationPlan",
-  "updateAllocationPlan",
-  "deleteAllocationPlan",
-  "saveLoan",
-  "updateLoan",
-  "deleteLoan",
-  "saveInvestmentPosition",
-  "updateInvestmentPosition",
-  "deleteInvestmentPosition",
-  "saveMonthlyJournal",
-  "updateMonthlyJournal",
-  "deleteMonthlyJournal",
-  "saveLoan",
-  "updateLoan",
-  "deleteLoan",
-  "saveInvestmentPosition",
-  "updateInvestmentPosition",
-  "deleteInvestmentPosition",
-  "saveMonthlyJournal",
-  "updateMonthlyJournal",
-  "deleteMonthlyJournal",
   "saveImportBatch",
   "commitImportBatch",
   "undoImportBatch",
@@ -232,11 +217,6 @@ const mutatingMethods = new Set([
   "purgeTrashedTransaction",
   "purgeTrashedTransactions",
   "cancelTransfer",
-  "trashTransaction",
-  "trashTransactions",
-  "restoreTransaction",
-  "purgeTrashedTransaction",
-  "purgeTrashedTransactions",
 ]);
 
 const supportedRemoteMutations = new Set([
@@ -280,7 +260,11 @@ const supportedRemoteMutations = new Set([
   "mergeTag",
   "removeTagGlobally",
   "cancelTransaction",
+  "trashTransaction",
+  "trashTransactions",
+  "restoreTransaction",
   "purgeTrashedTransaction",
+  "purgeTrashedTransactions",
 ]);
 
 async function operationForMutation(
@@ -290,6 +274,7 @@ async function operationForMutation(
   deviceId: string,
   revisions: Map<string, number>,
   client: LocalHostSyncClient,
+  transactionTagSnapshot?: ReadonlyMap<string, readonly Tag[]>,
 ): Promise<LocalSyncOperation | readonly LocalSyncOperation[] | undefined> {
   if (method === "saveTransfer") {
     const bundle = args[0] as TransferBundle;
@@ -402,6 +387,7 @@ async function operationForMutation(
   }
   if (method === "mergeTag" || method === "removeTagGlobally") {
     const sourceId = String(args[0]);
+    const targetId = method === "mergeTag" ? String(args[1]) : undefined;
     const operations: LocalSyncOperation[] = [];
     operations.push(
       await operationFromPayload(
@@ -419,7 +405,9 @@ async function operationForMutation(
       ),
     );
     for (const transaction of await repository.listTransactions()) {
-      const tags = await repository.listTransactionTags(transaction.id);
+      const tags =
+        transactionTagSnapshot?.get(transaction.id) ??
+        (await repository.listTransactionTags(transaction.id));
       if (tags.some((tag) => tag.id === sourceId))
         operations.push(
           await operationFromPayload(
@@ -429,10 +417,13 @@ async function operationForMutation(
               operation: "replace",
               entity_type: "transaction_tag_set",
               entity_id: transaction.id,
-              tag_ids: tags
-                .filter((tag) => tag.id !== sourceId)
-                .map((tag) => tag.id)
-                .sort(),
+              tag_ids: [
+                ...new Set(
+                  tags.map((tag) =>
+                    tag.id === sourceId && targetId !== undefined ? targetId : tag.id,
+                  ),
+                ),
+              ].sort(),
             }),
             false,
             deviceId,
@@ -499,6 +490,44 @@ async function operationForMutation(
       deviceId,
       revisions,
       client,
+    );
+  }
+  if (method === "purgeTrashedTransaction" || method === "purgeTrashedTransactions") {
+    const ids =
+      method === "purgeTrashedTransaction"
+        ? [String(args[0])]
+        : Array.isArray(args[0])
+          ? args[0].map(String)
+          : [];
+    return Promise.all(
+      ids.flatMap((id) => [
+        operationFromPayload(
+          id,
+          JSON.stringify({
+            schema_version: 1,
+            operation: "delete",
+            entity_type: "transaction",
+            entity_id: id,
+          }),
+          true,
+          deviceId,
+          revisions,
+          client,
+        ),
+        operationFromPayload(
+          id,
+          JSON.stringify({
+            schema_version: 1,
+            operation: "delete",
+            entity_type: "transaction_trash",
+            entity_id: id,
+          }),
+          true,
+          deviceId,
+          revisions,
+          client,
+        ),
+      ]),
     );
   }
   if (method === "cancelTransfer") {
