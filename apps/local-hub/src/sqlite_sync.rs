@@ -74,6 +74,16 @@ struct LedgerOperationPayload {
     kind_scope: Option<String>,
     #[serde(default)]
     parent_id: Option<String>,
+    #[serde(default)]
+    series_id: Option<String>,
+    #[serde(default)]
+    period: Option<String>,
+    #[serde(default)]
+    effective_to_period: Option<String>,
+    #[serde(default)]
+    first_alert_percentage: Option<i64>,
+    #[serde(default)]
+    second_alert_percentage: Option<i64>,
 }
 
 impl SqliteSyncOperationStore {
@@ -357,6 +367,32 @@ impl SqliteSyncOperationStore {
                 operations.push((0, row?));
             }
         }
+        if table_has_column(&self.connection, "budgets", "series_id")? {
+            let mut budgets = self.connection.prepare(
+                "SELECT id, series_id, period, effective_to_period, category_id,
+                        amount_minor, currency, first_alert_percentage, second_alert_percentage
+                 FROM budgets ORDER BY id",
+            )?;
+            for row in budgets.query_map([], |row| {
+                let payload = serde_json::json!({
+                    "schema_version": 1,
+                    "operation": "upsert",
+                    "entity_type": "budget",
+                    "entity_id": row.get::<_, String>(0)?,
+                    "series_id": row.get::<_, String>(1)?,
+                    "period": row.get::<_, String>(2)?,
+                    "effective_to_period": row.get::<_, Option<String>>(3)?,
+                    "category_id": row.get::<_, Option<String>>(4)?,
+                    "amount_minor": row.get::<_, String>(5)?,
+                    "currency": row.get::<_, String>(6)?,
+                    "first_alert_percentage": row.get::<_, Option<i64>>(7)?,
+                    "second_alert_percentage": row.get::<_, Option<i64>>(8)?,
+                });
+                Ok(bootstrap_operation(payload))
+            })? {
+                operations.push((0, row?));
+            }
+        }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
                     value_date, payee, description, category_id, note, source
@@ -460,6 +496,13 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
             "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'transfer', 'entity_id', OLD.id)",
         ));
     }
+    if table_has_column(connection, "budgets", "series_id")? {
+        sql.push_str(&entity_trigger_sql(
+            "budgets", "budget", "NEW.id", "OLD.id",
+            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'budget', 'entity_id', NEW.id, 'series_id', NEW.series_id, 'period', NEW.period, 'effective_to_period', NEW.effective_to_period, 'category_id', NEW.category_id, 'amount_minor', NEW.amount_minor, 'currency', NEW.currency, 'first_alert_percentage', NEW.first_alert_percentage, 'second_alert_percentage', NEW.second_alert_percentage)",
+            "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'budget', 'entity_id', OLD.id)",
+        ));
+    }
     connection.execute_batch(&sql)
 }
 
@@ -554,7 +597,7 @@ fn validate_payload(
         || payload.entity_id != operation.entity_id
         || !matches!(
             payload.entity_type.as_str(),
-            "account" | "category" | "tag" | "transaction" | "transfer"
+            "account" | "category" | "tag" | "budget" | "transaction" | "transfer"
         )
     {
         return Err(DurableSyncError::InvalidPayload(
@@ -609,6 +652,16 @@ fn validate_payload(
                 if payload.name.is_none() {
                     return Err(DurableSyncError::InvalidPayload(
                         "tag payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "budget" => {
+                if payload.period.is_none()
+                    || payload.amount_minor.is_none()
+                    || payload.currency.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "budget payload is incomplete".to_owned(),
                     ));
                 }
             }
@@ -718,6 +771,34 @@ fn apply_ledger_operation(
                 i64::from(payload.is_archived.unwrap_or(false)),
             ],
         ),
+        ("budget", "delete") => transaction.execute(
+            "DELETE FROM budgets WHERE id = ?1",
+            params![operation.entity_id],
+        ),
+        ("budget", "upsert") => transaction.execute(
+            "INSERT INTO budgets
+             (id, series_id, period, effective_to_period, category_id, amount_minor, currency,
+              alert_at_80, alert_at_100, first_alert_percentage, second_alert_percentage)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 1, 1, ?8, ?9)
+             ON CONFLICT(id) DO UPDATE SET
+              series_id = excluded.series_id, period = excluded.period,
+              effective_to_period = excluded.effective_to_period,
+              category_id = excluded.category_id, amount_minor = excluded.amount_minor,
+              currency = excluded.currency,
+              first_alert_percentage = excluded.first_alert_percentage,
+              second_alert_percentage = excluded.second_alert_percentage",
+            params![
+                operation.entity_id,
+                payload.series_id.as_deref().unwrap_or(&operation.entity_id),
+                payload.period.as_deref(),
+                payload.effective_to_period.as_deref(),
+                payload.category_id.as_deref(),
+                payload.amount_minor.as_deref(),
+                payload.currency.as_deref(),
+                payload.first_alert_percentage,
+                payload.second_alert_percentage,
+            ],
+        ),
         ("transaction", "delete") => transaction.execute(
             "DELETE FROM transactions WHERE id = ?1",
             params![operation.entity_id],
@@ -823,6 +904,13 @@ mod tests {
                  );
                  CREATE TABLE tags (
                    id TEXT PRIMARY KEY, name TEXT NOT NULL, is_archived INTEGER NOT NULL DEFAULT 0
+                 );
+                 CREATE TABLE budgets (
+                   id TEXT PRIMARY KEY, series_id TEXT NOT NULL, period TEXT NOT NULL,
+                   effective_to_period TEXT, category_id TEXT, amount_minor TEXT NOT NULL,
+                   currency TEXT NOT NULL, alert_at_80 INTEGER NOT NULL DEFAULT 1,
+                   alert_at_100 INTEGER NOT NULL DEFAULT 1, first_alert_percentage INTEGER,
+                   second_alert_percentage INTEGER
                  );
                  CREATE TABLE transactions (
                    id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL,
@@ -1103,6 +1191,74 @@ mod tests {
         assert_eq!(incremental[4].0, 8);
         assert!(incremental[4].1.payload.contains("transfer-mobile"));
         assert!(store.pull(8).unwrap().is_empty());
+    }
+
+    #[test]
+    fn normal_mobile_budget_writes_append_incremental_events() {
+        let directory = tempdir().unwrap();
+        let store = open_store(directory.path().join("nexora.db"));
+        store
+            .connection
+            .execute(
+                "INSERT INTO budgets
+                 (id, series_id, period, category_id, amount_minor, currency,
+                  first_alert_percentage, second_alert_percentage)
+                 VALUES ('budget-mobile', 'series-mobile', '2026-10', 'category-synthetic',
+                         '50000', 'EUR', 80, 100)",
+                [],
+            )
+            .unwrap();
+        let inserted = store.pull(0).unwrap();
+        assert_eq!(inserted.len(), 1);
+        assert!(inserted[0].1.payload.contains("budget-mobile"));
+        assert!(inserted[0].1.payload.contains("series-mobile"));
+
+        store
+            .connection
+            .execute(
+                "UPDATE budgets SET amount_minor = '60000' WHERE id = 'budget-mobile'",
+                [],
+            )
+            .unwrap();
+        store
+            .connection
+            .execute("DELETE FROM budgets WHERE id = 'budget-mobile'", [])
+            .unwrap();
+        let changed = store.pull(1).unwrap();
+        assert_eq!(changed.len(), 2);
+        assert!(changed[0].1.payload.contains("60000"));
+        assert!(changed[1].1.tombstone);
+    }
+
+    #[test]
+    fn applies_budget_operation_directly_to_host_sqlite() {
+        let directory = tempdir().unwrap();
+        let path = directory.path().join("nexora.db");
+        let mut store = open_store(&path);
+        let operation = ReplicableOperation {
+            idempotency_key: "op-budget".to_owned(),
+            device_id: "pc-pma-2".to_owned(),
+            entity_id: "budget-remote".to_owned(),
+            base_revision: 0,
+            revision: 0,
+            payload_digest: "sha256:op-budget".to_owned(),
+            payload: "{\"schema_version\":1,\"operation\":\"upsert\",\"entity_type\":\"budget\",\"entity_id\":\"budget-remote\",\"series_id\":\"series-remote\",\"period\":\"2026-11\",\"amount_minor\":\"75000\",\"currency\":\"EUR\",\"first_alert_percentage\":80,\"second_alert_percentage\":100}".to_owned(),
+            tombstone: false,
+            created_at: "2026-09-14T00:00:00.000Z".to_owned(),
+        };
+        let results = store.push("delivery-budget", [operation]).unwrap();
+        assert_eq!(results.len(), 1);
+        assert!(matches!(results[0], OperationApplyResult::Applied { .. }));
+        drop(store);
+        let connection = Connection::open(&path).unwrap();
+        let amount: String = connection
+            .query_row(
+                "SELECT amount_minor FROM budgets WHERE id = 'budget-remote'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(amount, "75000");
     }
 
     #[test]

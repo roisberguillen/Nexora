@@ -962,3 +962,5 @@
   control. LAN/TLS, secure pairing and ledger exposure remain gated to later phases.
 - Added a fail-safe Android foreground guard that stops the phone Local Hub when the app WebView is
   hidden, without adding permissions or touching ledger data.
+- `remote-mobile-host`: budget sincronizzati in entrambe le direzioni con bootstrap, journal incrementale,
+  outbox PC e applicazione atomica nello SQLite del telefono; aggiunti test di scrittura host.

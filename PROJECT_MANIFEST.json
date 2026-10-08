@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1496,
-      "sha256": "07cd3197fb49023828377ab4ee55992db9144718156cdd930b76896023764358"
+      "size": 1510,
+      "sha256": "0e9c523769fa33cb9a7d7e9c1e08837199ba29ef0502ff3c17953f9661318cb4"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1709,8 +1709,8 @@
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 52809,
-      "sha256": "a6b508e4b8e0ddab61b723475252f962a67b500658c590a762a13baac2d1db0f"
+      "size": 60327,
+      "sha256": "edc7a455b99c755701ed544b64dda185a6363cb588fb0df8261eb17003d1c13b"
     },
     {
       "path": "apps/web/index.html",
@@ -2679,8 +2679,8 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 19871,
-      "sha256": "eb0049d7079257ef346054497348a8a1c8dc827db5ef9b7c675da86ab9367b57"
+      "size": 23205,
+      "sha256": "09fdd3f27fa369498448e71e42572bda76b79c27a832edce9eaa2ab74e7f7dd3"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
@@ -2964,8 +2964,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 67034,
-      "sha256": "61ac6f09abde9a31c2264695078e8a0b36fb552bc3641d41b51f9b0b91b9a7e2"
+      "size": 67236,
+      "sha256": "c5a2a1ee1bb86013a8ba8d9c0fdcffeef70baa388cea4686f089f70655247c78"
     },
     {
       "path": "design/mockup/README.md",
@@ -3239,8 +3239,8 @@
     },
     {
       "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
-      "size": 4019,
-      "sha256": "46623ba0d85cf4fac4c4585f2f91134d509fb77428120fba5f8b6f119cb59dbc"
+      "size": 4097,
+      "sha256": "3c0f5672de71eb0e5db27e63e0ab8df16641f1a6ccdff7e74758d06b7540d37a"
     },
     {
       "path": "docs/reports/final-verification.md",

@@ -1,5 +1,6 @@
 import type {
   Account,
+  Budget,
   Category,
   LedgerRepository,
   Tag,
@@ -8,6 +9,7 @@ import type {
 } from "@nexora/domain";
 import {
   Account as DomainAccount,
+  Budget as DomainBudget,
   Category as DomainCategory,
   Tag as DomainTag,
   LocalDate,
@@ -206,6 +208,10 @@ const supportedRemoteMutations = new Set([
   "saveTransactionWithDetails",
   "saveTransfer",
   "cancelTransfer",
+  "saveBudget",
+  "updateBudget",
+  "reviseBudget",
+  "deleteBudget",
   "purgeTrashedTransaction",
 ]);
 
@@ -281,6 +287,54 @@ async function operationForMutation(
       ),
     );
   }
+  if (method === "saveBudget" || method === "updateBudget") {
+    const budget = args[0] as Budget;
+    return operationFromPayload(
+      budget.id,
+      JSON.stringify(budgetPayload(budget)),
+      false,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  if (method === "reviseBudget") {
+    const previous = args[0] as Budget;
+    const next = args[1] as Budget;
+    return [
+      await operationFromPayload(
+        previous.id,
+        JSON.stringify(budgetPayload(previous)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+      await operationFromPayload(
+        next.id,
+        JSON.stringify(budgetPayload(next)),
+        false,
+        deviceId,
+        revisions,
+        client,
+      ),
+    ];
+  }
+  if (method === "deleteBudget") {
+    return operationFromPayload(
+      String(args[0]),
+      JSON.stringify({
+        schema_version: 1,
+        operation: "delete",
+        entity_type: "budget",
+        entity_id: String(args[0]),
+      }),
+      true,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
   let transaction: Transaction | undefined;
   let account: Account | undefined;
   let category: Category | undefined;
@@ -324,7 +378,14 @@ async function operationForMutation(
   if (method === "deleteUnusedTag")
     tag = (await repository.listTags()).find((candidate) => candidate.id === entityId);
   const current = transaction ?? (await repository.findTransactionById(entityId));
-  if (!tombstone && current === undefined) return undefined;
+  if (
+    !tombstone &&
+    current === undefined &&
+    account === undefined &&
+    category === undefined &&
+    tag === undefined
+  )
+    return undefined;
   const payload = tombstone
     ? JSON.stringify({
         schema_version: 1,
@@ -449,6 +510,23 @@ function tagPayload(tag: Tag): Record<string, unknown> {
   };
 }
 
+function budgetPayload(budget: Budget): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "budget",
+    entity_id: budget.id,
+    series_id: budget.seriesId,
+    period: budget.period,
+    effective_to_period: budget.effectiveToPeriod ?? null,
+    category_id: budget.categoryId ?? null,
+    amount_minor: budget.amount.amountMinor.toString(),
+    currency: budget.amount.currency,
+    first_alert_percentage: budget.firstAlertPercentage ?? null,
+    second_alert_percentage: budget.secondAlertPercentage ?? null,
+  };
+}
+
 async function applyRemoteOperation(
   repository: LedgerRepository,
   operation: LocalSyncOperation,
@@ -514,6 +592,37 @@ async function applyRemoteOperation(
     if ((await repository.listTags()).some((candidate) => candidate.id === tag.id))
       await repository.updateTag(tag);
     else await repository.saveTag(tag);
+    return;
+  }
+  if (payload.entity_type === "budget") {
+    if (payload.operation === "delete") {
+      const existing = (await repository.listBudgets()).find(
+        (candidate) => candidate.id === operation.entityId,
+      );
+      if (existing) await repository.deleteBudget(operation.entityId);
+      return;
+    }
+    const budget = DomainBudget.restore({
+      id: operation.entityId,
+      seriesId: String(payload.series_id ?? operation.entityId),
+      period: String(payload.period),
+      ...(payload.effective_to_period === null || payload.effective_to_period === undefined
+        ? {}
+        : { effectiveToPeriod: String(payload.effective_to_period) }),
+      ...(payload.category_id === null || payload.category_id === undefined
+        ? {}
+        : { categoryId: String(payload.category_id) }),
+      amount: Money.fromMinor(BigInt(String(payload.amount_minor)), String(payload.currency)),
+      ...(payload.first_alert_percentage === null || payload.first_alert_percentage === undefined
+        ? {}
+        : { firstAlertPercentage: Number(payload.first_alert_percentage) }),
+      ...(payload.second_alert_percentage === null || payload.second_alert_percentage === undefined
+        ? {}
+        : { secondAlertPercentage: Number(payload.second_alert_percentage) }),
+    });
+    if ((await repository.listBudgets()).some((candidate) => candidate.id === budget.id))
+      await repository.updateBudget(budget);
+    else await repository.saveBudget(budget);
     return;
   }
   if (payload.entity_type === "transfer") {

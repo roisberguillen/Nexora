@@ -17,7 +17,7 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | `setTransactionTags` | transaction-tag | non supportato | — | — | no | no |
 | `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | non supportato | — | — | no | no |
 | `saveAllocationPlan`, `updateAllocationPlan`, `deleteAllocationPlan` | allocation plan | non supportato | — | — | no | no |
-| `saveBudget`, `updateBudget`, `reviseBudget`, `deleteBudget` | budget | non supportato | — | — | no | no |
+| `saveBudget`, `updateBudget`, `reviseBudget`, `deleteBudget` | budget | bidirezionale incrementale | `budget.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `saveLoan`, `updateLoan`, `deleteLoan` | loan | non supportato | — | — | no | no |
 | `saveInvestmentPosition`, `updateInvestmentPosition`, `deleteInvestmentPosition` | investment | non supportato | — | — | no | no |
 | `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | journal | non supportato | — | — | no | no |
