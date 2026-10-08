@@ -1094,8 +1094,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-08-remote-mobile-secure-identity.md",
-      "size": 1388,
-      "sha256": "9dd9577df73ec0819f5ac6a4e746d3927b90916dc586bfba3ced1b5941836a52"
+      "size": 1446,
+      "sha256": "c6785133549eb554ba9a6190137bd2f2ee0a8fb1d9f8a97738b73a7fa72a1574"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1709,8 +1709,8 @@
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
-      "size": 36295,
-      "sha256": "5e8aeb0e472c07475869b643bdf5945ca4bb43bbcc25767e2b7f4294799f1eb7"
+      "size": 52809,
+      "sha256": "a6b508e4b8e0ddab61b723475252f962a67b500658c590a762a13baac2d1db0f"
     },
     {
       "path": "apps/web/index.html",
@@ -2673,9 +2673,14 @@
       "sha256": "6d3fee4e0a911191bb1d765049ded146d89d78286b79cd018a761dcf31b792f8"
     },
     {
+      "path": "apps/web/src/settings/remoteLedgerRepository.test.ts",
+      "size": 5259,
+      "sha256": "d1049a1b8ccb0c0fc7b301afbede6fa3640914298def77e758a2467e5404a27d"
+    },
+    {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 15590,
-      "sha256": "89d7ead7559d9576e3fb8e09e6e5e468575da7ce89bb57d0e680abc8f2e46f88"
+      "size": 17057,
+      "sha256": "47dd64c6b29900519d2750c5723ebd14101cf733aa9e25a97e656a46fec410a6"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
@@ -2959,8 +2964,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 66534,
-      "sha256": "fd85c619bac8813cf29cb17e8db68da71c9bf995b63ef61ff62c2e0e97ab25d0"
+      "size": 66835,
+      "sha256": "bcad2b03af85941f60954dfadc74758e1fbc65d59b5b7a2d189af663eb49ac58"
     },
     {
       "path": "design/mockup/README.md",
@@ -3234,8 +3239,8 @@
     },
     {
       "path": "docs/REMOTE_LEDGER_SYNC_MATRIX.md",
-      "size": 3501,
-      "sha256": "a6f13b9556af184a6d7f845476d3ac615bca794905e8b26f4d0ad0c9c2a90dc1"
+      "size": 4010,
+      "sha256": "82f961d747dbe6ade646f825248baf5c181e1860f8defe6ad5268f31112bb983"
     },
     {
       "path": "docs/reports/final-verification.md",

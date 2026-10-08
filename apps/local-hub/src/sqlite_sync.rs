@@ -88,6 +88,7 @@ impl SqliteSyncOperationStore {
                  cursor INTEGER PRIMARY KEY AUTOINCREMENT,
                  idempotency_key TEXT NOT NULL UNIQUE,
                  device_id TEXT NOT NULL,
+                 entity_type TEXT NOT NULL DEFAULT '',
                  entity_id TEXT NOT NULL,
                  base_revision INTEGER NOT NULL,
                  revision INTEGER NOT NULL,
@@ -101,8 +102,19 @@ impl SqliteSyncOperationStore {
                  entity_id TEXT NOT NULL,
                  revision INTEGER NOT NULL,
                  PRIMARY KEY (entity_type, entity_id)
-             ) STRICT;",
+             ) STRICT;
+             CREATE TABLE IF NOT EXISTS sync_runtime (
+                 suppress_journal INTEGER NOT NULL CHECK (suppress_journal IN (0, 1))
+             ) STRICT;
+             INSERT INTO sync_runtime (suppress_journal)
+                 SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM sync_runtime);",
         )?;
+        if !table_has_column(&connection, "sync_operations", "entity_type")? {
+            connection.execute(
+                "ALTER TABLE sync_operations ADD COLUMN entity_type TEXT NOT NULL DEFAULT ''",
+                [],
+            )?;
+        }
         if !table_has_column(&connection, "sync_revisions", "entity_type")? {
             connection.execute_batch(
                 "ALTER TABLE sync_revisions RENAME TO sync_revisions_legacy;
@@ -117,6 +129,7 @@ impl SqliteSyncOperationStore {
                  DROP TABLE sync_revisions_legacy;",
             )?;
         }
+        install_change_journal_triggers(&connection)?;
         Ok(Self { connection })
     }
 
@@ -126,6 +139,7 @@ impl SqliteSyncOperationStore {
         operations: impl IntoIterator<Item = ReplicableOperation>,
     ) -> Result<Vec<OperationApplyResult>, DurableSyncError> {
         let transaction = self.connection.transaction()?;
+        transaction.execute("UPDATE sync_runtime SET suppress_journal = 1", [])?;
         let operations: Vec<ReplicableOperation> = operations.into_iter().collect();
         let payloads: Vec<LedgerOperationPayload> = operations
             .iter()
@@ -184,12 +198,13 @@ impl SqliteSyncOperationStore {
                 .ok_or(DurableSyncError::NumericOverflow)?;
             transaction.execute(
                 "INSERT INTO sync_operations
-                    (idempotency_key, device_id, entity_id, base_revision, revision,
+                    (idempotency_key, device_id, entity_type, entity_id, base_revision, revision,
                      payload_digest, payload, tombstone, created_at)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
                 params![
                     operation.idempotency_key,
                     operation.device_id,
+                    payload.entity_type,
                     operation.entity_id,
                     as_i64(operation.base_revision)?,
                     as_i64(revision)?,
@@ -249,11 +264,24 @@ impl SqliteSyncOperationStore {
         let cursor = operations.last().map(|(cursor, _)| *cursor).unwrap_or(0);
         let logged_entities = operations
             .iter()
-            .map(|(_, operation)| operation.entity_id.as_str())
+            .filter_map(|(_, operation)| {
+                let payload = serde_json::from_str::<serde_json::Value>(&operation.payload).ok()?;
+                Some((
+                    payload.get("entity_type")?.as_str()?.to_owned(),
+                    operation.entity_id.clone(),
+                ))
+            })
             .collect::<std::collections::HashSet<_>>();
         let mut snapshot_operations = self.current_ledger_operations()?;
-        snapshot_operations
-            .retain(|(_, operation)| !logged_entities.contains(operation.entity_id.as_str()));
+        snapshot_operations.retain(|(_, operation)| {
+            let payload = serde_json::from_str::<serde_json::Value>(&operation.payload).ok();
+            let Some(payload) = payload else { return true };
+            let Some(entity_type) = payload.get("entity_type").and_then(|value| value.as_str())
+            else {
+                return true;
+            };
+            !logged_entities.contains(&(entity_type.to_owned(), operation.entity_id.clone()))
+        });
         operations.append(&mut snapshot_operations);
         Ok(SyncBootstrapSnapshot {
             schema_version: 1,
@@ -370,6 +398,104 @@ fn table_has_column(
     Ok(statement
         .query_map(params![table], |row| row.get::<_, String>(0))?
         .any(|name| name.map(|value| value == column).unwrap_or(false)))
+}
+
+fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqlite::Error> {
+    let mut sql = String::new();
+    if table_has_column(connection, "accounts", "name")? {
+        sql.push_str(
+            r#"
+            DROP TRIGGER IF EXISTS sync_accounts_insert;
+            DROP TRIGGER IF EXISTS sync_accounts_update;
+            DROP TRIGGER IF EXISTS sync_accounts_delete;
+            CREATE TRIGGER sync_accounts_insert AFTER INSERT ON accounts
+            WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+              INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+              SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', 'account', NEW.id,
+                     COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'account' AND entity_id = NEW.id), 0),
+                     COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'account' AND entity_id = NEW.id), 0) + 1,
+                     'sha256:phone-local-journal', json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'account', 'entity_id', NEW.id, 'name', NEW.name, 'type', NEW.type, 'currency', NEW.currency, 'institution', NEW.institution, 'parent_account_id', NEW.parent_account_id, 'opening_balance_minor', NEW.opening_balance_minor, 'is_archived', NEW.is_archived), 0, strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+              INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT 'account', NEW.id, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+            END;
+            CREATE TRIGGER sync_accounts_update AFTER UPDATE ON accounts
+            WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+              INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+              SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', 'account', NEW.id, COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'account' AND entity_id = NEW.id), 0), COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'account' AND entity_id = NEW.id), 0) + 1, 'sha256:phone-local-journal', json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'account', 'entity_id', NEW.id, 'name', NEW.name, 'type', NEW.type, 'currency', NEW.currency, 'institution', NEW.institution, 'parent_account_id', NEW.parent_account_id, 'opening_balance_minor', NEW.opening_balance_minor, 'is_archived', NEW.is_archived), 0, strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+              INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT 'account', NEW.id, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+            END;
+            CREATE TRIGGER sync_accounts_delete AFTER DELETE ON accounts
+            WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+              INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+              SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', 'account', OLD.id, COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'account' AND entity_id = OLD.id), 0), COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = 'account' AND entity_id = OLD.id), 0) + 1, 'sha256:phone-local-journal', json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'account', 'entity_id', OLD.id), 1, strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+              INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT 'account', OLD.id, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+            END;
+            "#,
+        );
+    }
+    if table_has_column(connection, "categories", "name")? {
+        sql.push_str(&entity_trigger_sql(
+            "categories", "category", "NEW.id", "OLD.id",
+            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'category', 'entity_id', NEW.id, 'name', NEW.name, 'kind_scope', NEW.kind_scope, 'parent_id', NEW.parent_id, 'is_archived', NEW.is_archived)",
+            "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'category', 'entity_id', OLD.id)",
+        ));
+    }
+    if table_has_column(connection, "tags", "name")? {
+        sql.push_str(&entity_trigger_sql(
+            "tags", "tag", "NEW.id", "OLD.id",
+            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'tag', 'entity_id', NEW.id, 'name', NEW.name, 'is_archived', NEW.is_archived)",
+            "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'tag', 'entity_id', OLD.id)",
+        ));
+    }
+    if table_has_column(connection, "transactions", "amount_minor")? {
+        sql.push_str(&entity_trigger_sql(
+            "transactions", "transaction", "NEW.id", "OLD.id",
+            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'transaction', 'entity_id', NEW.id, 'amount_minor', NEW.amount_minor, 'currency', NEW.currency, 'kind', NEW.kind, 'status', NEW.status, 'account_id', NEW.account_id, 'booked_date', NEW.booked_date, 'value_date', NEW.value_date, 'payee', NEW.payee, 'description', NEW.description, 'category_id', NEW.category_id, 'note', NEW.note, 'source', NEW.source)",
+            "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'transaction', 'entity_id', OLD.id)",
+        ));
+    }
+    if table_has_column(connection, "transfers", "debit_transaction_id")? {
+        sql.push_str(&entity_trigger_sql(
+            "transfers", "transfer", "NEW.id", "OLD.id",
+            "json_object('schema_version', 1, 'operation', 'upsert', 'entity_type', 'transfer', 'entity_id', NEW.id, 'debit_transaction_id', NEW.debit_transaction_id, 'credit_transaction_id', NEW.credit_transaction_id, 'fee_transaction_id', NEW.fee_transaction_id)",
+            "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'transfer', 'entity_id', OLD.id)",
+        ));
+    }
+    connection.execute_batch(&sql)
+}
+
+fn entity_trigger_sql(
+    table: &str,
+    entity_type: &str,
+    new_id: &str,
+    old_id: &str,
+    upsert_payload: &str,
+    delete_payload: &str,
+) -> String {
+    format!(
+        r#"
+        DROP TRIGGER IF EXISTS sync_{table}_insert;
+        DROP TRIGGER IF EXISTS sync_{table}_update;
+        DROP TRIGGER IF EXISTS sync_{table}_delete;
+        CREATE TRIGGER sync_{table}_insert AFTER INSERT ON {table}
+        WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+          INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+          SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', '{entity_type}', {new_id}, COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = '{entity_type}' AND entity_id = {new_id}), 0), COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = '{entity_type}' AND entity_id = {new_id}), 0) + 1, 'sha256:phone-local-journal', {upsert_payload}, 0, strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+          INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT '{entity_type}', {new_id}, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+        END;
+        CREATE TRIGGER sync_{table}_update AFTER UPDATE ON {table}
+        WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+          INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+          SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', '{entity_type}', {new_id}, COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = '{entity_type}' AND entity_id = {new_id}), 0), COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = '{entity_type}' AND entity_id = {new_id}), 0) + 1, 'sha256:phone-local-journal', {upsert_payload}, 0, strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+          INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT '{entity_type}', {new_id}, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+        END;
+        CREATE TRIGGER sync_{table}_delete AFTER DELETE ON {table}
+        WHEN (SELECT suppress_journal FROM sync_runtime LIMIT 1) = 0 BEGIN
+          INSERT INTO sync_operations (idempotency_key, device_id, entity_type, entity_id, base_revision, revision, payload_digest, payload, tombstone, created_at)
+          SELECT 'phone-journal:' || lower(hex(randomblob(16))), 'phone-local-ledger', '{entity_type}', {old_id}, COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = '{entity_type}' AND entity_id = {old_id}), 0), COALESCE((SELECT revision FROM sync_revisions WHERE entity_type = '{entity_type}' AND entity_id = {old_id}), 0) + 1, 'sha256:phone-local-journal', {delete_payload}, 1, strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+          INSERT INTO sync_revisions (entity_type, entity_id, revision) SELECT '{entity_type}', {old_id}, revision FROM sync_operations WHERE cursor = last_insert_rowid() ON CONFLICT(entity_type, entity_id) DO UPDATE SET revision = excluded.revision;
+        END;
+        "#,
+    )
 }
 
 fn bootstrap_operation(payload: serde_json::Value) -> ReplicableOperation {
@@ -684,7 +810,13 @@ mod tests {
         connection
             .execute_batch(
                 "PRAGMA foreign_keys = ON;
-                 CREATE TABLE accounts (id TEXT PRIMARY KEY, currency TEXT NOT NULL);
+                 CREATE TABLE accounts (
+                   id TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL,
+                   institution TEXT, currency TEXT NOT NULL, parent_account_id TEXT,
+                   opening_balance_minor TEXT NOT NULL DEFAULT '0',
+                   is_archived INTEGER NOT NULL DEFAULT 0,
+                   updated_at TEXT NOT NULL DEFAULT ''
+                 );
                  CREATE TABLE categories (
                    id TEXT PRIMARY KEY, name TEXT NOT NULL, kind_scope TEXT NOT NULL,
                    parent_id TEXT, is_archived INTEGER NOT NULL DEFAULT 0
@@ -717,8 +849,9 @@ mod tests {
                        AND debit.status = credit.status
                    ) THEN RAISE(ABORT, 'invalid transfer legs') END;
                  END;
-                 INSERT INTO accounts (id, currency) VALUES
-                   ('account-synthetic', 'EUR'), ('account-second', 'EUR');
+                 INSERT INTO accounts (id, name, type, currency) VALUES
+                   ('account-synthetic', 'Synthetic', 'checking', 'EUR'),
+                   ('account-second', 'Second', 'checking', 'EUR');
                  INSERT INTO categories (id, name, kind_scope) VALUES
                    ('category-synthetic', 'Synthetic', 'expense');
                  INSERT INTO tags (id, name) VALUES ('tag-synthetic', 'Synthetic');",
@@ -826,7 +959,13 @@ mod tests {
         let bootstrap = store.bootstrap().unwrap();
         assert_eq!(bootstrap.schema_version, 1);
         assert_eq!(bootstrap.cursor, 1);
-        assert_eq!(bootstrap.operations.len(), 3);
+        assert_eq!(bootstrap.operations.len(), 5);
+        assert!(
+            bootstrap
+                .operations
+                .iter()
+                .any(|(_, operation)| operation.payload.contains("account-synthetic"))
+        );
         assert!(
             bootstrap
                 .operations
@@ -839,6 +978,131 @@ mod tests {
                 .iter()
                 .any(|(_, operation)| operation.payload.contains("tag-synthetic"))
         );
+    }
+
+    #[test]
+    fn normal_mobile_sqlite_writes_append_incremental_upsert_and_delete_events() {
+        let directory = tempdir().unwrap();
+        let store = open_store(directory.path().join("nexora.db"));
+        store
+            .connection
+            .execute(
+                "INSERT INTO transactions
+                 (id, kind, status, account_id, amount_minor, currency, booked_date, source)
+                 VALUES ('transaction-mobile', 'expense', 'booked', 'account-synthetic', '250', 'EUR', '2026-09-14', 'manual')",
+                [],
+            )
+            .unwrap();
+        let first_pull = store.pull(0).unwrap();
+        assert_eq!(first_pull.len(), 1);
+        assert_eq!(first_pull[0].0, 1);
+        assert!(first_pull[0].1.payload.contains("transaction-mobile"));
+        assert_eq!(first_pull[0].1.revision, 1);
+
+        store
+            .connection
+            .execute(
+                "DELETE FROM transactions WHERE id = 'transaction-mobile'",
+                [],
+            )
+            .unwrap();
+        let second_pull = store.pull(1).unwrap();
+        assert_eq!(second_pull.len(), 1);
+        assert_eq!(second_pull[0].0, 2);
+        assert!(second_pull[0].1.tombstone);
+        assert!(
+            second_pull[0]
+                .1
+                .payload
+                .contains("\"operation\":\"delete\"")
+        );
+        assert_eq!(second_pull[0].1.base_revision, 1);
+        assert_eq!(second_pull[0].1.revision, 2);
+    }
+
+    #[test]
+    fn normal_mobile_core_entities_and_transfer_are_pull_visible_in_order() {
+        let directory = tempdir().unwrap();
+        let store = open_store(directory.path().join("nexora.db"));
+        store
+            .connection
+            .execute(
+                "INSERT INTO accounts (id, name, type, currency, opening_balance_minor)
+                 VALUES ('account-mobile', 'Mobile', 'checking', 'EUR', '0')",
+                [],
+            )
+            .unwrap();
+        store
+            .connection
+            .execute(
+                "INSERT INTO categories (id, name, kind_scope) VALUES ('category-mobile', 'Mobile', 'expense')",
+                [],
+            )
+            .unwrap();
+        store
+            .connection
+            .execute(
+                "INSERT INTO tags (id, name) VALUES ('tag-mobile', 'Mobile')",
+                [],
+            )
+            .unwrap();
+        let metadata = store.pull(0).unwrap();
+        assert_eq!(metadata.len(), 3);
+        assert_eq!(
+            metadata
+                .iter()
+                .map(
+                    |(_, operation)| serde_json::from_str::<serde_json::Value>(&operation.payload)
+                        .unwrap()
+                        .get("entity_type")
+                        .unwrap()
+                        .as_str()
+                        .unwrap()
+                        .to_owned()
+                )
+                .collect::<Vec<_>>(),
+            vec!["account", "category", "tag"]
+        );
+
+        store
+            .connection
+            .execute(
+                "UPDATE categories SET name = 'Mobile updated' WHERE id = 'category-mobile'",
+                [],
+            )
+            .unwrap();
+        store
+            .connection
+            .execute("DELETE FROM tags WHERE id = 'tag-mobile'", [])
+            .unwrap();
+        store
+            .connection
+            .execute(
+                "INSERT INTO transactions
+                 (id, kind, status, account_id, amount_minor, currency, booked_date, source)
+                 VALUES ('transfer-mobile-debit', 'transfer', 'booked', 'account-mobile', '-100', 'EUR', '2026-09-14', 'manual'),
+                        ('transfer-mobile-credit', 'transfer', 'booked', 'account-second', '100', 'EUR', '2026-09-14', 'manual')",
+                [],
+            )
+            .unwrap();
+        store
+            .connection
+            .execute(
+                "INSERT INTO transfers (id, debit_transaction_id, credit_transaction_id)
+                 VALUES ('transfer-mobile', 'transfer-mobile-debit', 'transfer-mobile-credit')",
+                [],
+            )
+            .unwrap();
+        let incremental = store.pull(3).unwrap();
+        assert_eq!(incremental.len(), 5);
+        assert_eq!(incremental[0].0, 4);
+        assert_eq!(incremental[1].0, 5);
+        assert!(incremental[1].1.tombstone);
+        assert_eq!(incremental[2].0, 6);
+        assert_eq!(incremental[3].0, 7);
+        assert_eq!(incremental[4].0, 8);
+        assert!(incremental[4].1.payload.contains("transfer-mobile"));
+        assert!(store.pull(8).unwrap().is_empty());
     }
 
     #[test]

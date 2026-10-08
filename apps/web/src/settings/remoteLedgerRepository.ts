@@ -5,6 +5,7 @@ import {
   Tag as DomainTag,
   LocalDate,
   Money,
+  Transfer as DomainTransfer,
   Transaction as DomainTransaction,
 } from "@nexora/domain";
 
@@ -416,6 +417,42 @@ async function applyRemoteOperation(
     if ((await repository.listTags()).some((candidate) => candidate.id === tag.id))
       await repository.updateTag(tag);
     else await repository.saveTag(tag);
+    return;
+  }
+  if (payload.entity_type === "transfer") {
+    if (payload.operation === "delete") {
+      if (await repository.findTransferById(operation.entityId))
+        await repository.cancelTransfer(operation.entityId).catch(() => undefined);
+      return;
+    }
+    const debitTransaction = await repository.findTransactionById(
+      String(payload.debit_transaction_id),
+    );
+    const creditTransaction = await repository.findTransactionById(
+      String(payload.credit_transaction_id),
+    );
+    const feeTransaction =
+      payload.fee_transaction_id === null || payload.fee_transaction_id === undefined
+        ? undefined
+        : await repository.findTransactionById(String(payload.fee_transaction_id));
+    if (debitTransaction === undefined || creditTransaction === undefined) return;
+    if (payload.fee_transaction_id !== null && payload.fee_transaction_id !== undefined) {
+      if (feeTransaction === undefined) return;
+    }
+    const transfer = DomainTransfer.create({
+      id: operation.entityId,
+      debitTransaction,
+      creditTransaction,
+      ...(feeTransaction === undefined ? {} : { feeTransaction }),
+    });
+    if (await repository.findTransferById(transfer.id))
+      await repository.cancelTransfer(transfer.id);
+    await repository.saveTransfer({
+      transfer,
+      debitTransaction,
+      creditTransaction,
+      ...(feeTransaction === undefined ? {} : { feeTransaction }),
+    });
     return;
   }
   if (payload.entity_type !== "transaction") return;

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `remote-mobile-host`: il phone-host installa un journal SQLite atomico per account, category, tag,
+  transaction e transfer; le mutazioni normali producono operation incrementali, cursor monotono,
+  revisioni composite e tombstone, mentre il client PC applica pull successivi senza nuovo bootstrap.
 - `remote-mobile-host`: il client PC apre un cache ledger IndexedDB dedicato, ricostruito dal
   bootstrap autenticato del Local Hub del telefono; le mutazioni di transazione usano operation
   log, revisioni, pull/push con cursore persistente e outbox persistente con retry offline. Pairing,

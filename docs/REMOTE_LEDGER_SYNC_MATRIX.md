@@ -9,10 +9,10 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | Metodo mutativo | Entità | Stato attuale | Operation | Conflitto/revisione | PC → telefono | Telefono → PC |
 |---|---|---|---|---|---|---|
 | `resetFinancialData` | ledger | non supportato | — | — | no | no |
-| `saveAccount`, `updateAccount`, `deleteUnusedAccount` | account | PC→telefono implementato; telefono→PC ancora bootstrap | `account.upsert/delete` | `(entity_type, entity_id)` | sì | bootstrap only |
-| `saveCategory`, `updateCategory`, `deleteUnusedCategory` | category | PC→telefono implementato; telefono→PC ancora bootstrap | `category.upsert/delete` | `(entity_type, entity_id)` | sì | bootstrap only |
+| `saveAccount`, `updateAccount`, `deleteUnusedAccount` | account | bidirezionale incrementale per il core | `account.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
+| `saveCategory`, `updateCategory`, `deleteUnusedCategory` | category | bidirezionale incrementale per il core | `category.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `mergeCategory` | category + riferimenti | non supportato | — | — | no | no |
-| `saveTag`, `updateTag`, `deleteUnusedTag` | tag | PC→telefono implementato; telefono→PC ancora bootstrap | `tag.upsert/delete` | `(entity_type, entity_id)` | sì | bootstrap only |
+| `saveTag`, `updateTag`, `deleteUnusedTag` | tag | bidirezionale incrementale per il core | `tag.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
 | `mergeTag`, `removeTagGlobally` | tag + relazioni | non supportato | — | — | no | no |
 | `setTransactionTags` | transaction-tag | non supportato | — | — | no | no |
 | `saveRecurringRule`, `updateRecurringRule`, `deleteRecurringRule` | recurring rule | non supportato | — | — | no | no |
@@ -22,15 +22,20 @@ Il protocollo attuale usa operation versionate per entità e revisioni per `enti
 | `saveInvestmentPosition`, `updateInvestmentPosition`, `deleteInvestmentPosition` | investment | non supportato | — | — | no | no |
 | `saveMonthlyJournal`, `updateMonthlyJournal`, `deleteMonthlyJournal` | journal | non supportato | — | — | no | no |
 | `saveImportBatch`, `commitImportBatch`, `undoImportBatch` | import batch/rows | non supportato | — | — | no | no |
-| `saveTransaction`, `updateTransaction`, `saveTransactionWithSplits`, `saveTransactionWithDetails`, `updateTransactionWithDetails` | transaction | parziale | `transaction.upsert` | per entità | sì | bootstrap only |
-| `saveTransfer`, `cancelTransfer` | transfer + legs | parziale | `transfer.upsert` | per entità | sì, server-side | bootstrap only |
+| `saveTransaction`, `updateTransaction`, `saveTransactionWithSplits`, `saveTransactionWithDetails`, `updateTransactionWithDetails` | transaction | bidirezionale incrementale per il core | `transaction.upsert/delete` | `(entity_type, entity_id)` | sì | sì, journal incrementale |
+| `saveTransfer`, `cancelTransfer` | transfer + legs | telefono→PC incrementale; PC→telefono non supportato | `transfer.upsert/delete` + leg operations | `(entity_type, entity_id)` | no | sì, journal incrementale |
 | `cancelTransaction` | transaction | non supportato | — | — | no | no |
 | `trashTransaction`, `trashTransactions` | trash | non supportato | — | — | no | no |
 | `restoreTransaction` | trash/transaction | non supportato | — | — | no | no |
 | `purgeTrashedTransaction`, `purgeTrashedTransactions` | trash/transaction | singolo purge parziale | `transaction.delete` | per entità | parziale | no |
 
-La definizione di completamento richiede che ogni riga supportata percorra UI → cache → outbox →
-operation → validazione Local Hub → transazione sul `nexora.db` del telefono → ACK, e che le
-modifiche del repository Android producano eventi leggibili dal pull PC. Finché la matrice non viene
-aggiornata con test PC→SQLite, telefono→PC, offline e conflitto per ogni riga, il gate
-`remote-mobile-host` resta aperto.
+Per le cinque entità core il repository SQLite del telefono installa trigger journal atomici quando
+il Local Hub apre `nexora.db`: la mutazione normale, l'incremento della revisione e l'append con
+cursor avvengono nella stessa transazione. Il PC applica il pull incrementale alla cache e aggiorna
+cursor/revision; le delete producono tombstone. Il journal usa `sync_operations` con cursor
+autoincrementale, `entity_type`, `entity_id`, `base_revision`, `revision`, payload e timestamp, e
+`sync_revisions` con chiave primaria composta `(entity_type, entity_id)`. Le operazioni applicate dal
+PC impostano un flag transazionale di soppressione per evitare echo nel pull.
+
+Il gate `remote-mobile-host` resta aperto per le entità non core, per i metodi composti e per la
+validazione TLS completa della chiave pubblica/SAN.
