@@ -1,19 +1,23 @@
 import type {
   Account,
+  AllocationPlan,
   Budget,
   Category,
   LedgerRepository,
+  RecurringRule,
   Tag,
   Transaction,
   TransferBundle,
 } from "@nexora/domain";
 import {
   Account as DomainAccount,
+  AllocationPlan as DomainAllocationPlan,
   Budget as DomainBudget,
   Category as DomainCategory,
   Tag as DomainTag,
   LocalDate,
   Money,
+  RecurringRule as DomainRecurringRule,
   Transfer as DomainTransfer,
   Transaction as DomainTransaction,
 } from "@nexora/domain";
@@ -164,6 +168,12 @@ const mutatingMethods = new Set([
   "updateBudget",
   "reviseBudget",
   "deleteBudget",
+  "saveRecurringRule",
+  "updateRecurringRule",
+  "deleteRecurringRule",
+  "saveAllocationPlan",
+  "updateAllocationPlan",
+  "deleteAllocationPlan",
   "saveLoan",
   "updateLoan",
   "deleteLoan",
@@ -212,6 +222,12 @@ const supportedRemoteMutations = new Set([
   "updateBudget",
   "reviseBudget",
   "deleteBudget",
+  "saveRecurringRule",
+  "updateRecurringRule",
+  "deleteRecurringRule",
+  "saveAllocationPlan",
+  "updateAllocationPlan",
+  "deleteAllocationPlan",
   "purgeTrashedTransaction",
 ]);
 
@@ -327,6 +343,58 @@ async function operationForMutation(
         schema_version: 1,
         operation: "delete",
         entity_type: "budget",
+        entity_id: String(args[0]),
+      }),
+      true,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  if (method === "saveRecurringRule" || method === "updateRecurringRule") {
+    const rule = args[0] as RecurringRule;
+    return operationFromPayload(
+      rule.id,
+      JSON.stringify(recurringRulePayload(rule)),
+      false,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  if (method === "deleteRecurringRule") {
+    return operationFromPayload(
+      String(args[0]),
+      JSON.stringify({
+        schema_version: 1,
+        operation: "delete",
+        entity_type: "recurring_rule",
+        entity_id: String(args[0]),
+      }),
+      true,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  if (method === "saveAllocationPlan" || method === "updateAllocationPlan") {
+    const plan = args[0] as AllocationPlan;
+    return operationFromPayload(
+      plan.id,
+      JSON.stringify(allocationPlanPayload(plan)),
+      false,
+      deviceId,
+      revisions,
+      client,
+    );
+  }
+  if (method === "deleteAllocationPlan") {
+    return operationFromPayload(
+      String(args[0]),
+      JSON.stringify({
+        schema_version: 1,
+        operation: "delete",
+        entity_type: "allocation_plan",
         entity_id: String(args[0]),
       }),
       true,
@@ -527,6 +595,50 @@ function budgetPayload(budget: Budget): Record<string, unknown> {
   };
 }
 
+function recurringRulePayload(rule: RecurringRule): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "recurring_rule",
+    entity_id: rule.id,
+    name: rule.name,
+    kind: rule.kind,
+    account_id: rule.accountId,
+    amount_minor: rule.amount.amountMinor.toString(),
+    currency: rule.amount.currency,
+    category_id: rule.categoryId ?? null,
+    payee: rule.payee ?? null,
+    frequency: rule.frequency,
+    frequency_unit: rule.frequencyUnit,
+    interval_value: rule.interval,
+    nominal_day: rule.nominalDay,
+    nominal_month: rule.nominalMonth ?? null,
+    weekend_policy: rule.weekendPolicy,
+    next_nominal_date: rule.nextNominalDate.toString(),
+    next_expected_date: rule.nextExpectedDate.toString(),
+    enabled: rule.enabled,
+    retired_at: rule.retiredAt ?? null,
+    expense_variability: rule.expenseVariability ?? null,
+    expense_exceptionality: rule.expenseExceptionality ?? null,
+  };
+}
+
+function allocationPlanPayload(plan: AllocationPlan): Record<string, unknown> {
+  return {
+    schema_version: 1,
+    operation: "upsert",
+    entity_type: "allocation_plan",
+    entity_id: plan.id,
+    name: plan.name,
+    trigger_kind: plan.trigger,
+    source_account_id: plan.sourceAccountId,
+    target_account_id: plan.targetAccountId,
+    amount_minor: plan.amount.amountMinor.toString(),
+    currency: plan.amount.currency,
+    enabled: plan.enabled,
+  };
+}
+
 async function applyRemoteOperation(
   repository: LedgerRepository,
   operation: LocalSyncOperation,
@@ -623,6 +735,69 @@ async function applyRemoteOperation(
     if ((await repository.listBudgets()).some((candidate) => candidate.id === budget.id))
       await repository.updateBudget(budget);
     else await repository.saveBudget(budget);
+    return;
+  }
+  if (payload.entity_type === "recurring_rule") {
+    if (payload.operation === "delete") {
+      if ((await repository.listRecurringRules()).some((x) => x.id === operation.entityId))
+        await repository.deleteRecurringRule(operation.entityId);
+      return;
+    }
+    const rule = DomainRecurringRule.create({
+      id: operation.entityId,
+      name: String(payload.name),
+      kind: String(payload.kind) as RecurringRule["kind"],
+      accountId: String(payload.account_id),
+      amount: Money.fromMinor(BigInt(String(payload.amount_minor)), String(payload.currency)),
+      ...(payload.category_id == null ? {} : { categoryId: String(payload.category_id) }),
+      ...(payload.payee == null ? {} : { payee: String(payload.payee) }),
+      frequencyUnit: String(payload.frequency_unit) as RecurringRule["frequencyUnit"],
+      interval: Number(payload.interval_value),
+      nominalDay: Number(payload.nominal_day),
+      ...(payload.nominal_month == null ? {} : { nominalMonth: Number(payload.nominal_month) }),
+      weekendPolicy: String(payload.weekend_policy) as RecurringRule["weekendPolicy"],
+      nextNominalDate: LocalDate.parse(String(payload.next_nominal_date)),
+      nextExpectedDate: LocalDate.parse(String(payload.next_expected_date)),
+      enabled: payload.enabled === true,
+      ...(payload.retired_at == null ? {} : { retiredAt: String(payload.retired_at) }),
+      ...(payload.expense_variability == null
+        ? {}
+        : {
+            expenseVariability: String(payload.expense_variability) as NonNullable<
+              RecurringRule["expenseVariability"]
+            >,
+          }),
+      ...(payload.expense_exceptionality == null
+        ? {}
+        : {
+            expenseExceptionality: String(payload.expense_exceptionality) as NonNullable<
+              RecurringRule["expenseExceptionality"]
+            >,
+          }),
+    });
+    if ((await repository.listRecurringRules()).some((x) => x.id === rule.id))
+      await repository.updateRecurringRule(rule);
+    else await repository.saveRecurringRule(rule);
+    return;
+  }
+  if (payload.entity_type === "allocation_plan") {
+    if (payload.operation === "delete") {
+      if ((await repository.listAllocationPlans()).some((x) => x.id === operation.entityId))
+        await repository.deleteAllocationPlan(operation.entityId);
+      return;
+    }
+    const plan = DomainAllocationPlan.create({
+      id: operation.entityId,
+      name: String(payload.name),
+      trigger: String(payload.trigger_kind) as AllocationPlan["trigger"],
+      sourceAccountId: String(payload.source_account_id),
+      targetAccountId: String(payload.target_account_id),
+      amount: Money.fromMinor(BigInt(String(payload.amount_minor)), String(payload.currency)),
+      enabled: payload.enabled === true,
+    });
+    if ((await repository.listAllocationPlans()).some((x) => x.id === plan.id))
+      await repository.updateAllocationPlan(plan);
+    else await repository.saveAllocationPlan(plan);
     return;
   }
   if (payload.entity_type === "transfer") {

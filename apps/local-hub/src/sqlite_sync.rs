@@ -84,6 +84,34 @@ struct LedgerOperationPayload {
     first_alert_percentage: Option<i64>,
     #[serde(default)]
     second_alert_percentage: Option<i64>,
+    #[serde(default)]
+    frequency_unit: Option<String>,
+    #[serde(default)]
+    interval_value: Option<i64>,
+    #[serde(default)]
+    nominal_day: Option<i64>,
+    #[serde(default)]
+    nominal_month: Option<i64>,
+    #[serde(default)]
+    weekend_policy: Option<String>,
+    #[serde(default)]
+    next_nominal_date: Option<String>,
+    #[serde(default)]
+    next_expected_date: Option<String>,
+    #[serde(default)]
+    retired_at: Option<String>,
+    #[serde(default)]
+    expense_variability: Option<String>,
+    #[serde(default)]
+    expense_exceptionality: Option<String>,
+    #[serde(default)]
+    trigger_kind: Option<String>,
+    #[serde(default)]
+    source_account_id: Option<String>,
+    #[serde(default)]
+    target_account_id: Option<String>,
+    #[serde(default)]
+    enabled: Option<bool>,
 }
 
 impl SqliteSyncOperationStore {
@@ -393,6 +421,28 @@ impl SqliteSyncOperationStore {
                 operations.push((0, row?));
             }
         }
+        if table_has_column(&self.connection, "recurring_rules", "frequency_unit")? {
+            let mut rules = self.connection.prepare("SELECT id, name, kind, account_id, amount_minor, currency, category_id, payee, frequency, frequency_unit, interval_value, nominal_day, nominal_month, weekend_policy_v2, next_nominal_date, next_expected_date, enabled, retired_at, expense_variability, expense_exceptionality FROM recurring_rules ORDER BY id")?;
+            for row in rules.query_map([], |row| Ok(bootstrap_operation(serde_json::json!({
+                "schema_version": 1, "operation": "upsert", "entity_type": "recurring_rule",
+                "entity_id": row.get::<_, String>(0)?, "name": row.get::<_, String>(1)?, "kind": row.get::<_, String>(2)?,
+                "account_id": row.get::<_, String>(3)?, "amount_minor": row.get::<_, String>(4)?, "currency": row.get::<_, String>(5)?,
+                "category_id": row.get::<_, Option<String>>(6)?, "payee": row.get::<_, Option<String>>(7)?, "frequency": row.get::<_, String>(8)?,
+                "frequency_unit": row.get::<_, String>(9)?, "interval_value": row.get::<_, i64>(10)?, "nominal_day": row.get::<_, i64>(11)?,
+                "nominal_month": row.get::<_, Option<i64>>(12)?, "weekend_policy": row.get::<_, Option<String>>(13)?,
+                "next_nominal_date": row.get::<_, Option<String>>(14)?, "next_expected_date": row.get::<_, String>(15)?,
+                "enabled": row.get::<_, i64>(16)? != 0, "retired_at": row.get::<_, Option<String>>(17)?,
+                "expense_variability": row.get::<_, Option<String>>(18)?, "expense_exceptionality": row.get::<_, Option<String>>(19)?
+            }))))? { operations.push((0, row?)); }
+        }
+        if table_has_column(&self.connection, "allocation_plans", "trigger_kind")? {
+            let mut plans = self.connection.prepare("SELECT id, name, trigger_kind, source_account_id, target_account_id, amount_minor, currency, enabled FROM allocation_plans ORDER BY id")?;
+            for row in plans.query_map([], |row| Ok(bootstrap_operation(serde_json::json!({
+                "schema_version": 1, "operation": "upsert", "entity_type": "allocation_plan", "entity_id": row.get::<_, String>(0)?,
+                "name": row.get::<_, String>(1)?, "trigger_kind": row.get::<_, String>(2)?, "source_account_id": row.get::<_, String>(3)?,
+                "target_account_id": row.get::<_, String>(4)?, "amount_minor": row.get::<_, String>(5)?, "currency": row.get::<_, String>(6)?, "enabled": row.get::<_, i64>(7)? != 0
+            }))))? { operations.push((0, row?)); }
+        }
         let mut transactions = self.connection.prepare(
             "SELECT id, kind, status, account_id, amount_minor, currency, booked_date,
                     value_date, payee, description, category_id, note, source
@@ -503,6 +553,20 @@ fn install_change_journal_triggers(connection: &Connection) -> Result<(), rusqli
             "json_object('schema_version', 1, 'operation', 'delete', 'entity_type', 'budget', 'entity_id', OLD.id)",
         ));
     }
+    if table_has_column(connection, "recurring_rules", "frequency_unit")? {
+        sql.push_str(&entity_trigger_sql(
+            "recurring_rules", "recurring_rule", "NEW.id", "OLD.id",
+            "json_object('schema_version',1,'operation','upsert','entity_type','recurring_rule','entity_id',NEW.id,'name',NEW.name,'kind',NEW.kind,'account_id',NEW.account_id,'amount_minor',NEW.amount_minor,'currency',NEW.currency,'category_id',NEW.category_id,'payee',NEW.payee,'frequency',NEW.frequency,'frequency_unit',NEW.frequency_unit,'interval_value',NEW.interval_value,'nominal_day',NEW.nominal_day,'nominal_month',NEW.nominal_month,'weekend_policy',NEW.weekend_policy_v2,'next_nominal_date',NEW.next_nominal_date,'next_expected_date',NEW.next_expected_date,'enabled',NEW.enabled,'retired_at',NEW.retired_at,'expense_variability',NEW.expense_variability,'expense_exceptionality',NEW.expense_exceptionality)",
+            "json_object('schema_version',1,'operation','delete','entity_type','recurring_rule','entity_id',OLD.id)",
+        ));
+    }
+    if table_has_column(connection, "allocation_plans", "trigger_kind")? {
+        sql.push_str(&entity_trigger_sql(
+            "allocation_plans", "allocation_plan", "NEW.id", "OLD.id",
+            "json_object('schema_version',1,'operation','upsert','entity_type','allocation_plan','entity_id',NEW.id,'name',NEW.name,'trigger_kind',NEW.trigger_kind,'source_account_id',NEW.source_account_id,'target_account_id',NEW.target_account_id,'amount_minor',NEW.amount_minor,'currency',NEW.currency,'enabled',NEW.enabled)",
+            "json_object('schema_version',1,'operation','delete','entity_type','allocation_plan','entity_id',OLD.id)",
+        ));
+    }
     connection.execute_batch(&sql)
 }
 
@@ -597,7 +661,14 @@ fn validate_payload(
         || payload.entity_id != operation.entity_id
         || !matches!(
             payload.entity_type.as_str(),
-            "account" | "category" | "tag" | "budget" | "transaction" | "transfer"
+            "account"
+                | "category"
+                | "tag"
+                | "budget"
+                | "recurring_rule"
+                | "allocation_plan"
+                | "transaction"
+                | "transfer"
         )
     {
         return Err(DurableSyncError::InvalidPayload(
@@ -662,6 +733,35 @@ fn validate_payload(
                 {
                     return Err(DurableSyncError::InvalidPayload(
                         "budget payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "recurring_rule" => {
+                if payload.name.is_none()
+                    || payload.kind.is_none()
+                    || payload.account_id.is_none()
+                    || payload.amount_minor.is_none()
+                    || payload.currency.is_none()
+                    || payload.frequency_unit.is_none()
+                    || payload.interval_value.is_none()
+                    || payload.nominal_day.is_none()
+                    || payload.next_expected_date.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "recurring rule payload is incomplete".to_owned(),
+                    ));
+                }
+            }
+            "allocation_plan" => {
+                if payload.name.is_none()
+                    || payload.trigger_kind.is_none()
+                    || payload.source_account_id.is_none()
+                    || payload.target_account_id.is_none()
+                    || payload.amount_minor.is_none()
+                    || payload.currency.is_none()
+                {
+                    return Err(DurableSyncError::InvalidPayload(
+                        "allocation plan payload is incomplete".to_owned(),
                     ));
                 }
             }
@@ -799,6 +899,42 @@ fn apply_ledger_operation(
                 payload.second_alert_percentage,
             ],
         ),
+        ("recurring_rule", "delete") => transaction.execute(
+            "DELETE FROM recurring_rules WHERE id = ?1",
+            params![operation.entity_id],
+        ),
+        ("recurring_rule", "upsert") => transaction.execute(
+            "INSERT INTO recurring_rules (id,name,kind,account_id,amount_minor,currency,category_id,payee,frequency,interval_months,nominal_day,weekend_policy,next_expected_date,enabled,frequency_unit,interval_value,nominal_month,next_nominal_date,weekend_policy_v2,retired_at,expense_variability,expense_exceptionality) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21,?22) ON CONFLICT(id) DO UPDATE SET name=excluded.name,kind=excluded.kind,account_id=excluded.account_id,amount_minor=excluded.amount_minor,currency=excluded.currency,category_id=excluded.category_id,payee=excluded.payee,frequency=excluded.frequency,interval_months=excluded.interval_months,nominal_day=excluded.nominal_day,weekend_policy=excluded.weekend_policy,next_expected_date=excluded.next_expected_date,enabled=excluded.enabled,frequency_unit=excluded.frequency_unit,interval_value=excluded.interval_value,nominal_month=excluded.nominal_month,next_nominal_date=excluded.next_nominal_date,weekend_policy_v2=excluded.weekend_policy_v2,retired_at=excluded.retired_at,expense_variability=excluded.expense_variability,expense_exceptionality=excluded.expense_exceptionality",
+            params![
+                operation.entity_id,
+                payload.name.as_deref(),
+                payload.kind.as_deref(),
+                payload.account_id.as_deref(),
+                payload.amount_minor.as_deref(),
+                payload.currency.as_deref(),
+                payload.category_id.as_deref(),
+                payload.payee.as_deref(),
+                payload.kind.as_deref().map(|_| "monthly"),
+                payload.interval_value.unwrap_or(1),
+                payload.nominal_day.unwrap_or(1),
+                payload.weekend_policy.as_deref().unwrap_or("none"),
+                payload.next_expected_date.as_deref(),
+                i64::from(payload.enabled.unwrap_or(true)),
+                payload.frequency_unit.as_deref(),
+                payload.interval_value,
+                payload.nominal_month,
+                payload.next_nominal_date.as_deref(),
+                payload.weekend_policy.as_deref().unwrap_or("none"),
+                payload.retired_at.as_deref(),
+                payload.expense_variability.as_deref(),
+                payload.expense_exceptionality.as_deref(),
+            ],
+        ),
+        ("allocation_plan", "delete") => transaction.execute("DELETE FROM allocation_plans WHERE id = ?1", params![operation.entity_id]),
+        ("allocation_plan", "upsert") => transaction.execute(
+            "INSERT INTO allocation_plans (id,name,trigger_kind,source_account_id,target_account_id,amount_minor,currency,enabled) VALUES (?1,?2,?3,?4,?5,?6,?7,?8) ON CONFLICT(id) DO UPDATE SET name=excluded.name,trigger_kind=excluded.trigger_kind,source_account_id=excluded.source_account_id,target_account_id=excluded.target_account_id,amount_minor=excluded.amount_minor,currency=excluded.currency,enabled=excluded.enabled",
+            params![operation.entity_id,payload.name.as_deref(),payload.trigger_kind.as_deref(),payload.source_account_id.as_deref(),payload.target_account_id.as_deref(),payload.amount_minor.as_deref(),payload.currency.as_deref(),i64::from(payload.enabled.unwrap_or(true))],
+        ),
         ("transaction", "delete") => transaction.execute(
             "DELETE FROM transactions WHERE id = ?1",
             params![operation.entity_id],
@@ -911,6 +1047,22 @@ mod tests {
                    currency TEXT NOT NULL, alert_at_80 INTEGER NOT NULL DEFAULT 1,
                    alert_at_100 INTEGER NOT NULL DEFAULT 1, first_alert_percentage INTEGER,
                    second_alert_percentage INTEGER
+                 );
+                 CREATE TABLE recurring_rules (
+                   id TEXT PRIMARY KEY, name TEXT NOT NULL, kind TEXT NOT NULL,
+                   account_id TEXT NOT NULL, amount_minor TEXT NOT NULL, currency TEXT NOT NULL,
+                   category_id TEXT, payee TEXT, frequency TEXT NOT NULL DEFAULT 'monthly',
+                   interval_months INTEGER NOT NULL DEFAULT 1, nominal_day INTEGER NOT NULL DEFAULT 1,
+                   weekend_policy TEXT NOT NULL DEFAULT 'none', next_expected_date TEXT NOT NULL,
+                   enabled INTEGER NOT NULL DEFAULT 1, frequency_unit TEXT NOT NULL DEFAULT 'month',
+                   interval_value INTEGER NOT NULL DEFAULT 1, nominal_month INTEGER,
+                   next_nominal_date TEXT, weekend_policy_v2 TEXT, retired_at TEXT,
+                   expense_variability TEXT, expense_exceptionality TEXT
+                 );
+                 CREATE TABLE allocation_plans (
+                   id TEXT PRIMARY KEY, name TEXT NOT NULL, trigger_kind TEXT NOT NULL,
+                   source_account_id TEXT NOT NULL, target_account_id TEXT NOT NULL,
+                   amount_minor TEXT NOT NULL, currency TEXT NOT NULL, enabled INTEGER NOT NULL DEFAULT 1
                  );
                  CREATE TABLE transactions (
                    id TEXT PRIMARY KEY, kind TEXT NOT NULL, status TEXT NOT NULL,
@@ -1259,6 +1411,25 @@ mod tests {
             )
             .unwrap();
         assert_eq!(amount, "75000");
+    }
+
+    #[test]
+    fn recurring_and_allocation_operations_are_journaled_and_applied_atomically() {
+        let directory = tempdir().unwrap();
+        let path = directory.path().join("nexora.db");
+        let store = open_store(&path);
+        store
+            .connection
+            .execute("INSERT INTO recurring_rules (id,name,kind,account_id,amount_minor,currency,next_expected_date) VALUES ('rule-1','Salary','income','account-synthetic','100000','EUR','2026-10-01')", [])
+            .unwrap();
+        store
+            .connection
+            .execute("INSERT INTO allocation_plans (id,name,trigger_kind,source_account_id,target_account_id,amount_minor,currency) VALUES ('plan-1','Savings','salary','account-synthetic','account-second','10000','EUR')", [])
+            .unwrap();
+        let pulled = store.pull(0).unwrap();
+        assert_eq!(pulled.len(), 2);
+        assert!(pulled[0].1.payload.contains("recurring_rule"));
+        assert!(pulled[1].1.payload.contains("allocation_plan"));
     }
 
     #[test]

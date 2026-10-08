@@ -1,5 +1,14 @@
 import { InMemoryLedgerRepository } from "@nexora/database";
-import { Account, Tag, LocalDate, Money, Transaction, Transfer } from "@nexora/domain";
+import {
+  Account,
+  AllocationPlan,
+  RecurringRule,
+  Tag,
+  LocalDate,
+  Money,
+  Transaction,
+  Transfer,
+} from "@nexora/domain";
 import { describe, expect, it, vi } from "vitest";
 
 import { LocalHostSyncClient, type LocalSyncOperation } from "./localHostSync";
@@ -234,5 +243,105 @@ describe("remote ledger repository", () => {
       pushedBody?.operations.map((candidate) => JSON.parse(candidate.payload).entity_type),
     ).toEqual(["transaction", "transaction", "transfer"]);
     expect(client.pending()).toEqual([]);
+  });
+
+  it("applies recurring and allocation bootstrap records and pushes updates", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const account = Account.create({
+      id: "account-rules",
+      name: "Rules",
+      type: "checking",
+      currency: "EUR",
+    });
+    const other = Account.create({
+      id: "account-target",
+      name: "Target",
+      type: "savings",
+      currency: "EUR",
+    });
+    const rule = RecurringRule.create({
+      id: "rule-phone",
+      name: "Salary",
+      kind: "income",
+      accountId: account.id,
+      amount: Money.fromMinor(100000n, "EUR"),
+      frequencyUnit: "month",
+      interval: 1,
+      nominalDay: 1,
+      weekendPolicy: "none",
+      nextNominalDate: LocalDate.parse("2026-10-01"),
+    });
+    const plan = AllocationPlan.create({
+      id: "plan-phone",
+      name: "Savings",
+      trigger: "salary",
+      sourceAccountId: account.id,
+      targetAccountId: other.id,
+      amount: Money.fromMinor(10000n, "EUR"),
+    });
+    const request = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap"))
+        return response({
+          schema_version: 1,
+          cursor: 2,
+          operations: [
+            [
+              1,
+              operation(account.id, {
+                schema_version: 1,
+                operation: "upsert",
+                entity_type: "account",
+                entity_id: account.id,
+                name: account.name,
+                type: account.type,
+                currency: "EUR",
+                opening_balance_minor: "0",
+                is_archived: false,
+              }),
+            ],
+            [
+              2,
+              operation(other.id, {
+                schema_version: 1,
+                operation: "upsert",
+                entity_type: "account",
+                entity_id: other.id,
+                name: other.name,
+                type: other.type,
+                currency: "EUR",
+                opening_balance_minor: "0",
+                is_archived: false,
+              }),
+            ],
+          ],
+        });
+      if (url.endsWith("/v1/operations")) {
+        const body = JSON.parse(String(init?.body)) as { operations: LocalSyncOperation[] };
+        return response(
+          body.operations.map((candidate, index) => ({
+            Applied: { cursor: index + 3, revision: candidate.revision },
+          })),
+        );
+      }
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-1", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    await connection.repository.saveRecurringRule(rule);
+    await connection.repository.saveAllocationPlan(plan);
+    const pushed = request.mock.calls.filter(([input]) => String(input).endsWith("/v1/operations"));
+    expect(pushed).toHaveLength(2);
+    expect(JSON.parse(String(pushed[0]![1]?.body)).operations[0].payload).toContain(
+      "recurring_rule",
+    );
+    expect(JSON.parse(String(pushed[1]![1]?.body)).operations[0].payload).toContain(
+      "allocation_plan",
+    );
   });
 });
