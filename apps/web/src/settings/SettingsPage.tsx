@@ -99,6 +99,7 @@ export function SettingsPage({
   const [phoneHubUrl, setPhoneHubUrl] = useState<string | null>(null);
   const [isManagingPhoneHub, setIsManagingPhoneHub] = useState(false);
   const [phoneHubMessage, setPhoneHubMessage] = useState<string | null>(null);
+  const [phonePairingInvite, setPhonePairingInvite] = useState<string | null>(null);
   const [lanAddress, setLanAddress] = useState("");
   const [isStartingLan, setIsStartingLan] = useState(false);
   const [pairingInvite, setPairingInvite] = useState("");
@@ -169,6 +170,18 @@ export function SettingsPage({
       );
     } finally {
       setIsManagingPhoneHub(false);
+    }
+  };
+  const generatePhonePairingInvite = async () => {
+    setPhoneHubMessage(null);
+    try {
+      const invite = await createPhonePairingInvite();
+      setPhonePairingInvite(JSON.stringify(invite));
+      setPhoneHubMessage(
+        "Invito pairing creato. Copialo nella sezione Connessione dispositivi del PC.",
+      );
+    } catch {
+      setPhoneHubMessage("Avvia prima il Local Hub LAN del telefono per creare l’invito pairing.");
     }
   };
   useEffect(() => {
@@ -570,9 +583,29 @@ export function SettingsPage({
                   Apri Nexora dal PC: {phoneHubUrl}
                 </a>
               ) : null}
+              {phoneHubStatus?.state === "running" ? (
+                <>
+                  <button
+                    className="secondary-action"
+                    onClick={() => void generatePhonePairingInvite()}
+                    type="button"
+                  >
+                    Genera invito pairing per il PC
+                  </button>
+                  {phonePairingInvite !== null ? (
+                    <textarea
+                      aria-label="Invito pairing del telefono"
+                      readOnly
+                      rows={4}
+                      value={phonePairingInvite}
+                    />
+                  ) : null}
+                </>
+              ) : null}
               <small>
                 Telefono e PC devono essere sulla stessa Wi-Fi. Il certificato temporaneo viene
-                rigenerato a ogni avvio; il passcode sessione non è richiesto.
+                rigenerato a ogni avvio. Per collegare il PC, usa l’invito pairing invece di aprire
+                direttamente l’URL HTTPS nel browser.
               </small>
             </div>
           ) : null}

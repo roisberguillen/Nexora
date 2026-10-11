@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Local Hub LAN Android: il telefono ora genera un invito pairing da copiare nel PC, includendo
+  certificato e fingerprint per evitare il rifiuto del TLS temporaneo autofirmato.
 - Local Hub LAN Android: l’avvio usa un’identità TLS temporanea in memoria e non dipende più dal
   Keystore biometrico, che impediva l’apertura della porta sui dispositivi senza biometria forte;
   pairing e fingerprint vengono quindi rinnovati a ogni avvio esplicito.

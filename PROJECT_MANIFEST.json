@@ -1113,9 +1113,19 @@
       "sha256": "29784f611c31738a878d470542d3d358ca503c84c883bc31085780d8010459a2"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-11-phone-local-hub-lan-smoke.md",
+      "size": 1425,
+      "sha256": "549ca5a39d51af6fe96854484a2766bcddaafadc8c4b4831c68335268e5f16fa"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-10-11-phone-local-hub-runtime.md",
       "size": 1363,
       "sha256": "38a3b3c2146f142ec675ca640d9e7a99ead58de37a60d646f72856e430703f56"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-11-phone-pairing-invite.md",
+      "size": 1479,
+      "sha256": "b9ff90b8491b67d8bb7a2af1d9c3f5522dc01ba06b0bf2ff998c28cc4737fff1"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1599,8 +1609,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 210603,
-      "sha256": "9ca9cac75f32308bdbd790231e1a4470f04d1a3ae880a0991c526cc5f3167db8"
+      "size": 211104,
+      "sha256": "219542f8983957c1014ce44730ec1af0f2d36df14002812c2556cf0121eca188"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -2729,8 +2739,8 @@
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 52245,
-      "sha256": "f86ba0abf159baa8eced793c920a4024ffa5443ceef63d5164eedc2e2188f857"
+      "size": 53560,
+      "sha256": "055836f653859afc9481226eccd4f82162016b74f93557889fe016f011a96458"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -3004,8 +3014,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 69948,
-      "sha256": "f38fe9f191495fb3e738feb489faac7540156e2dc78409ff635a33eda6c0ce13"
+      "size": 70127,
+      "sha256": "a9019d4425644110c8f1cfdcb5c89b6d7cdf67394c3e1adda21690e85c2e7fb5"
     },
     {
       "path": "design/mockup/README.md",
