@@ -11,3 +11,6 @@
   `stopped`; the biometric-only Keystore path failed before listener startup.
 - Change: generate the PMA-3.2 TLS identity only in memory for the explicit runtime lifetime;
   pairing and fingerprint are renewed after each start.
+- Verification: CI signed APK from run `38130206673` installed with `adb install -r`; the
+  Settings control reached `running`, listener `43173` was present, and the PC reached that
+  listener over the phone LAN. No crash markers were found and app data was preserved.

@@ -1559,8 +1559,8 @@
     },
     {
       "path": ".codex/state/checkpoints/2026-10-11-phone-lan-runtime-debug.md",
-      "size": 856,
-      "sha256": "265607588e108098c6cd11425213197f62821a85f8caa0b505d264e243acda27"
+      "size": 1125,
+      "sha256": "0d3c9e269c41f78933adebb4517e3716a42b3a525ea3abfc0897b5b487b59486"
     },
     {
       "path": ".codex/state/current-task.md",
@@ -1599,8 +1599,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 210192,
-      "sha256": "10ba15fe96075b7e548945d7de2af568b2173fdab5b4e0806bff41e1bec60a87"
+      "size": 210603,
+      "sha256": "9ca9cac75f32308bdbd790231e1a4470f04d1a3ae880a0991c526cc5f3167db8"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
