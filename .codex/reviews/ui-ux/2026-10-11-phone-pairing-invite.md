@@ -6,13 +6,13 @@ Schermata: Impostazioni — Local Hub del telefono
 Route: settings
 Flusso principale: avvio Local Hub → generazione invito pairing → copia nel PC
 Reviewer/fase: Codex — Android LAN connection fix
-Modifiche: Aggiunto il controllo per generare e copiare l’invito pairing del telefono; nessun
-token visivo o layout approvato modificato.
+Modifiche: Aggiunto il controllo per generare e copiare l’invito pairing del telefono e spostato
+il controllo sopra la zona coperta dalla navigazione mobile; nessun token visivo approvato modificato.
 
 | Area | ID | Esito | Evidenza / N.A. |
 | --- | --- | --- | --- |
 | Universale | U-01 | PASS | Il flusso esplicita il pairing necessario per TLS verificato. |
-| Mobile | M-01 | PASS | Il pulsante e la textarea sono disponibili dopo `running`. |
+| Mobile | M-01 | PASS | Il pulsante e la textarea sono disponibili dopo `running` e il pulsante resta raggiungibile sopra la bottom navigation. |
 | Desktop | D-01 | PASS | L’invito può essere incollato nella sezione Connessione dispositivi del PC. |
 | Tablet | T-01 | N/A | Nessun layout tablet modificato. |
 | Visuale | V-01 | N/A | Colori, font e token invariati. |

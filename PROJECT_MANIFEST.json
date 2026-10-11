@@ -2740,7 +2740,7 @@
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
       "size": 53560,
-      "sha256": "055836f653859afc9481226eccd4f82162016b74f93557889fe016f011a96458"
+      "sha256": "444cf2da8333b0d9f247e077c23b09414eed169688a0dbc4db1a06c59c4f2416"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",

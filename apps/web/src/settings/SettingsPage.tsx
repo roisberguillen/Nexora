@@ -573,16 +573,6 @@ export function SettingsPage({
                     : "Avvia Local Hub LAN"}
               </button>
               <SettingsRow label="Runtime telefono" value={phoneHubStatus?.state ?? "stopped"} />
-              {phoneHubMessage !== null ? (
-                <p className="account-error" role="alert">
-                  {phoneHubMessage}
-                </p>
-              ) : null}
-              {phoneHubUrl !== null ? (
-                <a href={phoneHubUrl} rel="noopener noreferrer" target="_blank">
-                  Apri Nexora dal PC: {phoneHubUrl}
-                </a>
-              ) : null}
               {phoneHubStatus?.state === "running" ? (
                 <>
                   <button
@@ -601,6 +591,16 @@ export function SettingsPage({
                     />
                   ) : null}
                 </>
+              ) : null}
+              {phoneHubMessage !== null ? (
+                <p className="account-error" role="alert">
+                  {phoneHubMessage}
+                </p>
+              ) : null}
+              {phoneHubUrl !== null ? (
+                <a href={phoneHubUrl} rel="noopener noreferrer" target="_blank">
+                  Apri Nexora dal PC: {phoneHubUrl}
+                </a>
               ) : null}
               <small>
                 Telefono e PC devono essere sulla stessa Wi-Fi. Il certificato temporaneo viene
