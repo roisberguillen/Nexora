@@ -1124,8 +1124,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-11-phone-pairing-invite.md",
-      "size": 1479,
-      "sha256": "b9ff90b8491b67d8bb7a2af1d9c3f5522dc01ba06b0bf2ff998c28cc4737fff1"
+      "size": 1602,
+      "sha256": "1842da6fe81550ebaeabdf107ddf28948db510965ff03c7a610d82a4608f6ffc"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-11-phone-pairing-overlay.md",
+      "size": 1339,
+      "sha256": "3c262648d2dfbafcd1d4ab12b695a327d4ba5d0c46ebcefedacf2d6d63b4bea2"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1609,8 +1614,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 211104,
-      "sha256": "219542f8983957c1014ce44730ec1af0f2d36df14002812c2556cf0121eca188"
+      "size": 211362,
+      "sha256": "09727da81f66cc6664421af601886262fd1e270743b910c95f3b05846bd132a3"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
