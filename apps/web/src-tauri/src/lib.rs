@@ -18,9 +18,6 @@ use tokio::sync::Mutex as AsyncMutex;
 use x509_parser::extensions::ParsedExtension;
 use x509_parser::prelude::parse_x509_certificate;
 
-#[cfg(mobile)]
-use tauri_plugin_keystore::{KeystoreExt, RetrieveRequest, StoreRequest};
-
 #[derive(Default)]
 struct NativeTransactionState {
     next_id: AtomicU64,
@@ -270,7 +267,11 @@ async fn phone_local_hub_start(
             .map_err(|error| format!("Phone Local Hub SQLite sync store failed: {error}"))?,
     )));
     let lan_address = detect_local_lan_address()?;
-    let identity = load_or_generate_phone_lan_identity(&app, lan_address).await?;
+    // PMA-3.2 uses an ephemeral TLS identity. Persisting this key through the
+    // biometric-only keystore plugin made an explicit host start fail on
+    // devices without enrolled strong biometrics before the listener opened.
+    let identity = generate_phone_lan_identity(lan_address)?;
+    validate_phone_lan_identity(&identity)?;
     hub_state.app_url = Some(format!("https://{lan_address}:43173/"));
     hub_state.browser_root = app
         .path()
@@ -301,75 +302,6 @@ struct PhoneLanIdentity {
     host_identity: String,
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-struct PersistedPhoneLanIdentity {
-    certificate_pem: String,
-    fingerprint: String,
-    key_alias: String,
-    host_identity: String,
-}
-
-#[cfg(mobile)]
-async fn load_or_generate_phone_lan_identity(
-    app: &tauri::AppHandle,
-    address: IpAddr,
-) -> Result<PhoneLanIdentity, String> {
-    let path = database_path(app, "phone-local-hub-identity.json")?;
-    let key_alias = "nexora.local-hub.tls.v1".to_owned();
-    match fs::read_to_string(&path) {
-        Ok(raw) => {
-            let identity = serde_json::from_str::<PersistedPhoneLanIdentity>(&raw)
-                .map_err(|_| "invalid_persisted_local_hub_identity".to_owned())?;
-            if identity.key_alias != key_alias {
-                return Err("invalid_persisted_local_hub_identity".to_owned());
-            }
-            let private_key_pem = app
-                .keystore()
-                .retrieve(RetrieveRequest {
-                    key: key_alias.clone(),
-                    prompt: None,
-                })
-                .await
-                .map_err(|_| "secure_tls_key_unavailable".to_owned())?
-                .value
-                .ok_or_else(|| "secure_tls_key_unavailable".to_owned())?;
-            let loaded = PhoneLanIdentity {
-                certificate_pem: identity.certificate_pem,
-                private_key_pem,
-                fingerprint: identity.fingerprint,
-                host_identity: identity.host_identity,
-            };
-            validate_phone_lan_identity(&loaded)?;
-            return Ok(loaded);
-        }
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-        Err(_) => return Err("persisted_local_hub_identity_unavailable".to_owned()),
-    }
-    let identity = generate_phone_lan_identity(address)?;
-    validate_phone_lan_identity(&identity)?;
-    let persisted = PersistedPhoneLanIdentity {
-        certificate_pem: identity.certificate_pem.clone(),
-        fingerprint: identity.fingerprint.clone(),
-        key_alias: key_alias.clone(),
-        host_identity: identity.host_identity.clone(),
-    };
-    app.keystore()
-        .store(StoreRequest {
-            key: key_alias,
-            value: identity.private_key_pem.clone(),
-            prompt: None,
-        })
-        .await
-        .map_err(|_| "secure_tls_key_unavailable".to_owned())?;
-    fs::write(
-        path,
-        serde_json::to_vec(&persisted)
-            .map_err(|error| format!("Could not encode Local Hub identity: {error}"))?,
-    )
-    .map_err(|error| format!("Could not persist Local Hub identity: {error}"))?;
-    Ok(identity)
-}
-
 fn validate_phone_lan_identity(identity: &PhoneLanIdentity) -> Result<(), String> {
     let config = TransportSecurityConfig {
         binding: nexora_local_hub::BindingMode::Lan,
@@ -382,15 +314,7 @@ fn validate_phone_lan_identity(identity: &PhoneLanIdentity) -> Result<(), String
     };
     config
         .validate_identity()
-        .map_err(|error| format!("invalid_persisted_local_hub_identity: {error:?}"))
-}
-
-#[cfg(not(mobile))]
-async fn load_or_generate_phone_lan_identity(
-    _app: &tauri::AppHandle,
-    _address: IpAddr,
-) -> Result<PhoneLanIdentity, String> {
-    Err("secure_phone_tls_storage_requires_mobile_keystore".to_owned())
+        .map_err(|error| format!("invalid_ephemeral_local_hub_identity: {error:?}"))
 }
 
 fn detect_local_lan_address() -> Result<IpAddr, String> {
@@ -795,8 +719,6 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_sql::Builder::default().build());
-    #[cfg(mobile)]
-    let builder = builder.plugin(tauri_plugin_keystore::init());
     builder
         .run(tauri::generate_context!())
         .expect("Nexora native runtime failed to start");
@@ -807,7 +729,7 @@ mod tests {
     use std::collections::HashMap;
 
     use super::{
-        NativeHttpRequest, generate_phone_lan_identity, parse_first_certificate,
+        NativeHttpRequest, generate_phone_lan_identity,
         validate_database_filename, validate_native_local_host_request,
         verify_certificate_fingerprint,
     };
@@ -848,45 +770,6 @@ mod tests {
             verify_certificate_fingerprint(certificate.as_ref(), &identity.fingerprint).is_ok()
         );
         assert!(verify_certificate_fingerprint(certificate.as_ref(), "sha256:deadbeef").is_err());
-    }
-
-    #[test]
-    fn persisted_phone_identity_never_serializes_the_private_key() {
-        let identity =
-            generate_phone_lan_identity("192.0.2.10".parse::<IpAddr>().unwrap()).unwrap();
-        let persisted = super::PersistedPhoneLanIdentity {
-            certificate_pem: identity.certificate_pem,
-            fingerprint: identity.fingerprint,
-            key_alias: "nexora.local-hub.tls.v1".to_owned(),
-            host_identity: identity.host_identity,
-        };
-        let json = serde_json::to_string(&persisted).unwrap();
-        assert!(!json.contains("private_key_pem"));
-        assert!(!json.contains("PRIVATE KEY"));
-    }
-
-    #[test]
-    fn persisted_phone_identity_round_trip_keeps_certificate_fingerprint_and_host_identity() {
-        let identity =
-            generate_phone_lan_identity("192.0.2.10".parse::<IpAddr>().unwrap()).unwrap();
-        let persisted = super::PersistedPhoneLanIdentity {
-            certificate_pem: identity.certificate_pem.clone(),
-            fingerprint: identity.fingerprint.clone(),
-            key_alias: "nexora.local-hub.tls.v1".to_owned(),
-            host_identity: identity.host_identity.clone(),
-        };
-        let restored = serde_json::from_str::<super::PersistedPhoneLanIdentity>(
-            &serde_json::to_string(&persisted).unwrap(),
-        )
-        .unwrap();
-        assert_eq!(restored.fingerprint, identity.fingerprint);
-        assert_eq!(restored.host_identity, identity.host_identity);
-        assert_eq!(restored.certificate_pem, identity.certificate_pem);
-        assert!(verify_certificate_fingerprint(
-            &parse_first_certificate(&restored.certificate_pem).unwrap(),
-            &restored.fingerprint
-        )
-        .is_ok());
     }
 
     #[test]

@@ -1113,6 +1113,11 @@
       "sha256": "29784f611c31738a878d470542d3d358ca503c84c883bc31085780d8010459a2"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-11-phone-local-hub-runtime.md",
+      "size": 1363,
+      "sha256": "38a3b3c2146f142ec675ca640d9e7a99ead58de37a60d646f72856e430703f56"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -1553,6 +1558,11 @@
       "sha256": "e1e367c4bc92a8de554e9d144494aa7b14be2764e00ea53ad4c7726eebb25201"
     },
     {
+      "path": ".codex/state/checkpoints/2026-10-11-phone-lan-runtime-debug.md",
+      "size": 856,
+      "sha256": "265607588e108098c6cd11425213197f62821a85f8caa0b505d264e243acda27"
+    },
+    {
       "path": ".codex/state/current-task.md",
       "size": 657,
       "sha256": "a98ba20c3e86a2fa859f4075b2137ad5d96deb0154bf5c61151d6f41f24f266f"
@@ -1589,8 +1599,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 209716,
-      "sha256": "409072dcd5fae9ea2c31994dfbb01988299f33b082ef44959ad3ad2a482ff945"
+      "size": 210192,
+      "sha256": "10ba15fe96075b7e548945d7de2af568b2173fdab5b4e0806bff41e1bec60a87"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1794,13 +1804,13 @@
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 152275,
-      "sha256": "1e80e0052fed8bd540de74e8767ca2782ec43eb676c283c29bbee45756d0e848"
+      "size": 151959,
+      "sha256": "e062887e80c9578e9cada0b937040ac745eff318c416e8661c87aac3fb43f77e"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 891,
-      "sha256": "41a777f4774377f1af718e668e2258c6717664557d0d7a68203a7f73dabae5c9"
+      "size": 851,
+      "sha256": "3177b6314e433f1b4337ebd86cec2bbee8f1b9c9cbeb7bc37da8e2b770f5f0cb"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2064,8 +2074,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 35316,
-      "sha256": "bf909af35887b609d41f0c5e917d7204642e0494ff98cf3210ae12e18a38c78c"
+      "size": 30773,
+      "sha256": "b62bbedd55d8535c5dff538312a5b127559d26b0c0e8e6d86c89f2b373723d16"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -2994,8 +3004,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 69671,
-      "sha256": "d0e382daf45cf478cc3997670160d981f8bf841c73597437368be981d5f09751"
+      "size": 69948,
+      "sha256": "f38fe9f191495fb3e738feb489faac7540156e2dc78409ff635a33eda6c0ce13"
     },
     {
       "path": "design/mockup/README.md",
@@ -3184,8 +3194,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 37181,
-      "sha256": "d3030b8b2355bd130bdd90be7de13f587950520ed630695a1fff74f19ec309f2"
+      "size": 38128,
+      "sha256": "89f9a532a1ac1336a543426fcd6af6fe17b7824cf4bc12dbe1d45a3126d91864"
     },
     {
       "path": "docs/DESKTOP_DISTRIBUTION.md",
@@ -3339,8 +3349,8 @@
     },
     {
       "path": "docs/ROADMAP_PHONE_LOCAL_HUB.md",
-      "size": 13047,
-      "sha256": "748570c3ad8a2a056fbe679fc6580d7402afc437ccf37981dc03ddb0c39ac1e7"
+      "size": 13026,
+      "sha256": "4cec05adad1b0980fa53784e48fb4a6923f893b0e28e1e2050ad97fd40f79d05"
     },
     {
       "path": "docs/ROADMAP_STABILIZATION.md",

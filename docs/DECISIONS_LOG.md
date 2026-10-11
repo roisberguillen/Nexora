@@ -23,6 +23,19 @@
 
 Registrare qui ogni decisione non coperta dagli ADR con data, contesto, scelta e conseguenze.
 
+## 2026-10-11 — Phone Local Hub: identità TLS temporanea per l’avvio LAN
+
+- **Contesto:** il comando Android `phone_local_hub_start` falliva prima di aprire la porta LAN
+  perché il plugin Keystore usato per il certificato TLS richiedeva biometria forte ad ogni accesso.
+  La stessa rete Wi-Fi e l’ADB autorizzato erano presenti, ma il runtime restava `stopped`.
+- **Scelta:** PMA-3.2 genera certificato, chiave privata, fingerprint e `host_identity` in memoria
+  per la durata del runtime esplicitamente avviato. Il listener resta HTTPS, LAN opt-in, paired e
+  fail-closed; pairing/session credentials restano soggetti al secure storage previsto dal loro
+  contratto e non vengono salvati in URL, QR o localStorage.
+- **Conseguenze:** ogni riavvio del Local Hub richiede un nuovo pairing e un nuovo fingerprint;
+  lo stop o il crash eliminano la chiave privata dalla memoria e non lasciano un’identità TLS
+  persistita da recuperare.
+
 ## 2026-09-14 — Phone Local Hub: inversione controllata del ruolo host
 
 - **Contesto:** il PC Manager completato usa il PC come host; il nuovo flusso richiesto deve

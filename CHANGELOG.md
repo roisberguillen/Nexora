@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Local Hub LAN Android: l’avvio usa un’identità TLS temporanea in memoria e non dipende più dal
+  Keystore biometrico, che impediva l’apertura della porta sui dispositivi senza biometria forte;
+  pairing e fingerprint vengono quindi rinnovati a ogni avvio esplicito.
 - Local Hub LAN mobile: la rilevazione ora privilegia l'interfaccia Wi-Fi/Ethernet rispetto a
   interfacce cellulari o VPN; l'avvio mostra subito lo stato di caricamento e l'errore nella
   sezione del telefono.

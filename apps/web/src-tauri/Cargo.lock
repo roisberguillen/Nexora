@@ -2450,7 +2450,6 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-dialog",
  "tauri-plugin-fs",
- "tauri-plugin-keystore",
  "tauri-plugin-sql",
  "tokio",
  "x509-parser",
@@ -4635,18 +4634,6 @@ dependencies = [
  "thiserror 2.0.19",
  "toml 1.1.4+spec-1.1.0",
  "url",
-]
-
-[[package]]
-name = "tauri-plugin-keystore"
-version = "2.1.0-alpha.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54ab4f3275d830afd38248eedc481e7532fa248a6d50882c86f640871875625c"
-dependencies = [
- "serde",
- "tauri",
- "tauri-plugin",
- "thiserror 2.0.19",
 ]
 
 [[package]]

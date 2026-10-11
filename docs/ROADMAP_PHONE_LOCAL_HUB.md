@@ -142,7 +142,7 @@ Il contratto Rust mantiene grant monouso, host fingerprint, revoca e separazione
 Gate full verify, UI review e invito sintetico sul Pixel ancora aperti.
 
 **Slice PMA-3.2 — 2026-09-14:** il comando Android rileva l’indirizzo Wi-Fi del telefono e avvia
-il Local Hub LAN su HTTPS con identità TLS persistita nel keystore e metadati pubblici stabili,
+il Local Hub LAN su HTTPS con identità TLS temporanea in memoria e metadati pubblici stabili,
 fingerprint calcolato dal certificato DER e porta `43173`. La Settings UI Android è stata ridotta al flusso operativo
 `Avvia/Arresta Local Hub LAN → Runtime → URL da aprire sul PC`; i controlli passcode/sessione e le
 azioni desktop non pertinenti sono nascosti sul telefono. L’autorizzazione backend resta separata
@@ -150,8 +150,7 @@ e fail-closed. Build firmata e verifica reale Pixel → PC sulla stessa Wi-Fi so
 
 **TLS identity hardening — 2026-10-08:** chiusa la validazione automatica
 certificato DER ↔ fingerprint, private key ↔ certificato tramite Rustls,
-`host_identity` ↔ SAN DNS, validità temporale, alias/key storage e recovery
-fail-closed. Il client nativo PC impone HTTPS, origine/hostname paired,
+`host_identity` ↔ SAN DNS, validità temporale e recovery fail-closed. Il client nativo PC impone HTTPS, origine/hostname paired,
 fingerprint pinned, indirizzo LAN privato e redirect disabilitati; rifiuta host
 arbitrari, downgrade HTTP, userinfo, loopback non paired e path traversal. La
 rilevazione LAN non usa più host Internet. Evidenza: `docs/TLS_IDENTITY_HARDENING.md`.
