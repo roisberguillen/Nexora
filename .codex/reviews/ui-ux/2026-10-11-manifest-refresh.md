@@ -6,7 +6,8 @@ Schermata: Impostazioni — Local Hub del telefono
 Route: settings
 Flusso principale: verifica manifest dopo la correzione pairing
 Reviewer/fase: Codex — validation gate
-Modifiche: Nessuna modifica visuale; il manifest descrive i file della review pairing.
+Modifiche: Nessuna modifica visuale; il manifest descrive i file della review pairing e della
+correzione di accessibilità del controllo pairing.
 
 | Area | ID | Esito | Evidenza / N.A. |
 | --- | --- | --- | --- |

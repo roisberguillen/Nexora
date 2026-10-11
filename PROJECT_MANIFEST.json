@@ -1113,6 +1113,11 @@
       "sha256": "29784f611c31738a878d470542d3d358ca503c84c883bc31085780d8010459a2"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-11-manifest-refresh.md",
+      "size": 1207,
+      "sha256": "ef250713ca03a78cf40aecf2f6ffb652d5a0b89f68c2c28171cc9d484db13b1c"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-10-11-phone-local-hub-lan-smoke.md",
       "size": 1425,
       "sha256": "549ca5a39d51af6fe96854484a2766bcddaafadc8c4b4831c68335268e5f16fa"
