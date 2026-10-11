@@ -1138,6 +1138,11 @@
       "sha256": "3c262648d2dfbafcd1d4ab12b695a327d4ba5d0c46ebcefedacf2d6d63b4bea2"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-11-tls-e2e.md",
+      "size": 1444,
+      "sha256": "443513bb8faf16584866dd6ff0bbf4a5ddf2e4f8e6ca11bd2b6537fbcfc749fe"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -1619,8 +1624,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 211362,
-      "sha256": "09727da81f66cc6664421af601886262fd1e270743b910c95f3b05846bd132a3"
+      "size": 211875,
+      "sha256": "b7c4223b16974afc382b0de63e7b64f52ea0b7502bcaaf28066486f1e08acbdc"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -3491,6 +3496,11 @@
       "path": "examples/imports/money-manager-generic.csv",
       "size": 426,
       "sha256": "121faaaa842348c3a7eced9c220e8cd523ffc8443589a62ba2ff39b80119042d"
+    },
+    {
+      "path": "LOCAL_HUB_TLS_E2E_REPORT.md",
+      "size": 3369,
+      "sha256": "804d4d7633cbad14787acb02791bf61b11cab9e1e571f1e80d5a66869f7ef58f"
     },
     {
       "path": "package.json",
