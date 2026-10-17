@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 — 2026-10-17
+
+- Local Hub: il bootstrap del database remoto ordina le entità rispettando le dipendenze, così
+  conti, transazioni, tag e cestino vengono ricostruiti correttamente nel browser del PC.
+
 ## 1.0.0 — 2026-10-17
 
 - Local Hub LAN Android: la App Shell web incorporata nell'APK viene ora servita correttamente

@@ -122,6 +122,92 @@ describe("remote ledger repository", () => {
     window.removeEventListener(remoteLedgerSyncEventName, syncEvent);
   });
 
+  it("orders phone bootstrap dependencies before relations and trash", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const account = Account.create({
+      id: "account-bootstrap-order",
+      name: "Phone account",
+      type: "checking",
+      currency: "EUR",
+    });
+    const tag = Tag.create({ id: "tag-bootstrap-order", name: "Phone tag" });
+    const accountOperation = operation(account.id, {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "account",
+      entity_id: account.id,
+      name: account.name,
+      type: account.type,
+      currency: account.currency,
+      opening_balance_minor: "0",
+      is_archived: false,
+    });
+    const tagOperation = operation(tag.id, {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "tag",
+      entity_id: tag.id,
+      name: tag.name,
+      is_archived: false,
+    });
+    const transactionOperation = operation("transaction-bootstrap-order", {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "transaction",
+      entity_id: "transaction-bootstrap-order",
+      amount_minor: "-1250",
+      currency: "EUR",
+      kind: "expense",
+      status: "booked",
+      account_id: account.id,
+      booked_date: "2026-10-17",
+      source: "manual",
+    });
+    const tagSetOperation = operation("transaction-bootstrap-order", {
+      schema_version: 1,
+      operation: "replace",
+      entity_type: "transaction_tag_set",
+      entity_id: "transaction-bootstrap-order",
+      tag_ids: [tag.id],
+    });
+    const trashOperation = operation("transaction-bootstrap-order", {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "transaction_trash",
+      entity_id: "transaction-bootstrap-order",
+      deleted_at: "2026-10-17T12:00:00.000Z",
+      deletion_group_id: "transaction:transaction-bootstrap-order",
+    });
+    const request = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("/v1/bootstrap"))
+        return response({
+          schema_version: 1,
+          cursor: 0,
+          operations: [
+            [0, tagSetOperation],
+            [0, trashOperation],
+            [0, transactionOperation],
+            [0, tagOperation],
+            [0, accountOperation],
+          ],
+        });
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-bootstrap-order", token: "token" },
+      storage: storage(),
+      request,
+    });
+
+    const connection = await connectRemoteLedgerRepository(repository, client);
+
+    await expect(connection.repository.findAccountById(account.id)).resolves.toEqual(account);
+    await expect(connection.repository.listTransactionTags("transaction-bootstrap-order")).resolves
+      .toEqual([tag]);
+    await expect(connection.repository.listTrashedTransactions()).resolves.toHaveLength(1);
+  });
+
   it("applies a phone tag tombstone and does not repeat an acknowledged pull", async () => {
     const repository = new InMemoryLedgerRepository();
     const tag = Tag.create({ id: "tag-phone", name: "Phone" });

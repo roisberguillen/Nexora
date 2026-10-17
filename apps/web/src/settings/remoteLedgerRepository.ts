@@ -84,7 +84,7 @@ export async function connectRemoteLedgerRepository(
   // records cannot remain visible on the PC after a reconnect.
   await repository.resetFinancialData();
   const revisions = new Map<string, number>();
-  for (const [, operation] of bootstrap.operations) {
+  for (const [, operation] of orderBootstrapOperations(bootstrap.operations)) {
     const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
     revisions.set(revisionKey, operation.revision);
     client.setRevision(revisionKey, operation.revision);
@@ -121,6 +121,56 @@ export async function connectRemoteLedgerRepository(
       }
     },
   };
+}
+
+function orderBootstrapOperations(
+  operations: readonly [number, LocalSyncOperation][],
+): readonly [number, LocalSyncOperation][] {
+  const journal = operations.filter(([cursor]) => cursor !== 0);
+  const snapshot = operations
+    .map((entry, index) => ({ entry, index }))
+    .filter(({ entry: [cursor] }) => cursor === 0)
+    .sort(
+      ({ entry: [, left], index: leftIndex }, { entry: [, right], index: rightIndex }) =>
+        bootstrapOperationRank(left) - bootstrapOperationRank(right) || leftIndex - rightIndex,
+    )
+    .map(({ entry }) => entry);
+  return [...journal, ...snapshot];
+}
+
+function bootstrapOperationRank(operation: LocalSyncOperation): number {
+  try {
+    const entityType = (JSON.parse(operation.payload) as { entity_type?: unknown }).entity_type;
+    switch (entityType) {
+      case "account":
+        return 10;
+      case "category":
+      case "tag":
+        return 20;
+      case "budget":
+      case "recurring_rule":
+      case "allocation_plan":
+      case "loan":
+      case "investment":
+      case "monthly_journal":
+      case "import_batch":
+        return 30;
+      case "import_row":
+        return 40;
+      case "transaction":
+        return 50;
+      case "transfer":
+        return 60;
+      case "transaction_tag_set":
+        return 70;
+      case "transaction_trash":
+        return 80;
+      default:
+        return 90;
+    }
+  } catch {
+    return 90;
+  }
 }
 
 function createRemoteRepository(
