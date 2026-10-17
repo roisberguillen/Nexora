@@ -115,6 +115,44 @@ describe("local host sync client", () => {
     });
   });
 
+  it("normalizes snake_case operations returned by the Rust Local Hub", async () => {
+    const request = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            schema_version: 1,
+            cursor: 3,
+            operations: [
+              [
+                3,
+                {
+                  idempotency_key: operation.idempotencyKey,
+                  device_id: operation.deviceId,
+                  entity_id: operation.entityId,
+                  base_revision: operation.baseRevision,
+                  revision: operation.revision,
+                  payload_digest: operation.payloadDigest,
+                  payload: operation.payload,
+                  tombstone: operation.tombstone,
+                  created_at: operation.createdAt,
+                },
+              ],
+            ],
+          }),
+          { status: 200 },
+        ),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://host.home",
+      credentials: { deviceId: "browser-1", token: "volatile-token" },
+      storage: storage(),
+      request,
+    });
+    await expect(client.bootstrap()).resolves.toMatchObject({
+      operations: [[3, operation]],
+    });
+  });
+
   it("pulls only validated cursors and sends the paired headers", async () => {
     const request = vi.fn(
       async () => new Response(JSON.stringify({ operations: [[1, operation]] }), { status: 200 }),

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 — 2026-10-17
+
+- Local Hub: il browser normalizza le operazioni `snake_case` restituite dal telefono, completando
+  il bootstrap remoto e mostrando i conti già presenti nel database del telefono.
+
 ## 1.0.1 — 2026-10-17
 
 - Local Hub: il bootstrap del database remoto ordina le entità rispettando le dipendenze, così

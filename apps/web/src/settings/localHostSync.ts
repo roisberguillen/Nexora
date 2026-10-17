@@ -184,10 +184,11 @@ export class LocalHostSyncClient {
     }
     const validSchemaVersion = schemaVersion as number;
     const validCursor = cursor as number;
+    const operations = normalizeOperationEntries(body.operations, "invalid_sync_bootstrap_response");
     const result = Object.freeze({
       schemaVersion: validSchemaVersion,
       cursor: validCursor,
-      operations: body.operations as readonly [number, LocalSyncOperation][],
+      operations,
     });
     for (const [, operation] of result.operations)
       this.setRevision(operation.entityId, operation.revision);
@@ -205,7 +206,7 @@ export class LocalHostSyncClient {
     const body = (await response.json()) as { operations?: unknown };
     if (!Array.isArray(body.operations)) throw new Error("invalid_sync_pull_response");
     return Object.freeze({
-      operations: body.operations as readonly [number, LocalSyncOperation][],
+      operations: normalizeOperationEntries(body.operations, "invalid_sync_pull_response"),
     });
   }
 
@@ -241,6 +242,50 @@ function headers(credentials: LocalSyncCredentials): HeadersInit {
       ? {}
       : { "x-nexora-session-token": credentials.sessionToken }),
   };
+}
+
+function normalizeOperationEntries(
+  value: unknown,
+  errorCode: string,
+): readonly [number, LocalSyncOperation][] {
+  if (!Array.isArray(value)) throw new Error(errorCode);
+  return value.map((entry) => {
+    if (!Array.isArray(entry) || entry.length !== 2) throw new Error(errorCode);
+    const cursor = entry[0];
+    const raw = entry[1];
+    if (!Number.isSafeInteger(cursor) || cursor < 0 || typeof raw !== "object" || raw === null)
+      throw new Error(errorCode);
+    const candidate = raw as Record<string, unknown>;
+    const operation = {
+      idempotencyKey: candidate.idempotencyKey ?? candidate.idempotency_key,
+      deviceId: candidate.deviceId ?? candidate.device_id,
+      entityId: candidate.entityId ?? candidate.entity_id,
+      baseRevision: candidate.baseRevision ?? candidate.base_revision,
+      revision: candidate.revision,
+      payloadDigest: candidate.payloadDigest ?? candidate.payload_digest,
+      payload: candidate.payload,
+      tombstone: candidate.tombstone,
+      createdAt: candidate.createdAt ?? candidate.created_at,
+    };
+    if (
+      typeof operation.idempotencyKey !== "string" ||
+      typeof operation.deviceId !== "string" ||
+      typeof operation.entityId !== "string" ||
+      typeof operation.baseRevision !== "number" ||
+      !Number.isSafeInteger(operation.baseRevision) ||
+      operation.baseRevision < 0 ||
+      typeof operation.revision !== "number" ||
+      !Number.isSafeInteger(operation.revision) ||
+      operation.revision < 0 ||
+      typeof operation.payloadDigest !== "string" ||
+      typeof operation.payload !== "string" ||
+      typeof operation.tombstone !== "boolean" ||
+      typeof operation.createdAt !== "string"
+    ) {
+      throw new Error(errorCode);
+    }
+    return [cursor, operation as LocalSyncOperation];
+  });
 }
 
 function trimEndpoint(endpoint: string): string {

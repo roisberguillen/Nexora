@@ -1,6 +1,6 @@
 {
   "project": "Nexora",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "files": [
     {
       "path": ".codex/agents/domain-architect.md",
@@ -1143,6 +1143,11 @@
       "sha256": "443513bb8faf16584866dd6ff0bbf4a5ddf2e4f8e6ca11bd2b6537fbcfc749fe"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-17-mobile-hub-background-lifecycle.md",
+      "size": 1635,
+      "sha256": "98d3ed6ea205d92c3a1e5a1d9abff6917db9f79c3e1568a56c03705f63ab378c"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-10-17-mobile-hub-browser-assets.md",
       "size": 1417,
       "sha256": "364a5993322cfe06a9ee42c4998d9cd4ba75cb7fe13c0b599a4b9d1a39d89acf"
@@ -1151,6 +1156,11 @@
       "path": ".codex/reviews/ui-ux/2026-10-17-remote-bootstrap-order.md",
       "size": 1398,
       "sha256": "ddf5765cd955e88c425b1da11208bc131f57166ffda1c6009e734ea562941131"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-17-remote-bootstrap-wire-format.md",
+      "size": 1428,
+      "sha256": "8528d75252545d566cc9db15e90ff0b63950dd8f07d36655bd05931633aef837"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-17-v1-release.md",
@@ -1850,7 +1860,7 @@
     {
       "path": "apps/web/src-tauri/Cargo.toml",
       "size": 849,
-      "sha256": "5949241c4f4d8a8df4f7ff5232a1e6da6404cf4ac50c9c1b38470d2060e54a77"
+      "sha256": "46aa8667a30ca951347385f908ef259d9dc7e77319f6ce74356e99030e0daeac"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2125,7 +2135,7 @@
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
       "size": 1192,
-      "sha256": "39ec97af66c294d191d0d106f546fc08b4aa3e254dd9ced42147eaa1c1ba6360"
+      "sha256": "568cb37bc2875072b92ffd2e9aaf25793d7ce9d7c96ddf1b177803d9031f5489"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -2709,13 +2719,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 7575,
-      "sha256": "cdf77884a000bde2010d3764a54af50a077d2d13680e70bb6e2d284fe9df0ecf"
+      "size": 8783,
+      "sha256": "e7c2fd0372f71e71c3bf2eebc20a76747997e060633c9085a0e0213213fae2bf"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 10479,
-      "sha256": "394fb861ddd69d6ab9738562354b07a2c1187609013ef78ca4f799121f6461ac"
+      "size": 12345,
+      "sha256": "beaaad2de9a0abf488aa2214f3f88cde8144cb8ef0ff37b606c6459dc9981340"
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",
@@ -2734,13 +2744,13 @@
     },
     {
       "path": "apps/web/src/settings/phoneLocalHubForeground.test.ts",
-      "size": 1753,
-      "sha256": "4b3c67ac7aa8dd759f59c45caba6b55e94c875289f5efaf9152bed1a5b50381f"
+      "size": 1629,
+      "sha256": "9adbd026ab3b492ac14ba2c20b008f0c5217b4e42c1c8f6bac49a3fde7a36f7f"
     },
     {
       "path": "apps/web/src/settings/phoneLocalHubForeground.ts",
-      "size": 758,
-      "sha256": "6633b57aa25b4c688c6eeb4d6d8fb7b333b24f8df53d31e3168ed0e10f70da70"
+      "size": 621,
+      "sha256": "d655ec7bfe69638dda0c02fceb6a573e86c5598f27e1cb3063fe3ae697f47e16"
     },
     {
       "path": "apps/web/src/settings/preferences.test.ts",
@@ -3044,8 +3054,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 70548,
-      "sha256": "fceeb479f800f8a25ada6c404734fbb0278191cafb040d34586ea296e8365283"
+      "size": 70924,
+      "sha256": "94def9b426d4be7f4bb5cff77e775dcf2af620ac5f1a29ae20e32f580d2546ef"
     },
     {
       "path": "design/mockup/README.md",
@@ -3520,7 +3530,7 @@
     {
       "path": "package.json",
       "size": 2538,
-      "sha256": "bc78baf9b23b2af19c9f94700434ced0c08f65a6f9e03967929adb066fea8b33"
+      "sha256": "141f52793f350c64eb936c0c2d0ce69a6071d350b469611d4f3a410e532325d4"
     },
     {
       "path": "packages/application/package.json",
