@@ -227,6 +227,7 @@ struct LanHubStartRequest {
 fn browser_asset_resolver(app: &tauri::AppHandle) -> BrowserAssetResolver {
     let app = app.clone();
     Arc::new(move |path| {
+        let path = path.strip_prefix("browser/").unwrap_or(path);
         app.asset_resolver()
             .get(path.to_owned())
             .map(|asset| (asset.bytes, asset.mime_type))

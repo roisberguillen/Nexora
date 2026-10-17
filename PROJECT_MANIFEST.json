@@ -1143,6 +1143,11 @@
       "sha256": "443513bb8faf16584866dd6ff0bbf4a5ddf2e4f8e6ca11bd2b6537fbcfc749fe"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-17-mobile-hub-browser-assets.md",
+      "size": 1305,
+      "sha256": "2ef45eab1a85b2086463a1c6fe78fc0494e05843ad6c3f0d28c047ec30ec086a"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -2099,8 +2104,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 31272,
-      "sha256": "81be552cf471536b4020c9fe1134bd0a4b3e7d62bd5a7f848bdcc1afc8cc0405"
+      "size": 31338,
+      "sha256": "8f410290d832e4135d2077182d97e7b33a20bf1aaa30ec1f09adff7afb52d24f"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -3499,8 +3504,8 @@
     },
     {
       "path": "LOCAL_HUB_TLS_E2E_REPORT.md",
-      "size": 3916,
-      "sha256": "d08857af0c9d24d095d3b2590e22ad663b5fcb3910770ccf24668ff00cd167bf"
+      "size": 3914,
+      "sha256": "f22b9557225c42687141f3a034e8bde993ebc1f2b9556859fe7a14f49f02806b"
     },
     {
       "path": "package.json",
