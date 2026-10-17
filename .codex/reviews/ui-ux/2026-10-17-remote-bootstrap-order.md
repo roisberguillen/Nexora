@@ -3,7 +3,7 @@
 Manifest: nexora-ui-ux-mobile-desktop/v1
 Data: 2026-10-17
 Schermata: App Shell web del Local Hub remoto
-Route: `/` e `/settings` dopo il pairing del PC
+Route: `/` e `/settings` dopo il pairing del PC nella release 1.0.1
 Flusso principale: bootstrap del database del telefono nel browser PC
 Reviewer/fase: Codex — remote bootstrap dependency order
 Modifiche: nessun redesign; la correzione riordina i dati ricevuti prima della presentazione UI

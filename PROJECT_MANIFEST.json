@@ -1149,8 +1149,8 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-17-remote-bootstrap-order.md",
-      "size": 1378,
-      "sha256": "f06c633f7a0e65fe644d16487a08602aa4c76e8066e9bc44aceb2ec712bd5529"
+      "size": 1398,
+      "sha256": "ddf5765cd955e88c425b1da11208bc131f57166ffda1c6009e734ea562941131"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-17-v1-release.md",
@@ -1844,8 +1844,8 @@
     },
     {
       "path": "apps/web/src-tauri/Cargo.lock",
-      "size": 151959,
-      "sha256": "e062887e80c9578e9cada0b937040ac745eff318c416e8661c87aac3fb43f77e"
+      "size": 151957,
+      "sha256": "a122f44ac529d47c88f4c13838f1e5c292a24a777f9ec0cae666c1740d005333"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
