@@ -4,6 +4,8 @@
 
 - Local Hub: il bootstrap del database remoto ordina le entità rispettando le dipendenze, così
   conti, transazioni, tag e cestino vengono ricostruiti correttamente nel browser del PC.
+- Local Hub Android: il servizio resta raggiungibile quando la WebView passa in background, ad
+  esempio mentre si copia l’invito pairing o si usa il browser del PC.
 
 ## 1.0.0 — 2026-10-17
 

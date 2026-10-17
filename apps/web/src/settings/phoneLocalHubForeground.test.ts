@@ -23,29 +23,27 @@ function createDocumentStub() {
 }
 
 describe("phone Local Hub foreground guard", () => {
-  it("stops the phone host when Android becomes hidden", async () => {
+  it("keeps the phone host available when Android becomes hidden", async () => {
     const documentStub = createDocumentStub();
     const stopHost = vi.fn().mockResolvedValue(undefined);
-    const cleanup = installPhoneLocalHubForegroundGuard(documentStub, () => true, stopHost);
+    const cleanup = installPhoneLocalHubForegroundGuard(documentStub, () => true);
 
     documentStub.state = "hidden";
     documentStub.emit();
     await Promise.resolve();
 
-    expect(stopHost).toHaveBeenCalledOnce();
+    expect(stopHost).not.toHaveBeenCalled();
     cleanup();
-    expect(documentStub.removeEventListener).toHaveBeenCalledOnce();
+    expect(documentStub.removeEventListener).not.toHaveBeenCalled();
   });
 
   it("does not register outside Android or while visible", () => {
     const documentStub = createDocumentStub();
-    const stopHost = vi.fn().mockResolvedValue(undefined);
-    installPhoneLocalHubForegroundGuard(documentStub, () => false, stopHost);
+    installPhoneLocalHubForegroundGuard(documentStub, () => false);
     expect(documentStub.addEventListener).not.toHaveBeenCalled();
 
-    const cleanup = installPhoneLocalHubForegroundGuard(documentStub, () => true, stopHost);
+    const cleanup = installPhoneLocalHubForegroundGuard(documentStub, () => true);
     documentStub.emit();
-    expect(stopHost).not.toHaveBeenCalled();
     cleanup();
   });
 });
