@@ -32,6 +32,8 @@ pub const API_VERSION: u16 = 1;
 pub const PAIRING_PROTOCOL: &str = "nexora-local-hub/v1";
 pub const DEFAULT_PORT: u16 = 43_173;
 
+pub type BrowserAssetResolver = Arc<dyn Fn(&str) -> Option<(Vec<u8>, String)> + Send + Sync>;
+
 #[derive(Clone)]
 pub struct LocalHubState {
     pub pairing: Arc<RwLock<PairingRegistry>>,
@@ -41,6 +43,7 @@ pub struct LocalHubState {
     pub app_url: Option<String>,
     /// Root directory for the versioned local browser build, if published.
     pub browser_root: Option<PathBuf>,
+    pub browser_asset_resolver: Option<BrowserAssetResolver>,
     pub sync: Arc<Mutex<SyncTransport>>,
     pub durable_sync: Option<Arc<Mutex<SqliteSyncOperationStore>>>,
     pub sync_status: Arc<RwLock<SyncRuntimeStatus>>,
@@ -55,6 +58,7 @@ impl Default for LocalHubState {
             runtime: Arc::new(RwLock::new(HubRuntimeStatus::default())),
             app_url: None,
             browser_root: None,
+            browser_asset_resolver: None,
             sync: Arc::new(Mutex::new(SyncTransport::default())),
             durable_sync: None,
             sync_status: Arc::new(RwLock::new(SyncRuntimeStatus::default())),
@@ -258,9 +262,6 @@ async fn logout_session(
 }
 
 async fn browser_asset(State(state): State<LocalHubState>, uri: Uri) -> Response {
-    let Some(root) = state.browser_root else {
-        return StatusCode::NOT_FOUND.into_response();
-    };
     let requested = uri.path().trim_start_matches('/');
     let requested = if requested.is_empty() {
         "index.html"
@@ -273,27 +274,41 @@ async fn browser_asset(State(state): State<LocalHubState>, uri: Uri) -> Response
     {
         return StatusCode::BAD_REQUEST.into_response();
     }
-    let candidate = root.join(requested);
-    let (served_path, bytes) = match tokio::fs::read(&candidate).await {
-        Ok(bytes) => (candidate, bytes),
-        Err(_) if !requested.contains('.') => {
-            match tokio::fs::read(root.join("index.html")).await {
-                Ok(bytes) => (root.join("index.html"), bytes),
-                Err(_) => return StatusCode::NOT_FOUND.into_response(),
+    let embedded = state.browser_asset_resolver.as_ref().and_then(|resolve| {
+        resolve(&format!("browser/{requested}")).or_else(|| {
+            (!requested.contains('.'))
+                .then(|| resolve("browser/index.html"))
+                .flatten()
+        })
+    });
+    let (bytes, content_type) = if let Some((bytes, content_type)) = embedded {
+        (bytes, content_type)
+    } else if let Some(root) = state.browser_root {
+        let candidate = root.join(requested);
+        let (served_path, bytes) = match tokio::fs::read(&candidate).await {
+            Ok(bytes) => (candidate, bytes),
+            Err(_) if !requested.contains('.') => {
+                match tokio::fs::read(root.join("index.html")).await {
+                    Ok(bytes) => (root.join("index.html"), bytes),
+                    Err(_) => return StatusCode::NOT_FOUND.into_response(),
+                }
             }
-        }
-        Err(_) => return StatusCode::NOT_FOUND.into_response(),
-    };
-    let content_type = match served_path
-        .extension()
-        .and_then(|extension| extension.to_str())
-    {
-        Some("html") => "text/html; charset=utf-8",
-        Some("js") => "text/javascript; charset=utf-8",
-        Some("css") => "text/css; charset=utf-8",
-        Some("json") => "application/json; charset=utf-8",
-        Some("svg") => "image/svg+xml",
-        _ => "application/octet-stream",
+            Err(_) => return StatusCode::NOT_FOUND.into_response(),
+        };
+        let content_type = match served_path
+            .extension()
+            .and_then(|extension| extension.to_str())
+        {
+            Some("html") => "text/html; charset=utf-8",
+            Some("js") => "text/javascript; charset=utf-8",
+            Some("css") => "text/css; charset=utf-8",
+            Some("json") => "application/json; charset=utf-8",
+            Some("svg") => "image/svg+xml",
+            _ => "application/octet-stream",
+        };
+        (bytes, content_type.to_owned())
+    } else {
+        return StatusCode::NOT_FOUND.into_response();
     };
     Response::builder()
         .status(StatusCode::OK)
@@ -2079,10 +2094,8 @@ mod tests {
 
     #[test]
     fn tls_identity_validation_rejects_expired_certificate() {
-        let mut params = rcgen::CertificateParams::new(vec![
-            "nexora-phone-test.local".to_owned(),
-        ])
-        .unwrap();
+        let mut params =
+            rcgen::CertificateParams::new(vec!["nexora-phone-test.local".to_owned()]).unwrap();
         params.not_before = rcgen::date_time_ymd(2000, 1, 1);
         params.not_after = rcgen::date_time_ymd(2001, 1, 1);
         let key_pair = rcgen::KeyPair::generate().unwrap();

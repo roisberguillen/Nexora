@@ -1,12 +1,16 @@
 # Local Hub TLS E2E report
 
-Data: 2026-10-11 (Europe/Rome)  
+Data: 2026-10-17 (Europe/Rome)
 Branch: `codex/pc-manager-local-browser`  
 Commit verificato: `d4d6f3661a207e3a3e8b924b47a89e4d5bcc2637`
 
 ## Esito
 
-**INCOMPLETE — il pairing TLS PC↔telefono non è ancora chiuso.**
+**PARZIALE — il browser LAN e il servizio API sono verificati; il pairing TLS PC↔telefono non è ancora chiuso.**
+
+La build Android aggiornata ora serve la App Shell dal Local Hub anche su Android, dove gli asset
+sono incorporati nell'APK e non sono leggibili come file normali. La prova fisica dal PC ha restituito
+HTTP 200 per `/`, `/settings` e `/v1/health` con il Local Hub in stato `running`.
 
 Il Local Hub Android si avvia e la rete LAN è raggiungibile. Il client Windows aggiornato
 visualizza il flusso di invito pairing, ma l'azione di autorizzazione termina con il messaggio
@@ -23,9 +27,11 @@ SQLite del telefono.
 - IP Wi-Fi osservato sul telefono: `192.168.1.5`.
 - `Test-NetConnection 192.168.1.5 -Port 43173`: **PASS**.
 - `GET /v1/health` con client diagnostico: **PASS**, `status=ok`, `binding=lan`, `runtime_state=running`.
-- Apertura diretta dell'URL nel browser: **NON È UN TEST DI PAIRING**; la radice API può restituire
-  404 e il certificato temporaneo autofirmato non è attendibile per il trust store di Windows.
-  Non è stato usato `-k` come prova di successo.
+- `GET /` dal PC: **PASS**, `200 text/html`.
+- `GET /settings` dal PC: **PASS**, `200 text/html`.
+- `GET /v1/health` dal PC: **PASS**, `200 application/json`.
+- Questa prova usa `curl -k` solo per raggiungere il certificato temporaneo autofirmato; non
+  costituisce la verifica del pairing o del trust browser.
 
 ## Pairing TLS
 
@@ -51,6 +57,9 @@ Run CI: [38147745202](https://github.com/roisberguillen/Nexora/actions/runs/3814
 - APK firmato prodotto e installato sul Pixel: **PASS**
 
 ## Correzioni già verificate
+
+- Il Local Hub Android risolve gli asset incorporati dell'APK tramite l'asset resolver Tauri;
+  la App Shell non restituisce più 404 dal browser LAN.
 
 - Rilevazione IP LAN Android con priorità a Wi-Fi/Ethernet.
 - Identità TLS Android temporanea in memoria per evitare il blocco di avvio causato dal percorso

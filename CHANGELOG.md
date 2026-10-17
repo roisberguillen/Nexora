@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Local Hub LAN Android: la App Shell web incorporata nell'APK viene ora servita correttamente
+  dal browser del PC tramite l'indirizzo LAN del telefono; verificati `/`, `/settings` e `/v1/health`.
 - Local Hub LAN Android: il telefono ora genera un invito pairing da copiare nel PC, includendo
   certificato e fingerprint per evitare il rifiuto del TLS temporaneo autofirmato.
 - Local Hub LAN Android: l’avvio usa un’identità TLS temporanea in memoria e non dipende più dal

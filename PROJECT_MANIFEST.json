@@ -1769,8 +1769,8 @@
     },
     {
       "path": "apps/local-hub/src/lib.rs",
-      "size": 130677,
-      "sha256": "1b323994d0289b6a6b7588eafcd8ed251f0b7fe2776c3650d9e9b1de34ee62c9"
+      "size": 131394,
+      "sha256": "02291b669b823d4af8ce5c478c2fa8c0d3ec5b0a1c8f3a44b26c9f358535dff8"
     },
     {
       "path": "apps/local-hub/src/sqlite_sync.rs",
@@ -2099,8 +2099,8 @@
     },
     {
       "path": "apps/web/src-tauri/src/lib.rs",
-      "size": 30773,
-      "sha256": "b62bbedd55d8535c5dff538312a5b127559d26b0c0e8e6d86c89f2b373723d16"
+      "size": 31272,
+      "sha256": "81be552cf471536b4020c9fe1134bd0a4b3e7d62bd5a7f848bdcc1afc8cc0405"
     },
     {
       "path": "apps/web/src-tauri/src/main.rs",
@@ -3029,8 +3029,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 70127,
-      "sha256": "a9019d4425644110c8f1cfdcb5c89b6d7cdf67394c3e1adda21690e85c2e7fb5"
+      "size": 70325,
+      "sha256": "0ab1c746e1dc4caa53d90a57480a14befeb2ab7f98e0c4e170e9a3ce289e5119"
     },
     {
       "path": "design/mockup/README.md",
@@ -3499,8 +3499,8 @@
     },
     {
       "path": "LOCAL_HUB_TLS_E2E_REPORT.md",
-      "size": 3369,
-      "sha256": "804d4d7633cbad14787acb02791bf61b11cab9e1e571f1e80d5a66869f7ef58f"
+      "size": 3916,
+      "sha256": "d08857af0c9d24d095d3b2590e22ad663b5fcb3910770ccf24668ff00cd167bf"
     },
     {
       "path": "package.json",

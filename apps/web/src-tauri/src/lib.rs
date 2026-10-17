@@ -7,8 +7,8 @@ use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use nexora_local_hub::{
-    HubRuntimeStatus, LocalHubRuntime, LocalHubState, PairingInvite, SqliteSyncOperationStore,
-    TransportSecurityConfig,
+    BrowserAssetResolver, HubRuntimeStatus, LocalHubRuntime, LocalHubState, PairingInvite,
+    SqliteSyncOperationStore, TransportSecurityConfig,
 };
 use rusqlite::{Connection, params_from_iter, types::Value};
 use serde_json::{Map, Value as JsonValue};
@@ -224,6 +224,15 @@ struct LanHubStartRequest {
     private_key_path: String,
 }
 
+fn browser_asset_resolver(app: &tauri::AppHandle) -> BrowserAssetResolver {
+    let app = app.clone();
+    Arc::new(move |path| {
+        app.asset_resolver()
+            .get(path.to_owned())
+            .map(|asset| (asset.bytes, asset.mime_type))
+    })
+}
+
 #[tauri::command]
 async fn pc_manager_start(
     app: tauri::AppHandle,
@@ -240,6 +249,7 @@ async fn pc_manager_start(
         .resource_dir()
         .ok()
         .map(|directory| directory.join("browser"));
+    hub_state.browser_asset_resolver = Some(browser_asset_resolver(&app));
     let started = LocalHubRuntime::start(TransportSecurityConfig::default(), hub_state)
         .await
         .map_err(|error| format!("Local Hub start failed: {error:?}"))?;
@@ -278,6 +288,7 @@ async fn phone_local_hub_start(
         .resource_dir()
         .ok()
         .map(|directory| directory.join("browser"));
+    hub_state.browser_asset_resolver = Some(browser_asset_resolver(&app));
     let config = TransportSecurityConfig {
         binding: nexora_local_hub::BindingMode::Lan,
         address: lan_address,
@@ -428,6 +439,7 @@ async fn pc_manager_start_lan(
         .resource_dir()
         .ok()
         .map(|directory| directory.join("browser"));
+    hub_state.browser_asset_resolver = Some(browser_asset_resolver(&app));
     let config = TransportSecurityConfig {
         binding: nexora_local_hub::BindingMode::Lan,
         address,
@@ -729,9 +741,8 @@ mod tests {
     use std::collections::HashMap;
 
     use super::{
-        NativeHttpRequest, generate_phone_lan_identity,
-        validate_database_filename, validate_native_local_host_request,
-        verify_certificate_fingerprint,
+        NativeHttpRequest, generate_phone_lan_identity, validate_database_filename,
+        validate_native_local_host_request, verify_certificate_fingerprint,
     };
     use std::net::IpAddr;
 
