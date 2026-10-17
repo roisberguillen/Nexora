@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 — 2026-10-17
 
 - Local Hub LAN Android: la App Shell web incorporata nell'APK viene ora servita correttamente
   dal browser del PC tramite l'indirizzo LAN del telefono; verificati `/`, `/settings` e `/v1/health`.

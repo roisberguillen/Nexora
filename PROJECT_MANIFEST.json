@@ -1,6 +1,6 @@
 {
   "project": "Nexora",
-  "version": "0.5.0-rc.1",
+  "version": "1.0.0",
   "files": [
     {
       "path": ".codex/agents/domain-architect.md",
@@ -1144,8 +1144,13 @@
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-17-mobile-hub-browser-assets.md",
-      "size": 1305,
-      "sha256": "2ef45eab1a85b2086463a1c6fe78fc0494e05843ad6c3f0d28c047ec30ec086a"
+      "size": 1417,
+      "sha256": "364a5993322cfe06a9ee42c4998d9cd4ba75cb7fe13c0b599a4b9d1a39d89acf"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-17-v1-release.md",
+      "size": 1382,
+      "sha256": "d742d97346903345502e70905b86ccf062598200542162b4e34fdf9e054265a1"
     },
     {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
@@ -1839,8 +1844,8 @@
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
-      "size": 851,
-      "sha256": "3177b6314e433f1b4337ebd86cec2bbee8f1b9c9cbeb7bc37da8e2b770f5f0cb"
+      "size": 849,
+      "sha256": "bc06a134b2c8f17c5ca8f8ba5f85bbcca61a9e38d9714a7a921969ebd93b9d43"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2114,8 +2119,8 @@
     },
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
-      "size": 1194,
-      "sha256": "dce30f272aeae14837ef138c506d6d12c63d23b28351115e38738e3fe7f47c60"
+      "size": 1192,
+      "sha256": "2258b86420b67a887c4650ca11f0398d596fe1c8d32739f435dd86c3c256afc6"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -3034,8 +3039,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 70325,
-      "sha256": "0ab1c746e1dc4caa53d90a57480a14befeb2ab7f98e0c4e170e9a3ce289e5119"
+      "size": 70335,
+      "sha256": "e1d3f8e1eb3666b68bdc5df5feac41b71a7df70ec5cd1cbb6cb06d914aa5c376"
     },
     {
       "path": "design/mockup/README.md",
@@ -3509,8 +3514,8 @@
     },
     {
       "path": "package.json",
-      "size": 2543,
-      "sha256": "03d329c15f7a3fd5facddfb092609dcc3bf085571edd313780bbf76424c51021"
+      "size": 2538,
+      "sha256": "9f287f3f79e68005aa55597ff5c27e1340cf851c6b957877b910de4404638edf"
     },
     {
       "path": "packages/application/package.json",
