@@ -2459,3 +2459,51 @@ Keep only the latest relevant evidence per completed phase.
 - 2026-10-11 — PC connection diagnosis: `10.2.32.144:43173` accepted TCP and `/v1/health` returned `status: ok` with the test client; default TLS verification rejected the temporary self-signed certificate with `SEC_E_UNTRUSTED_ROOT`, and `/` returned `404` because the Local Hub API is not a public browser page. Settings now exposes a phone-generated pairing invite carrying certificate and fingerprint; focused Settings/connection/desktop tests `27/27` PASS and web typecheck/format checks PASS.
 - 2026-10-11 — Physical UI review found the pairing button below the mobile bottom navigation overlay, so the first tap could not activate it. The button was moved next to the runtime control; focused Settings/connection/desktop tests remain `27/27` PASS.
 - 2026-10-11 — Physical TLS E2E report: signed APK from CI run `38147745202` installed with `adb install -r` on Pixel 9; Local Hub `running` on Wi-Fi `192.168.1.5:43173`; TCP and `/v1/health` LAN probes PASS; phone-generated invite and updated Windows pairing UI reached, but authorization ended with the generic pairing failure. Bootstrap, pull/push and real PC mutation into phone SQLite remain NOT TESTED/BLOCKED. Full report in `LOCAL_HUB_TLS_E2E_REPORT.md`; no reset, uninstall or data mutation performed.
+
+## PMA-3.2 — Remote browser bootstrap recovery — 2026-10-18 — IMPLEMENTED / DEVICE GATE PENDING
+
+- Bootstrap snapshot ordering now uses a stable heap-based topological walk; revision metadata is
+  written once per snapshot and the cache completion marker is committed only after all imported
+  rows, revisions and cursor succeed. Web Locks serialize bootstrap, pull and all repository reads
+  and writes across tabs; unsupported browsers fail closed. Failed imports and storage quota errors
+  leave the cache marker invalid.
+- Regression coverage: 10,000 synthetic account rows, interrupted snapshot, quota failure, two
+  concurrent bootstrap callers, active mutation vs rebuild, active pull vs rebuild, and missing Web
+  Locks; focused Vitest `27/27 PASS`.
+- Full Vitest `700 PASS / 4 SKIP / 1 test file skipped`; `pnpm lint`, `pnpm typecheck`, Rust
+  `cargo check --offline --locked`, web build, manifest check, orchestrator validation and targeted
+  Prettier/diff checks PASS. Full repository `pnpm format:check` still reports pre-existing
+  formatting differences in 211 unrelated files; those were left untouched.
+- Android USB sees Pixel 9 on installed 1.0.3. During this verification `/v1/health` on
+  `192.168.1.5:43173` was unreachable. Signed APK 1.0.4 install, Local Hub restart and real browser
+  bootstrap through visible phone data remain pending; no phone ledger data was changed.
+
+## NX-TIMEOUT-001 — PC startup credential boundary — 2026-10-18 — DEVICE GATE PENDING
+
+- A saved remote connection now waits at most eight seconds for the credential vault and reports a
+  specific failure when credentials are missing, mismatched or unreadable. It does not fall back to
+  an unrelated local ledger. The earlier remote cache ordering/locking fix remains part of 1.0.4.
+- Focused Vitest `29/29 PASS`; full Vitest `703 PASS / 4 SKIP` (one test file skipped); `pnpm lint`,
+  `pnpm typecheck`, Local Hub Rust `55/55`, `pnpm codex:validate`, manifest check, Android frontend
+  build and targeted Prettier/diff checks PASS.
+- Android arm64 debug APK 1.0.4 built and verified with APK Signature Scheme v2; SHA-256
+  `0DAFC3F53FE61C7D6E82443FF2E6175890EDDB1B666A7F805B4BEB347FE68A4F`. Its debug
+  certificate differs from the installed Pixel release, so it was not installed over user data.
+- Release APK build compiled frontend and Rust but Gradle signing stopped at missing local
+  `storePassword`. The emulator could not start because this PC lacks Android Emulator hypervisor
+  acceleration. Signed release build, physical install and PC-to-phone browser verification remain
+  pending. No database reset, uninstall or user-data mutation was performed.
+- Scoped Playwright startup suite `9 PASS / 15 SKIP` across six viewport projects; includes the
+  50-reload resilience and five-tab startup checks at desktop width. Debug APK `index.html` points
+  to the new bundled JS containing the vault timeout and remote cache logic.
+- Signed arm64 release APK 1.0.4 built successfully; APK signature v2 verified. Release SHA-256
+  `C4ACB32E89F3C651DD5C7FAB6173D9A95AB98C6B051C7A7308208FECA837A8CF`; signing certificate
+  matched the installed Pixel certificate `4b3c398bc04710c0065cb10825bf9d5a7ff19f370768f2a6cc908c261fd450fb`.
+- `adb install -r` updated Pixel 9 from 1.0.3 to 1.0.4 without uninstall or data reset; MainActivity
+  opened and no app crash was found. Local Hub was manually restarted after Android stopped it during
+  the update; PC `/v1/health` returned `status: ok`, runtime `running`.
+- PC Chrome opened the hosted app and reloaded it in `1.2 s`; startup overlay cleared and
+  `NX-TIMEOUT-001` was absent. The page still reports `Archivio di questo browser` and
+  `Nessuna sincronizzazione attiva`, so phone ledger visibility and remote read/write are NOT
+  verified; this browser session did not show the phone database. No ledger values were used as
+  test evidence.

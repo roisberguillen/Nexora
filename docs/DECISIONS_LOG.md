@@ -570,3 +570,17 @@ passare dal secure storage Android prima di sopravvivere a un riavvio.
 Questa decisione non dichiara ancora completata la modalità PC `remote-mobile-host`: sessione e
 pairing runtime restano da collegare a secure storage persistente e il ledger client remoto resta
 un gate successivo.
+
+## 2026-10-18 — Preferenza UX Local Hub telefono → PC
+
+- L'utente richiede avvio dell'hub sul telefono e accesso automatico in lettura e modifica di un PC nuovo sulla stessa Wi-Fi, senza codice, passcode o conferma sul telefono.
+- La richiesta cambia il modello di fiducia di ADR 0016/0020: la sola rete non distingue il PC dell'utente da un altro client raggiungibile. Il protocollo resta invariato in attesa della decisione tecnica e della revisione indipendente descritte in ADR 0023.
+- Il bug di avvio PC `NX-TIMEOUT-001` nella fase `storage` resta separato e aperto: semplificare il pairing non risolve quel timeout.
+## 2026-10-18 — Local Hub rimosso dal prodotto attivo
+
+- **Decisione:** disabilitare la superficie Local Hub, il pairing e il bootstrap del ledger remoto.
+  Nexora apre e modifica soltanto l’archivio locale del dispositivo.
+- **Motivazione:** il trust model per l’accesso tra dispositivi non è stato approvato e la funzione
+  viene rinviata a una fase futura con revisione di sicurezza indipendente.
+- **Conseguenze:** nessun listener Local Hub viene avviato dal flusso utente; il codice infrastrutturale
+  resta isolato per una futura riattivazione. Le migrazioni e i backup locali restano invariati.

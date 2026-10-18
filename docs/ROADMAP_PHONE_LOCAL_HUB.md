@@ -1,5 +1,10 @@
 # Roadmap Nexora — Phone Local Hub verso PC Desktop
 
+> **Stato 2026-10-18: deferred.** Il Local Hub è rimosso dal prodotto attivo e resta una
+> funzione futura. Il ledger locale e i backup supportati continuano a funzionare senza
+> discovery, pairing o bootstrap remoto; la riattivazione richiederà un nuovo modello di
+> fiducia e una revisione di sicurezza.
+
 ## Obiettivo
 
 Permettere all'utente di aprire Nexora sul Pixel 9, avviare esplicitamente un Local Hub

@@ -198,7 +198,7 @@ describe("local host sync client", () => {
     expect(otherDevice.cursor()).toBe(0);
   });
 
-  it("persists entity revisions and bootstrap availability across restarts", async () => {
+  it("leaves the bootstrap cache unmarked until the repository finishes applying it", async () => {
     const values = storage();
     const request = vi.fn(
       async () =>
@@ -217,8 +217,10 @@ describe("local host sync client", () => {
     });
     expect(first.hasBootstrapCache()).toBe(false);
     await first.bootstrap();
+    expect(first.hasBootstrapCache()).toBe(false);
     expect(first.revision("transaction-1")).toBe(0);
-    first.setRevision("account-1", 7);
+    first.replaceRevisions(new Map([["account-1", 7]]));
+    first.markBootstrapCache();
     const restored = new LocalHostSyncClient({
       endpoint: "https://host.home/",
       credentials: { deviceId: "browser-1", token: "volatile-token" },

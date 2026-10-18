@@ -101,12 +101,27 @@ export class LocalHostSyncClient {
     this.storage.setItem(this.revisionKey(), JSON.stringify(revisions));
   }
 
+  public replaceRevisions(revisions: ReadonlyMap<string, number>): void {
+    const next: Record<string, number> = {};
+    for (const [entityId, revision] of revisions) {
+      if (entityId.length === 0 || !Number.isSafeInteger(revision) || revision < 0) {
+        throw new Error("invalid_sync_revision");
+      }
+      next[entityId] = revision;
+    }
+    this.storage.setItem(this.revisionKey(), JSON.stringify(next));
+  }
+
   public hasBootstrapCache(): boolean {
     return this.storage.getItem(this.bootstrapKey()) === "1";
   }
 
   public markBootstrapCache(): void {
     this.storage.setItem(this.bootstrapKey(), "1");
+  }
+
+  public clearBootstrapCache(): void {
+    this.storage.setItem(this.bootstrapKey(), "0");
   }
 
   public enqueue(operation: LocalSyncOperation): void {
@@ -184,15 +199,15 @@ export class LocalHostSyncClient {
     }
     const validSchemaVersion = schemaVersion as number;
     const validCursor = cursor as number;
-    const operations = normalizeOperationEntries(body.operations, "invalid_sync_bootstrap_response");
+    const operations = normalizeOperationEntries(
+      body.operations,
+      "invalid_sync_bootstrap_response",
+    );
     const result = Object.freeze({
       schemaVersion: validSchemaVersion,
       cursor: validCursor,
       operations,
     });
-    for (const [, operation] of result.operations)
-      this.setRevision(operation.entityId, operation.revision);
-    this.markBootstrapCache();
     return result;
   }
 

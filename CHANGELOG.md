@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- Rimosso dal prodotto attivo il Local Hub e il bootstrap del ledger remoto; Nexora usa soltanto
+  l’archivio locale. Il Local Hub resta una funzione futura da riprogettare e sottoporre a revisione.
+
+## 1.0.4 — 2026-10-18
+
+- Local Hub: bootstrap di grandi archivi più efficiente; revisioni persistite in blocco e cache
+  dichiarata completa soltanto dopo l’import riuscito. Più schede serializzano il bootstrap per
+  evitare che un’importazione concorrente esponga un archivio parziale.
+
+## 1.0.3 — 2026-10-18
+
+- Local Hub: il bootstrap ordina le categorie annidate dopo i rispettivi padri e conserva le
+  categorie di sistema protette. Il browser attende il completamento del ripristino di archivi
+  estesi prima di dichiarare un timeout.
+
 ## 1.0.2 — 2026-10-17
 
 - Local Hub: il browser normalizza le operazioni `snake_case` restituite dal telefono, completando
@@ -1014,3 +1031,8 @@
   inclusi bootstrap, outbox PC e journal SQLite con identità stabile per transazione.
 
 ## Unreleased
+
+## 1.0.3 — 2026-10-17
+
+- Local Hub: il bootstrap ordina le categorie annidate dopo i rispettivi padri, così il database
+  remoto del PC viene ricostruito senza errori di dipendenza.

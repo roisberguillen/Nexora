@@ -19,7 +19,7 @@ repository, basata sulle 98 schermate Stitch, è in
 | Organizzazione | categorie, tag, cestino | categorie gerarchiche e tag con CRUD/merge, più cestino e flussi distruttivi confermati | Fase 12 completata |
 | Profilo e impostazioni | profile, settings, privacy | collegamenti alle superfici finanziarie, preferenze locali, privacy/sicurezza e app lock; notifiche locali separate dal ledger | Fase 12 completata |
 | Piattaforme native | Tauri desktop/Android | nuova | Fasi 7, 13, 14 |
-| Sincronizzazione | Nexora Local Hub | nuova, sostituisce local-host Node | Fasi 15–16 |
+| Sincronizzazione | Nexora Local Hub | deferred; infrastruttura isolata per una funzione futura | Fasi 15–16 |
 
 Le schermate prive di feature o contratto dati non sono autorizzate in produzione. La Fase 1 ha
 consolidato gli stati in superfici esistenti: non vengono introdotte route duplicate per gli stati

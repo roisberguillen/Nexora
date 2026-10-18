@@ -1,6 +1,6 @@
 {
   "project": "Nexora",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "files": [
     {
       "path": ".codex/agents/domain-architect.md",
@@ -1143,6 +1143,11 @@
       "sha256": "443513bb8faf16584866dd6ff0bbf4a5ddf2e4f8e6ca11bd2b6537fbcfc749fe"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-17-bootstrap-category-order.md",
+      "size": 1510,
+      "sha256": "ebd3c5e4311444d10c13571d633a385b05a742bf45a1f2d8b2739fdf6ec3c7b1"
+    },
+    {
       "path": ".codex/reviews/ui-ux/2026-10-17-mobile-hub-background-lifecycle.md",
       "size": 1635,
       "sha256": "98d3ed6ea205d92c3a1e5a1d9abff6917db9f79c3e1568a56c03705f63ab378c"
@@ -1151,6 +1156,11 @@
       "path": ".codex/reviews/ui-ux/2026-10-17-mobile-hub-browser-assets.md",
       "size": 1417,
       "sha256": "364a5993322cfe06a9ee42c4998d9cd4ba75cb7fe13c0b599a4b9d1a39d89acf"
+    },
+    {
+      "path": ".codex/reviews/ui-ux/2026-10-17-release-version-alignment.md",
+      "size": 1309,
+      "sha256": "4ba2067823dd8cd2291ff90e0b6cdb035e374ba62d35e2b0e4744d5ba6548ff6"
     },
     {
       "path": ".codex/reviews/ui-ux/2026-10-17-remote-bootstrap-order.md",
@@ -1613,9 +1623,24 @@
       "sha256": "0d3c9e269c41f78933adebb4517e3716a42b3a525ea3abfc0897b5b487b59486"
     },
     {
+      "path": ".codex/state/checkpoints/2026-10-18-local-hub-one-action-ux.md",
+      "size": 967,
+      "sha256": "cc830855cf3e99866ce8bfb300c2f90e647876546defe5b2b2ff7d4ae3a86bb8"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-10-18-nx-timeout-001-pc.md",
+      "size": 1517,
+      "sha256": "12f99eb27b2c0788f45e0ef0bb1edbb1e55f1d65fe61891a888a31a8432fee75"
+    },
+    {
+      "path": ".codex/state/checkpoints/2026-10-18-pma-3-2-diagnose-local-hub-remote-browser-startup-after-pairing.md",
+      "size": 645,
+      "sha256": "4d49bb835223ae4bf21a3f194886be6a8451b0028e52b72afb5a05a41253d4c3"
+    },
+    {
       "path": ".codex/state/current-task.md",
-      "size": 657,
-      "sha256": "a98ba20c3e86a2fa859f4075b2137ad5d96deb0154bf5c61151d6f41f24f266f"
+      "size": 601,
+      "sha256": "2a937b306f8df58cba03fe5b4bfdeb5367f33eada4fb04001083a9c91d9d3a57"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1644,13 +1669,13 @@
     },
     {
       "path": ".codex/state/roadmap-progress.md",
-      "size": 25192,
-      "sha256": "61364c1d18e2dfe1b82622c213cd329b2f4b65335445ad33f6e268e2fbb0c11a"
+      "size": 25081,
+      "sha256": "02063331b563079758366830ad2b5b850659af1e9a41b921611af7b7f114417a"
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 211875,
-      "sha256": "b7c4223b16974afc382b0de63e7b64f52ea0b7502bcaaf28066486f1e08acbdc"
+      "size": 215775,
+      "sha256": "178665d534b30ba8aa496d2d1c42f8cf44f28bb635a3493f8abe179acd407c10"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -1855,12 +1880,12 @@
     {
       "path": "apps/web/src-tauri/Cargo.lock",
       "size": 151957,
-      "sha256": "a122f44ac529d47c88f4c13838f1e5c292a24a777f9ec0cae666c1740d005333"
+      "sha256": "9bf9c8a13692ae80c6d269b25cc2e62ca4ba621fdada5572a81d60b613b61eec"
     },
     {
       "path": "apps/web/src-tauri/Cargo.toml",
       "size": 849,
-      "sha256": "46aa8667a30ca951347385f908ef259d9dc7e77319f6ce74356e99030e0daeac"
+      "sha256": "0dc2addefecf3af2d61d2946f43cc647132b0c906b0d8f3b25e3d99901f71614"
     },
     {
       "path": "apps/web/src-tauri/icons/128x128.png",
@@ -2135,7 +2160,7 @@
     {
       "path": "apps/web/src-tauri/tauri.conf.json",
       "size": 1192,
-      "sha256": "568cb37bc2875072b92ffd2e9aaf25793d7ce9d7c96ddf1b177803d9031f5489"
+      "sha256": "595e2171099503e49acbdd123119a395f95130a94f0cf2e0eb479c4addd86d8e"
     },
     {
       "path": "apps/web/src/accounts/accountCommands.test.ts",
@@ -2189,8 +2214,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 44611,
-      "sha256": "59985a967abc61ac46ca97a087b0573dbc2b9ce7050e72761db50999fc2cb0ef"
+      "size": 43816,
+      "sha256": "860b18ba47574aedb7f78ba8e763c7a348907f0640585d4d0a8aee093596c7de"
     },
     {
       "path": "apps/web/src/appModels.test.ts",
@@ -2204,8 +2229,8 @@
     },
     {
       "path": "apps/web/src/appVersion.test.ts",
-      "size": 193,
-      "sha256": "1026f2b2adb458683a717c2e626c5946777ba3d7c7ea801b8998e6709a1a3440"
+      "size": 187,
+      "sha256": "e449e8a218d1da9d0ccc933c1309f9746acd1673d21a76c751c5a17322811404"
     },
     {
       "path": "apps/web/src/appVersion.ts",
@@ -2524,8 +2549,8 @@
     },
     {
       "path": "apps/web/src/main.tsx",
-      "size": 9458,
-      "sha256": "35216fffe32a766b3509b709c1389507ebdb8e62a70c4e72c396880be4df866f"
+      "size": 6482,
+      "sha256": "435776dfe03cf7a5ef93a380fb89f334f74afc3dfca554e4002a4f33643c4f35"
     },
     {
       "path": "apps/web/src/notifications/browserNotifications.test.ts",
@@ -2719,13 +2744,13 @@
     },
     {
       "path": "apps/web/src/settings/localHostSync.test.ts",
-      "size": 8783,
-      "sha256": "e7c2fd0372f71e71c3bf2eebc20a76747997e060633c9085a0e0213213fae2bf"
+      "size": 8893,
+      "sha256": "28501d3417c584bf97167ceac10460a4699a87fdc1c2eb8d5efc6a6d5eb1e2c3"
     },
     {
       "path": "apps/web/src/settings/localHostSync.ts",
-      "size": 12345,
-      "sha256": "beaaad2de9a0abf488aa2214f3f88cde8144cb8ef0ff37b606c6459dc9981340"
+      "size": 12741,
+      "sha256": "9d72f075b1ed5677ec600a934da5521644ce0bf67b469ba69b8cce9ca8439b32"
     },
     {
       "path": "apps/web/src/settings/localHostVault.ts",
@@ -2764,23 +2789,33 @@
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.test.ts",
-      "size": 23216,
-      "sha256": "429f6553812c87750fb6f905a3c5d3243b71443d006dd7fb4b8a6b9d5efd5581"
+      "size": 39334,
+      "sha256": "2489e0bebdd6d27ccc6319ad68e81b5b3b3f40df7df464eff43bf706da5b9201"
     },
     {
       "path": "apps/web/src/settings/remoteLedgerRepository.ts",
-      "size": 56065,
-      "sha256": "76603594b08dc4e886228491afc962677ca0944a89f2e9c535308c7235185ab1"
+      "size": 61126,
+      "sha256": "bac386ada9a505edbf28bfade25a35370467a114d7cc82013c3d92350f9e63ed"
+    },
+    {
+      "path": "apps/web/src/settings/remoteLedgerStartup.test.ts",
+      "size": 1716,
+      "sha256": "16059564cbe0eb62631935297f3cd936be3f19e8e18fdb886b9c80453c4c862d"
+    },
+    {
+      "path": "apps/web/src/settings/remoteLedgerStartup.ts",
+      "size": 1226,
+      "sha256": "2a9028989d080374a7574739bf34b17707d1e34929946bead864c753a6343bd1"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.test.tsx",
-      "size": 11272,
-      "sha256": "fcd7616b146d3eb1609680b4b50d9a91dfdcaaedf69779576de35ea28dd6ba34"
+      "size": 10260,
+      "sha256": "3a6d462c9c12339a69c96464df11b48b233bc1fad78a708bb1f0c7b1a011b015"
     },
     {
       "path": "apps/web/src/settings/SettingsPage.tsx",
-      "size": 53560,
-      "sha256": "444cf2da8333b0d9f247e077c23b09414eed169688a0dbc4db1a06c59c4f2416"
+      "size": 54310,
+      "sha256": "054d97dc82ece60bf413706b176b6a6ed3da7e7475c939414b658c4a81650243"
     },
     {
       "path": "apps/web/src/startup/PreMountError.test.ts",
@@ -3054,8 +3089,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "size": 70924,
-      "sha256": "94def9b426d4be7f4bb5cff77e775dcf2af620ac5f1a29ae20e32f580d2546ef"
+      "size": 71878,
+      "sha256": "f8b3a48ab7f0e4de93f4d8d26688b68692f6e3fef7ecb60ea451f84965901f81"
     },
     {
       "path": "design/mockup/README.md",
@@ -3198,6 +3233,11 @@
       "sha256": "4a42b028c5847de413905e79f30aabdd2056eb2490aa830430e0a90561053f97"
     },
     {
+      "path": "docs/adr/0023-phone-local-hub-one-action-access.md",
+      "size": 2495,
+      "sha256": "e0c5214376727bc51b9a1178e6c8dfd0e40114b8b8cbf6a436f3984ab14d9139"
+    },
+    {
       "path": "docs/ANDROID_SIGNING.md",
       "size": 4787,
       "sha256": "5828a98a0bfe6c478d7b2ae32ff1a2c2b03ce26e5a02464531512faae53ca356"
@@ -3244,8 +3284,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 38128,
-      "sha256": "89f9a532a1ac1336a543426fcd6af6fe17b7824cf4bc12dbe1d45a3126d91864"
+      "size": 39365,
+      "sha256": "e106f9bae069fe98687b9671ecea6c0136428f029ccb80000f5f0e4f6e82ce40"
     },
     {
       "path": "docs/DESKTOP_DISTRIBUTION.md",
@@ -3254,8 +3294,8 @@
     },
     {
       "path": "docs/FUNCTIONAL_INVENTORY.md",
-      "size": 2668,
-      "sha256": "2006f54c0917152f5f22f51d1e6d87eaf74d07a20d8a28829c718fe29fc5fab9"
+      "size": 2690,
+      "sha256": "e7e746b18a6aa70dbef23a9e827f5954c45c954ced4f20195a029e06a7f17d20"
     },
     {
       "path": "docs/imports/BANK_STATEMENT_IMPORT_EXPORT.md",
@@ -3399,8 +3439,8 @@
     },
     {
       "path": "docs/ROADMAP_PHONE_LOCAL_HUB.md",
-      "size": 13026,
-      "sha256": "4cec05adad1b0980fa53784e48fb4a6923f893b0e28e1e2050ad97fd40f79d05"
+      "size": 13335,
+      "sha256": "4c017f8927fcedddd97d1241cabea74af0ff4d3cdb07db59bccfa4d62f966699"
     },
     {
       "path": "docs/ROADMAP_STABILIZATION.md",
@@ -3530,7 +3570,7 @@
     {
       "path": "package.json",
       "size": 2538,
-      "sha256": "141f52793f350c64eb936c0c2d0ce69a6071d350b469611d4f3a410e532325d4"
+      "sha256": "77886ba5be624112b488ec8db5948af020d4a35508217ae371c7980483db7426"
     },
     {
       "path": "packages/application/package.json",

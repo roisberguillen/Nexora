@@ -31,6 +31,7 @@ import {
   ImportBatch,
   ImportRow,
   validateImportCommit,
+  isSystemCategory,
 } from "@nexora/domain";
 
 import type { LocalSyncOperation } from "./localHostSync";
@@ -47,6 +48,24 @@ export async function connectRemoteLedgerRepository(
   repository: LedgerRepository,
   client: LocalHostSyncClient,
 ): Promise<RemoteLedgerConnection> {
+  return withRemoteLedgerLock(client, () =>
+    connectRemoteLedgerRepositoryUnlocked(repository, client),
+  );
+}
+
+function withRemoteLedgerLock<T>(
+  client: LocalHostSyncClient,
+  callback: () => Promise<T>,
+): Promise<T> {
+  const lockManager = globalThis.navigator?.locks;
+  if (lockManager === undefined) throw new Error("remote_sync_lock_unavailable");
+  return lockManager.request(`nexora-remote-ledger-cache:${client.deviceId()}`, callback);
+}
+
+async function connectRemoteLedgerRepositoryUnlocked(
+  repository: LedgerRepository,
+  client: LocalHostSyncClient,
+): Promise<RemoteLedgerConnection> {
   try {
     await client.flush();
   } catch {
@@ -60,65 +79,73 @@ export async function connectRemoteLedgerRepository(
     return {
       repository: createRemoteRepository(repository, client, new Map()),
       async sync(): Promise<void> {
-        try {
-          await client.flush();
-          const pulled = await client.pull(client.cursor());
-          let lastCursor = client.cursor();
-          for (const [cursor, operation] of pulled.operations) {
-            if (!Number.isSafeInteger(cursor) || cursor <= lastCursor)
-              throw new Error("invalid_sync_pull_cursor");
-            const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
-            client.setRevision(revisionKey, operation.revision);
-            client.setRevision(operation.entityId, operation.revision);
-            await applyRemoteOperation(repository, operation);
-            lastCursor = cursor;
+        await withRemoteLedgerLock(client, async () => {
+          try {
+            await client.flush();
+            const pulled = await client.pull(client.cursor());
+            let lastCursor = client.cursor();
+            for (const [cursor, operation] of pulled.operations) {
+              if (!Number.isSafeInteger(cursor) || cursor <= lastCursor)
+                throw new Error("invalid_sync_pull_cursor");
+              const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
+              client.setRevision(revisionKey, operation.revision);
+              client.setRevision(operation.entityId, operation.revision);
+              await applyRemoteOperation(repository, operation);
+              lastCursor = cursor;
+            }
+            if (lastCursor !== client.cursor()) client.setCursor(lastCursor);
+          } catch {
+            // Cache and outbox remain authoritative locally until reconnect.
           }
-          if (lastCursor !== client.cursor()) client.setCursor(lastCursor);
-        } catch {
-          // Cache and outbox remain authoritative locally until reconnect.
-        }
+        });
       },
     };
   }
   // The remote cache is disposable. Rebuild it from the phone so deleted host
   // records cannot remain visible on the PC after a reconnect.
   await repository.resetFinancialData();
+  client.clearBootstrapCache();
   const revisions = new Map<string, number>();
+  const persistedRevisions = new Map<string, number>();
   for (const [, operation] of orderBootstrapOperations(bootstrap.operations)) {
     const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
     revisions.set(revisionKey, operation.revision);
-    client.setRevision(revisionKey, operation.revision);
-    client.setRevision(operation.entityId, operation.revision);
+    persistedRevisions.set(revisionKey, operation.revision);
+    persistedRevisions.set(operation.entityId, operation.revision);
     await applyRemoteOperation(repository, operation);
   }
+  client.replaceRevisions(persistedRevisions);
   client.setCursor(bootstrap.cursor);
+  client.markBootstrapCache();
   const remoteRepository = createRemoteRepository(repository, client, revisions);
   return {
     repository: remoteRepository,
     async sync(): Promise<void> {
-      try {
-        await client.flush();
-      } catch {
-        // The durable outbox keeps the operation for the next reconnect.
-      }
-      const after = client.cursor();
-      const pulled = await client.pull(after);
-      let lastCursor = after;
-      for (const [cursor, operation] of pulled.operations) {
-        if (!Number.isSafeInteger(cursor) || cursor < lastCursor) {
-          throw new Error("invalid_sync_pull_cursor");
+      await withRemoteLedgerLock(client, async () => {
+        try {
+          await client.flush();
+        } catch {
+          // The durable outbox keeps the operation for the next reconnect.
         }
-        const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
-        revisions.set(revisionKey, operation.revision);
-        client.setRevision(revisionKey, operation.revision);
-        client.setRevision(operation.entityId, operation.revision);
-        await applyRemoteOperation(repository, operation);
-        lastCursor = cursor;
-      }
-      if (lastCursor !== after) {
-        client.setCursor(lastCursor);
-        window.dispatchEvent(new Event(remoteLedgerSyncEventName));
-      }
+        const after = client.cursor();
+        const pulled = await client.pull(after);
+        let lastCursor = after;
+        for (const [cursor, operation] of pulled.operations) {
+          if (!Number.isSafeInteger(cursor) || cursor < lastCursor) {
+            throw new Error("invalid_sync_pull_cursor");
+          }
+          const revisionKey = syncRevisionKey(operation.payload, operation.entityId);
+          revisions.set(revisionKey, operation.revision);
+          client.setRevision(revisionKey, operation.revision);
+          client.setRevision(operation.entityId, operation.revision);
+          await applyRemoteOperation(repository, operation);
+          lastCursor = cursor;
+        }
+        if (lastCursor !== after) {
+          client.setCursor(lastCursor);
+          window.dispatchEvent(new Event(remoteLedgerSyncEventName));
+        }
+      });
     },
   };
 }
@@ -135,12 +162,114 @@ function orderBootstrapOperations(
         bootstrapOperationRank(left) - bootstrapOperationRank(right) || leftIndex - rightIndex,
     )
     .map(({ entry }) => entry);
-  return [...journal, ...snapshot];
+  return [...journal, ...orderBootstrapDependencies(snapshot)];
+}
+
+function orderBootstrapDependencies(
+  operations: readonly [number, LocalSyncOperation][],
+): readonly [number, LocalSyncOperation][] {
+  const pending = operations.map(([cursor, operation], index) => {
+    const payload = parseBootstrapPayload(operation.payload);
+    const entityType = payload?.entity_type;
+    const parentId =
+      payload === undefined
+        ? undefined
+        : entityType === "category"
+          ? payload.parent_id
+          : entityType === "account"
+            ? payload.parent_account_id
+            : undefined;
+    return {
+      entry: [cursor, operation] as [number, LocalSyncOperation],
+      index,
+      entityKey: typeof entityType === "string" ? `${entityType}:${operation.entityId}` : undefined,
+      parentKey:
+        typeof entityType === "string" && typeof parentId === "string" && parentId.length > 0
+          ? `${entityType}:${parentId}`
+          : undefined,
+    };
+  });
+  const indexByEntity = new Map<string, number>();
+  for (const item of pending) {
+    if (item.entityKey !== undefined) indexByEntity.set(item.entityKey, item.index);
+  }
+  const children = Array.from({ length: pending.length }, () => [] as number[]);
+  const hasParent = new Uint8Array(pending.length);
+  for (const item of pending) {
+    if (item.parentKey === undefined) continue;
+    const parentIndex = indexByEntity.get(item.parentKey);
+    if (parentIndex === undefined || parentIndex === item.index) continue;
+    children[parentIndex]?.push(item.index);
+    hasParent[item.index] = 1;
+  }
+
+  // Stable topological ordering: always emit the earliest currently-ready item.
+  // A min-heap avoids repeatedly shifting a large snapshot array with splice(0, 1).
+  const ready: number[] = [];
+  const pushReady = (index: number) => {
+    let child = ready.length;
+    ready.push(index);
+    while (child > 0) {
+      const parent = Math.floor((child - 1) / 2);
+      if (ready[parent]! <= index) break;
+      ready[child] = ready[parent]!;
+      child = parent;
+    }
+    ready[child] = index;
+  };
+  const popReady = (): number | undefined => {
+    const first = ready[0];
+    const last = ready.pop();
+    if (first === undefined || last === undefined) return first;
+    if (ready.length === 0) return first;
+    let parent = 0;
+    while (true) {
+      const left = parent * 2 + 1;
+      if (left >= ready.length) break;
+      const right = left + 1;
+      const child = right < ready.length && ready[right]! < ready[left]! ? right : left;
+      if (ready[child]! >= last) break;
+      ready[parent] = ready[child]!;
+      parent = child;
+    }
+    ready[parent] = last;
+    return first;
+  };
+  for (let index = 0; index < pending.length; index += 1) {
+    if (hasParent[index] === 0) pushReady(index);
+  }
+
+  const ordered: [number, LocalSyncOperation][] = [];
+  const emitted = new Uint8Array(pending.length);
+  let current: number | undefined;
+  while ((current = popReady()) !== undefined) {
+    const item = pending[current];
+    if (item === undefined) continue;
+    ordered.push(item.entry);
+    emitted[current] = 1;
+    for (const child of children[current] ?? []) pushReady(child);
+  }
+  // Malformed cycles retain their input order, as the previous fail-soft behavior did.
+  for (let index = 0; index < pending.length; index += 1) {
+    if (emitted[index] === 0) ordered.push(pending[index]!.entry);
+  }
+  return ordered;
+}
+
+function parseBootstrapPayload(payload: string): Record<string, unknown> | undefined {
+  try {
+    const parsed = JSON.parse(payload) as unknown;
+    return parsed !== null && typeof parsed === "object"
+      ? (parsed as Record<string, unknown>)
+      : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function bootstrapOperationRank(operation: LocalSyncOperation): number {
   try {
-    const entityType = (JSON.parse(operation.payload) as { entity_type?: unknown }).entity_type;
+    const entityType = parseBootstrapPayload(operation.payload)?.entity_type;
     switch (entityType) {
       case "account":
         return 10;
@@ -183,50 +312,52 @@ function createRemoteRepository(
       const method = Reflect.get(target, property, receiver);
       if (typeof method !== "function") return method;
       return async (...args: unknown[]) => {
-        const methodName = String(property);
-        if (mutatingMethods.has(methodName) && !supportedRemoteMutations.has(methodName)) {
-          throw new Error(`remote_mutation_not_supported:${methodName}`);
-        }
-        const transactionTagSnapshot =
-          methodName === "mergeTag" || methodName === "removeTagGlobally"
-            ? new Map(
-                await Promise.all(
-                  (await target.listTransactions()).map(
-                    async (transaction) =>
-                      [transaction.id, await target.listTransactionTags(transaction.id)] as const,
-                  ),
-                ),
-              )
-            : undefined;
-        const trashSnapshot =
-          methodName === "trashTransaction" ||
-          methodName === "trashTransactions" ||
-          methodName === "restoreTransaction" ||
-          methodName === "purgeTrashedTransaction" ||
-          methodName === "purgeTrashedTransactions"
-            ? await target.listTrashedTransactions()
-            : undefined;
-        const result = await method.apply(target, args);
-        const operation = await operationForMutation(
-          methodName,
-          args,
-          target,
-          client.deviceId(),
-          revisions,
-          client,
-          transactionTagSnapshot,
-          trashSnapshot,
-        );
-        if (operation !== undefined) {
-          const operations = Array.isArray(operation) ? operation : [operation];
-          for (const candidate of operations) client.enqueue(candidate);
-          try {
-            await client.flush();
-          } catch {
-            // The durable outbox keeps the operation for the next reconnect.
+        return withRemoteLedgerLock(client, async () => {
+          const methodName = String(property);
+          if (mutatingMethods.has(methodName) && !supportedRemoteMutations.has(methodName)) {
+            throw new Error(`remote_mutation_not_supported:${methodName}`);
           }
-        }
-        return result;
+          const transactionTagSnapshot =
+            methodName === "mergeTag" || methodName === "removeTagGlobally"
+              ? new Map(
+                  await Promise.all(
+                    (await target.listTransactions()).map(
+                      async (transaction) =>
+                        [transaction.id, await target.listTransactionTags(transaction.id)] as const,
+                    ),
+                  ),
+                )
+              : undefined;
+          const trashSnapshot =
+            methodName === "trashTransaction" ||
+            methodName === "trashTransactions" ||
+            methodName === "restoreTransaction" ||
+            methodName === "purgeTrashedTransaction" ||
+            methodName === "purgeTrashedTransactions"
+              ? await target.listTrashedTransactions()
+              : undefined;
+          const result = await method.apply(target, args);
+          const operation = await operationForMutation(
+            methodName,
+            args,
+            target,
+            client.deviceId(),
+            revisions,
+            client,
+            transactionTagSnapshot,
+            trashSnapshot,
+          );
+          if (operation !== undefined) {
+            const operations = Array.isArray(operation) ? operation : [operation];
+            for (const candidate of operations) client.enqueue(candidate);
+            try {
+              await client.flush();
+            } catch {
+              // The durable outbox keeps the operation for the next reconnect.
+            }
+          }
+          return result;
+        });
       };
     },
   }) as LedgerRepository;
@@ -1341,9 +1472,12 @@ async function applyRemoteOperation(
     return;
   }
   if (payload.entity_type === "category") {
+    const existing = await repository.findCategoryById(operation.entityId);
+    // Local repositories seed protected system categories during reset. Keep those canonical
+    // records and still import every user category from the phone.
+    if (isSystemCategory(operation.entityId)) return;
     if (payload.operation === "delete") {
-      if (await repository.findCategoryById(operation.entityId))
-        await repository.deleteUnusedCategory(operation.entityId);
+      if (existing) await repository.deleteUnusedCategory(operation.entityId);
       return;
     }
     const category = DomainCategory.create({
@@ -1355,7 +1489,7 @@ async function applyRemoteOperation(
         : { parentId: String(payload.parent_id) }),
       isArchived: payload.is_archived === true,
     });
-    if (await repository.findCategoryById(category.id)) await repository.updateCategory(category);
+    if (existing) await repository.updateCategory(category);
     else await repository.saveCategory(category);
     return;
   }

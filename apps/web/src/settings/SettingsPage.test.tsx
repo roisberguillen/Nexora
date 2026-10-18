@@ -229,34 +229,10 @@ describe("SettingsPage destructive flows", () => {
     expect(screen.getByRole("region", { name: "Gestione dati" })).toBeVisible();
   });
 
-  it("collega e disattiva un host solo dopo averlo verificato", async () => {
-    const user = userEvent.setup();
-    render(
-      <SettingsPage
-        onProbeLocalHost={async () => ({
-          apiVersion: 1,
-          appUrl: "https://nexora.home",
-          runtimeState: "running",
-          binding: "lan",
-        })}
-      />,
-    );
-    expect(screen.getByRole("region", { name: "Connessione dispositivi" })).toHaveTextContent(
-      "Solo locale",
-    );
-    await user.click(screen.getByRole("button", { name: "Attiva host" }));
-    expect(await screen.findByRole("status")).toHaveTextContent(
-      "Apri Nexora da: https://nexora.home",
-    );
-    expect(screen.getByText("Host collegato")).toBeVisible();
-    const browserLink = screen.getByRole("link", { name: "Apri Nexora nel browser locale" });
-    expect(browserLink).toHaveAttribute("href", "https://nexora.home");
-    expect(browserLink).toHaveAttribute("target", "_blank");
-    expect(browserLink).toHaveAttribute("rel", "noopener noreferrer");
-    await user.click(screen.getByRole("button", { name: "Disattiva host" }));
-    expect(await screen.findByRole("status")).toHaveTextContent(
-      "Host disattivato in questo browser",
-    );
-    expect(screen.queryByRole("link", { name: "Apri Nexora nel browser locale" })).toBeNull();
+  it("nasconde la superficie Local Hub finché la funzione futura non viene riattivata", () => {
+    render(<SettingsPage />);
+
+    expect(screen.queryByRole("region", { name: "Connessione dispositivi" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Local Hub/i })).toBeNull();
   });
 });

@@ -2,6 +2,7 @@ import { InMemoryLedgerRepository } from "@nexora/database";
 import {
   Account,
   AllocationPlan,
+  Category,
   RecurringRule,
   Tag,
   LocalDate,
@@ -10,8 +11,9 @@ import {
   Transfer,
   ImportBatch,
   ImportRow,
+  createSystemCategories,
 } from "@nexora/domain";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LocalHostSyncClient, type LocalSyncOperation } from "./localHostSync";
 import { connectRemoteLedgerRepository, remoteLedgerSyncEventName } from "./remoteLedgerRepository";
@@ -51,6 +53,32 @@ function operation(
 function response(body: unknown): Response {
   return new Response(JSON.stringify(body), { status: 200 });
 }
+
+beforeEach(() => {
+  let previousLock = Promise.resolve();
+  const locks = {
+    request<T>(_name: string, callback: () => Promise<T>): Promise<T> {
+      const waitForPrevious = previousLock;
+      let release!: () => void;
+      previousLock = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      return (async () => {
+        await waitForPrevious;
+        try {
+          return await callback();
+        } finally {
+          release();
+        }
+      })();
+    },
+  };
+  vi.stubGlobal("navigator", { locks });
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("remote ledger repository", () => {
   it("applies a phone transaction from the incremental pull and advances cursor", async () => {
@@ -203,9 +231,438 @@ describe("remote ledger repository", () => {
     const connection = await connectRemoteLedgerRepository(repository, client);
 
     await expect(connection.repository.findAccountById(account.id)).resolves.toEqual(account);
-    await expect(connection.repository.listTransactionTags("transaction-bootstrap-order")).resolves
-      .toEqual([tag]);
+    await expect(
+      connection.repository.listTransactionTags("transaction-bootstrap-order"),
+    ).resolves.toEqual([tag]);
     await expect(connection.repository.listTrashedTransactions()).resolves.toHaveLength(1);
+  });
+
+  it("orders nested phone categories after their parent during bootstrap", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const parent = Category.create({ id: "category-parent", name: "Parent", kindScope: "both" });
+    const child = Category.create({
+      id: "category-child",
+      name: "Child",
+      kindScope: "both",
+      parentId: parent.id,
+    });
+    const categoryOperation = (category: Category) =>
+      operation(category.id, {
+        schema_version: 1,
+        operation: "upsert",
+        entity_type: "category",
+        entity_id: category.id,
+        name: category.name,
+        kind_scope: category.kindScope,
+        parent_id: category.parentId ?? null,
+        is_archived: category.isArchived,
+      });
+    const request = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("/v1/bootstrap"))
+        return response({
+          schema_version: 1,
+          cursor: 0,
+          operations: [
+            [0, categoryOperation(child)],
+            [0, categoryOperation(parent)],
+          ],
+        });
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-category-order", token: "token" },
+      storage: storage(),
+      request,
+    });
+
+    const connection = await connectRemoteLedgerRepository(repository, client);
+
+    await expect(connection.repository.findCategoryById(parent.id)).resolves.toEqual(parent);
+    await expect(connection.repository.findCategoryById(child.id)).resolves.toEqual(child);
+  });
+
+  it("preserves protected local system categories during phone bootstrap", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const systemCategory = createSystemCategories()[0]!;
+    const remoteOperation = operation(systemCategory.id, {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "category",
+      entity_id: systemCategory.id,
+      name: "Phone system category",
+      kind_scope: systemCategory.kindScope,
+      parent_id: null,
+      is_archived: false,
+    });
+    const request = vi.fn(async (input: RequestInfo | URL) =>
+      String(input).endsWith("/v1/bootstrap")
+        ? response({ schema_version: 1, cursor: 0, operations: [[0, remoteOperation]] })
+        : response({ operations: [] }),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-system-category", token: "token" },
+      storage: storage(),
+      request,
+    });
+
+    const connection = await connectRemoteLedgerRepository(repository, client);
+
+    await expect(connection.repository.findCategoryById(systemCategory.id)).resolves.toEqual(
+      systemCategory,
+    );
+  });
+
+  it("does not mark a partially applied phone snapshot as a usable bootstrap cache", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const accountOperation = operation("account-interrupted-bootstrap", {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "account",
+      entity_id: "account-interrupted-bootstrap",
+      name: "Phone account",
+      type: "checking",
+      currency: "EUR",
+      opening_balance_minor: "0",
+      is_archived: false,
+    });
+    const request = vi.fn(async (input: RequestInfo | URL) =>
+      String(input).endsWith("/v1/bootstrap")
+        ? response({ schema_version: 1, cursor: 0, operations: [[0, accountOperation]] })
+        : response({ operations: [] }),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-interrupted-bootstrap", token: "token" },
+      storage: storage(),
+      request,
+    });
+    client.markBootstrapCache();
+    vi.spyOn(repository, "saveAccount").mockRejectedValueOnce(new Error("cache write failed"));
+
+    await expect(connectRemoteLedgerRepository(repository, client)).rejects.toThrow(
+      "cache write failed",
+    );
+    expect(client.hasBootstrapCache()).toBe(false);
+  });
+
+  it("serializes concurrent phone bootstraps across tabs until the cache is complete", async () => {
+    let previousLock = Promise.resolve();
+    const requestLock = vi.fn(async <T>(_name: string, callback: () => Promise<T>): Promise<T> => {
+      const waitForPrevious = previousLock;
+      let release!: () => void;
+      previousLock = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      await waitForPrevious;
+      try {
+        return await callback();
+      } finally {
+        release();
+      }
+    });
+    vi.stubGlobal("navigator", { locks: { request: requestLock } });
+
+    try {
+      const repository = new InMemoryLedgerRepository();
+      const accountOperation = operation("account-serialized-bootstrap", {
+        schema_version: 1,
+        operation: "upsert",
+        entity_type: "account",
+        entity_id: "account-serialized-bootstrap",
+        name: "Phone account",
+        type: "checking",
+        currency: "EUR",
+        opening_balance_minor: "0",
+        is_archived: false,
+      });
+      const request = vi.fn(async (input: RequestInfo | URL) =>
+        String(input).endsWith("/v1/bootstrap")
+          ? response({ schema_version: 1, cursor: 0, operations: [[0, accountOperation]] })
+          : response({ operations: [] }),
+      );
+      const client = new LocalHostSyncClient({
+        endpoint: "https://phone.local",
+        credentials: { deviceId: "pc-serialized-bootstrap", token: "token" },
+        storage: storage(),
+        request,
+      });
+      const originalSaveAccount = repository.saveAccount.bind(repository);
+      let enteredFirstSave!: () => void;
+      const firstSaveEntered = new Promise<void>((resolve) => {
+        enteredFirstSave = resolve;
+      });
+      let finishFirstSave!: () => void;
+      const firstSaveGate = new Promise<void>((resolve) => {
+        finishFirstSave = resolve;
+      });
+      let activeSaves = 0;
+      let maximumActiveSaves = 0;
+      const saveSpy = vi.spyOn(repository, "saveAccount").mockImplementation(async (account) => {
+        activeSaves += 1;
+        maximumActiveSaves = Math.max(maximumActiveSaves, activeSaves);
+        if (activeSaves === 1) {
+          enteredFirstSave();
+          await firstSaveGate;
+        }
+        try {
+          await originalSaveAccount(account);
+        } finally {
+          activeSaves -= 1;
+        }
+      });
+
+      const first = connectRemoteLedgerRepository(repository, client);
+      await firstSaveEntered;
+      const second = connectRemoteLedgerRepository(repository, client);
+      await Promise.resolve();
+      expect(request).toHaveBeenCalledTimes(1);
+      finishFirstSave();
+      await Promise.all([first, second]);
+
+      expect(requestLock).toHaveBeenCalledTimes(2);
+      expect(requestLock).toHaveBeenCalledWith(
+        "nexora-remote-ledger-cache:pc-serialized-bootstrap",
+        expect.any(Function),
+      );
+      expect(maximumActiveSaves).toBe(1);
+      expect(request).toHaveBeenCalledTimes(2);
+      expect(client.hasBootstrapCache()).toBe(true);
+      saveSpy.mockRestore();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("waits for a local remote-ledger mutation before resetting a shared cache", async () => {
+    const repository = new InMemoryLedgerRepository();
+    const remoteAccount = operation("account-shared-cache", {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "account",
+      entity_id: "account-shared-cache",
+      name: "Phone account",
+      type: "checking",
+      currency: "EUR",
+      opening_balance_minor: "0",
+      is_archived: false,
+    });
+    let bootstrapCount = 0;
+    const request = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap")) {
+        bootstrapCount += 1;
+        return response({ schema_version: 1, cursor: 0, operations: [[0, remoteAccount]] });
+      }
+      if (init?.method === "POST") return response([{ Applied: { revision: 1 } }]);
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-mutation-lock", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const resetSpy = vi.spyOn(repository, "resetFinancialData");
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    const originalSaveAccount = repository.saveAccount.bind(repository);
+    const newAccount = Account.create({
+      id: "account-concurrent-edit",
+      name: "PC account",
+      type: "checking",
+      currency: "EUR",
+    });
+    let enteredMutation!: () => void;
+    const mutationEntered = new Promise<void>((resolve) => {
+      enteredMutation = resolve;
+    });
+    let releaseMutation!: () => void;
+    const mutationGate = new Promise<void>((resolve) => {
+      releaseMutation = resolve;
+    });
+    vi.spyOn(repository, "saveAccount").mockImplementation(async (account) => {
+      if (account.id === newAccount.id) {
+        enteredMutation();
+        await mutationGate;
+      }
+      return originalSaveAccount(account);
+    });
+
+    const mutation = connection.repository.saveAccount(newAccount);
+    await mutationEntered;
+    const rebuild = connectRemoteLedgerRepository(repository, client);
+    await Promise.resolve();
+    expect(bootstrapCount).toBe(1);
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+
+    releaseMutation();
+    await Promise.all([mutation, rebuild]);
+
+    expect(bootstrapCount).toBe(2);
+    expect(resetSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("waits for an active pull before another tab rebuilds the remote cache", async () => {
+    const repository = new InMemoryLedgerRepository();
+    let bootstrapCount = 0;
+    const accountOperation = operation("account-pull-lock", {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "account",
+      entity_id: "account-pull-lock",
+      name: "Phone account",
+      type: "checking",
+      currency: "EUR",
+      opening_balance_minor: "0",
+      is_archived: false,
+    });
+    let enteredPull!: () => void;
+    const pullEntered = new Promise<void>((resolve) => {
+      enteredPull = resolve;
+    });
+    let releasePull!: () => void;
+    const pullGate = new Promise<void>((resolve) => {
+      releasePull = resolve;
+    });
+    const request = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith("/v1/bootstrap")) {
+        bootstrapCount += 1;
+        return response({ schema_version: 1, cursor: 0, operations: [[0, accountOperation]] });
+      }
+      if (url.endsWith("after=0")) {
+        enteredPull();
+        await pullGate;
+      }
+      return response({ operations: [] });
+    });
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-pull-lock", token: "token" },
+      storage: storage(),
+      request,
+    });
+    const resetSpy = vi.spyOn(repository, "resetFinancialData");
+    const connection = await connectRemoteLedgerRepository(repository, client);
+    const pull = connection.sync();
+    await pullEntered;
+    const rebuild = connectRemoteLedgerRepository(repository, client);
+    await Promise.resolve();
+    expect(bootstrapCount).toBe(1);
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+
+    releasePull();
+    await Promise.all([pull, rebuild]);
+
+    expect(bootstrapCount).toBe(2);
+    expect(resetSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("fails closed when cross-tab locking is unavailable", async () => {
+    vi.stubGlobal("navigator", {});
+    const request = vi.fn(async () => response({ schema_version: 1, cursor: 0, operations: [] }));
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-no-lock", token: "token" },
+      storage: storage(),
+      request,
+    });
+
+    await expect(
+      connectRemoteLedgerRepository(new InMemoryLedgerRepository(), client),
+    ).rejects.toThrow("remote_sync_lock_unavailable");
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it("keeps the bootstrap cache invalid when the revision index exceeds storage quota", async () => {
+    const accountOperation = operation("account-bootstrap-quota", {
+      schema_version: 1,
+      operation: "upsert",
+      entity_type: "account",
+      entity_id: "account-bootstrap-quota",
+      name: "Phone account",
+      type: "checking",
+      currency: "EUR",
+      opening_balance_minor: "0",
+      is_archived: false,
+    });
+    const localStorage = storage();
+    const setItem = localStorage.setItem.bind(localStorage);
+    vi.spyOn(localStorage, "setItem").mockImplementation((key, value) => {
+      if (key.includes("local-sync-revisions"))
+        throw new DOMException("Quota", "QuotaExceededError");
+      setItem(key, value);
+    });
+    const request = vi.fn(async (input: RequestInfo | URL) =>
+      String(input).endsWith("/v1/bootstrap")
+        ? response({ schema_version: 1, cursor: 0, operations: [[0, accountOperation]] })
+        : response({ operations: [] }),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-bootstrap-quota", token: "token" },
+      storage: localStorage,
+      request,
+    });
+    client.markBootstrapCache();
+
+    await expect(
+      connectRemoteLedgerRepository(new InMemoryLedgerRepository(), client),
+    ).rejects.toThrow();
+    expect(client.hasBootstrapCache()).toBe(false);
+  });
+
+  it("imports a large phone snapshot without rewriting the revision index per record", async () => {
+    const snapshotSize = 10_000;
+    const operations = Array.from({ length: snapshotSize }, (_, index) => {
+      const id = `bulk-account-${index}`;
+      return [
+        0,
+        operation(id, {
+          schema_version: 1,
+          operation: "upsert",
+          entity_type: "account",
+          entity_id: id,
+          name: `Account ${index}`,
+          type: "checking",
+          currency: "EUR",
+          opening_balance_minor: "0",
+          is_archived: false,
+        }),
+      ] as const;
+    });
+    const values = new Map<string, string>();
+    const setItem = vi.fn((key: string, value: string) => values.set(key, value));
+    const localStorage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem,
+      removeItem: (key: string) => values.delete(key),
+      clear: () => values.clear(),
+      key: (index: number) => [...values.keys()][index] ?? null,
+      get length() {
+        return values.size;
+      },
+    } as Storage;
+    const request = vi.fn(async (input: RequestInfo | URL) =>
+      String(input).endsWith("/v1/bootstrap")
+        ? response({ schema_version: 1, cursor: 0, operations })
+        : response({ operations: [] }),
+    );
+    const client = new LocalHostSyncClient({
+      endpoint: "https://phone.local",
+      credentials: { deviceId: "pc-large-bootstrap", token: "token" },
+      storage: localStorage,
+      request,
+    });
+    const repository = new InMemoryLedgerRepository();
+    await connectRemoteLedgerRepository(repository, client);
+
+    expect(await repository.listAccounts()).toHaveLength(snapshotSize);
+    expect(setItem.mock.calls.filter(([key]) => key.includes("local-sync-revisions"))).toHaveLength(
+      1,
+    );
+    expect(client.hasBootstrapCache()).toBe(true);
   });
 
   it("applies a phone tag tombstone and does not repeat an acknowledged pull", async () => {
