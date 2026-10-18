@@ -1178,6 +1178,11 @@
       "sha256": "d742d97346903345502e70905b86ccf062598200542162b4e34fdf9e054265a1"
     },
     {
+      "path": ".codex/reviews/ui-ux/2026-10-18-local-hub-deferred.md",
+      "size": 1568,
+      "sha256": "4b70a36a6a72f66e23dc2e793641560670c9e45b1c2e3bd5ea29d00d74896501"
+    },
+    {
       "path": ".codex/reviews/ui-ux/financial-month-start-final-gate.md",
       "size": 1359,
       "sha256": "60ed2b9d6fb167afff0ab6f6b59d6c26de03bec920ba86a94333515432935b87"
@@ -1639,8 +1644,8 @@
     },
     {
       "path": ".codex/state/current-task.md",
-      "size": 601,
-      "sha256": "2a937b306f8df58cba03fe5b4bfdeb5367f33eada4fb04001083a9c91d9d3a57"
+      "size": 620,
+      "sha256": "a4c3f64a4b14db7b12785b1109048058cdd2cf00b453312ff75912f0ab5765be"
     },
     {
       "path": ".codex/state/d-phase-evidence-matrix.md",
@@ -1674,8 +1679,8 @@
     },
     {
       "path": ".codex/state/test-evidence.md",
-      "size": 215775,
-      "sha256": "178665d534b30ba8aa496d2d1c42f8cf44f28bb635a3493f8abe179acd407c10"
+      "size": 216248,
+      "sha256": "2ad71fab43bf737c59b23b72920265ca5b96195717442a77ebf21e50e68c1c54"
     },
     {
       "path": ".codex/state/ui-screen-review-matrix.md",
@@ -3284,8 +3289,8 @@
     },
     {
       "path": "docs/DECISIONS_LOG.md",
-      "size": 39365,
-      "sha256": "e106f9bae069fe98687b9671ecea6c0136428f029ccb80000f5f0e4f6e82ce40"
+      "size": 39364,
+      "sha256": "4af8ac153e6b20e9858801339e5e3a73f6828496739f2e561dfb31816a306257"
     },
     {
       "path": "docs/DESKTOP_DISTRIBUTION.md",

@@ -2507,3 +2507,8 @@ Keep only the latest relevant evidence per completed phase.
   `Nessuna sincronizzazione attiva`, so phone ledger visibility and remote read/write are NOT
   verified; this browser session did not show the phone database. No ledger values were used as
   test evidence.
+- Local Hub deferred on 2026-10-18: the Settings device-connection surface, foreground guard,
+  remote sync event listener and active remote ledger bootstrap were removed from the product
+  flow. The Settings regression test confirms `Connessione dispositivi` and `Local Hub` are not
+  rendered. Full Vitest is `703 PASS / 4 SKIP`; full typecheck, lint, PWA build, orchestrator
+  validation, manifest check and diff check pass. Local ledger and backup paths remain active.
